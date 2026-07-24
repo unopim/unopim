@@ -5,10 +5,10 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'prefix'     => 'v1/rest',
     'middleware' => [
+        'accept.json',
         'auth:api',
         'throttle:rest-api',
         'api.scope',
-        'accept.json',
         'request.locale',
     ],
 ], function () {

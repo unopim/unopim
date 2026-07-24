@@ -10,6 +10,7 @@ use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\ProductPassport\Console\InstallPassportAttributesCommand;
 use Webkul\ProductPassport\DataGrids\Catalog\PassportProductDataGrid;
 use Webkul\ProductPassport\Http\Controllers\PublicationController;
+use Webkul\ProductPassport\Listeners\ValidateProductGtin;
 use Webkul\ProductPassport\View\Composers\PassportPanelComposer;
 
 class ProductPassportServiceProvider extends ServiceProvider
@@ -49,6 +50,11 @@ class ProductPassportServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'passport');
 
         Route::middleware('web')->group(__DIR__.'/../Routes/admin.php');
+
+        // Validate the merchant-entered GTIN before the product save proceeds,
+        // so an invalid check digit is rejected with inline feedback rather
+        // than silently published to the passport later.
+        Event::listen('catalog.product.update.before', ValidateProductGtin::class);
 
         // Gating on the admin guard matters even though the whole surrounding
         // page already requires an authenticated admin — a listener on a

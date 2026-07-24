@@ -165,6 +165,7 @@ return [
         'source' => 'Kaynak Öznitelik',
         'select-source' => 'Pasaport özniteliğini kullan',
         'save-btn' => 'Eşlemeyi Kaydet',
+        'type-mismatch' => 'Seçilen kaynak, bu pasaport alanının türüyle uyumlu değil.',
         'saved' => 'Alan eşlemesi başarıyla kaydedildi.',
     ],
 

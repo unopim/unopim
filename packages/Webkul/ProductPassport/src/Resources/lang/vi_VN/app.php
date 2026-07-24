@@ -165,6 +165,7 @@ return [
         'source' => 'Thuộc tính nguồn',
         'select-source' => 'Sử dụng thuộc tính hộ chiếu',
         'save-btn' => 'Lưu ánh xạ',
+        'type-mismatch' => 'Nguồn đã chọn không tương thích với loại trường hộ chiếu này.',
         'saved' => 'Đã lưu ánh xạ trường thành công.',
     ],
 

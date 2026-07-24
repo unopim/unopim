@@ -160,6 +160,7 @@ return [
         'source' => 'Attribut source',
         'select-source' => 'Utiliser l’attribut du passeport',
         'save-btn' => 'Enregistrer le mappage',
+        'type-mismatch' => 'La source sélectionnée n\'est pas compatible avec le type de ce champ du passeport.',
         'saved' => 'Mappage des champs enregistré avec succès.',
     ],
 

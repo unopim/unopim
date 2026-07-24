@@ -165,6 +165,7 @@ return [
         'source' => 'Atribut origen',
         'select-source' => 'Utilitza l\'atribut del passaport',
         'save-btn' => 'Desa el mapatge',
+        'type-mismatch' => 'La font seleccionada no és compatible amb el tipus d\'aquest camp del passaport.',
         'saved' => 'El mapatge de camps s\'ha desat correctament.',
     ],
 

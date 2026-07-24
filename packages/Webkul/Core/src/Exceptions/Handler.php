@@ -46,6 +46,23 @@ class Handler extends ExceptionHandler
     }
 
     /**
+     * Framework hook invoked before renderable callbacks. Overridden so an
+     * unauthenticated API request always gets a JSON 401 (regardless of
+     * APP_DEBUG or the Accept header) instead of the framework default, which
+     * redirects to the nonexistent `login` route and 500s.
+     */
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->wantsJson() || $this->isApiRequest($request)) {
+            return response()->json([
+                'error' => trans('admin::app.errors.401.message'),
+            ], JsonResponse::HTTP_UNAUTHORIZED);
+        }
+
+        return redirect()->guest(route('admin.session.create'));
+    }
+
+    /**
      * Render an exception into an HTTP response.
      */
     public function render($request, Throwable $exception)

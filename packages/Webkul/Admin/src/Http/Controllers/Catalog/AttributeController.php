@@ -205,11 +205,19 @@ class AttributeController extends Controller
     {
         $indices = $massDestroyRequest->input('indices');
 
+        $attributes = $this->attributeRepository->findWhereIn('id', $indices)->keyBy('id');
+
+        $superAttributeIds = DB::table('product_super_attributes')
+            ->whereIn('attribute_id', $indices)
+            ->distinct()
+            ->pluck('attribute_id')
+            ->flip();
+
         $deleted = 0;
         $inUse = 0;
 
         foreach ($indices as $index) {
-            $attribute = $this->attributeRepository->find($index);
+            $attribute = $attributes->get($index);
 
             if (
                 ! $attribute
@@ -218,7 +226,7 @@ class AttributeController extends Controller
                 continue;
             }
 
-            if ($this->attributeCanBeDeleted($index) > 0) {
+            if ($superAttributeIds->has($index)) {
                 $inUse++;
 
                 continue;

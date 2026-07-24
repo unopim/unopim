@@ -123,68 +123,72 @@
         </div>
     </details>
 
-    @if ($withdrawn)
-        <div class="tombstone">@include('passport::public.partials.tombstone')</div>
-    @endif
-
     <header class="hero">
         <span class="badge">{{ trans('passport::app.public.badge') }}</span>
         <h1>{{ trans('passport::app.public.title') }}</h1>
         <div class="uuid">{{ $uuid }}</div>
     </header>
 
-    <section class="card">
-        <h2>{{ trans('passport::app.public.identifier.title') }}</h2>
-        <div class="ids">
-            <div>
-                <div class="k">{{ trans('passport::app.public.identifier.gtin') }}</div>
-                <div class="v">{{ $payload['identifier']['gtin'] ?? trans('passport::app.public.identifier.not-provided') }}</div>
+    {{-- A withdrawn/redacted passport is a tombstone, never a content page:
+         Publisher::withdraw() flips status without redacting the frozen payload,
+         so every payload section MUST be suppressed here or the withdrawn HTML
+         would still surface field values, documents and operator details. --}}
+    @if ($withdrawn)
+        <div class="tombstone">@include('passport::public.partials.tombstone')</div>
+    @else
+        <section class="card">
+            <h2>{{ trans('passport::app.public.identifier.title') }}</h2>
+            <div class="ids">
+                <div>
+                    <div class="k">{{ trans('passport::app.public.identifier.gtin') }}</div>
+                    <div class="v">{{ $payload['identifier']['gtin'] ?? trans('passport::app.public.identifier.not-provided') }}</div>
+                </div>
+                <div>
+                    <div class="k">{{ trans('passport::app.public.identifier.model') }}</div>
+                    <div class="v">{{ $payload['identifier']['model'] ?? trans('passport::app.public.identifier.not-provided') }}</div>
+                </div>
+                <div>
+                    <div class="k">{{ trans('passport::app.public.identifier.batch') }}</div>
+                    <div class="v">{{ $payload['identifier']['batch'] ?? trans('passport::app.public.identifier.not-provided') }}</div>
+                </div>
             </div>
-            <div>
-                <div class="k">{{ trans('passport::app.public.identifier.model') }}</div>
-                <div class="v">{{ $payload['identifier']['model'] ?? trans('passport::app.public.identifier.not-provided') }}</div>
-            </div>
-            <div>
-                <div class="k">{{ trans('passport::app.public.identifier.batch') }}</div>
-                <div class="v">{{ $payload['identifier']['batch'] ?? trans('passport::app.public.identifier.not-provided') }}</div>
-            </div>
-        </div>
-    </section>
+        </section>
 
-    @foreach ($payload['sections'] as $section)
-        @if (! empty($section['fields']))
+        @foreach ($payload['sections'] as $section)
+            @if (! empty($section['fields']))
+                <section class="card">
+                    <h2>{{ $section['label'] }}</h2>
+                    <dl class="fields">
+                        @foreach ($section['fields'] as $field)
+                            <div>
+                                <dt>{{ $field['label'] }}</dt>
+                                <dd>{{ $field['value'] }}</dd>
+                            </div>
+                        @endforeach
+                    </dl>
+                </section>
+            @endif
+        @endforeach
+
+        @if (! empty($payload['documents']))
             <section class="card">
-                <h2>{{ $section['label'] }}</h2>
-                <dl class="fields">
-                    @foreach ($section['fields'] as $field)
-                        <div>
-                            <dt>{{ $field['label'] }}</dt>
-                            <dd>{{ $field['value'] }}</dd>
-                        </div>
+                <h2>{{ trans('passport::app.public.documents.title') }}</h2>
+                <ul class="docs">
+                    @foreach ($payload['documents'] as $document)
+                        <li><a href="{{ $documentUrl($document) }}">{{ $document['label'] }}</a></li>
                     @endforeach
-                </dl>
+                </ul>
             </section>
         @endif
-    @endforeach
 
-    @if (! empty($payload['documents']))
-        <section class="card">
-            <h2>{{ trans('passport::app.public.documents.title') }}</h2>
-            <ul class="docs">
-                @foreach ($payload['documents'] as $document)
-                    <li><a href="{{ $documentUrl($document) }}">{{ $document['label'] }}</a></li>
-                @endforeach
-            </ul>
-        </section>
-    @endif
-
-    @if ($hasOperator)
-        <section class="card">
-            <h2>{{ trans('passport::app.public.operator.title') }}</h2>
-            @if (! empty($operator['name']))<div>{{ $operator['name'] }}</div>@endif
-            @if (! empty($operator['address']))<div>{{ $operator['address'] }}</div>@endif
-            @if (! empty($operator['eu_representative']))<div>{{ $operator['eu_representative'] }}</div>@endif
-        </section>
+        @if ($hasOperator)
+            <section class="card">
+                <h2>{{ trans('passport::app.public.operator.title') }}</h2>
+                @if (! empty($operator['name']))<div>{{ $operator['name'] }}</div>@endif
+                @if (! empty($operator['address']))<div>{{ $operator['address'] }}</div>@endif
+                @if (! empty($operator['eu_representative']))<div>{{ $operator['eu_representative'] }}</div>@endif
+            </section>
+        @endif
     @endif
 
     <footer>{{ trans('passport::app.public.badge') }}</footer>

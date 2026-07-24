@@ -165,6 +165,7 @@ return [
         'source' => 'Bronattribuut',
         'select-source' => 'Gebruik het paspoortattribuut',
         'save-btn' => 'Toewijzing opslaan',
+        'type-mismatch' => 'De geselecteerde bron is niet compatibel met het type van dit paspoortveld.',
         'saved' => 'Veldtoewijzing succesvol opgeslagen.',
     ],
 

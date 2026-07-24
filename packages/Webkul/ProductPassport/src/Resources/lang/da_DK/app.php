@@ -165,6 +165,7 @@ return [
         'source' => 'Kildeattribut',
         'select-source' => 'Brug pasattributten',
         'save-btn' => 'Gem mapping',
+        'type-mismatch' => 'Den valgte kilde er ikke kompatibel med typen for dette pasfelt.',
         'saved' => 'Feltmapping blev gemt.',
     ],
 

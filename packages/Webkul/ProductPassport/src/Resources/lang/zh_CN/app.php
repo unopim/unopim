@@ -165,6 +165,7 @@ return [
         'source' => '来源属性',
         'select-source' => '使用护照属性',
         'save-btn' => '保存映射',
+        'type-mismatch' => '所选来源与此护照字段的类型不兼容。',
         'saved' => '字段映射保存成功。',
     ],
 

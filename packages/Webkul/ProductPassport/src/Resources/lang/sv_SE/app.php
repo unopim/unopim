@@ -165,6 +165,7 @@ return [
         'source' => 'Källattribut',
         'select-source' => 'Använd passattributet',
         'save-btn' => 'Spara mappning',
+        'type-mismatch' => 'Den valda källan är inte kompatibel med typen för detta passfält.',
         'saved' => 'Fältmappningen sparades.',
     ],
 

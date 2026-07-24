@@ -165,6 +165,7 @@ return [
         'source' => 'Atrybut źródłowy',
         'select-source' => 'Użyj atrybutu paszportu',
         'save-btn' => 'Zapisz mapowanie',
+        'type-mismatch' => 'Wybrane źródło jest niezgodne z typem tego pola paszportu.',
         'saved' => 'Mapowanie pól zostało pomyślnie zapisane.',
     ],
 

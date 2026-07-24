@@ -165,6 +165,7 @@ return [
         'source' => 'Lähdeattribuutti',
         'select-source' => 'Käytä passiattribuuttia',
         'save-btn' => 'Tallenna määritys',
+        'type-mismatch' => 'Valittu lähde ei ole yhteensopiva tämän passikentän tyypin kanssa.',
         'saved' => 'Kenttämääritys tallennettiin onnistuneesti.',
     ],
 

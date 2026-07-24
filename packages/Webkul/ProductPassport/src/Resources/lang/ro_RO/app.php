@@ -165,6 +165,7 @@ return [
         'source' => 'Atribut sursă',
         'select-source' => 'Folosește atributul pașaportului',
         'save-btn' => 'Salvează maparea',
+        'type-mismatch' => 'Sursa selectată nu este compatibilă cu tipul acestui câmp de pașaport.',
         'saved' => 'Maparea câmpurilor a fost salvată cu succes.',
     ],
 

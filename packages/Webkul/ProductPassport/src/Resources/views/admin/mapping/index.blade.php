@@ -25,7 +25,7 @@
                     :value="$mapping[$field->code] ?? ''"
                     :label="$field->getTranslatedValueWithFallback('name') ?: $field->code"
                     :placeholder="trans('passport::app.mapping.select-source')"
-                    :options="json_encode($sourceOptions)"
+                    :options="json_encode($sourceOptions[$field->code] ?? [])"
                     track-by="id"
                     label-by="label"
                 />

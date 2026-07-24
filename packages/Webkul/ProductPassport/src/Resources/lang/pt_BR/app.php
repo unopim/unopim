@@ -165,6 +165,7 @@ return [
         'source' => 'Atributo de origem',
         'select-source' => 'Usar o atributo do passaporte',
         'save-btn' => 'Salvar mapeamento',
+        'type-mismatch' => 'A fonte selecionada não é compatível com o tipo deste campo do passaporte.',
         'saved' => 'Mapeamento de campos salvo com sucesso.',
     ],
 

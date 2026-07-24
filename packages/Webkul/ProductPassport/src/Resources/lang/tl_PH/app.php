@@ -165,6 +165,7 @@ return [
         'source' => 'Pinagmulang Attribute',
         'select-source' => 'Gamitin ang attribute ng pasaporte',
         'save-btn' => 'I-save ang Pagmamapa',
+        'type-mismatch' => 'Ang napiling pinagmulan ay hindi tugma sa uri ng field ng pasaporte na ito.',
         'saved' => 'Matagumpay na na-save ang pagmamapa ng field.',
     ],
 

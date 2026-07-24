@@ -165,6 +165,7 @@ return [
         'source' => '來源屬性',
         'select-source' => '使用護照屬性',
         'save-btn' => '儲存對應',
+        'type-mismatch' => '所選來源與此護照欄位的類型不相容。',
         'saved' => '欄位對應已成功儲存。',
     ],
 

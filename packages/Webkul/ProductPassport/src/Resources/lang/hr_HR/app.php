@@ -165,6 +165,7 @@ return [
         'source' => 'Izvorni atribut',
         'select-source' => 'Koristi atribut putovnice',
         'save-btn' => 'Spremi mapiranje',
+        'type-mismatch' => 'Odabrani izvor nije kompatibilan s vrstom ovog polja putovnice.',
         'saved' => 'Mapiranje polja uspješno je spremljeno.',
     ],
 

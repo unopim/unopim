@@ -166,6 +166,7 @@ return [
         'source'        => 'Source Attribute',
         'select-source' => 'Use the passport attribute',
         'save-btn'      => 'Save Mapping',
+        'type-mismatch' => 'The selected source is not compatible with this passport field\'s type.',
         'saved'         => 'Field mapping saved successfully.',
     ],
 

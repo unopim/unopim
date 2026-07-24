@@ -165,6 +165,7 @@ return [
         'source' => 'Quellattribut',
         'select-source' => 'Passattribut verwenden',
         'save-btn' => 'Zuordnung speichern',
+        'type-mismatch' => 'Die ausgewählte Quelle ist nicht mit dem Typ dieses Passfelds kompatibel.',
         'saved' => 'Feldzuordnung erfolgreich gespeichert.',
     ],
 

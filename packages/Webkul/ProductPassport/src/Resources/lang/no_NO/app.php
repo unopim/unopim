@@ -165,6 +165,7 @@ return [
         'source' => 'Kildeattributt',
         'select-source' => 'Bruk passattributtet',
         'save-btn' => 'Lagre mapping',
+        'type-mismatch' => 'Den valgte kilden er ikke kompatibel med typen for dette passfeltet.',
         'saved' => 'Feltmapping ble lagret.',
     ],
 

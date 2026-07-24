@@ -165,6 +165,7 @@ return [
         'source' => 'Atributo de origen',
         'select-source' => 'Usar el atributo del pasaporte',
         'save-btn' => 'Guardar asignación',
+        'type-mismatch' => 'La fuente seleccionada no es compatible con el tipo de este campo del pasaporte.',
         'saved' => 'La asignación de campos se guardó correctamente.',
     ],
 

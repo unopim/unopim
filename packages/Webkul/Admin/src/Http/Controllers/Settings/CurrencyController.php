@@ -39,14 +39,9 @@ class CurrencyController extends Controller
      */
     public function store(): JsonResponse
     {
-        $messages = [
-            'code.required' => 'The code field is required.',
-            'code.unique'   => 'The code must be unique.',
-        ];
-
         $this->validate(request(), [
             'code' => 'required|min:3|max:3|unique:currencies,code',
-        ], $messages);
+        ]);
 
         $this->currencyRepository->create(request()->only([
             'code',

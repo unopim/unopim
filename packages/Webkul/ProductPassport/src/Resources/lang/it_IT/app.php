@@ -165,6 +165,7 @@ return [
         'source' => 'Attributo di origine',
         'select-source' => 'Usa l’attributo del passaporto',
         'save-btn' => 'Salva mappatura',
+        'type-mismatch' => 'L\'origine selezionata non è compatibile con il tipo di questo campo del passaporto.',
         'saved' => 'Mappatura dei campi salvata con successo.',
     ],
 

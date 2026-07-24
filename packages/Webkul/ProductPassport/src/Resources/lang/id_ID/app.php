@@ -165,6 +165,7 @@ return [
         'source' => 'Atribut Sumber',
         'select-source' => 'Gunakan atribut paspor',
         'save-btn' => 'Simpan Pemetaan',
+        'type-mismatch' => 'Sumber yang dipilih tidak kompatibel dengan tipe bidang paspor ini.',
         'saved' => 'Pemetaan bidang berhasil disimpan.',
     ],
 
