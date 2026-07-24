@@ -237,6 +237,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.attributes.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.attributes.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.attributes.delete',
+        'sort'  => 3,
     ],
 
     // Attribute options — map to attributes permissions

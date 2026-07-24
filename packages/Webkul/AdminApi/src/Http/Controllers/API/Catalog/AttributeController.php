@@ -3,6 +3,7 @@
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -112,6 +113,45 @@ class AttributeController extends ApiController
                 trans('admin::app.catalog.attributes.update-success'),
                 Response::HTTP_OK
             );
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
+     * Partially update the specified resource.
+     */
+    public function partialUpdate(UpdateAttributeRequest $request, string $code): JsonResponse
+    {
+        return $this->update($request, $code);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $attribute = $this->attributeRepository->findOneByField('code', $code);
+        if (! $attribute) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.attributes.not-found', ['code' => $code]));
+        }
+
+        if (
+            ! $attribute->canBeDeleted()
+            || DB::table('product_super_attributes')->where('attribute_id', $attribute->id)->count() > 0
+        ) {
+            return $this->validateErrorResponse(
+                ['code' => [trans('admin::app.catalog.attributes.index.datagrid.delete-failed')]],
+                trans('admin::app.catalog.attributes.index.datagrid.delete-failed')
+            );
+        }
+
+        try {
+            Event::dispatch('catalog.attribute.delete.before', $attribute->id);
+            $this->attributeRepository->delete($attribute->id);
+            Event::dispatch('catalog.attribute.delete.after', $attribute->id);
+
+            return $this->successResponse(trans('admin::app.catalog.attributes.delete-success'));
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }

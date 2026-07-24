@@ -29,6 +29,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.attributes.get');
         Route::post('', 'store')->name('admin.api.attributes.store');
         Route::put('{code}', 'update')->name('admin.api.attributes.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.attributes.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.attributes.delete');
 
         Route::get('{code}/options', 'getOptions')->name('admin.api.attribute_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.attribute_options.store_option');
