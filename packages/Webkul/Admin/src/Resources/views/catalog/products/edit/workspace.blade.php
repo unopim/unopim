@@ -18,6 +18,8 @@
             background: rgb(250 249 255);          /* cherry primary-page */
         }
         .dark .product-workspace-panel { background: #26283D; }
+
+        [v-cloak] { display: none !important; }
     </style>
 @endPushOnce
 
