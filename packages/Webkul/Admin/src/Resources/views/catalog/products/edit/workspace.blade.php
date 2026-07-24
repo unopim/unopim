@@ -12,7 +12,7 @@
             bottom: 0;
             left: var(--product-workspace-left, 0px);
             right: 0;
-            z-index: 41;
+            z-index: 10051;        /* above app header (z-10001) + sidebar (z-1000) */
             overflow-y: auto;
             padding: 1.5rem;
             background: rgb(250 249 255);          /* cherry primary-page */
@@ -30,14 +30,14 @@
     >
         <div
             v-show="store.isOpen"
-            class="fixed inset-0 z-40"
+            class="fixed inset-0 z-[10050]"
             style="left: var(--product-workspace-left, 0px);"
         >
             <!-- Frame background -->
             <div class="absolute inset-0 bg-[rgb(250,249,255)] dark:bg-cherry-900"></div>
 
             <!-- Header (above body panels) -->
-            <div class="absolute top-0 left-0 right-0 h-16 z-[42] flex items-center justify-between gap-4 px-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-cherry-900">
+            <div class="absolute top-0 left-0 right-0 h-16 z-[10052] flex items-center justify-between gap-4 px-6 border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-cherry-900">
                 <div class="flex items-center gap-3 min-w-0">
                     <span class="grid place-items-center w-9 h-9 rounded bg-violet-50 dark:bg-cherry-800 shrink-0">
                         <span :class="activeIcon" class="text-xl text-gray-600 dark:text-gray-300"></span>
