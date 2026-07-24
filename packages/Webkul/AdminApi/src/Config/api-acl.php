@@ -340,4 +340,22 @@ return [
         'route' => 'admin.api.families.delete',
         'sort'  => 3,
     ],
+
+    // ── Product Passports ───────────────────────────────────
+    [
+        'key'   => 'api.catalog.passports',
+        'name'  => 'admin::app.acl.passports',
+        'route' => 'admin.api.passports.index',
+        'sort'  => 7,
+    ], [
+        'key'   => 'api.catalog.passports',
+        'name'  => 'admin::app.acl.passports',
+        'route' => 'admin.api.passports.get',
+        'sort'  => 7,
+    ], [
+        'key'   => 'api.catalog.passports',
+        'name'  => 'admin::app.acl.passports',
+        'route' => 'admin.api.passports.mapping',
+        'sort'  => 7,
+    ],
 ];

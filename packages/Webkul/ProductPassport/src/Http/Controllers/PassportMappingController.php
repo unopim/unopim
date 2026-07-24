@@ -50,9 +50,7 @@ class PassportMappingController extends Controller
 
         $sourceAttributes = $this->sourceAttributes($dppAttributeIds);
 
-        $mapping = $passportFields->mapWithKeys(fn ($attribute): array => [
-            $attribute->code => (string) (core()->getConfigData(self::MAPPING_PREFIX.$attribute->code) ?? ''),
-        ])->all();
+        $mapping = $this->mappingFor($passportFields);
 
         $sourceOptions = $passportFields->mapWithKeys(fn ($attribute): array => [
             $attribute->code => $this->compatibleSourceOptions($attribute, $sourceAttributes),
@@ -89,6 +87,28 @@ class PassportMappingController extends Controller
             'message'      => trans('passport::app.mapping.saved'),
             'redirect_url' => route('admin.catalog.passports.mapping.edit'),
         ]);
+    }
+
+    /**
+     * Field-code => mapped-source-code map for every dpp passport field. Shared
+     * with the REST API so admin and API read the same single source of truth.
+     *
+     * @return array<string, string>
+     */
+    public function mappingData(): array
+    {
+        return $this->mappingFor($this->passportFields($this->dppGroupAttributeIds()));
+    }
+
+    /**
+     * @param  Collection<int, Attribute>  $passportFields
+     * @return array<string, string>
+     */
+    private function mappingFor(Collection $passportFields): array
+    {
+        return $passportFields->mapWithKeys(fn ($attribute): array => [
+            $attribute->code => (string) (core()->getConfigData(self::MAPPING_PREFIX.$attribute->code) ?? ''),
+        ])->all();
     }
 
     /**

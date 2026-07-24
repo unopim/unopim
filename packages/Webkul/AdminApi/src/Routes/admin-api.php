@@ -22,4 +22,9 @@ Route::group([
      */
     require 'V1/catalog-routes.php';
 
+    /**
+     * Product Passport API
+     */
+    require 'V1/passport-routes.php';
+
 });
