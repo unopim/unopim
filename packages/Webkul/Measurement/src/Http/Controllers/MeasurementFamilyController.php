@@ -100,7 +100,7 @@ class MeasurementFamilyController extends Controller
 
             return response()->json([
                 'error'   => trans('measurement::app.messages.family.error'),
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }

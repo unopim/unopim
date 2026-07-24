@@ -5,6 +5,7 @@ namespace Webkul\Measurement\Http\Controllers\Api;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 use Webkul\Measurement\Repositories\MeasurementFamilyRepository;
 use Webkul\Measurement\Validation\MeasurementUnitValidator;
 
@@ -129,9 +130,11 @@ class MeasurementUnitApiController extends Controller
                 'message' => trans('measurement::app.messages.unit.created'),
             ], 201);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }
@@ -164,7 +167,10 @@ class MeasurementUnitApiController extends Controller
                 $unit['labels'] = array_merge($unit['labels'] ?? [], $request->labels ?? []);
                 $unit['symbol'] = $request->symbol;
 
-                if ($code !== $family->standard_unit) {
+                if (
+                    $code !== $family->standard_unit
+                    && ! resolve(AttributeMeasurementRepository::class)->isFamilyInUse($family->code)
+                ) {
                     $conversionOperators = $request->input('convert_from_standard', []);
                     $conversionValues = $request->input('convert_value', []);
 
@@ -206,9 +212,11 @@ class MeasurementUnitApiController extends Controller
                 'message' => trans('measurement::app.messages.unit.updated'),
             ]);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }
@@ -247,6 +255,13 @@ class MeasurementUnitApiController extends Controller
             ], 422);
         }
 
+        if (resolve(AttributeMeasurementRepository::class)->findWhere(['unit_code' => $code])->isNotEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => trans('measurement::app.messages.unit.in_use'),
+            ], 422);
+        }
+
         $filtered = array_filter($units, fn (array $u): bool => $u['code'] !== $code);
 
         try {
@@ -259,9 +274,11 @@ class MeasurementUnitApiController extends Controller
                 'message' => trans('measurement::app.messages.unit.deleted'),
             ]);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }

@@ -108,9 +108,11 @@ class MeasurementFamilyApiController extends Controller
                 'message' => trans('measurement::app.messages.family.created'),
             ], 201);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }
@@ -166,9 +168,11 @@ class MeasurementFamilyApiController extends Controller
                 'message' => trans('measurement::app.messages.family.updated'),
             ]);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }
@@ -198,9 +202,11 @@ class MeasurementFamilyApiController extends Controller
                 'message' => trans('measurement::app.messages.family.deleted'),
             ]);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }

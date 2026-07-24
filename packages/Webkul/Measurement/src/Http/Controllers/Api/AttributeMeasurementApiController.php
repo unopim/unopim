@@ -153,9 +153,11 @@ class AttributeMeasurementApiController extends Controller
                 'message' => trans($messageKey),
             ]);
         } catch (\Exception $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage(),
+                'message' => trans('measurement::app.messages.family.error'),
             ], 500);
         }
     }

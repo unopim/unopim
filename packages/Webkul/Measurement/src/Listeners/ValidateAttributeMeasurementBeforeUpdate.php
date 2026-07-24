@@ -38,10 +38,17 @@ class ValidateAttributeMeasurementBeforeUpdate
             );
         }
 
-        $familyExists = $this->measurementFamilyRepository->findWhere(['code' => $familyCode])->isNotEmpty();
+        $family = $this->measurementFamilyRepository->findOneByField('code', $familyCode);
 
-        if (! $familyExists) {
+        if (! $family) {
             Session::flash('error', trans('measurement::app.messages.attribute.family_not_found'));
+            throw new HttpResponseException(
+                back()->withInput()
+            );
+        }
+
+        if (! collect($family->units)->contains('code', $unitCode)) {
+            Session::flash('error', trans('measurement::app.messages.attribute.unit_not_in_family'));
             throw new HttpResponseException(
                 back()->withInput()
             );

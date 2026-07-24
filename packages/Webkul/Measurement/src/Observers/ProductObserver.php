@@ -38,6 +38,8 @@ class ProductObserver
 
         $this->validateRequiredMeasurements($values);
 
+        $this->validateMeasurementValues($values);
+
         $this->processMeasurementValues($values);
 
         $product->values = $values;
@@ -96,6 +98,84 @@ class ProductObserver
                     $errors[$attributeCode] = trans('validation.required', [
                         'attribute' => $attribute->name ?: $attribute->code,
                     ]);
+                }
+            }
+        }
+
+        if ($errors !== []) {
+            throw ValidationException::withMessages($errors);
+        }
+    }
+
+    protected function validateMeasurementValues(array $values): void
+    {
+        $scopes = $this->collectScopes($values);
+
+        if ($scopes === []) {
+            return;
+        }
+
+        $codes = [];
+
+        foreach ($scopes as $scope) {
+            $codes = array_merge($codes, array_keys($scope));
+        }
+
+        $codes = array_values(array_unique($codes));
+
+        if ($codes === []) {
+            return;
+        }
+
+        $attributes = resolve(AttributeRepository::class)
+            ->findWhereIn('code', $codes)
+            ->keyBy('code');
+
+        $measurementCache = [];
+
+        $errors = [];
+
+        foreach ($scopes as $scope) {
+            foreach ($scope as $attributeCode => $value) {
+                $attribute = $attributes[$attributeCode] ?? null;
+
+                if (! $attribute || $attribute->type !== 'measurement' || ! is_array($value)) {
+                    continue;
+                }
+
+                if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {
+                    continue;
+                }
+
+                if (! is_numeric($value['value'])) {
+                    $errors[$attributeCode] = trans('validation.numeric', [
+                        'attribute' => $attribute->name ?: $attribute->code,
+                    ]);
+
+                    continue;
+                }
+
+                $unit = $value['unit'] ?? null;
+
+                if ($unit === null || $unit === '') {
+                    continue;
+                }
+
+                if (! isset($measurementCache[$attribute->id])) {
+                    $measurementCache[$attribute->id] =
+                        $this->attributeMeasurementRepository->getByAttributeId($attribute->id);
+                }
+
+                $measurement = $measurementCache[$attribute->id];
+
+                if ($measurement && $measurement->family) {
+                    $unitCodes = array_column($measurement->family->units ?? [], 'code');
+
+                    if (! in_array($unit, $unitCodes, true)) {
+                        $errors[$attributeCode] = trans('validation.in', [
+                            'attribute' => $attribute->name ?: $attribute->code,
+                        ]);
+                    }
                 }
             }
         }
@@ -233,11 +313,17 @@ class ProductObserver
             if (! is_array($value)) {
                 continue;
             }
-            if (isset($value['amount'])) {
-                continue;
-            }
             if (isset($value['<all_channels>'])) {
                 continue;
+            }
+
+            if (
+                ! isset($value['value'])
+                && isset($value['amount'])
+                && $value['amount'] !== ''
+                && $value['amount'] !== null
+            ) {
+                $value['value'] = $value['amount'];
             }
 
             if (! isset($value['value']) || $value['value'] === '' || $value['value'] === null) {

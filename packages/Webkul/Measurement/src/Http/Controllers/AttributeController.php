@@ -39,7 +39,7 @@ class AttributeController extends Controller
 
             Log::error('Attribute Measurement fetch failed', [
                 'attribute_id' => $attributeId,
-                'error'        => $e->getMessage(),
+                'error'        => trans('measurement::app.messages.family.error'),
             ]);
 
             return response()->json([
