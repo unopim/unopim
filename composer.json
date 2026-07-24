@@ -74,7 +74,6 @@
             "Webkul\\DebugBar\\": "packages/Webkul/DebugBar/src",
             "Webkul\\HistoryControl\\": "packages/Webkul/HistoryControl/src",
             "Webkul\\Installer\\": "packages/Webkul/Installer/src",
-            "Webkul\\Inventory\\": "packages/Webkul/Inventory/src",
             "Webkul\\MagicAI\\": "packages/Webkul/MagicAI/src",
             "Webkul\\Notification\\": "packages/Webkul/Notification/src",
             "Webkul\\Product\\": "packages/Webkul/Product/src",
