@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'Ang :attribute ay dapat na wastong GTIN (8, 12, 13, o 14 na digit na may tamang check digit).',
     ],
+    'mapping' => [
+        'title' => 'Pagmamapa ng Field ng Pasaporte',
+        'info' => 'Kunin ang bawat field ng pasaporte mula sa isang attribute na pinananatili mo na. Iwanang hindi namapa ang isang field upang gamitin ang nakatuong attribute ng pasaporte nito.',
+        'menu' => 'Pagmamapa ng Field',
+        'field' => 'Field ng Pasaporte',
+        'source' => 'Pinagmulang Attribute',
+        'select-source' => 'Gamitin ang attribute ng pasaporte',
+        'save-btn' => 'I-save ang Pagmamapa',
+        'saved' => 'Matagumpay na na-save ang pagmamapa ng field.',
+    ],
+
 ];

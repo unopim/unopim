@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => ':attribute måste vara ett giltigt GTIN (8, 12, 13 eller 14 siffror med korrekt kontrollsiffra).',
     ],
+    'mapping' => [
+        'title' => 'Fältmappning för produktpass',
+        'info' => 'Hämta varje passfält från ett attribut som du redan underhåller. Lämna ett fält omappat för att falla tillbaka på dess dedikerade passattribut.',
+        'menu' => 'Fältmappning',
+        'field' => 'Passfält',
+        'source' => 'Källattribut',
+        'select-source' => 'Använd passattributet',
+        'save-btn' => 'Spara mappning',
+        'saved' => 'Fältmappningen sparades.',
+    ],
+
 ];

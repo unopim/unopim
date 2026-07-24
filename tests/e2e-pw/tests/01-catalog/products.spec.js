@@ -36,7 +36,8 @@ async function selectMultiselect(page, fieldName, optionLabel) {
   // Wait for dropdown list to appear (scoped to this field)
   await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   if (optionLabel) {
-    await page.getByRole('option', { name: optionLabel }).first().click();
+    // Options carry no role="option"; match on the option element text.
+    await wrapper.locator('.multiselect__option', { hasText: optionLabel }).first().click();
   } else {
     // Pick first enabled option when label not provided
     await wrapper
@@ -61,6 +62,32 @@ async function createSimpleProduct(adminPage, sku) {
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
   // After creation, the app redirects to the product edit page
+  await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  await adminPage.waitForLoadState('networkidle').catch(() => {});
+  return sku;
+}
+
+/**
+ * Create a configurable product and land on its edit page. A configurable
+ * needs a family that declares a variant structure (Electronics carries the
+ * seeded ones), which the modal asks for after the first save.
+ */
+async function createConfigurableProduct(adminPage, sku) {
+  await navigateTo(adminPage, 'products');
+  await adminPage.getByRole('button', { name: 'Create Product' }).click();
+  await adminPage.waitForLoadState('networkidle');
+  await selectMultiselect(adminPage, 'type', 'Configurable');
+  await selectMultiselect(adminPage, 'attribute_family_id', 'Electronics');
+  await adminPage.locator('input[name="sku"]').fill(sku);
+  // Configurable submit reads "Next" until a variant structure is chosen;
+  // scope to the modal's submit so the grid's pagination "Next" is not matched.
+  await adminPage.locator('button[type="submit"]').filter({ hasText: 'Next' }).click();
+
+  await adminPage.locator('input[name="variant_structure_id"]').locator('..')
+    .locator('.multiselect__tags').waitFor({ state: 'visible', timeout: 15000 });
+  await selectMultiselect(adminPage, 'variant_structure_id');
+  await clickSave(adminPage, 'Save Product');
+
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
   return sku;
@@ -286,8 +313,6 @@ test.describe('Simple Product CRUD', () => {
 
     // Fill required fields (use unique values to avoid duplicate conflicts)
     const uid = generateUid();
-    await adminPage.locator('#product_number').waitFor({ state: 'visible', timeout: 5000 });
-    await adminPage.locator('#product_number').fill(`PN-${uid}`);
     await adminPage.locator('#name').fill(`Test Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
     // Default channel has multiple currencies in demo seed; fill every
@@ -326,21 +351,7 @@ test.describe('Simple Product CRUD', () => {
 test.describe('Configurable Product CRUD', () => {
   test('23 - Create Configurable Product', async ({ adminPage }) => {
     const sku = `cfg-${generateUid()}`;
-    await navigateTo(adminPage, 'products');
-    await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id');
-    await adminPage.locator('input[name="sku"]').fill(sku);
-    await clickSave(adminPage, 'Save Product');
-
-    // Remove one of the default-selected configurable attributes so the
-    // family has at least one remaining. Default family uses Color/Size.
-    await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
-    await clickSave(adminPage, 'Save Product');
-    // After creation, the app redirects to the product edit page
-    await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    await createConfigurableProduct(adminPage, sku);
 
     // Cleanup
     await deleteProductBySku(adminPage, sku);
@@ -350,17 +361,7 @@ test.describe('Configurable Product CRUD', () => {
     test.setTimeout(60000);
     const sku = `cfgu-${generateUid()}`;
     // Create configurable product
-    await navigateTo(adminPage, 'products');
-    await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id');
-    await adminPage.locator('input[name="sku"]').fill(sku);
-    await clickSave(adminPage, 'Save Product');
-    await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
-    await clickSave(adminPage, 'Save Product');
-    await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    await createConfigurableProduct(adminPage, sku);
 
     // Navigate back to listing and re-open edit for a clean page state
     await navigateTo(adminPage, 'products');
@@ -370,10 +371,10 @@ test.describe('Configurable Product CRUD', () => {
 
     // Fill in fields on the edit page (use unique values)
     const uid = generateUid();
-    await adminPage.locator('#product_number').waitFor({ state: 'visible', timeout: 5000 });
-    await adminPage.locator('#product_number').fill(`PN-${uid}`);
     await adminPage.locator('#name').fill(`Config Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
+    // The electronics family requires weight on the configurable parent.
+    await adminPage.locator('#weight').fill('1.5');
     // Multi-currency default channel; fill every #price input.
     {
       const prices = adminPage.locator('#price');
@@ -397,17 +398,7 @@ test.describe('Configurable Product CRUD', () => {
   test('25 - Delete configurable product', async ({ adminPage }) => {
     const sku = `cfgd-${generateUid()}`;
     // Create configurable product
-    await navigateTo(adminPage, 'products');
-    await adminPage.getByRole('button', { name: 'Create Product' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id');
-    await adminPage.locator('input[name="sku"]').fill(sku);
-    await clickSave(adminPage, 'Save Product');
-    await adminPage.locator('p').filter({ hasText: /^Color/ }).locator('span').first().click();
-    await clickSave(adminPage, 'Save Product');
-    await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    await createConfigurableProduct(adminPage, sku);
 
     // Delete via listing
     await navigateTo(adminPage, 'products');
@@ -487,10 +478,11 @@ test.describe('Product Listing Features', () => {
 
   test('31 - should allow setting items per page', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
-    const perPageButton = adminPage.locator('#app').locator('button:has(.icon-chevron-down)').first();
+    const perPageButton = adminPage.getByRole('button', { name: 'Per Page' });
     await perPageButton.click();
-    // Click the dropdown list item "20" specifically (not a span showing count)
-    await adminPage.locator('#app li').getByText('20', { exact: true }).click();
+    const option = adminPage.locator('li').getByText('20', { exact: true }).first();
+    await option.waitFor({ state: 'visible', timeout: 10000 });
+    await option.click();
     await expect(perPageButton).toContainText('20');
   });
 

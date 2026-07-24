@@ -20,7 +20,7 @@ class PublicationResolver
      */
     public function isChannelEnabled(Publication $publication): bool
     {
-        return (bool) (core()->getConfigData('general.publication.settings.enabled', $publication->channel->code) ?? true);
+        return (bool) (core()->getConfigData('general.publication.settings.enabled', $publication->channel->code) ?? false);
     }
 
     /**
@@ -59,10 +59,14 @@ class PublicationResolver
      */
     private function localePreference(Publication $publication, ?string $localeCode, ?string $acceptLanguage): array
     {
-        $preferred = $localeCode !== null ? [$localeCode] : $this->parseAcceptLanguage($acceptLanguage);
+        // An explicit locale in the URL is authoritative: match it exactly or 404,
+        // so a bogus segment can't serve another locale's content under a 200.
+        if ($localeCode !== null) {
+            return [$localeCode];
+        }
 
         return array_values(array_unique([
-            ...$preferred,
+            ...$this->parseAcceptLanguage($acceptLanguage),
             ...$publication->channel->locales->pluck('code')->all(),
         ]));
     }

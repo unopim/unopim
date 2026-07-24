@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'El :attribute ha de ser un GTIN vàlid (8, 12, 13 o 14 dígits amb un dígit de control correcte).',
     ],
+    'mapping' => [
+        'title' => 'Mapatge de camps del passaport',
+        'info' => 'Obteniu cada camp del passaport a partir d\'un atribut que ja manteniu. Deixeu un camp sense mapar per utilitzar el seu atribut de passaport dedicat.',
+        'menu' => 'Mapatge de camps',
+        'field' => 'Camp del passaport',
+        'source' => 'Atribut origen',
+        'select-source' => 'Utilitza l\'atribut del passaport',
+        'save-btn' => 'Desa el mapatge',
+        'saved' => 'El mapatge de camps s\'ha desat correctament.',
+    ],
+
 ];

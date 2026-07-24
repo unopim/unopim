@@ -96,17 +96,17 @@ async function createSelectAttribute(adminPage) {
   const uid = generateUid();
   const code = `selopt_${uid}`;
   await navigateTo(adminPage, 'attributes');
-  await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+  await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
   await adminPage.waitForLoadState('load');
   await waitForCodeHydration(adminPage);
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.locator('input[name="type"][type="text"]').fill('Select');
   await adminPage.getByRole('option', { name: 'Select' }).first().click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(`SelOpt ${uid}`);
+  await adminPage.locator('input[name$="[name]"]').first().fill(`SelOpt ${uid}`);
   await clickSaveAndExpectSuccess(
     adminPage,
-    adminPage.getByRole('button', { name: 'Save changes' }),
+    adminPage.getByRole('button', { name: 'Save Attribute' }),
     /Attribute Created Successfully/i
   );
   return code;
@@ -215,23 +215,27 @@ test.describe('Code field validation — Category', () => {
 test.describe('Code field validation — Category Field', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+    await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
     await adminPage.waitForLoadState('load');
     await waitForCodeHydration(adminPage);
   });
 
   /** Helper: select type "Text" in the category-field form */
   async function selectTextType(adminPage) {
-    await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
+    // Input validation is required on category fields; pick the "No" option.
+    const validationMs = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="validation"]') });
+    await validationMs.click();
+    await validationMs.locator('.multiselect__option', { hasText: /^No$/ }).first().click();
   }
 
   test('less than 191 characters', async ({ adminPage }) => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`cfshort_${uid}`);
     await selectTextType(adminPage);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW CF Short');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Category Field Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW CF Short');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Category Field' }), /Category Field Created Successfully/i);
   });
 
   test('exactly 191 characters', async ({ adminPage }) => {
@@ -240,25 +244,25 @@ test.describe('Code field validation — Category Field', () => {
     const code191 = base + 'x'.repeat(191 - base.length);
     await adminPage.locator('input[name="code"]').fill(code191);
     await selectTextType(adminPage);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW CF Exact');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Category Field Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW CF Exact');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Category Field' }), /Category Field Created Successfully/i);
   });
 
   test('more than 191 characters truncated', async ({ adminPage }) => {
     const codeField = adminPage.locator('input[name="code"]');
-    const blurTarget = adminPage.locator('input[name="en_US\\[name\\]"]');
+    const blurTarget = adminPage.locator('input[name$="[name]"]').first();
     await assertTruncation(adminPage, codeField, blurTarget);
     await selectTextType(adminPage);
     await blurTarget.fill('PW CF Long');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Category Field Created Successfully/i);
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Category Field' }), /Category Field Created Successfully/i);
   });
 
   test('number first in code field', async ({ adminPage }) => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`165cfnum_${uid}`);
     await selectTextType(adminPage);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW CF Num');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Category Field Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW CF Num');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Category Field' }), /Category Field Created Successfully/i);
   });
 
   test('special characters removed', async ({ adminPage }) => {
@@ -292,7 +296,7 @@ test.describe('Code field validation — Category Field', () => {
 test.describe('Code field validation — Attribute', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('load');
     await waitForCodeHydration(adminPage);
   });
@@ -307,8 +311,8 @@ test.describe('Code field validation — Attribute', () => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`attrshort_${uid}`);
     await selectTextType(adminPage);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW Attr Short');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW Attr Short');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute' }), /Attribute Created Successfully/i);
   });
 
   test('exactly 191 characters', async ({ adminPage }) => {
@@ -317,25 +321,25 @@ test.describe('Code field validation — Attribute', () => {
     const code191 = base + 'x'.repeat(191 - base.length);
     await adminPage.locator('input[name="code"]').fill(code191);
     await selectTextType(adminPage);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW Attr Exact');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW Attr Exact');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute' }), /Attribute Created Successfully/i);
   });
 
   test('more than 191 characters truncated', async ({ adminPage }) => {
     const codeField = adminPage.locator('input[name="code"]');
-    const blurTarget = adminPage.locator('input[name="en_US\\[name\\]"]');
+    const blurTarget = adminPage.locator('input[name$="[name]"]').first();
     await assertTruncation(adminPage, codeField, blurTarget);
     await selectTextType(adminPage);
     await blurTarget.fill('PW Attr Long');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Created Successfully/i);
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute' }), /Attribute Created Successfully/i);
   });
 
   test('number first in code field', async ({ adminPage }) => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`165attrnum_${uid}`);
     await selectTextType(adminPage);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW Attr Num');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW Attr Num');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute' }), /Attribute Created Successfully/i);
   });
 
   test('special characters removed', async ({ adminPage }) => {
@@ -450,7 +454,7 @@ test.describe('Code field validation — Attribute Option', () => {
 test.describe('Code field validation — Attribute Group', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByRole('link', { name: 'Create Attribute Group' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute Group' }).click();
     await adminPage.waitForLoadState('load');
     await waitForCodeHydration(adminPage);
   });
@@ -458,8 +462,8 @@ test.describe('Code field validation — Attribute Group', () => {
   test('less than 191 characters', async ({ adminPage }) => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`agshort_${uid}`);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW AG Short');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Group Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW AG Short');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Group' }), /Attribute Group Created Successfully/i);
   });
 
   test('exactly 191 characters', async ({ adminPage }) => {
@@ -467,23 +471,23 @@ test.describe('Code field validation — Attribute Group', () => {
     const base = `agexact_${uid}_`;
     const code191 = base + 'x'.repeat(191 - base.length);
     await adminPage.locator('input[name="code"]').fill(code191);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW AG Exact');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Group Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW AG Exact');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Group' }), /Attribute Group Created Successfully/i);
   });
 
   test('more than 191 characters truncated', async ({ adminPage }) => {
     const codeField = adminPage.locator('input[name="code"]');
-    const blurTarget = adminPage.locator('input[name="en_US\\[name\\]"]');
+    const blurTarget = adminPage.locator('input[name$="[name]"]').first();
     await assertTruncation(adminPage, codeField, blurTarget);
     await blurTarget.fill('PW AG Long');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Group Created Successfully/i);
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Group' }), /Attribute Group Created Successfully/i);
   });
 
   test('number first in code field', async ({ adminPage }) => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`165agnum_${uid}`);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW AG Num');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Attribute Group Created Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW AG Num');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Group' }), /Attribute Group Created Successfully/i);
   });
 
   test('special characters removed', async ({ adminPage }) => {
@@ -517,7 +521,7 @@ test.describe('Code field validation — Attribute Group', () => {
 test.describe('Code field validation — Attribute Family', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeFamilies');
-    await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute Family' }).click();
     await adminPage.waitForLoadState('load');
     await waitForCodeHydration(adminPage);
   });
@@ -525,8 +529,8 @@ test.describe('Code field validation — Attribute Family', () => {
   test('less than 191 characters', async ({ adminPage }) => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`afshort_${uid}`);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW AF Short');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Family created successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW AF Short');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Family' }), /Family created successfully/i);
   });
 
   test('exactly 191 characters', async ({ adminPage }) => {
@@ -534,23 +538,23 @@ test.describe('Code field validation — Attribute Family', () => {
     const base = `afexact_${uid}_`;
     const code191 = base + 'x'.repeat(191 - base.length);
     await adminPage.locator('input[name="code"]').fill(code191);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW AF Exact');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Family created successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW AF Exact');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Family' }), /Family created successfully/i);
   });
 
   test('more than 191 characters truncated', async ({ adminPage }) => {
     const codeField = adminPage.locator('input[name="code"]');
-    const blurTarget = adminPage.locator('input[name="en_US\\[name\\]"]');
+    const blurTarget = adminPage.locator('input[name$="[name]"]').first();
     await assertTruncation(adminPage, codeField, blurTarget);
     await blurTarget.fill('PW AF Long');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Family created successfully/i);
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Family' }), /Family created successfully/i);
   });
 
   test('number first in code field', async ({ adminPage }) => {
     const uid = generateUid();
     await adminPage.locator('input[name="code"]').fill(`165afnum_${uid}`);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('PW AF Num');
-    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save changes' }), /Family created successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('PW AF Num');
+    await clickSaveAndExpectSuccess(adminPage, adminPage.getByRole('button', { name: 'Save Attribute Family' }), /Family created successfully/i);
   });
 
   test('special characters removed', async ({ adminPage }) => {

@@ -643,9 +643,21 @@
 
             mounted() {
                 this.images = this.uploadedImages;
+                this.initialImages = this.uploadedImages.map(image => ({ ...image }));
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             methods: {
+                resetToInitial() {
+                    this.images = this.initialImages.map(image => ({ ...image }));
+
+                    this.signalChange();
+                },
                 selectImage(image) {
                     this.ai.images.forEach(item => item.selected = false);
                     image.selected = true;

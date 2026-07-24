@@ -291,18 +291,12 @@ class Import
             $typeImporter = $this->getTypeImporter();
             $typeImporter->queue = $queue;
             $typeImporter->importData($importBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;
@@ -319,18 +313,12 @@ class Import
             $typeImporter = $this->getTypeImporter();
 
             $typeImporter->linkData($importBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;
@@ -347,18 +335,12 @@ class Import
             $typeImporter = $this->getTypeImporter();
 
             $typeImporter->indexData($importBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;
@@ -653,6 +635,8 @@ class Import
 
             case 'xls':
                 $writer = new Xls($spreadsheet);
+
+                break;
 
             case 'xlsx':
                 $writer = new Xlsx($spreadsheet);

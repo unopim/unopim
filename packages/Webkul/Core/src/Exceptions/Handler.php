@@ -19,6 +19,7 @@ class Handler extends ExceptionHandler
         JsonResponse::HTTP_NOT_FOUND,
         JsonResponse::HTTP_METHOD_NOT_ALLOWED,
         JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE,
+        419,
         JsonResponse::HTTP_TOO_MANY_REQUESTS,
         JsonResponse::HTTP_INTERNAL_SERVER_ERROR,
         JsonResponse::HTTP_SERVICE_UNAVAILABLE,

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Log;
 use Webkul\AiAgent\DTOs\CredentialConfig;
 use Webkul\AiAgent\Exceptions\ApiException;
 use Webkul\AiAgent\Services\TokenEstimator;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
  * cURL-based HTTP client for AI provider APIs.
@@ -126,6 +127,13 @@ class AiApiClient
      */
     protected function execute(string $method, string $url, ?array $data = null): array
     {
+        throw_unless(
+            SafeWebhookUrl::validate($url)['valid'],
+            ApiException::class,
+            trans('admin::app.configuration.platform.message.unsafe-api-url'),
+            422
+        );
+
         $ch = curl_init();
 
         $headers = [

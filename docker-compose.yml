@@ -107,7 +107,7 @@ services:
     env_file: .env
     environment:
       <<: *app-environment
-      QUEUE_NAMES: "webhooks,system,completeness,default"
+      QUEUE_NAMES: "webhooks,system,completeness,default,publication"
     depends_on:
       <<: *app-depends
     logging: *default-logging

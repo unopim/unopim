@@ -96,6 +96,9 @@ class ProductServiceProvider extends ServiceProvider
      */
     protected function registerBindings(): void
     {
+        // Bound (fresh per resolve), not scoped: the resolver's per-product memo
+        // must not survive a mutation within the same request (read-after-write in
+        // variant save/index flows), so a fresh instance per call is intentional.
         $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
         $this->app->bind(VariantPlacementSuggesterContract::class, VariantPlacementSuggester::class);
         $this->app->bind(VariantStructurePlannerContract::class, VariantStructurePlanner::class);

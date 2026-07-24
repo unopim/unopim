@@ -17,7 +17,11 @@ use Webkul\Publication\Http\Controllers\PublicationController;
 use Webkul\Publication\Http\Middleware\EnsurePublicationEnabled;
 use Webkul\Publication\Http\Middleware\PublicationErrorBoundary;
 use Webkul\Publication\Http\Middleware\PublicationRateLimit;
+use Webkul\Publication\Http\Middleware\SecurePublicHeaders;
+use Webkul\Publication\Listeners\GuardChannelDeletionAgainstPublications;
+use Webkul\Publication\Listeners\GuardProductDeletionAgainstPublications;
 use Webkul\Publication\Listeners\PrunePublicationVersionDocumentsOnRedaction;
+use Webkul\Publication\Listeners\SyncPublicationCounters;
 use Webkul\Publication\Listeners\SyncPublicationVersionDocuments;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 
@@ -39,6 +43,7 @@ class PublicationServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../Config/publication.php', 'publication');
         $this->mergeConfigFrom(__DIR__.'/../Config/publication_settings.php', 'core');
         $this->mergeConfigFrom(__DIR__.'/../Config/system_settings.php', 'system_settings');
+        $this->mergeConfigFrom(__DIR__.'/../Config/acl.php', 'acl');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'publication');
 
@@ -49,7 +54,10 @@ class PublicationServiceProvider extends ServiceProvider
         $this->app->register(ModuleServiceProvider::class);
 
         Event::listen(PublicationPublished::class, SyncPublicationVersionDocuments::class);
+        Event::listen(PublicationPublished::class, SyncPublicationCounters::class);
         Event::listen(PublicationRedacted::class, PrunePublicationVersionDocumentsOnRedaction::class);
+        Event::listen('catalog.product.delete.before', GuardProductDeletionAgainstPublications::class);
+        Event::listen('core.channel.delete.before', GuardChannelDeletionAgainstPublications::class);
 
         $this->registerPublicRoutes();
     }
@@ -66,6 +74,7 @@ class PublicationServiceProvider extends ServiceProvider
         $router->aliasMiddleware('publication.enabled', EnsurePublicationEnabled::class);
         $router->aliasMiddleware('publication.errors', PublicationErrorBoundary::class);
         $router->aliasMiddleware('publication.ratelimit', PublicationRateLimit::class);
+        $router->aliasMiddleware('publication.headers', SecurePublicHeaders::class);
 
         RateLimiter::for('publication', function (Request $request) {
             return [
@@ -89,7 +98,7 @@ class PublicationServiceProvider extends ServiceProvider
             // The asset route's own `where('path', ...)` is a functional necessity,
             // not just a hardening extra: without it the `{path}` segment cannot
             // capture the slashes a nested document path contains at all.
-            Route::middleware(['publication.errors', 'publication.enabled', 'publication.ratelimit'])
+            Route::middleware(['publication.errors', 'publication.enabled', 'publication.headers', 'publication.ratelimit'])
                 ->prefix($type->routePrefix)
                 ->group(function () use ($type): void {
                     Route::get('/{uuid}', [PublicationController::class, 'redirect'])

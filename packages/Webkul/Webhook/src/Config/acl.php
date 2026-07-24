@@ -3,7 +3,7 @@
 return [
     [
         'key'   => 'configuration.webhook',
-        'name'  => 'webhook::app.acl.webhook.index',
+        'name'  => 'webhook::app.components.layouts.sidebar.menu.webhook.name',
         'route' => 'webhook.index',
         'sort'  => 3,
     ], [
@@ -41,5 +41,25 @@ return [
         'name'  => 'webhook::app.acl.logs.mass-delete',
         'route' => 'webhook.logs.mass_delete',
         'sort'  => 3,
+    ], [
+        'key'   => 'configuration.webhook.edit',
+        'name'  => 'webhook::app.acl.webhook.edit',
+        'route' => 'webhook.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.webhook.edit',
+        'name'  => 'webhook::app.acl.webhook.edit',
+        'route' => 'webhook.test',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.webhook.delete',
+        'name'  => 'webhook::app.acl.webhook.delete',
+        'route' => 'webhook.mass_delete',
+        'sort'  => 3,
+    ], [
+        'key'   => 'configuration.webhook.logs',
+        'name'  => 'webhook::app.acl.logs.index',
+        'route' => 'webhook.logs.for-webhook',
+        'sort'  => 4,
     ],
 ];

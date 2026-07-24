@@ -70,7 +70,7 @@ async function createUserWithRole(adminPage, { name, email, password, roleName }
   await adminPage.waitForLoadState('networkidle');
 
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(email);
+  await adminPage.getByPlaceholder('email@example.com').fill(email);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill(password);
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill(password);
 

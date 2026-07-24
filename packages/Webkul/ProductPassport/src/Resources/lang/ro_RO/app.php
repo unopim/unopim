@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'Câmpul :attribute trebuie să fie un GTIN valid (8, 12, 13 sau 14 cifre cu o cifră de control corectă).',
     ],
+    'mapping' => [
+        'title' => 'Maparea câmpurilor pașaportului',
+        'info' => 'Alimentați fiecare câmp al pașaportului dintr-un atribut pe care îl gestionați deja. Lăsați un câmp nemapat pentru a reveni la atributul său de pașaport dedicat.',
+        'menu' => 'Maparea câmpurilor',
+        'field' => 'Câmp pașaport',
+        'source' => 'Atribut sursă',
+        'select-source' => 'Folosește atributul pașaportului',
+        'save-btn' => 'Salvează maparea',
+        'saved' => 'Maparea câmpurilor a fost salvată cu succes.',
+    ],
+
 ];

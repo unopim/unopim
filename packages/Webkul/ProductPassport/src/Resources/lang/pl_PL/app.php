@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'Pole :attribute musi być prawidłowym numerem GTIN (8, 12, 13 lub 14 cyfr z poprawną cyfrą kontrolną).',
     ],
+    'mapping' => [
+        'title' => 'Mapowanie pól paszportu',
+        'info' => 'Wypełnij każde pole paszportu z atrybutu, który już utrzymujesz. Pozostaw pole niezmapowane, aby użyć jego dedykowanego atrybutu paszportu.',
+        'menu' => 'Mapowanie pól',
+        'field' => 'Pole paszportu',
+        'source' => 'Atrybut źródłowy',
+        'select-source' => 'Użyj atrybutu paszportu',
+        'save-btn' => 'Zapisz mapowanie',
+        'saved' => 'Mapowanie pól zostało pomyślnie zapisane.',
+    ],
+
 ];

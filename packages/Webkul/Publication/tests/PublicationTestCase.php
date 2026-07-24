@@ -10,6 +10,7 @@ use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductProxy;
@@ -126,7 +127,21 @@ class PublicationTestCase extends TestCase
         // boot() runs, or call this same method itself).
         $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
 
+        $this->enablePublicTier($channel->code);
+
         return resolve(Publisher::class)->publish($product, $channel, $complete, 'dpp');
+    }
+
+    /**
+     * The public tier is opt-in per channel; the resolver treats an unset flag
+     * as disabled, so a fixture that expects a served passport must enable it.
+     */
+    protected function enablePublicTier(string $channelCode): void
+    {
+        CoreConfig::query()->updateOrCreate(
+            ['code' => 'general.publication.settings.enabled', 'channel_code' => $channelCode, 'locale_code' => null],
+            ['value' => '1'],
+        );
     }
 
     /**
@@ -157,6 +172,8 @@ class PublicationTestCase extends TestCase
         // don't know about the `dpp` type set just now, so this test's Router
         // instance needs its own explicit re-registration.
         $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
+
+        $this->enablePublicTier($channel->code);
 
         DocumentStubPayloadBuilder::$documentPath = $path;
 

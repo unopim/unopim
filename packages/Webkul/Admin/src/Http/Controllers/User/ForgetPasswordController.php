@@ -46,35 +46,38 @@ class ForgetPasswordController extends Controller
             'email' => 'required|email',
         ]);
 
-        $wantsJson = request()->wantsJson();
-
         try {
             $this->broker()->sendResetLink(
                 request(['email'])
             );
-
-            $message = trans('admin::app.users.forget-password.create.reset-link-sent');
-
-            if ($wantsJson) {
-                return response()->json(['message' => $message]);
-            }
-
-            session()->flash('success', $message);
-
-            return redirect()->route('admin.forget_password.create');
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             report($e);
 
-            $message = trans('admin::app.users.forget-password.create.email-settings-error');
+            // 200 warning, not a 500: a mail-transport failure is operator config,
+            // kept visible to the admin while the cause is logged.
+            $warning = trans('admin::app.users.forget-password.create.email-settings-error');
 
-            if ($wantsJson) {
-                return response()->json(['message' => $message], 500);
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => $warning,
+                    'type'    => 'warning',
+                ]);
             }
 
-            session()->flash('error', $message);
+            session()->flash('warning', $warning);
 
             return redirect()->route('admin.forget_password.create');
         }
+
+        $message = trans('admin::app.users.forget-password.create.reset-link-sent');
+
+        if (request()->wantsJson()) {
+            return response()->json(['message' => $message]);
+        }
+
+        session()->flash('success', $message);
+
+        return redirect()->route('admin.forget_password.create');
     }
 
     /**

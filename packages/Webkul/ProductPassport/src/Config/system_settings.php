@@ -7,7 +7,7 @@ return [
         'info'         => 'passport::app.configuration.product_passport.info',
         'icon'         => 'icon-setting',
         'config_group' => 'catalog.product_passport.settings',
-        'acl'          => 'configuration.system_settings',
+        'acl'          => 'configuration.system_settings.product_passport',
         'sort'         => 9,
     ],
 ];

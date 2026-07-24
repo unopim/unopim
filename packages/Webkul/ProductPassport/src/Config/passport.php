@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\ProductPassport\Http\Resources\PassportJsonLdResource;
 use Webkul\ProductPassport\Services\PassportPayloadBuilder;
 
 return [
@@ -10,6 +11,7 @@ return [
             'template'        => 'passport::public.passport',
             'required_group'  => 'dpp',
             'route_prefix'    => 'p',
+            'jsonld'          => PassportJsonLdResource::class,
         ],
     ],
 ];

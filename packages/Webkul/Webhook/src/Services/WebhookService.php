@@ -261,15 +261,27 @@ class WebhookService
     {
         $adminName = $this->actingName();
 
+        // Store only this product's slice per row. Persisting the whole batch
+        // payload on every row was O(N²) storage for an N-product bulk edit.
+        $dataBySku = collect($payload['data'] ?? [])->keyBy(fn ($entry): ?string => $entry['sku'] ?? null);
+
+        $envelope = array_diff_key($payload, ['data' => true]);
+
         foreach ($products as $product) {
+            $sku = $product->sku ?? ($product['sku'] ?? null);
+
+            $rowPayload = $payload === []
+                ? []
+                : $envelope + ['data' => array_values(array_filter([$dataBySku->get($sku)]))];
+
             $this->logsRepository->create([
                 'webhook_id' => $webhook->id,
                 'user'       => $adminName,
-                'sku'        => $product->sku ?? ($product['sku'] ?? null),
+                'sku'        => $sku,
                 'event'      => $event,
                 'status'     => $status,
                 'http_code'  => $httpCode,
-                'extra'      => ['payload' => $payload, 'response' => $response],
+                'extra'      => ['payload' => $rowPayload, 'response' => $response],
             ]);
         }
     }

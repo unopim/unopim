@@ -80,6 +80,25 @@ class PublicationController extends Controller
             return $this->notFound();
         }
 
+        // Only a Published passport exposes payload content: withdrawn/redacted
+        // states are publicly resolvable but the HTML path renders a tombstone
+        // only, so the JSON-LD branch must fall through to that same tombstone
+        // rather than leak the frozen payload as machine-readable content.
+        if (
+            $definition->jsonld !== null
+            && $publication->status === PublicationStatus::Published
+            && str_contains((string) $request->header('Accept'), 'application/ld+json')
+        ) {
+            app()->setLocale($version->locale->code);
+
+            $jsonldClass = $definition->jsonld;
+
+            return response()
+                ->json((new $jsonldClass($version->payload))->toArray($request))
+                ->header('Content-Type', 'application/ld+json')
+                ->header('X-Robots-Tag', 'noindex, nofollow');
+        }
+
         app()->setLocale($version->locale->code);
 
         $etag = '"'.hash_hmac('sha256', implode('|', [

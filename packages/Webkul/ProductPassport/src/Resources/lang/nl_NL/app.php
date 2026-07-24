@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'Het :attribute moet een geldige GTIN zijn (8, 12, 13 of 14 cijfers met een correct controlecijfer).',
     ],
+    'mapping' => [
+        'title' => 'Paspoortveldtoewijzing',
+        'info' => 'Haal elk paspoortveld op uit een attribuut dat u al beheert. Laat een veld niet toegewezen om terug te vallen op het eigen paspoortattribuut.',
+        'menu' => 'Veldtoewijzing',
+        'field' => 'Paspoortveld',
+        'source' => 'Bronattribuut',
+        'select-source' => 'Gebruik het paspoortattribuut',
+        'save-btn' => 'Toewijzing opslaan',
+        'saved' => 'Veldtoewijzing succesvol opgeslagen.',
+    ],
+
 ];

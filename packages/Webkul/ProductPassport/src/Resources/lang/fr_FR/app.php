@@ -152,4 +152,15 @@ return [
     'validation' => [
         'gtin' => 'Le champ :attribute doit être un GTIN valide (8, 12, 13 ou 14 chiffres avec une clé de contrôle correcte).',
     ],
+    'mapping' => [
+        'title' => 'Mappage des champs du passeport',
+        'info' => 'Alimentez chaque champ du passeport à partir d’un attribut que vous gérez déjà. Laissez un champ non mappé pour revenir à son attribut de passeport dédié.',
+        'menu' => 'Mappage des champs',
+        'field' => 'Champ du passeport',
+        'source' => 'Attribut source',
+        'select-source' => 'Utiliser l’attribut du passeport',
+        'save-btn' => 'Enregistrer le mappage',
+        'saved' => 'Mappage des champs enregistré avec succès.',
+    ],
+
 ];

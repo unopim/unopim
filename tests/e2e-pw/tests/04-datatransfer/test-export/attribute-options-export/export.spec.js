@@ -7,7 +7,8 @@ test.describe('UnoPim Export Jobs', () => {
 
     const uniqueCode = 'Attribute_Options_Export_CSV_' + Math.random().toString(36).slice(2, 6);
 
-    await adminPage.goto('/admin/data-transfer/exports/create', { waitUntil: 'networkidle' });
+    await adminPage.goto('/admin/data-transfer/exports/create', { waitUntil: 'domcontentloaded' });
+    await adminPage.waitForTimeout(1000);
 
     // Fill Code
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(uniqueCode);
@@ -49,6 +50,8 @@ test.describe('UnoPim Export Jobs', () => {
     // Run Export
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
 
+    await adminPage.getByRole('link', { name: 'Download Exported Files' }).waitFor({ state: 'visible', timeout: 60000 });
+
     const [csvDownload] = await Promise.all([
       adminPage.waitForEvent('download'),
       adminPage.getByRole('link', { name: 'Download Exported Files' }).click(),
@@ -78,6 +81,8 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Export Again
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
+
+    await adminPage.getByRole('link', { name: 'Download Exported Files' }).waitFor({ state: 'visible', timeout: 60000 });
 
     const [xlsDownload] = await Promise.all([
       adminPage.waitForEvent('download'),

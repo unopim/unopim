@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'The :attribute must be a valid GTIN (8, 12, 13, or 14 digits with a correct check digit).',
     ],
+    'mapping' => [
+        'title' => 'Passport Field Mapping',
+        'info' => 'Source each passport field from an attribute you already maintain. Leave a field unmapped to fall back to its dedicated passport attribute.',
+        'menu' => 'Field Mapping',
+        'field' => 'Passport Field',
+        'source' => 'Source Attribute',
+        'select-source' => 'Use the passport attribute',
+        'save-btn' => 'Save Mapping',
+        'saved' => 'Field mapping saved successfully.',
+    ],
+
 ];

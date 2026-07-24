@@ -75,31 +75,35 @@ async function getCsrfToken(context) {
   return decodeURIComponent(xsrf.value);
 }
 
+// Create an active webhook subscribed to product.updated via the index create modal.
 async function configureWebhook(adminPage, url) {
   await navigateTo(adminPage, 'webhook');
-  await adminPage.locator('input[name="webhook_url"]').fill(url);
+  await adminPage.getByRole('button', { name: 'Create Webhook' }).click();
+  await adminPage.locator('input[name="name"]').waitFor({ state: 'visible', timeout: 15000 });
+  await adminPage.locator('input[name="name"]').fill(`E2E Delivery ${Date.now()}`);
+  await adminPage.locator('input[name="url"]').fill(url);
 
-  const toggle = adminPage.locator('label[for="webhook_active"]');
-  const checkbox = adminPage.locator('input[name="webhook_active"]');
-  const isChecked = await checkbox.isChecked().catch(() => false);
-  if (!isChecked) await toggle.click();
+  const events = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="events"]') });
+  await events.locator('.multiselect__tags').click();
+  await events.locator('.multiselect__option', { hasText: 'Product Updated' }).first().click();
 
-  await clickSave(adminPage, 'Save');
-  await expect(
-    adminPage.locator('#app').getByText('Webhook settings saved successfully'),
-  ).toBeVisible();
+  await Promise.all([
+    adminPage.waitForURL(/\/webhook\/edit\/\d+/, { timeout: 20000 }).catch(() => {}),
+    adminPage.locator('form[ref="webhookCreateForm"], .modal').getByRole('button', { name: 'Save' }).last().click(),
+  ]);
 }
 
+// Remove every webhook so each run starts clean (afterEach cleanup).
 async function disableWebhook(adminPage) {
   await navigateTo(adminPage, 'webhook');
-  const checkbox = adminPage.locator('input[name="webhook_active"]');
-  const isChecked = await checkbox.isChecked().catch(() => false);
-  if (isChecked) {
-    await adminPage.locator('label[for="webhook_active"]').click();
-    await clickSave(adminPage, 'Save');
-    await expect(
-      adminPage.locator('#app').getByText('Webhook settings saved successfully'),
-    ).toBeVisible();
+  for (let i = 0; i < 10; i++) {
+    const del = adminPage.locator('span[title="Delete"]').first();
+    if (!(await del.isVisible({ timeout: 3000 }).catch(() => false))) {
+      break;
+    }
+    await del.click();
+    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.waitForTimeout(800);
   }
 }
 
@@ -199,6 +203,16 @@ test.describe('Product webhook delivery — bulk edit E2E', () => {
   });
 
   test('bulk edit save dispatches a webhook POST for each updated product', async ({ adminPage }) => {
+    // The catcher listens on the test-host loopback and SafeWebhookUrl only permits
+    // loopback (with WEBHOOK_ALLOW_LOOPBACK) — private/LAN targets stay blocked. So the
+    // app must run on the same host as the test (php artisan serve), not the Docker
+    // :8024 stack whose container cannot reach the host's 127.0.0.1.
+    const appUrl = process.env.BASE_URL || 'http://127.0.0.1:8000';
+    test.skip(
+      ! /\/\/(127\.0\.0\.1|localhost)[:/]/.test(appUrl),
+      'Requires the app on the test-host loopback (same-host serve) with WEBHOOK_ALLOW_LOOPBACK=true.',
+    );
+
     webhookServer = await createLocalWebhookServer();
 
     await configureWebhook(adminPage, webhookServer.url);

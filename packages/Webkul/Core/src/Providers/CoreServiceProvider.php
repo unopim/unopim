@@ -24,6 +24,7 @@ use Webkul\Core\Exceptions\Handler;
 use Webkul\Core\Facades\Core as CoreFacade;
 use Webkul\Core\Facades\ElasticSearch as ElasticSearchFacade;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
+use Webkul\Core\Helpers\Locales as LocalesHelper;
 use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -194,6 +195,15 @@ class CoreServiceProvider extends ServiceProvider
             $app->make(LocaleRepository::class),
             $app->make(ChannelRepository::class),
         ));
+
+        /**
+         * Astrotomic registers its own Locales helper as a singleton, but every TranslatableModel
+         * resolves this subclass, which is otherwise rebuilt on each getLocalesHelper() call and
+         * reloads all locales every time. Astrotomic hits that helper several times per translated
+         * attribute, so serializing a page of models turned into thousands of locale reloads. Scope
+         * it so it loads once per request — Octane-safe, since a locale added mid-worker shows next request.
+         */
+        $this->app->scoped(LocalesHelper::class);
 
         /**
          * Register ElasticSearch as a singleton.

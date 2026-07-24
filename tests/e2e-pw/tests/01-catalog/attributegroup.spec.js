@@ -6,11 +6,11 @@ const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../.
  */
 async function createAttributeGroup(adminPage, code, name) {
   await navigateTo(adminPage, 'attributeGroups');
-  await adminPage.getByRole('link', { name: 'Create Attribute Group' }).click();
+  await adminPage.getByRole('button', { name: 'Create Attribute Group' }).click();
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Created Successfully/i);
+  await adminPage.locator('input[name$="[name]"]').first().fill(name);
+  await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Created Successfully/i);
 }
 
 /**
@@ -33,9 +33,10 @@ test.describe('UnoPim Attribute Group Tests', () => {
 
   test('Create Attribute Group with empty Code field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByRole('link', { name: 'Create Attribute Group' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute Group' }).click();
+    await adminPage.locator('input[name$="[name]"]').first().fill('Product Description');
+    // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Description');
     await clickSave(adminPage, 'Save Attribute Group');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
@@ -118,7 +119,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
+    await adminPage.locator('input[name$="[name]"]').first().fill('After Update');
     await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Updated Successfully/i);
 
     // Cleanup

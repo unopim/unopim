@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -203,24 +204,48 @@ class AttributeController extends Controller
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $indices = $massDestroyRequest->input('indices');
-        $delete = false;
+
+        $deleted = 0;
+        $inUse = 0;
 
         foreach ($indices as $index) {
-            Event::dispatch('catalog.attribute.delete.before', $index);
-
             $attribute = $this->attributeRepository->find($index);
 
-            if (! $attribute->canBeDeleted()) {
+            if (
+                ! $attribute
+                || ! $attribute->canBeDeleted()
+            ) {
                 continue;
             }
 
-            $this->attributeRepository->delete($index);
-            $delete = true;
+            if ($this->attributeCanBeDeleted($index) > 0) {
+                $inUse++;
 
-            Event::dispatch('catalog.attribute.delete.after', $index);
+                continue;
+            }
+
+            try {
+                Event::dispatch('catalog.attribute.delete.before', $index);
+
+                $this->attributeRepository->delete($index);
+
+                Event::dispatch('catalog.attribute.delete.after', $index);
+
+                $deleted++;
+            } catch (QueryException $exception) {
+                report($exception);
+
+                $inUse++;
+            }
         }
 
-        if (! $delete) {
+        if ($inUse > 0) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.attributes.index.datagrid.mass-delete-partial', ['count' => $inUse]),
+            ], $deleted > 0 ? JsonResponse::HTTP_OK : JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        if ($deleted === 0) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.attributes.index.datagrid.mass-delete-failed'),
             ], JsonResponse::HTTP_BAD_REQUEST);

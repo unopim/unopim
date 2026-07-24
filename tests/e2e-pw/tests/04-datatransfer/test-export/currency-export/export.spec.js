@@ -18,7 +18,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
     await clickSaveAndExpect(adminPage, 'Save changes', /Export created successfully/i);
 
     await adminPage.getByRole('link', { name: 'Edit' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
 
     const statusSelect = adminPage.locator('input[name="filters[status]"], select[name="filters[status]"]')
         .locator('..')
@@ -31,7 +31,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
     await adminPage.getByRole('option', { name: new RegExp(statusLabel, 'i') }).locator('span').first().click();
 
     await adminPage.getByRole('button', { name: 'Save changes' }).click();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
 
     const exportNowBtn = adminPage.getByRole('button', { name: 'Export Now' });
     await expect(exportNowBtn).toBeVisible({ timeout: 5000 });
@@ -47,7 +47,7 @@ async function deleteExport(adminPage, code) {
     await navigateTo(adminPage, 'exports');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
     const deleteBtn = adminPage.locator('span[title="Delete"]').first();
     if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
         await deleteBtn.click();

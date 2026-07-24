@@ -118,7 +118,7 @@ class TrackerController extends Controller
 
         $import = $this->jobTrackRepository->findOrFail($id);
 
-        return Storage::disk('public')->download($import->file_path);
+        return Storage::disk('private')->download($import->file_path);
     }
 
     /**

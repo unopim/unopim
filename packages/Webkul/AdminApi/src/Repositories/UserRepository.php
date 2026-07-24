@@ -39,8 +39,9 @@ class UserRepository extends BaseUserRepository
             return null;
         }
 
-        // Check if user account is active
-        if ($user->status === 0) {
+        // Truthiness check (not strict === 0) so a status returned as the string
+        // "0" under emulated prepared statements is still treated as inactive.
+        if (! $user->status) {
             return null;
         }
 

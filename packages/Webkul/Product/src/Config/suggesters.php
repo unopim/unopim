@@ -5,7 +5,7 @@ use Webkul\Product\Services\VariantPlacementSuggester;
 return [
     'variant_placement' => [
         'class'  => VariantPlacementSuggester::class,
-        'acl'    => 'catalog.families.variant_structures.ai_suggest',
+        'acl'    => 'catalog.families.variant-structures.ai_suggest',
         'config' => 'general.magic_ai.settings.variant_suggestion_enabled',
         'ai'     => [
             'model'       => null,   // null = the platform default

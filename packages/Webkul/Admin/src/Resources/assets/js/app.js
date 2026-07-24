@@ -110,7 +110,7 @@ const appOptions = {
             })
                 .then(({ data }) => {
                     if (data.message) {
-                        this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: "success", message: data.message });
+                        this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: data.type || "success", message: data.message });
                     }
 
                     this.$emitter.emit(EMITTER_EVENTS.FORM_SAVED, data);
@@ -201,6 +201,7 @@ import Slugify from "./directives/slugify";
 import Debounce from "./directives/debounce";
 import Code from "./directives/code";
 import CodeGenerator from "./directives/code-generator";
+import Focus from "./directives/focus";
 import { generateCode, sanitizeCode } from "./utils/code";
 
 /**
@@ -234,6 +235,7 @@ function createAdminApp() {
     app.directive("debounce", Debounce);
     app.directive("code", Code);
     app.directive("code-generator", CodeGenerator);
+    app.directive("focus", Focus);
 
     app.config.globalProperties.$generateCode = generateCode;
     app.config.globalProperties.$sanitizeCode = sanitizeCode;

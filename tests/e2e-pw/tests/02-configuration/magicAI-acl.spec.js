@@ -46,9 +46,8 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
             adminPage.locator('#app').getByText("AI Platforms", { exact: true }).first(),
         ).toBeVisible();
 
-        // Check sidebar visibility
-        const sidebar = adminPage.locator("nav");
-        const magicAIMenu = sidebar.getByText("Magic AI").first();
+        // The collapsed sidebar keeps a hidden label copy, so assert the visible menu link.
+        const magicAIMenu = adminPage.getByRole("link", { name: "Magic AI" }).first();
         await expect(magicAIMenu).toBeVisible();
     });
 });

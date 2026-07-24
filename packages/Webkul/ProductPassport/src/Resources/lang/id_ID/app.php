@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => ':attribute harus berupa GTIN yang valid (8, 12, 13, atau 14 digit dengan digit pemeriksa yang benar).',
     ],
+    'mapping' => [
+        'title' => 'Pemetaan Bidang Paspor',
+        'info' => 'Ambil setiap bidang paspor dari atribut yang sudah Anda kelola. Biarkan bidang tidak dipetakan untuk kembali ke atribut paspor khususnya.',
+        'menu' => 'Pemetaan Bidang',
+        'field' => 'Bidang Paspor',
+        'source' => 'Atribut Sumber',
+        'select-source' => 'Gunakan atribut paspor',
+        'save-btn' => 'Simpan Pemetaan',
+        'saved' => 'Pemetaan bidang berhasil disimpan.',
+    ],
+
 ];

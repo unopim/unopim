@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => ':attribute skal være en gyldig GTIN (8, 12, 13 eller 14 cifre med et korrekt kontrolciffer).',
     ],
+    'mapping' => [
+        'title' => 'Feltmapping for produktpas',
+        'info' => 'Hent hvert pasfelt fra en attribut, du allerede vedligeholder. Lad et felt være umappet for at falde tilbage til dets dedikerede pasattribut.',
+        'menu' => 'Feltmapping',
+        'field' => 'Pasfelt',
+        'source' => 'Kildeattribut',
+        'select-source' => 'Brug pasattributten',
+        'save-btn' => 'Gem mapping',
+        'saved' => 'Feltmapping blev gemt.',
+    ],
+
 ];

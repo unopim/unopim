@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => ':attribute mora biti valjan GTIN (8, 12, 13 ili 14 znamenki s ispravnom kontrolnom znamenkom).',
     ],
+    'mapping' => [
+        'title' => 'Mapiranje polja putovnice',
+        'info' => 'Svako polje putovnice popunite iz atributa koji već održavate. Ostavite polje nemapiranim da bi se koristio njegov namjenski atribut putovnice.',
+        'menu' => 'Mapiranje polja',
+        'field' => 'Polje putovnice',
+        'source' => 'Izvorni atribut',
+        'select-source' => 'Koristi atribut putovnice',
+        'save-btn' => 'Spremi mapiranje',
+        'saved' => 'Mapiranje polja uspješno je spremljeno.',
+    ],
+
 ];

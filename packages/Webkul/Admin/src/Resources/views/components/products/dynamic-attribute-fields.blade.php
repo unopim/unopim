@@ -23,6 +23,43 @@
     }
 @endphp
 
+@php
+    // Batch the selected-option labels for every select/multiselect field into one query,
+    // instead of one lookup per field. Only the pre-selected codes are loaded, not the full set.
+    $selectedCodesByAttribute = [];
+
+    foreach ($fields as $selectField) {
+        if (! in_array($selectField->type, ['select', 'multiselect'])) {
+            continue;
+        }
+
+        $selected = $fieldValues
+            ? $selectField->getValueFromProductValues($fieldValues, $currentChannelCode, $currentLocaleCode)
+            : null;
+
+        $selected = old($fieldsWrapper.$selectField->getFlatAttributeName($currentChannelCode, $currentLocaleCode)) ?? $selected;
+
+        if (isset($lockedFields[$selectField->code])) {
+            $selected = $lockedFields[$selectField->code]['value'] ?? null;
+        }
+
+        $codes = array_filter((array) $selected, static fn ($code): bool => $code !== '' && $code !== null);
+
+        if (! empty($codes)) {
+            $selectedCodesByAttribute[$selectField->id] = $codes;
+        }
+    }
+
+    $preloadedSelectedOptions = ! empty($selectedCodesByAttribute)
+        ? \Webkul\Attribute\Models\AttributeOption::query()
+            ->whereIn('attribute_id', array_keys($selectedCodesByAttribute))
+            ->whereIn('code', collect($selectedCodesByAttribute)->flatten()->unique()->values()->all())
+            ->with('translations')
+            ->get()
+            ->groupBy('attribute_id')
+        : collect();
+@endphp
+
 @foreach($fields as $field)
     @php
         $isLocalizable = $field->isLocaleBasedAttribute();
@@ -327,7 +364,14 @@
                 {{-- NO BREAK --}}
                 @php
                     $selectedValue = [];
-                    foreach ($field->options->whereIn('code', $value) as $option) {
+
+                    $selectedCodes = array_filter((array) $value, static fn ($code): bool => $code !== '' && $code !== null);
+
+                    $selectedOptions = ! empty($selectedCodes)
+                        ? $preloadedSelectedOptions->get($field->id, collect())->whereIn('code', $selectedCodes)
+                        : collect();
+
+                    foreach ($selectedOptions as $option) {
                         $translatedOptionLabel = $option->translate($currentLocaleCode)?->label;
 
                         $selectedValue[] = [

@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Storage;
 use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
-use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
@@ -141,30 +140,6 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
-     * Get an attribute from the model.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
-    public function getAttribute($key)
-    {
-        if (! method_exists(static::class, $key) && ! in_array($key, [
-            'pivot',
-            'parent_id',
-            'attribute_family_id',
-        ]) && ! isset($this->attributes[$key]) && (isset($this->id) && $this->attribute_family?->id)) {
-            $attribute = $this->checkInLoadedFamilyAttributes()->where('code', $key)->first();
-            if ($attribute) {
-                $this->attributes[$key] = $this->getCustomAttributeValue($attribute);
-            }
-
-            return $this->getAttributeValue($key);
-        }
-
-        return parent::getAttribute($key);
-    }
-
-    /**
      * Retrieve product attributes.
      *
      * @param  Group  $group
@@ -224,75 +199,6 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
-     * Get an product attribute value.
-     *
-     * @return mixed
-     */
-    public function getCustomAttributeValue($attribute)
-    {
-        if (! $attribute) {
-            return;
-        }
-
-        $locale = core()->getRequestedLocaleCodeInRequestedChannel();
-
-        $channel = core()->getRequestedChannelCode();
-
-        if (empty($this->attribute_values->count())) {
-            $this->load('attribute_values');
-        }
-
-        if ($attribute->value_per_channel) {
-            if ($attribute->value_per_locale) {
-                $attributeValue = $this->attribute_values
-                    ->where('channel', $channel)
-                    ->where('locale', $locale)
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-
-                if (empty($attributeValue[$attribute->column_name])) {
-                    $attributeValue = $this->attribute_values
-                        ->where('channel', core()->getDefaultChannelCode())
-                        ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
-                        ->where('attribute_id', $attribute->id)
-                        ->first();
-                }
-            } else {
-                $attributeValue = $this->attribute_values
-                    ->where('channel', $channel)
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-            }
-        } elseif ($attribute->value_per_locale) {
-            $attributeValue = $this->attribute_values
-                ->where('locale', $locale)
-                ->where('attribute_id', $attribute->id)
-                ->first();
-            if (empty($attributeValue[$attribute->column_name])) {
-                $attributeValue = $this->attribute_values
-                    ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-            }
-        } else {
-            $attributeValue = $this->attribute_values
-                ->where('attribute_id', $attribute->id)
-                ->first();
-        }
-
-        return $attributeValue[$attribute->column_name] ?? $attribute->default_value;
-    }
-
-    /**
-     * Check in loaded family attributes.
-     */
-    public function checkInLoadedFamilyAttributes(): object
-    {
-        return core()->getSingletonInstance(AttributeRepository::class)
-            ->getFamilyAttributes($this->attribute_family);
-    }
-
-    /**
      * Overrides the default Eloquent query builder.
      *
      * @param  \Illuminate\Database\Query\Builder  $query
@@ -323,11 +229,26 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
-     * Get all image attributes for the product
+     * Get all image attributes for the product.
+     *
+     * Image attributes are family-level, so the result is memoised per family for the
+     * request to avoid one join per product in normalizeWithImage() loops.
      */
     public function getImageAttributes()
     {
-        return $this->attribute_family->customAttributes()->where('type', 'image')->get();
+        $memoKey = "product_image_attributes.{$this->attribute_family_id}";
+
+        $memo = request()->attributes;
+
+        if ($memo->has($memoKey)) {
+            return $memo->get($memoKey);
+        }
+
+        $imageAttributes = $this->attribute_family->customAttributes()->where('type', 'image')->get();
+
+        $memo->set($memoKey, $imageAttributes);
+
+        return $imageAttributes;
     }
 
     /**

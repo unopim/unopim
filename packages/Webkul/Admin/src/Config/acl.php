@@ -15,6 +15,16 @@ return [
         'name'  => 'admin::app.acl.dashboard',
         'route' => 'admin.dashboard.index',
         'sort'  => 1,
+    ], [
+        'key'   => 'dashboard',
+        'name'  => 'admin::app.acl.dashboard',
+        'route' => 'admin.dashboard.stats',
+        'sort'  => 1,
+    ], [
+        'key'   => 'dashboard',
+        'name'  => 'admin::app.acl.dashboard',
+        'route' => 'admin.dashboard.completeness.data',
+        'sort'  => 1,
     ],
 
     /*
@@ -465,6 +475,161 @@ return [
         'name'  => 'admin::app.acl.execute',
         'route' => 'admin.settings.data_transfer.exports.export_now',
         'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.index_data',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.import-view',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.link',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.stats',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.download',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.download_error_report',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.download_sample',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.download_sample_zip',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.data_transfer.imports.validate',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.imports.start',
+        'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.index_data',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.export-view',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.link',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.stats',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.download',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.download_error_report',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.download_sample',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.download_sample_zip',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.filters.attribute_families',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.filters.attributes',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.filters.categories',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.filters.channels',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.filters.currencies',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.filters.locales',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.settings.data_transfer.exports.validate',
+        'sort'  => 2,
+    ], [
+        'key'   => 'data_transfer.export.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.exports.start',
+        'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.job_tracker',
+        'name'  => 'admin::app.acl.tracker',
+        'route' => 'admin.settings.data_transfer.tracker.view',
+        'sort'  => 1,
+    ], [
+        'key'   => 'data_transfer.job_tracker',
+        'name'  => 'admin::app.acl.tracker',
+        'route' => 'admin.settings.data_transfer.tracker.download',
+        'sort'  => 1,
+    ], [
+        'key'   => 'data_transfer.job_tracker',
+        'name'  => 'admin::app.acl.tracker',
+        'route' => 'admin.settings.data_transfer.tracker.archive.download',
+        'sort'  => 1,
+    ], [
+        'key'   => 'data_transfer.job_tracker',
+        'name'  => 'admin::app.acl.tracker',
+        'route' => 'admin.settings.data_transfer.tracker.log.download',
+        'sort'  => 1,
+    ], [
+        'key'   => 'data_transfer',
+        'name'  => 'admin::app.acl.data-transfer',
+        'route' => 'admin.settings.data_transfer.systems.edit',
+        'sort'  => 8,
     ],
 
     /*
@@ -668,6 +833,11 @@ return [
     ], [
         'key'    => 'configuration',
         'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.search',
+        'sort'   => 10,
+    ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
         'route'  => 'admin.configuration.store',
         'sort'   => 10,
     ], [
@@ -679,7 +849,7 @@ return [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
         'route' => 'admin.configuration.integrations.index',
-        'sort'  => 1,
+        'sort'  => 2,
     ], [
         'key'   => 'configuration.integrations.create',
         'name'  => 'admin::app.acl.create',
@@ -709,6 +879,11 @@ return [
         'key'   => 'configuration.integrations.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.configuration.integrations.re_generate_secret_key',
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.integrations.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.configuration.integrations.re_generate_password',
         'sort'  => 2,
     ], [
         'key'   => 'configuration.integrations.delete',
@@ -742,26 +917,145 @@ return [
         'key'   => 'configuration.system_information',
         'name'  => 'admin::app.acl.system-information',
         'route' => 'admin.configuration.system.information',
-        'sort'  => 4,
+        'sort'  => 3,
     ], [
         'key'   => 'configuration.system_settings',
         'name'  => 'admin::app.acl.system-settings',
         'route' => 'admin.settings.system.index',
-        'sort'  => 5,
+        'sort'  => 4,
     ], [
         'key'   => 'configuration.system_settings',
         'name'  => 'admin::app.acl.system-settings',
         'route' => 'admin.settings.system.edit',
-        'sort'  => 5,
+        'sort'  => 4,
     ], [
         'key'   => 'configuration.system_settings',
         'name'  => 'admin::app.acl.system-settings',
         'route' => 'admin.settings.system.update',
-        'sort'  => 5,
+        'sort'  => 4,
     ], [
-        'key'   => 'configuration.system_settings.edit',
-        'name'  => 'admin::app.acl.edit',
+        'key'   => 'configuration.system_settings.appearance',
+        'name'  => 'admin::app.settings.appearance.title',
+        'route' => 'admin.settings.appearance.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'configuration.system_settings.appearance',
+        'name'  => 'admin::app.settings.appearance.title',
         'route' => 'admin.settings.appearance.update',
         'sort'  => 1,
+    ], [
+        /**
+         * Routeless section permissions: these rows share the generic system
+         * settings editor route, so access is enforced per-row in
+         * SystemSettingsController against each hub row's `acl`.
+         */
+        'key'   => 'configuration.system_settings.email',
+        'name'  => 'admin::app.settings.system-settings.email.title',
+        'route' => null,
+        'sort'  => 2,
+    ], [
+        'key'   => 'configuration.system_settings.debug',
+        'name'  => 'admin::app.settings.system-settings.debug.title',
+        'route' => null,
+        'sort'  => 3,
+    ], [
+        'key'   => 'configuration.system_settings.microsoft_sso',
+        'name'  => 'admin::app.settings.system-settings.microsoft-sso.title',
+        'route' => null,
+        'sort'  => 4,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Sub-action route coverage
+    |--------------------------------------------------------------------------
+    |
+    | Ajax/child endpoints that belong to a feature but were previously
+    | unmapped — the Bouncer middleware auto-gates a route only when its name
+    | is registered here, so these bind each helper route to its feature's
+    | existing permission. Generic cross-feature fetchers (option lookups,
+    | datagrid infra, editor uploads) are intentionally left open.
+    |
+    */
+    [
+        'key'   => 'catalog.attributes',
+        'name'  => 'admin::app.acl.attributes',
+        'route' => 'admin.catalog.attributes.options.index',
+        'sort'  => 4,
+    ], [
+        'key'   => 'catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.attributes.options.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.categories',
+        'name'  => 'admin::app.acl.categories',
+        'route' => 'admin.catalog.categories.children.tree',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.categories',
+        'name'  => 'admin::app.acl.categories',
+        'route' => 'admin.catalog.categories.search',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.category_fields',
+        'name'  => 'admin::app.acl.category_fields',
+        'route' => 'admin.catalog.category_fields.options',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.category_fields',
+        'name'  => 'admin::app.acl.category_fields',
+        'route' => 'admin.catalog.category_fields.search',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.category_fields',
+        'name'  => 'admin::app.acl.category_fields',
+        'route' => 'admin.catalog.category_fields.tree',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.search',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.filterable_attributes',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.variant_children',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.grid_views.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.grid_views.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.products.grid_views.delete',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.product.get_attribute',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.catalog.product.get_locale',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.variant_node.create',
+        'sort'  => 3,
     ],
 ];

@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => ':attribute geçerli bir GTIN olmalıdır (doğru kontrol basamağıyla 8, 12, 13 veya 14 hane).',
     ],
+    'mapping' => [
+        'title' => 'Pasaport Alan Eşlemesi',
+        'info' => 'Her pasaport alanını zaten yönettiğiniz bir öznitelikten alın. Bir alanı eşlenmemiş bırakırsanız kendi özel pasaport özniteliği kullanılır.',
+        'menu' => 'Alan Eşlemesi',
+        'field' => 'Pasaport Alanı',
+        'source' => 'Kaynak Öznitelik',
+        'select-source' => 'Pasaport özniteliğini kullan',
+        'save-btn' => 'Eşlemeyi Kaydet',
+        'saved' => 'Alan eşlemesi başarıyla kaydedildi.',
+    ],
+
 ];

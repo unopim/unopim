@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Dedicated queue for publish jobs, so bulk publishing never competes with
-    | the import pipeline. Run a worker with:
+    | the import pipeline. The worker must consume this queue:
     |
     |   php artisan queue:work --queue=publication
     |

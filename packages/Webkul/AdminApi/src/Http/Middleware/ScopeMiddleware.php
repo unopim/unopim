@@ -37,6 +37,10 @@ class ScopeMiddleware
             return false;
         }
 
+        if ($user->apiKey->revoked || ! $user->status) {
+            return false;
+        }
+
         if ($user->apiKey->permission_type == 'all') {
             return true;
         }

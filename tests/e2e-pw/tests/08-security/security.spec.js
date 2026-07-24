@@ -2,6 +2,8 @@ const { test, expect } = require('../../utils/fixtures');
 const { clickSave } = require('../../utils/helpers');
 
 const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
+const ADMIN_EMAIL = process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || 'admin@example.com';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
 
 /**
  * Create a fresh unauthenticated browser page (no saved session).
@@ -47,8 +49,8 @@ test.describe('Security Vulnerability Fixes', () => {
 
     // Login fresh
     await page.goto('/admin/login', { waitUntil: 'networkidle' });
-    await page.getByRole('textbox', { name: 'Email Address' }).fill('admin@example.com');
-    await page.getByRole('textbox', { name: 'Password' }).fill('admin123');
+    await page.getByRole('textbox', { name: 'Email Address' }).fill(ADMIN_EMAIL);
+    await page.getByRole('textbox', { name: 'Password' }).fill(ADMIN_PASSWORD);
     await page.getByRole('button', { name: 'Sign In' }).click();
     // The login form validates asynchronously then POSTs via AJAX, so
     // networkidle can resolve before the request fires. Wait for the

@@ -329,9 +329,11 @@ abstract class AbstractType
                 : array_merge($productValues, $values)
         );
 
+        $attributes = $this->attributeRepository->findWhereIn('code', array_keys($values))->keyBy('code');
+
         foreach ($values as $field => $fieldValue) {
             if (is_array($fieldValue)) {
-                $attribute = $this->attributeRepository->findOneByField('code', $field);
+                $attribute = $attributes->get($field);
                 $type = $attribute?->type;
 
                 if (in_array($type, ['image', 'gallery', 'file'], true)) {
@@ -375,12 +377,8 @@ abstract class AbstractType
 
             if (
                 $isCommonAttribute
-                && $this->attributeRepository->findWhere([
-                    'type' => AttributeTypes::PRICE_ATTRIBUTE_TYPE,
-                    'code' => $field,
-                ])->first()?->toArray()
+                && $attributes->get($field)?->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE
             ) {
-
                 $fieldValue = $this->processCommonPriceValues($field, $fieldValue, $productValues);
             }
 

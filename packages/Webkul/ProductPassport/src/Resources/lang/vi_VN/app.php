@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => ':attribute phải là một GTIN hợp lệ (8, 12, 13 hoặc 14 chữ số với chữ số kiểm tra chính xác).',
     ],
+    'mapping' => [
+        'title' => 'Ánh xạ trường hộ chiếu sản phẩm',
+        'info' => 'Lấy từng trường hộ chiếu từ một thuộc tính bạn đã duy trì. Để trống ánh xạ một trường để quay lại thuộc tính hộ chiếu chuyên dụng của nó.',
+        'menu' => 'Ánh xạ trường',
+        'field' => 'Trường hộ chiếu',
+        'source' => 'Thuộc tính nguồn',
+        'select-source' => 'Sử dụng thuộc tính hộ chiếu',
+        'save-btn' => 'Lưu ánh xạ',
+        'saved' => 'Đã lưu ánh xạ trường thành công.',
+    ],
+
 ];

@@ -171,9 +171,21 @@
 
             mounted() {
                 this.inputFiles = this.uploadedFiles;
+                this.initialFiles = this.uploadedFiles.map(file => ({ ...file }));
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             methods: {
+                resetToInitial() {
+                    this.inputFiles = this.initialFiles.map(file => ({ ...file }));
+
+                    this.signalChange();
+                },
                 isFileAccepted(file) {
                     if (! this.acceptedExtensions.length) {
                         return true;

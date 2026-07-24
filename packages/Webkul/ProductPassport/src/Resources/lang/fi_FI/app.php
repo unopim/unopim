@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => ':attribute on oltava kelvollinen GTIN (8, 12, 13 tai 14 numeroa oikealla tarkistusnumerolla).',
     ],
+    'mapping' => [
+        'title' => 'Passikenttien määritys',
+        'info' => 'Hae jokainen passikenttä attribuutista, jota jo ylläpidät. Jätä kenttä määrittämättä, jolloin käytetään sen omaa passiattribuuttia.',
+        'menu' => 'Kenttämääritys',
+        'field' => 'Passikenttä',
+        'source' => 'Lähdeattribuutti',
+        'select-source' => 'Käytä passiattribuuttia',
+        'save-btn' => 'Tallenna määritys',
+        'saved' => 'Kenttämääritys tallennettiin onnistuneesti.',
+    ],
+
 ];

@@ -1,6 +1,6 @@
 @props([
     'type' => 'text',
-    'name' => '', 
+    'name' => '',
     'info' => '',
 ])
 
@@ -33,7 +33,7 @@
             name="{{ $name }}"
         >
             <div
-                class="flex items-center w-full border rounded-md overflow-hidden text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400  focus-within:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
+                class="focus-ring-within flex items-center w-full border rounded-md overflow-hidden text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400  focus-within:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
             >
                 @if (isset($currency))
@@ -50,7 +50,7 @@
                     type="text"
                     name="{{ $name }}"
                     v-bind="field"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900']) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'no-focus-ring w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900']) }}
                 />
             </div>
         </v-field>
@@ -280,7 +280,7 @@
              {{ 
                 $attributes
                     ->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])
-                    ->merge(['class' => 'icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700'])
+                    ->merge(['class' => 'icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-600 peer-focus-visible:rounded-sm'])
                     ->merge(['class' => $attributes->get('disabled') ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'])
             }}
         >
@@ -306,7 +306,7 @@
         </v-field>
 
         <label
-            class="icon-radio-normal text-2xl peer-checked:icon-radio-selected peer-checked:text-primary-700 cursor-pointer"
+            class="icon-radio-normal text-2xl peer-checked:icon-radio-selected peer-checked:text-primary-700 cursor-pointer peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-600 peer-focus-visible:rounded-full"
             {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
         >
         </label>
@@ -451,7 +451,16 @@
                 const parsed = this.parseValue();
                 return {
                     selectedValue: parsed != null ? this.parseOptions().find(option => String(option[this.trackBy]) === String(parsed)) : null,
+                    initialValue: this.value,
                 }
+            },
+
+            mounted() {
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             computed: {
@@ -476,6 +485,20 @@
             },
 
             methods: {
+                resetToInitial() {
+                    const parsed = this.parseInitialValue();
+
+                    this.selectedValue = parsed != null
+                        ? this.parseOptions().find(option => String(option[this.trackBy]) === String(parsed))
+                        : null;
+                },
+                parseInitialValue() {
+                    try {
+                        return this.initialValue ? JSON.parse(this.initialValue) : null;
+                    } catch (error) {
+                        return this.initialValue;
+                    }
+                },
                 parseOptions() {
                     try {
                         return JSON.parse(this.options);
@@ -572,11 +595,34 @@
                     default: false
                 }
             },
-            
+
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                    initialValue: this.value,
                 }
+            },
+
+            mounted() {
+                this.resetToInitial = () => {
+                    let values;
+
+                    try {
+                        values = this.initialValue ? JSON.parse(this.initialValue) : [];
+                    } catch (error) {
+                        values = this.initialValue;
+                    }
+
+                    this.selectedValue = (values instanceof Array)
+                        ? this.parseOptions().filter(option => values.some(valueItem => option[this.trackBy] === valueItem))
+                        : [];
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             computed: {
@@ -701,11 +747,34 @@
                 field: Array,
                 placeholder: String,
             },
-            
+
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                    initialValue: this.value,
                 }
+            },
+
+            mounted() {
+                this.resetToInitial = () => {
+                    let values;
+
+                    try {
+                        values = this.initialValue ? JSON.parse(this.initialValue) : [];
+                    } catch (error) {
+                        values = this.initialValue;
+                    }
+
+                    this.selectedValue = (values instanceof Array)
+                        ? this.parseOptions().filter(option => values.some(valueItem => option[this.trackBy] === valueItem))
+                        : [];
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             computed: {
@@ -721,7 +790,7 @@
 
                     return selectedOptions.length > 0 ? selectedOptions : null;
                 },
-                
+
             },
 
             watch: {
@@ -863,6 +932,7 @@
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                    initialValue: this.value,
                     isLoading: false,
                     optionsList: [],
                     timer: null,
@@ -890,7 +960,32 @@
                         this.initializeValue();
                     }
                 });
+
+                this.resetToInitial = () => {
+                    let parsed;
+
+                    try {
+                        parsed = this.initialValue ? JSON.parse(this.initialValue) : [];
+                    } catch (error) {
+                        parsed = this.initialValue;
+                    }
+
+                    this.selectedValue = parsed
+                        ? this.parseOptions().filter(option => parsed instanceof Array && parsed?.some(valueItem => option[this.trackBy] === valueItem))
+                        : [];
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
             },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
+            },
+
             computed: {
                 formattedOptions() {
                     return this.optionsList;
@@ -1177,6 +1272,7 @@
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseValue() : null,
+                    initialValue: this.value,
 
                     isLoading: false,
                     optionsList: [],
@@ -1218,6 +1314,28 @@
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
                 }
+
+                this.resetToInitial = () => {
+                    let parsed;
+
+                    try {
+                        parsed = this.initialValue ? JSON.parse(this.initialValue) : null;
+                    } catch (error) {
+                        parsed = this.initialValue;
+                    }
+
+                    this.selectedValue = parsed ? parsed : null;
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             watch: {
@@ -1398,7 +1516,13 @@
 
                             this.optionsList.unshift(option);
 
-                            this.selectedValue = option;
+                            if (this.multiple) {
+                                const current = Array.isArray(this.selectedValue) ? this.selectedValue : [];
+
+                                this.selectedValue = [...current, option];
+                            } else {
+                                this.selectedValue = option;
+                            }
 
                             this.selectOption(option);
 
@@ -1486,7 +1610,14 @@
                     {{-- TODO: `fieldData` aliases the injected `field` prop; writes mutate it by design so the VeeValidate field value drives the multipart submit. --}}
                     fieldData: this.field,
                     isDragging: false,
+                    initialValue: this.field.value,
                 }
+            },
+            mounted() {
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
             watch: {
                 field: {
@@ -1552,6 +1683,16 @@
                         this.$forceUpdate();
                     });
                     event.preventDefault();
+                },
+
+                resetToInitial() {
+                    this.fieldData.value = this.initialValue;
+
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.value = '';
+                    }
+
+                    this.$nextTick(() => this.$forceUpdate());
                 }
             }
         });

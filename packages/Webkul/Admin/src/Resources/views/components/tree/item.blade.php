@@ -1,22 +1,23 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-tree-item-template">
     <div :class="itemClasses">
-        <i
-            v-if="hasChildren || hasFetchedChildren"
-            :class="toggleIconClasses"
-            @click="toggleBranch"
-        ></i>
+        <div class="flex items-center">
+            <i
+                :class="toggleIconClasses"
+                @click="toggleBranch"
+            ></i>
 
-        <i :class="folderIconClasses"></i>
+            <i :class="folderIconClasses"></i>
 
-        <component
-            :is="inputComponent"
-            :id="id"
-            :label="label"
-            :name="name"
-            :value="value"
-            @change="onInputChange(item.value)"
-        />
+            <component
+                :is="inputComponent"
+                :id="id"
+                :label="label"
+                :name="name"
+                :value="value"
+                @change="onInputChange(item.value)"
+            />
+        </div>
 
         <template v-if="showChildren">
             <v-tree-item
@@ -115,25 +116,25 @@
             itemClasses() {
                 return [
                     'v-tree-item inline-block w-full [&>.v-tree-item]:ltr:pl-6 [&>.v-tree-item]:rtl:pr-6 [&>.v-tree-item]:hidden [&.active>.v-tree-item]:block',
-                    this.level === 1 && !this.hasChildren ? 'ltr:!pl-5 rtl:!pr-5'
-                    : this.level > 1 && !this.hasChildren ? 'ltr:!pl-14 rtl:!pr-14'
-                    : '',
                     this.hasSelectedValue ? 'active' : '',
                     this.showChildren ? 'active' : ''
                 ];
             },
 
             toggleIconClasses() {
+                const isExpandable = this.hasChildren || this.hasFetchedChildren;
+
                 return [
-                    this.showChildren ? 'icon-chevron-down' : 'icon-chevron-right',
-                    'text-xl rounded-md cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800'
+                    isExpandable ? (this.showChildren ? 'icon-chevron-down' : 'icon-chevron-right') : '',
+                    'flex shrink-0 items-center justify-center w-6 text-xl rounded-md transition-all',
+                    isExpandable ? 'cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800' : 'pointer-events-none'
                 ];
             },
 
             folderIconClasses() {
                 return [
                     (this.hasChildren || this.hasFetchedChildren) ? 'icon-folder' : 'icon-attribute',
-                    'text-2xl cursor-pointer'
+                    'shrink-0 text-2xl cursor-pointer'
                 ];
             },
 

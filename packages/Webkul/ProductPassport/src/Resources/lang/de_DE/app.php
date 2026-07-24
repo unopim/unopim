@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'Das Feld :attribute muss eine gültige GTIN sein (8, 12, 13 oder 14 Ziffern mit korrekter Prüfziffer).',
     ],
+    'mapping' => [
+        'title' => 'Passfeld-Zuordnung',
+        'info' => 'Beziehen Sie jedes Passfeld aus einem Attribut, das Sie bereits pflegen. Lassen Sie ein Feld unzugeordnet, um auf sein eigenes Passattribut zurückzugreifen.',
+        'menu' => 'Feldzuordnung',
+        'field' => 'Passfeld',
+        'source' => 'Quellattribut',
+        'select-source' => 'Passattribut verwenden',
+        'save-btn' => 'Zuordnung speichern',
+        'saved' => 'Feldzuordnung erfolgreich gespeichert.',
+    ],
+
 ];

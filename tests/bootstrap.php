@@ -18,6 +18,9 @@ $overrides = [
     'QUEUE_CONNECTION'  => 'sync',
     'SESSION_DRIVER'    => 'array',
     'TELESCOPE_ENABLED' => 'false',
+    // The e2e app .env raises this so Playwright's many logins do not throttle;
+    // the throttle tests need the real low limit.
+    'ADMIN_LOGIN_RATE_LIMIT' => '5',
 ];
 
 foreach ($overrides as $key => $value) {

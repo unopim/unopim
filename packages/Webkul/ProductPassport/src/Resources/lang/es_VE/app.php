@@ -157,4 +157,15 @@ return [
     'validation' => [
         'gtin' => 'El :attribute debe ser un GTIN válido (8, 12, 13 o 14 dígitos con un dígito verificador correcto).',
     ],
+    'mapping' => [
+        'title' => 'Asignación de campos del pasaporte',
+        'info' => 'Obtenga cada campo del pasaporte a partir de un atributo que ya mantiene. Deje un campo sin asignar para recurrir a su atributo de pasaporte específico.',
+        'menu' => 'Asignación de campos',
+        'field' => 'Campo del pasaporte',
+        'source' => 'Atributo de origen',
+        'select-source' => 'Usar el atributo del pasaporte',
+        'save-btn' => 'Guardar asignación',
+        'saved' => 'La asignación de campos se guardó correctamente.',
+    ],
+
 ];
