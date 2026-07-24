@@ -10,7 +10,7 @@
     :title="trans('admin::app.catalog.products.edit.categories.title')"
     icon="icon-folder"
 >
-    <span v-text='$productWorkspace.getCount("categories") + " " + @json(trans("admin::app.catalog.products.edit.workspace.categories.selected"))'></span>
+    <span v-text='($productWorkspace?.getCount("categories") ?? 0) + " " + @json(trans("admin::app.catalog.products.edit.workspace.categories.selected"))'></span>
 </x-admin::product.section-card>
 
 <x-admin::product.workspace-panel

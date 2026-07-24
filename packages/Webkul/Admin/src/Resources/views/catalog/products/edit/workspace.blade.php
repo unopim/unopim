@@ -83,7 +83,7 @@
     </script>
 
     <script type="module">
-        const store = Vue.reactive({
+        const store = window.Vue.reactive({
             sections: [],
             isOpen: false,
             activeId: null,

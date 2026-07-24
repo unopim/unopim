@@ -6,7 +6,7 @@ import.meta.glob(["../images/**", "../fonts/**"]);
 /**
  * Main vue bundler.
  */
-import { createApp } from "vue/dist/vue.esm-bundler";
+import { createApp, reactive, ref, computed, watch } from "vue/dist/vue.esm-bundler";
 
 import DOMPurify from "dompurify";
 
@@ -14,6 +14,10 @@ import { HEADERS, EMITTER_EVENTS } from "./constants";
 
 // Expose DOMPurify for inline component scripts (e.g. AI chat widget); no CDN.
 window.DOMPurify = DOMPurify;
+
+// Expose Vue reactivity primitives for inline blade component scripts (which have
+// no bundler import), mirroring the existing window.DOMPurify exposure.
+window.Vue = { reactive, ref, computed, watch };
 
 /**
  * Main root application registry.

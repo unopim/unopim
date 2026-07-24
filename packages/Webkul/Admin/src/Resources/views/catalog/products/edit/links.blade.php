@@ -10,7 +10,7 @@
     icon="icon-product"
 >
     {{-- v-text attribute is SINGLE-quoted so @json's double quotes don't collide --}}
-    <span v-text='$productWorkspace.getCount("associations") + " " + @json(trans("admin::app.catalog.products.edit.workspace.associations.linked"))'></span>
+    <span v-text='($productWorkspace?.getCount("associations") ?? 0) + " " + @json(trans("admin::app.catalog.products.edit.workspace.associations.linked"))'></span>
 </x-admin::product.section-card>
 
 <x-admin::product.workspace-panel

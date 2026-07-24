@@ -7,7 +7,7 @@
 ])
 
 <div
-    v-show="$productWorkspace.isActive('{{ $id }}')"
+    v-show="$productWorkspace?.isActive('{{ $id }}')"
     class="product-workspace-panel"
     data-section-id="{{ $id }}"
     v-cloak
