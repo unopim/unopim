@@ -67,26 +67,43 @@ class PassportMappingController extends Controller
     {
         abort_unless(PublicationController::featureEnabled(), 404);
 
-        $payload = [];
-
-        foreach ($request->validated('mapping') ?? [] as $field => $source) {
-            Arr::set($payload, self::MAPPING_PREFIX.$field, $source ?: null);
-        }
-
-        foreach (['channel', 'locale'] as $scope) {
-            if ($request->filled($scope)) {
-                $payload[$scope] = $request->input($scope);
-            }
-        }
-
-        if ($payload !== []) {
-            $this->coreConfigRepository->create($payload);
-        }
+        $this->persistMapping(
+            $request->validated('mapping') ?? [],
+            $request->filled('channel') ? (string) $request->input('channel') : null,
+            $request->filled('locale') ? (string) $request->input('locale') : null,
+        );
 
         return new JsonResponse([
             'message'      => trans('passport::app.mapping.saved'),
             'redirect_url' => route('admin.catalog.passports.mapping.edit'),
         ]);
+    }
+
+    /**
+     * Persist a passport field->source mapping (and optional channel/locale
+     * scope) as core_config rows. Shared by the admin screen and the REST API.
+     *
+     * @param  array<string, string|null>  $mapping
+     */
+    public function persistMapping(array $mapping, ?string $channel = null, ?string $locale = null): void
+    {
+        $payload = [];
+
+        foreach ($mapping as $field => $source) {
+            Arr::set($payload, self::MAPPING_PREFIX.$field, $source ?: null);
+        }
+
+        if ($channel !== null) {
+            $payload['channel'] = $channel;
+        }
+
+        if ($locale !== null) {
+            $payload['locale'] = $locale;
+        }
+
+        if ($payload !== []) {
+            $this->coreConfigRepository->create($payload);
+        }
     }
 
     /**

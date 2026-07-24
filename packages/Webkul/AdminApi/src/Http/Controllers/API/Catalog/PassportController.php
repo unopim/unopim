@@ -4,12 +4,15 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\PassportMappingApiRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\PublishPassportApiRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\RedactPassportApiRequest;
 use Webkul\AdminApi\Http\Resources\PublicationResource;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\ProductPassport\Http\Controllers\PassportMappingController;
 use Webkul\ProductPassport\Http\Controllers\PublicationController as PassportFeature;
+use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Services\Publisher;
@@ -117,5 +120,69 @@ class PassportController extends ApiController
         $publisher->withdraw($publication);
 
         return $this->successResponse(trans('passport::app.publications.withdrawn'));
+    }
+
+    /**
+     * Return a withdrawn publication to Published.
+     */
+    public function reinstate(int $id, Publisher $publisher): JsonResponse
+    {
+        abort_unless(PassportFeature::featureEnabled(), 404);
+
+        $publication = Publication::find($id);
+        if (! $publication) {
+            return $this->modelNotFoundResponse(trans('passport::app.publications.not-found', ['id' => $id]));
+        }
+
+        try {
+            $publisher->reinstate($publication);
+
+            return $this->successResponse(trans('passport::app.publications.reinstated'));
+        } catch (InvalidPublicationTransitionException) {
+            return $this->validateErrorResponse(
+                ['status' => [trans('passport::app.publications.reinstate-invalid')]],
+                trans('passport::app.publications.reinstate-invalid')
+            );
+        }
+    }
+
+    /**
+     * GDPR erasure: redact every current version and flip the publication to Redacted.
+     */
+    public function redact(RedactPassportApiRequest $request, int $id, Publisher $publisher): JsonResponse
+    {
+        abort_unless(PassportFeature::featureEnabled(), 404);
+
+        $publication = Publication::find($id);
+        if (! $publication) {
+            return $this->modelNotFoundResponse(trans('passport::app.publications.not-found', ['id' => $id]));
+        }
+
+        try {
+            $publisher->redactAll($publication, (int) auth()->guard('api')->id(), (string) $request->input('reason'));
+
+            return $this->successResponse(trans('passport::app.publications.redacted'));
+        } catch (InvalidPublicationTransitionException) {
+            return $this->validateErrorResponse(
+                ['status' => [trans('passport::app.publications.redact-invalid')]],
+                trans('passport::app.publications.redact-invalid')
+            );
+        }
+    }
+
+    /**
+     * Persist the passport field->source attribute mapping configuration.
+     */
+    public function updateMapping(PassportMappingApiRequest $request): JsonResponse
+    {
+        abort_unless(PassportFeature::featureEnabled(), 404);
+
+        app(PassportMappingController::class)->persistMapping(
+            $request->validated('mapping') ?? [],
+            $request->filled('channel') ? (string) $request->input('channel') : null,
+            $request->filled('locale') ? (string) $request->input('locale') : null,
+        );
+
+        return $this->successResponse(trans('passport::app.mapping.saved'));
     }
 }
