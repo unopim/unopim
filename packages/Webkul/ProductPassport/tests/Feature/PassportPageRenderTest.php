@@ -3,7 +3,7 @@
 use Webkul\Publication\Services\Publisher;
 
 it('renders every payload section and links documents through the proxy', function (): void {
-    $version = $this->publishedPassportFixture(withCertificate: true);
+    $version = $this->publishedPassportFixture(withDocument: true);
 
     $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)
         ->assertOk()

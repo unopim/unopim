@@ -29,8 +29,9 @@ it('accepts a valid category field', function () {
     $this->loginWithPermissions('all', ['dashboard']);
 
     postJson(route('admin.catalog.category_fields.store'), [
-        'code'    => 'perf_field_'.uniqid(),
-        'type'    => 'text',
-        'section' => 'left',
+        'code'       => 'perf_field_'.uniqid(),
+        'type'       => 'text',
+        'section'    => 'left',
+        'validation' => 'none',
     ])->assertStatus(302);
 });

@@ -40,8 +40,20 @@ class PassportPayloadBuilder implements PayloadBuilder
         // of products, which are not variants.
         $values = empty($product->parent_id) ? ($product->values ?? []) : $product->resolvedValues();
 
-        $fields = [];
-        $documents = [];
+        // Tiers live under `publication.tiers`: the ProductPassport provider
+        // merges this package's config into the `publication` namespace (see
+        // ProductPassportServiceProvider::register), so there is no top-level
+        // `passport` config key.
+        $order = config('publication.tiers.order', ['consumer']);
+        $default = config('publication.tiers.default', 'consumer');
+        $map = config('publication.tiers.map', []);
+
+        // Clamp any misconfigured tier back to `default` so a typo in the map
+        // can never mint an orphan bucket that array_slice-by-order silently
+        // drops (which would hide a field from every tier including authority).
+        $tierOf = fn (string $code): string => in_array($map[$code] ?? $default, $order, true) ? ($map[$code] ?? $default) : $default;
+
+        $tiers = array_fill_keys($order, ['fields' => [], 'documents' => []]);
 
         foreach ($attributes as $attribute) {
             if (in_array($attribute->code, self::IDENTIFIER_CODES, true)) {
@@ -55,23 +67,26 @@ class PassportPayloadBuilder implements PayloadBuilder
             }
 
             $label = $attribute->getTranslatedValueWithFallback('name', $localeCode) ?: '['.$attribute->code.']';
+            $tier = $tierOf($attribute->code);
 
             if (in_array($attribute->type, self::DOCUMENT_TYPES, true)) {
                 $copiedPath = $this->copyToAssetDisk($context->uuid, $localeCode, $attribute->code, (string) $raw);
 
                 if ($copiedPath !== null) {
-                    $documents[] = ['code' => $attribute->code, 'label' => $label, 'path' => $copiedPath];
+                    $tiers[$tier]['documents'][] = ['code' => $attribute->code, 'label' => $label, 'path' => $copiedPath];
                 }
 
                 continue;
             }
 
-            $fields[] = [
+            $tiers[$tier]['fields'][] = [
                 'code'  => $attribute->code,
                 'label' => $label,
                 'value' => $this->formatValue($attribute, $raw, $channelCode),
             ];
         }
+
+        $base = $order[0];
 
         return [
             'identifier' => [
@@ -84,8 +99,14 @@ class PassportPayloadBuilder implements PayloadBuilder
                 'address'           => (string) (core()->getConfigData('catalog.product_passport.settings.operator_address', $channelCode) ?? ''),
                 'eu_representative' => (string) (core()->getConfigData('catalog.product_passport.settings.operator_eu_rep', $channelCode) ?? ''),
             ],
-            'sections'  => [['key' => self::GROUP_CODE, 'label' => trans('passport::app.public.sections.passport', [], $localeCode), 'fields' => $fields]],
-            'documents' => $documents,
+            // `sections[0].fields` and `documents` carry the base (consumer)
+            // tier verbatim — the template and JSON-LD resource already read
+            // exactly these, so an empty tiers map keeps today's single-tier
+            // shape byte-for-byte. `tiers` is the full partition the controller
+            // reads to elevate a signed request to operator/authority.
+            'sections'  => [['key' => self::GROUP_CODE, 'label' => trans('passport::app.public.sections.passport', [], $localeCode), 'fields' => $tiers[$base]['fields']]],
+            'documents' => $tiers[$base]['documents'],
+            'tiers'     => $tiers,
             // Identity/rebuild metadata ONLY — Publisher::publish() excludes
             // the entire `meta` key from the checksum (Arr::except($payload,
             // 'meta')), so anything content-bearing placed here is invisible

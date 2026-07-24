@@ -80,6 +80,9 @@ class PublicationController extends Controller
             return $this->notFound();
         }
 
+        [$granted, $grantedIndex] = $this->grantedTier($request);
+        $payload = $this->applyTierGate($version->payload, $grantedIndex);
+
         // Only a Published passport exposes payload content: withdrawn/redacted
         // states are publicly resolvable but the HTML path renders a tombstone
         // only, so the JSON-LD branch must fall through to that same tombstone
@@ -93,10 +96,13 @@ class PublicationController extends Controller
 
             $jsonldClass = $definition->jsonld;
 
-            return response()
-                ->json((new $jsonldClass($version->payload))->toArray($request))
-                ->header('Content-Type', 'application/ld+json')
-                ->header('X-Robots-Tag', 'noindex, nofollow');
+            return $this->tierCache(
+                response()
+                    ->json((new $jsonldClass($payload))->toArray($request))
+                    ->header('Content-Type', 'application/ld+json')
+                    ->header('X-Robots-Tag', 'noindex, nofollow'),
+                $grantedIndex,
+            );
         }
 
         app()->setLocale($version->locale->code);
@@ -105,6 +111,7 @@ class PublicationController extends Controller
             $version->checksum,
             $publication->status->value,
             $version->locale->code,
+            $granted,
             self::TEMPLATE_VERSION,
         ]), config('app.key')).'"';
 
@@ -113,17 +120,84 @@ class PublicationController extends Controller
         }
 
         $view = view($definition->template, [
-            'payload'   => $version->payload,
+            'payload'   => $payload,
             'withdrawn' => $publication->status !== PublicationStatus::Published,
             'uuid'      => $publication->uuid,
             'locale'    => $version->locale->code,
             'locales'   => $publication->channel->locales,
         ]);
 
-        return response($view->render())
-            ->header('ETag', $etag)
-            ->header('Cache-Control', 'public, max-age='.(int) (core()->getConfigData('general.publication.settings.cache_ttl', $publication->channel->code) ?? 3600))
-            ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow');
+        return $this->tierCache(
+            response($view->render())
+                ->header('ETag', $etag)
+                ->header('Cache-Control', 'public, max-age='.(int) (core()->getConfigData('general.publication.settings.cache_ttl', $publication->channel->code) ?? 3600))
+                ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
+            $grantedIndex,
+        );
+    }
+
+    /**
+     * Resolves the ESPR access tier this request is authorised for. Elevation
+     * above `consumer` is granted ONLY by a valid Laravel signed URL carrying a
+     * `tier` param that exists in the configured order — any missing/invalid
+     * signature, unknown tier, or tier outside `order` fails closed to the base
+     * tier. The `tier` param is never trusted without a valid signature, so an
+     * unsigned `?tier=authority` can never widen the surface.
+     *
+     * @return array{0: string, 1: int}
+     */
+    private function grantedTier(Request $request): array
+    {
+        $order = config('publication.tiers.order', ['consumer']);
+        $base = $order[0] ?? 'consumer';
+        $requested = (string) $request->query('tier', $base);
+
+        $granted = ($request->hasValidSignature() && in_array($requested, $order, true)) ? $requested : $base;
+
+        return [$granted, (int) array_search($granted, $order, true)];
+    }
+
+    /**
+     * Collapses the tier-partitioned payload down to only the fields/documents
+     * visible up to the granted tier, overwriting the base `sections`/`documents`
+     * the template and JSON-LD resource read. A payload without a `tiers` key
+     * (a frozen version built before tiering, or a redacted null payload) is
+     * returned untouched — its existing base shape is already the consumer view.
+     */
+    private function applyTierGate(mixed $payload, int $grantedIndex): mixed
+    {
+        if (! is_array($payload) || ! isset($payload['tiers']) || ! is_array($payload['tiers'])) {
+            return $payload;
+        }
+
+        $order = array_keys($payload['tiers']);
+        $fields = [];
+        $documents = [];
+
+        foreach (array_slice($order, 0, $grantedIndex + 1) as $tier) {
+            $fields = array_merge($fields, $payload['tiers'][$tier]['fields'] ?? []);
+            $documents = array_merge($documents, $payload['tiers'][$tier]['documents'] ?? []);
+        }
+
+        $payload['sections'][0]['fields'] = $fields;
+        $payload['documents'] = $documents;
+        unset($payload['tiers']);
+
+        return $payload;
+    }
+
+    /**
+     * An elevated (above-base) tier response carries content a signed URL
+     * holder is uniquely authorised to see, so it must never enter a shared
+     * cache; the base tier keeps whatever caching the caller already set.
+     */
+    private function tierCache(Response $response, int $grantedIndex): Response
+    {
+        if ($grantedIndex > 0) {
+            $response->headers->set('Cache-Control', 'private, no-store');
+        }
+
+        return $response;
     }
 
     /**

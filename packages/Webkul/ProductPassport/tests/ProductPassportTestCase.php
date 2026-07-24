@@ -32,13 +32,16 @@ class ProductPassportTestCase extends TestCase
 
     /**
      * Seeds the `dpp` group/attributes, attaches `dpp_material_composition`
-     * (and, when requested, `dpp_certificates`) to a fresh family alongside
-     * an unrelated group carrying a non-dpp "secret" attribute — proving the
-     * builder only ever surfaces `dpp`-group fields.
+     * (and, when requested, the consumer-tier `dpp_disassembly_guide` document)
+     * to a fresh family alongside an unrelated group carrying a non-dpp "secret"
+     * attribute — proving the builder only ever surfaces `dpp`-group fields. The
+     * demo document is deliberately a consumer-tier file (repair guide), not a
+     * compliance file, so generic document-rendering assertions stay valid under
+     * the default access-tier map that gates certificates to `authority`.
      *
      * @return array{0: Product, 1: PublicationContext, 2?: string}
      */
-    protected function productWithSecretAndDppAttributes(bool $withCertificate = false): array
+    protected function productWithSecretAndDppAttributes(bool $withDocument = false): array
     {
         resolve(DppAttributeSeeder::class)->run();
 
@@ -69,13 +72,13 @@ class ProductPassportTestCase extends TestCase
 
         $sourcePath = null;
 
-        if ($withCertificate) {
+        if ($withDocument) {
             $family->attributeFamilyGroupMappings()->where('attribute_group_id', $dppGroup->id)->first()
-                ?->customAttributes()->attach(Attribute::where('code', 'dpp_certificates')->first());
+                ?->customAttributes()->attach(Attribute::where('code', 'dpp_disassembly_guide')->first());
 
-            $sourcePath = 'product-files/dpp_certificates/certificate.pdf';
+            $sourcePath = 'product-files/dpp_disassembly_guide/guide.pdf';
             Storage::disk(config('filesystems.default'))->put($sourcePath, '%PDF-1.4 stub');
-            $values['common']['dpp_certificates'] = $sourcePath;
+            $values['common']['dpp_disassembly_guide'] = $sourcePath;
         }
 
         $product = ProductProxy::factory()->create([
@@ -90,7 +93,7 @@ class ProductPassportTestCase extends TestCase
             url: 'https://example.test/p/'.$product->id.'/'.$locale->code,
         );
 
-        return $withCertificate ? [$product, $context, $sourcePath] : [$product, $context];
+        return $withDocument ? [$product, $context, $sourcePath] : [$product, $context];
     }
 
     /**
@@ -235,9 +238,9 @@ class ProductPassportTestCase extends TestCase
      * end to end. Registers a perfect completeness score directly since
      * these tests aren't exercising `CompletenessGate` itself.
      */
-    protected function publishedPassportFixture(bool $withCertificate = false): PublicationVersion
+    protected function publishedPassportFixture(bool $withDocument = false): PublicationVersion
     {
-        [$product, $context] = $this->productWithSecretAndDppAttributes($withCertificate);
+        [$product, $context] = $this->productWithSecretAndDppAttributes($withDocument);
 
         ProductCompletenessScore::query()->create([
             'product_id'    => $product->id,
@@ -250,6 +253,50 @@ class ProductPassportTestCase extends TestCase
         $this->enablePublicTier($context->channel->code);
 
         return resolve(Publisher::class)->publish($product, $context->channel, $context->locale, 'dpp');
+    }
+
+    /**
+     * Publishes a passport carrying both a base-tier field
+     * (`dpp_material_composition`) and an operator-tier field
+     * (`dpp_supply_chain_notes`, classified `operator` in `passport.tiers.map`),
+     * so access-tier tests can assert the operator value is gated out of the
+     * consumer view yet revealed behind a valid signed `tier` URL.
+     */
+    protected function publishedTieredPassportFixture(): PublicationVersion
+    {
+        resolve(DppAttributeSeeder::class)->run();
+
+        $dppGroup = AttributeGroup::where('code', 'dpp')->firstOrFail();
+
+        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
+        $family->familyGroups()->attach($dppGroup->id);
+
+        $mapping = $family->attributeFamilyGroupMappings()->where('attribute_group_id', $dppGroup->id)->first();
+        $mapping?->customAttributes()->attach(Attribute::where('code', 'dpp_material_composition')->first());
+        $mapping?->customAttributes()->attach(Attribute::where('code', 'dpp_supply_chain_notes')->first());
+
+        $channel = ChannelProxy::factory()->create();
+        $locale = $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
+
+        $product = ProductProxy::factory()->create([
+            'attribute_family_id' => $family->id,
+            'values'              => ['locale_specific' => [$locale->code => [
+                'dpp_material_composition' => 'Recycled cotton, 80%',
+                'dpp_supply_chain_notes'   => 'Tier 2 supplier in Poland',
+            ]]],
+        ]);
+
+        ProductCompletenessScore::query()->create([
+            'product_id'    => $product->id,
+            'channel_id'    => $channel->id,
+            'locale_id'     => $locale->id,
+            'score'         => 100,
+            'missing_count' => 0,
+        ]);
+
+        $this->enablePublicTier($channel->code);
+
+        return resolve(Publisher::class)->publish($product, $channel, $locale, 'dpp');
     }
 
     /**

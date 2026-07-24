@@ -20,7 +20,7 @@ it('does not leak the acting admin identity across import jobs', function () {
 
     try {
         (new ImportTrackBatch($jobTrack))->handle();
-    } catch (\Throwable) {
+    } catch (Throwable) {
         // The import pipeline may abort on the factory's minimal batch; the
         // identity handling (set own user, clear on exit) is what this asserts.
     }

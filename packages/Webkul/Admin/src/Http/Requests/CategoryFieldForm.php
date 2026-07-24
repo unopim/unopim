@@ -39,8 +39,14 @@ class CategoryFieldForm extends FormRequest
             'position' => ['sometimes', 'integer', 'min:0'],
         ];
 
+        // Create requires a validation choice; update leaves it untouched. In both
+        // cases a concrete rule (other than the 'none' sentinel) is enum-checked.
+        if (! $id) {
+            $rules['validation'] = ['required'];
+        }
+
         if ($this->filled('validation') && $this->input('validation') !== 'none') {
-            $rules['validation'] = [new ValidationTypes];
+            $rules['validation'][] = new ValidationTypes;
         }
 
         return $rules;

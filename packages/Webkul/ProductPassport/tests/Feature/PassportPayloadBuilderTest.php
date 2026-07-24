@@ -35,7 +35,7 @@ it('carries the configured economic operator', function (): void {
 });
 
 it('copies a referenced document onto the asset disk and stamps the final path', function (): void {
-    [$product, $context, $sourcePath] = $this->productWithSecretAndDppAttributes(withCertificate: true);
+    [$product, $context, $sourcePath] = $this->productWithSecretAndDppAttributes(withDocument: true);
 
     $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
 
