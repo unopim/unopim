@@ -1,16 +1,3 @@
-/**
- * Progressive-enhancement admin navigation.
- *
- * Instead of a full document reload, an internal admin link is fetched over
- * ajax and only the `#app` region is swapped in, keeping the loaded JS runtime
- * and already-cached assets alive and removing the white flash. The server
- * still returns the whole page, so the sidebar, active menu state, header and
- * tabs all come back correct for free.
- *
- * This is strictly additive: ANY failure (network, parse, missing #app, a
- * script that throws while re-registering) falls back to a normal full
- * navigation, so a page can only ever be made smoother, never broken.
- */
 import { HEADERS, META, NAV_EVENTS } from '../constants';
 
 export default function initAjaxNavigation() {
@@ -20,9 +7,6 @@ export default function initAjaxNavigation() {
 
     window.__ajaxNavInitialised = true;
 
-    // Public programmatic navigation, for JS-driven links that are not plain
-    // anchors (e.g. datagrid row actions). Falls back to a full load on failure
-    // like every other visit.
     window.unopim = window.unopim || {};
     window.unopim.visit = (url) => visit(url, true);
 
@@ -68,7 +52,6 @@ export default function initAjaxNavigation() {
             return false;
         }
 
-        // Pure in-page anchors are the browser's job.
         if (url.pathname === window.location.pathname && url.hash) {
             return false;
         }
@@ -79,18 +62,18 @@ export default function initAjaxNavigation() {
     function adminPrefix() {
         const meta = document.querySelector('meta[name="' + META.ADMIN_URL + '"]');
 
-        const configured = meta ? meta.getAttribute('content') : '';
+        const path = new URL((meta && meta.getAttribute('content')) || 'admin', window.location.origin).pathname;
 
-        const prefix = (configured || window.location.pathname.split('/').filter(Boolean)[0] || 'admin')
-            .replace(/^\/+|\/+$/g, '');
+        const marker = '/' + (path.split('/').filter(Boolean).pop() || 'admin') + '/';
 
-        return '/' + prefix + '/';
+        const here = window.location.pathname + '/';
+
+        const at = here.indexOf(marker);
+
+        return at !== -1 ? here.slice(0, at + marker.length) : '/' + path.replace(/^\/+|\/+$/g, '') + '/';
     }
 
     async function visit(url, push) {
-        // Public, cancelable lifecycle hook: a module can call
-        // event.preventDefault() to force a normal full navigation for a case
-        // it cannot handle over ajax.
         const before = dispatch(NAV_EVENTS.BEFORE, { url }, true);
 
         if (before.defaultPrevented) {
@@ -102,9 +85,6 @@ export default function initAjaxNavigation() {
         toggleProgress(true);
 
         try {
-            // Use fetch, not axios: axios sets X-Requested-With globally, which
-            // makes controllers return their datagrid JSON instead of the full
-            // page. A plain fetch reads as a normal navigation and returns HTML.
             const response = await fetch(url, {
                 headers: { [HEADERS.AJAX_NAV]: 'true' },
                 credentials: 'same-origin',
@@ -115,11 +95,6 @@ export default function initAjaxNavigation() {
                 throw new Error('Request failed with status ' + response.status);
             }
 
-            // Follow the server's redirects in the address bar too. When the
-            // requested URL 302s (e.g. ai-agent/settings → configuration/...),
-            // `response.url` is the final URL; pushing the original would leave
-            // the bar stale so a page form with `action=""` posts to the wrong
-            // route (405). Fall back to the request URL when unavailable.
             const finalUrl = response.url || url;
 
             const html = await response.text();
@@ -144,8 +119,6 @@ export default function initAjaxNavigation() {
 
             removePageScripts();
 
-            // Page-specific inline styles (e.g. the unsaved-changes bar) live in
-            // `@push('scripts')`; without this the swapped page loses that CSS.
             replaceInjectedStyles(styles);
 
             window.createAdminApp();
@@ -162,9 +135,6 @@ export default function initAjaxNavigation() {
 
             (document.getElementById('main-content') ?? window).scrollTo(0, 0);
 
-            // The new page is mounted and live: modules re-initialise any
-            // non-Vue widgets (third-party libraries, charts, editors) here.
-            // Vue components re-run their own mounted() hooks automatically.
             dispatch(NAV_EVENTS.SUCCESS, { url });
         } catch (error) {
             dispatch(NAV_EVENTS.ERROR, { url, error });
@@ -177,11 +147,6 @@ export default function initAjaxNavigation() {
         }
     }
 
-    /**
-     * Fire a public navigation lifecycle event on `document`. Any code — Vue or
-     * plain JS, core or plugin — can listen without depending on the Vue app
-     * instance, which is torn down and rebuilt on every visit.
-     */
     function dispatch(name, detail, cancelable = false) {
         const event = new CustomEvent(name, { detail, cancelable, bubbles: true });
 
@@ -190,11 +155,6 @@ export default function initAjaxNavigation() {
         return event;
     }
 
-    /**
-     * The persistent app bundle lives in <head>; every <script> in <body> is a
-     * per-page `@stack('scripts')` registration (component definitions and their
-     * `text/x-template` blocks) that must be re-run against the fresh app.
-     */
     function collectPageScripts(doc) {
         return [...doc.body.querySelectorAll('script')].filter((script) => {
             return ! script.src || ! /assets\/app-.*\.js/.test(script.src);
@@ -208,16 +168,6 @@ export default function initAjaxNavigation() {
             || type === 'module';
     }
 
-    /**
-     * Drop the previous page's inline scripts and templates (they have already
-     * run / are about to be replaced). External library `<script src>` nodes are
-     * kept so a lib such as TinyMCE is not re-fetched and re-run on every visit.
-     */
-    /**
-     * Swap in the incoming page's inline `<style>` blocks. Previously-injected
-     * ones are dropped first so styles do not accumulate across visits. The
-     * persistent bundle stylesheet (a `<link>` in <head>) is never touched.
-     */
     function replaceInjectedStyles(styles) {
         document.querySelectorAll('style[data-ajax-nav-style]').forEach((node) => node.remove());
 
@@ -243,9 +193,6 @@ export default function initAjaxNavigation() {
     async function injectScripts(scripts) {
         const pending = [];
 
-        // Pass 1: put templates/JSON into the DOM and start loading external
-        // libraries (deduped). Inline scripts wait until the libs are ready so a
-        // component's init (e.g. TinyMCE) can rely on the global being present.
         scripts.forEach((original) => {
             const type = (original.getAttribute('type') || '').toLowerCase();
 
@@ -268,7 +215,6 @@ export default function initAjaxNavigation() {
                         script.type = type;
                     }
 
-                    // Never let a slow or failing library block navigation.
                     script.onload = resolve;
                     script.onerror = resolve;
 
@@ -279,10 +225,6 @@ export default function initAjaxNavigation() {
 
         await Promise.all(pending);
 
-        // Pass 2: run inline scripts in document order, each in its OWN function
-        // scope so page-level `const`/`let`/`function` declarations cannot
-        // collide when the same script runs again on a later navigation. A
-        // throwing script is logged, never allowed to break navigation.
         scripts.forEach((original) => {
             const type = (original.getAttribute('type') || '').toLowerCase();
 
