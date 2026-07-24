@@ -7,7 +7,7 @@ return [
     |--------------------------------------------------------------------------
     |
     | Dedicated queue for publish jobs, so bulk publishing never competes with
-    | the import pipeline. Run a worker with:
+    | the import pipeline. The worker must consume this queue:
     |
     |   php artisan queue:work --queue=publication
     |
@@ -53,4 +53,17 @@ return [
     |
     */
     'global_rate_limit' => (int) env('PUBLICATION_GLOBAL_RATE_LIMIT', 6000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Asset Disk
+    |--------------------------------------------------------------------------
+    |
+    | Never `filesystems.default` — that disk is `public`, symlinked into
+    | `public/storage` and served directly by nginx with no publication check
+    | at all. Documents referenced by a published payload are copied here
+    | (Task 10, at build time) and served exclusively through the proxy below.
+    |
+    */
+    'asset_disk' => env('PUBLICATION_ASSET_DISK', 'private'),
 ];

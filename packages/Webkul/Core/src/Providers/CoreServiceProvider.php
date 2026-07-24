@@ -3,6 +3,7 @@
 namespace Webkul\Core\Providers;
 
 use Elastic\Elasticsearch\Client as ElasticSearchClient;
+use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\DB;
@@ -24,9 +25,12 @@ use Webkul\Core\Exceptions\Handler;
 use Webkul\Core\Facades\Core as CoreFacade;
 use Webkul\Core\Facades\ElasticSearch as ElasticSearchFacade;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
+use Webkul\Core\Helpers\Locales as LocalesHelper;
 use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Core\RequestMemo;
 use Webkul\Core\View\Compilers\BladeCompiler;
 use Webkul\Theme\ViewRenderEventManager;
 
@@ -80,6 +84,17 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->bind(ExceptionHandler::class, Handler::class);
 
+        /*
+         * The framework's default redirect target for unauthenticated requests
+         * is the (nonexistent) `login` route, which the Authenticate middleware
+         * resolves eagerly while building the exception — throwing a 500 before
+         * any handler runs. Point web requests at the admin login and let API
+         * requests fall through to the JSON 401 in the exception handler.
+         */
+        Authenticate::redirectUsing(
+            fn ($request) => $request->is('api/*') ? null : route('admin.session.create')
+        );
+
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'core');
 
         Event::listen('unopim.shop.layout.body.after', static function (ViewRenderEventManager $viewRenderEventManager): void {
@@ -106,6 +121,12 @@ class CoreServiceProvider extends ServiceProvider
         }
 
         DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
+
+        // Drop the request-scoped config memo whenever a config row changes, so a
+        // write is reflected by a later read within the same request/job.
+        $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
+        CoreConfig::saved($forgetConfigMemo);
+        CoreConfig::deleted($forgetConfigMemo);
     }
 
     /**
@@ -194,6 +215,17 @@ class CoreServiceProvider extends ServiceProvider
             $app->make(LocaleRepository::class),
             $app->make(ChannelRepository::class),
         ));
+
+        $this->app->scoped(RequestMemo::class);
+
+        /**
+         * Astrotomic registers its own Locales helper as a singleton, but every TranslatableModel
+         * resolves this subclass, which is otherwise rebuilt on each getLocalesHelper() call and
+         * reloads all locales every time. Astrotomic hits that helper several times per translated
+         * attribute, so serializing a page of models turned into thousands of locale reloads. Scope
+         * it so it loads once per request — Octane-safe, since a locale added mid-worker shows next request.
+         */
+        $this->app->scoped(LocalesHelper::class);
 
         /**
          * Register ElasticSearch as a singleton.

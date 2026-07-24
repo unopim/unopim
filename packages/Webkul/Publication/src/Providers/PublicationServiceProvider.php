@@ -5,26 +5,47 @@ namespace Webkul\Publication\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Publication\DataTransferObjects\PublicationType;
+use Webkul\Publication\Events\PublicationPublished;
+use Webkul\Publication\Events\PublicationRedacted;
+use Webkul\Publication\Http\Controllers\PublicationAssetController;
+use Webkul\Publication\Http\Controllers\PublicationCarrierController;
 use Webkul\Publication\Http\Controllers\PublicationController;
 use Webkul\Publication\Http\Middleware\EnsurePublicationEnabled;
 use Webkul\Publication\Http\Middleware\PublicationErrorBoundary;
 use Webkul\Publication\Http\Middleware\PublicationRateLimit;
+use Webkul\Publication\Http\Middleware\SecurePublicHeaders;
+use Webkul\Publication\Listeners\GuardChannelDeletionAgainstPublications;
+use Webkul\Publication\Listeners\GuardProductDeletionAgainstPublications;
+use Webkul\Publication\Listeners\PrunePublicationVersionDocumentsOnRedaction;
+use Webkul\Publication\Listeners\SyncPublicationCounters;
+use Webkul\Publication\Listeners\SyncPublicationGtin;
+use Webkul\Publication\Listeners\SyncPublicationVersionDocuments;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 
 class PublicationServiceProvider extends ServiceProvider
 {
+    /**
+     * Registers the request-scoped publication type registry.
+     */
     public function register(): void
     {
         $this->app->scoped(PublicationTypeRegistry::class);
     }
 
+    /**
+     * Boots the package: config, translations, migrations, views, and routes.
+     */
     public function boot(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/publication.php', 'publication');
+        $this->mergeConfigFrom(__DIR__.'/../Config/publication_settings.php', 'core');
+        $this->mergeConfigFrom(__DIR__.'/../Config/system_settings.php', 'system_settings');
+        $this->mergeConfigFrom(__DIR__.'/../Config/acl.php', 'acl');
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'publication');
 
@@ -34,17 +55,21 @@ class PublicationServiceProvider extends ServiceProvider
 
         $this->app->register(ModuleServiceProvider::class);
 
+        Event::listen(PublicationPublished::class, SyncPublicationVersionDocuments::class);
+        Event::listen(PublicationPublished::class, SyncPublicationCounters::class);
+        Event::listen(PublicationPublished::class, SyncPublicationGtin::class);
+        Event::listen(PublicationRedacted::class, PrunePublicationVersionDocumentsOnRedaction::class);
+        Event::listen('catalog.product.delete.before', GuardProductDeletionAgainstPublications::class);
+        Event::listen('core.channel.delete.before', GuardChannelDeletionAgainstPublications::class);
+
         $this->registerPublicRoutes();
     }
 
     /**
-     * Public so a consuming package's own provider (or a test that mutates
-     * `publication.types` after this provider has already booted) can
-     * re-trigger registration once its type is actually present in config.
-     * Safe to call more than once as long as each type is only added to
-     * config once: middleware aliases and the rate limiter definition are
-     * simple overwrites, and a type present at the first call contributes
-     * no routes to re-add on a later call.
+     * Public so a consuming provider (or a test that mutates
+     * `publication.types` post-boot) can re-trigger registration. Safe to
+     * call more than once: aliases/rate limiter are simple overwrites, and
+     * an already-registered type contributes no routes to re-add.
      */
     public function registerPublicRoutes(): void
     {
@@ -52,6 +77,7 @@ class PublicationServiceProvider extends ServiceProvider
         $router->aliasMiddleware('publication.enabled', EnsurePublicationEnabled::class);
         $router->aliasMiddleware('publication.errors', PublicationErrorBoundary::class);
         $router->aliasMiddleware('publication.ratelimit', PublicationRateLimit::class);
+        $router->aliasMiddleware('publication.headers', SecurePublicHeaders::class);
 
         RateLimiter::for('publication', function (Request $request) {
             return [
@@ -60,39 +86,39 @@ class PublicationServiceProvider extends ServiceProvider
             ];
         });
 
-        // Reads config directly (never database, so this stays static and
-        // route:cache remains valid) rather than resolving the scoped
-        // PublicationTypeRegistry singleton: that instance memoizes all()
-        // permanently on first call, and consuming it here — at boot, before
-        // any request-time config mutation — would freeze every request for
-        // the rest of this container's lifetime onto the boot-time type list.
+        // Reads config directly rather than resolving the scoped PublicationTypeRegistry:
+        // that registry memoizes all() on first call, so consuming it here at boot would
+        // freeze every request onto the boot-time type list.
         foreach (collect(config('publication.types', []))->map(
             fn (array $config, string $code): PublicationType => PublicationType::fromConfig($code, $config)
         ) as $type) {
-            // Deliberately NO ->whereUuid()/->where('locale', ...) constraints:
-            // a route whose regex fails to match throws NotFoundHttpException
-            // OUTSIDE any route's own middleware (routing itself fails before
-            // a route, and therefore its group's publication.errors/enabled
-            // middleware, is ever selected) — bootstrap/app.php's blanket
-            // handler would render admin::errors.index for that request,
-            // unconditionally, regardless of anything this package does.
-            // Segment COUNT (1 vs 2 vs Task 6's 3) already disambiguates these
-            // routes without needing shape constraints, and Locale.code has no
-            // fixed format in this codebase (confirmed: LocaleFactory yields
-            // bare 2-letter codes, not always "xx_XX") — so validating shape
-            // is the controller's job, which returns a safe 404 either way.
-            Route::middleware(['publication.errors', 'publication.enabled', 'publication.ratelimit'])
+            // No ->whereUuid()/->where('locale', ...) constraints on the first and
+            // third routes: a route regex failure throws NotFoundHttpException
+            // outside this group's own middleware, so Laravel's Pipeline renders it
+            // via the global handler (admin::errors.index) instead. Segment count
+            // plus the literal `asset` token disambiguate these three routes; shape
+            // validation is the controller's job, which always returns our own 404.
+            // The asset route's own `where('path', ...)` is a functional necessity,
+            // not just a hardening extra: without it the `{path}` segment cannot
+            // capture the slashes a nested document path contains at all.
+            Route::middleware(['publication.errors', 'publication.enabled', 'publication.headers', 'publication.ratelimit'])
                 ->prefix($type->routePrefix)
                 ->group(function () use ($type): void {
                     Route::get('/{uuid}', [PublicationController::class, 'redirect'])
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.show');
 
-                    // Task 6 inserts `/{uuid}/asset/{path}` here, BEFORE the
-                    // locale route below — a `{locale}` segment would
-                    // otherwise swallow the literal `asset` path segment.
-                    // See Task 6 Step 4 for the full, final group in
-                    // registration order.
+                    Route::get('/{uuid}/asset/{path}', [PublicationAssetController::class, 'show'])
+                        ->where('path', '[A-Za-z0-9][A-Za-z0-9_.\/%-]*')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.asset');
+
+                    // Registered before `/{uuid}/{locale}`: `carrier.svg` contains
+                    // a dot and would otherwise be captured as a `{locale}` segment,
+                    // so first-match ordering must resolve it here.
+                    Route::get('/{uuid}/carrier.svg', [PublicationCarrierController::class, 'show'])
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.carrier');
 
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)
@@ -100,16 +126,23 @@ class PublicationServiceProvider extends ServiceProvider
                 });
         }
 
-        // RouteCollection::add() snapshots $route->getName() the instant
-        // Route::get() runs, BEFORE the fluent ->name() call above has set
-        // it — so the name list is only ever populated by Laravel's own
-        // Application::booted() callback (Illuminate\Foundation\Support\
-        // Providers\RouteServiceProvider), which fires exactly once, early
-        // in the normal boot sequence. Any registration that happens after
-        // that point (e.g. this method being re-invoked once a consuming
-        // package's type lands in config) needs its own explicit refresh, or
-        // route('publication.public.{type}.show.locale', ...) throws
-        // RouteNotFoundException despite the route matching requests fine.
+        // GS1 Digital Link's `/01/{gtin}` grammar is fixed by the standard, not
+        // per-type-prefixed, so it lives in its own global group outside the loop
+        // above while sharing the identical public middleware stack. It resolves
+        // to the `dpp` type; the numeric `{gtin}` regex keeps it from shadowing any
+        // per-type prefix route (all of which begin with an alphabetic segment).
+        Route::middleware(['publication.errors', 'publication.enabled', 'publication.headers', 'publication.ratelimit'])
+            ->group(function (): void {
+                Route::get('/01/{gtin}', [PublicationController::class, 'resolveByGtin'])
+                    ->where('gtin', '[0-9]{8,14}')
+                    ->defaults('type', 'dpp')
+                    ->name('publication.public.gs1');
+            });
+
+        // RouteCollection snapshots the route name before ->name() sets it, and the
+        // name-lookup cache is only rebuilt once during normal boot. A late
+        // re-invocation of this method needs its own explicit refresh, or route()
+        // throws RouteNotFoundException despite the route matching requests fine.
         $router->getRoutes()->refreshNameLookups();
     }
 }

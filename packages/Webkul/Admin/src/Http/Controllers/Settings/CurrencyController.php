@@ -6,10 +6,10 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\CurrencyDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\CurrencyForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Core\Repositories\CurrencyRepository;
-use Webkul\Core\Rules\Code;
 
 class CurrencyController extends Controller
 {
@@ -37,17 +37,8 @@ class CurrencyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(CurrencyForm $request): JsonResponse
     {
-        $messages = [
-            'code.required' => 'The code field is required.',
-            'code.unique'   => 'The code must be unique.',
-        ];
-
-        $this->validate(request(), [
-            'code' => 'required|min:3|max:3|unique:currencies,code',
-        ], $messages);
-
         $this->currencyRepository->create(request()->only([
             'code',
             'symbol',
@@ -77,14 +68,9 @@ class CurrencyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(): JsonResponse
+    public function update(CurrencyForm $request): JsonResponse
     {
         $id = request('id');
-
-        $this->validate(request(), [
-            'code'      => ['required', 'unique:currencies,code,'.$id, new Code],
-            'status'    => 'boolean',
-        ]);
 
         if (! request()->status && $this->currencyRepository->checkCurrencyBeingUsed($id)) {
             return new JsonResponse([

@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Le mot de passe actuel que vous avez saisi est incorrect.',
             'name'                => 'Nom',
             'password'            => 'Mot de passe',
+            'gravatar-preview'    => 'Utilisation de votre image Gravatar.com',
             'profile-image'       => 'Image de profil',
             'save-btn'            => 'Enregistrer le compte',
             'title'               => 'Mon compte',
             'ui-locale'           => 'Langue de l\'interface',
             'update-success'      => 'Compte mis à jour avec succès',
-            'upload-image-info'   => 'Télécharger une image de profil (110px x 110px)',
+            'upload-image-info'   => 'Téléchargez une image de profil (110px X 110px), ou utilisez votre image Gravatar.com liée à votre adresse e-mail.',
             'user-timezone'       => 'Fuseau horaire',
             'catalog-locale'      => 'Langue du catalogue',
             'catalog-locale-info' => 'La langue dans laquelle le contenu de votre catalogue est rédigé. Elle est distincte de la langue de l\'interface ci-dessus.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Média introuvable.',
+            'index'          => [
                 'already-taken'             => 'Le :name a déjà été pris.',
                 'variant-sku-already-taken' => 'Le SKU de la variante ":sku" est déjà utilisé.',
                 'variant-sku-label'         => 'SKU de la variante :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Créé le',
                     'product-type' => 'Type de produit',
                 ],
+                'more'         => 'Plus',
                 'more-actions' => 'Plus d\'actions',
                 'variations'   => [
                     'title'          => 'Variations',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Unique',
                     'delete-failed'            => 'Erreur lors de la suppression de l\'attribut.',
                     'mass-delete-failed'       => 'Les attributs sélectionnés ne peuvent pas être supprimés.',
+                    'mass-delete-partial'      => 'Impossible de supprimer :count attribut(s) car ils sont utilisés dans des produits configurables.',
                     'delete-attribute-failure' => 'Impossible de supprimer cet attribut car il est utilisé pour des produits configurables.',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'L\'attribut avec le code ":code" est introuvable',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Option d\'attribut supprimée avec succès',
+            'swatch-not-found'     => 'Aucune image de nuancier trouvée pour cette option.',
             'create-success'       => 'Option d\'attribut créée avec succès',
             'update-success'       => 'Option d\'attribut mise à jour avec succès',
             'usable-in-grid-error' => 'Seuls 4 attributs peuvent être utilisés dans la grille.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Option de champ de catégorie supprimée avec succès',
             'create-success'      => 'Option de champ de catégorie créée avec succès',
             'update-success'      => 'Option de champ de catégorie mise à jour avec succès',
             'update-unknown-code' => 'Aucune option de champ de catégorie n\'existe avec le code « :code ».',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Langue avec le code :code introuvable.',
                 'create-btn'            => 'Ajouter un langage',
                 'locale'                => 'Langue',
                 'title'                 => 'Langues',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Devise avec le code :code introuvable.',
                 'create-btn'            => 'Ajouter une devise',
                 'currency'              => 'Devise',
                 'title'                 => 'Devises',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Canal avec le code :code introuvable.',
                 'create-btn'           => 'Ajouter un canal',
                 'delete-failed'        => 'La suppression du canal a échoué',
                 'delete-success'       => 'Le canal a été supprimé avec succès.',
@@ -1753,7 +1763,7 @@ return [
                     'save-btn'            => 'Enregistrer l\'utilisateur',
                     'status'              => 'Statut',
                     'title'               => 'Ajouter un utilisateur',
-                    'upload-image-info'   => 'Envoyer une image de profil (110px x 110px)',
+                    'upload-image-info'   => 'Téléchargez une image de profil (110px X 110px), ou utilisez votre image Gravatar.com liée à votre adresse e-mail.',
                     'user-timezone'       => 'Fuseau horaire',
                     'catalog-locale'      => 'Langue du catalogue',
                     'catalog-locale-info' => 'La langue dans laquelle cet utilisateur rédige le contenu du catalogue. Distincte de sa langue d\'interface.',
@@ -1796,18 +1806,19 @@ return [
                 'status'           => 'Statut',
                 'title'            => 'Modifier l\'utilisateur',
             ],
-            'activate-warning'          => 'Votre compte n\'a pas été activé, veuillez contacter l\'administrateur.',
-            'cannot-change'             => 'L\'utilisateur ne peut pas être modifié',
-            'cannot-escalate-role'      => 'Vous n\'avez pas la permission d\'attribuer un rôle avec accès complet.',
-            'create-success'            => 'L\'utilisateur a été créé avec succès.',
-            'delete-failed'             => 'Erreur lors de la suppression de l\'utilisateur.',
-            'delete-success'            => 'L\'utilisateur a été supprimé avec succès.',
-            'delete-warning'            => 'Êtes-vous sûr de vouloir effectuer cette action ?',
-            'incorrect-password'        => 'Mot de passe incorrect',
-            'last-delete-error'         => 'La suppression du dernier utilisateur a échoué',
-            'login-error'               => 'Veuillez vérifier vos informations d\'identification et réessayer.',
-            'update-success'            => 'L\'utilisateur a été mis à jour avec succès.',
-            'current-user-delete-error' => 'L\'utilisateur connecté ne peut pas être supprimé',
+            'activate-warning'             => 'Votre compte n\'a pas été activé, veuillez contacter l\'administrateur.',
+            'cannot-change'                => 'L\'utilisateur ne peut pas être modifié',
+            'cannot-escalate-role'         => 'Vous n\'avez pas la permission d\'attribuer un rôle avec accès complet.',
+            'create-success'               => 'L\'utilisateur a été créé avec succès.',
+            'delete-failed'                => 'Erreur lors de la suppression de l\'utilisateur.',
+            'delete-success'               => 'L\'utilisateur a été supprimé avec succès.',
+            'delete-warning'               => 'Êtes-vous sûr de vouloir effectuer cette action ?',
+            'incorrect-password'           => 'Mot de passe incorrect',
+            'last-delete-error'            => 'La suppression du dernier utilisateur a échoué',
+            'login-error'                  => 'Veuillez vérifier vos informations d\'identification et réessayer.',
+            'update-success'               => 'L\'utilisateur a été mis à jour avec succès.',
+            'current-user-delete-error'    => 'L\'utilisateur connecté ne peut pas être supprimé',
+            'last-all-access-delete-error' => 'Le dernier administrateur actif avec accès complet ne peut pas être supprimé.',
         ],
         'system-settings' => [
             'title'              => 'Paramètres système',
@@ -2689,6 +2700,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Passeports produit',
+        'publish'                  => 'Publier',
+        'withdraw'                 => 'Retirer',
         'addresses'                => 'Adresses',
         'attribute-families'       => 'Familles d\'attributs',
         'attribute-groups'         => 'Groupes d\'attributs',

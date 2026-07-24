@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'La password attuale è errata.',
             'name'                => 'Nome',
             'password'            => 'Password',
+            'gravatar-preview'    => 'Utilizzo della tua immagine Gravatar.com',
             'profile-image'       => 'Immagine del profilo',
             'save-btn'            => 'Salva account',
             'title'               => 'Il mio account',
             'ui-locale'           => 'Locale utente',
             'update-success'      => 'Account aggiornato con successo',
-            'upload-image-info'   => 'Carica un\'immagine del profilo (110px X 110px)',
+            'upload-image-info'   => 'Carica un\'immagine del profilo (110px X 110px), oppure usa la tua immagine Gravatar.com collegata alla tua email.',
             'user-timezone'       => 'Fuso orario',
             'catalog-locale'      => 'Lingua del catalogo',
             'catalog-locale-info' => 'La lingua in cui è scritto il contenuto del catalogo. È separata dalla lingua dell\'interfaccia indicata sopra.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Impossibile trovare il file multimediale.',
+            'index'          => [
                 'already-taken'             => ':name è già stato preso.',
                 'variant-sku-already-taken' => 'Lo SKU della variante ":sku" è già in uso.',
                 'variant-sku-label'         => 'SKU della variante :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Data di creazione',
                     'product-type' => 'Tipo di prodotto',
                 ],
+                'more'         => 'Altro',
                 'more-actions' => 'Altre azioni',
                 'variations'   => [
                     'title'          => 'Variazioni',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Unico',
                     'delete-failed'            => 'Impossibile eliminare questo attributo.',
                     'mass-delete-failed'       => 'Impossibile eliminare gli attributi selezionati.',
+                    'mass-delete-partial'      => 'Impossibile eliminare :count attributo/i perché sono utilizzati in prodotti configurabili.',
                     'delete-attribute-failure' => 'Questo attributo non può essere rimosso perché è in uso per i prodotti configurabili',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'Attributo con codice ":code" non trovato',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opzione attributo eliminata con successo',
+            'swatch-not-found'     => 'Nessuna immagine campione trovata per questa opzione.',
             'create-success'       => 'Opzione attributo creata con successo',
             'update-success'       => 'Opzione attributo aggiornata con successo',
             'usable-in-grid-error' => 'Possono essere contrassegnati come utilizzabili nella griglia solo 4 attributi.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'I seguenti campi non possono essere modificati: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opzione campo categoria eliminata con successo',
             'create-success'      => 'Opzione del campo categoria creata con successo',
             'update-success'      => 'Opzione del campo categoria aggiornata con successo',
             'update-unknown-code' => 'Nessuna opzione campo categoria esiste con il codice ":code".',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Localizzazione con codice :code non trovata.',
                 'create-btn'            => 'Crea Località',
                 'locale'                => 'Località',
                 'title'                 => 'Località',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta con codice :code non trovata.',
                 'create-btn'            => 'Crea Valuta',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valute',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Canale con codice :code non trovato.',
                 'create-btn'           => 'Crea Canale',
                 'delete-failed'        => 'Eliminazione del canale non riuscita',
                 'delete-success'       => 'Canale eliminato con successo.',
@@ -1753,7 +1763,7 @@ return [
                     'save-btn'            => 'Salva Utente',
                     'status'              => 'Stato',
                     'title'               => 'Crea Utente',
-                    'upload-image-info'   => 'Carica un\'immagine del profilo (110px X 110px)',
+                    'upload-image-info'   => 'Carica un\'immagine del profilo (110px X 110px), oppure usa la tua immagine Gravatar.com collegata alla tua email.',
                     'user-timezone'       => 'Fuso orario',
                     'catalog-locale'      => 'Lingua del catalogo',
                     'catalog-locale-info' => 'La lingua in cui questo utente scrive i contenuti del catalogo. Separata dalla sua lingua dell\'interfaccia.',
@@ -1796,18 +1806,19 @@ return [
                 'status'           => 'Stato',
                 'title'            => 'Modifica Utente',
             ],
-            'activate-warning'          => 'Il tuo account non è ancora stato attivato, contatta l\'amministratore.',
-            'cannot-change'             => 'Non è possibile modificare l\'utente',
-            'cannot-escalate-role'      => 'Non hai il permesso di assegnare un ruolo con accesso completo.',
-            'create-success'            => 'Utente creato con successo.',
-            'delete-failed'             => 'Eliminazione utente fallita.',
-            'delete-success'            => 'Utente eliminato con successo.',
-            'delete-warning'            => 'Sei sicuro di voler eseguire questa azione?',
-            'incorrect-password'        => 'Password errata',
-            'last-delete-error'         => 'L\'eliminazione dell\'ultimo utente non è riuscita',
-            'login-error'               => 'Controlla le tue credenziali e riprova.',
-            'update-success'            => 'Utente aggiornato con successo.',
-            'current-user-delete-error' => 'Non è possibile eliminare l\'utente attualmente connesso.',
+            'activate-warning'             => 'Il tuo account non è ancora stato attivato, contatta l\'amministratore.',
+            'cannot-change'                => 'Non è possibile modificare l\'utente',
+            'cannot-escalate-role'         => 'Non hai il permesso di assegnare un ruolo con accesso completo.',
+            'create-success'               => 'Utente creato con successo.',
+            'delete-failed'                => 'Eliminazione utente fallita.',
+            'delete-success'               => 'Utente eliminato con successo.',
+            'delete-warning'               => 'Sei sicuro di voler eseguire questa azione?',
+            'incorrect-password'           => 'Password errata',
+            'last-delete-error'            => 'L\'eliminazione dell\'ultimo utente non è riuscita',
+            'login-error'                  => 'Controlla le tue credenziali e riprova.',
+            'update-success'               => 'Utente aggiornato con successo.',
+            'current-user-delete-error'    => 'Non è possibile eliminare l\'utente attualmente connesso.',
+            'last-all-access-delete-error' => 'L\'ultimo amministratore attivo con accesso completo non può essere eliminato.',
         ],
         'system-settings' => [
             'title'              => 'Impostazioni di sistema',
@@ -2691,6 +2702,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Passaporti prodotto',
+        'publish'                  => 'Pubblica',
+        'withdraw'                 => 'Ritira',
         'addresses'                => 'Indirizzi',
         'attribute-families'       => 'Famiglie di attributi',
         'attribute-groups'         => 'Gruppi di attributi',

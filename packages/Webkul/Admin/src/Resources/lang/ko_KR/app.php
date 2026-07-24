@@ -77,12 +77,13 @@ return [
             'invalid-password'    => '입력하신 현재 비밀번호가 잘못되었습니다.',
             'name'                => '이름',
             'password'            => '비밀번호',
+            'gravatar-preview'    => 'Gravatar.com 이미지 사용 중',
             'profile-image'       => '프로필 이미지',
             'save-btn'            => '계정 저장',
             'title'               => '내 계정',
             'ui-locale'           => 'UI 로캘',
             'update-success'      => '계정이 성공적으로 업데이트되었습니다',
-            'upload-image-info'   => '프로필 이미지를 업로드하세요 (110px X 110px)',
+            'upload-image-info'   => '프로필 이미지를 업로드(110px X 110px)하거나 이메일에 연결된 Gravatar.com 이미지를 사용하세요.',
             'user-timezone'       => '시간대',
             'catalog-locale'      => '카탈로그 언어',
             'catalog-locale-info' => '카탈로그 콘텐츠를 작성하는 언어입니다. 위의 인터페이스 언어와는 별개입니다.',
@@ -186,7 +187,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => '미디어를 찾을 수 없습니다.',
+            'index'          => [
                 'already-taken'             => ':name은(는) 이미 사용되었습니다.',
                 'variant-sku-already-taken' => '변형 SKU ":sku"은(는) 이미 사용 중입니다.',
                 'variant-sku-label'         => '변형 :position SKU',
@@ -393,6 +395,7 @@ return [
                     'created-at'   => '생성일',
                     'product-type' => '제품 유형',
                 ],
+                'more'         => '더보기',
                 'more-actions' => '추가 작업',
                 'variations'   => [
                     'title'          => '변형',
@@ -516,6 +519,7 @@ return [
                     'unique'                   => '고유',
                     'delete-failed'            => '이 속성을 삭제할 수 없습니다.',
                     'mass-delete-failed'       => '선택한 속성을 삭제할 수 없습니다.',
+                    'mass-delete-partial'      => ':count개의 속성은 구성 가능한 제품에서 사용 중이므로 삭제할 수 없습니다.',
                     'delete-attribute-failure' => '이 속성은 구성 가능한 제품에 사용 중이므로 제거할 수 없습니다.',
                 ],
             ],
@@ -671,6 +675,8 @@ return [
             'not-found'         => '코드 ":code"에 해당하는 속성을 찾을 수 없습니다',
         ],
         'attribute-options' => [
+            'delete-success'       => '속성 옵션이 성공적으로 삭제되었습니다',
+            'swatch-not-found'     => '이 옵션에 대한 견본 이미지를 찾을 수 없습니다.',
             'create-success'       => '속성 옵션이 성공적으로 생성되었습니다.',
             'update-success'       => '속성 옵션이 성공적으로 업데이트되었습니다.',
             'usable-in-grid-error' => '그리드에서 사용할 수 있는 속성은 4개만 설정할 수 있습니다.',
@@ -953,6 +959,7 @@ return [
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => '카테고리 필드 옵션이 성공적으로 삭제되었습니다',
             'create-success'      => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
             'update-success'      => '카테고리 필드 옵션이 성공적으로 업데이트되었습니다.',
             'update-unknown-code' => '코드 ":code"에 해당하는 카테고리 필드 옵션이 없습니다.',
@@ -1142,6 +1149,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => '코드가 :code인 로케일을 찾을 수 없습니다.',
                 'create-btn'            => '로케일 생성',
                 'locale'                => '로케일',
                 'title'                 => '로케일',
@@ -1189,6 +1197,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => '코드가 :code인 통화를 찾을 수 없습니다.',
                 'create-btn'            => '통화 생성',
                 'currency'              => '통화',
                 'title'                 => '통화',
@@ -1649,6 +1658,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => '코드가 :code인 채널을 찾을 수 없습니다.',
                 'create-btn'           => '채널 만들기',
                 'delete-failed'        => '채널 삭제 실패',
                 'delete-success'       => '채널이 성공적으로 삭제되었습니다.',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => '사용자 저장',
                     'status'              => '상태',
                     'title'               => '사용자 생성',
-                    'upload-image-info'   => '프로필 이미지 업로드 (110px X 110px)',
+                    'upload-image-info'   => '프로필 이미지를 업로드(110px X 110px)하거나 이메일에 연결된 Gravatar.com 이미지를 사용하세요.',
                     'user-timezone'       => '시간대',
                     'catalog-locale'      => '카탈로그 언어',
                     'catalog-locale-info' => '이 사용자가 카탈로그 콘텐츠를 작성하는 언어입니다. 인터페이스 언어와는 별개입니다.',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => '상태',
                 'title'            => '사용자 편집',
             ],
-            'activate-warning'          => '귀하의 계정은 아직 활성화되지 않았습니다. 관리자에게 문의하십시오.',
-            'cannot-change'             => '사용자는 변경할 수 없습니다.',
-            'cannot-escalate-role'      => '전체 접근 역할을 할당할 권한이 없습니다.',
-            'create-success'            => '사용자가 성공적으로 생성되었습니다.',
-            'delete-failed'             => '사용자 삭제 실패.',
-            'delete-success'            => '사용자 삭제 성공.',
-            'delete-warning'            => '이 작업을 수행하시겠습니까?',
-            'incorrect-password'        => '잘못된 비밀번호',
-            'last-delete-error'         => '마지막 사용자 삭제 실패',
-            'login-error'               => '자격 증명을 확인하고 다시 시도하십시오.',
-            'update-success'            => '사용자가 성공적으로 업데이트되었습니다.',
-            'current-user-delete-error' => '로그인한 사용자는 삭제할 수 없습니다.',
+            'activate-warning'             => '귀하의 계정은 아직 활성화되지 않았습니다. 관리자에게 문의하십시오.',
+            'cannot-change'                => '사용자는 변경할 수 없습니다.',
+            'cannot-escalate-role'         => '전체 접근 역할을 할당할 권한이 없습니다.',
+            'create-success'               => '사용자가 성공적으로 생성되었습니다.',
+            'delete-failed'                => '사용자 삭제 실패.',
+            'delete-success'               => '사용자 삭제 성공.',
+            'delete-warning'               => '이 작업을 수행하시겠습니까?',
+            'incorrect-password'           => '잘못된 비밀번호',
+            'last-delete-error'            => '마지막 사용자 삭제 실패',
+            'login-error'                  => '자격 증명을 확인하고 다시 시도하십시오.',
+            'update-success'               => '사용자가 성공적으로 업데이트되었습니다.',
+            'current-user-delete-error'    => '로그인한 사용자는 삭제할 수 없습니다.',
+            'last-all-access-delete-error' => '전체 접근 권한을 가진 마지막 활성 관리자는 삭제할 수 없습니다.',
         ],
         'system-settings' => [
             'info'               => '시스템 설정을 한 곳에서 관리하세요.',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => '제품 여권',
+        'publish'                  => '게시',
+        'withdraw'                 => '회수',
         'addresses'                => '주소',
         'attribute-families'       => '속성 가족',
         'attribute-groups'         => '속성 그룹',

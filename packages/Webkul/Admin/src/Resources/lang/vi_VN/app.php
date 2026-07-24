@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Mật khẩu hiện tại bạn nhập không chính xác.',
             'name'                => 'Tên',
             'password'            => 'Mật khẩu',
+            'gravatar-preview'    => 'Đang dùng ảnh Gravatar.com của bạn',
             'profile-image'       => 'Ảnh hồ sơ',
             'save-btn'            => 'Lưu tài khoản',
             'title'               => 'Tài khoản của tôi',
             'ui-locale'           => 'Ngôn ngữ giao diện',
             'update-success'      => 'Tài khoản đã được cập nhật thành công',
-            'upload-image-info'   => 'Tải lên ảnh hồ sơ (110px X 110px)',
+            'upload-image-info'   => 'Tải lên ảnh hồ sơ (110px X 110px), hoặc sử dụng ảnh Gravatar.com được liên kết với email của bạn.',
             'user-timezone'       => 'Múi giờ của người dùng',
             'catalog-locale'      => 'Ngôn ngữ danh mục',
             'catalog-locale-info' => 'Ngôn ngữ mà nội dung danh mục của bạn được viết. Ngôn ngữ này tách biệt với ngôn ngữ giao diện ở trên.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Không tìm thấy phương tiện.',
+            'index'          => [
                 'already-taken'             => ':name đã được sử dụng.',
                 'variant-sku-already-taken' => 'SKU của biến thể ":sku" đã được sử dụng.',
                 'variant-sku-label'         => 'SKU của biến thể :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Ngày tạo',
                     'product-type' => 'Loại sản phẩm',
                 ],
+                'more'         => 'Thêm',
                 'more-actions' => 'Hành động khác',
                 'variations'   => [
                     'title'          => 'Biến thể',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Duy nhất',
                     'delete-failed'            => 'Không thể xoá thuộc tính này.',
                     'mass-delete-failed'       => 'Không thể xoá các thuộc tính đã chọn.',
+                    'mass-delete-partial'      => 'Không thể xóa :count thuộc tính vì chúng đang được dùng cho các sản phẩm có thể cấu hình.',
                     'delete-attribute-failure' => 'Thuộc tính này không thể bị xóa vì nó đang được sử dụng cho các sản phẩm có thể cấu hình',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'Không tìm thấy thuộc tính với mã ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Đã xóa tùy chọn thuộc tính thành công',
+            'swatch-not-found'     => 'Không tìm thấy hình ảnh mẫu cho tùy chọn này.',
             'create-success'       => 'Tùy chọn thuộc tính đã được tạo thành công',
             'update-success'       => 'Tùy chọn thuộc tính đã được cập nhật thành công',
             'usable-in-grid-error' => 'Chỉ có 4 thuộc tính có thể được đánh dấu là có thể sử dụng trong lưới.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Đã xóa tùy chọn trường danh mục thành công',
             'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',
             'update-success'      => 'Tùy chọn trường danh mục đã được cập nhật thành công',
             'update-unknown-code' => 'Không có tuỳ chọn trường danh mục với mã ":code".',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Không tìm thấy ngôn ngữ có mã :code.',
                 'create-btn'            => 'Tạo Ngôn Ngữ',
                 'locale'                => 'Ngôn Ngữ',
                 'title'                 => 'Các Ngôn Ngữ',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Không tìm thấy tiền tệ có mã :code.',
                 'create-btn'            => 'Tạo Tiền Tệ',
                 'currency'              => 'Tiền Tệ',
                 'title'                 => 'Các Tiền Tệ',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Không tìm thấy kênh có mã :code.',
                 'create-btn'           => 'Tạo Kênh',
                 'delete-failed'        => 'Xóa Kênh Thất Bại',
                 'delete-success'       => 'Kênh đã được xóa thành công.',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => 'Lưu người dùng',
                     'status'              => 'Trạng thái',
                     'title'               => 'Tạo người dùng',
-                    'upload-image-info'   => 'Tải lên hình ảnh đại diện (110px X 110px)',
+                    'upload-image-info'   => 'Tải lên ảnh hồ sơ (110px X 110px), hoặc sử dụng ảnh Gravatar.com được liên kết với email của bạn.',
                     'user-timezone'       => 'Múi giờ',
                     'catalog-locale'      => 'Ngôn ngữ danh mục',
                     'catalog-locale-info' => 'Ngôn ngữ mà người dùng này viết nội dung danh mục. Tách biệt với ngôn ngữ giao diện của họ.',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => 'Trạng thái',
                 'title'            => 'Chỉnh sửa người dùng',
             ],
-            'activate-warning'          => 'Tài khoản của bạn chưa được kích hoạt, vui lòng liên hệ với quản trị viên.',
-            'cannot-change'             => 'Không thể thay đổi người dùng',
-            'cannot-escalate-role'      => 'Bạn không có quyền gán vai trò truy cập đầy đủ.',
-            'create-success'            => 'Người dùng đã được tạo thành công.',
-            'delete-failed'             => 'Không thể xóa người dùng.',
-            'delete-success'            => 'Người dùng đã bị xóa thành công.',
-            'delete-warning'            => 'Bạn có chắc chắn muốn thực hiện hành động này?',
-            'incorrect-password'        => 'Mật khẩu không chính xác',
-            'last-delete-error'         => 'Không thể xóa người dùng cuối cùng',
-            'login-error'               => 'Vui lòng kiểm tra thông tin của bạn và thử lại.',
-            'update-success'            => 'Người dùng đã được cập nhật thành công.',
-            'current-user-delete-error' => 'Không thể xóa người dùng hiện tại.',
+            'activate-warning'             => 'Tài khoản của bạn chưa được kích hoạt, vui lòng liên hệ với quản trị viên.',
+            'cannot-change'                => 'Không thể thay đổi người dùng',
+            'cannot-escalate-role'         => 'Bạn không có quyền gán vai trò truy cập đầy đủ.',
+            'create-success'               => 'Người dùng đã được tạo thành công.',
+            'delete-failed'                => 'Không thể xóa người dùng.',
+            'delete-success'               => 'Người dùng đã bị xóa thành công.',
+            'delete-warning'               => 'Bạn có chắc chắn muốn thực hiện hành động này?',
+            'incorrect-password'           => 'Mật khẩu không chính xác',
+            'last-delete-error'            => 'Không thể xóa người dùng cuối cùng',
+            'login-error'                  => 'Vui lòng kiểm tra thông tin của bạn và thử lại.',
+            'update-success'               => 'Người dùng đã được cập nhật thành công.',
+            'current-user-delete-error'    => 'Không thể xóa người dùng hiện tại.',
+            'last-all-access-delete-error' => 'Không thể xóa quản trị viên toàn quyền đang hoạt động cuối cùng.',
         ],
         'system-settings' => [
             'title'              => 'Cài đặt hệ thống',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Hộ chiếu sản phẩm',
+        'publish'                  => 'Xuất bản',
+        'withdraw'                 => 'Thu hồi',
         'addresses'                => 'Địa chỉ',
         'attribute-families'       => 'Nhóm thuộc tính',
         'attribute-groups'         => 'Nhóm thuộc tính',

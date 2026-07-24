@@ -27,7 +27,7 @@ test.describe('Attribute Group Import', () => {
         await navigateTo(adminPage, 'imports');
         await adminPage.getByRole('textbox', { name: 'Search' }).fill(importCode);
         await adminPage.keyboard.press('Enter');
-        await adminPage.waitForLoadState('networkidle');
+        await adminPage.waitForLoadState('domcontentloaded');
 
         const itemRow = adminPage.locator('div', { hasText: importCode });
         await itemRow.locator('span[title="Delete"]').first().click();

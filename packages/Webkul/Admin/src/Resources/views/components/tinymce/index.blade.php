@@ -313,6 +313,8 @@
             },
 
             mounted() {
+                this.initialContent = this.field?.value ?? '';
+
                 this.init();
 
                 this.changeThemeHandler = (theme) => {
@@ -323,12 +325,15 @@
                 };
 
                 this.$emitter.on('change-theme', this.changeThemeHandler);
+                this.$emitter.on('unsaved-changes:reset', this.resetContent);
             },
 
             beforeUnmount() {
                 if (this.changeThemeHandler) {
                     this.$emitter.off('change-theme', this.changeThemeHandler);
                 }
+
+                this.$emitter.off('unsaved-changes:reset', this.resetContent);
             },
 
             methods: {
@@ -696,6 +701,18 @@
                     this.field.onInput(this.ai.content.replace(/\r?\n/g, ''));
 
                     this.$refs.magicAIModal.close();
+                },
+
+                resetContent() {
+                    const content = this.initialContent ?? '';
+                    const editor = tinymce.get(this.selector.replace('textarea#', ''));
+
+                    if (editor) {
+                        editor.setContent(content);
+                        editor.save();
+                    }
+
+                    this.field.onInput(content);
                 },
             },
         })

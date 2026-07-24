@@ -1,12 +1,21 @@
 @props(['banners' => []])
 
 <v-promo-bar
+    v-cloak
     :banners='@json($banners)'
     dismiss-url="{{ route('admin.help.promo.dismiss') }}"
     dont-show-label="{{ trans('admin::app.help.banners.dont-show-again') }}"
 ></v-promo-bar>
 
 @pushOnce('scripts')
+    <style>
+        v-promo-bar[v-cloak] {
+            display: block;
+            flex-shrink: 0;
+            min-height: 48px;
+        }
+    </style>
+
     <script
         type="text/x-template"
         id="v-promo-bar-template"

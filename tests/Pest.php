@@ -9,6 +9,7 @@ use Webkul\Core\Tests\CoreTestCase;
 use Webkul\DataGrid\Tests\DataGridTestCase;
 use Webkul\Installer\Tests\UserCreateCommandTestCase;
 use Webkul\Product\Tests\ProductTestCase;
+use Webkul\ProductPassport\Tests\ProductPassportTestCase;
 use Webkul\Publication\Tests\PublicationTestCase;
 use Webkul\Resource\Tests\ResourceTestCase;
 use Webkul\User\Tests\UserTestCase;
@@ -43,6 +44,7 @@ uses(CoreTestCase::class)->in('../packages/Webkul/Webhook/tests');
 uses(AdminTestCase::class)->in('../packages/Webkul/AppUrlGuard/tests');
 uses(ResourceTestCase::class)->in('../packages/Webkul/Resource/tests/Feature');
 uses(PublicationTestCase::class)->in('../packages/Webkul/Publication/tests');
+uses(ProductPassportTestCase::class)->in('../packages/Webkul/ProductPassport/tests');
 
 /*
 |--------------------------------------------------------------------------

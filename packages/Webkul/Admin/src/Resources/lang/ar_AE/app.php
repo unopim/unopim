@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'كلمة المرور الحالية التي أدخلتها غير صحيحة.',
             'name'                => 'اسم',
             'password'            => 'كلمة المرور',
+            'gravatar-preview'    => 'استخدام صورة Gravatar.com الخاصة بك',
             'profile-image'       => 'صورة الملف الشخصي',
             'save-btn'            => 'حفظ الحساب',
             'title'               => 'حسابي',
             'ui-locale'           => 'واجهة المستخدم المحلية',
             'update-success'      => 'تم تحديث الحساب بنجاح',
-            'upload-image-info'   => 'قم بتحميل صورة الملف الشخصي (110 بكسل × 110 بكسل)',
+            'upload-image-info'   => 'قم بتحميل صورة الملف الشخصي (110px X 110px)، أو استخدم صورة Gravatar.com المرتبطة ببريدك الإلكتروني.',
             'user-timezone'       => 'وحدة زمنية',
             'catalog-locale'      => 'لغة الكتالوج',
             'catalog-locale-info' => 'اللغة التي يُكتب بها محتوى الكتالوج الخاص بك. وهي منفصلة عن لغة الواجهة أعلاه.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'تعذّر العثور على الوسائط.',
+            'index'          => [
                 'already-taken'             => 'تم أخذ :name بالفعل.',
                 'variant-sku-already-taken' => 'رمز SKU للمتغير ":sku" مستخدم بالفعل.',
                 'variant-sku-label'         => 'رمز SKU للمتغير :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'تاريخ الإنشاء',
                     'product-type' => 'نوع المنتج',
                 ],
+                'more'         => 'المزيد',
                 'more-actions' => 'إجراءات إضافية',
                 'variations'   => [
                     'title'          => 'التنويعات',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'فريد',
                     'delete-failed'            => 'لا يمكن حذف هذه السمة.',
                     'mass-delete-failed'       => 'لا يمكن حذف سمات محددة.',
+                    'mass-delete-partial'      => 'تعذّر حذف :count سمة لأنها مستخدمة في منتجات قابلة للتهيئة.',
                     'delete-attribute-failure' => 'لا يمكن حذف هذه الخاصية لأنها قيد الاستخدام في المنتجات القابلة للتكوين',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'لم يتم العثور على السمة برمز ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'تم حذف خيار السمة بنجاح',
+            'swatch-not-found'     => 'لم يتم العثور على صورة نموذج لهذا الخيار.',
             'create-success'       => 'خيار السمة الذي تم إنشاؤه بنجاح',
             'update-success'       => 'تم تحديث خيار السمة بنجاح',
             'usable-in-grid-error' => 'يمكن استخدام 4 سمات فقط في تمكين الشبكة.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'تم حذف خيار حقل الفئة بنجاح',
             'create-success'      => 'خيار حقل الفئة تم إنشاؤه بنجاح',
             'update-success'      => 'تم تحديث خيار حقل الفئة بنجاح',
             'update-unknown-code' => 'خيار حقل الفئة ذو الرمز ":code" غير موجود.',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'لم يتم العثور على لغة بالرمز :code.',
                 'create-btn'            => 'إنشاء لغة',
                 'locale'                => 'لغة',
                 'title'                 => 'أماكن',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'لم يتم العثور على عملة بالرمز :code.',
                 'create-btn'            => 'إنشاء العملة',
                 'currency'              => 'عملة',
                 'title'                 => 'العملات',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'لم يتم العثور على قناة بالرمز :code.',
                 'create-btn'           => 'إنشاء قناة',
                 'delete-failed'        => 'فشل حذف القناة',
                 'delete-success'       => 'تم حذف القناة بنجاح.',
@@ -1753,7 +1763,7 @@ return [
                     'save-btn'            => 'حفظ المستخدم',
                     'status'              => 'حالة',
                     'title'               => 'إنشاء المستخدم',
-                    'upload-image-info'   => 'قم بتحميل صورة الملف الشخصي (110 بكسل × 110 بكسل)',
+                    'upload-image-info'   => 'قم بتحميل صورة الملف الشخصي (110px X 110px)، أو استخدم صورة Gravatar.com المرتبطة ببريدك الإلكتروني.',
                     'user-timezone'       => 'وحدة زمنية',
                     'catalog-locale'      => 'لغة الكتالوج',
                     'catalog-locale-info' => 'اللغة التي يكتب بها هذا المستخدم محتوى الكتالوج. منفصلة عن لغة واجهته.',
@@ -1796,18 +1806,19 @@ return [
                 'status'           => 'حالة',
                 'title'            => 'تحرير العضو',
             ],
-            'activate-warning'          => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
-            'cannot-change'             => 'لا يمكن تغيير المستخدم',
-            'cannot-escalate-role'      => 'ليس لديك إذن لتعيين دور بصلاحيات كاملة.',
-            'create-success'            => 'تم إنشاء المستخدم بنجاح.',
-            'delete-failed'             => 'فشل حذف المستخدم.',
-            'delete-success'            => 'تم حذف المستخدم بنجاح.',
-            'delete-warning'            => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
-            'incorrect-password'        => 'كلمة سر خاطئة',
-            'last-delete-error'         => 'فشل آخر حذف المستخدم',
-            'login-error'               => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
-            'update-success'            => 'تم تحديث المستخدم بنجاح.',
-            'current-user-delete-error' => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
+            'activate-warning'             => 'لم يتم تنشيط حسابك بعد ، يرجى الاتصال بالمسؤول.',
+            'cannot-change'                => 'لا يمكن تغيير المستخدم',
+            'cannot-escalate-role'         => 'ليس لديك إذن لتعيين دور بصلاحيات كاملة.',
+            'create-success'               => 'تم إنشاء المستخدم بنجاح.',
+            'delete-failed'                => 'فشل حذف المستخدم.',
+            'delete-success'               => 'تم حذف المستخدم بنجاح.',
+            'delete-warning'               => 'هل أنت متأكد من أنك تريد تنفيذ هذا الإجراء؟',
+            'incorrect-password'           => 'كلمة سر خاطئة',
+            'last-delete-error'            => 'فشل آخر حذف المستخدم',
+            'login-error'                  => 'يرجى التحقق من بيانات الاعتماد الخاصة بك والمحاولة مرة أخرى.',
+            'update-success'               => 'تم تحديث المستخدم بنجاح.',
+            'current-user-delete-error'    => 'لا يمكن حذف المستخدم الذي قام بتسجيل الدخول',
+            'last-all-access-delete-error' => 'لا يمكن حذف آخر مسؤول نشط يملك صلاحية الوصول الكامل.',
         ],
         'system-settings' => [
             'info'               => 'إدارة إعدادات النظام من مكان واحد.',
@@ -2690,6 +2701,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'جوازات المنتج',
+        'publish'                  => 'نشر',
+        'withdraw'                 => 'سحب',
         'addresses'                => 'عناوين',
         'attribute-families'       => 'عائلات السمات',
         'attribute-groups'         => 'مجموعات السمات',

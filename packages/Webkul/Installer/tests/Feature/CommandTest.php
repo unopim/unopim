@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Webkul\Installer\Console\Commands\Installer;
 use Webkul\User\Models\Admin;
@@ -176,7 +177,13 @@ it('should ask for name if invalid user name given in the command', function () 
 
 it('should validate database prefix in unopim:install command', function () {
     $this->app->extend(Installer::class, function ($service) {
-        return new class extends Installer
+        // Installer resolves its name from a #[Signature] attribute, which an anonymous
+        // subclass does not inherit — restate it so the command registers with a name.
+        return new #[Signature('unopim:install
+            { --skip-env-check : Skip env check. }
+            { --skip-admin-creation : Skip admin creation. }
+            { --with-demo-data : Seed sample products and demo data. }
+            { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }')] class extends Installer
         {
             public function call($command, array $arguments = [], $output = null)
             {
@@ -192,12 +199,10 @@ it('should validate database prefix in unopim:install command', function () {
             { /* Mute */
             }
 
-            public function handle()
+            public function handle(): void
             {
                 // Ensure prompts occur even if .env exists
                 $this->askForDatabaseDetails();
-
-                return 0;
             }
         };
     });

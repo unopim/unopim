@@ -10,7 +10,7 @@ test.describe('Attribute History - View Tooltip (#703)', () => {
 
     // Step 1: Create an attribute so it generates a history entry
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     await adminPage.locator('input[name="code"]').fill(code);
@@ -21,7 +21,8 @@ test.describe('Attribute History - View Tooltip (#703)', () => {
     await adminPage.waitForTimeout(300);
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
 
-    await clickSaveAndExpect(adminPage, 'Save changes', /Attribute created successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill(`Hist Attr ${uid}`);
+    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute created successfully/i);
 
     // Step 2: Navigate to the attribute's History tab
     await navigateTo(adminPage, 'attributes');

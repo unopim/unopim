@@ -38,6 +38,8 @@ class SystemSettingsController extends Controller
             return redirect()->route('admin.settings.system.index');
         }
 
+        $this->enforceSectionAccess($entry);
+
         return view('admin::system.settings-edit', [
             'entry' => $entry,
             'group' => $group,
@@ -55,11 +57,30 @@ class SystemSettingsController extends Controller
             return redirect()->route('admin.settings.system.index');
         }
 
+        $this->enforceSectionAccess($entry);
+
         $this->coreConfigRepository->create($this->allowedConfig($request, $group));
 
         session()->flash('success', trans('admin::app.settings.system-settings.save-message'));
 
         return redirect()->route('admin.settings.system.edit', $key);
+    }
+
+    /**
+     * Deny direct access to a section the admin's role is not granted. Every row
+     * shares one generic editor route, so the Bouncer middleware can only gate at
+     * the umbrella `configuration.system_settings` level — per-section access is
+     * enforced here against the hub row's own `acl`.
+     *
+     * @param  array<string, mixed>  $entry
+     */
+    protected function enforceSectionAccess(array $entry): void
+    {
+        abort_unless(
+            empty($entry['acl']) || bouncer()->hasPermission((string) $entry['acl']),
+            403,
+            trans('admin::app.errors.403.message')
+        );
     }
 
     /**

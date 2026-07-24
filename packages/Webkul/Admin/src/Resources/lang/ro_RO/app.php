@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Parola curentă este greșită.',
             'name'                => 'Nume',
             'password'            => 'Parolă',
+            'gravatar-preview'    => 'Se folosește imaginea ta de pe Gravatar.com',
             'profile-image'       => 'Imagine de profil',
             'save-btn'            => 'Salvați contul',
             'title'               => 'Contul meu',
             'ui-locale'           => 'Localizare UI',
             'update-success'      => 'Contul a fost actualizat cu succes',
-            'upload-image-info'   => 'Încărcați o imagine de profil (110px X 110px)',
+            'upload-image-info'   => 'Încarcă o imagine de profil (110px X 110px) sau folosește imaginea ta Gravatar.com asociată cu adresa ta de e-mail.',
             'user-timezone'       => 'Fus orar',
             'catalog-locale'      => 'Limba catalogului',
             'catalog-locale-info' => 'Limba în care este scris conținutul catalogului dvs. Este separată de limba interfeței de mai sus.',
@@ -186,7 +187,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media nu a putut fi găsită.',
+            'index'          => [
                 'already-taken'             => ':name este deja utilizat.',
                 'variant-sku-already-taken' => 'SKU-ul variantei ":sku" este deja utilizat.',
                 'variant-sku-label'         => 'SKU-ul variantei :position',
@@ -393,6 +395,7 @@ return [
                     'created-at'   => 'Data Creării',
                     'product-type' => 'Tip Produs',
                 ],
+                'more'         => 'Mai multe',
                 'more-actions' => 'Mai multe acțiuni',
                 'variations'   => [
                     'title'          => 'Variații',
@@ -516,6 +519,7 @@ return [
                     'unique'                   => 'Unic',
                     'delete-failed'            => 'Nu s-a putut șterge acest atribut.',
                     'mass-delete-failed'       => 'Nu s-au putut șterge atributele selectate.',
+                    'mass-delete-partial'      => ':count atribut(e) nu au putut fi șterse deoarece sunt utilizate în produse configurabile.',
                     'delete-attribute-failure' => 'Acest atribut nu poate fi eliminat deoarece este utilizat pentru produse configurabile',
                 ],
             ],
@@ -671,6 +675,8 @@ return [
             'not-found'         => 'Atributul cu codul ":code" nu a fost găsit',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opțiunea de atribut a fost ștearsă cu succes',
+            'swatch-not-found'     => 'Nu s-a găsit nicio imagine de mostră pentru această opțiune.',
             'create-success'       => 'Opțiunea atributului a fost creată cu succes',
             'update-success'       => 'Opțiunea atributului a fost actualizată cu succes',
             'usable-in-grid-error' => 'Doar 4 atribute pot fi marcate ca utilizabile în grilă.',
@@ -953,6 +959,7 @@ return [
             'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opțiunea câmpului de categorie a fost ștearsă cu succes',
             'create-success'      => 'Opțiune câmp categorie creată',
             'update-success'      => 'Opțiune câmp categorie actualizată',
             'update-unknown-code' => 'Nu există nicio opțiune de câmp de categorie cu codul „:code”.',
@@ -1142,6 +1149,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Nu s-a găsit nicio localizare cu codul :code.',
                 'create-btn'            => 'Creare Localitate',
                 'locale'                => 'Localitate',
                 'title'                 => 'Localități',
@@ -1189,6 +1197,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Nu s-a găsit nicio monedă cu codul :code.',
                 'create-btn'            => 'Creare Monedă',
                 'currency'              => 'Monedă',
                 'title'                 => 'Monede',
@@ -1649,6 +1658,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Nu s-a găsit niciun canal cu codul :code.',
                 'create-btn'           => 'Creează Canal',
                 'delete-failed'        => 'Ștergerea canalului a eșuat',
                 'delete-success'       => 'Canalul a fost șters cu succes.',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => 'Salvează Utilizator',
                     'status'              => 'Stare',
                     'title'               => 'Creează Utilizator',
-                    'upload-image-info'   => 'Încarcă imaginea de profil (110px X 110px)',
+                    'upload-image-info'   => 'Încarcă o imagine de profil (110px X 110px) sau folosește imaginea ta Gravatar.com asociată cu adresa ta de e-mail.',
                     'user-timezone'       => 'Fus orar',
                     'catalog-locale'      => 'Limba catalogului',
                     'catalog-locale-info' => 'Limba în care acest utilizator scrie conținutul catalogului. Separată de limba interfeței sale.',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => 'Stare',
                 'title'            => 'Editează Utilizator',
             ],
-            'activate-warning'          => 'Contul dvs. nu a fost încă activat. Contactați administratorul.',
-            'cannot-change'             => 'Utilizatorul nu poate fi modificat',
-            'cannot-escalate-role'      => 'Nu aveți permisiunea de a atribui un rol cu acces complet.',
-            'create-success'            => 'Utilizatorul a fost creat cu succes.',
-            'delete-failed'             => 'Ștergerea utilizatorului a eșuat.',
-            'delete-success'            => 'Utilizatorul a fost șters cu succes.',
-            'delete-warning'            => 'Sunteți sigur că doriți să efectuați această acțiune?',
-            'incorrect-password'        => 'Parola incorectă',
-            'last-delete-error'         => 'Ștergerea ultimului utilizator a eșuat',
-            'login-error'               => 'Verificați datele de autentificare și încercați din nou.',
-            'update-success'            => 'Utilizatorul a fost actualizat cu succes.',
-            'current-user-delete-error' => 'Nu se poate șterge utilizatorul conectat.',
+            'activate-warning'             => 'Contul dvs. nu a fost încă activat. Contactați administratorul.',
+            'cannot-change'                => 'Utilizatorul nu poate fi modificat',
+            'cannot-escalate-role'         => 'Nu aveți permisiunea de a atribui un rol cu acces complet.',
+            'create-success'               => 'Utilizatorul a fost creat cu succes.',
+            'delete-failed'                => 'Ștergerea utilizatorului a eșuat.',
+            'delete-success'               => 'Utilizatorul a fost șters cu succes.',
+            'delete-warning'               => 'Sunteți sigur că doriți să efectuați această acțiune?',
+            'incorrect-password'           => 'Parola incorectă',
+            'last-delete-error'            => 'Ștergerea ultimului utilizator a eșuat',
+            'login-error'                  => 'Verificați datele de autentificare și încercați din nou.',
+            'update-success'               => 'Utilizatorul a fost actualizat cu succes.',
+            'current-user-delete-error'    => 'Nu se poate șterge utilizatorul conectat.',
+            'last-all-access-delete-error' => 'Ultimul administrator activ cu acces complet nu poate fi șters.',
         ],
         'system-settings' => [
             'info'               => 'Gestionează setările sistemului dintr-un singur loc.',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Pașapoarte produs',
+        'publish'                  => 'Publică',
+        'withdraw'                 => 'Retrage',
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Familii de Atribute',
         'attribute-groups'         => 'Grupuri de Atribute',

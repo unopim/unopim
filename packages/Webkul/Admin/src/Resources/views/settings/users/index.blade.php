@@ -259,7 +259,7 @@
                                         name="password_confirmation"
                                         ::rules="isUpdating ? 'confirmed:@password' : 'required|confirmed:@password'"
                                         v-model="data.user.password_confirmation"
-                                        :label="trans('admin::app.settings.users.index.create.password')"
+                                        :label="trans('admin::app.settings.users.index.create.confirm-password')"
                                         :placeholder="trans('admin::app.settings.users.index.create.confirm-password')"
                                     />
 

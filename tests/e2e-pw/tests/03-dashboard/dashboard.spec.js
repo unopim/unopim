@@ -565,10 +565,10 @@ test('10.5 - Recent Activity entries show entity type badges', async ({ adminPag
 // ═════════════════════════════════════════════════
 
 test('11.1 - Shows Data Transfer card heading', async ({ adminPage }) => {
-  // Data Transfer card inside main content area (not sidebar nav)
-  const dataTransferHeading = adminPage.locator('main p, [class*="content"] p, .grid p').filter({ hasText: 'Data Transfer' });
-  await dataTransferHeading.first().scrollIntoViewIfNeeded();
-  await expect(dataTransferHeading.first()).toBeVisible();
+  // Target the visible dashboard section heading; the union of selectors above
+  // also matched a hidden sidebar/shimmer <p>, whose .first() could never scroll.
+  const dataTransferHeading = adminPage.locator('p:visible', { hasText: 'Data Transfer' });
+  await expect(dataTransferHeading.first()).toBeVisible({ timeout: 15000 });
 });
 
 test('11.2 - Data Transfer shows job entries or empty state message', async ({ adminPage }) => {

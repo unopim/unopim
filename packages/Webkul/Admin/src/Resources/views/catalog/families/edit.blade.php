@@ -196,6 +196,7 @@
                                     icon-position="left"
                                     :placeholder="trans('admin::app.catalog.families.edit.search')"
                                     v-model.trim="assignedSearchTerm"
+                                    v-focus
                                     clear-when="assignedSearchTerm"
                                     clear-action="assignedSearchTerm = ''"
                                 />
@@ -275,6 +276,7 @@
                                     :placeholder="trans('admin::app.catalog.families.edit.search')"
                                     v-model.trim="searchTerm"
                                     v-debounce="500"
+                                    v-focus
                                     @change="search(searchTerm)"
                                     @keydown.enter.prevent="search(searchTerm)"
                                     clear-when="searchTerm"
@@ -903,6 +905,11 @@
                         },
 
                         search(value) {
+                            // Blur also fires `change`; skip the refetch that would tear the list down mid-click.
+                            if (this.params.query === value) {
+                                return;
+                            }
+
                             this.params.query = value;
                             this.currentPage = 1;
 

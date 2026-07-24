@@ -888,6 +888,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $exportableData = [];
         $columns = [];
 
+        $channelsAndLocales = $this->getAllChannelsAndLocales();
+
         foreach ($gridData as $product) {
             $productArray = (array) $product;
             if (! empty($productArray['values']) && is_string($productArray['values'])) {
@@ -898,7 +900,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             unset($productArray[AbstractType::PRODUCT_VALUES_KEY], $productArray['raw_values'], $productArray['completeness']);
 
-            foreach ($this->getAllChannelsAndLocales() as [$channelCode, $localeCode]) {
+            foreach ($channelsAndLocales as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
 
                 $data += $this->formatProductColumnsData($productArray);
@@ -945,17 +947,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * get channel and locales as iterable
      */
-    protected function getAllChannelsAndLocales(): iterable
+    protected function getAllChannelsAndLocales(): array
     {
-        foreach ($this->channelRepository->all() as $channel) {
-            $channelCode = $channel->code;
+        $pairs = [];
 
+        foreach ($this->channelRepository->with('locales')->all() as $channel) {
             foreach ($channel->locales as $locale) {
-                $localeCode = $locale->code;
-
-                yield [$channelCode, $localeCode];
+                $pairs[] = [$channel->code, $locale->code];
             }
         }
+
+        return $pairs;
     }
 
     /**

@@ -27,14 +27,41 @@ test.describe.serial('Attribute Family — Completeness tab', () => {
     const page = adminPage;
     await gotoTab(page, family.id, 'completeness');
 
-    const wrapper = page.locator('input[name="channel_requirements"]')
-      .first().locator('xpath=ancestor::*[contains(@class,"multiselect")][1]');
-    await wrapper.waitFor({ state: 'visible', timeout: 25000 });
-    await wrapper.click();
-    const option = page.locator('.multiselect__content-wrapper li:visible, .multiselect__element:visible').first();
-    await option.waitFor({ state: 'visible', timeout: 8000 });
-    await option.click();
+    await page.locator('input[name="channel_requirements"]').first().waitFor({ state: 'attached', timeout: 25000 });
+    // The completeness datagrid re-creates its row nodes on each notification poll, so
+    // Playwright never sees the option as "stable" for a click. Drive vue-multiselect's
+    // native select synchronously (focus opens the dropdown; the option's mouse events
+    // fire @select) so the re-render can't interleave.
+    await page.waitForTimeout(1500);
 
+    const updateSaved = page.waitForResponse(
+      (r) => r.url().includes('/completeness-settings/update') && r.request().method() === 'POST',
+      { timeout: 20000 },
+    );
+
+    const selected = await page.evaluate(async () => {
+      const control = document.querySelector('input[name="channel_requirements"]')?.closest('.multiselect');
+      if (! control) {
+        return false;
+      }
+
+      control.querySelector('.multiselect__input')?.focus();
+      await new Promise((resolve) => setTimeout(resolve, 400));
+
+      const option = control.querySelector('.multiselect__option');
+      if (! option) {
+        return false;
+      }
+
+      ['mousedown', 'mouseup', 'click'].forEach((type) => {
+        option.dispatchEvent(new MouseEvent(type, { bubbles: true }));
+      });
+
+      return true;
+    });
+    expect(selected).toBe(true);
+
+    await updateSaved;
     await expect(page.locator('#app').getByText(/Completeness updated successfully/i).first())
       .toBeVisible({ timeout: 20000 });
   });

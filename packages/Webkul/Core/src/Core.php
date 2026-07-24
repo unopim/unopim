@@ -933,6 +933,14 @@ class Core
      */
     protected function getCoreConfig($field, $channel, $locale)
     {
+        $memoKey = 'core_config.'.implode('|', [$field, $channel, $locale]);
+
+        $memo = app(RequestMemo::class);
+
+        if ($memo->has($memoKey)) {
+            return $memo->get($memoKey);
+        }
+
         $fields = $this->getConfigField($field);
 
         if (! empty($fields['channel_based'])) {
@@ -958,6 +966,8 @@ class Core
                 'code' => $field,
             ]);
         }
+
+        $memo->set($memoKey, $coreConfigValue);
 
         return $coreConfigValue;
     }

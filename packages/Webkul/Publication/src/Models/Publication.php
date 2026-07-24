@@ -34,11 +34,9 @@ class Publication extends Model implements HistoryContract, PublicationContract
     protected $historyTags = ['publication'];
 
     /**
-     * `auditInclude` (owen-it's actual whitelist property, unlike the
-     * package-wide but unwired `$historyFields`) is what makes these three
-     * columns actually appear in the audit trail: the uuid is the permanent
-     * public identifier printed on the product, and re-pointing a passport at
-     * a different product must leave a trail.
+     * `auditInclude` is the actual whitelist property (unlike the unwired
+     * `$historyFields`) — re-pointing a passport at a different product must
+     * leave a trail.
      */
     protected $auditInclude = ['status', 'uuid', 'product_id'];
 
@@ -75,10 +73,8 @@ class Publication extends Model implements HistoryContract, PublicationContract
 
     /**
      * `orderByDesc('version')` guards against a data anomaly, not the normal
-     * path: `is_current` is uniquely constrained to one row per locale (see
-     * the `current_locale_id` generated column), so at most one row should
-     * ever match. If that invariant is ever violated, prefer the highest
-     * version over silently returning the lowest.
+     * path: `is_current` is uniquely constrained to one row per locale, so at
+     * most one row should ever match.
      */
     public function currentVersion(int $localeId): ?PublicationVersionContract
     {

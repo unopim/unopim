@@ -7,21 +7,15 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The pre-routing kill switch — see Config/publication.php `enabled`. This is
- * deliberately the ONLY gate that runs before a Publication row is resolved,
- * and it never resolves channel scope from the request: a per-channel
- * `general.publication.settings.enabled` check (Task 7) happens later, inside
- * the controller, against $publication->channel->code — never against an
- * unvalidated `?channel=` query parameter.
+ * The pre-routing kill switch (Config/publication.php `enabled`) — the only
+ * gate before a Publication row is resolved. Never resolves channel scope
+ * from the request: the per-channel enabled check happens later, in the
+ * controller, against $publication->channel->code, never an unvalidated
+ * `?channel=` query param.
  *
- * Returns the 404 view directly rather than calling abort(): a thrown
- * NotFoundHttpException is rendered by Illuminate\Routing\Pipeline via the
- * application's global ExceptionHandler at the exact pipe that threw it, and
- * bootstrap/app.php's own unconditional NotFoundHttpException callback
- * (admin::errors.index, which computes the admin support email) always wins
- * that race — no wrapping middleware, however early in the stack, can
- * intercept a downstream throw ahead of it. See PublicationErrorBoundary's
- * doc comment for the full explanation.
+ * Returns the 404 view directly rather than abort(): a thrown exception is
+ * rendered by Laravel's Pipeline via the global handler at the throwing pipe,
+ * bypassing this middleware entirely (see PublicationErrorBoundary).
  */
 class EnsurePublicationEnabled
 {

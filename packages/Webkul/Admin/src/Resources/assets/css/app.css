@@ -223,12 +223,20 @@
         @apply outline-none;
     }
 
+    *:focus-visible:not(.sr-only):not(.no-focus-ring) {
+        @apply outline outline-2 outline-offset-2 outline-primary-600 rounded-sm;
+    }
+
+    .focus-ring-within:focus-within {
+        @apply outline outline-2 outline-offset-2 outline-primary-600;
+    }
+
     .primary-button {
         @apply flex gap-x-1 items-center px-3 py-1.5 bg-unopim-primary-base bg-primary-600 border border-unopim-primary border-primary-700 hover:bg-unopim-primary-hover hover:bg-primary-500 hover:border-unopim-primary-hover hover:border-primary-500 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-[0.9] focus:opacity-[0.9];
     }
 
     .secondary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-unopim-primary-base border-primary-600 text-unopim-primary-base text-primary-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-unopim-primary-hover hover:text-primary-500 hover:border-unopim-primary-hover hover:border-primary-500 hover:bg-unopim-primary-muted hover:bg-primary-100 dark:bg-cherry-900 dark:border-unopim-primary-400 dark:border-primary-400 dark:text-unopim-primary-100 dark:text-primary-200 dark:hover:bg-cherry-800 dark:hover:border-unopim-primary-200 dark:hover:border-primary-300 dark:hover:text-unopim-primary-50 dark:hover:text-primary-100;
+        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-unopim-primary-base border-primary-600 text-unopim-primary-base text-primary-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-unopim-primary-hover hover:text-primary-500 hover:border-unopim-primary-hover hover:border-primary-500 hover:bg-unopim-primary-muted hover:bg-primary-100 dark:bg-cherry-900 dark:border-unopim-primary-400 dark:border-primary-400 dark:text-unopim-primary-100 dark:text-primary-200 dark:hover:bg-cherry-800 dark:hover:border-unopim-primary-200 dark:hover:border-primary-300 dark:hover:text-unopim-primary-50 dark:hover:text-primary-100 dark:focus-visible:ring-offset-cherry-900;
     }
 
     .transparent-button {

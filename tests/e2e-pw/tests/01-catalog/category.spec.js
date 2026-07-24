@@ -197,7 +197,7 @@ test.describe('UnoPim Category Tests', () => {
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('root');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
-    const row = adminPage.locator('div', { hasText: /\[root\]/ });
+    const row = adminPage.locator('.row').filter({ hasText: /root/i }).first();
     await row.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/cannot delete the root category/i)).toBeVisible({ timeout: 20000 });

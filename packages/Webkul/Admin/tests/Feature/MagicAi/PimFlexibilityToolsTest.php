@@ -287,6 +287,16 @@ function setPimFlexCoreConfig(string $code, string $value): void
         'created_at' => now(),
         'updated_at' => now(),
     ]);
+
+    // getConfigData memoises per request, so drop the stale entry after the
+    // underlying row changes within a single test.
+    $attributes = request()->attributes;
+
+    foreach ($attributes->keys() as $key) {
+        if (str_starts_with((string) $key, 'core_config_memo.')) {
+            $attributes->remove($key);
+        }
+    }
 }
 
 function insertPimFlexTokenUsage(int $userId, int $tokens): void

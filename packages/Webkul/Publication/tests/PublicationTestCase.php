@@ -2,6 +2,7 @@
 
 namespace Webkul\Publication\Tests;
 
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
@@ -9,12 +10,14 @@ use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Providers\PublicationServiceProvider;
 use Webkul\Publication\Services\Publisher;
+use Webkul\Publication\Tests\Support\DocumentStubPayloadBuilder;
 use Webkul\Publication\Tests\Support\StubPayloadBuilder;
 use Webkul\User\Tests\Concerns\UserAssertions;
 
@@ -124,6 +127,58 @@ class PublicationTestCase extends TestCase
         // boot() runs, or call this same method itself).
         $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
 
+        $this->enablePublicTier($channel->code);
+
         return resolve(Publisher::class)->publish($product, $channel, $complete, 'dpp');
+    }
+
+    /**
+     * The public tier is opt-in per channel; the resolver treats an unset flag
+     * as disabled, so a fixture that expects a served passport must enable it.
+     */
+    protected function enablePublicTier(string $channelCode): void
+    {
+        CoreConfig::query()->updateOrCreate(
+            ['code' => 'general.publication.settings.enabled', 'channel_code' => $channelCode, 'locale_code' => null],
+            ['value' => '1'],
+        );
+    }
+
+    /**
+     * Places a real file on the asset disk first, exactly mirroring what
+     * Task 10's real payload builder will do, then publishes through
+     * `DocumentStubPayloadBuilder` so the version's payload already points at
+     * that path when `SyncPublicationVersionDocuments` indexes it.
+     *
+     * @return array{0: PublicationVersion, 1: string}
+     */
+    protected function passportWithDocumentFixture(): array
+    {
+        [$product, $channel, , $complete] = $this->seedPassportFixture();
+
+        $path = 'publication/'.$product->id.'/'.$complete->code.'/certificate.pdf';
+
+        Storage::disk(config('publication.asset_disk'))->put($path, '%PDF-1.4 stub');
+
+        config()->set('publication.types.dpp', [
+            'label'           => 'publication::app.publications.status.published',
+            'payload_builder' => DocumentStubPayloadBuilder::class,
+            'template'        => 'publication::public.stub',
+            'required_group'  => 'dpp',
+            'route_prefix'    => 'p',
+        ]);
+
+        // See publishedPassportFixture() above: routes registered at boot time
+        // don't know about the `dpp` type set just now, so this test's Router
+        // instance needs its own explicit re-registration.
+        $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
+
+        $this->enablePublicTier($channel->code);
+
+        DocumentStubPayloadBuilder::$documentPath = $path;
+
+        $version = resolve(Publisher::class)->publish($product, $channel, $complete, 'dpp');
+
+        return [$version, $path];
     }
 }

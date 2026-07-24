@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Trenutna lozinka je neispravna.',
             'name'                => 'Ime',
             'password'            => 'Lozinka',
+            'gravatar-preview'    => 'Koristi se vaša Gravatar.com slika',
             'profile-image'       => 'Profilna slika',
             'save-btn'            => 'Spremite račun',
             'title'               => 'Moj račun',
             'ui-locale'           => 'Jezik sučelja',
             'update-success'      => 'Račun uspješno ažuriran',
-            'upload-image-info'   => 'Prenesite profilnu sliku (110px X 110px)',
+            'upload-image-info'   => 'Prenesite profilnu sliku (110px X 110px) ili upotrijebite svoju Gravatar.com sliku povezanu s vašom e-poštom.',
             'user-timezone'       => 'Vremenska zona',
             'catalog-locale'      => 'Jezik kataloga',
             'catalog-locale-info' => 'Jezik na kojem je napisan sadržaj vašeg kataloga. Odvojen je od gore navedenog jezika sučelja.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Medij nije pronađen.',
+            'index'          => [
                 'already-taken'             => ':name je već zauzet.',
                 'variant-sku-already-taken' => 'SKU varijante ":sku" je već zauzet.',
                 'variant-sku-label'         => 'SKU varijante :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Datum izrade',
                     'product-type' => 'Vrsta proizvoda',
                 ],
+                'more'         => 'Više',
                 'more-actions' => 'Više radnji',
                 'variations'   => [
                     'title'          => 'Varijacije',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Jedinstven',
                     'delete-failed'            => 'Ovaj atribut se ne može obrisati.',
                     'mass-delete-failed'       => 'Odabrani atributi se ne mogu obrisati.',
+                    'mass-delete-partial'      => ':count atribut(a) nije moguće izbrisati jer se koriste u konfigurabilnim proizvodima.',
                     'delete-attribute-failure' => 'Ovaj atribut se ne može ukloniti jer se koristi za konfigurabilne proizvode',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'Atribut s kodom ":code" nije pronađen',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opcija atributa uspješno izbrisana',
+            'swatch-not-found'     => 'Nije pronađena slika uzorka za ovu opciju.',
             'create-success'       => 'Opcija atributa uspješno stvorena',
             'update-success'       => 'Opcija atributa uspješno ažurirana',
             'usable-in-grid-error' => 'Samo 4 atributa mogu biti označena kao upotrebljiva u mreži.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opcija polja kategorije uspješno izbrisana',
             'create-success'      => 'Opcija polja kategorije uspješno stvorena',
             'update-success'      => 'Opcija polja kategorije uspješno ažurirana',
             'update-unknown-code' => 'Ne postoji opcija polja kategorije s kodom „:code“.',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Lokalizacija s kodom :code nije pronađena.',
                 'create-btn'            => 'Kreiraj lokalitet',
                 'locale'                => 'Lokalitet',
                 'title'                 => 'Lokaliteti',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta s kodom :code nije pronađena.',
                 'create-btn'            => 'Kreiraj valutu',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valute',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanal s kodom :code nije pronađen.',
                 'create-btn'           => 'Kreiraj kanal',
                 'delete-failed'        => 'Brisanje kanala nije uspjelo',
                 'delete-success'       => 'Kanal je uspješno izbrisan.',
@@ -1753,7 +1763,7 @@ return [
                     'save-btn'            => 'Spremi korisnika',
                     'status'              => 'Status',
                     'title'               => 'Kreiraj korisnika',
-                    'upload-image-info'   => 'Pošaljite profilnu sliku (110px X 110px)',
+                    'upload-image-info'   => 'Prenesite profilnu sliku (110px X 110px) ili upotrijebite svoju Gravatar.com sliku povezanu s vašom e-poštom.',
                     'user-timezone'       => 'Vremenska zona',
                     'catalog-locale'      => 'Jezik kataloga',
                     'catalog-locale-info' => 'Jezik na kojem ovaj korisnik piše sadržaj kataloga. Odvojen od njegovog jezika sučelja.',
@@ -1796,18 +1806,19 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Uredi korisnika',
             ],
-            'activate-warning'          => 'Vaš račun još nije aktiviran, obratite se administratoru.',
-            'cannot-change'             => 'Korisnik se ne može mijenjati',
-            'cannot-escalate-role'      => 'Nemate dozvolu za dodjeljivanje uloge s potpunim pristupom.',
-            'create-success'            => 'Korisnik uspješno kreiran.',
-            'delete-failed'             => 'Brisanje korisnika nije uspjelo.',
-            'delete-success'            => 'Korisnik uspješno izbrisan.',
-            'delete-warning'            => 'Jeste li sigurni da želite izvesti ovu akciju?',
-            'incorrect-password'        => 'Pogrešna lozinka',
-            'last-delete-error'         => 'Posljednje brisanje korisnika nije uspjelo',
-            'login-error'               => 'Provjerite svoje podatke i pokušajte ponovo.',
-            'update-success'            => 'Korisnik uspješno ažuriran.',
-            'current-user-delete-error' => 'Trenutno prijavljeni korisnik se ne može obrisati.',
+            'activate-warning'             => 'Vaš račun još nije aktiviran, obratite se administratoru.',
+            'cannot-change'                => 'Korisnik se ne može mijenjati',
+            'cannot-escalate-role'         => 'Nemate dozvolu za dodjeljivanje uloge s potpunim pristupom.',
+            'create-success'               => 'Korisnik uspješno kreiran.',
+            'delete-failed'                => 'Brisanje korisnika nije uspjelo.',
+            'delete-success'               => 'Korisnik uspješno izbrisan.',
+            'delete-warning'               => 'Jeste li sigurni da želite izvesti ovu akciju?',
+            'incorrect-password'           => 'Pogrešna lozinka',
+            'last-delete-error'            => 'Posljednje brisanje korisnika nije uspjelo',
+            'login-error'                  => 'Provjerite svoje podatke i pokušajte ponovo.',
+            'update-success'               => 'Korisnik uspješno ažuriran.',
+            'current-user-delete-error'    => 'Trenutno prijavljeni korisnik se ne može obrisati.',
+            'last-all-access-delete-error' => 'Posljednji aktivni administrator s potpunim pristupom ne može se izbrisati.',
         ],
         'system-settings' => [
             'title'              => 'Postavke sustava',
@@ -2691,6 +2702,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Putovnice proizvoda',
+        'publish'                  => 'Objavi',
+        'withdraw'                 => 'Povuci',
         'addresses'                => 'Adrese',
         'attribute-families'       => 'Attributne obitelji',
         'attribute-groups'         => 'Attributne grupe',

@@ -175,7 +175,7 @@
         @endphp
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
-                @foreach ($product->attribute_family->familyGroups()->orderBy('position')->get() as $group)
+                @foreach ($product->attribute_family->familyGroups()->with('translations')->orderBy('position')->get() as $group)
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
 
                         @php
@@ -189,7 +189,10 @@
                                 $customAttributes = $customAttributes->reject(fn ($attribute) => in_array($attribute->code, $variantHiddenCodes))->values();
                             }
 
-                            $customAttributes->loadMissing(['translations', 'options.translations']);
+                            $customAttributes->loadMissing('translations');
+
+                            // Only checkbox renders every option; select/multiselect resolve selected labels on demand.
+                            $customAttributes->where('type', 'checkbox')->loadMissing('options.translations');
 
                             $groupLabel = $group->name;
                             $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;

@@ -64,7 +64,7 @@ test.describe('Attribute Family — General tab & index', () => {
     const page = adminPage;
     const { code } = await createFamily(page);
 
-    const nameInput = page.locator('input[name="en_US\\[name\\]"]');
+    const nameInput = page.locator('input[name$="[name]"]').first();
     await nameInput.fill(`Renamed ${code}`);
     await nameInput.blur();
     await saveFamilyEdit(page);
@@ -81,6 +81,55 @@ test.describe('Attribute Family — General tab & index', () => {
     await expect(page.locator('.group_node')).toHaveCount(groupsBefore + 1);
 
     await saveFamilyEdit(page);
+    await deleteFamilyByCode(page, code);
+  });
+
+  test('edit: clicking a section search icon auto-focuses the revealed input', async ({ adminPage }) => {
+    test.slow(); // create + two-panel interaction + cleanup runs long on the seeded DB
+    const page = adminPage;
+    const { code } = await createFamily(page);
+
+    // Both panels start with a magnifying-glass toggle; clicking it must reveal
+    // the search field AND focus it so the user can type without a second click.
+    for (const title of ['Assigned Groups', 'Unassigned Attributes']) {
+      const panel = page.locator('div.mb-4').filter({ hasText: title }).first();
+
+      await panel.locator('button.icon-search').click();
+
+      const input = panel.getByRole('textbox', { name: 'Search' });
+      await expect(input).toBeVisible();
+      await expect(input).toBeFocused();
+
+      // Typing lands in the field directly — proves focus, not just visibility.
+      await page.keyboard.type('sku');
+      await expect(input).toHaveValue('sku');
+    }
+
+    await deleteFamilyByCode(page, code);
+  });
+
+  test('edit: searched unassigned attribute checkbox selects on first click', async ({ adminPage }) => {
+    test.slow();
+    const page = adminPage;
+    const { code } = await createFamily(page);
+
+    const panel = page.locator('div.mb-4').filter({ hasText: 'Unassigned Attributes' }).first();
+    await panel.locator('button.icon-search').click();
+
+    const input = panel.getByRole('textbox', { name: 'Search' });
+    await input.fill('name');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(2500); // search round-trip
+
+    const row = page.locator('#unassigned-attributes div.group', { hasText: /name/i }).first();
+    await expect(row).toBeVisible();
+
+    // A single click must select it — clicking the checkbox blurs the search
+    // input, which used to re-run the query and tear the list down mid-click.
+    const checkbox = row.locator('button').first();
+    await checkbox.click();
+    await expect(checkbox).toHaveClass(/icon-checkbox-check/);
+
     await deleteFamilyByCode(page, code);
   });
 });

@@ -77,12 +77,13 @@ return [
             'invalid-password'    => '您輸入的當前密碼不正確。',
             'name'                => '名稱',
             'password'            => '密碼',
+            'gravatar-preview'    => '正在使用您的 Gravatar.com 圖片',
             'profile-image'       => '個人資料圖片',
             'save-btn'            => '保存賬戶',
             'title'               => '我的賬戶',
             'ui-locale'           => 'UI 地區設置',
             'update-success'      => '賬戶更新成功',
-            'upload-image-info'   => '上傳個人資料圖片 (110px X 110px)',
+            'upload-image-info'   => '上傳個人資料圖片（110px X 110px），或使用與您的電子郵件關聯的 Gravatar.com 圖片。',
             'user-timezone'       => '用戶時區',
             'catalog-locale'      => '型錄語言',
             'catalog-locale-info' => '您的型錄內容所使用的語言。此設定與上方的介面語言是分開的。',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => '找不到媒體檔案。',
+            'index'          => [
                 'already-taken'             => ':name 已經被使用。',
                 'variant-sku-already-taken' => '變體 SKU「:sku」已被使用。',
                 'variant-sku-label'         => '變體 :position 的 SKU',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => '創建日期',
                     'product-type' => '產品類型',
                 ],
+                'more'         => '更多',
                 'more-actions' => '更多操作',
                 'variations'   => [
                     'title'          => '變體',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => '唯一',
                     'delete-failed'            => '無法刪除此屬性。',
                     'mass-delete-failed'       => '無法刪除選中的屬性。',
+                    'mass-delete-partial'      => '有 :count 個屬性因用於可設定產品而無法刪除。',
                     'delete-attribute-failure' => '此屬性無法刪除，因為它正在用於可配置產品',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => '找不到代碼 ":code" 的屬性',
         ],
         'attribute-options' => [
+            'delete-success'       => '屬性選項刪除成功',
+            'swatch-not-found'     => '找不到此選項的色票圖片。',
             'create-success'       => '屬性選項已成功創建',
             'update-success'       => '屬性選項已成功更新',
             'usable-in-grid-error' => '最多只能有4個屬性標示為可用於網格。',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => '以下欄位無法修改：:fields。',
         ],
         'category-fields-options' => [
+            'delete-success'      => '分類欄位選項刪除成功',
             'create-success'      => '類別欄位選項建立成功',
             'update-success'      => '類別欄位選項更新成功',
             'update-unknown-code' => '不存在代碼為「:code」的類別欄位選項。',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => '找不到代碼為 :code 的語言環境。',
                 'create-btn'            => '創建語言',
                 'locale'                => '語言',
                 'title'                 => '語言',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => '找不到代碼為 :code 的貨幣。',
                 'create-btn'            => '創建貨幣',
                 'currency'              => '貨幣',
                 'title'                 => '貨幣',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => '找不到代碼為 :code 的頻道。',
                 'create-btn'           => '創建頻道',
                 'delete-failed'        => '刪除頻道失敗',
                 'delete-success'       => '頻道已成功刪除。',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => '保存用戶',
                     'status'              => '狀態',
                     'title'               => '創建用戶',
-                    'upload-image-info'   => '上傳頭像圖片 (110px X 110px)',
+                    'upload-image-info'   => '上傳個人資料圖片（110px X 110px），或使用與您的電子郵件關聯的 Gravatar.com 圖片。',
                     'user-timezone'       => '時區',
                     'catalog-locale'      => '型錄語言',
                     'catalog-locale-info' => '該使用者編寫型錄內容所使用的語言。與其介面語言分開。',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => '狀態',
                 'title'            => '編輯用戶',
             ],
-            'activate-warning'          => '您的帳號尚未啟用，請聯繫管理員。',
-            'cannot-change'             => '無法修改用戶',
-            'cannot-escalate-role'      => '您沒有權限指派全權限角色。',
-            'create-success'            => '用戶創建成功。',
-            'delete-failed'             => '無法刪除用戶。',
-            'delete-success'            => '用戶刪除成功。',
-            'delete-warning'            => '您確定要執行此操作嗎？',
-            'incorrect-password'        => '密碼錯誤',
-            'last-delete-error'         => '無法刪除最後一個用戶',
-            'login-error'               => '請檢查您的登錄憑證並重試。',
-            'update-success'            => '用戶更新成功。',
-            'current-user-delete-error' => '無法刪除當前用戶。',
+            'activate-warning'             => '您的帳號尚未啟用，請聯繫管理員。',
+            'cannot-change'                => '無法修改用戶',
+            'cannot-escalate-role'         => '您沒有權限指派全權限角色。',
+            'create-success'               => '用戶創建成功。',
+            'delete-failed'                => '無法刪除用戶。',
+            'delete-success'               => '用戶刪除成功。',
+            'delete-warning'               => '您確定要執行此操作嗎？',
+            'incorrect-password'           => '密碼錯誤',
+            'last-delete-error'            => '無法刪除最後一個用戶',
+            'login-error'                  => '請檢查您的登錄憑證並重試。',
+            'update-success'               => '用戶更新成功。',
+            'current-user-delete-error'    => '無法刪除當前用戶。',
+            'last-all-access-delete-error' => '無法刪除最後一個具有完整存取權限的啟用管理員。',
         ],
         'system-settings' => [
             'title'              => '系統設定',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => '產品護照',
+        'publish'                  => '發布',
+        'withdraw'                 => '撤回',
         'addresses'                => '地址',
         'attribute-families'       => '屬性家庭',
         'attribute-groups'         => '屬性群組',

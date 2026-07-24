@@ -29,7 +29,7 @@ beforeEach(function () {
     // allows the env-file-setup steps against the always-seeded test database.
     app()->instance(DatabaseManager::class, new class extends DatabaseManager
     {
-        public function isInstalled()
+        public function isInstalled(): bool
         {
             return false;
         }

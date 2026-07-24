@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Nykyinen salasana on virheellinen.',
             'name'                => 'Nimi',
             'password'            => 'Salasana',
+            'gravatar-preview'    => 'Käytetään Gravatar.com-kuvaasi',
             'profile-image'       => 'Profiilikuva',
             'save-btn'            => 'Tallenna tili',
             'title'               => 'Oma tili',
             'ui-locale'           => 'Käyttöliittymän kieli',
             'update-success'      => 'Tili päivitetty onnistuneesti',
-            'upload-image-info'   => 'Lataa profiilikuva (110px X 110px)',
+            'upload-image-info'   => 'Lataa profiilikuva (110px X 110px) tai käytä sähköpostiisi liitettyä Gravatar.com-kuvaa.',
             'user-timezone'       => 'Aikavyöhyke',
             'catalog-locale'      => 'Luettelon kieli',
             'catalog-locale-info' => 'Kieli, jolla luettelosisältösi on kirjoitettu. Tämä on erillinen yllä olevasta käyttöliittymän kielestä.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Mediaa ei löytynyt.',
+            'index'          => [
                 'already-taken'             => ':name on jo otettu.',
                 'variant-sku-already-taken' => 'Variantin SKU ":sku" on jo käytössä.',
                 'variant-sku-label'         => 'variantin :position SKU',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Luotu',
                     'product-type' => 'Tuotetyyppi',
                 ],
+                'more'         => 'Lisää',
                 'more-actions' => 'Lisää toimintoja',
                 'variations'   => [
                     'title'          => 'Variaatiot',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Ainutlaatuinen',
                     'delete-failed'            => 'Tätä ominaisuutta ei voida poistaa.',
                     'mass-delete-failed'       => 'Valittuja ominaisuuksia ei voida poistaa.',
+                    'mass-delete-partial'      => ':count määritettä ei voitu poistaa, koska niitä käytetään konfiguroitavissa tuotteissa.',
                     'delete-attribute-failure' => 'Tätä attribuuttia ei voi poistaa, koska se on käytössä muokattavissa tuotteissa',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'Ominaisuutta koodilla ":code" ei löytynyt',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Määriteoptio poistettu onnistuneesti',
+            'swatch-not-found'     => 'Tälle vaihtoehdolle ei löytynyt värimallikuvaa.',
             'create-success'       => 'Attribuuttivaihtoehto luotiin onnistuneesti',
             'update-success'       => 'Attribuuttivaihtoehto päivitettiin onnistuneesti',
             'usable-in-grid-error' => 'Vain 4 attribuuttia voidaan merkitä käytettäväksi ruudukossa.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategoriakentän vaihtoehto poistettu onnistuneesti',
             'create-success'      => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
             'update-success'      => 'Kategoriakenttävaihtoehto päivitetty onnistuneesti',
             'update-unknown-code' => 'Luokkakenttävalintaa koodilla ":code" ei ole olemassa.',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Kielialuetta koodilla :code ei löytynyt.',
                 'create-btn'            => 'Luo käännöskieli',
                 'locale'                => 'Kieli',
                 'title'                 => 'Käännöskielet',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuuttaa koodilla :code ei löytynyt.',
                 'create-btn'            => 'Luo valuutta',
                 'currency'              => 'Valuutta',
                 'title'                 => 'Valuutat',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanavaa koodilla :code ei löytynyt.',
                 'create-btn'           => 'Luo Kanava',
                 'delete-failed'        => 'Kanavan poistaminen epäonnistui',
                 'delete-success'       => 'Kanava poistettu onnistuneesti.',
@@ -1753,7 +1763,7 @@ return [
                     'save-btn'            => 'Tallenna Käyttäjä',
                     'status'              => 'Tila',
                     'title'               => 'Luo Käyttäjä',
-                    'upload-image-info'   => 'Lataa profiilikuva (110px X 110px)',
+                    'upload-image-info'   => 'Lataa profiilikuva (110px X 110px) tai käytä sähköpostiisi liitettyä Gravatar.com-kuvaa.',
                     'user-timezone'       => 'Aikavyöhyke',
                     'catalog-locale'      => 'Luettelon kieli',
                     'catalog-locale-info' => 'Kieli, jolla tämä käyttäjä kirjoittaa luettelosisältöä. Erillinen hänen käyttöliittymän kielestään.',
@@ -1796,18 +1806,19 @@ return [
                 'status'           => 'Tila',
                 'title'            => 'Muokkaa Käyttäjää',
             ],
-            'activate-warning'          => 'Tilisi ei ole vielä aktivoitu, ota yhteys järjestelmänvalvojaan.',
-            'cannot-change'             => 'Käyttäjää ei voi muuttaa',
-            'cannot-escalate-role'      => 'Sinulla ei ole oikeutta määrittää täyden pääsyn roolia.',
-            'create-success'            => 'Käyttäjä luotu onnistuneesti.',
-            'delete-failed'             => 'Käyttäjän poistaminen epäonnistui.',
-            'delete-success'            => 'Käyttäjä poistettu onnistuneesti.',
-            'delete-warning'            => 'Oletko varma, että haluat suorittaa tämän toiminnon?',
-            'incorrect-password'        => 'Virheellinen salasana',
-            'last-delete-error'         => 'Viimeinen käyttäjän poisto epäonnistui',
-            'login-error'               => 'Tarkista tunnuksesi ja yritä uudelleen.',
-            'update-success'            => 'Käyttäjä päivitettiin onnistuneesti.',
-            'current-user-delete-error' => 'Kirjautunutta käyttäjää ei voi poistaa.',
+            'activate-warning'             => 'Tilisi ei ole vielä aktivoitu, ota yhteys järjestelmänvalvojaan.',
+            'cannot-change'                => 'Käyttäjää ei voi muuttaa',
+            'cannot-escalate-role'         => 'Sinulla ei ole oikeutta määrittää täyden pääsyn roolia.',
+            'create-success'               => 'Käyttäjä luotu onnistuneesti.',
+            'delete-failed'                => 'Käyttäjän poistaminen epäonnistui.',
+            'delete-success'               => 'Käyttäjä poistettu onnistuneesti.',
+            'delete-warning'               => 'Oletko varma, että haluat suorittaa tämän toiminnon?',
+            'incorrect-password'           => 'Virheellinen salasana',
+            'last-delete-error'            => 'Viimeinen käyttäjän poisto epäonnistui',
+            'login-error'                  => 'Tarkista tunnuksesi ja yritä uudelleen.',
+            'update-success'               => 'Käyttäjä päivitettiin onnistuneesti.',
+            'current-user-delete-error'    => 'Kirjautunutta käyttäjää ei voi poistaa.',
+            'last-all-access-delete-error' => 'Viimeistä aktiivista täydet oikeudet omaavaa järjestelmänvalvojaa ei voi poistaa.',
         ],
         'system-settings' => [
             'title'              => 'Järjestelmäasetukset',
@@ -2691,6 +2702,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Tuotepassit',
+        'publish'                  => 'Julkaise',
+        'withdraw'                 => 'Peru',
         'addresses'                => 'Osoitteet',
         'attribute-families'       => 'Attribuuttiperheet',
         'attribute-groups'         => 'Attribuuttiryhmät',

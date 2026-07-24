@@ -31,9 +31,12 @@ class CoreConfigRepository extends Repository
 
         $channel = $locale = null;
 
-        if ((isset($data['locale']) && $data['locale']) || (isset($data['channel']) && $data['channel'])) {
-            $locale = $data['locale'] ?? null;
-            $channel = $data['channel'] ?? null;
+        // Strip scope keys even when null: a channel_based field saved from the
+        // "all channels" view posts channel => null, which would otherwise reach
+        // recursiveArray() (array-typed) and fatal the save.
+        if (array_key_exists('locale', $data) || array_key_exists('channel', $data)) {
+            $locale = ($data['locale'] ?? null) ?: null;
+            $channel = ($data['channel'] ?? null) ?: null;
 
             unset($data['locale'], $data['channel']);
         }

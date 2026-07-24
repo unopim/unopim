@@ -23,6 +23,9 @@ const workerCount = isCI
 module.exports = defineConfig({
   testDir: './tests',
 
+  /* Scratch specs under 99-debug are for local diagnosis only, never CI. */
+  testIgnore: '**/99-debug/**',
+
   /* Run tests within each file sequentially, but files in parallel across workers */
   fullyParallel: false,
 

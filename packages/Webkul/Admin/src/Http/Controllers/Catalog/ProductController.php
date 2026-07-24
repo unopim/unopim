@@ -415,7 +415,8 @@ class ProductController extends Controller
                 ->where('pc.channel_id', $channel->id)
                 ->where('pc.locale_id', $locale->id)
                 ->where('pc.score', 100)
-                ->selectRaw('p.parent_id, count(*) as aggregate')
+                ->select('p.parent_id')
+                ->selectRaw('count(*) as aggregate')
                 ->groupBy('p.parent_id')
                 ->pluck('aggregate', 'p.parent_id')
             : collect();
@@ -839,7 +840,8 @@ class ProductController extends Controller
                 ->where('pc.channel_id', $channel->id)
                 ->where('pc.locale_id', $locale->id)
                 ->where('pc.score', 100)
-                ->selectRaw('p.parent_id, count(*) as aggregate')
+                ->select('p.parent_id')
+                ->selectRaw('count(*) as aggregate')
                 ->groupBy('p.parent_id')
                 ->pluck('aggregate', 'p.parent_id')
             : collect();

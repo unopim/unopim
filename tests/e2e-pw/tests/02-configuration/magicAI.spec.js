@@ -354,7 +354,7 @@ test('2.9 - Save Configuration without any changes', async ({ adminPage }) => {
     clickSave(adminPage, 'Save Configuration')
   ]);
   await adminPage.waitForLoadState('networkidle');
-  await expect(adminPage.locator('#app').getByText('Magic AI').first()).toBeVisible();
+  await expect(adminPage.getByRole('heading', { name: 'Magic AI' })).toBeVisible();
 });
 
 // ═════════════════════════════════════════════════
@@ -472,8 +472,9 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   const currentTitle = await titleInput.inputValue();
   await titleInput.clear();
   await titleInput.fill(currentTitle + ' Pro');
-  await clickSave(adminPage, 'Save');
-  await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 20000 });
+  // The edit form is dirty-tracked (save via the "Save changes" bar) and redirects to
+  // the index on success, so the toast is caught before navigation, not after.
+  await clickSaveAndExpect(adminPage, 'Save changes', /updated successfully|saved successfully/i, /system-prompts/);
 
   // Revert the edit
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
@@ -485,8 +486,7 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await expect(titleInputRevert).toBeVisible({ timeout: 20000 });
   await titleInputRevert.clear();
   await titleInputRevert.fill(currentTitle);
-  await clickSave(adminPage, 'Save');
-  await expect(adminPage.locator('#app').getByText(/updated successfully|saved successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save changes', /updated successfully|saved successfully/i, /system-prompts/);
 });
 
 test('3.10 - Search system prompts in datagrid', async ({ adminPage }) => {
@@ -693,8 +693,9 @@ test('5.1 - Enable Hindi locale for translation testing', async ({ adminPage }) 
   await adminPage.waitForLoadState('networkidle');
   await expect(adminPage.locator('label[for="status"]')).toBeVisible();
   await adminPage.locator('label[for="status"]').click();
-  await clickSave(adminPage, 'Save Locale');
-  await expect(adminPage.locator('#app').getByText(/Locale Updated successfully/i)).toBeVisible();
+  // Locale edit saves via the "Save changes" bar and redirects to the index; catch the
+  // toast before navigation.
+  await clickSaveAndExpect(adminPage, 'Save changes', /Locale updated successfully/i, /settings\/locales/);
 });
 
 test('5.2 - Edit the default channel and save via the unsaved-changes bar', async ({ adminPage }) => {
@@ -1163,7 +1164,7 @@ test('9.1 - Verify Magic AI permission tree under Configuration in Roles', async
   if (await configLabel.isVisible().catch(() => false)) {
     await configLabel.click();
   } else {
-    await adminPage.locator('div').filter({ hasText: /^Configuration$/ }).click();
+    await adminPage.locator('div').filter({ hasText: /^Configuration$/ }).first().click();
   }
 
   await expect(adminPage.locator('label').filter({ hasText: 'Magic AI' })).toBeVisible();
@@ -1221,20 +1222,21 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   // Create user
   await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
+  await adminPage.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible', timeout: 15000 });
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(userName);
-  await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(email);
+  await adminPage.locator('input[name="email"]').fill(email);
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('Test@1234');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('Test@1234');
-  await adminPage.locator('div').filter({ hasText: /^UI Locale$/ }).nth(1).click();
-  await adminPage.getByRole('option', { name: 'English (United States)' }).first().click();
-  await adminPage.locator('div').filter({ hasText: /^Timezone$/ }).nth(1).click();
-  await adminPage.keyboard.type('kolkata');
-  await adminPage.getByRole('option', { name: 'Asia/Kolkata (+05:30)' }).first().click();
-  await adminPage.locator('div').filter({ hasText: /^Role$/ }).nth(1).click();
+
+  // The create modal only collects role + status; UI locale, timezone and catalog
+  // locale are assigned on the edit screen.
+  const roleMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="role_id"]') });
+  await roleMultiselect.locator('.multiselect__tags').click();
   await adminPage.getByRole('option', { name: roleName }).first().click();
-  await adminPage.locator('label[for="status"]').click();
-  await clickSave(adminPage, 'Save User');
-  await expect(adminPage.locator('#app').getByText(/User created successfully/i)).toBeVisible();
+  await adminPage.locator('body').click();
+
+  await adminPage.locator('label[for="status"]').click({ force: true });
+  await clickSaveAndExpect(adminPage, 'Save User', /User created successfully/i);
 
   // Cleanup: delete the user
   await navigateTo(adminPage, 'users');

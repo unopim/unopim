@@ -18,6 +18,7 @@
         "ext-pdo_mysql": "*",
         "ext-tokenizer": "*",
         "astrotomic/laravel-translatable": "^11.16.0",
+        "bacon/bacon-qr-code": "^3.1",
         "barryvdh/laravel-dompdf": "^2.0.0|^3.0",
         "diglactic/laravel-breadcrumbs": "^10.0",
         "elasticsearch/elasticsearch": "^8.17",
@@ -86,7 +87,8 @@
             "Webkul\\AiAgent\\": "packages/Webkul/AiAgent/src",
             "Webkul\\AppUrlGuard\\": "packages/Webkul/AppUrlGuard/src",
             "Webkul\\Resource\\": "packages/Webkul/Resource/src",
-            "Webkul\\Publication\\": "packages/Webkul/Publication/src"
+            "Webkul\\Publication\\": "packages/Webkul/Publication/src",
+            "Webkul\\ProductPassport\\": "packages/Webkul/ProductPassport/src"
         }
     },
     "autoload-dev": {
@@ -104,7 +106,8 @@
             "Webkul\\Attribute\\Tests\\": "packages/Webkul/Attribute/tests",
             "Webkul\\DataTransfer\\Tests\\": "packages/Webkul/DataTransfer/tests",
             "Webkul\\Resource\\Tests\\": "packages/Webkul/Resource/tests",
-            "Webkul\\Publication\\Tests\\": "packages/Webkul/Publication/tests"
+            "Webkul\\Publication\\Tests\\": "packages/Webkul/Publication/tests",
+            "Webkul\\ProductPassport\\Tests\\": "packages/Webkul/ProductPassport/tests"
         }
     },
     "scripts": {

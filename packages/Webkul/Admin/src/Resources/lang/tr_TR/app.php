@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Girdiğiniz mevcut şifre hatalı.',
             'name'                => 'Ad',
             'password'            => 'Şifre',
+            'gravatar-preview'    => 'Gravatar.com resminiz kullanılıyor',
             'profile-image'       => 'Profil Resmi',
             'save-btn'            => 'Hesabı Kaydet',
             'title'               => 'Hesabım',
             'ui-locale'           => 'UI Yerel Ayarları',
             'update-success'      => 'Hesap başarıyla güncellendi',
-            'upload-image-info'   => 'Profil Resmi Yükleyin (110px X 110px)',
+            'upload-image-info'   => 'Bir profil resmi yükleyin (110px X 110px) veya e-postanıza bağlı Gravatar.com resminizi kullanın.',
             'user-timezone'       => 'Saat Dilimi',
             'catalog-locale'      => 'Katalog Dili',
             'catalog-locale-info' => 'Katalog içeriğinizin yazıldığı dil. Bu, yukarıdaki arayüz dilinden ayrıdır.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Medya bulunamadı.',
+            'index'          => [
                 'already-taken'             => ':name zaten kullanılıyor.',
                 'variant-sku-already-taken' => 'Varyant SKU ":sku" zaten kullanılıyor.',
                 'variant-sku-label'         => 'varyant :position SKU',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Oluşturulma Tarihi',
                     'product-type' => 'Ürün Türü',
                 ],
+                'more'         => 'Daha Fazla',
                 'more-actions' => 'Daha Fazla İşlem',
                 'variations'   => [
                     'title'          => 'Varyasyonlar',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Benzersiz',
                     'delete-failed'            => 'Bu öznitelik silinemedi.',
                     'mass-delete-failed'       => 'Seçilen öznitelikler silinemedi.',
+                    'mass-delete-partial'      => ':count öznitelik, yapılandırılabilir ürünlerde kullanıldığı için silinemedi.',
                     'delete-attribute-failure' => ':attribute, konfigüre edilebilir ürünlerde kullanıldığı için kaldırılamaz.',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => '":code" kodlu öznitelik bulunamadı',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Özellik seçeneği başarıyla silindi',
+            'swatch-not-found'     => 'Bu seçenek için renk örneği görseli bulunamadı.',
             'create-success'       => 'Öznitelik seçeneği başarıyla oluşturuldu',
             'update-success'       => 'Öznitelik seçeneği başarıyla güncellendi',
             'usable-in-grid-error' => 'Sadece 4 öznitelik ızgarada kullanılabilir olarak işaretlenebilir.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategori alanı seçeneği başarıyla silindi',
             'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',
             'update-success'      => 'Kategori alanı seçeneği başarıyla güncellendi',
             'update-unknown-code' => '":code" kodlu kategori alanı seçeneği bulunamadı.',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => ':code kodlu yerel ayar bulunamadı.',
                 'create-btn'            => 'Lumikha ng Wika',
                 'locale'                => 'Wika',
                 'title'                 => 'Mga Wika',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => ':code kodlu para birimi bulunamadı.',
                 'create-btn'            => 'Lumikha ng Pera',
                 'currency'              => 'Pera',
                 'title'                 => 'Mga Pera',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => ':code kodlu kanal bulunamadı.',
                 'create-btn'           => 'Kanal Oluştur',
                 'delete-failed'        => 'Kanal silme işlemi başarısız oldu',
                 'delete-success'       => 'Kanal başarıyla silindi.',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => 'Kullanıcıyı Kaydet',
                     'status'              => 'Durum',
                     'title'               => 'Kullanıcı Oluştur',
-                    'upload-image-info'   => 'Profil Resmi Yükleyin (110px X 110px)',
+                    'upload-image-info'   => 'Bir profil resmi yükleyin (110px X 110px) veya e-postanıza bağlı Gravatar.com resminizi kullanın.',
                     'user-timezone'       => 'Saat Dilimi',
                     'catalog-locale'      => 'Katalog Dili',
                     'catalog-locale-info' => 'Bu kullanıcının katalog içeriğini yazdığı dil. Arayüz dilinden ayrıdır.',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => 'Durum',
                 'title'            => 'Kullanıcıyı Düzenle',
             ],
-            'activate-warning'          => 'Hesabınız henüz etkinleştirilmedi, lütfen yöneticinizle iletişime geçin.',
-            'cannot-change'             => 'Kullanıcı değiştirilemez',
-            'cannot-escalate-role'      => 'Tam erişim rolü atama izniniz bulunmamaktadır.',
-            'create-success'            => 'Kullanıcı başarıyla oluşturuldu.',
-            'delete-failed'             => 'Kullanıcı silinemedi.',
-            'delete-success'            => 'Kullanıcı başarıyla silindi.',
-            'delete-warning'            => 'Bu işlemi gerçekleştirmek istediğinizden emin misiniz?',
-            'incorrect-password'        => 'Yanlış şifre',
-            'last-delete-error'         => 'Son kullanıcı silinemedi',
-            'login-error'               => 'Kimlik bilgilerinizi kontrol edin ve tekrar deneyin.',
-            'update-success'            => 'Kullanıcı başarıyla güncellendi.',
-            'current-user-delete-error' => 'Giriş yapmış kullanıcı silinemez.',
+            'activate-warning'             => 'Hesabınız henüz etkinleştirilmedi, lütfen yöneticinizle iletişime geçin.',
+            'cannot-change'                => 'Kullanıcı değiştirilemez',
+            'cannot-escalate-role'         => 'Tam erişim rolü atama izniniz bulunmamaktadır.',
+            'create-success'               => 'Kullanıcı başarıyla oluşturuldu.',
+            'delete-failed'                => 'Kullanıcı silinemedi.',
+            'delete-success'               => 'Kullanıcı başarıyla silindi.',
+            'delete-warning'               => 'Bu işlemi gerçekleştirmek istediğinizden emin misiniz?',
+            'incorrect-password'           => 'Yanlış şifre',
+            'last-delete-error'            => 'Son kullanıcı silinemedi',
+            'login-error'                  => 'Kimlik bilgilerinizi kontrol edin ve tekrar deneyin.',
+            'update-success'               => 'Kullanıcı başarıyla güncellendi.',
+            'current-user-delete-error'    => 'Giriş yapmış kullanıcı silinemez.',
+            'last-all-access-delete-error' => 'Tam erişime sahip son etkin yönetici silinemez.',
         ],
         'system-settings' => [
             'title'              => 'Sistem Ayarları',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Ürün Pasaportları',
+        'publish'                  => 'Yayınla',
+        'withdraw'                 => 'Geri Çek',
         'addresses'                => 'Adresler',
         'attribute-families'       => 'Özellik Aileleri',
         'attribute-groups'         => 'Özellik Grupları',

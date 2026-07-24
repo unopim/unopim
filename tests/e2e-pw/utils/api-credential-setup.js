@@ -73,24 +73,31 @@ async function adminLoginStorageState({ baseUrl, adminEmail, adminPassword }) {
  * @returns {Promise<{ client_id: string, client_secret: string } | null>}
  */
 async function readCredentialsOnEditPage(page) {
-  // Re-Generate Secret Key is the only reliable button — clicking it mints
-  // a fresh client_id+secret pair and reveals both inputs populated.
-  const regen = page.locator('button').filter({ hasText: /re-?generate/i }).first();
-  if (await regen.isVisible({ timeout: 3000 }).catch(() => false)) {
-    const respPromise = page.waitForResponse(
-      (r) => r.request().method() === 'POST',
-      { timeout: 15000 },
-    ).catch(() => null);
+  // A fresh integration has no OAuth client yet; "Generate" mints the client_id +
+  // secret_key pair. On an existing one, "Re-Generate Secret Key" rotates the secret.
+  const generate = page.getByRole('button', { name: 'Generate', exact: true });
+  const regen = page.getByTitle('Re-Generate Secret Key');
+
+  if (await generate.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
+    await generate.click();
+    await resp;
+  } else if (await regen.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
     await regen.click();
-    // If a confirm dialog appears, accept it.
-    const confirm = page.locator('button:has-text("Yes"), button:has-text("Confirm"), button:has-text("OK")').first();
-    if (await confirm.isVisible({ timeout: 2000 }).catch(() => false)) await confirm.click();
-    await respPromise;
-    await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    await resp;
   }
 
-  const cid = await page.locator('#client_id').inputValue().catch(() => '');
-  const sec = await page.locator('#secret_key').inputValue().catch(() => '');
+  // Credentials render as read-only rows; the full value lives in the <p>'s title attr.
+  const valueFor = async (label) => {
+    const row = page.locator('div.flex.items-center.gap-2')
+      .filter({ hasText: label })
+      .first();
+    return (await row.locator('p[title]').first().getAttribute('title').catch(() => '')) || '';
+  };
+
+  const cid = await valueFor('Client ID');
+  const sec = await valueFor('Secret Key');
   if (cid && sec) return { client_id: cid, client_secret: sec };
   return null;
 }
@@ -100,12 +107,12 @@ async function readCredentialsOnEditPage(page) {
  * Returns its credentials, regenerating the secret if necessary.
  */
 async function reuseExistingIntegration(page, baseUrl) {
-  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
   const editIcon = page.locator('[title="Edit"], .icon-edit').first();
   if (!await editIcon.isVisible({ timeout: 5000 }).catch(() => false)) return null;
   await editIcon.click();
   await page.waitForURL(/\/admin\/configuration\/integrations\/edit\//, { timeout: 15000 });
-  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+  await page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
   return readCredentialsOnEditPage(page);
 }
 
@@ -115,25 +122,29 @@ async function reuseExistingIntegration(page, baseUrl) {
  * one — UnoPim enforces unique admin_id on integrations).
  */
 async function tryCreateNewIntegration(page, baseUrl, integrationName) {
-  await page.goto(`${baseUrl}/admin/configuration/integrations/create`, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.locator('input[name="name"]').first().waitFor({ state: 'visible', timeout: 10000 });
-  await page.locator('input[name="name"]').first().fill(integrationName);
+  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
-  // Vue multiselect — click container, wait for options to render, pick first.
-  await page.locator('#admin_id .multiselect').click();
-  await page.locator('#admin_id .multiselect__element').first().waitFor({ state: 'visible', timeout: 5000 });
-  await page.locator('#admin_id .multiselect__element').first().click();
+  const createBtn = page.getByRole('button', { name: 'Create', exact: true });
+  await createBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await createBtn.click();
+
+  await page.locator('input[name="name"]').waitFor({ state: 'visible', timeout: 10000 });
+  await page.locator('input[name="name"]').fill(integrationName);
+
+  // Permission type is a required vue-multiselect (Custom / All).
+  const perm = page.locator('input[name="permission_type"]')
+    .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
+  await perm.locator('.multiselect__tags').click();
+  await perm.locator('.multiselect__option', { hasText: 'Custom' }).first().click();
 
   const postPromise = page.waitForResponse(
     (r) => r.request().method() === 'POST' && r.url().includes('configuration/integrations'),
     { timeout: 15000 },
   ).catch(() => null);
-  await page.locator('button:has-text("Save")').first().click();
+  await page.locator('button[type="submit"]').filter({ hasText: 'Save' }).first().click();
+  await page.waitForURL(/\/integrations\/edit\//, { timeout: 15000 }).catch(() => {});
   const post = await postPromise;
-  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
 
-  // 302 + still on /create means validation failure (almost always
-  // "admin id has already been taken" on UnoPim).
   if (!post || !/\/edit\//.test(page.url())) return null;
   return readCredentialsOnEditPage(page);
 }

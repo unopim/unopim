@@ -21,6 +21,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.attribute_groups.get');
         Route::post('', 'store')->name('admin.api.attribute_groups.store');
         Route::put('{code}', 'update')->name('admin.api.attribute_groups.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.attribute_groups.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.attribute_groups.delete');
     });
 
     /** Attributes API Routes */
@@ -29,10 +31,13 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.attributes.get');
         Route::post('', 'store')->name('admin.api.attributes.store');
         Route::put('{code}', 'update')->name('admin.api.attributes.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.attributes.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.attributes.delete');
 
         Route::get('{code}/options', 'getOptions')->name('admin.api.attribute_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.attribute_options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.attribute_options.update_option');
+        Route::delete('{code}/options/{optionCode}', 'deleteOption')->name('admin.api.attribute_options.delete_option');
     });
 
     /** Attributes Family API Routes */
@@ -41,6 +46,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.families.get');
         Route::post('', 'store')->name('admin.api.families.store');
         Route::put('{code}', 'update')->name('admin.api.families.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.families.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.families.delete');
     });
 
     /** Category Fields API Routes */
@@ -49,10 +56,13 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.category-fields.get');
         Route::post('', 'store')->name('admin.api.category-fields.store');
         Route::put('{code}', 'update')->name('admin.api.category-fields.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.category-fields.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.category-fields.delete');
 
         Route::get('{code}/options', 'getOptions')->name('admin.api.category-fields_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.category-fields-options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.category-fields-options.update_option');
+        Route::delete('{code}/options/{optionCode}', 'deleteOption')->name('admin.api.category-fields-options.delete_option');
     });
 
     /** Categories API Routes */
@@ -69,14 +79,20 @@ Route::group([
     Route::controller(MediaFileController::class)->prefix('media-files')->group(function () {
         Route::prefix('category')->group(function () {
             Route::post('', 'storeCategoryMedia')->name('admin.api.media-files.category.store');
+            Route::get('', 'getCategoryMedia')->name('admin.api.media-files.category.get');
+            Route::delete('', 'deleteCategoryMedia')->name('admin.api.media-files.category.delete');
         });
 
         Route::prefix('product')->group(function () {
             Route::post('', 'storeProductMedia')->name('admin.api.media-files.product.store');
+            Route::get('', 'getProductMedia')->name('admin.api.media-files.product.get');
+            Route::delete('', 'deleteProductMedia')->name('admin.api.media-files.product.delete');
         });
 
         Route::prefix('swatch')->group(function () {
             Route::post('', 'storeSwatchMedia')->name('admin.api.media-files.attribute.options.store');
+            Route::get('', 'getSwatchMedia')->name('admin.api.media-files.attribute.options.get');
+            Route::delete('', 'deleteSwatchMedia')->name('admin.api.media-files.attribute.options.delete');
         });
     });
 
@@ -93,9 +109,16 @@ Route::group([
 
     /** Configurable Products API Routes (supports both "configurable" and the legacy "configrable" typo) */
     foreach (['configurable-products', 'configrable-products'] as $configurablePrefix) {
-        $nameSuffix = $configurablePrefix === 'configrable-products' ? 'configrable_products' : 'configurable_products';
+        $isLegacy = $configurablePrefix === 'configrable-products';
+        $nameSuffix = $isLegacy ? 'configrable_products' : 'configurable_products';
 
-        Route::controller(ConfigurableProductController::class)->prefix($configurablePrefix)->group(function () use ($nameSuffix) {
+        $group = Route::controller(ConfigurableProductController::class)->prefix($configurablePrefix);
+
+        if ($isLegacy) {
+            $group->middleware('api.deprecated:/api/v1/rest/configurable-products');
+        }
+
+        $group->group(function () use ($nameSuffix) {
             Route::get('', 'index')->name('admin.api.'.$nameSuffix.'.index');
             Route::get('{code}', 'get')->name('admin.api.'.$nameSuffix.'.get');
             Route::post('', 'store')->name('admin.api.'.$nameSuffix.'.store');

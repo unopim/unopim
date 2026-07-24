@@ -20,7 +20,7 @@ async function fillUserForm(adminPage, {
     await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
   }
   if (email !== null) {
-    await adminPage.getByRole('textbox', { name: 'email@example.com' }).fill(email);
+    await adminPage.getByPlaceholder('email@example.com').fill(email);
   }
   if (password !== null) {
     await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill(password);

@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Das aktuelle Passwort, das Sie eingegeben haben, ist falsch.',
             'name'                => 'Name',
             'password'            => 'Passwort',
+            'gravatar-preview'    => 'Ihr Gravatar.com-Bild wird verwendet',
             'profile-image'       => 'Profilbild',
             'save-btn'            => 'Konto speichern',
             'title'               => 'Mein Konto',
             'ui-locale'           => 'UI-Gebietsschema',
             'update-success'      => 'Konto erfolgreich aktualisiert',
-            'upload-image-info'   => 'Profilbild hochladen (110px x 110px)',
+            'upload-image-info'   => 'Laden Sie ein Profilbild hoch (110px X 110px) oder verwenden Sie Ihr mit Ihrer E-Mail verknüpftes Gravatar.com-Bild.',
             'user-timezone'       => 'Zeitzone',
             'catalog-locale'      => 'Katalogsprache',
             'catalog-locale-info' => 'Die Sprache, in der Ihr Katalog­inhalt verfasst ist. Dies ist unabhängig von der oben genannten Oberflächensprache.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Medien konnten nicht gefunden werden.',
+            'index'          => [
                 'already-taken'             => 'Der :name ist bereits vergeben.',
                 'variant-sku-already-taken' => 'Die Varianten-SKU ":sku" ist bereits vergeben.',
                 'variant-sku-label'         => 'SKU der Variante :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Erstellt am',
                     'product-type' => 'Produkttyp',
                 ],
+                'more'         => 'Mehr',
                 'more-actions' => 'Mehr Aktionen',
                 'variations'   => [
                     'title'          => 'Variationen',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Eindeutig',
                     'delete-failed'            => 'Dieses Attribut kann nicht gelöscht werden.',
                     'mass-delete-failed'       => 'Ausgewählte Attribute können nicht gelöscht werden.',
+                    'mass-delete-partial'      => ':count Attribut(e) konnten nicht gelöscht werden, da sie in konfigurierbaren Produkten verwendet werden.',
                     'delete-attribute-failure' => 'Dieses Attribut kann nicht entfernt werden, da es für konfigurierbare Produkte verwendet wird.',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'Attribut mit Code „:code“ konnte nicht gefunden werden',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attributoption erfolgreich gelöscht',
+            'swatch-not-found'     => 'Für diese Option wurde kein Farbfeldbild gefunden.',
             'create-success'       => 'Attributoption erfolgreich erstellt',
             'update-success'       => 'Attributoption erfolgreich aktualisiert',
             'usable-in-grid-error' => 'Es können nur 4 Attribute zur Verwendung im Raster aktiviert sein.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategoriefeldoption erfolgreich gelöscht',
             'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',
             'update-success'      => 'Kategoriefeldoption erfolgreich aktualisiert',
             'update-unknown-code' => 'Eine Kategoriefeld-Option mit dem Code „:code“ existiert nicht.',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Gebietsschema mit dem Code :code nicht gefunden.',
                 'create-btn'            => 'Gebietsschema erstellen',
                 'locale'                => 'Gebietsschema',
                 'title'                 => 'Gebietsschemas',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Währung mit dem Code :code nicht gefunden.',
                 'create-btn'            => 'Währung erstellen',
                 'currency'              => 'Währung',
                 'title'                 => 'Währungen',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanal mit dem Code :code nicht gefunden.',
                 'create-btn'           => 'Kanal erstellen',
                 'delete-failed'        => 'Kanal löschen fehlgeschlagen',
                 'delete-success'       => 'Kanal erfolgreich gelöscht.',
@@ -1753,7 +1763,7 @@ return [
                     'save-btn'            => 'Benutzer speichern',
                     'status'              => 'Status',
                     'title'               => 'Benutzer erstellen',
-                    'upload-image-info'   => 'Profilbild hochladen (110px x 110px)',
+                    'upload-image-info'   => 'Laden Sie ein Profilbild hoch (110px X 110px) oder verwenden Sie Ihr mit Ihrer E-Mail verknüpftes Gravatar.com-Bild.',
                     'user-timezone'       => 'Zeitzone',
                     'catalog-locale'      => 'Katalogsprache',
                     'catalog-locale-info' => 'Die Sprache, in der dieser Benutzer Katalog­inhalte verfasst. Unabhängig von seiner Oberflächensprache.',
@@ -1796,18 +1806,19 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Benutzer bearbeiten',
             ],
-            'activate-warning'          => 'Ihr Konto muss noch aktiviert werden. Bitte wenden Sie sich an Administrator.',
-            'cannot-change'             => 'Der Benutzer kann nicht geändert werden',
-            'cannot-escalate-role'      => 'Sie haben keine Berechtigung, eine Rolle mit Vollzugriff zuzuweisen.',
-            'create-success'            => 'Benutzer erfolgreich erstellt.',
-            'delete-failed'             => 'Benutzer gelöscht fehlgeschlagen.',
-            'delete-success'            => 'Benutzer erfolgreich gelöscht.',
-            'delete-warning'            => 'Sind Sie sicher, Sie möchten diese Aktion ausführen?',
-            'incorrect-password'        => 'Falsches Passwort',
-            'last-delete-error'         => 'Der letzte Benutzer löschen fehlgeschlagen',
-            'login-error'               => 'Bitte überprüfen Sie Ihre Anmeldeinformationen und versuchen Sie es erneut.',
-            'update-success'            => 'Benutzer erfolgreich aktualisiert.',
-            'current-user-delete-error' => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
+            'activate-warning'             => 'Ihr Konto muss noch aktiviert werden. Bitte wenden Sie sich an Administrator.',
+            'cannot-change'                => 'Der Benutzer kann nicht geändert werden',
+            'cannot-escalate-role'         => 'Sie haben keine Berechtigung, eine Rolle mit Vollzugriff zuzuweisen.',
+            'create-success'               => 'Benutzer erfolgreich erstellt.',
+            'delete-failed'                => 'Benutzer gelöscht fehlgeschlagen.',
+            'delete-success'               => 'Benutzer erfolgreich gelöscht.',
+            'delete-warning'               => 'Sind Sie sicher, Sie möchten diese Aktion ausführen?',
+            'incorrect-password'           => 'Falsches Passwort',
+            'last-delete-error'            => 'Der letzte Benutzer löschen fehlgeschlagen',
+            'login-error'                  => 'Bitte überprüfen Sie Ihre Anmeldeinformationen und versuchen Sie es erneut.',
+            'update-success'               => 'Benutzer erfolgreich aktualisiert.',
+            'current-user-delete-error'    => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
+            'last-all-access-delete-error' => 'Der letzte aktive Administrator mit Vollzugriff kann nicht gelöscht werden.',
         ],
         'system-settings' => [
             'info'               => 'Verwalten Sie die Systemeinstellungen an einem Ort.',
@@ -2691,6 +2702,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Produktpässe',
+        'publish'                  => 'Veröffentlichen',
+        'withdraw'                 => 'Zurückziehen',
         'addresses'                => 'Adressen',
         'attribute-families'       => 'Attributfamilien',
         'attribute-groups'         => 'Attributgruppen',

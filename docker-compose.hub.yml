@@ -83,7 +83,7 @@ services:
       REDIS_HOST: unopim-redis
       REDIS_PORT: 6379
       ELASTICSEARCH_HOST: unopim-elasticsearch:9200
-      QUEUE_NAMES: "webhooks,system,completeness,default"
+      QUEUE_NAMES: "webhooks,system,completeness,default,publication"
     depends_on:
       unopim-mysql:
         condition: service_healthy

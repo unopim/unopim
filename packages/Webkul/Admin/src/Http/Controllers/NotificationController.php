@@ -51,22 +51,25 @@ class NotificationController extends Controller
      */
     public function viewedNotifications($id): RedirectResponse
     {
+        $adminId = auth()->user()->id;
+
         $notification = $this->notificationRepository->find($id);
 
-        if ($notification) {
-            $notification->userNotifications()
-                ->where('read', 0)
-                ->where('admin_id', auth()->user()->id)
-                ->update(['read' => 1]);
+        abort_if(
+            ! $notification || ! $notification->userNotifications()->where('admin_id', $adminId)->exists(),
+            404
+        );
 
-            if ($notification->route) {
-                return redirect()->route($notification->route, $notification->route_params);
-            }
+        $notification->userNotifications()
+            ->where('read', 0)
+            ->where('admin_id', $adminId)
+            ->update(['read' => 1]);
 
-            return back();
+        if ($notification->route) {
+            return redirect()->route($notification->route, $notification->route_params);
         }
 
-        abort(404);
+        return back();
     }
 
     /**

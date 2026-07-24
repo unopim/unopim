@@ -51,7 +51,7 @@ class WebhookService
      */
     public function sendBatchByIds(array $ids): ?Response
     {
-        return $this->sendBatch($this->productRepository->findWhereIn('id', $ids));
+        return $this->deliverChunked('id', $ids);
     }
 
     /**
@@ -60,7 +60,7 @@ class WebhookService
      */
     public function sendBatchForBulkEdit(array $ids): ?Response
     {
-        return $this->sendBatch($this->productRepository->findWhereIn('id', $ids), requireChanges: false);
+        return $this->deliverChunked('id', $ids, requireChanges: false);
     }
 
     /**
@@ -68,7 +68,35 @@ class WebhookService
      */
     public function sendBatchBySkus(array $skus): ?Response
     {
-        return $this->sendBatch($this->productRepository->findWhereIn('sku', $skus));
+        return $this->deliverChunked('sku', $skus);
+    }
+
+    /**
+     * Load and deliver products in bounded chunks so a large selection never
+     * loads the whole set into memory or emits one oversized request body.
+     *
+     * @param  array<int, int|string>  $values
+     */
+    protected function deliverChunked(string $field, array $values, bool $requireChanges = true): ?Response
+    {
+        $lastResponse = null;
+
+        foreach (array_chunk($values, $this->batchChunkSize()) as $chunk) {
+            $lastResponse = $this->sendBatch(
+                $this->productRepository->findWhereIn($field, $chunk),
+                $requireChanges,
+            );
+        }
+
+        return $lastResponse;
+    }
+
+    /**
+     * Max products loaded and delivered per webhook request.
+     */
+    protected function batchChunkSize(): int
+    {
+        return 100;
     }
 
     /**
@@ -261,15 +289,27 @@ class WebhookService
     {
         $adminName = $this->actingName();
 
+        // Store only this product's slice per row. Persisting the whole batch
+        // payload on every row was O(N²) storage for an N-product bulk edit.
+        $dataBySku = collect($payload['data'] ?? [])->keyBy(fn ($entry): ?string => $entry['sku'] ?? null);
+
+        $envelope = array_diff_key($payload, ['data' => true]);
+
         foreach ($products as $product) {
+            $sku = $product->sku ?? ($product['sku'] ?? null);
+
+            $rowPayload = $payload === []
+                ? []
+                : $envelope + ['data' => array_values(array_filter([$dataBySku->get($sku)]))];
+
             $this->logsRepository->create([
                 'webhook_id' => $webhook->id,
                 'user'       => $adminName,
-                'sku'        => $product->sku ?? ($product['sku'] ?? null),
+                'sku'        => $sku,
                 'event'      => $event,
                 'status'     => $status,
                 'http_code'  => $httpCode,
-                'extra'      => ['payload' => $payload, 'response' => $response],
+                'extra'      => ['payload' => $rowPayload, 'response' => $response],
             ]);
         }
     }

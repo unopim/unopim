@@ -116,6 +116,10 @@ jobs:
           # rate-limit security spec reads this same value to still assert throttling.
           echo "ADMIN_LOGIN_RATE_LIMIT=20" >> .env
 
+          # The webhook-delivery spec's catcher listens on the runner's loopback;
+          # SafeWebhookUrl blocks loopback unless this opt-in is set.
+          echo "WEBHOOK_ALLOW_LOOPBACK=true" >> .env
+
       - name: Running UnoPim Installer & Start Server
         env:
           # Fall back to the same literal creds login.js defaults to, so the
@@ -129,7 +133,7 @@ jobs:
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
           php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
-          php artisan queue:work --queue=webhooks,default,system,completeness > /tmp/queue.log 2>&1 &
+          php artisan queue:work --queue=webhooks,default,system,completeness,publication > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
 

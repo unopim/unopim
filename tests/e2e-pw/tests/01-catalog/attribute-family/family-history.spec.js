@@ -27,9 +27,13 @@ test.describe.serial('Attribute Family — History tab', () => {
     // Make a change on the General tab to generate history.
     await gotoTab(page, family.id, '');
     await page.waitForSelector('.group_node', { timeout: 30000 });
-    const nameInput = page.locator('input[name="en_US\\[name\\]"]');
+    // The unsaved-changes tracker snapshots initial field values on mount; editing
+    // before that snapshot bakes the new value into the baseline, so it never dirties.
+    await page.waitForTimeout(1000);
+    const nameInput = page.locator('input[name="en_US[name]"]').first();
     await nameInput.fill(`History Edit ${generateUid()}`);
     await nameInput.blur();
+    await expect(page.getByRole('button', { name: 'Save changes' })).toBeVisible({ timeout: 10000 });
     await saveFamilyEdit(page);
 
     // History tab should now show at least one entry (version/date/user row).

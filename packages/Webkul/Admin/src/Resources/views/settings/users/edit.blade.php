@@ -49,10 +49,16 @@
                             @lang('admin::app.account.edit.profile-image')
                         </x-admin::form.control-group.label>
 
+                        @php
+                            $profileImages = $user->image
+                                ? [['id' => 'image', 'url' => $user->image_url, 'value' => $user->image]]
+                                : ($user->hasGravatar() ? [['id' => 'gravatar', 'url' => $user->gravatar_url, 'value' => null]] : []);
+                        @endphp
+
                         <x-admin::media.image
                             name="image"
                             :show-suggestions="false"
-                            :uploaded-images="$user->image ? [['id' => 'image', 'url' => $user->image_url, 'value' => $user->image]] : []"
+                            :uploaded-images="$profileImages"
                         />
 
                         <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">

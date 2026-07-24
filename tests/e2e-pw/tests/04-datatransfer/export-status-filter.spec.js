@@ -37,7 +37,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
 
   // Navigate to the edit page to set the Status filter
   await adminPage.getByRole('link', { name: 'Edit' }).click();
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.waitForLoadState('domcontentloaded');
 
   // Now on the edit page — set the Status filter
   const statusSelect = adminPage.locator('input[name="filters[status]"], select[name="filters[status]"]')

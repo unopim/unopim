@@ -13,6 +13,7 @@ use Webkul\Admin\DataGrids\Settings\UserDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\UserForm;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\User\Models\Role;
 use Webkul\User\Repositories\AdminRepository;
 use Webkul\User\Repositories\RoleRepository;
 
@@ -46,6 +47,32 @@ class UserController extends Controller
     }
 
     /**
+     * Whether the acting admin is forbidden from assigning the given role.
+     *
+     * A full-access admin may assign anything; anyone else is blocked from
+     * assigning an all-access role or any custom role carrying permissions they
+     * do not themselves hold.
+     */
+    protected function cannotAssignRole(?Role $targetRole): bool
+    {
+        if (! $targetRole) {
+            return false;
+        }
+
+        $actingRole = auth()->guard('admin')->user()->role;
+
+        if ($actingRole->permission_type === 'all') {
+            return false;
+        }
+
+        if ($targetRole->permission_type === 'all') {
+            return true;
+        }
+
+        return (bool) array_diff($targetRole->permissions ?? [], $actingRole->permissions ?? []);
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(UserForm $request): JsonResponse
@@ -63,16 +90,7 @@ class UserController extends Controller
             'timezone',
         ]);
 
-        /**
-         * Prevent non-superadmins from assigning all-access roles.
-         */
-        $targetRole = $this->roleRepository->find($data['role_id']);
-
-        if (
-            $targetRole
-            && $targetRole->permission_type === 'all'
-            && auth()->guard('admin')->user()->role->permission_type !== 'all'
-        ) {
+        if ($this->cannotAssignRole($this->roleRepository->find($data['role_id']))) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.users.cannot-escalate-role'),
             ], JsonResponse::HTTP_FORBIDDEN);
@@ -216,6 +234,15 @@ class UserController extends Controller
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
+        if (
+            $user->role?->permission_type === 'all'
+            && $this->adminRepository->countAdminsWithAllAccessAndActiveStatus() === 1
+        ) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.users.last-all-access-delete-error'),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
         try {
             Event::dispatch('user.admin.delete.before', $id);
 
@@ -321,16 +348,7 @@ class UserController extends Controller
             return $this->cannotChangeRedirectResponse('status');
         }
 
-        /**
-         * Prevent non-superadmins from assigning all-access roles.
-         */
-        $targetRole = $this->roleRepository->find($data['role_id'] ?? $user->role_id);
-
-        if (
-            $targetRole
-            && $targetRole->permission_type === 'all'
-            && auth()->guard('admin')->user()->role->permission_type !== 'all'
-        ) {
+        if ($this->cannotAssignRole($this->roleRepository->find($data['role_id'] ?? $user->role_id))) {
             return $this->cannotChangeRedirectResponse('role');
         }
 
