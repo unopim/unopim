@@ -109,9 +109,16 @@ Route::group([
 
     /** Configurable Products API Routes (supports both "configurable" and the legacy "configrable" typo) */
     foreach (['configurable-products', 'configrable-products'] as $configurablePrefix) {
-        $nameSuffix = $configurablePrefix === 'configrable-products' ? 'configrable_products' : 'configurable_products';
+        $isLegacy = $configurablePrefix === 'configrable-products';
+        $nameSuffix = $isLegacy ? 'configrable_products' : 'configurable_products';
 
-        Route::controller(ConfigurableProductController::class)->prefix($configurablePrefix)->group(function () use ($nameSuffix) {
+        $group = Route::controller(ConfigurableProductController::class)->prefix($configurablePrefix);
+
+        if ($isLegacy) {
+            $group->middleware('api.deprecated:/api/v1/rest/configurable-products');
+        }
+
+        $group->group(function () use ($nameSuffix) {
             Route::get('', 'index')->name('admin.api.'.$nameSuffix.'.index');
             Route::get('{code}', 'get')->name('admin.api.'.$nameSuffix.'.get');
             Route::post('', 'store')->name('admin.api.'.$nameSuffix.'.store');

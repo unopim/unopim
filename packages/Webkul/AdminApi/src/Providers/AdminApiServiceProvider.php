@@ -12,6 +12,7 @@ use Laravel\Passport\Bridge\UserRepository as PassportUserRepository;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Webkul\AdminApi\Console\ApiClientCommand;
+use Webkul\AdminApi\Http\Middleware\DeprecatedRoute;
 use Webkul\AdminApi\Http\Middleware\EnsureAcceptsJson;
 use Webkul\AdminApi\Http\Middleware\LocaleMiddleware;
 use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
@@ -31,6 +32,7 @@ class AdminApiServiceProvider extends ServiceProvider
         'accept.json'    => EnsureAcceptsJson::class,
         'request.locale' => LocaleMiddleware::class,
         'api.scope'      => ScopeMiddleware::class,
+        'api.deprecated' => DeprecatedRoute::class,
     ];
 
     /**
