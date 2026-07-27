@@ -248,7 +248,6 @@
                     @includeIf('admin::catalog.products.edit.types.' . $product->type)
                 @endif
 
-                <!-- Related, Cross Sells, Up Sells View Blade File -->
                 @include('admin::catalog.products.edit.links', ['linkedProducts' => $linkedProducts])
 
                 @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
@@ -267,12 +266,10 @@
     {!! view_render_event('unopim.admin.catalog.product.edit.after', ['product' => $product]) !!}
 
     @pushOnce('scripts')
-        {{-- Give the sticky edit header a solid white background once the page is scrolled
-             (Vue has no `.window` event modifier, so this is done with a plain listener). --}}
+        {{-- Solid white background on the sticky edit header once scrolled (Vue has no `.window` modifier). --}}
         <script>
             (function () {
-                // Query the header on each call — it's rendered by Vue (inside <v-form>),
-                // so it may not exist yet when this script first runs.
+                // Query the header each call — Vue renders it inside <v-form>, so it may not exist on first run.
                 const update = () => {
                     const header = document.querySelector('.js-sticky-header');
 
@@ -286,9 +283,7 @@
                     header.classList.toggle('shadow-md', scrolled);
                 };
 
-                // The SPA re-runs pushed scripts on every ajax visit, so drop any
-                // previous listener before adding a new one and clean up on navigate —
-                // otherwise scroll handlers accumulate across visits.
+                // The SPA re-runs pushed scripts each visit; drop the previous listener and clean up on navigate to avoid accumulation.
                 if (window.__stickyProductHeader) {
                     window.removeEventListener('scroll', window.__stickyProductHeader);
                 }

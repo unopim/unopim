@@ -162,7 +162,6 @@
                         data-attribute-groups-dirty
                     />
 
-                    <!-- Panel Header -->
                     <div class="flex flex-wrap gap-2.5 justify-between mb-2.5 p-4">
                         <div class="flex flex-col gap-2">
                             <p class="text-base font-semibold text-gray-800 dark:text-white">
@@ -175,7 +174,6 @@
                         </div>
                         
                         <div class="flex gap-x-1 items-center">
-                            <!-- Add Group Button -->
                             <div
                                 class="secondary-button"
                                 @click="$refs.assignGroupModal.open()"
@@ -186,7 +184,6 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4 mb-2.5 p-4">
                         <div class="">
-                            <!-- Unassigned Attribute Groups Header -->
                             <x-admin::list.panel-header
                                 :title="trans('admin::app.catalog.families.edit.main-column')"
                                 :description="trans('admin::app.catalog.families.edit.main-column-info')"
@@ -202,7 +199,6 @@
                                 />
                             </x-admin::list.panel-header>
 
-                            <!-- Draggable Unassigned Attribute Group  -->
                             <div
                                 v-if="! defaultFamilyGroups.length"
                                 class="h-[calc(100vh-285px)] overflow-auto pb-4 ltr:border-r ltr:pr-4 rtl:border-l rtl:pl-4 border-gray-200"
@@ -229,12 +225,10 @@
                             >
                                 <template #item="{ element, index }">
                                     <div class="ltr:pr-3 rtl:pl-3">
-                                        <!-- Group Container -->
                                             <x-admin::catalog.families.group-row
                                                 :remove-title="trans('admin::app.catalog.families.edit.remove-group-btn')"
                                             />
 
-                                        <!-- Group Attributes -->
                                         <div
                                             class="relative ltr:ml-[70px] rtl:mr-[70px]"
                                             v-show="! element.hide"
@@ -265,7 +259,6 @@
                         </div>
 
                         <div>
-                            <!-- Unassigned Attributes Header -->
                             <x-admin::list.panel-header
                                 :title="trans('admin::app.catalog.families.edit.unassigned-attributes')"
                                 :description="trans('admin::app.catalog.families.edit.unassigned-attributes-info')"
@@ -326,7 +319,6 @@
                                     </button>
                                 </div>
 
-                                <!-- Select-all-across-pages banner -->
                                 <div
                                     v-if="canSelectAllMatching || selectAllAcrossPages"
                                     class="flex items-center justify-center gap-1.5 mb-2 rounded-md bg-unopim-primary-soft/50 dark:bg-cherry-900 px-3 py-1.5 text-xs text-gray-600 dark:text-gray-300"
@@ -348,7 +340,6 @@
                                     :select-group-placeholder="trans('admin::app.catalog.families.edit.select-destination-group')"
                                 />
 
-                                <!-- Draggable Unassigned Attributes -->
                                 <draggable
                                     id="unassigned-attributes"
                                     class="h-[calc(100vh-285px)] pb-4 overflow-auto"
@@ -375,7 +366,6 @@
                                     </template>
                                 </draggable>
 
-                                <!-- Pagination -->
                                 <x-admin::pagination.compact
                                     class="mt-3"
                                     current-page="currentPage"
@@ -844,8 +834,7 @@
                         },
 
                         signalUnsaved() {
-                            // Drag-assigning attributes/groups mutates hidden inputs without a
-                            // native input/change event, so tell the unsaved-changes tracker.
+                            // Drag-assign mutates hidden inputs without a native event, so notify the unsaved-changes tracker.
                             this.dirtyTick++;
 
                             this.$nextTick(() => {

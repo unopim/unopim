@@ -10,9 +10,7 @@ function setEnvVar(string $name, string $value): void
     $_ENV[$name] = $value;
     putenv("{$name}={$value}");
 
-    // The seeder reads config('installer.admin.*'), resolved from env at boot; re-sync
-    // it so env values set mid-test (after boot) are honoured like a real install where
-    // the vars are present before the config is built.
+    // Seeder reads config('installer.admin.*') built from env at boot; re-sync so mid-test env changes take effect.
     config([
         'installer.admin.email'    => env('INSTALLER_ADMIN_EMAIL'),
         'installer.admin.password' => env('INSTALLER_ADMIN_PASSWORD'),

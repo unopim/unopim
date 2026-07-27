@@ -31,9 +31,7 @@ class CoreConfigRepository extends Repository
 
         $channel = $locale = null;
 
-        // Strip scope keys even when null: a channel_based field saved from the
-        // "all channels" view posts channel => null, which would otherwise reach
-        // recursiveArray() (array-typed) and fatal the save.
+        // Strip scope keys even when null, else a null channel/locale reaches array-typed recursiveArray() and fatals.
         if (array_key_exists('locale', $data) || array_key_exists('channel', $data)) {
             $locale = ($data['locale'] ?? null) ?: null;
             $channel = ($data['channel'] ?? null) ?: null;
@@ -47,8 +45,7 @@ class CoreConfigRepository extends Repository
             foreach ($recursiveData as $fieldName => $value) {
                 $field = core()->getConfigField($fieldName);
 
-                // For null values, use the field's default_value if available, otherwise store an empty
-                // string so explicitly cleared fields (e.g. deselected multiselects) are persisted.
+                // Fall back to default_value, else empty string so explicitly cleared fields are persisted.
                 if (is_null($value)) {
                     $value = isset($field['default_value']) && $field['default_value'] !== '' ? $field['default_value'] : '';
                 }

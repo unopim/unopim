@@ -42,8 +42,7 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
-     * Create a family with a usable starting structure: a clone of $basedOn when given,
-     * otherwise a single "general" group holding the sku attribute.
+     * Create a family with a usable starting structure: a clone of $basedOn, or a "general" group holding sku.
      */
     public function createScaffolded(string $code, ?int $basedOn = null, array $translations = []): AttributeFamily
     {
@@ -184,8 +183,7 @@ class AttributeFamilyRepository extends Repository
 
         $groupPosition = 1;
 
-        // Resolve every referenced attribute once, keyed by id, instead of a
-        // find() per attribute per group (G·A point lookups on a large family).
+        // Resolve all referenced attributes once, keyed by id, avoiding a find() per attribute per group.
         $attributeIds = collect($data['attribute_groups'] ?? [])
             ->flatMap(fn ($group): array => collect($group['custom_attributes'] ?? [])->pluck('id')->all())
             ->filter()
@@ -355,8 +353,7 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
-     * This function returns a query builder instance for the family model.
-     * It eager loads the 'translations' relationship for the family.
+     * Query builder with translations and family group mappings eager-loaded.
      *
      * @return Builder
      */

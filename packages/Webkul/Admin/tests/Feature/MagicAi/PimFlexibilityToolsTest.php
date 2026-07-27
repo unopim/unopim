@@ -288,8 +288,7 @@ function setPimFlexCoreConfig(string $code, string $value): void
         'updated_at' => now(),
     ]);
 
-    // getConfigData memoises per request, so drop the stale entry after the
-    // underlying row changes within a single test.
+    // getConfigData memoises per request; drop the stale entry after changing the row within a test.
     $attributes = request()->attributes;
 
     foreach ($attributes->keys() as $key) {

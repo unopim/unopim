@@ -4,13 +4,7 @@ use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\get;
 
-/*
- * Contract + performance-regression coverage for the async option lookup
- * (AjaxOptionsController::getOptions) that powers every searchable multiselect.
- * Labels must resolve through the translation fallback, and formatting a page must
- * stay a small, constant number of queries — never one lazy translation load per row.
- */
-
+// Contract + N+1 regression for AjaxOptionsController::getOptions (powers searchable multiselects).
 it('returns translated attribute options with the paginated envelope', function () {
     $this->loginAsAdmin();
 
@@ -51,7 +45,6 @@ it('formats an options page without an N+1 translation load', function () {
         return $queries;
     };
 
-    // Eager loading makes the query count independent of page size. Under the old
-    // lazy-per-row behaviour a 40-row page would fire ~35 more queries than a 5-row page.
+    // Eager loading keeps the query count independent of page size (was ~1 lazy translation load per row).
     expect($countFor(40) - $countFor(5))->toBeLessThanOrEqual(2);
 });

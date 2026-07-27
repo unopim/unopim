@@ -17,7 +17,6 @@ use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
@@ -337,29 +336,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
-        $existingCodes = array_merge(
-            $this->defaultColumns,
-            array_keys($this->attributeColumns)
-        );
-
-        $requestedFilters = array_keys(request()->input('filters', []));
-
-        $propertyColumnKeys = array_merge(
-            array_keys($this->getPropertyColumns()),
-            ['channel', 'locale', 'all', 'indices']
-        );
-
-        $activeAttributeFilters = array_diff($requestedFilters, $propertyColumnKeys, $existingCodes);
-
-        if (empty($activeAttributeFilters)) {
-            return;
-        }
-
         $filterableAttributes = app(AttributeRepository::class)
             ->where('is_filterable', true)
             ->whereIn('code', $requestedCodes)
-            ->whereNotIn('code', $existingCodes)
-            ->whereIn('code', array_values($activeAttributeFilters))
             ->get();
 
         foreach ($filterableAttributes as $attribute) {
@@ -380,9 +359,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return [];
         }
 
-        return array_values(array_diff(
-            array_keys($filters),
-            ['all', 'indices', 'channel', 'locale']
+        $excludedCodes = array_merge(
+            ['all', 'indices', 'channel', 'locale'],
+            $this->defaultColumns,
+            array_keys($this->attributeColumns),
+            array_keys($this->getPropertyColumns()),
+        );
+
+        return array_values(array_filter(
+            array_diff(array_keys($filters), $excludedCodes),
+            fn (mixed $code): bool => is_string($code),
         ));
     }
 
@@ -499,7 +485,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->setElasticSort($requestedParams['sort'] ?? []);
             $this->setElasticFilters($requestedParams['filters'] ?? []);
 
-            $esQuery = ElasticSearchQuery::build();
+            $esQuery = $this->prepareQuery->build();
 
             $matchingParams = $requestedParams;
             $matchingParams['pagination'] = [
@@ -522,7 +508,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->setElasticSort($requestedParams['sort'] ?? []);
             $this->setElasticFilters($requestedParams['filters'] ?? []);
 
-            $esQuery = ElasticSearchQuery::build();
+            $esQuery = $this->prepareQuery->build();
             $result = ResultCursorFactory::createCursor($esQuery, $requestedParams);
 
             $ids = $result->getAllIds();
@@ -802,7 +788,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
 
-        ElasticSearchQuery::orderBy([
+        $this->prepareQuery->orderBy([
             $sort => [
                 'order'         => $sortOrder,
                 'missing'       => '_last',

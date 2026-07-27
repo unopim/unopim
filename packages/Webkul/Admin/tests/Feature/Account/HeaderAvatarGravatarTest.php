@@ -29,6 +29,26 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
         expect(Admin::gravatarExistsForEmail(null))->toBeFalse();
     });
 
+    it('does not report a gravatar when the admin opted out, even if the email has one', function () {
+        Http::fake([
+            'gravatar.com/avatar/*' => Http::response('img-bytes', 200, ['Content-Type' => 'image/png']),
+        ]);
+
+        $admin = Admin::factory()->create([
+            'email'        => 'opted-out@example.com',
+            'image'        => null,
+            'use_gravatar' => false,
+        ]);
+
+        expect($admin->hasGravatar())->toBeFalse();
+
+        $this->loginAsAdmin($admin);
+
+        $expected = route('admin.avatar.public', ['hash' => md5('opted-out@example.com')]);
+
+        $this->get(route('admin.account.edit'))->assertDontSee($expected, false);
+    });
+
     it('renders the gravatar avatar in the header when the email has one and no image is uploaded', function () {
         Http::fake([
             'gravatar.com/avatar/*' => Http::response('img-bytes', 200, ['Content-Type' => 'image/png']),
@@ -60,7 +80,7 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'image/png');
-        expect($response->streamedContent() ?: $response->getContent())->toBe('img-bytes');
+        expect($response->getContent())->toBe('img-bytes');
     });
 
     it('returns 404 through the proxy route when the email has no gravatar', function () {

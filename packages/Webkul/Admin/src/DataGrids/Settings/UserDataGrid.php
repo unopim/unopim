@@ -31,6 +31,7 @@ class UserDataGrid extends DataGrid
                 'u.id as user_id',
                 'u.name as user_name',
                 'u.image as user_image',
+                'u.use_gravatar',
                 'u.status',
                 'u.email',
                 'ro.name as role_name'
@@ -79,6 +80,10 @@ class UserDataGrid extends DataGrid
             'closure'    => function ($row) {
                 if ($row->user_image) {
                     return Storage::url($row->user_image);
+                }
+
+                if (! $row->use_gravatar) {
+                    return null;
                 }
 
                 return AdminUser::getGravatarUrlFromEmail($row->email);

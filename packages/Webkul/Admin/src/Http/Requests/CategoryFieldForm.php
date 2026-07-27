@@ -22,8 +22,7 @@ class CategoryFieldForm extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * Constrains type/validation/section to their allowed sets so the admin form
-     * matches the API's guarantees and cannot persist an unknown field type.
+     * Constrains type/validation/section to their allowed sets so no unknown field type can be persisted.
      *
      * @return array<string, mixed>
      */
@@ -39,8 +38,7 @@ class CategoryFieldForm extends FormRequest
             'position' => ['sometimes', 'integer', 'min:0'],
         ];
 
-        // Create requires a validation choice; update leaves it untouched. In both
-        // cases a concrete rule (other than the 'none' sentinel) is enum-checked.
+        // Create requires a validation choice; update leaves it untouched.
         if (! $id) {
             $rules['validation'] = ['required'];
         }

@@ -28,6 +28,8 @@ use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
 use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Helpers\ProductType;
+use Webkul\Product\Jobs\MassDeleteProducts;
+use Webkul\Product\Jobs\MassUpdateProductsStatus;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Repositories\ProductRepository;
@@ -976,9 +978,11 @@ class ProductController extends Controller
             return back()->withInput();
         }
 
-        Event::dispatch('catalog.product.update.after', $product);
+        if ($product->wasDirtyOnUpdate) {
+            Event::dispatch('catalog.product.update.after', $product);
 
-        ProductCompletenessJob::dispatch([$id]);
+            ProductCompletenessJob::dispatch([$id]);
+        }
 
         session()->flash('success', trans('admin::app.catalog.products.update-success'));
 
@@ -1040,18 +1044,16 @@ class ProductController extends Controller
     {
         $productIds = $massDestroyRequest->input('indices');
 
+        if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
+            MassDeleteProducts::dispatch($productIds);
+
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.mass-delete-queued'),
+            ]);
+        }
+
         try {
-            foreach ($productIds as $productId) {
-                $product = $this->productRepository->find($productId);
-
-                if (isset($product)) {
-                    Event::dispatch('catalog.product.delete.before', $productId);
-
-                    $this->productRepository->delete($productId);
-
-                    Event::dispatch('catalog.product.delete.after', $productId);
-                }
-            }
+            $this->productRepository->massDelete($productIds);
 
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.products.index.datagrid.mass-delete-success'),
@@ -1068,17 +1070,19 @@ class ProductController extends Controller
      */
     public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $data = $massUpdateRequest->all();
+        $productIds = $massUpdateRequest->input('indices');
 
-        $productIds = $data['indices'];
+        $status = (bool) $massUpdateRequest->input('value');
 
-        foreach ($productIds as $productId) {
-            Event::dispatch('catalog.product.update.before', $productId);
+        if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
+            MassUpdateProductsStatus::dispatch($productIds, $status);
 
-            $product = $this->productRepository->updateStatus($massUpdateRequest->input('value'), $productId);
-
-            Event::dispatch('catalog.product.update.after', $product);
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-queued'),
+            ], JsonResponse::HTTP_OK);
         }
+
+        $this->productRepository->massUpdateStatus($productIds, $status);
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success'),
