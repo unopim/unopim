@@ -3,10 +3,7 @@
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Publication\Models\PublicationProxy;
 
-// Lives with the ProductPassport suite, not Publication: only the real `dpp`
-// payload builder (this package) emits the `identifier.gtin` the GS1 listener
-// reads, and `publishGtinPassport` is a ProductPassportTestCase helper — the
-// Publication suite publishes through a stub with no identifier block.
+// In the ProductPassport suite because only its real `dpp` builder emits the `identifier.gtin` the GS1 listener reads.
 it('populates gtin and the canonical GS1 alias on publish and resolves the scanned link', function (): void {
     [, , $versions] = $this->publishGtinPassport('4006381333931');
 
@@ -36,8 +33,7 @@ it('resolves to the designated passport channel when one is configured', functio
     $this->get('/01/4006381333931')
         ->assertRedirect('/p/'.$designated->uuid.'/'.$versions[1]->locale->code);
 
-    // The product-scoped GS1 alias lives on exactly one (canonical) publication,
-    // never duplicated across the channels sharing this GTIN.
+    // The GS1 alias lives on exactly one canonical publication, never duplicated across channels sharing this GTIN.
     expect(PublicationProxy::modelClass()::query()->where('gtin', '4006381333931')->whereNotNull('alias_identifier')->count())
         ->toBe(1);
 });

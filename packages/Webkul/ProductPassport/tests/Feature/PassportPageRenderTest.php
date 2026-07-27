@@ -25,9 +25,7 @@ it('offers a locale switcher for every channel locale', function (): void {
 });
 
 it('escapes hostile field values instead of rendering them', function (): void {
-    // Set the hostile operator before the fixture publishes, so it is baked
-    // into the first (and only) version: getCoreConfig() memoizes per request,
-    // so a same-request re-publish would read the pre-config value and dedupe.
+    // Config before publish so the hostile value is baked in; getCoreConfig() memoizes per request.
     $this->setPassportConfig(['operator_name' => '<script>alert(1)</script>']);
 
     $version = $this->publishedPassportFixture();

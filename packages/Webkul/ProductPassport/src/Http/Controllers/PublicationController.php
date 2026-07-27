@@ -5,6 +5,7 @@ namespace Webkul\ProductPassport\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Product\Models\Product;
@@ -12,14 +13,17 @@ use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
 use Webkul\ProductPassport\Http\Requests\BulkPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\MassPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\PublishPassportRequest;
+use Webkul\ProductPassport\Http\Requests\RepublishPassportVersionRequest;
 use Webkul\ProductPassport\Jobs\BulkPublishPassportsJob;
+use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationVersionProxy;
 use Webkul\Publication\Services\Publisher;
 
 class PublicationController extends Controller
 {
-    public function index(): View|JsonResponse
+    public function index(): View|JsonResponse|BinaryFileResponse
     {
         abort_unless(bouncer()->hasPermission('catalog.passport.view'), 403);
 
@@ -28,6 +32,7 @@ class PublicationController extends Controller
         }
 
         if (request()->ajax()) {
+            // toJson() returns a JsonResponse for the grid payload, or a BinaryFileResponse for an export.
             return resolve(PublicationDataGrid::class)->toJson();
         }
 
@@ -142,6 +147,54 @@ class PublicationController extends Controller
         return new JsonResponse([
             'message'      => trans('passport::app.publications.withdrawn'),
             'redirect_url' => route('admin.catalog.passports.index'),
+        ]);
+    }
+
+    /**
+     * The immutable version history for a passport: every version row for the
+     * publication, newest first within each locale. Eager-loads `locale` and
+     * `publishedBy` so the listing is a fixed number of queries, never N+1.
+     */
+    public function versions(Publication $publication): View
+    {
+        abort_unless(bouncer()->hasPermission('catalog.passport.view'), 403);
+
+        $publication->load([
+            'product',
+            'channel',
+            'versions' => fn ($query) => $query
+                ->with(['locale', 'publishedBy'])
+                ->orderBy('locale_id')
+                ->orderByDesc('version'),
+        ]);
+
+        return view('passport::admin.versions.index', compact('publication'));
+    }
+
+    /**
+     * Rollback = forward-only republish of an older immutable version. Mints a
+     * new current version from the source's frozen payload; the old row is left
+     * intact. Refuses on a redacted publication/version.
+     */
+    public function republish(RepublishPassportVersionRequest $request, Publication $publication, Publisher $publisher): JsonResponse
+    {
+        $source = PublicationVersionProxy::modelClass()::query()
+            ->where('publication_id', $publication->id)
+            ->findOrFail($request->integer('version_id'));
+
+        try {
+            $version = $publisher->republishFrom($source, auth()->guard('admin')->id());
+        } catch (InvalidPublicationTransitionException) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.republish-invalid'),
+            ], 422);
+        }
+
+        return new JsonResponse([
+            'message'      => $version === null
+                ? trans('passport::app.publications.republish-noop')
+                : trans('passport::app.publications.republished'),
+            'redirect_url' => route('admin.catalog.passports.versions', $publication->id),
         ]);
     }
 }

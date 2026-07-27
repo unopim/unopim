@@ -9,7 +9,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ trans('passport::app.public.title') }}</title>
-    @if (! $withdrawn && (! empty($payload['identifier']['gtin']) || ! empty($payload['sections'])))
+    @if (! ($preview ?? false) && ! $withdrawn && (! empty($payload['identifier']['gtin']) || ! empty($payload['sections'])))
         {{-- Emitted only for a live (Published) passport: a withdrawn/redacted
              page renders a tombstone, so its frozen payload must never surface
              as machine-readable JSON-LD — matching the controller's Published
@@ -88,6 +88,10 @@
         dl.fields > div:first-child { border-top: 0; }
         dl.fields dt { font-size: .78rem; color: var(--muted); margin-bottom: .15rem; }
         dl.fields dd { margin: 0; }
+        .media { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: .75rem; }
+        .media figure { margin: 0; }
+        .media img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); display: block; }
+        .media figcaption { font-size: .72rem; color: var(--muted); margin-top: .3rem; text-align: center; }
         .docs { list-style: none; margin: 0; padding: 0; }
         .docs li { padding: .5rem 0; border-top: 1px solid var(--line); }
         .docs li:first-child { border-top: 0; }
@@ -97,6 +101,13 @@
             background: var(--accent-soft); border: 1px solid var(--border); border-radius: var(--radius);
             padding: 1rem 1.15rem; margin-bottom: 1rem;
         }
+        .preview-banner {
+            background: #fffbeb; border: 1px solid #fbbf24; border-left: 4px solid #f59e0b;
+            border-radius: var(--radius); padding: .9rem 1.15rem; margin-bottom: 1.25rem;
+        }
+        .preview-banner .t { font-weight: 700; color: #92400e; text-transform: uppercase; letter-spacing: .04em; font-size: .78rem; }
+        .preview-banner .d { color: #78350f; font-size: .82rem; margin-top: .2rem; }
+        .docs li .pending { color: var(--muted); font-size: .78rem; font-style: italic; }
         @media print {
             body { background: #fff; }
             .switcher { display: none; }
@@ -107,6 +118,7 @@
 </head>
 <body>
 <div class="wrap">
+    @unless ($preview ?? false)
     <details class="switcher">
         <summary>{{ $locale }}</summary>
         <div class="menu">
@@ -122,6 +134,14 @@
             </div>
         </div>
     </details>
+    @endunless
+
+    @if ($preview ?? false)
+        <div class="preview-banner" role="status">
+            <div class="t">{{ trans('passport::app.public.preview.banner') }}</div>
+            <div class="d">{{ trans('passport::app.public.preview.note') }}</div>
+        </div>
+    @endif
 
     <header class="hero">
         <span class="badge">{{ trans('passport::app.public.badge') }}</span>
@@ -170,11 +190,46 @@
             @endif
         @endforeach
 
-        @if (! empty($payload['documents']))
+        @php
+            $mediaDocuments   = collect($payload['documents'] ?? []);
+            $previewDocuments = $mediaDocuments->where('preview', true)->values();
+            $servableDocuments = $mediaDocuments->where('preview', '!==', true);
+            $inlineImages     = $servableDocuments->where('kind', 'image')->values();
+            $fileDocuments    = $servableDocuments->where('kind', '!==', 'image')->values();
+        @endphp
+
+        @if ($previewDocuments->isNotEmpty())
+            {{-- Preview build carries no servable asset path, so documents are listed by label only, never as a live download. --}}
             <section class="card">
                 <h2>{{ trans('passport::app.public.documents.title') }}</h2>
                 <ul class="docs">
-                    @foreach ($payload['documents'] as $document)
+                    @foreach ($previewDocuments as $document)
+                        <li>{{ $document['label'] }} <span class="pending">— {{ trans('passport::app.public.preview.document-pending') }}</span></li>
+                    @endforeach
+                </ul>
+            </section>
+        @endif
+
+        @if ($inlineImages->isNotEmpty())
+            <section class="card">
+                <h2>{{ trans('passport::app.public.media.title') }}</h2>
+                <div class="media">
+                    @foreach ($inlineImages as $image)
+                        {{-- Same-origin asset route; CSP img-src 'self' permits it. Alt text is the merchant label, escaped by Blade. --}}
+                        <figure>
+                            <img src="{{ $documentUrl($image) }}" alt="{{ $image['label'] }}" loading="lazy">
+                            <figcaption>{{ $image['label'] }}</figcaption>
+                        </figure>
+                    @endforeach
+                </div>
+            </section>
+        @endif
+
+        @if ($fileDocuments->isNotEmpty())
+            <section class="card">
+                <h2>{{ trans('passport::app.public.documents.title') }}</h2>
+                <ul class="docs">
+                    @foreach ($fileDocuments as $document)
                         <li><a href="{{ $documentUrl($document) }}">{{ $document['label'] }}</a></li>
                     @endforeach
                 </ul>

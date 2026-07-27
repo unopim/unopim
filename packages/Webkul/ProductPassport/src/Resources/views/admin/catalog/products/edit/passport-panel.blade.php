@@ -5,20 +5,35 @@
             {{ trans('passport::app.catalog.products.edit.passport.title') }}
         </p>
 
-        <button type="button"
-                class="passport-publish-all-btn primary-button text-sm"
-                data-locale-ids="{{ json_encode($passportRows->pluck('locale_id')->values()) }}">
-            {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
-        </button>
+        <div class="flex items-center gap-3">
+            @if ($passportHistoryUrl !== null)
+                <a href="{{ $passportHistoryUrl }}"
+                   class="text-violet-700 dark:text-violet-300 font-semibold text-sm">
+                    {{ trans('passport::app.catalog.products.edit.passport.version-history') }}
+                </a>
+            @endif
+
+            <button type="button"
+                    class="passport-publish-all-btn primary-button text-sm"
+                    data-locale-ids="{{ json_encode($passportRows->pluck('locale_id')->values()) }}">
+                {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
+            </button>
+        </div>
     </div>
 
-    <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">
-        @if ($passportAutoPublish)
-            {{ trans('passport::app.catalog.products.edit.passport.auto-publish-on') }}
-        @else
-            {{ trans('passport::app.catalog.products.edit.passport.auto-publish-off') }}
-        @endif
-    </p>
+    <div class="flex justify-between items-center mb-4 gap-4">
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+            @if ($passportAutoPublish)
+                {{ trans('passport::app.catalog.products.edit.passport.auto-publish-on') }}
+            @else
+                {{ trans('passport::app.catalog.products.edit.passport.auto-publish-off') }}
+            @endif
+        </p>
+
+        <p class="text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap" id="passport-total-views">
+            {{ trans('passport::app.catalog.products.edit.passport.total-views', ['count' => $passportViews]) }}
+        </p>
+    </div>
 
     <table class="w-full text-sm">
         <thead>
@@ -61,6 +76,13 @@
                             </a>
                         @endif
 
+                        @if (! empty($row['preview_url']))
+                            <a href="{{ $row['preview_url'] }}" target="_blank" rel="noopener"
+                               class="text-violet-700 dark:text-violet-300 font-semibold mr-3">
+                                {{ trans('passport::app.catalog.products.edit.passport.preview') }}
+                            </a>
+                        @endif
+
                         <button type="button" class="passport-publish-btn text-violet-700 dark:text-violet-300 font-semibold"
                                 data-locale-id="{{ $row['locale_id'] }}">
                             {{ $passportAutoPublish
@@ -77,9 +99,7 @@
 @pushOnce('scripts')
 <script>
     (function () {
-        // Delegate on document, not #passport-panel: the panel is server-
-        // rendered inside the Vue #app root, and Vue's mount detaches a
-        // listener bound directly to the panel element.
+        {{-- Delegate on document, not #passport-panel: Vue's mount detaches a listener bound directly to the panel element. --}}
         var publishRoute = '{{ route('admin.catalog.passports.publish', $product->id) }}';
         var channelId    = {{ $passportChannel->id }};
         var csrfToken    = '{{ csrf_token() }}';

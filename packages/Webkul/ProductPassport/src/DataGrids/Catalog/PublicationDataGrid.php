@@ -22,8 +22,17 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'publications.status as publication_status',
                 'publications.live_locale_count',
                 'publications.last_published_at',
+                'publications.gtin',
+                'publications.alias_identifier as gs1_link',
                 'products.sku',
                 'channels.code as channel_code',
+            )
+            // Single correlated aggregate, not a per-row query: the sum of every daily counter for this publication.
+            ->selectSub(
+                DB::table('publication_view_stats')
+                    ->selectRaw('COALESCE(SUM(publication_view_stats.views), 0)')
+                    ->whereColumn('publication_view_stats.publication_id', 'publications.id'),
+                'views',
             );
 
         $this->addFilter('id', 'publications.id');
@@ -91,10 +100,57 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             'filterable' => false,
             'sortable'   => true,
         ]);
+
+        $this->addColumn([
+            'index'      => 'views',
+            'label'      => trans('passport::app.publications.datagrid.views'),
+            'type'       => 'integer',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable'   => true,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'gtin',
+            'label'      => trans('passport::app.publications.datagrid.gtin'),
+            'type'       => 'string',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable'   => false,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'gs1_link',
+            'label'      => trans('passport::app.publications.datagrid.gs1-link'),
+            'type'       => 'string',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable'   => false,
+        ]);
+
+        $this->addColumn([
+            'index'      => 'public_url',
+            'label'      => trans('passport::app.publications.datagrid.public-url'),
+            'type'       => 'string',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable'   => false,
+            'closure'    => fn ($row): string => $this->publicUrl($row),
+        ]);
     }
 
     public function prepareActions(): void
     {
+        if (bouncer()->hasPermission('catalog.passport.view')) {
+            $this->addAction([
+                'index'  => 'versions',
+                'icon'   => 'icon-time-machine',
+                'title'  => trans('passport::app.publications.datagrid.version-history'),
+                'method' => 'GET',
+                'url'    => fn ($row): string => route('admin.catalog.passports.versions', $row->id),
+            ]);
+        }
+
         if (bouncer()->hasPermission('catalog.passport.withdraw')) {
             $this->addAction([
                 'index'  => 'withdraw',
@@ -121,9 +177,34 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
      * `live_locale_count`/`last_published_at` are plain, indexed columns —
      * sorting them is an ordinary indexed sort, not a per-row correlated
      * subquery.
+     *
+     * `public_url` is a closure column, so the CSV writer (which reads raw row
+     * properties, not the grid's formatter) never sees it unless stamped here.
      */
     public function getExportableData(array $parameters = []): array
     {
-        return $this->queryBuilder->orderBy('publications.id')->lazyById(1000, 'publications.id')->collect()->all();
+        return $this->queryBuilder
+            ->orderBy('publications.id')
+            ->lazyById(1000, 'publications.id')
+            ->map(function (object $row): object {
+                $row->public_url = $this->publicUrl($row);
+
+                return $row;
+            })
+            ->collect()
+            ->all();
+    }
+
+    /**
+     * The passport's public landing URL, keyed to its channel's configured base
+     * host (`general.publication.settings.base_url`) so a merchant can feed it to
+     * their own label/print system; falls back to the app URL when unset.
+     */
+    private function publicUrl(object $row): string
+    {
+        $base = core()->getConfigData('general.publication.settings.base_url', $row->channel_code ?? null)
+            ?: config('app.url');
+
+        return rtrim((string) $base, '/').route('publication.public.dpp.show', ['uuid' => $row->uuid], false);
     }
 }

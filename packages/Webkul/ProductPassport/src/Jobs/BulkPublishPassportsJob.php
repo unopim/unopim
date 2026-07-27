@@ -11,10 +11,9 @@ use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\PublicationProxy;
 
 /**
- * Orchestrates a bulk publish: loads the selected publications in bounded
- * chunks and re-dispatches one PublishPassportForProductChannelJob per
- * (product, channel) for all that channel's locales. Kept as its own queued
- * job so an arbitrarily large grid selection never runs in the web request.
+ * Bulk publish: chunks the selected publications and re-dispatches one PublishPassportForProductChannelJob per (product, channel).
+ *
+ * Queued so an arbitrarily large grid selection never runs in the web request.
  */
 class BulkPublishPassportsJob implements ShouldQueue
 {
@@ -52,9 +51,7 @@ class BulkPublishPassportsJob implements ShouldQueue
                         continue;
                     }
 
-                    // One dispatch per (product, channel) preserves the publish
-                    // job's uniqueId() de-dupe and its per-locale, lockForUpdate()
-                    // guarded transaction.
+                    // One dispatch per (product, channel) preserves the publish job's uniqueId() de-dupe and per-locale locking.
                     PublishPassportForProductChannelJob::dispatch(
                         $publication->product_id,
                         $publication->channel_id,

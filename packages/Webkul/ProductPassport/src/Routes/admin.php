@@ -12,14 +12,18 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::post('mass-publish', 'massPublish')->name('admin.catalog.passports.mass_publish');
         Route::post('bulk-publish', 'bulkPublish')->name('admin.catalog.passports.bulk-publish');
         Route::post('withdraw/{publication}', 'withdraw')->name('admin.catalog.passports.withdraw');
+        Route::get('{publication}/versions', 'versions')->name('admin.catalog.passports.versions');
+        Route::post('{publication}/versions/republish', 'republish')->name('admin.catalog.passports.republish');
     });
 
     Route::controller(PassportMappingController::class)->prefix('catalog/passports')->group(function (): void {
         Route::get('mapping', 'edit')->name('admin.catalog.passports.mapping.edit');
         Route::put('mapping', 'update')->name('admin.catalog.passports.mapping.update');
-        Route::post('mapping/field', 'storeField')->name('admin.catalog.passports.mapping.field.store');
     });
 
     Route::get('products/{product}/passport', [ProductPassportController::class, 'show'])
         ->name('admin.catalog.products.passport.show');
+
+    Route::get('products/{product}/passport/preview', [ProductPassportController::class, 'preview'])
+        ->name('admin.catalog.products.passport.preview');
 });

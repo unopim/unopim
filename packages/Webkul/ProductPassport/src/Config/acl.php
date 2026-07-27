@@ -17,9 +17,19 @@ return [
         'route' => 'admin.catalog.products.passport.show',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.passport.view',
+        'name'  => 'passport::app.acl.passports.view',
+        'route' => 'admin.catalog.passports.versions',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.passport.publish',
         'name'  => 'passport::app.acl.passports.publish',
         'route' => 'admin.catalog.passports.publish',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.passport.publish',
+        'name'  => 'passport::app.acl.passports.publish',
+        'route' => 'admin.catalog.passports.republish',
         'sort'  => 2,
     ], [
         'key'   => 'catalog.passport.withdraw',
@@ -35,11 +45,6 @@ return [
         'key'   => 'catalog.passport.mapping',
         'name'  => 'passport::app.mapping.title',
         'route' => 'admin.catalog.passports.mapping.update',
-        'sort'  => 4,
-    ], [
-        'key'   => 'catalog.passport.mapping',
-        'name'  => 'passport::app.mapping.title',
-        'route' => 'admin.catalog.passports.mapping.field.store',
         'sort'  => 4,
     ], [
         /**

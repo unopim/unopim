@@ -9,13 +9,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('publications', function (Blueprint $table): void {
-            // Denormalised, not attested content — maintained by
-            // SyncPublicationCounters after every publish.
+            // Denormalised, not attested content — maintained by SyncPublicationCounters after every publish.
             $table->unsignedInteger('live_locale_count')->default(0);
             $table->dateTime('last_published_at')->nullable();
 
-            // Explicit name: auto names include the table prefix and overrun
-            // MySQL's 64-char identifier limit on prefixed installs.
+            // Explicit name: auto names include the prefix and overrun MySQL's 64-char identifier limit on prefixed installs.
             $table->index(['type', 'last_published_at'], 'pub_type_pubat_idx');
         });
     }

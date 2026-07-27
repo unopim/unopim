@@ -7,6 +7,7 @@ use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Models\PublicationVersionDocument;
 use Webkul\Publication\Models\PublicationVersionPayload;
+use Webkul\Publication\Models\PublicationViewStat;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
 {
@@ -15,5 +16,6 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
         PublicationVersion::class,
         PublicationVersionPayload::class,
         PublicationVersionDocument::class,
+        PublicationViewStat::class,
     ];
 }

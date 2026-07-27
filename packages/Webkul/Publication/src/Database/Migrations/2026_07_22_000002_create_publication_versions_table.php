@@ -25,8 +25,7 @@ return new class extends Migration
 
             $table->boolean('is_current')->default(false);
 
-            // NULL when not current, so only current rows collide on the unique
-            // index below: enforces one current version per (publication, locale).
+            // NULL when not current, so the unique index below enforces one current version per (publication, locale).
             $table->unsignedInteger('current_locale_id')
                 ->storedAs('case when is_current = 1 then locale_id else null end');
 
@@ -45,8 +44,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Explicit names: auto names include the table prefix and overrun
-            // MySQL's 64-char identifier limit on prefixed installs.
+            // Explicit names: auto names include the prefix and overrun MySQL's 64-char identifier limit on prefixed installs.
             $table->unique(['publication_id', 'locale_id', 'version'], 'pubver_pub_loc_ver_uq');
             $table->unique(['publication_id', 'current_locale_id'], 'pubver_pub_curloc_uq');
             $table->index(['publication_id', 'is_current', 'locale_id'], 'pubver_pub_cur_loc_idx');

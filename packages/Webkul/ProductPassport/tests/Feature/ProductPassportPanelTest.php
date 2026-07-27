@@ -45,7 +45,6 @@ it('refuses to publish a locale that fails the completeness gate', function (): 
         'locale_ids' => [$incomplete->id],
     ])->assertOk();
 
-    // QUEUE_CONNECTION=sync in tests, so the dispatched job already ran
-    // inline by the time the request above returns.
+    // sync queue in tests: the dispatched job already ran inline.
     expect(Publication::where('product_id', $product->id)->exists())->toBeFalse();
 });

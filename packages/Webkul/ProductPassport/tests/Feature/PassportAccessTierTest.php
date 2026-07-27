@@ -81,9 +81,7 @@ it('reveals operator field values in the negotiated json-ld behind a valid signa
 it('partitions fields into config-driven tier buckets in the built payload', function (): void {
     $payload = $this->publishedTieredPassportFixture()->payload;
 
-    // dpp_material_composition is unmapped => base consumer tier;
-    // dpp_supply_chain_notes is mapped to operator, so it must never sit in
-    // the consumer bucket the template and JSON-LD read from.
+    // Unmapped => consumer tier; the operator-mapped field must stay out of the consumer bucket.
     $consumerCodes = array_column($payload['tiers']['consumer']['fields'], 'code');
     $operatorCodes = array_column($payload['tiers']['operator']['fields'], 'code');
 
@@ -98,8 +96,7 @@ it('treats every field as consumer when the tiers map is empty (backward compati
 
     $version = $this->publishedTieredPassportFixture();
 
-    // With no classification, the operator field collapses to the consumer tier
-    // and surfaces on the plain public page exactly as it did before tiering.
+    // With no classification the operator field collapses into the consumer tier and shows on the public page.
     $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)
         ->assertOk()
         ->assertSee('Recycled cotton, 80%')
