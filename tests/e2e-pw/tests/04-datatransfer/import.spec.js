@@ -34,7 +34,7 @@ async function deleteImport(adminPage, code) {
   await navigateTo(adminPage, 'imports');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
   await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.waitForLoadState('domcontentloaded');
   const deleteBtn = adminPage.locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
     await deleteBtn.click();
@@ -217,7 +217,7 @@ test.describe('UnoPim Import Jobs', () => {
     await navigateTo(adminPage, 'imports');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
     await expect(adminPage.locator('#app').getByText(code, { exact: true })).toBeVisible();
 
     // Cleanup
@@ -258,7 +258,7 @@ test.describe('UnoPim Import Jobs', () => {
     await navigateTo(adminPage, 'imports');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
 
     const itemRow = adminPage.locator('div', { hasText: code });
 
@@ -266,26 +266,26 @@ test.describe('UnoPim Import Jobs', () => {
     await itemRow.locator('span[title="Import"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/import/);
     await adminPage.goBack();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
 
     // Search again
     await navigateTo(adminPage, 'imports');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
 
     // Test Edit action
     const itemRow2 = adminPage.locator('div', { hasText: code });
     await itemRow2.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/edit/);
     await adminPage.goBack();
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
 
     // Search again (scope to the datagrid's search box — after navigating back
     // the page can briefly expose more than one "Search" textbox).
     await adminPage.getByRole('textbox', { name: 'Search' }).first().fill(code);
     await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
 
     // Test Delete action (opens confirmation modal)
     const itemRow3 = adminPage.locator('div', { hasText: code });

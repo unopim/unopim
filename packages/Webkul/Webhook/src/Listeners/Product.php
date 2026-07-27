@@ -2,6 +2,7 @@
 
 namespace Webkul\Webhook\Listeners;
 
+use Webkul\Webhook\Jobs\SendBulkEditProductWebhook;
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
 use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Repositories\WebhookRepository;
@@ -71,6 +72,6 @@ class Product
             return;
         }
 
-        $this->webhookService->sendBatchForBulkEdit($ids);
+        dispatch(new SendBulkEditProductWebhook($ids, auth('admin')?->user()?->id))->onQueue('webhooks');
     }
 }

@@ -6,13 +6,10 @@ use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 
 /**
- * Stamps a payload with its own identity so a Digital Product Passport
- * remains self-contained and reconstructible without further catalog access
- * across its ten-year retention obligation. Carries the full Channel/Locale
- * models (not just codes) so a builder can resolve anything it needs from
- * them without a second query. New properties may be appended here later
- * (Task 10 and beyond) without another breaking change to PayloadBuilder,
- * since every consumer must access them by name.
+ * Identity stamped onto a payload so it stays self-contained and
+ * reconstructible without further catalog access. Carries the full
+ * Channel/Locale models, not just codes, so a builder can resolve anything it
+ * needs without a second query.
  */
 readonly class PublicationContext
 {

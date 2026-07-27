@@ -71,13 +71,20 @@ class Tree
         if ($type == 'menu') {
             $item['url'] = route($item['route'], $item['params'] ?? []);
 
-            if (str_contains($this->current, $item['url'])) {
+            if ($this->isCurrentUrl($item['url'])) {
                 $this->currentKey = $item['key'];
             }
         } elseif ($type == 'acl') {
             $item['name'] = trans($item['name']);
 
-            $this->roles[$item['route']] = $item['key'];
+            /**
+             * A routeless acl entry registers only as an assignable permission
+             * checkbox; enforcement happens in-controller (e.g. per-section
+             * System Settings rows that all share one generic editor route).
+             */
+            if (! empty($item['route'])) {
+                $this->roles[$item['route']] = $item['key'];
+            }
         }
 
         $children = str_replace('.', '.children.', $item['key']);
@@ -90,16 +97,38 @@ class Tree
      */
     public function getActive(array $item): ?bool
     {
-        $url = trim($item['url'], '/');
-
         if (
-            str_contains($this->current, $url)
-            || (str_starts_with($this->currentKey, $item['key']))
+            $this->isCurrentUrl($item['url'])
+            || $this->isCurrentKeyDescendant($item['key'])
         ) {
             return true;
         }
 
         return null;
+    }
+
+    /**
+     * Whether the given menu url matches the current request url, respecting
+     * path-segment boundaries so a shorter url (e.g. `configuration/system`)
+     * does not match a sibling that merely shares its prefix
+     * (e.g. `configuration/system-information`).
+     */
+    private function isCurrentUrl(string $url): bool
+    {
+        $current = rtrim($this->current, '/');
+        $url = rtrim($url, '/');
+
+        return $current === $url || str_starts_with($current, $url.'/');
+    }
+
+    /**
+     * Whether the current active key is the given key or one of its
+     * descendants, matching on the dotted key hierarchy boundary so a key is
+     * not treated as an ancestor of a sibling sharing its prefix.
+     */
+    private function isCurrentKeyDescendant(string $key): bool
+    {
+        return $this->currentKey === $key || str_starts_with((string) $this->currentKey, $key.'.');
     }
 
     /**

@@ -16,7 +16,8 @@ Route::group(['prefix' => config('app.admin_url')], function () {
     /**
      * Public avatar proxy route (no auth middleware).
      */
-    Route::get('avatar/u/{hash}.png', [AvatarController::class, 'gravatar'])
+    Route::get('avatar/u/{hash}', [AvatarController::class, 'gravatar'])
+        ->where('hash', '[a-f0-9]{32}')
         ->name('admin.avatar.public')
         ->middleware('throttle:60,1');
 

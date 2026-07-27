@@ -60,12 +60,12 @@
 
         <x-admin::dropdown position="bottom-right">
             <x-slot:toggle>
-                @if ($admin->image)
+                @if ($admin->image_url || $admin->hasGravatar())
                     <button class="flex w-9 h-9 overflow-hidden rounded-full cursor-pointer hover:opacity-80 focus:opacity-80">
                         <img
-                            src="{{ $admin->image_url }}"
+                            src="{{ $admin->avatar_url }}"
                             class="w-full h-full object-cover object-top"
-                            alt="{{ $admin->image_url }}"
+                            alt="{{ $admin->name }}"
                         />
                     </button>
                 @else

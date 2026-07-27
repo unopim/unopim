@@ -77,12 +77,13 @@ return [
             'invalid-password'    => '入力した現在のパスワードは正しくありません。',
             'name'                => '名前',
             'password'            => 'パスワード',
+            'gravatar-preview'    => 'あなたの Gravatar.com 画像を使用中',
             'profile-image'       => 'プロフィール画像',
             'save-btn'            => 'アカウントを保存',
             'title'               => 'マイアカウント',
             'ui-locale'           => 'UI ロケール',
             'update-success'      => 'アカウントが正常に更新されました',
-            'upload-image-info'   => 'プロフィール画像をアップロード (110 x 110 ピクセル)',
+            'upload-image-info'   => 'プロフィール画像をアップロード（110px X 110px）するか、メールに関連付けられた Gravatar.com の画像を使用してください。',
             'user-timezone'       => 'タイムゾーン',
             'catalog-locale'      => 'カタログ言語',
             'catalog-locale-info' => 'カタログコンテンツを作成する言語です。上記のインターフェース言語とは別のものです。',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'メディアが見つかりませんでした。',
+            'index'          => [
                 'already-taken'             => ':name はすでに使用されています。',
                 'variant-sku-already-taken' => 'バリエーションのSKU「:sku」は既に使用されています。',
                 'variant-sku-label'         => 'バリエーション:positionのSKU',
@@ -413,6 +415,7 @@ return [
                     ],
                 ],
 
+                'more'         => 'その他',
                 'more-actions' => 'その他の操作',
                 'variations'   => [
                     'title'          => 'バリエーション',
@@ -536,6 +539,7 @@ return [
                     'unique'                   => '一意',
                     'delete-failed'            => 'この属性は削除できません。',
                     'mass-delete-failed'       => '選択した属性は削除できません。',
+                    'mass-delete-partial'      => ':count 件の属性は設定可能な商品で使用されているため削除できませんでした。',
                     'delete-attribute-failure' => 'この属性は設定可能な製品で使用されているため、削除できません。',
                 ],
             ],
@@ -691,6 +695,8 @@ return [
             'not-found'         => 'コード ":code" の属性が見つかりませんでした',
         ],
         'attribute-options' => [
+            'delete-success'       => '属性オプションが正常に削除されました',
+            'swatch-not-found'     => 'このオプションのスウォッチ画像が見つかりません。',
             'create-success'       => '属性オプションが正常に作成されました',
             'update-success'       => '属性オプションが正常に更新されました',
             'usable-in-grid-error' => 'グリッドを有効にすると、4 つの属性のみ使用可能になります。',
@@ -1030,6 +1036,7 @@ return [
         ],
 
         'category-fields-options' => [
+            'delete-success'      => 'カテゴリフィールドオプションが正常に削除されました',
             'create-success'      => 'カテゴリ フィールド オプションが正常に作成されました',
             'update-success'      => 'カテゴリ フィールド オプションが正常に更新されました',
             'update-unknown-code' => 'コード「:code」のカテゴリフィールドオプションは存在しません。',
@@ -1219,6 +1226,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'コード :code のロケールが見つかりません。',
                 'create-btn'            => 'ロケールの作成',
                 'locale'                => 'ロケール',
                 'title'                 => 'ロケール',
@@ -1266,6 +1274,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'コード :code の通貨が見つかりません。',
                 'create-btn'            => '通貨の作成',
                 'currency'              => '通貨',
                 'title'                 => '通貨',
@@ -1726,6 +1735,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'コード :code のチャネルが見つかりません。',
                 'create-btn'           => 'チャネルの作成',
                 'delete-failed'        => 'チャネルの削除に失敗しました',
                 'delete-success'       => 'チャネルが正常に削除されました。',
@@ -1831,7 +1841,7 @@ return [
                     'save-btn'            => 'ユーザーを保存',
                     'status'              => 'ステータス',
                     'title'               => 'ユーザーを作成',
-                    'upload-image-info'   => 'プロフィール画像をアップロード (110 x 110 ピクセル)',
+                    'upload-image-info'   => 'プロフィール画像をアップロード（110px X 110px）するか、メールに関連付けられた Gravatar.com の画像を使用してください。',
                     'user-timezone'       => 'タイムゾーン',
                     'catalog-locale'      => 'カタログ言語',
                     'catalog-locale-info' => 'このユーザーがカタログコンテンツを作成する言語です。インターフェース言語とは別です。',
@@ -1874,18 +1884,19 @@ return [
                 'status'           => 'ステータス',
                 'title'            => 'ユーザーの編集',
             ],
-            'activate-warning'          => 'アカウントはまだ有効化されていません。管理者にお問い合わせください。',
-            'cannot-change'             => 'ユーザーを変更できません',
-            'cannot-escalate-role'      => 'フルアクセスロールを割り当てる権限がありません。',
-            'create-success'            => 'ユーザーの作成に成功しました。',
-            'delete-failed'             => 'ユーザーの削除に失敗しました。',
-            'delete-success'            => 'ユーザーの削除に成功しました。',
-            'delete-warning'            => 'この操作を実行してもよろしいですか?',
-            'incorrect-password'        => 'パスワードが間違っています',
-            'last-delete-error'         => '前回のユーザーの削除に失敗しました',
-            'login-error'               => '資格情報を確認して、もう一度お試しください。',
-            'update-success'            => 'ユーザーの更新に成功しました。',
-            'current-user-delete-error' => 'ログインユーザーは削除できません',
+            'activate-warning'             => 'アカウントはまだ有効化されていません。管理者にお問い合わせください。',
+            'cannot-change'                => 'ユーザーを変更できません',
+            'cannot-escalate-role'         => 'フルアクセスロールを割り当てる権限がありません。',
+            'create-success'               => 'ユーザーの作成に成功しました。',
+            'delete-failed'                => 'ユーザーの削除に失敗しました。',
+            'delete-success'               => 'ユーザーの削除に成功しました。',
+            'delete-warning'               => 'この操作を実行してもよろしいですか?',
+            'incorrect-password'           => 'パスワードが間違っています',
+            'last-delete-error'            => '前回のユーザーの削除に失敗しました',
+            'login-error'                  => '資格情報を確認して、もう一度お試しください。',
+            'update-success'               => 'ユーザーの更新に成功しました。',
+            'current-user-delete-error'    => 'ログインユーザーは削除できません',
+            'last-all-access-delete-error' => '全アクセス権を持つ最後の有効な管理者は削除できません。',
         ],
         'system-settings' => [
             'title'              => 'システム設定',
@@ -2779,6 +2790,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => '製品パスポート',
+        'publish'                  => '公開',
+        'withdraw'                 => '取り下げ',
         'addresses'                => '住所',
         'attribute-families'       => '属性ファミリー',
         'attribute-groups'         => '属性グループ',

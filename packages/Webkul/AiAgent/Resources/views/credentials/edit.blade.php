@@ -124,7 +124,7 @@
                                         type="password"
                                         name="apiKey"
                                         rules="required"
-                                        value="{{ old('apiKey') ?: $credential->apiKey }}"
+                                        value="{{ old('apiKey') ?: ($credential->getRawOriginal('apiKey') ? '********' : '') }}"
                                         :label="trans('ai-agent::app.credentials.fields.api-key')"
                                         :placeholder="trans('ai-agent::app.credentials.fields.api-key-placeholder')"
                                     />

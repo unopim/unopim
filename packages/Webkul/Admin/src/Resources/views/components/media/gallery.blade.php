@@ -610,9 +610,21 @@
 
             mounted() {
                 this.images = this.uploadedImages;
+                this.initialImages = this.uploadedImages.map(image => ({ ...image }));
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             methods: {
+                resetToInitial() {
+                    this.images = this.initialImages.map(image => ({ ...image }));
+
+                    this.signalChange();
+                },
                 isFileAccepted(file) {
                     const typeAccepted = this.acceptedTypes.length === 0 || this.acceptedTypes.some(type => type.endsWith('/*')
                         ? file.type.startsWith(type.slice(0, -1))

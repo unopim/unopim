@@ -24,8 +24,8 @@ class CategoryObserver
      */
     public function saved($category): void
     {
-        foreach ($category->children as $child) {
-            $child->touch();
-        }
+        // Bump direct children in one query. touch() would re-fire this observer
+        // per child and recurse the whole subtree — an O(descendants) write storm.
+        $category->children()->getQuery()->update(['updated_at' => now()]);
     }
 }

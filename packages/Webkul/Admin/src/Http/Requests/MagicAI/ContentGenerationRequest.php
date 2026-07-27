@@ -22,8 +22,11 @@ class ContentGenerationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'model'  => 'required',
-            'prompt' => 'required',
+            'model'              => 'required',
+            'prompt'             => 'required',
+            'system_prompt_text' => ['nullable', 'string', 'max:4000'],
+            'temperature'        => ['nullable', 'numeric', 'between:0,2'],
+            'max_tokens'         => ['nullable', 'integer', 'min:1', 'max:16384'],
         ];
     }
 }

@@ -38,6 +38,7 @@ class AttributeGroup extends TranslatableModel implements AttributeGroupContract
             ->where('attribute_family_group_mappings.attribute_group_id', $this->id)
             ->where('attribute_family_group_mappings.attribute_family_id', $familyId)
             ->orderBy('attribute_group_mappings.position', 'asc')
+            ->with('translations')
             ->select('attributes.*', 'attribute_groups.id as group_id')->get();
     }
 

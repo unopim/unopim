@@ -2,6 +2,7 @@
 
 namespace Webkul\Publication\Services;
 
+use Illuminate\Support\Facades\Log;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationVersion;
@@ -12,6 +13,20 @@ class PublicationResolver
 
     private const LANGUAGE_TAG_PATTERN = '/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/';
 
+    /**
+     * The per-channel public-tier kill switch: `general.publication.settings.enabled`.
+     * Distinct from the publish-time-only status gate — shared by every public-facing
+     * controller (page and asset alike) so a disabled channel takes the whole
+     * publication, including its documents, off the air consistently.
+     */
+    public function isChannelEnabled(Publication $publication): bool
+    {
+        return (bool) (core()->getConfigData('general.publication.settings.enabled', $publication->channel->code) ?? false);
+    }
+
+    /**
+     * Finds a publication by uuid/type with its channel locales and current versions eager loaded.
+     */
     public function findPublication(string $uuid, string $type): ?Publication
     {
         return PublicationProxy::modelClass()::query()
@@ -24,6 +39,45 @@ class PublicationResolver
             ->first();
     }
 
+    /**
+     * Resolves a GTIN to a single canonical publication. A GTIN identifies the
+     * product, not the channel, so it is non-unique across publications: the
+     * designated passport channel (`general.publication.settings.gs1_passport_channel`)
+     * makes the mapping deterministic. When unset, falls back to the lowest
+     * channel_id and logs the ambiguity so a multi-channel GTIN never silently
+     * resolves to an arbitrary passport.
+     */
+    public function findByGtin(string $gtin, string $type): ?Publication
+    {
+        $passportChannel = core()->getConfigData('general.publication.settings.gs1_passport_channel');
+
+        $query = PublicationProxy::modelClass()::query()
+            ->where('gtin', $gtin)
+            ->where('type', $type)
+            ->with([
+                'channel.locales',
+                'versions' => fn ($query) => $query->where('is_current', true)->with('locale'),
+            ]);
+
+        if (! empty($passportChannel)) {
+            return $query->whereHas('channel', fn ($channel) => $channel->where('code', $passportChannel))->first();
+        }
+
+        $publication = $query->orderBy('channel_id')->first();
+
+        if ($publication !== null) {
+            Log::warning('GS1 resolve without designated passport channel', [
+                'gtin'       => $gtin,
+                'channel_id' => $publication->channel_id,
+            ]);
+        }
+
+        return $publication;
+    }
+
+    /**
+     * Resolves the best-match current version by explicit locale, falling back to Accept-Language preference.
+     */
     public function resolveVersion(Publication $publication, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
     {
         $currentByLocale = $publication->versions->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
@@ -42,20 +96,22 @@ class PublicationResolver
      */
     private function localePreference(Publication $publication, ?string $localeCode, ?string $acceptLanguage): array
     {
-        $preferred = $localeCode !== null ? [$localeCode] : $this->parseAcceptLanguage($acceptLanguage);
+        // An explicit locale in the URL is authoritative: match it exactly or 404,
+        // so a bogus segment can't serve another locale's content under a 200.
+        if ($localeCode !== null) {
+            return [$localeCode];
+        }
 
         return array_values(array_unique([
-            ...$preferred,
+            ...$this->parseAcceptLanguage($acceptLanguage),
             ...$publication->channel->locales->pluck('code')->all(),
         ]));
     }
 
     /**
-     * Caps the token count, validates each tag against a real BCP-47-ish
-     * shape, and honours `q=` weights instead of discarding them — the
-     * 2026-07-22 draft did neither, so a malformed or hostile header could
-     * not be trusted and preference order silently ignored the client's
-     * actual ranking.
+     * Caps the token count, validates each tag against a BCP-47-ish shape,
+     * and honours `q=` weights so a malformed or hostile header can't be
+     * trusted and client ranking isn't silently ignored.
      *
      * @return list<string>
      */

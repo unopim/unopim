@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Den indtastede adgangskode er forkert.',
             'name'                => 'Navn',
             'password'            => 'Adgangskode',
+            'gravatar-preview'    => 'Bruger dit Gravatar.com-billede',
             'profile-image'       => 'Profilbillede',
             'save-btn'            => 'Gem konto',
             'title'               => 'Min konto',
             'ui-locale'           => 'UI-lokalisering',
             'update-success'      => 'Konto opdateret med succes',
-            'upload-image-info'   => 'Upload et profilbillede (110px X 110px)',
+            'upload-image-info'   => 'Upload et profilbillede (110px X 110px), eller brug dit Gravatar.com-billede knyttet til din e-mail.',
             'user-timezone'       => 'Tidszone',
             'catalog-locale'      => 'Katalogsprog',
             'catalog-locale-info' => 'Sproget dit katalogindhold er skrevet på. Dette er adskilt fra grænsefladesproget ovenfor.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Mediet kunne ikke findes.',
+            'index'          => [
                 'already-taken'             => ':name er allerede taget.',
                 'variant-sku-already-taken' => 'Variantens SKU ":sku" er allerede i brug.',
                 'variant-sku-label'         => 'SKU for variant :position',
@@ -413,6 +415,7 @@ return [
                     ],
                 ],
 
+                'more'         => 'Mere',
                 'more-actions' => 'Flere handlinger',
                 'variations'   => [
                     'title'          => 'Variationer',
@@ -536,6 +539,7 @@ return [
                     'unique'                   => 'Unik',
                     'delete-failed'            => 'Denne attribut kan ikke slettes.',
                     'mass-delete-failed'       => 'De valgte attributter kan ikke slettes.',
+                    'mass-delete-partial'      => ':count attribut(ter) kunne ikke slettes, fordi de bruges i konfigurerbare produkter.',
                     'delete-attribute-failure' => 'Dette attribut kan ikke fjernes, da det er i brug for konfigurerbare produkter',
                 ],
             ],
@@ -691,6 +695,8 @@ return [
             'not-found'         => 'Attribut med kode ":code" blev ikke fundet',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attributindstilling slettet',
+            'swatch-not-found'     => 'Der blev ikke fundet noget farveprøvebillede for denne indstilling.',
             'create-success'       => 'Attributmulighed oprettet succesfuldt',
             'update-success'       => 'Attributmulighed opdateret succesfuldt',
             'usable-in-grid-error' => 'Kun 4 attributter kan have "brugbar i grid" aktiveret.',
@@ -1030,6 +1036,7 @@ return [
         ],
 
         'category-fields-options' => [
+            'delete-success'      => 'Kategorifeltindstilling slettet',
             'create-success'      => 'Kategori Felt Option Oprettet Succesfuldt',
             'update-success'      => 'Kategori Felt Option Opdateret Succesfuldt',
             'update-unknown-code' => 'Der findes ingen kategorifeltsindstilling med koden ":code".',
@@ -1219,6 +1226,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Landestandard med koden :code blev ikke fundet.',
                 'create-btn'            => 'Opret Lokalitet',
                 'locale'                => 'Lokalitet',
                 'title'                 => 'Lokaliteter',
@@ -1266,6 +1274,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta med koden :code blev ikke fundet.',
                 'create-btn'            => 'Opret Valuta',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valutaer',
@@ -1726,6 +1735,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanal med koden :code blev ikke fundet.',
                 'create-btn'           => 'Opret kanal',
                 'delete-failed'        => 'Kanalen kunne ikke slettes',
                 'delete-success'       => 'Kanalen blev slettet med succes.',
@@ -1831,7 +1841,7 @@ return [
                     'save-btn'            => 'Gem Bruger',
                     'status'              => 'Status',
                     'title'               => 'Opret Bruger',
-                    'upload-image-info'   => 'Upload et Profilbillede (110px X 110px)',
+                    'upload-image-info'   => 'Upload et profilbillede (110px X 110px), eller brug dit Gravatar.com-billede knyttet til din e-mail.',
                     'user-timezone'       => 'Tidszone',
                     'catalog-locale'      => 'Katalogsprog',
                     'catalog-locale-info' => 'Sproget denne bruger skriver katalogindhold på. Adskilt fra deres grænsefladesprog.',
@@ -1874,18 +1884,19 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Rediger Bruger',
             ],
-            'activate-warning'          => 'Din konto er endnu ikke aktiveret, kontakt administrator.',
-            'cannot-change'             => 'Bruger kan ikke ændres',
-            'cannot-escalate-role'      => 'Du har ikke tilladelse til at tildele en rolle med fuld adgang.',
-            'create-success'            => 'Bruger oprettet succesfuldt.',
-            'delete-failed'             => 'Bruger sletning mislykkedes.',
-            'delete-success'            => 'Bruger slettet succesfuldt.',
-            'delete-warning'            => 'Er du sikker på, at du vil udføre denne handling?',
-            'incorrect-password'        => 'Forkert adgangskode',
-            'last-delete-error'         => 'Sidste sletning af bruger mislykkedes',
-            'login-error'               => 'Tjek dine legitimationsoplysninger og prøv igen.',
-            'update-success'            => 'Bruger opdateret succesfuldt.',
-            'current-user-delete-error' => 'Den loggede bruger kan ikke slettes.',
+            'activate-warning'             => 'Din konto er endnu ikke aktiveret, kontakt administrator.',
+            'cannot-change'                => 'Bruger kan ikke ændres',
+            'cannot-escalate-role'         => 'Du har ikke tilladelse til at tildele en rolle med fuld adgang.',
+            'create-success'               => 'Bruger oprettet succesfuldt.',
+            'delete-failed'                => 'Bruger sletning mislykkedes.',
+            'delete-success'               => 'Bruger slettet succesfuldt.',
+            'delete-warning'               => 'Er du sikker på, at du vil udføre denne handling?',
+            'incorrect-password'           => 'Forkert adgangskode',
+            'last-delete-error'            => 'Sidste sletning af bruger mislykkedes',
+            'login-error'                  => 'Tjek dine legitimationsoplysninger og prøv igen.',
+            'update-success'               => 'Bruger opdateret succesfuldt.',
+            'current-user-delete-error'    => 'Den loggede bruger kan ikke slettes.',
+            'last-all-access-delete-error' => 'Den sidste aktive administrator med fuld adgang kan ikke slettes.',
         ],
         'system-settings' => [
             'info'               => 'Administrer systemindstillinger fra ét sted.',
@@ -2779,6 +2790,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Produktpas',
+        'publish'                  => 'Udgiv',
+        'withdraw'                 => 'Træk tilbage',
         'addresses'                => 'Adresser',
         'attribute-families'       => 'Attributfamilier',
         'attribute-groups'         => 'Attributgrupper',

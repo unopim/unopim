@@ -54,6 +54,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
             ->join('attribute_groups', 'attribute_family_group_mappings.attribute_group_id', '=', 'attribute_groups.id')
             ->join('attribute_families', 'attribute_family_group_mappings.attribute_family_id', '=', 'attribute_families.id')
             ->where('attribute_families.id', $this->id)
+            ->with('translations')
             ->select('attributes.*', 'attribute_groups.id as group_id');
     }
 

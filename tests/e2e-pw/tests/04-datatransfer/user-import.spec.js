@@ -19,7 +19,7 @@ async function deleteImport(adminPage, code) {
   await navigateTo(adminPage, 'imports');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
   await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.waitForLoadState('domcontentloaded');
   const deleteBtn = adminPage.locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
     await deleteBtn.click();

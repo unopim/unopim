@@ -11,8 +11,10 @@ async function openFirstStructure(page) {
   await page.waitForLoadState('domcontentloaded').catch(() => {});
 
   for (let attempt = 0; attempt < 3; attempt++) {
+    // The electronics family carries the seeded variant structures; family 1
+    // (default) has none, so its variants tab shows nothing to edit.
     const navigated = await page
-      .goto('/admin/catalog/attribute-families/edit/1?variants=1', { waitUntil: 'domcontentloaded' })
+      .goto('/admin/catalog/attribute-families/edit/3?variants=1', { waitUntil: 'domcontentloaded' })
       .then(() => true)
       .catch(() => false);
 
@@ -86,7 +88,7 @@ test.describe('Variant structure editor', () => {
 
     await adminPage.getByRole('button', { name: /Save Variant/i }).click();
 
-    await adminPage.waitForURL(/attribute-families\/edit\/1/, { timeout: 30000 });
+    await adminPage.waitForURL(/attribute-families\/edit\/3/, { timeout: 30000 });
 
     await openFirstStructure(adminPage);
 

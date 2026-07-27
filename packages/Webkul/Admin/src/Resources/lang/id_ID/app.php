@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Kata sandi saat ini yang Anda masukkan salah.',
             'name'                => 'Nama',
             'password'            => 'Kata sandi',
+            'gravatar-preview'    => 'Menggunakan gambar Gravatar.com Anda',
             'profile-image'       => 'Gambar profil',
             'save-btn'            => 'Simpan akun',
             'title'               => 'Akun saya',
             'ui-locale'           => 'Ui lokal',
             'update-success'      => 'Akun berhasil diperbarui',
-            'upload-image-info'   => 'Unggah gambar profil (110px x 110px)',
+            'upload-image-info'   => 'Unggah Gambar Profil (110px X 110px), atau gunakan gambar Gravatar.com yang tertaut dengan email Anda.',
             'user-timezone'       => 'Zona waktu',
             'catalog-locale'      => 'Bahasa Katalog',
             'catalog-locale-info' => 'Bahasa yang digunakan untuk menulis konten katalog Anda. Ini terpisah dari bahasa antarmuka di atas.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media tidak dapat ditemukan.',
+            'index'          => [
                 'already-taken'             => ':name telah diambil.',
                 'variant-sku-already-taken' => 'SKU varian ":sku" sudah digunakan.',
                 'variant-sku-label'         => 'SKU varian :position',
@@ -413,6 +415,7 @@ return [
                     ],
                 ],
 
+                'more'         => 'Lainnya',
                 'more-actions' => 'Tindakan Lainnya',
                 'variations'   => [
                     'title'          => 'Variasi',
@@ -536,6 +539,7 @@ return [
                     'unique'                   => 'Unik',
                     'delete-failed'            => 'Atribut ini tidak dapat dihapus.',
                     'mass-delete-failed'       => 'Atribut yang dipilih tidak dapat dihapus.',
+                    'mass-delete-partial'      => ':count atribut tidak dapat dihapus karena digunakan pada produk yang dapat dikonfigurasi.',
                     'delete-attribute-failure' => 'Tidak dapat menghapus atribut ini karena sedang digunakan untuk produk yang dapat dikonfigurasi.',
                 ],
             ],
@@ -691,6 +695,8 @@ return [
             'not-found'         => 'Atribut dengan kode ":code" tidak dapat ditemukan',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opsi atribut berhasil dihapus',
+            'swatch-not-found'     => 'Tidak ada gambar contoh warna untuk opsi ini.',
             'create-success'       => 'Opsi atribut berhasil dibuat',
             'update-success'       => 'Opsi atribut berhasil diperbarui',
             'usable-in-grid-error' => 'Hanya 4 atribut yang dapat digunakan dalam kisi yang diaktifkan.',
@@ -1030,6 +1036,7 @@ return [
         ],
 
         'category-fields-options' => [
+            'delete-success'      => 'Opsi bidang kategori berhasil dihapus',
             'create-success'      => 'Opsi bidang kategori berhasil dibuat',
             'update-success'      => 'Opsi bidang kategori berhasil diperbarui',
             'update-unknown-code' => 'Opsi field kategori dengan kode ":code" tidak ditemukan.',
@@ -1219,6 +1226,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Lokal dengan kode :code tidak ditemukan.',
                 'create-btn'            => 'Buat lokal',
                 'locale'                => 'Lokal',
                 'title'                 => 'Lokal',
@@ -1266,6 +1274,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Mata uang dengan kode :code tidak ditemukan.',
                 'create-btn'            => 'Buat mata uang',
                 'currency'              => 'Mata uang',
                 'title'                 => 'Mata uang',
@@ -1726,6 +1735,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Saluran dengan kode :code tidak ditemukan.',
                 'create-btn'           => 'Buat saluran',
                 'delete-failed'        => 'Hapus saluran gagal',
                 'delete-success'       => 'Saluran berhasil dihapus.',
@@ -1831,7 +1841,7 @@ return [
                     'save-btn'            => 'Simpan Pengguna',
                     'status'              => 'Status',
                     'title'               => 'Buat pengguna',
-                    'upload-image-info'   => 'Unggah gambar profil (110px x 110px)',
+                    'upload-image-info'   => 'Unggah Gambar Profil (110px X 110px), atau gunakan gambar Gravatar.com yang tertaut dengan email Anda.',
                     'user-timezone'       => 'Zona waktu',
                     'catalog-locale'      => 'Bahasa Katalog',
                     'catalog-locale-info' => 'Bahasa yang digunakan pengguna ini untuk menulis konten katalog. Terpisah dari bahasa antarmuka mereka.',
@@ -1874,18 +1884,19 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Edit pengguna',
             ],
-            'activate-warning'          => 'Akun Anda belum diaktifkan, silakan hubungi Administrator.',
-            'cannot-change'             => 'Pengguna tidak dapat diubah',
-            'cannot-escalate-role'      => 'Anda tidak memiliki izin untuk menetapkan peran dengan akses penuh.',
-            'create-success'            => 'Pengguna berhasil dibuat.',
-            'delete-failed'             => 'Pengguna dihapus gagal.',
-            'delete-success'            => 'Pengguna berhasil dihapus.',
-            'delete-warning'            => 'Apakah Anda yakin, Anda ingin melakukan tindakan ini?',
-            'incorrect-password'        => 'kata kunci Salah',
-            'last-delete-error'         => 'Hapus pengguna terakhir gagal',
-            'login-error'               => 'Silakan periksa kredensial Anda dan coba lagi.',
-            'update-success'            => 'Pengguna berhasil diperbarui.',
-            'current-user-delete-error' => 'Pengguna yang masuk tidak dapat dihapus',
+            'activate-warning'             => 'Akun Anda belum diaktifkan, silakan hubungi Administrator.',
+            'cannot-change'                => 'Pengguna tidak dapat diubah',
+            'cannot-escalate-role'         => 'Anda tidak memiliki izin untuk menetapkan peran dengan akses penuh.',
+            'create-success'               => 'Pengguna berhasil dibuat.',
+            'delete-failed'                => 'Pengguna dihapus gagal.',
+            'delete-success'               => 'Pengguna berhasil dihapus.',
+            'delete-warning'               => 'Apakah Anda yakin, Anda ingin melakukan tindakan ini?',
+            'incorrect-password'           => 'kata kunci Salah',
+            'last-delete-error'            => 'Hapus pengguna terakhir gagal',
+            'login-error'                  => 'Silakan periksa kredensial Anda dan coba lagi.',
+            'update-success'               => 'Pengguna berhasil diperbarui.',
+            'current-user-delete-error'    => 'Pengguna yang masuk tidak dapat dihapus',
+            'last-all-access-delete-error' => 'Administrator akses penuh aktif terakhir tidak dapat dihapus.',
         ],
         'system-settings' => [
             'title'              => 'Pengaturan Sistem',
@@ -2779,6 +2790,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Paspor Produk',
+        'publish'                  => 'Terbitkan',
+        'withdraw'                 => 'Tarik',
         'addresses'                => 'Alamat',
         'attribute-families'       => 'Keluarga atribut',
         'attribute-groups'         => 'Grup atribut',

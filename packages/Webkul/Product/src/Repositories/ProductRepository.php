@@ -219,12 +219,7 @@ class ProductRepository extends Repository
             'super_attributes',
             'variants',
         ])->scopeQuery(function ($query) use ($params) {
-            $prefix = DB::getTablePrefix();
-
-            // Check if distinct is actually required here
-            $qb = $query
-                ->select('products.*')
-                ->leftJoin('products as variants', DB::raw('COALESCE('.$prefix.'variants.parent_id, '.$prefix.'variants.id)'), '=', 'products.id');
+            $qb = $query->select('products.*');
 
             if (! empty($params['type'])) {
                 $qb->where('products.type', $params['type']);
@@ -238,7 +233,7 @@ class ProductRepository extends Repository
                 $qb->whereNotIn('products.sku', is_string($params['skipSku']) ? [$params['skipSku']] : $params['skipSku']);
             }
 
-            return $qb->groupBy('products.id');
+            return $qb;
         });
 
         return [$query];

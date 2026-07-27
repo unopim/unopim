@@ -2,40 +2,36 @@ const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
- * Helper: Delete ALL existing integrations so admin_id is free for new ones.
- * The admin_id column is unique, so only one integration per admin user is allowed.
+ * Open the index create modal (a header button, not a link) and wait for it to render.
  */
-async function deleteAllIntegrations(adminPage) {
+async function openCreateModal(adminPage) {
   await navigateTo(adminPage, 'integrations');
-  for (let i = 0; i < 20; i++) {
-    // Wait for page to stabilize before checking for delete buttons
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
-    const deleteBtn = adminPage.locator('span[title="Delete"]').first();
-    if (!(await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false))) break;
-    await deleteBtn.click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
-    // Wait for any toast/modal to disappear before next iteration
-    await adminPage.waitForTimeout(500);
-  }
+  await adminPage.getByRole('button', { name: 'Create', exact: true }).click();
+  await adminPage.locator('input[name="name"]').waitFor({ state: 'visible', timeout: 15000 });
 }
 
 /**
- * Helper: Create a new integration with a given name.
- * Assumes admin_id is available (call deleteAllIntegrations first).
+ * Pick an option in the create modal's permission-type vue-multiselect by visible label.
+ */
+async function selectPermissionType(adminPage, label) {
+  const wrapper = adminPage.locator('input[name="permission_type"]')
+    .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
+  await wrapper.locator('.multiselect__tags').click();
+  await wrapper.locator('.multiselect__option', { hasText: label }).first().click();
+}
+
+/**
+ * Create an integration (name + permission type) via the modal. Lands on the edit page.
  */
 async function createIntegration(adminPage, name) {
-  await navigateTo(adminPage, 'integrations');
-  await adminPage.getByRole('link', { name: 'Create' }).click();
-  await adminPage.waitForLoadState('load');
-  await adminPage.getByRole('textbox', { name: 'Name' }).fill(name);
-  await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
-  await adminPage.getByRole('option').first().click();
-  await clickSaveAndExpect(adminPage, 'Save', /API Integration is created successfully/i, /\/admin\/configuration\/integrations\/edit\//);
+  await openCreateModal(adminPage);
+  await adminPage.locator('input[name="name"]').fill(name);
+  await selectPermissionType(adminPage, 'Custom');
+  await clickSaveAndExpect(adminPage, 'Save', /API Integration Created Successfully/i, /\/admin\/configuration\/integrations\/edit\//);
 }
 
 /**
- * Helper: Delete an integration by searching for its name.
+ * Delete an integration by searching for its name in the datagrid.
  */
 async function deleteIntegration(adminPage, name) {
   await navigateTo(adminPage, 'integrations');
@@ -49,54 +45,41 @@ async function deleteIntegration(adminPage, name) {
 test.describe('UnoPim Integration API Keys', () => {
 
   test('Create Integration with empty Name field shows validation', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'integrations');
-    await adminPage.getByRole('link', { name: 'Create' }).click();
-    await adminPage.waitForLoadState('load');
-    await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
-    await adminPage.locator('input[name="admin_id"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
-    await adminPage.getByRole('option').first().click();
+    await openCreateModal(adminPage);
+    await selectPermissionType(adminPage, 'Custom');
     await clickSave(adminPage, 'Save');
-    await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/The Name field is required/i)).toBeVisible();
   });
 
-  test('Create Integration with empty Assign User field shows validation', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'integrations');
-    await adminPage.getByRole('link', { name: 'Create' }).click();
-    await adminPage.waitForLoadState('load');
-    await adminPage.getByRole('textbox', { name: 'Name' }).fill('Validation Test');
+  test('Create Integration with empty Permission field shows validation', async ({ adminPage }) => {
+    await openCreateModal(adminPage);
+    await adminPage.locator('input[name="name"]').fill('Validation Test');
     await clickSave(adminPage, 'Save');
-    await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/The Permissions field is required/i)).toBeVisible();
   });
 
   test('Create Integration with all empty fields shows validation', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'integrations');
-    await adminPage.getByRole('link', { name: 'Create' }).click();
-    await adminPage.waitForLoadState('load');
-    await adminPage.getByRole('textbox', { name: 'Name' }).fill('');
+    await openCreateModal(adminPage);
     await clickSave(adminPage, 'Save');
-    await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Assign User field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/The Name field is required/i)).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/The Permissions field is required/i)).toBeVisible();
   });
 
   test('Create and delete an Integration successfully', async ({ adminPage }) => {
-    const uid = generateUid();
-    const name = `Integration ${uid}`;
+    const name = `Integration ${generateUid()}`;
 
-    await deleteAllIntegrations(adminPage);
     await createIntegration(adminPage, name);
     await deleteIntegration(adminPage, name);
   });
 
   test('Search for an Integration in the datagrid', async ({ adminPage }) => {
-    const uid = generateUid();
-    const name = `Integration ${uid}`;
+    const name = `Integration ${generateUid()}`;
 
-    await deleteAllIntegrations(adminPage);
     await createIntegration(adminPage, name);
 
     await navigateTo(adminPage, 'integrations');
     await searchInDataGrid(adminPage, name);
-    await expect(adminPage.locator('#app').locator(`text=${name}`)).toBeVisible();
+    await expect(adminPage.locator('#app').locator(`text=${name}`).first()).toBeVisible();
 
     await deleteIntegration(adminPage, name);
   });
@@ -116,10 +99,8 @@ test.describe('UnoPim Integration API Keys', () => {
   });
 
   test('Edit action navigates to edit page', async ({ adminPage }) => {
-    const uid = generateUid();
-    const name = `Integration ${uid}`;
+    const name = `Integration ${generateUid()}`;
 
-    await deleteAllIntegrations(adminPage);
     await createIntegration(adminPage, name);
 
     await navigateTo(adminPage, 'integrations');
@@ -132,10 +113,8 @@ test.describe('UnoPim Integration API Keys', () => {
   });
 
   test('Delete action shows confirmation dialog', async ({ adminPage }) => {
-    const uid = generateUid();
-    const name = `Integration ${uid}`;
+    const name = `Integration ${generateUid()}`;
 
-    await deleteAllIntegrations(adminPage);
     await createIntegration(adminPage, name);
 
     await navigateTo(adminPage, 'integrations');
@@ -144,52 +123,33 @@ test.describe('UnoPim Integration API Keys', () => {
     await row.locator('span[title="Delete"]').first().click();
     await expect(adminPage.locator('#app').locator('text=Are you sure you want to delete?')).toBeVisible();
 
-    // Confirm delete for cleanup
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/API Integration is deleted successfully/i)).toBeVisible({ timeout: 20000 });
   });
 
   test('Generate API key for an Integration', async ({ adminPage }) => {
-    const uid = generateUid();
-    const name = `Integration ${uid}`;
+    const name = `Integration ${generateUid()}`;
 
-    await deleteAllIntegrations(adminPage);
     await createIntegration(adminPage, name);
 
-    await navigateTo(adminPage, 'integrations');
-    await searchInDataGrid(adminPage, name);
-    const row = adminPage.locator('div', { hasText: name });
-    await row.locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('load');
-    await adminPage.getByRole('button', { name: 'Generate' }).click();
+    await adminPage.getByRole('button', { name: 'Generate', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/API key is generated successfully/i)).toBeVisible({ timeout: 20000 });
-    await expect(adminPage.locator('#client_id')).not.toHaveValue('');
-    await expect(adminPage.locator('#secret_key')).not.toHaveValue('');
+    // Post-generate the OAuth credentials render as read-only text rows, not inputs.
+    await expect(adminPage.getByTitle('Re-Generate Secret Key')).toBeVisible({ timeout: 10000 });
 
     await deleteIntegration(adminPage, name);
   });
 
   test('Regenerate API secret key for an Integration', async ({ adminPage }) => {
-    const uid = generateUid();
-    const name = `Integration ${uid}`;
+    const name = `Integration ${generateUid()}`;
 
-    await deleteAllIntegrations(adminPage);
     await createIntegration(adminPage, name);
 
-    // Generate key first
-    await navigateTo(adminPage, 'integrations');
-    await searchInDataGrid(adminPage, name);
-    const row = adminPage.locator('div', { hasText: name });
-    await row.locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('load');
-    await adminPage.getByRole('button', { name: 'Generate' }).click();
+    await adminPage.getByRole('button', { name: 'Generate', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/API key is generated successfully/i)).toBeVisible({ timeout: 20000 });
 
-    // Act: regenerate
-    await adminPage.getByRole('button', { name: 'Re-Generate Secret Key' }).click();
+    await adminPage.getByTitle('Re-Generate Secret Key').click();
     await expect(adminPage.locator('#app').getByText(/API secret key is regenerated successfully/i)).toBeVisible({ timeout: 20000 });
-    await expect(adminPage.locator('#client_id')).not.toHaveValue('');
-    await expect(adminPage.locator('#secret_key')).not.toHaveValue('');
 
     await deleteIntegration(adminPage, name);
   });
@@ -199,16 +159,12 @@ test.describe('UnoPim Integration API Keys', () => {
     const name = `Integration ${uid}`;
     const updatedName = `Integration Updated ${uid}`;
 
-    await deleteAllIntegrations(adminPage);
     await createIntegration(adminPage, name);
 
-    await navigateTo(adminPage, 'integrations');
-    await searchInDataGrid(adminPage, name);
-    const row = adminPage.locator('div', { hasText: name });
-    await row.locator('span[title="Edit"]').first().click();
-    await adminPage.waitForLoadState('load');
-    await adminPage.getByRole('textbox', { name: 'Name' }).fill(updatedName);
-    await clickSaveAndExpect(adminPage, 'Save', /API Integration is updated successfully/i);
+    // The edit form is dirty-tracked, so the real save is the "Save changes" bar.
+    await adminPage.waitForTimeout(1000);
+    await adminPage.locator('input[name="name"]').fill(updatedName);
+    await clickSaveAndExpect(adminPage, 'Save changes', /API Integration is updated successfully/i);
 
     await deleteIntegration(adminPage, updatedName);
   });

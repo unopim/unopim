@@ -24,13 +24,10 @@ class PublicationController extends Controller
     ) {}
 
     /**
-     * Every not-found branch below RETURNS a response instead of calling
-     * abort(): see PublicationErrorBoundary's doc comment — a thrown
-     * NotFoundHttpException is rendered by Illuminate\Routing\Pipeline via the
-     * global ExceptionHandler at the exact pipe that threw it, and
-     * bootstrap/app.php's own unconditional callback (admin::errors.index,
-     * admin email) always wins that race. Returning a Response directly is
-     * the only way this route group's 404s reach our own template.
+     * Every not-found branch below returns a Response instead of calling
+     * abort(): a thrown exception is rendered by Laravel's routing Pipeline
+     * via the global handler at the pipe that threw it, bypassing this
+     * package's own template (see PublicationErrorBoundary).
      */
     public function redirect(Request $request, string $uuid): Response
     {
@@ -58,6 +55,46 @@ class PublicationController extends Controller
             ->header('Vary', 'Accept-Language');
     }
 
+    /**
+     * GS1 Digital Link entry point: maps a scanned `/01/{gtin}` to the product's
+     * designated passport and 302s to its canonical per-locale URL, where the
+     * existing Accept-Language resolution picks the language. Honours the same
+     * publicly-resolvable-status and channel-enabled gates as every other public
+     * route, keyed by the resolved row rather than request input.
+     */
+    public function resolveByGtin(Request $request, string $gtin): Response
+    {
+        $type = $this->routeType($request);
+
+        if (! $this->registry->has($type)) {
+            return $this->notFound();
+        }
+
+        $publication = $this->resolver->findByGtin($gtin, $type);
+
+        if (
+            $publication === null
+            || ! $publication->status->isPubliclyResolvable()
+            || ! $this->resolver->isChannelEnabled($publication)
+        ) {
+            return $this->notFound();
+        }
+
+        $version = $this->resolver->resolveVersion($publication, null, $request->header('Accept-Language'));
+
+        if ($version === null) {
+            return $this->notFound();
+        }
+
+        return redirect()
+            ->route('publication.public.'.$type.'.show.locale', ['uuid' => $publication->uuid, 'locale' => $version->locale->code])
+            ->header('Cache-Control', 'private, no-store')
+            ->header('Vary', 'Accept-Language');
+    }
+
+    /**
+     * Renders the publication, honouring If-None-Match against a checksum-derived ETag.
+     */
     public function show(Request $request, string $uuid, string $locale): Response
     {
         $type = $this->routeType($request);
@@ -80,12 +117,38 @@ class PublicationController extends Controller
             return $this->notFound();
         }
 
+        [$granted, $grantedIndex] = $this->grantedTier($request);
+        $payload = $this->applyTierGate($version->payload, $grantedIndex);
+
+        // Only a Published passport exposes payload content: withdrawn/redacted
+        // states are publicly resolvable but the HTML path renders a tombstone
+        // only, so the JSON-LD branch must fall through to that same tombstone
+        // rather than leak the frozen payload as machine-readable content.
+        if (
+            $definition->jsonld !== null
+            && $publication->status === PublicationStatus::Published
+            && str_contains((string) $request->header('Accept'), 'application/ld+json')
+        ) {
+            app()->setLocale($version->locale->code);
+
+            $jsonldClass = $definition->jsonld;
+
+            return $this->tierCache(
+                response()
+                    ->json((new $jsonldClass($payload))->toArray($request))
+                    ->header('Content-Type', 'application/ld+json')
+                    ->header('X-Robots-Tag', 'noindex, nofollow'),
+                $grantedIndex,
+            );
+        }
+
         app()->setLocale($version->locale->code);
 
         $etag = '"'.hash_hmac('sha256', implode('|', [
             $version->checksum,
             $publication->status->value,
             $version->locale->code,
+            $granted,
             self::TEMPLATE_VERSION,
         ]), config('app.key')).'"';
 
@@ -94,30 +157,91 @@ class PublicationController extends Controller
         }
 
         $view = view($definition->template, [
-            'payload'   => $version->payload,
+            'payload'   => $payload,
             'withdrawn' => $publication->status !== PublicationStatus::Published,
             'uuid'      => $publication->uuid,
             'locale'    => $version->locale->code,
             'locales'   => $publication->channel->locales,
         ]);
 
-        return response($view->render())
-            ->header('ETag', $etag)
-            ->header('Cache-Control', 'public, max-age='.(int) (core()->getConfigData('general.publication.settings.cache_ttl', $publication->channel->code) ?? 3600))
-            ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow');
+        return $this->tierCache(
+            response($view->render())
+                ->header('ETag', $etag)
+                ->header('Cache-Control', 'public, max-age='.(int) (core()->getConfigData('general.publication.settings.cache_ttl', $publication->channel->code) ?? 3600))
+                ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
+            $grantedIndex,
+        );
     }
 
     /**
-     * Reads the `type` route default via the Request rather than accepting it
-     * as a method parameter: Laravel's ControllerDispatcher binds non-class
-     * method parameters POSITIONALLY (`array_values($route->parametersWithoutNulls())`),
-     * never by name — confirmed by execution during development, where a
-     * `string $type` parameter silently received the `{uuid}` segment's value
-     * instead, because `defaults()` values are appended AFTER real URI
-     * captures in that array, not in method-signature order. `uuid`/`locale`
-     * stay as ordinary parameters above because they ARE real URI captures in
-     * URI declaration order, which Laravel does guarantee; `type` never
-     * appears in the URI at all, so it is not safe to bind positionally.
+     * Resolves the ESPR access tier this request is authorised for. Elevation
+     * above `consumer` is granted ONLY by a valid Laravel signed URL carrying a
+     * `tier` param that exists in the configured order — any missing/invalid
+     * signature, unknown tier, or tier outside `order` fails closed to the base
+     * tier. The `tier` param is never trusted without a valid signature, so an
+     * unsigned `?tier=authority` can never widen the surface.
+     *
+     * @return array{0: string, 1: int}
+     */
+    private function grantedTier(Request $request): array
+    {
+        $order = config('publication.tiers.order', ['consumer']);
+        $base = $order[0] ?? 'consumer';
+        $requested = (string) $request->query('tier', $base);
+
+        $granted = ($request->hasValidSignature() && in_array($requested, $order, true)) ? $requested : $base;
+
+        return [$granted, (int) array_search($granted, $order, true)];
+    }
+
+    /**
+     * Collapses the tier-partitioned payload down to only the fields/documents
+     * visible up to the granted tier, overwriting the base `sections`/`documents`
+     * the template and JSON-LD resource read. A payload without a `tiers` key
+     * (a frozen version built before tiering, or a redacted null payload) is
+     * returned untouched — its existing base shape is already the consumer view.
+     */
+    private function applyTierGate(mixed $payload, int $grantedIndex): mixed
+    {
+        if (! is_array($payload) || ! isset($payload['tiers']) || ! is_array($payload['tiers'])) {
+            return $payload;
+        }
+
+        $order = array_keys($payload['tiers']);
+        $fields = [];
+        $documents = [];
+
+        foreach (array_slice($order, 0, $grantedIndex + 1) as $tier) {
+            $fields = array_merge($fields, $payload['tiers'][$tier]['fields'] ?? []);
+            $documents = array_merge($documents, $payload['tiers'][$tier]['documents'] ?? []);
+        }
+
+        $payload['sections'][0]['fields'] = $fields;
+        $payload['documents'] = $documents;
+        unset($payload['tiers']);
+
+        return $payload;
+    }
+
+    /**
+     * An elevated (above-base) tier response carries content a signed URL
+     * holder is uniquely authorised to see, so it must never enter a shared
+     * cache; the base tier keeps whatever caching the caller already set.
+     */
+    private function tierCache(Response $response, int $grantedIndex): Response
+    {
+        if ($grantedIndex > 0) {
+            $response->headers->set('Cache-Control', 'private, no-store');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Reads the `type` route default via the Request rather than as a method
+     * parameter: ControllerDispatcher binds non-class parameters positionally,
+     * and `defaults()` values are appended after real URI captures — a
+     * `string $type` parameter would silently receive `{uuid}`'s value instead.
      */
     private function routeType(Request $request): string
     {
@@ -125,13 +249,10 @@ class PublicationController extends Controller
     }
 
     /**
-     * Resolves the publication and enforces every scope-derived gate against
-     * values read from the resolved row itself — never from request input.
-     * `general.publication.settings.enabled` (Task 7) is per-channel and is
-     * the operational "unplug this channel's public tier" switch; it is
-     * distinct from `catalog.product_passport.settings.enabled` (Task 8),
-     * which only blocks *new* dpp publishes and is enforced solely in the
-     * publish path (Tasks 12–13), never here.
+     * Resolves the publication and enforces scope gates against the resolved
+     * row itself, never request input. `general.publication.settings.enabled`
+     * is the per-channel public-tier kill switch; it's distinct from the
+     * publish-time-only gate enforced elsewhere, never here.
      */
     private function resolveEnabledPublication(string $uuid, string $type): ?Publication
     {
@@ -141,7 +262,7 @@ class PublicationController extends Controller
             return null;
         }
 
-        if (! (bool) (core()->getConfigData('general.publication.settings.enabled', $publication->channel->code) ?? true)) {
+        if (! $this->resolver->isChannelEnabled($publication)) {
             return null;
         }
 

@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'The current password you entered is incorrect.',
             'name'                => 'Name',
             'password'            => 'Password',
+            'gravatar-preview'    => 'Using your Gravatar.com image',
             'profile-image'       => 'Profile Image',
             'save-btn'            => 'Save Account',
             'title'               => 'My Account',
             'ui-locale'           => 'UI Locale',
             'update-success'      => 'Account updated successfully',
-            'upload-image-info'   => 'Upload a Profile Image (110px X 110px)',
+            'upload-image-info'   => 'Upload a Profile Image (110px X 110px), or use your Gravatar.com image linked to your email.',
             'user-timezone'       => 'Timezone',
             'catalog-locale'      => 'Catalog Locale',
             'catalog-locale-info' => 'The language your catalog content is written in. This is separate from the interface language above.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media could not be found.',
+            'index'          => [
                 'already-taken'             => ':name has already been taken.',
                 'variant-sku-already-taken' => 'The variant SKU ":sku" has already been taken.',
                 'variant-sku-label'         => 'variant :position SKU',
@@ -413,6 +415,7 @@ return [
                     ],
                 ],
 
+                'more'         => 'More',
                 'more-actions' => 'More Actions',
                 'variations'   => [
                     'title'          => 'Variations',
@@ -536,6 +539,7 @@ return [
                     'unique'                   => 'Unique',
                     'delete-failed'            => 'This attribute cannot be deleted.',
                     'mass-delete-failed'       => 'Selected attributes cannot be deleted.',
+                    'mass-delete-partial'      => ':count attribute(s) could not be deleted because they are in use for configurable products.',
                     'delete-attribute-failure' => 'This attribute cannot be removed because it is in use for configurable products',
                 ],
             ],
@@ -691,6 +695,8 @@ return [
             'not-found'         => 'Attribute with code ":code" could not be found',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attribute Option Deleted Successfully',
+            'swatch-not-found'     => 'No swatch image found for this option.',
             'create-success'       => 'Attribute Option Created Successfully',
             'update-success'       => 'Attribute Option Updated Successfully',
             'usable-in-grid-error' => 'Only 4 attributes can be marked as usable in grid.',
@@ -1030,6 +1036,7 @@ return [
         ],
 
         'category-fields-options' => [
+            'delete-success'      => 'Category Field Option Deleted Successfully',
             'create-success'      => 'Category Field Option Created Successfully',
             'update-success'      => 'Category Field Option Updated Successfully',
             'update-unknown-code' => 'No category field option exists with code ":code".',
@@ -1219,6 +1226,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Locale with code :code not found.',
                 'create-btn'            => 'Create Locale',
                 'locale'                => 'Locale',
                 'title'                 => 'Locales',
@@ -1266,6 +1274,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Currency with code :code not found.',
                 'create-btn'            => 'Create Currency',
                 'currency'              => 'Currency',
                 'title'                 => 'Currencies',
@@ -1726,6 +1735,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Channel with code :code not found.',
                 'create-btn'           => 'Create Channel',
                 'delete-failed'        => 'Channel deletion failed',
                 'delete-success'       => 'Channel deleted successfully.',
@@ -1831,7 +1841,7 @@ return [
                     'save-btn'            => 'Save User',
                     'status'              => 'Status',
                     'title'               => 'Create User',
-                    'upload-image-info'   => 'Upload a Profile Image (110px X 110px)',
+                    'upload-image-info'   => 'Upload a Profile Image (110px X 110px), or use your Gravatar.com image linked to your email.',
                     'user-timezone'       => 'Timezone',
                     'catalog-locale'      => 'Catalog Locale',
                     'catalog-locale-info' => 'The language this user writes catalog content in. Separate from their interface language.',
@@ -1874,18 +1884,19 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Edit User',
             ],
-            'activate-warning'          => 'Your account is yet to be activated, please contact the administrator.',
-            'cannot-change'             => 'User cannot be changed',
-            'cannot-escalate-role'      => 'You do not have permission to assign an all-access role.',
-            'create-success'            => 'User created successfully.',
-            'delete-failed'             => 'User delete failed.',
-            'delete-success'            => 'User deleted successfully.',
-            'delete-warning'            => 'Are you sure you want to perform this action?',
-            'incorrect-password'        => 'Incorrect password',
-            'last-delete-error'         => 'Last User delete failed',
-            'login-error'               => 'Please check your credentials and try again.',
-            'update-success'            => 'User updated successfully.',
-            'current-user-delete-error' => 'The logged-in user cannot be deleted.',
+            'activate-warning'             => 'Your account is yet to be activated, please contact the administrator.',
+            'cannot-change'                => 'User cannot be changed',
+            'cannot-escalate-role'         => 'You do not have permission to assign an all-access role.',
+            'create-success'               => 'User created successfully.',
+            'delete-failed'                => 'User delete failed.',
+            'delete-success'               => 'User deleted successfully.',
+            'delete-warning'               => 'Are you sure you want to perform this action?',
+            'incorrect-password'           => 'Incorrect password',
+            'last-delete-error'            => 'Last User delete failed',
+            'login-error'                  => 'Please check your credentials and try again.',
+            'update-success'               => 'User updated successfully.',
+            'current-user-delete-error'    => 'The logged-in user cannot be deleted.',
+            'last-all-access-delete-error' => 'The last active all-access administrator cannot be deleted.',
         ],
         'system-settings' => [
             'info'               => 'Manage system settings from a single place.',
@@ -2779,6 +2790,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Product Passports',
+        'publish'                  => 'Publish',
+        'withdraw'                 => 'Withdraw',
         'addresses'                => 'Addresses',
         'attribute-families'       => 'Attribute Families',
         'attribute-groups'         => 'Attribute Groups',

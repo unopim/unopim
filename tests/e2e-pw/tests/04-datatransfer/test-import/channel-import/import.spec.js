@@ -24,7 +24,7 @@ async function deleteImport(adminPage, code) {
     await navigateTo(adminPage, 'imports');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
-    await adminPage.waitForLoadState('networkidle');
+    await adminPage.waitForLoadState('domcontentloaded');
     const deleteBtn = adminPage.locator('span[title="Delete"]').first();
     if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
         await deleteBtn.click();
@@ -58,7 +58,7 @@ test.describe('UnoPim Channel Import Jobs', () => {
         await navigateTo(adminPage, 'imports');
         await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
         await adminPage.keyboard.press('Enter');
-        await adminPage.waitForLoadState('networkidle');
+        await adminPage.waitForLoadState('domcontentloaded');
         await expect(adminPage.locator('#app').getByText(code, { exact: true })).toBeVisible();
 
         await deleteImport(adminPage, code);
@@ -73,24 +73,24 @@ test.describe('UnoPim Channel Import Jobs', () => {
         await navigateTo(adminPage, 'imports');
         await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
         await adminPage.keyboard.press('Enter');
-        await adminPage.waitForLoadState('networkidle');
+        await adminPage.waitForLoadState('domcontentloaded');
 
         const itemRow = adminPage.locator('div', { hasText: code });
 
         await itemRow.locator('span[title="Import"]').first().click();
         await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/import/);
         await adminPage.goBack();
-        await adminPage.waitForLoadState('networkidle');
+        await adminPage.waitForLoadState('domcontentloaded');
 
         await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
         await adminPage.keyboard.press('Enter');
-        await adminPage.waitForLoadState('networkidle');
+        await adminPage.waitForLoadState('domcontentloaded');
 
         const itemRow2 = adminPage.locator('div', { hasText: code });
         await itemRow2.locator('span[title="Edit"]').first().click();
         await expect(adminPage).toHaveURL(/\/admin\/data-transfer\/imports\/edit/);
         await adminPage.goBack();
-        await adminPage.waitForLoadState('networkidle');
+        await adminPage.waitForLoadState('domcontentloaded');
 
         await deleteImport(adminPage, code);
     });

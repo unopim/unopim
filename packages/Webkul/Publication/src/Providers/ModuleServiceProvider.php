@@ -5,6 +5,7 @@ namespace Webkul\Publication\Providers;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationVersion;
+use Webkul\Publication\Models\PublicationVersionDocument;
 use Webkul\Publication\Models\PublicationVersionPayload;
 
 class ModuleServiceProvider extends CoreModuleServiceProvider
@@ -13,5 +14,6 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
         Publication::class,
         PublicationVersion::class,
         PublicationVersionPayload::class,
+        PublicationVersionDocument::class,
     ];
 }

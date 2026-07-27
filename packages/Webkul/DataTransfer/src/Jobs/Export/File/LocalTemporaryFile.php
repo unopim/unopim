@@ -2,7 +2,7 @@
 
 namespace Webkul\DataTransfer\Jobs\Export\File;
 
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Files\TemporaryFile;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 
@@ -15,8 +15,12 @@ class LocalTemporaryFile extends TemporaryFile
      */
     public function __construct(private readonly string $filePath, private readonly string $temporaryPath, private $writerType = SpoutWriterFactory::CSV)
     {
-        Storage::makeDirectory($this->temporaryPath);
-        $this->LocalFilePath = storage_path(FileBuffer::PUBLIC_STORAGE_PATH.$this->filePath);
+        $this->LocalFilePath = storage_path(FileBuffer::PRIVATE_STORAGE_PATH.$this->filePath);
+
+        // The writer opens LocalFilePath directly, so ensure its own directory exists.
+        // Storage::makeDirectory() resolves against the default disk (which may be rooted
+        // elsewhere, e.g. app/public), leaving app/private/... uncreated and fopen failing.
+        File::ensureDirectoryExists(dirname($this->LocalFilePath));
     }
 
     public function getLocalPath(): string

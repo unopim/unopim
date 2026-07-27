@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Event;
 use Webkul\Admin\DataGrids\Catalog\AttributeOptionDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AttributeOptionForm;
+use Webkul\Admin\Http\Requests\AttributeOptionSortForm;
+use Webkul\Admin\Http\Requests\AttributeOptionUpdateForm;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
@@ -76,11 +78,11 @@ class AttributeOptionController extends Controller
      */
     public function edit(int $attributeId, int $id): JsonResponse
     {
-        $option = $this->attributeOptionRepository->find($id)->toArray();
+        $option = $this->attributeOptionRepository->findOneWhere(['id' => $id, 'attribute_id' => $attributeId]);
 
-        if (! $option) {
-            abort(404);
-        }
+        abort_if(! $option, 404);
+
+        $option = $option->toArray();
 
         foreach ($option['translations'] as $key => $translation) {
             $option['locales'][$translation['locale']] = $translation['label'] ?? '';
@@ -92,16 +94,27 @@ class AttributeOptionController extends Controller
     /**
      * Update attribute option
      */
-    public function update(int $attributeId, int $id): JsonResponse
+    public function update(AttributeOptionUpdateForm $request, int $attributeId, int $id): JsonResponse
     {
-        $this->validate(request(), ['locales.*.label' => 'nullable|string']);
+        abort_if(! $this->attributeOptionRepository->findOneWhere(['id' => $id, 'attribute_id' => $attributeId]), 404);
 
-        $requestData = request()->only('locales', 'swatch_value');
+        $requestData = $request->input('locales') ?? [];
+
+        $attribute = $this->attributeRepository->find($attributeId);
+
+        if ($attribute && in_array($attribute->swatch_type, SwatchTypeEnum::getValues(), true)) {
+            $swatchValue = $request->file('swatch_value') ?? $request->input('swatch_value');
+
+            if ($attribute->swatch_type === 'color' && blank($swatchValue)) {
+                $swatchValue = '#000000';
+            }
+
+            $requestData['swatch_value'] = $swatchValue;
+        }
+
         Event::dispatch('catalog.attribute.option.update.before', $id);
 
-        $option = $this->attributeOptionRepository->update(array_merge($requestData['locales'], [
-            'swatch_value' => $requestData['swatch_value'] ?? '',
-        ]), $id);
+        $option = $this->attributeOptionRepository->update($requestData, $id);
 
         Event::dispatch('catalog.attribute.option.update.after', $option);
 
@@ -113,9 +126,9 @@ class AttributeOptionController extends Controller
     /**
      * Updates the sort order of an attribute option based on the direction it is moved (up or down).
      */
-    public function updateSort(int $attributeId): JsonResponse
+    public function updateSort(AttributeOptionSortForm $request, int $attributeId): JsonResponse
     {
-        $data = request()->all();
+        $data = $request->validated();
 
         $sortOrderUpdated = $this->attributeOptionRepository->updateSortOrder($data['optionIds'], $data['direction'], $data['toIndex'], $attributeId);
 
@@ -135,6 +148,8 @@ class AttributeOptionController extends Controller
      */
     public function destroy(int $attributeId, int $id): JsonResponse
     {
+        abort_if(! $this->attributeOptionRepository->findOneWhere(['id' => $id, 'attribute_id' => $attributeId]), 404);
+
         // TODO: add validation before delete to check if it is not being used in any product
         try {
             Event::dispatch('catalog.attribute.option.delete.before', $id);
