@@ -13,7 +13,7 @@ test.describe('UnoPim Magic AI v2.1.0 Configuration', () => {
 
 test('1.1 - Magic AI config page loads with correct title', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage.locator('#app').getByText('Magic AI').first()).toBeVisible();
+  await expect(adminPage.getByRole('heading', { name: 'Magic AI' })).toBeVisible();
 });
 
 test('1.2 - Magic AI config page has Save Configuration button', async ({ adminPage }) => {

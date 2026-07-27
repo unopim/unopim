@@ -20,31 +20,40 @@ async function fillChannelForm(adminPage, opts = {}) {
     selectCurrency = true,
   } = opts;
 
-  if (code !== null) {
+  // quick-create-modal selects are vue-multiselect keyed by hidden input name.
+  const pickOption = async (inputName, optionName, exact = false) => {
+    const ms = adminPage.locator('.multiselect').filter({ has: adminPage.locator(`input[name="${inputName}"]`) });
+    await ms.locator('.multiselect__tags').click();
+    // options are .multiselect__option, without role="option".
+    const option = ms.locator('.multiselect__option', {
+      hasText: exact ? new RegExp(`^${optionName}$`) : optionName,
+    }).first();
+    await option.waitFor({ state: 'visible', timeout: 10000 });
+    await option.click();
+    await adminPage.keyboard.press('Escape');
+  };
+
+  // Only fill when there is a value: fill('') marks the field touched-but-empty,
+  // which suppresses the required message the empty-code test asserts.
+  if (code) {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   }
 
   if (selectRootCategory) {
-    await adminPage.locator('#root_category_id').getByRole('combobox').locator('div').filter({ hasText: 'Select Root Category' }).click();
-    await adminPage.getByRole('option', { name: '[root]' }).locator('span').first().click();
+    await pickOption('root_category_id', 'Root', true);
   }
 
   if (name) {
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
+    // Name is keyed by the requested locale, which need not be en_US.
+    await adminPage.locator('input[name$="[name]"]').first().fill(name);
   }
 
   if (selectLocale) {
-    await adminPage.locator('#locales').getByRole('combobox').locator('div').filter({ hasText: 'Select Locales' }).click();
-    await adminPage.getByRole('option', { name: 'English (United States)' }).locator('span').first().click();
-    await adminPage.keyboard.press('Escape');
-    await expect(adminPage.locator('#locales')).toBeVisible();
+    await pickOption('locales', 'English (United States)');
   }
 
   if (selectCurrency) {
-    await adminPage.locator('#currencies').getByRole('combobox').locator('div').filter({ hasText: 'Select currencies' }).click();
-    await adminPage.getByRole('option', { name: 'US Dollar' }).locator('span').first().click();
-    await adminPage.keyboard.press('Escape');
-    await expect(adminPage.locator('#currencies')).toBeVisible();
+    await pickOption('currencies', 'US Dollar');
   }
 }
 
@@ -53,9 +62,9 @@ async function fillChannelForm(adminPage, opts = {}) {
  */
 async function createChannel(adminPage, code, name) {
   await navigateTo(adminPage, 'channels');
-  await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+  await adminPage.getByRole('button', { name: 'Create Channel' }).click();
   await fillChannelForm(adminPage, { code, name });
-  await clickSaveAndExpect(adminPage, 'Save changes', /Channel created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save Channel', /Channel created successfully/i);
 }
 
 /**
@@ -84,8 +93,12 @@ test.describe('Channel Management', () => {
 
   test('Create Channel with empty Code shows validation error', async ({ adminPage }) => {
     await navigateTo(adminPage, 'channels');
-    await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+    await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: '', name: 'E-Commerce' });
+    // v-code auto-generates the code from the name, so clear it afterwards to
+    // actually submit an empty code and trigger the required rule.
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
+    await adminPage.getByRole('textbox', { name: 'Code' }).blur();
     await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
@@ -93,7 +106,7 @@ test.describe('Channel Management', () => {
   test('Create Channel with empty Root Category shows validation error', async ({ adminPage }) => {
     const uid = generateUid();
     await navigateTo(adminPage, 'channels');
-    await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+    await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}rc`, name: 'E-Commerce', selectRootCategory: false });
     await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Root Category field is required')).toBeVisible();
@@ -102,7 +115,7 @@ test.describe('Channel Management', () => {
   test('Create Channel with empty Locales shows validation error', async ({ adminPage }) => {
     const uid = generateUid();
     await navigateTo(adminPage, 'channels');
-    await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+    await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}lc`, name: 'E-Commerce', selectLocale: false });
     await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Locales field is required')).toBeVisible();
@@ -111,7 +124,7 @@ test.describe('Channel Management', () => {
   test('Create Channel with empty Currency shows validation error', async ({ adminPage }) => {
     const uid = generateUid();
     await navigateTo(adminPage, 'channels');
-    await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+    await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}cu`, name: 'E-Commerce', selectCurrency: false });
     await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Currencies field is required')).toBeVisible();
@@ -119,9 +132,8 @@ test.describe('Channel Management', () => {
 
   test('Create Channel with all required fields empty shows all validation errors', async ({ adminPage }) => {
     await navigateTo(adminPage, 'channels');
-    await adminPage.getByRole('link', { name: 'Create Channel' }).click();
-    await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('E-Commerce');
+    await adminPage.getByRole('button', { name: 'Create Channel' }).click();
+    // Leave code untouched (fill('') suppresses its required message) and submit.
     await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Root Category field is required')).toBeVisible();
@@ -141,17 +153,15 @@ test.describe('Channel Management', () => {
     await deleteChannel(adminPage, code);
   });
 
-  test('Create Channel without translations succeeds', async ({ adminPage }) => {
+  test('Create Channel requires a name in the quick-create modal', async ({ adminPage }) => {
     const uid = generateUid();
     const code = `${uid}nt`;
 
     await navigateTo(adminPage, 'channels');
-    await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+    await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: '' });
-    await clickSaveAndExpect(adminPage, 'Save changes', /Channel created successfully/i);
-
-    // Cleanup
-    await deleteChannel(adminPage, code);
+    await clickSave(adminPage, 'Save Channel');
+    await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
   });
 
   test('Create Channel with duplicate Code shows error', async ({ adminPage }) => {
@@ -164,10 +174,10 @@ test.describe('Channel Management', () => {
 
     // Try to create another with same code
     await navigateTo(adminPage, 'channels');
-    await adminPage.getByRole('link', { name: 'Create Channel' }).click();
+    await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: 'Other Name' });
     await clickSave(adminPage, 'Save Channel');
-    await expect(adminPage.locator('#app').getByText('The Code has already been taken.')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The code has already been taken.').first()).toBeVisible();
 
     // Cleanup
     await deleteChannel(adminPage, code);
@@ -193,8 +203,8 @@ test.describe('Channel Management', () => {
     const row = adminPage.locator('#app div').filter({ hasText: code });
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill(`${uid} Updated`);
-    await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill(`${uid} Updated`);
+    await clickSaveAndExpect(adminPage, 'Save Channel', /Update Channel Successfully/i);
 
     // Cleanup
     await deleteChannel(adminPage, code);
@@ -220,7 +230,8 @@ test.describe('Channel Management', () => {
   test('Delete default Channel shows error', async ({ adminPage }) => {
     await navigateTo(adminPage, 'channels');
     await searchInDataGrid(adminPage, 'default');
-    const row = adminPage.locator('#app div').filter({ hasText: 'default' }).first();
+    // '#app div' matches many containers; target the datagrid row instead.
+    const row = adminPage.locator('.row').filter({ hasText: 'default' }).first();
     await row.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/default channel cannot be deleted|can.t delete the channel.*default/i)).toBeVisible();

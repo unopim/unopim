@@ -15,9 +15,7 @@ it('renders drag and drop handlers for every media component', function (string 
     expect($html)->toContain('onDrop(event)');
     expect($html)->toContain('isDragging');
 })->with([
-    'videos'  => ['videos', 1],
     'files'   => ['files', 1],
-    'gallery' => ['gallery', 2],
-    'file'    => ['file', 2],
-    'images'  => ['images', 2],
+    'gallery' => ['gallery', 1],
+    'image'   => ['image', 1],
 ]);

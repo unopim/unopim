@@ -6,13 +6,17 @@ const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../.
  */
 async function createCategoryField(adminPage, code, name, type = 'Text') {
   await navigateTo(adminPage, 'categoryFields');
-  await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+  await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
-  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
+  await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: type }).first().click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
-  await clickSaveAndExpect(adminPage, 'Save changes', /Category Field Created Successfully/i);
+  await adminPage.locator('input[name$="[name]"]').first().fill(name);
+  // Input validation is required; pick the "No" (none) option.
+  const validationMs = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="validation"]') });
+  await validationMs.click();
+  await validationMs.locator('.multiselect__option', { hasText: /^No$/ }).first().click();
+  await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Created Successfully/i);
 }
 
 /**
@@ -35,31 +39,33 @@ test.describe('UnoPim Category Field Tests', () => {
 
   test('Create category field with empty Code', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+    await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Suggestion');
+    // v-code derives the code from the name, so clear it to submit an empty code.
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Code field is required ')).toBeVisible();
   });
 
   test('Create category field with empty Type', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+    await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('test_empty_type');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Suggestion');
     await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Type field is required ')).toBeVisible();
   });
 
   test('Create category field with empty Code and Type', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+    await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
     await adminPage.waitForLoadState('networkidle');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Suggestion');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
     await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Code field is required ')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required ')).toBeVisible();
@@ -149,7 +155,7 @@ test.describe('UnoPim Category Field Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Edit"]').first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
+    await adminPage.locator('input[name$="[name]"]').first().fill('After Update');
     await clickSaveAndExpect(adminPage, 'Save changes', /Category Field Updated Successfully/i);
 
     // Cleanup

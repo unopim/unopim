@@ -55,9 +55,15 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
+        $rows = $paginator['data'] ?? [];
+
+        $completenessByProduct = $withCompleteness
+            ? $this->completenessScoresByProduct(array_column($rows, 'id'))
+            : null;
+
         return array_map(
-            fn ($item) => $this->normalizeProduct($item, $withCompleteness),
-            $paginator['data'] ?? [],
+            fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct),
+            $rows,
         );
     }
 
@@ -243,7 +249,10 @@ class ProductDataSource extends ApiDataSource
     /**
      * Normalize product data for API response
      */
-    protected function normalizeProduct(array $product, bool $withCompleteness = false): array
+    /**
+     * @param  array<string, list<array<string, mixed>>>|null  $completenessByProduct
+     */
+    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null): array
     {
         $responseData = [
             'sku'        => $product['sku'],
@@ -265,7 +274,9 @@ class ProductDataSource extends ApiDataSource
         }
 
         if ($withCompleteness) {
-            $responseData['completeness'] = $this->getCompletenessScores($product['id']) ?? 'N/A';
+            $responseData['completeness'] = $completenessByProduct !== null
+                ? ($completenessByProduct[$product['id']] ?? [])
+                : $this->getCompletenessScores($product['id']);
         }
 
         return $responseData;
@@ -273,20 +284,31 @@ class ProductDataSource extends ApiDataSource
 
     protected function getCompletenessScores(string $id): array
     {
-        $completenessScores = $this->productCompletenessScoreRepository
-            ->findByField('product_id', $id)
-            ->load(['channel:id,code', 'locale:id,code']);
+        return $this->completenessScoresByProduct([$id])[$id] ?? [];
+    }
 
-        $completenessData = [];
+    /**
+     * Batch-load completeness scores for a set of products, grouped by product id,
+     * so a paginated list does not run one query per row.
+     *
+     * @param  array<int, int|string>  $ids
+     * @return array<string, list<array<string, mixed>>>
+     */
+    protected function completenessScoresByProduct(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
 
-        foreach ($completenessScores as $completeness) {
-            $completenessData[] = [
+        return $this->productCompletenessScoreRepository
+            ->findWhereIn('product_id', $ids)
+            ->load(['channel:id,code', 'locale:id,code'])
+            ->groupBy('product_id')
+            ->map(fn ($scores): array => $scores->map(fn ($completeness): array => [
                 'channel' => $completeness->channel->code,
                 'locale'  => $completeness->locale->code,
                 'score'   => $completeness->score,
-            ];
-        }
-
-        return $completenessData;
+            ])->values()->all())
+            ->all();
     }
 }

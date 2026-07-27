@@ -13,7 +13,7 @@ test.describe('UnoPim Magic AI — Default platform must be enabled (Issue #755)
       const form = new URLSearchParams({
         label,
         provider:   'openai',
-        api_url:    'https://example.test',
+        api_url:    'https://1.1.1.1',
         api_key:    'sk-test-key',
         models:     'gpt-test',
         is_default: '1',

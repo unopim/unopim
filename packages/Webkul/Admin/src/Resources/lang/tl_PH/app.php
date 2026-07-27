@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Ang kasalukuyang password na iyong ipinasok ay mali.',
             'name'                => 'Pangalan',
             'password'            => 'Password',
+            'gravatar-preview'    => 'Ginagamit ang iyong larawan sa Gravatar.com',
             'profile-image'       => 'Larawan ng Profile',
             'save-btn'            => 'I-save ang Account',
             'title'               => 'Aking Account',
             'ui-locale'           => 'Lokalisasyon ng UI',
             'update-success'      => 'Na-update ang Account na matagumpay',
-            'upload-image-info'   => 'I-upload ang isang Larawan ng Profile (110px X 110px)',
+            'upload-image-info'   => 'Mag-upload ng Larawan ng Profile (110px X 110px), o gamitin ang iyong larawan sa Gravatar.com na naka-link sa iyong email.',
             'user-timezone'       => 'Oras ng User',
             'catalog-locale'      => 'Wika ng Katalogo',
             'catalog-locale-info' => 'Ang wikang ginamit sa pagsulat ng nilalaman ng iyong katalogo. Ito ay hiwalay sa wika ng interface sa itaas.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Hindi matagpuan ang media.',
+            'index'          => [
                 'already-taken'             => ':name ay ginagamit na.',
                 'variant-sku-already-taken' => 'Ang SKU ng variant na ":sku" ay ginagamit na.',
                 'variant-sku-label'         => 'SKU ng variant :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Petsa ng Pagkakalikha',
                     'product-type' => 'Uri ng Produkto',
                 ],
+                'more'         => 'Higit pa',
                 'more-actions' => 'Higit Pang Aksyon',
                 'variations'   => [
                     'title'          => 'Mga Variation',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Natangi',
                     'delete-failed'            => 'Hindi ma-delete ang katangiang ito.',
                     'mass-delete-failed'       => 'Hindi ma-delete ang mga napiling katangian.',
+                    'mass-delete-partial'      => 'Hindi ma-delete ang :count (na) attribute dahil ginagamit ang mga ito sa configurable na produkto.',
                     'delete-attribute-failure' => 'Ang katangiang ito ay hindi maaaring alisin dahil ginagamit ito para sa mga configurable na produkto',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'Ang katangian na may code ":code" ay hindi natagpuan',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Matagumpay na natanggal ang opsyon ng attribute',
+            'swatch-not-found'     => 'Walang natagpuang larawan ng swatch para sa opsyong ito.',
             'create-success'       => 'Matag taglay na opsyon ng attribute ay matagumpay na nalikha',
             'update-success'       => 'Matagumpay na na-update ang opsyon ng attribute',
             'usable-in-grid-error' => 'Apat lamang na attribute ang maaaring ituring na magagamit sa grid.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Matagumpay na natanggal ang opsyon ng field ng kategorya',
             'create-success'      => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
             'update-success'      => 'Na-update ang opsyon ng kategorya',
             'update-unknown-code' => 'Walang category field option na may code na ":code".',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Hindi natagpuan ang lokal na may code na :code.',
                 'create-btn'            => 'Lumikha ng Wika',
                 'locale'                => 'Wika',
                 'title'                 => 'Mga Wika',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Hindi natagpuan ang pera na may code na :code.',
                 'create-btn'            => 'Lumikha ng Pera',
                 'currency'              => 'Pera',
                 'title'                 => 'Mga Pera',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Hindi natagpuan ang channel na may code na :code.',
                 'create-btn'           => 'Lumikha ng Channel',
                 'delete-failed'        => 'Nabigo ang pagtanggal ng channel',
                 'delete-success'       => 'Channel ay matagumpay na natanggal.',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => 'I-save ang Gumagamit',
                     'status'              => 'Katayuan',
                     'title'               => 'Lumikha ng Gumagamit',
-                    'upload-image-info'   => 'Mag-upload ng Larawan ng Profile (110px X 110px)',
+                    'upload-image-info'   => 'Mag-upload ng Larawan ng Profile (110px X 110px), o gamitin ang iyong larawan sa Gravatar.com na naka-link sa iyong email.',
                     'user-timezone'       => 'Time Zone',
                     'catalog-locale'      => 'Wika ng Katalogo',
                     'catalog-locale-info' => 'Ang wikang ginagamit ng user na ito sa pagsulat ng nilalaman ng katalogo. Hiwalay sa wika ng kanilang interface.',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => 'Katayuan',
                 'title'            => 'I-edit ang Gumagamit',
             ],
-            'activate-warning'          => 'Ang iyong account ay hindi pa na-activate, mangyaring makipag-ugnayan sa administrator.',
-            'cannot-change'             => 'Ang gumagamit ay hindi maaaring baguhin',
-            'cannot-escalate-role'      => 'Wala kang pahintulot na mag-assign ng role na may buong access.',
-            'create-success'            => 'Gumagamit na nalikha ng matagumpay.',
-            'delete-failed'             => 'Nabigo ang pagtanggal ng gumagamit.',
-            'delete-success'            => 'Ang gumagamit ay matagumpay na tinanggal.',
-            'delete-warning'            => 'Sigurado ka bang nais mong isagawa ang aksyon na ito?',
-            'incorrect-password'        => 'Maling password',
-            'last-delete-error'         => 'Nabigong tanggalin ang huling gumagamit',
-            'login-error'               => 'Pakisuri ang iyong kredensyal at subukang muli.',
-            'update-success'            => 'Gumagamit ay matagumpay na na-update.',
-            'current-user-delete-error' => 'Hindi maaaring tanggalin ang kasalukuyang naka-login na gumagamit.',
+            'activate-warning'             => 'Ang iyong account ay hindi pa na-activate, mangyaring makipag-ugnayan sa administrator.',
+            'cannot-change'                => 'Ang gumagamit ay hindi maaaring baguhin',
+            'cannot-escalate-role'         => 'Wala kang pahintulot na mag-assign ng role na may buong access.',
+            'create-success'               => 'Gumagamit na nalikha ng matagumpay.',
+            'delete-failed'                => 'Nabigo ang pagtanggal ng gumagamit.',
+            'delete-success'               => 'Ang gumagamit ay matagumpay na tinanggal.',
+            'delete-warning'               => 'Sigurado ka bang nais mong isagawa ang aksyon na ito?',
+            'incorrect-password'           => 'Maling password',
+            'last-delete-error'            => 'Nabigong tanggalin ang huling gumagamit',
+            'login-error'                  => 'Pakisuri ang iyong kredensyal at subukang muli.',
+            'update-success'               => 'Gumagamit ay matagumpay na na-update.',
+            'current-user-delete-error'    => 'Hindi maaaring tanggalin ang kasalukuyang naka-login na gumagamit.',
+            'last-all-access-delete-error' => 'Hindi mabubura ang huling aktibong administrator na may buong access.',
         ],
         'system-settings' => [
             'title'              => 'Mga Setting ng Sistema',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Mga Pasaporte ng Produkto',
+        'publish'                  => 'I-publish',
+        'withdraw'                 => 'Bawiin',
         'addresses'                => 'Mga Address',
         'attribute-families'       => 'Mga Pamilya ng Katangian',
         'attribute-groups'         => 'Mga Grupo ng Katangian',

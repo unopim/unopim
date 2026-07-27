@@ -10,15 +10,10 @@ use RuntimeException;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Deliberately NOT Laravel's `throttle:` middleware alias: ThrottleRequests
- * throws ThrottleRequestsException, and — as established in
- * PublicationErrorBoundary's doc comment — bootstrap/app.php's own
- * unconditional ThrottleRequestsException callback (admin::errors.index,
- * admin support email) always wins the render race, so nothing this package
- * registers can intercept it after the fact. Reusing the SAME named
- * `publication` limiter (registered in PublicationServiceProvider) but
- * checking/hitting it directly and returning a Response on rejection is the
- * only way a 429 on this route group reaches our own template.
+ * Deliberately not Laravel's `throttle:` alias: ThrottleRequestsException
+ * would be rendered by the global handler before this package can intercept
+ * it (see PublicationErrorBoundary). Reuses the same `publication` limiter
+ * but checks/hits it directly and returns a Response on rejection.
  */
 class PublicationRateLimit
 {

@@ -22,7 +22,7 @@ test.describe('Attribute_Options_Import', () => {
         await navigateTo(adminPage, 'imports');
         await adminPage.getByRole('textbox', { name: 'Search' }).fill('Attribute_Options_Import');
         await adminPage.keyboard.press('Enter');
-        await adminPage.waitForLoadState('networkidle');
+        await adminPage.waitForLoadState('domcontentloaded');
         const itemRow = await adminPage.locator('div', { hasText: 'Attribute_Options_Import' });
         await itemRow.locator('span[title="Delete"]').first().click();
         await adminPage.getByRole('button', { name: 'Delete' }).click();

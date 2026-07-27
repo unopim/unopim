@@ -78,7 +78,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await expect(assignedGroups.getByText('General').first()).toBeVisible();
     await expect(assignedGroups.getByText('SKU').first()).toBeVisible();
 
-    const nameInput = adminPage.locator('input[name="en_US\\[name\\]"]');
+    const nameInput = adminPage.locator('input[name$="[name]"]').first();
     await nameInput.fill('After Edit');
     await nameInput.blur();
     await saveFamilyEdit(adminPage);

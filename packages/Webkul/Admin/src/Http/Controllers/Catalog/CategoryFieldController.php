@@ -9,13 +9,12 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryFieldDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\CategoryFieldForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Category\Rules\NotSupportedFields;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Core\Rules\Code;
 
 class CategoryFieldController extends Controller
 {
@@ -55,17 +54,8 @@ class CategoryFieldController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse|JsonResponse
+    public function store(CategoryFieldForm $request): RedirectResponse|JsonResponse
     {
-        $this->validate(request(), [
-            'code'       => ['required', 'unique:category_fields,code', new Code, new NotSupportedFields],
-            'type'       => 'required',
-            'validation' => 'required',
-            'status'     => 'sometimes',
-            'position'   => 'sometimes|min:0',
-            'section'    => 'sometimes',
-        ]);
-
         $requestData = array_merge([
             'status'   => 1,
             'position' => 0,
@@ -111,16 +101,8 @@ class CategoryFieldController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(int $id): RedirectResponse
+    public function update(CategoryFieldForm $request, int $id): RedirectResponse
     {
-        $this->validate(request(), [
-            'code'     => ['required', 'unique:category_fields,code,'.$id, new Code],
-            'type'     => 'required',
-            'status'   => 'required',
-            'position' => 'required',
-            'section'  => 'required',
-        ]);
-
         $requestData = request()->except(['code', 'type', 'value_per_locale', 'is_unique']);
 
         Event::dispatch('catalog.category_field.update.before', $id);

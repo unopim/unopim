@@ -129,6 +129,12 @@ class AjaxOptionsController extends Controller
             ? $this->categoryQuery($query)
             : $this->getRepository($entityName);
 
+        if (! $isCategory) {
+            // Labels are resolved per row via translate()/toArray(); eager load the
+            // translations up front so formatting the page is a single query, not N+1.
+            $repository = $repository->with(['translations']);
+        }
+
         if ($id && ! $isCategory) {
             $repository = $repository->where($entityName.'_id', $id);
         }

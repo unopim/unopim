@@ -37,7 +37,7 @@ return [
         'info'  => 'admin::app.settings.appearance.info',
         'icon'  => 'icon-image',
         'route' => 'admin.settings.appearance.index',
-        'acl'   => 'configuration.system_settings',
+        'acl'   => 'configuration.system_settings.appearance',
         'sort'  => 1,
     ],
 
@@ -47,7 +47,7 @@ return [
         'info'         => 'admin::app.settings.system-settings.email.info',
         'icon'         => 'icon-at',
         'config_group' => 'emails.configure.email_settings',
-        'acl'          => 'configuration.system_settings',
+        'acl'          => 'configuration.system_settings.email',
         'sort'         => 2,
     ],
 
@@ -57,7 +57,7 @@ return [
         'info'         => 'admin::app.settings.system-settings.debug.info',
         'icon'         => 'icon-setting',
         'config_group' => 'general.debug.settings',
-        'acl'          => 'configuration.system_settings',
+        'acl'          => 'configuration.system_settings.debug',
         'sort'         => 3,
     ],
 
@@ -67,7 +67,7 @@ return [
         'info'         => 'admin::app.settings.system-settings.microsoft-sso.info',
         'icon'         => 'icon-configuration',
         'config_group' => 'general.microsoft_sso.settings',
-        'acl'          => 'configuration.system_settings',
+        'acl'          => 'configuration.system_settings.microsoft_sso',
         'sort'         => 4,
     ],
 ];

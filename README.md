@@ -168,13 +168,15 @@ php artisan unopim:install
 php artisan serve
 ```
 
-Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, and webhook deliveries, start the queue worker:
+Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, webhook deliveries, and Digital Product Passport publishing, start the queue worker:
 
 ```bash
-php artisan queue:work --queue=webhooks,system,default,completeness
+php artisan queue:work --queue=webhooks,system,default,completeness,publication
 ```
 
 > **Note:** The `webhooks` queue is required for outgoing webhook delivery. The `Webkul\Webhook\Listeners\Product` listener is dispatched asynchronously to this queue so product save/update requests are not blocked by HTTP calls to subscribers. If you omit `webhooks` from the `--queue` list, webhook events will queue up but never be processed.
+
+> **Note:** The `publication` queue processes Digital Product Passport publish jobs (single and bulk). Omit it and passports will queue but never publish. If you run a process manager such as Supervisor, add `publication` to your worker's `--queue=` list and restart it (e.g. `sudo supervisorctl restart unopim-worker`).
 
 ### Docker
 

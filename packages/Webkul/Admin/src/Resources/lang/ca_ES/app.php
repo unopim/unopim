@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'La contrasenya actual introduïda és incorrecta.',
             'name'                => 'Nom',
             'password'            => 'Contrasenya',
+            'gravatar-preview'    => 'Utilitzant la teva imatge de Gravatar.com',
             'profile-image'       => 'Imatge del perfil',
             'save-btn'            => 'Desar compte',
             'title'               => 'El meu compte',
             'ui-locale'           => 'Interfície local',
             'update-success'      => 'Compte actualitzat correctament',
-            'upload-image-info'   => 'Puja una imatge de perfil (110px X 110px)',
+            'upload-image-info'   => 'Puja una imatge de perfil (110px X 110px), o utilitza la teva imatge de Gravatar.com vinculada al teu correu electrònic.',
             'user-timezone'       => 'Fus horari',
             'catalog-locale'      => 'Idioma del catàleg',
             'catalog-locale-info' => 'L\'idioma en què s\'escriu el contingut del vostre catàleg. És diferent de l\'idioma de la interfície anterior.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'No s\'ha pogut trobar el mitjà.',
+            'index'          => [
                 'already-taken'             => 'El :name ja està en ús.',
                 'variant-sku-already-taken' => 'El SKU de la variant ":sku" ja està en ús.',
                 'variant-sku-label'         => 'SKU de la variant :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Data de creació',
                     'product-type' => 'Tipus de producte',
                 ],
+                'more'         => 'Més',
                 'more-actions' => 'Més accions',
                 'variations'   => [
                     'title'          => 'Variacions',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Únic',
                     'delete-failed'            => 'Aquest atribut no es pot eliminar.',
                     'mass-delete-failed'       => 'Els atributs seleccionats no es poden eliminar.',
+                    'mass-delete-partial'      => 'No s\'han pogut eliminar :count atribut(s) perquè s\'utilitzen en productes configurables.',
                     'delete-attribute-failure' => 'Aquest atribut no es pot eliminar perquè s\'està utilitzant per a productes configurables',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'No s\'ha trobat l\'atribut amb codi ":code"',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Opció d\'atribut eliminada correctament',
+            'swatch-not-found'     => 'No s\'ha trobat cap imatge de mostra per a aquesta opció.',
             'create-success'       => 'Opció d\'atribut creada amb èxit',
             'update-success'       => 'Opció d\'atribut actualitzada amb èxit',
             'usable-in-grid-error' => 'Només es poden habilitar 4 atributs com a utilitzables en la graella.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Opció de camp de categoria eliminada correctament',
             'create-success'      => 'Opció de Camp de Categoria Creada Correctament',
             'update-success'      => 'Opció de Camp de Categoria Actualitzada Correctament',
             'update-unknown-code' => 'No existeix cap opció de camp de categoria amb el codi «:code».',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'No s\'ha trobat cap configuració regional amb el codi :code.',
                 'create-btn'            => 'Crear Local',
                 'locale'                => 'Local',
                 'title'                 => 'Locals',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'No s\'ha trobat cap moneda amb el codi :code.',
                 'create-btn'            => 'Crear Moneda',
                 'currency'              => 'Moneda',
                 'title'                 => 'Monedes',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'No s\'ha trobat cap canal amb el codi :code.',
                 'create-btn'           => 'Crear Canal',
                 'delete-failed'        => 'No s\'ha pogut suprimir el canal',
                 'delete-success'       => 'Canal suprimit amb èxit.',
@@ -1753,7 +1763,7 @@ return [
                     'save-btn'            => 'Desar Usuari',
                     'status'              => 'Estat',
                     'title'               => 'Crear Usuari',
-                    'upload-image-info'   => 'Puja una Imatge de Perfil (110px X 110px)',
+                    'upload-image-info'   => 'Puja una imatge de perfil (110px X 110px), o utilitza la teva imatge de Gravatar.com vinculada al teu correu electrònic.',
                     'user-timezone'       => 'Fus horari',
                     'catalog-locale'      => 'Idioma del catàleg',
                     'catalog-locale-info' => 'L\'idioma en què aquest usuari escriu el contingut del catàleg. Diferent del seu idioma d\'interfície.',
@@ -1796,18 +1806,19 @@ return [
                 'status'           => 'Estat',
                 'title'            => 'Editar Usuari',
             ],
-            'activate-warning'          => 'El teu compte encara no està activat, contacta amb l\'administrador.',
-            'cannot-change'             => 'L\'usuari no pot ser modificat',
-            'cannot-escalate-role'      => 'No teniu permís per assignar un rol amb accés complet.',
-            'create-success'            => 'Usuari creat correctament.',
-            'delete-failed'             => 'Error en eliminar l\'usuari.',
-            'delete-success'            => 'Usuari eliminat correctament.',
-            'delete-warning'            => 'Estàs segur de voler realitzar aquesta acció?',
-            'incorrect-password'        => 'Contrasenya incorrecta',
-            'last-delete-error'         => 'Última eliminació d\'usuari fallida',
-            'login-error'               => 'Comprova les teves credencials i torna a provar.',
-            'update-success'            => 'Usuari actualitzat correctament.',
-            'current-user-delete-error' => 'L\'usuari connectat no es pot eliminar.',
+            'activate-warning'             => 'El teu compte encara no està activat, contacta amb l\'administrador.',
+            'cannot-change'                => 'L\'usuari no pot ser modificat',
+            'cannot-escalate-role'         => 'No teniu permís per assignar un rol amb accés complet.',
+            'create-success'               => 'Usuari creat correctament.',
+            'delete-failed'                => 'Error en eliminar l\'usuari.',
+            'delete-success'               => 'Usuari eliminat correctament.',
+            'delete-warning'               => 'Estàs segur de voler realitzar aquesta acció?',
+            'incorrect-password'           => 'Contrasenya incorrecta',
+            'last-delete-error'            => 'Última eliminació d\'usuari fallida',
+            'login-error'                  => 'Comprova les teves credencials i torna a provar.',
+            'update-success'               => 'Usuari actualitzat correctament.',
+            'current-user-delete-error'    => 'L\'usuari connectat no es pot eliminar.',
+            'last-all-access-delete-error' => 'No es pot eliminar l\'últim administrador actiu amb accés total.',
         ],
         'system-settings' => [
             'info'               => 'Gestiona la configuració del sistema des d\'un sol lloc.',
@@ -2691,6 +2702,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Passaports de producte',
+        'publish'                  => 'Publica',
+        'withdraw'                 => 'Retira',
         'addresses'                => 'Adreces',
         'attribute-families'       => 'Famílies d\'atributs',
         'attribute-groups'         => 'Grups d\'atributs',

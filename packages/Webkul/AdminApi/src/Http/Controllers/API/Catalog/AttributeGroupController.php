@@ -96,4 +96,40 @@ class AttributeGroupController extends ApiController
             return $this->storeExceptionLog($e);
         }
     }
+
+    /**
+     * Partially update the specified resource.
+     */
+    public function partialUpdate(UpdateAttributeGroupRequest $request, string $code): JsonResponse
+    {
+        return $this->update($request, $code);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $attributeGroup = $this->attributeGroupRepository->findOneByField('code', $code);
+        if (! $attributeGroup) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.attribute-groups.not-found', ['code' => $code]));
+        }
+
+        if ($attributeGroup->groupMappings()->count()) {
+            return $this->validateErrorResponse(
+                ['code' => [trans('admin::app.catalog.attribute-groups.attribute-group-error')]],
+                trans('admin::app.catalog.attribute-groups.attribute-group-error')
+            );
+        }
+
+        try {
+            Event::dispatch('catalog.attribute.group.delete.before', $attributeGroup->id);
+            $this->attributeGroupRepository->delete($attributeGroup->id);
+            Event::dispatch('catalog.attribute.group.delete.after', $attributeGroup->id);
+
+            return $this->successResponse(trans('admin::app.catalog.attribute-groups.delete-success'));
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
 }

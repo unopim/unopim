@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Det aktuella lösenordet är felaktigt.',
             'name'                => 'Namn',
             'password'            => 'Lösenord',
+            'gravatar-preview'    => 'Använder din Gravatar.com-bild',
             'profile-image'       => 'Profilbild',
             'save-btn'            => 'Spara konto',
             'title'               => 'Mitt konto',
             'ui-locale'           => 'UI-lokal',
             'update-success'      => 'Kontot uppdaterat framgångsrikt',
-            'upload-image-info'   => 'Ladda upp en profilbild (110px X 110px)',
+            'upload-image-info'   => 'Ladda upp en profilbild (110px X 110px), eller använd din Gravatar.com-bild kopplad till din e-post.',
             'user-timezone'       => 'Tidszon',
             'catalog-locale'      => 'Katalogspråk',
             'catalog-locale-info' => 'Språket ditt katalog­innehåll är skrivet på. Detta är skilt från gränssnittsspråket ovan.',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media kunde inte hittas.',
+            'index'          => [
                 'already-taken'             => ':name är redan i bruk.',
                 'variant-sku-already-taken' => 'Variantens SKU ":sku" används redan.',
                 'variant-sku-label'         => 'SKU för variant :position',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => 'Skapad datum',
                     'product-type' => 'Produkttyp',
                 ],
+                'more'         => 'Mer',
                 'more-actions' => 'Fler åtgärder',
                 'variations'   => [
                     'title'          => 'Variationer',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => 'Unik',
                     'delete-failed'            => 'Det gick inte att ta bort detta attribut.',
                     'mass-delete-failed'       => 'Det gick inte att ta bort de valda attributen.',
+                    'mass-delete-partial'      => ':count attribut kunde inte tas bort eftersom de används i konfigurerbara produkter.',
                     'delete-attribute-failure' => 'Detta attribut kan inte tas bort eftersom det används för konfigurerbara produkter',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => 'Attributet med koden ":code" hittades inte',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attributalternativ har tagits bort',
+            'swatch-not-found'     => 'Ingen färgrutebild hittades för detta alternativ.',
             'create-success'       => 'Attributalternativ skapades',
             'update-success'       => 'Attributalternativ uppdaterades',
             'usable-in-grid-error' => 'Endast 4 attribut kan markeras som användbara i rutan.',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Kategorifältalternativ har tagits bort',
             'create-success'      => 'Kategoriens fältalternativ skapades',
             'update-success'      => 'Kategoriens fältalternativ uppdaterades',
             'update-unknown-code' => 'Det finns inget kategorifältsalternativ med koden ":code".',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Språkinställning med koden :code hittades inte.',
                 'create-btn'            => 'Skapa Lokalitet',
                 'locale'                => 'Lokalitet',
                 'title'                 => 'Lokaliteter',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta med koden :code hittades inte.',
                 'create-btn'            => 'Skapa Valuta',
                 'currency'              => 'Valuta',
                 'title'                 => 'Valutor',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanal med koden :code hittades inte.',
                 'create-btn'           => 'Skapa kanal',
                 'delete-failed'        => 'Kanals borttagning misslyckades',
                 'delete-success'       => 'Kanal borttagen.',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => 'Spara Användare',
                     'status'              => 'Status',
                     'title'               => 'Skapa Användare',
-                    'upload-image-info'   => 'Ladda upp profilbild (110px X 110px)',
+                    'upload-image-info'   => 'Ladda upp en profilbild (110px X 110px), eller använd din Gravatar.com-bild kopplad till din e-post.',
                     'user-timezone'       => 'Tidszon',
                     'catalog-locale'      => 'Katalogspråk',
                     'catalog-locale-info' => 'Språket den här användaren skriver katalog­innehåll på. Skilt från användarens gränssnittsspråk.',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Redigera Användare',
             ],
-            'activate-warning'          => 'Ditt konto har ännu inte aktiverats, vänligen kontakta administratören.',
-            'cannot-change'             => 'Användaren kan inte ändras',
-            'cannot-escalate-role'      => 'Du har inte behörighet att tilldela en roll med full åtkomst.',
-            'create-success'            => 'Användare skapades framgångsrikt.',
-            'delete-failed'             => 'Det gick inte att ta bort användaren.',
-            'delete-success'            => 'Användaren togs bort framgångsrikt.',
-            'delete-warning'            => 'Är du säker på att du vill utföra denna åtgärd?',
-            'incorrect-password'        => 'Felaktigt lösenord',
-            'last-delete-error'         => 'Det gick inte att ta bort den sista användaren',
-            'login-error'               => 'Kontrollera dina uppgifter och försök igen.',
-            'update-success'            => 'Användare uppdaterad framgångsrikt.',
-            'current-user-delete-error' => 'Den inloggade användaren kan inte tas bort.',
+            'activate-warning'             => 'Ditt konto har ännu inte aktiverats, vänligen kontakta administratören.',
+            'cannot-change'                => 'Användaren kan inte ändras',
+            'cannot-escalate-role'         => 'Du har inte behörighet att tilldela en roll med full åtkomst.',
+            'create-success'               => 'Användare skapades framgångsrikt.',
+            'delete-failed'                => 'Det gick inte att ta bort användaren.',
+            'delete-success'               => 'Användaren togs bort framgångsrikt.',
+            'delete-warning'               => 'Är du säker på att du vill utföra denna åtgärd?',
+            'incorrect-password'           => 'Felaktigt lösenord',
+            'last-delete-error'            => 'Det gick inte att ta bort den sista användaren',
+            'login-error'                  => 'Kontrollera dina uppgifter och försök igen.',
+            'update-success'               => 'Användare uppdaterad framgångsrikt.',
+            'current-user-delete-error'    => 'Den inloggade användaren kan inte tas bort.',
+            'last-all-access-delete-error' => 'Den sista aktiva administratören med full åtkomst kan inte tas bort.',
         ],
         'system-settings' => [
             'title'              => 'Systeminställningar',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Produktpass',
+        'publish'                  => 'Publicera',
+        'withdraw'                 => 'Dra tillbaka',
         'addresses'                => 'Adresser',
         'attribute-families'       => 'Attributfamiljer',
         'attribute-groups'         => 'Attributgrupper',

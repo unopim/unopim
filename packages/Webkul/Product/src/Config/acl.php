@@ -1,15 +1,16 @@
 <?php
 
 return [
+    /**
+     * Nested under the canonical hyphenated `catalog.families.variant-structures`
+     * key (defined in Admin acl) so the tree shows a single node, not a duplicate.
+     * Routeless: the AI-suggestion toggle is enforced in `SuggestionManager`
+     * against `config('suggesters.*.acl')`, not by a route.
+     */
     [
-        'key'   => 'catalog.families.variant_structures',
-        'name'  => 'product::app.acl.variant-structures',
-        'route' => 'admin.catalog.families.index',
-        'sort'  => 6,
-    ], [
-        'key'   => 'catalog.families.variant_structures.ai_suggest',
+        'key'   => 'catalog.families.variant-structures.ai_suggest',
         'name'  => 'product::app.acl.ai-suggest',
-        'route' => 'admin.catalog.families.index',
-        'sort'  => 7,
+        'route' => null,
+        'sort'  => 3,
     ],
 ];

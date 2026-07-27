@@ -87,7 +87,7 @@ test.describe('Role Management', () => {
     await expect(adminPage.locator('#app').getByText(/The Name field is required/i)).toBeVisible();
   });
 
-  test('Create role with empty Description shows validation error', async ({ adminPage }) => {
+  test('Create role without a Description succeeds; description is optional', async ({ adminPage }) => {
     const uid = generateUid();
     await navigateTo(adminPage, 'roles');
     await adminPage.getByRole('link', { name: 'Create Role' }).click();
@@ -96,7 +96,7 @@ test.describe('Role Management', () => {
     await adminPage.getByRole('textbox', { name: 'Name' }).fill(`${uid} Role`);
     await adminPage.getByRole('textbox', { name: 'Description' }).fill('');
     await clickSave(adminPage, 'Save Role');
-    await expect(adminPage.locator('#app').getByText(/The Description field is required/i)).toBeVisible();
+    await expect(adminPage.locator('#app').getByText(/created successfully/i)).toBeVisible();
   });
 
   test('Create role with all required fields empty shows all validation errors', async ({ adminPage }) => {
@@ -109,7 +109,6 @@ test.describe('Role Management', () => {
     await clickSave(adminPage, 'Save Role');
     await expect(adminPage.locator('#app').getByText(/The Permissions field is required/i)).toBeVisible();
     await expect(adminPage.locator('#app').getByText(/The Name field is required/i)).toBeVisible();
-    await expect(adminPage.locator('#app').getByText(/The Description field is required/i)).toBeVisible();
   });
 
   // --- CRUD Tests: Administrator (All permissions) role ---

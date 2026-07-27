@@ -9,29 +9,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
- * IMPORTANT — verified by execution against this codebase, not merely read
- * from the framework source: a try/catch wrapping `$next($request)` in a
- * middleware CANNOT intercept an exception thrown further down the same
- * route's pipeline. `Illuminate\Routing\Pipeline` (used for both the global
- * and the route-specific middleware stacks) wraps EVERY pipe — including the
- * controller itself — in its own try/catch via `carry()`/`prepareDestination()`,
- * and on failure immediately renders the exception through the application's
- * global ExceptionHandler and returns that as a normal value. bootstrap/app.php
- * registers unconditional NotFoundHttpException/ThrottleRequestsException
- * render callbacks (-> admin::errors.index, which computes the admin support
- * email) before this package ever boots, so they always win that race. An
- * outer middleware's own catch block, this one included, therefore never
- * actually receives the exception — confirmed with instrumented logging
- * during development: `$next()` returned a rendered 404 response, never threw.
- *
- * The real fix is structural, not this middleware: EnsurePublicationEnabled,
- * PublicationRateLimit and PublicationController all RETURN a Response
- * directly instead of calling abort()/throwing, so no exception is ever
- * raised on this route group's own success/failure paths for those classes.
- * This middleware is kept for the narrow case of a genuinely unanticipated
- * exception thrown by ITS OWN code (none currently) and as a stable extension
- * point/alias for Task 6 and beyond — do not rely on its catch clauses to
- * intercept exceptions thrown by anything invoked via $next().
+ * A try/catch here cannot intercept exceptions thrown further down the
+ * pipeline: Illuminate\Routing\Pipeline renders NotFoundHttpException /
+ * ThrottleRequestsException via the global ExceptionHandler at the exact pipe
+ * that threw, before this middleware's catch ever runs — bootstrap/app.php's
+ * unconditional callback always wins that race. The real fix is structural:
+ * EnsurePublicationEnabled, PublicationRateLimit and PublicationController all
+ * return a Response directly instead of throwing. This middleware only
+ * catches genuinely unanticipated exceptions from its own future code — do
+ * not rely on it to intercept exceptions thrown via $next().
  */
 class PublicationErrorBoundary
 {

@@ -29,8 +29,8 @@ test.describe('Attribute Family - Save with empty groups (#709)', () => {
 
     // Assign an extra group, then save via the tracked bar.
     await assignGroup(page);
-    await page.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test A');
-    await page.locator('input[name="en_US\\[name\\]"]').blur();
+    await page.locator('input[name$="[name]"]').first().fill('Empty Group Test A');
+    await page.locator('input[name$="[name]"]').first().blur();
     await saveFamilyEdit(page);
 
     // Reopen and remove the non-SKU group via its trash icon (the General group
@@ -47,8 +47,8 @@ test.describe('Attribute Family - Save with empty groups (#709)', () => {
     await agree.waitFor({ state: 'hidden', timeout: 10000 });
 
     // Save again — must succeed (no 500).
-    await page.locator('input[name="en_US\\[name\\]"]').fill('Empty Group Test B');
-    await page.locator('input[name="en_US\\[name\\]"]').blur();
+    await page.locator('input[name$="[name]"]').first().fill('Empty Group Test B');
+    await page.locator('input[name$="[name]"]').first().blur();
     await saveFamilyEdit(page);
 
     await deleteFamilyByCode(page, created);

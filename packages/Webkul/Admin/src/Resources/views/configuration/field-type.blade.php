@@ -15,6 +15,14 @@
 
     $field['options'] = isset($field['repository']) ? ($repositoryOptions ?? []) : ($field['options'] ?? []);
 
+    if (! empty($field['placeholder'])) {
+        $field['placeholder'] = trans($field['placeholder']);
+    }
+
+    if (! empty($field['info'])) {
+        $field['info'] = trans($field['info']);
+    }
+
     $value = core()->getConfigData($nameKey) ?? ($field['default_value'] ?? '');
 
     // For select fields, ensure value is always a string so v-select-handler matching works
@@ -51,6 +59,14 @@
             >
                 <x-admin::form.control-group.label ::for="name">
                     @{{ label }} <span :class="isRequire"></span>
+
+                    <span
+                        v-if="info"
+                        class="icon tooltip-icon cursor-pointer ltr:ml-1.5 rtl:mr-1.5"
+                        :title="info"
+                    >
+                        &#9432;
+                    </span>
                 </x-admin::form.control-group.label>
             </div>
         

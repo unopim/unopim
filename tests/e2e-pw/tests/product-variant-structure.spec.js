@@ -6,7 +6,8 @@ const { navigateTo, clickSave, generateUid, searchInDataGrid } = require('../uti
  * Mirrors the helper in tests/01-catalog/products.spec.js.
  */
 async function selectMultiselect(page, fieldName, optionLabel) {
-  const wrapper = page.locator(`input[name="${fieldName}"]`).locator('..');
+  const wrapper = page.locator(`input[name="${fieldName}"]`)
+    .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
   await wrapper.locator('.multiselect__tags').click();
   await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   if (optionLabel) {
@@ -45,7 +46,8 @@ test.describe('Product Creation - Variant Structure selector', () => {
     await adminPage.waitForLoadState('networkidle');
 
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
+    // The Electronics family carries the seeded variant structures; Default has none.
+    await selectMultiselect(adminPage, 'attribute_family_id', 'Electronics');
     await adminPage.locator('input[name="sku"]').fill(sku);
 
     // Scope submits to the modal: the datagrid's pagination also exposes a "Next"
@@ -56,7 +58,7 @@ test.describe('Product Creation - Variant Structure selector', () => {
 
     // Step 2: the variant structure selector replaces the type/family/sku view.
     await expect(adminPage.locator('#app').getByText('Variant Structure').first()).toBeVisible({ timeout: 10000 });
-    await selectMultiselect(adminPage, 'variant_structure_id', 'product by color,size and brand (1-level)');
+    await selectMultiselect(adminPage, 'variant_structure_id', 'Based on Color and Size');
     // Step 2 swaps the modal content, so scope this submit to the page instead.
     await adminPage.getByRole('button', { name: 'Save Product', exact: true }).click();
 
@@ -65,16 +67,16 @@ test.describe('Product Creation - Variant Structure selector', () => {
 
     // A level that splits on several axes is labelled by all of them, and its
     // "add" modal asks for one option per axis before it will create anything.
-    await expect(adminPage.getByText(/^\s*color,\s*size,\s*brand\s*$/i).first()).toBeVisible({ timeout: 15000 });
+    await expect(adminPage.getByText(/^\s*Color,\s*Size\s*$/i).first()).toBeVisible({ timeout: 15000 });
 
-    await adminPage.getByRole('button', { name: /Select Color, Size, Brand/i }).click();
+    await adminPage.getByRole('button', { name: /Select Color, Size/i }).click();
     await adminPage.getByRole('button', { name: 'Add New', exact: true }).click();
 
-    const addModal = adminPage.locator('.fixed').filter({ hasText: /Add a new Color, Size, Brand/i }).first();
+    const addModal = adminPage.locator('.fixed').filter({ hasText: /Add a new Color, Size/i }).first();
 
     await addModal.waitFor({ state: 'visible', timeout: 10000 });
 
-    await expect(addModal.locator('.multiselect')).toHaveCount(3);
+    await expect(addModal.locator('.multiselect')).toHaveCount(2);
     await expect(addModal.getByRole('button', { name: 'Create', exact: true })).toBeDisabled();
 
     await addModal.getByRole('button', { name: 'Cancel', exact: true }).click();

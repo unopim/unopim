@@ -16,7 +16,7 @@ beforeEach(function () {
     // allows this in-progress step against the always-seeded test database.
     app()->instance(DatabaseManager::class, new class extends DatabaseManager
     {
-        public function isInstalled()
+        public function isInstalled(): bool
         {
             return false;
         }
@@ -29,9 +29,8 @@ beforeEach(function () {
 
     app()->instance(EnvironmentManager::class, new class(app(DatabaseManager::class)) extends EnvironmentManager
     {
-        public function generateEnv($request)
+        public function generateEnv(array $request): bool|Exception
         {
-
             $this->databaseManager->generateKey();
 
             return true;

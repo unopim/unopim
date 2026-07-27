@@ -11,52 +11,33 @@ return new class extends Migration
         Schema::create('publication_versions', function (Blueprint $table): void {
             $table->id();
 
+            // restrictOnDelete backstops Publication::deleting() at the DB layer.
             $table->unsignedBigInteger('publication_id');
-            // A version row can only ever be destroyed by cascading from its
-            // parent publication, and Publication::deleting() refuses that
-            // whenever any version exists — so in practice this FK never
-            // fires. RESTRICT (not CASCADE) makes that guarantee hold even if
-            // the app-layer guard is ever bypassed via a raw query.
             $table->foreign('publication_id')->references('id')->on('publications')->restrictOnDelete();
 
-            // Retention obligation outlives the catalog record: a locale cannot be
-            // deleted while attested versions still exist in that language.
-            // Declared explicitly: MySQL auto-indexes FK columns, PostgreSQL does not.
             $table->unsignedInteger('locale_id');
             $table->foreign('locale_id')->references('id')->on('locales')->restrictOnDelete();
-            $table->index('locale_id');
+            $table->index('locale_id', 'pubver_locale_idx');
 
             $table->unsignedInteger('version');
-
-            // The public payload is now stored in `publication_version_payloads`
-            // (gzip-compressed, external to this table) so this clustered index
-            // stays thin at 500K products × 24 locales × repeated revisions over
-            // a ten-year retention window. See PublicationVersion::payload().
 
             $table->string('checksum', 64);
 
             $table->boolean('is_current')->default(false);
 
-            // Generated column + unique index is how "at most one current
-            // version per (publication, locale)" is enforced at the database
-            // layer: MySQL/Postgres both treat NULL as distinct for unique
-            // indexes, so non-current rows (current_locale_id = NULL) never
-            // collide, while two rows flagged current for the same locale do.
+            // NULL when not current, so only current rows collide on the unique
+            // index below: enforces one current version per (publication, locale).
             $table->unsignedInteger('current_locale_id')
                 ->storedAs('case when is_current = 1 then locale_id else null end');
 
-            // A `timestamp` stops at 2038-01-19; this table carries a ten-year
-            // retention obligation and code always sets this on write.
+            // dateTime, not timestamp: this data is retained past 2038.
             $table->dateTime('published_at');
 
             $table->unsignedInteger('published_by_id')->nullable();
             $table->foreign('published_by_id')->references('id')->on('admins')->nullOnDelete();
-            $table->index('published_by_id');
+            $table->index('published_by_id', 'pubver_pubby_idx');
 
-            // GDPR Art. 17: the one sanctioned exception to immutability. See
-            // PublicationVersion::redact() — payload is nulled, checksum is kept
-            // so the audit trail still proves what was removed, and the
-            // transition is one-way (redacted_at null -> set, never back).
+            // Redaction (GDPR Art. 17) nulls the payload but keeps the checksum.
             $table->dateTime('redacted_at')->nullable();
             $table->unsignedInteger('redacted_by_id')->nullable();
             $table->foreign('redacted_by_id')->references('id')->on('admins')->nullOnDelete();
@@ -64,14 +45,13 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->unique(['publication_id', 'locale_id', 'version']);
-            $table->unique(['publication_id', 'current_locale_id']);
-            // (publication_id, is_current, locale_id): is_current before locale_id
-            // because every hot-path lookup filters by is_current and is either
-            // scoped to one locale or none, never the reverse.
-            $table->index(['publication_id', 'is_current', 'locale_id']);
-            $table->index(['publication_id', 'published_at']);
-            $table->index('published_at');
+            // Explicit names: auto names include the table prefix and overrun
+            // MySQL's 64-char identifier limit on prefixed installs.
+            $table->unique(['publication_id', 'locale_id', 'version'], 'pubver_pub_loc_ver_uq');
+            $table->unique(['publication_id', 'current_locale_id'], 'pubver_pub_curloc_uq');
+            $table->index(['publication_id', 'is_current', 'locale_id'], 'pubver_pub_cur_loc_idx');
+            $table->index(['publication_id', 'published_at'], 'pubver_pub_pubat_idx');
+            $table->index('published_at', 'pubver_pubat_idx');
         });
     }
 

@@ -229,18 +229,12 @@ class Export
             $typeExporter = $this->getTypeExporter();
             $typeExporter->queue = $queue;
             $typeExporter->exportData($exportBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;

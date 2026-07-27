@@ -1,11 +1,12 @@
 <?php
 
+use Illuminate\Console\Attributes\Signature;
 use Webkul\Installer\Console\Commands\Installer;
 
 function bindInstallerCapturingEnvUpdate(array &$captured): Closure
 {
     return function () use (&$captured) {
-        return new class($captured) extends Installer
+        return new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class($captured) extends Installer
         {
             private array $captured;
 
@@ -25,11 +26,10 @@ function bindInstallerCapturingEnvUpdate(array &$captured): Closure
                 $this->captured[$key] = $value;
             }
 
-            public function handle()
+            public function handle(): void
             {
                 $this->askForDatabaseDetails();
 
-                return 0;
             }
         };
     };

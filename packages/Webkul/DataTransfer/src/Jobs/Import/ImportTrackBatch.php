@@ -30,11 +30,29 @@ class ImportTrackBatch implements ShouldQueue
      */
     public function handle(): void
     {
-        if (! auth()->guard('admin')->check()) {
-            $user = AdminProxy::find($this->importBatch->user_id);
-            auth('admin')->login($user);
+        // Set this batch's owner unconditionally (not only when unauthenticated):
+        // a persistent worker keeps the guard populated between jobs, so a stale
+        // identity would otherwise carry over and attribute the import to the
+        // wrong admin. setUser() avoids touching the session; the guard is cleared
+        // in the finally so nothing leaks into the next job.
+        $user = AdminProxy::find($this->importBatch->user_id);
+
+        if ($user) {
+            auth()->guard('admin')->setUser($user);
         }
 
+        try {
+            $this->runImport();
+        } finally {
+            auth()->guard('admin')->forgetUser();
+        }
+    }
+
+    /**
+     * Run the import pipeline for the tracked batch.
+     */
+    protected function runImport(): void
+    {
         $importHelper = resolve(ImportHelper::class);
 
         $importHelper->setImport($this->importBatch);

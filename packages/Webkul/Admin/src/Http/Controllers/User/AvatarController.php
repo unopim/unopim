@@ -2,15 +2,17 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Http;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\User\Models\Admin;
 
 class AvatarController extends Controller
 {
     /**
      * Proxy gravatar image through local app domain.
+     *
+     * The upstream fetch is cached (misses included) by the model so a listing that renders one
+     * avatar per row does not trigger a synchronous gravatar round-trip per request.
      */
     public function gravatar(string $hash): Response
     {
@@ -18,25 +20,14 @@ class AvatarController extends Controller
             abort(404);
         }
 
-        $gravatarUrl = "https://gravatar.com/avatar/{$hash}?s=200&d=404";
+        $payload = Admin::gravatarPayload($hash);
 
-        try {
-            $response = Http::timeout(4)
-                ->withHeaders([
-                    'User-Agent' => 'UnoPim Avatar Proxy',
-                    'Accept'     => 'image/*',
-                ])
-                ->get($gravatarUrl);
-        } catch (ConnectionException $exception) {
+        if (! $payload['found']) {
             abort(404);
         }
 
-        if (! $response->successful()) {
-            abort(404);
-        }
-
-        return response($response->body())
-            ->header('Content-Type', $response->header('Content-Type') ?: 'image/png')
-            ->header('Cache-Control', 'public, max-age=300');
+        return response($payload['body'])
+            ->header('Content-Type', $payload['content_type'])
+            ->header('Cache-Control', 'public, max-age=86400');
     }
 }

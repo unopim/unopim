@@ -77,12 +77,13 @@ return [
             'invalid-password'    => '您输入的当前密码不正确。',
             'name'                => '姓名',
             'password'            => '密码',
+            'gravatar-preview'    => '正在使用您的 Gravatar.com 图片',
             'profile-image'       => '个人资料图像',
             'save-btn'            => '保存帐户',
             'title'               => '我的账户',
             'ui-locale'           => 'UI本地',
             'update-success'      => '帐户成功更新',
-            'upload-image-info'   => '上传配置文件图像 110px x 110px',
+            'upload-image-info'   => '上传个人资料图片（110px X 110px），或使用与您的电子邮件关联的 Gravatar.com 图片。',
             'user-timezone'       => '时区',
             'catalog-locale'      => '目录语言',
             'catalog-locale-info' => '您的目录内容所使用的语言。此设置与上方的界面语言是分开的。',
@@ -185,7 +186,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => '找不到媒体文件。',
+            'index'          => [
                 'already-taken'             => ':name 已被占用。',
                 'variant-sku-already-taken' => '变体 SKU“:sku”已被使用。',
                 'variant-sku-label'         => '变体 :position 的 SKU',
@@ -392,6 +394,7 @@ return [
                     'created-at'   => '创建日期',
                     'product-type' => '产品类型',
                 ],
+                'more'         => '更多',
                 'more-actions' => '更多操作',
                 'variations'   => [
                     'title'          => '变体',
@@ -515,6 +518,7 @@ return [
                     'unique'                   => '独特的',
                     'delete-failed'            => '无法删除此属性。',
                     'mass-delete-failed'       => '所选属性无法删除。',
+                    'mass-delete-partial'      => '有 :count 个属性因用于可配置产品而无法删除。',
                     'delete-attribute-failure' => '无法删除此属性，因为它正在用于可配置产品',
                 ],
             ],
@@ -670,6 +674,8 @@ return [
             'not-found'         => '无法找到代码为“:code”的属性',
         ],
         'attribute-options' => [
+            'delete-success'       => '属性选项删除成功',
+            'swatch-not-found'     => '未找到此选项的色板图片。',
             'create-success'       => '属性选项成功创建了',
             'update-success'       => '属性选项成功更新',
             'usable-in-grid-error' => '仅在启用网格中可以使用4个属性。',
@@ -952,6 +958,7 @@ return [
             'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
         'category-fields-options' => [
+            'delete-success'      => '分类字段选项删除成功',
             'create-success'      => '类别字段选项成功创建了',
             'update-success'      => '类别字段选项成功更新',
             'update-unknown-code' => '不存在代码为":code"的类别字段选项。',
@@ -1141,6 +1148,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => '未找到代码为 :code 的语言环境。',
                 'create-btn'            => '创建语言环境',
                 'locale'                => '语言环境',
                 'title'                 => '地区',
@@ -1188,6 +1196,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => '未找到代码为 :code 的货币。',
                 'create-btn'            => '创建货币',
                 'currency'              => '货币',
                 'title'                 => '货币',
@@ -1648,6 +1657,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => '未找到代码为 :code 的渠道。',
                 'create-btn'           => '创建频道',
                 'delete-failed'        => '频道删除失败',
                 'delete-success'       => '频道成功删除。',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => '保存用户',
                     'status'              => '地位',
                     'title'               => '创建用户',
-                    'upload-image-info'   => '上传配置文件图像（110px x 110px）',
+                    'upload-image-info'   => '上传个人资料图片（110px X 110px），或使用与您的电子邮件关联的 Gravatar.com 图片。',
                     'user-timezone'       => '时区',
                     'catalog-locale'      => '目录语言',
                     'catalog-locale-info' => '该用户编写目录内容所使用的语言。与其界面语言分开。',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => '地位',
                 'title'            => '编辑用户',
             ],
-            'activate-warning'          => '您的帐户尚未激活，请联系管理员。',
-            'cannot-change'             => '用户无法更改',
-            'cannot-escalate-role'      => '您没有权限分配全权限角色。',
-            'create-success'            => '用户成功创建了。',
-            'delete-failed'             => '用户删除失败。',
-            'delete-success'            => '用户成功删除。',
-            'delete-warning'            => '您确定要执行此操作吗？',
-            'incorrect-password'        => '密码错误',
-            'last-delete-error'         => '最后一个用户删除失败',
-            'login-error'               => '请检查您的凭据，然后重试。',
-            'update-success'            => '用户成功更新了。',
-            'current-user-delete-error' => '已登录用户无法删除',
+            'activate-warning'             => '您的帐户尚未激活，请联系管理员。',
+            'cannot-change'                => '用户无法更改',
+            'cannot-escalate-role'         => '您没有权限分配全权限角色。',
+            'create-success'               => '用户成功创建了。',
+            'delete-failed'                => '用户删除失败。',
+            'delete-success'               => '用户成功删除。',
+            'delete-warning'               => '您确定要执行此操作吗？',
+            'incorrect-password'           => '密码错误',
+            'last-delete-error'            => '最后一个用户删除失败',
+            'login-error'                  => '请检查您的凭据，然后重试。',
+            'update-success'               => '用户成功更新了。',
+            'current-user-delete-error'    => '已登录用户无法删除',
+            'last-all-access-delete-error' => '无法删除最后一个具有完全访问权限的活动管理员。',
         ],
         'system-settings' => [
             'title'              => '系统设置',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => '产品护照',
+        'publish'                  => '发布',
+        'withdraw'                 => '撤回',
         'addresses'                => '地址',
         'attribute-families'       => '属性家庭',
         'attribute-groups'         => '属性组',

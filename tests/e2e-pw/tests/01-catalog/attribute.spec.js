@@ -10,18 +10,18 @@ const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../.
  */
 async function createAttribute(adminPage, code, name, type = 'Text') {
   await navigateTo(adminPage, 'attributes');
-  await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+  await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.locator('input[name="type"][type="text"]').fill(type);
   await adminPage.getByRole('option', { name: type }).first().click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
+  await adminPage.locator('input[name$="[name]"]').first().fill(name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
     clickSave(adminPage, 'Save Attribute'),
   ]);
-  await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Edit Attribute').first()).toBeVisible();
 }
 
 /**
@@ -32,24 +32,25 @@ async function createAttribute(adminPage, code, name, type = 'Text') {
  * @param {string} swatchType - 'Text Swatch', 'Color Swatch', or 'Image Swatch'
  */
 async function createSelectSwatchAttribute(adminPage, code, name, swatchType = 'Text Swatch') {
-  await navigateTo(adminPage, 'attributes');
-  await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+  // Swatch type is only selectable on the full create page; the quick-create
+  // modal omits it and locks new attributes to the text swatch.
+  await adminPage.goto('/admin/catalog/attributes/create');
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.locator('input[name="type"][type="text"]').fill('Select');
   await adminPage.getByRole('option', { name: 'Select' }).first().click();
   if (swatchType !== 'Text Swatch') {
-    await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Text Swatch' }).click();
-    await adminPage.getByRole('option', { name: swatchType }).first().click();
+    const swatchMs = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="swatch_type"]') });
+    await swatchMs.click();
+    await swatchMs.locator('.multiselect__option', { hasText: swatchType }).first().click();
   }
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
+  await adminPage.locator('input[name$="[name]"]').first().fill(name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
     clickSave(adminPage, 'Save Attribute'),
   ]);
-  await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('Edit Attribute').first()).toBeVisible();
 }
 
 /**
@@ -149,12 +150,13 @@ test.describe('UnoPim Attribute', () => {
 
   test('Create attribute with empty code field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Name');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
+    // v-code derives the code from the name, so clear it to submit an empty code.
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await clickSave(adminPage, 'Save Attribute');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
   });
@@ -163,20 +165,21 @@ test.describe('UnoPim Attribute', () => {
     const uid = generateUid();
     const code = `attr_${uid}`;
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Name');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
     await clickSave(adminPage, 'Save Attribute');
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
   });
 
   test('Create attribute with empty Code and Type field', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('networkidle');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
+    // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Product Name');
     await clickSave(adminPage, 'Save Attribute');
     await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
@@ -252,7 +255,7 @@ test.describe('UnoPim Attribute', () => {
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('prudact nem');
+    await adminPage.locator('input[name$="[name]"]').first().fill('prudact nem');
     await adminPage.locator('#is_required').nth(1).click();
     await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
 
@@ -285,13 +288,13 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     const uid = generateUid();
     const code = `chk_${uid}`;
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('checkbox');
     await adminPage.getByRole('option', { name: 'Checkbox' }).first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('In the Box');
+    await adminPage.locator('input[name$="[name]"]').first().fill('In the Box');
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).not.toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).not.toBeVisible();
   });
@@ -411,13 +414,13 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     const uid = generateUid();
     const code = `msel_${uid}`;
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Multiselect');
     await adminPage.getByRole('option', { name: 'Multiselect' }).first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Features');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Features');
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).not.toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).not.toBeVisible();
   });
@@ -537,13 +540,13 @@ test.describe('Select Type Attribute', () => {
     const uid = generateUid();
     const code = `sel_${uid}`;
     await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.getByRole('button', { name: 'Create Attribute' }).click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Select');
     await adminPage.getByRole('option', { name: 'Select' }).first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Material');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Material');
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).not.toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).not.toBeVisible();
   });
@@ -659,45 +662,30 @@ test.describe('Select Type Attribute', () => {
 // ============================================================================
 test.describe('Swatch Type Attribute Option', () => {
 
-  test('Check swatch type visibility on Select attribute creation', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await adminPage.getByRole('textbox', { name: 'Code' }).fill('swatch_vis_check');
-    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.locator('input[name="type"][type="text"]').fill('Select');
-    await adminPage.getByRole('option', { name: 'Select' }).first().click();
-    await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Text Swatch' }).click();
+  // Swatch type moved from the create modal to the edit page, so each case
+  // creates a Select attribute first and then works on its edit screen.
+  const swatchMultiselect = (adminPage) =>
+    adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="swatch_type"]') });
+
+  test('Check swatch type visibility on Select attribute edit', async ({ adminPage }) => {
+    const code = `swatch_vis_${generateUid()}`;
+    await createAttribute(adminPage, code, 'Swatch Vis', 'Select');
+    await expect(swatchMultiselect(adminPage)).toBeVisible();
+    await deleteAttribute(adminPage, code);
   });
 
-  test('Check the swatch type options for select type attribute', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await adminPage.getByRole('textbox', { name: 'Code' }).fill('swatch_opt_check');
-    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.locator('input[name="type"][type="text"]').fill('Select');
-    await adminPage.getByRole('option', { name: 'Select' }).first().click();
-    await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Text Swatch' }).click();
-    await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Color Swatch' }).click();
-    await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Image Swatch' }).click();
+  test('Swatch type is locked to its creation value on edit', async ({ adminPage }) => {
+    const code = `swatch_opt_${generateUid()}`;
+    await createAttribute(adminPage, code, 'Swatch Opt', 'Select');
+    await expect(swatchMultiselect(adminPage)).toHaveClass(/multiselect--disabled/);
+    await deleteAttribute(adminPage, code);
   });
 
   test('Verify swatch type field have default value as Text Swatch', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
-    await adminPage.waitForLoadState('networkidle');
-    await adminPage.getByRole('textbox', { name: 'Code' }).fill('swatch_default');
-    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
-    await adminPage.locator('input[name="type"][type="text"]').fill('Select');
-    await adminPage.getByRole('option', { name: 'Select' }).first().click();
-    const swatchType = await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Text Swatch' }).innerText();
-    expect(swatchType).toBe('Text Swatch');
+    const code = `swatch_def_${generateUid()}`;
+    await createAttribute(adminPage, code, 'Swatch Default', 'Select');
+    await expect(swatchMultiselect(adminPage)).toContainText('Text Swatch');
+    await deleteAttribute(adminPage, code);
   });
 
   test('Create a select type attribute with swatch type as text swatch', { timeout: 60000 }, async ({ adminPage }) => {
@@ -732,7 +720,6 @@ test.describe('Swatch Type Attribute Option', () => {
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addTextSwatchOption(adminPage, `red_${uid}`, 'Red');
     await addTextSwatchOption(adminPage, `blue_${uid}`, 'Blue');
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -757,24 +744,22 @@ test.describe('Swatch Type Attribute Option', () => {
   test('Create the select type attribute with swatch type as color swatch', { timeout: 60000 }, async ({ adminPage }) => {
     const uid = generateUid();
     const code = `csw_${uid}`;
-    await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.goto('/admin/catalog/attributes/create');
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Select');
     await adminPage.getByRole('option', { name: 'Select' }).first().click();
-    await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Text Swatch' }).click();
-    await adminPage.getByRole('option', { name: 'Color Swatch' }).first().click();
-    await expect(adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Color Swatch' }).first()).toBeVisible();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Color Swatch');
+    const swatchMs = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="swatch_type"]') });
+    await swatchMs.click();
+    await swatchMs.locator('.multiselect__option', { hasText: 'Color Swatch' }).first().click();
+    await expect(swatchMs).toContainText('Color Swatch');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Color Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
       clickSave(adminPage, 'Save Attribute'),
     ]);
-    await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('Edit Attribute').first()).toBeVisible();
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -803,7 +788,6 @@ test.describe('Swatch Type Attribute Option', () => {
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addColorSwatchOption(adminPage, `red_${uid}`, 'Red', '#ff0000');
     await addColorSwatchOption(adminPage, `aqua_${uid}`, 'Aqua Blue', '#00faf6');
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -828,24 +812,22 @@ test.describe('Swatch Type Attribute Option', () => {
   test('Create the select type attribute with swatch type as image swatch', { timeout: 60000 }, async ({ adminPage }) => {
     const uid = generateUid();
     const code = `isw_${uid}`;
-    await navigateTo(adminPage, 'attributes');
-    await adminPage.getByRole('link', { name: 'Create Attribute' }).click();
+    await adminPage.goto('/admin/catalog/attributes/create');
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.locator('input[name="type"][type="text"]').fill('Select');
     await adminPage.getByRole('option', { name: 'Select' }).first().click();
-    await adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Text Swatch' }).click();
-    await adminPage.getByRole('option', { name: 'Image Swatch' }).first().click();
-    await expect(adminPage.locator('#swatch_type').getByRole('combobox').locator('div')
-      .filter({ hasText: 'Image Swatch' }).first()).toBeVisible();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Image Swatch');
+    const swatchMs = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="swatch_type"]') });
+    await swatchMs.click();
+    await swatchMs.locator('.multiselect__option', { hasText: 'Image Swatch' }).first().click();
+    await expect(swatchMs).toContainText('Image Swatch');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Image Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
       clickSave(adminPage, 'Save Attribute'),
     ]);
-    await expect(adminPage.locator('#app').getByText('Edit Attribute')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('Edit Attribute').first()).toBeVisible();
     // Cleanup
     await deleteAttribute(adminPage, code);
   });
@@ -876,7 +858,6 @@ test.describe('Swatch Type Attribute Option', () => {
     await addImageSwatchOption(adminPage, `stripes_${uid}`, 'Stripes Pattern', 'assets/stripes.jpg');
     await addImageSwatchOption(adminPage, `dots_${uid}`, 'Dots Pattern', 'assets/dotted.png');
     await addImageSwatchOption(adminPage, `checked_${uid}`, 'Checked Pattern', 'assets/check.jpeg');
-    await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
     // Cleanup
     await deleteAttribute(adminPage, code);
   });

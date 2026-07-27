@@ -77,12 +77,13 @@ return [
             'invalid-password'    => 'Het huidige wachtwoord dat je hebt ingevoerd, is onjuist.',
             'name'                => 'Naam',
             'password'            => 'Wachtwoord',
+            'gravatar-preview'    => 'Je Gravatar.com-afbeelding wordt gebruikt',
             'profile-image'       => 'Profielfoto',
             'save-btn'            => 'Account opslaan',
             'title'               => 'Mijn account',
             'ui-locale'           => 'Interfacetaal',
             'update-success'      => 'Account succesvol bijgewerkt.',
-            'upload-image-info'   => 'Upload een profielafbeelding (110px x 110px)',
+            'upload-image-info'   => 'Upload een profielafbeelding (110px X 110px), of gebruik je Gravatar.com-afbeelding die aan je e-mail is gekoppeld.',
             'user-timezone'       => 'Tijdzone',
             'catalog-locale'      => 'Catalogustaal',
             'catalog-locale-info' => 'De taal waarin uw catalogusinhoud is geschreven. Dit is los van de bovenstaande interfacetaal.',
@@ -186,7 +187,8 @@ return [
     ],
     'catalog' => [
         'products' => [
-            'index' => [
+            'upload-failure' => 'Media kon niet worden gevonden.',
+            'index'          => [
                 'already-taken'             => 'De :name is al in gebruik.',
                 'variant-sku-already-taken' => 'De variant-SKU ":sku" is al in gebruik.',
                 'variant-sku-label'         => 'SKU van variant :position',
@@ -393,6 +395,7 @@ return [
                     'created-at'   => 'Aanmaakdatum',
                     'product-type' => 'Producttype',
                 ],
+                'more'         => 'Meer',
                 'more-actions' => 'Meer acties',
                 'variations'   => [
                     'title'          => 'Variaties',
@@ -516,6 +519,7 @@ return [
                     'unique'                   => 'Uniek',
                     'delete-failed'            => 'Dit attribuut kan niet worden verwijderd.',
                     'mass-delete-failed'       => 'Geselecteerde attributen kunnen niet worden verwijderd.',
+                    'mass-delete-partial'      => ':count kenmerk(en) konden niet worden verwijderd omdat ze in gebruik zijn voor configureerbare producten.',
                     'delete-attribute-failure' => 'Dit attribuut kan niet worden verwijderd omdat het in gebruik is voor configureerbare producten.',
                 ],
             ],
@@ -671,6 +675,8 @@ return [
             'not-found'         => 'Attribuut met code ":code" kon niet worden gevonden.',
         ],
         'attribute-options' => [
+            'delete-success'       => 'Attribuutoptie succesvol verwijderd',
+            'swatch-not-found'     => 'Geen staalafbeelding gevonden voor deze optie.',
             'create-success'       => 'Attribuutoptie succesvol aangemaakt.',
             'update-success'       => 'Attribuutoptie succesvol bijgewerkt.',
             'usable-in-grid-error' => 'Er kunnen maximaal 4 attributen bruikbaar zijn in het raster.',
@@ -953,6 +959,7 @@ return [
             'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
         ],
         'category-fields-options' => [
+            'delete-success'      => 'Categorieveldoptie succesvol verwijderd',
             'create-success'      => 'Categorieveldoptie succesvol aangemaakt.',
             'update-success'      => 'Categorieveldoptie succesvol bijgewerkt.',
             'update-unknown-code' => 'Er bestaat geen categorieveldoptie met code ":code".',
@@ -1142,6 +1149,7 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
+                'not-found'             => 'Landinstelling met code :code niet gevonden.',
                 'create-btn'            => 'Taalinstelling aanmaken',
                 'locale'                => 'Taalinstelling',
                 'title'                 => 'Taalinstellingen',
@@ -1189,6 +1197,7 @@ return [
         ],
         'currencies' => [
             'index' => [
+                'not-found'             => 'Valuta met code :code niet gevonden.',
                 'create-btn'            => 'Valuta aanmaken',
                 'currency'              => 'Munteenheid',
                 'title'                 => 'Valuta',
@@ -1649,6 +1658,7 @@ return [
         ],
         'channels' => [
             'index' => [
+                'not-found'            => 'Kanaal met code :code niet gevonden.',
                 'create-btn'           => 'Kanaal aanmaken',
                 'delete-failed'        => 'Kanaal verwijderen mislukt.',
                 'delete-success'       => 'Kanaal succesvol verwijderd.',
@@ -1755,7 +1765,7 @@ return [
                     'save-btn'            => 'Gebruiker opslaan',
                     'status'              => 'Status',
                     'title'               => 'Gebruiker aanmaken',
-                    'upload-image-info'   => 'Upload een profielafbeelding (110px x 110px)',
+                    'upload-image-info'   => 'Upload een profielafbeelding (110px X 110px), of gebruik je Gravatar.com-afbeelding die aan je e-mail is gekoppeld.',
                     'user-timezone'       => 'Tijdzone',
                     'catalog-locale'      => 'Catalogustaal',
                     'catalog-locale-info' => 'De taal waarin deze gebruiker catalogusinhoud schrijft. Los van diens interfacetaal.',
@@ -1798,18 +1808,19 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Gebruiker bewerken',
             ],
-            'activate-warning'          => 'Je account moet nog worden geactiveerd, neem contact op met de beheerder.',
-            'cannot-change'             => 'Gebruiker kan niet worden gewijzigd.',
-            'cannot-escalate-role'      => 'Je hebt geen toestemming om een rol met volledige toegang toe te wijzen.',
-            'create-success'            => 'Gebruiker succesvol aangemaakt.',
-            'delete-failed'             => 'Gebruiker verwijderen mislukt.',
-            'delete-success'            => 'Gebruiker succesvol verwijderd.',
-            'delete-warning'            => 'Weet je zeker dat je deze actie wilt uitvoeren?',
-            'incorrect-password'        => 'Onjuist wachtwoord.',
-            'last-delete-error'         => 'Laatste gebruiker kan niet worden verwijderd.',
-            'login-error'               => 'Controleer je inloggegevens en probeer het opnieuw.',
-            'update-success'            => 'Gebruiker succesvol bijgewerkt.',
-            'current-user-delete-error' => 'De ingelogde gebruiker kan niet worden verwijderd.',
+            'activate-warning'             => 'Je account moet nog worden geactiveerd, neem contact op met de beheerder.',
+            'cannot-change'                => 'Gebruiker kan niet worden gewijzigd.',
+            'cannot-escalate-role'         => 'Je hebt geen toestemming om een rol met volledige toegang toe te wijzen.',
+            'create-success'               => 'Gebruiker succesvol aangemaakt.',
+            'delete-failed'                => 'Gebruiker verwijderen mislukt.',
+            'delete-success'               => 'Gebruiker succesvol verwijderd.',
+            'delete-warning'               => 'Weet je zeker dat je deze actie wilt uitvoeren?',
+            'incorrect-password'           => 'Onjuist wachtwoord.',
+            'last-delete-error'            => 'Laatste gebruiker kan niet worden verwijderd.',
+            'login-error'                  => 'Controleer je inloggegevens en probeer het opnieuw.',
+            'update-success'               => 'Gebruiker succesvol bijgewerkt.',
+            'current-user-delete-error'    => 'De ingelogde gebruiker kan niet worden verwijderd.',
+            'last-all-access-delete-error' => 'De laatste actieve beheerder met volledige toegang kan niet worden verwijderd.',
         ],
         'system-settings' => [
             'info'               => 'Beheer systeeminstellingen vanaf één plek.',
@@ -2694,6 +2705,9 @@ return [
         ],
     ],
     'acl' => [
+        'passports'                => 'Productpaspoorten',
+        'publish'                  => 'Publiceren',
+        'withdraw'                 => 'Intrekken',
         'addresses'                => 'Adressen',
         'attribute-families'       => 'Attribuutsets',
         'attribute-groups'         => 'Attribuutgroepen',

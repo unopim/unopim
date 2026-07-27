@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Console\Attributes\Signature;
 use Webkul\Installer\Console\Commands\Installer;
 
 /**
@@ -10,13 +11,12 @@ use Webkul\Installer\Console\Commands\Installer;
  * migrate:fresh + seed pipeline never runs.
  */
 it('resolves valid --with-packages keys', function () {
-    $this->app->extend(Installer::class, fn () => new class extends Installer
+    $this->app->extend(Installer::class, fn () => new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
     {
-        public function handle()
+        public function handle(): void
         {
             $this->line('RESOLVED:'.implode(',', $this->resolveSelectedPackages()));
 
-            return self::SUCCESS;
         }
     });
 
@@ -29,13 +29,12 @@ it('resolves valid --with-packages keys', function () {
 });
 
 it('skips unknown packages passed to --with-packages', function () {
-    $this->app->extend(Installer::class, fn () => new class extends Installer
+    $this->app->extend(Installer::class, fn () => new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
     {
-        public function handle()
+        public function handle(): void
         {
             $this->line('RESOLVED:'.implode(',', $this->resolveSelectedPackages()));
 
-            return self::SUCCESS;
         }
     });
 
@@ -49,15 +48,14 @@ it('skips unknown packages passed to --with-packages', function () {
 });
 
 it('installs nothing when no packages are selected', function () {
-    $this->app->extend(Installer::class, fn () => new class extends Installer
+    $this->app->extend(Installer::class, fn () => new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
     {
-        public function handle()
+        public function handle(): void
         {
             $this->installOptionalPackages([]);
 
             $this->line('DONE');
 
-            return self::SUCCESS;
         }
     });
 
@@ -70,13 +68,12 @@ it('installs nothing when no packages are selected', function () {
 });
 
 it('renders the cloud hosting banner with the promo url', function () {
-    $this->app->extend(Installer::class, fn () => new class extends Installer
+    $this->app->extend(Installer::class, fn () => new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
     {
-        public function handle()
+        public function handle(): void
         {
             $this->renderCloudHostingBanner();
 
-            return self::SUCCESS;
         }
     });
 

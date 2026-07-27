@@ -32,10 +32,9 @@ class CategoryController extends Controller
     public function __construct(
         protected ChannelRepository $channelRepository,
         protected CategoryRepository $categoryRepository,
-        protected CategoryFieldRepository $categoryFieldRepository
-    ) {
-        $this->categoryValidator = new CategoryRequestValidator($this->categoryRepository, $this->categoryFieldRepository, $this->channelRepository);
-    }
+        protected CategoryFieldRepository $categoryFieldRepository,
+        protected CategoryRequestValidator $categoryValidator
+    ) {}
 
     /**
      * Display a listing of the resource.

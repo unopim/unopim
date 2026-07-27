@@ -19,6 +19,7 @@ use Webkul\MagicAI\Providers\MagicAIServiceProvider;
 use Webkul\Measurement\Providers\MeasurementServiceProvider;
 use Webkul\Notification\Providers\NotificationServiceProvider;
 use Webkul\Product\Providers\ProductServiceProvider;
+use Webkul\ProductPassport\Providers\ProductPassportServiceProvider;
 use Webkul\Publication\Providers\PublicationServiceProvider;
 use Webkul\Resource\Providers\ResourceServiceProvider;
 use Webkul\Theme\Providers\ThemeServiceProvider;
@@ -54,5 +55,6 @@ return [
     AiAgentServiceProvider::class,
     MeasurementServiceProvider::class,
     AppUrlGuardServiceProvider::class,
+    ProductPassportServiceProvider::class,
     PublicationServiceProvider::class,
 ];

@@ -407,8 +407,18 @@
                         el.dispatchEvent(new Event('change', { bubbles: true }));
                     });
 
+                    // Native revert above only round-trips fields whose native element is
+                    // the source of truth. Rich fields (select, multiselect, media, file,
+                    // WYSIWYG) keep their value in Vue state and can't be reverted from the
+                    // DOM, so broadcast a reset they each restore their own initial value from.
+                    this.$emitter.emit('unsaved-changes:reset');
+
                     this.touched = {};
                     this.recompute();
+
+                    // Rich-field resets settle on Vue's next tick; re-evaluate afterwards so
+                    // the bar clears once their hidden inputs hold the original values again.
+                    this.$nextTick(() => this.recompute());
                 },
 
                 onFormSaved() {

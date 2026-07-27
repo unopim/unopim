@@ -80,13 +80,16 @@ async function gotoTab(page, id, tab = '') {
  */
 async function selectMultiselect(page, inputName, optionText) {
   const input = page.locator(`input[name="${inputName}"]`).first();
-  // The zero-width input isn't clickable until the wrapper opens it.
-  const wrapper = input.locator('xpath=ancestor::*[contains(@class,"multiselect")][1]');
+  // Scope to the real `.multiselect` root, not the inner `.multiselect__tags` (both
+  // contain the substring "multiselect", so match the class as a whole word) — the
+  // option list is a sibling of `__tags` and falls outside a `__tags`-scoped search.
+  const wrapper = input.locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
   await wrapper.click();
   if (optionText) {
     await input.pressSequentially(String(optionText), { delay: 15 }).catch(() => {});
   }
-  const option = page.locator('.multiselect__content-wrapper li:visible, .multiselect__element:visible')
+  // Scope to the opened wrapper so a sibling multiselect's options are ignored.
+  const option = wrapper.locator('.multiselect__content-wrapper li, .multiselect__element')
     .filter({ hasText: optionText || /\S/ }).first();
   await option.waitFor({ state: 'visible', timeout: 8000 });
   await option.click();

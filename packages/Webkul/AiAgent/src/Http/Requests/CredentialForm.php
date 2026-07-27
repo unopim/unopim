@@ -2,7 +2,9 @@
 
 namespace Webkul\AiAgent\Http\Requests;
 
+use Closure;
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 /**
  * Form request for Credential create/update validation.
@@ -27,7 +29,11 @@ class CredentialForm extends FormRequest
         return [
             'label'    => ['required', 'string', 'max:255'],
             'provider' => ['required', 'string', 'in:openai,anthropic,azure,custom'],
-            'apiUrl'   => ['required', 'url', 'max:500'],
+            'apiUrl'   => ['required', 'url', 'max:500', function (string $attribute, mixed $value, Closure $fail): void {
+                if (! SafeWebhookUrl::validate($value)['valid']) {
+                    $fail(trans('admin::app.configuration.platform.message.unsafe-api-url'));
+                }
+            }],
             'apiKey'   => ['required', 'string', 'max:500'],
             'model'    => ['required', 'string', 'max:255'],
             'status'   => ['sometimes', 'boolean'],
