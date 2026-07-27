@@ -76,6 +76,7 @@ return [
             'general'             => 'عام',
             'invalid-password'    => 'كلمة المرور الحالية التي أدخلتها غير صحيحة.',
             'name'                => 'اسم',
+            'password-whitespace' => 'كلمة المرور لا يمكن أن تتكون من مسافات فقط.',
             'password'            => 'كلمة المرور',
             'gravatar-preview'    => 'استخدام صورة Gravatar.com الخاصة بك',
             'profile-image'       => 'صورة الملف الشخصي',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'فشل بدء عملية الاستيراد. يرجى المحاولة مرة أخرى.',
+                'rerun-no-file'     => 'هذه المهمة ليس لها ملف استيراد، لذا لا يمكن إعادة تشغيلها.',
                 'create'            => [
                     'code'                => 'شفرة',
                     'action'              => 'فعل',
@@ -2044,7 +2046,6 @@ return [
                 'all'            => 'الجميع',
                 'back-btn'       => 'خلف',
                 'custom'         => 'مخصص',
-                'assign-user'    => 'تعيين المستخدم',
                 'general'        => 'عام',
                 'name'           => 'اسم',
                 'permissions'    => 'أذونات',
@@ -2056,7 +2057,6 @@ return [
                 'all'                         => 'الجميع',
                 'back-btn'                    => 'خلف',
                 'custom'                      => 'مخصص',
-                'assign-user'                 => 'تعيين المستخدم',
                 'general'                     => 'عام',
                 'name'                        => 'اسم',
                 'credentials'                 => 'أوراق اعتماد',

@@ -76,6 +76,7 @@ return [
             'general'             => 'Opće',
             'invalid-password'    => 'Trenutna lozinka je neispravna.',
             'name'                => 'Ime',
+            'password-whitespace' => 'Lozinka ne može sadržavati samo razmake.',
             'password'            => 'Lozinka',
             'gravatar-preview'    => 'Koristi se vaša Gravatar.com slika',
             'profile-image'       => 'Profilna slika',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Pokretanje procesa uvoza nije uspjelo. Pokušajte ponovno.',
+                'rerun-no-file'     => 'Ovaj posao nema datoteku za uvoz, stoga se ne može ponovno pokrenuti.',
                 'create'            => [
                     'code'                => 'Kod',
                     'action'              => 'Akcija',
@@ -2044,7 +2046,6 @@ return [
                 'all'            => 'Svi',
                 'back-btn'       => 'Povratak',
                 'custom'         => 'Prilagođeno',
-                'assign-user'    => 'Dodijeli korisnika',
                 'general'        => 'Opće',
                 'name'           => 'Ime',
                 'permissions'    => 'Dopuštenja',
@@ -2056,7 +2057,6 @@ return [
                 'all'                         => 'Svi',
                 'back-btn'                    => 'Povratak',
                 'custom'                      => 'Prilagođeno',
-                'assign-user'                 => 'Dodijeli korisnika',
                 'general'                     => 'Opće',
                 'name'                        => 'Ime',
                 'credentials'                 => 'Vjerodajnice',

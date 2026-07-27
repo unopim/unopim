@@ -76,6 +76,7 @@ return [
             'general'             => 'Allgemein',
             'invalid-password'    => 'Das aktuelle Passwort, das Sie eingegeben haben, ist falsch.',
             'name'                => 'Name',
+            'password-whitespace' => 'Das Passwort darf nicht nur aus Leerzeichen bestehen.',
             'password'            => 'Passwort',
             'gravatar-preview'    => 'Ihr Gravatar.com-Bild wird verwendet',
             'profile-image'       => 'Profilbild',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Der Importvorgang konnte nicht gestartet werden. Bitte versuchen Sie es erneut.',
+                'rerun-no-file'     => 'Dieser Job hat keine Importdatei und kann daher nicht erneut ausgeführt werden.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Aktion',
@@ -2044,7 +2046,6 @@ return [
                 'all'            => 'Alle',
                 'back-btn'       => 'Zurück',
                 'custom'         => 'Benutzerdefiniert',
-                'assign-user'    => 'Benutzer zuweisen',
                 'general'        => 'Allgemein',
                 'name'           => 'Name',
                 'permissions'    => 'Berechtigungen',
@@ -2056,7 +2057,6 @@ return [
                 'all'                         => 'Alle',
                 'back-btn'                    => 'Zurück',
                 'custom'                      => 'Benutzerdefiniert',
-                'assign-user'                 => 'Benutzer zuweisen',
                 'general'                     => 'Allgemein',
                 'name'                        => 'Name',
                 'credentials'                 => 'Anmeldeinformationen',

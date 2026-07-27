@@ -76,6 +76,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'La contrasenya actual introduïda és incorrecta.',
             'name'                => 'Nom',
+            'password-whitespace' => 'La contrasenya no pot consistir només en espais.',
             'password'            => 'Contrasenya',
             'gravatar-preview'    => 'Utilitzant la teva imatge de Gravatar.com',
             'profile-image'       => 'Imatge del perfil',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'No s\'ha pogut iniciar el procés d\'importació. Torneu-ho a provar.',
+                'rerun-no-file'     => 'Aquesta tasca no té cap fitxer d\'importació, per la qual cosa no es pot tornar a executar.',
                 'create'            => [
                     'code'                => 'Codi',
                     'action'              => 'Acció',
@@ -2044,7 +2046,6 @@ return [
                 'all'            => 'Todos',
                 'back-btn'       => 'Voltar',
                 'custom'         => 'Personalizado',
-                'assign-user'    => 'Atribuir Usuário',
                 'general'        => 'Geral',
                 'name'           => 'Nome',
                 'permissions'    => 'Permissões',
@@ -2056,7 +2057,6 @@ return [
                 'all'                         => 'Todos',
                 'back-btn'                    => 'Voltar',
                 'custom'                      => 'Personalizado',
-                'assign-user'                 => 'Atribuir Usuário',
                 'general'                     => 'Geral',
                 'name'                        => 'Nome',
                 'credentials'                 => 'Credenciais',

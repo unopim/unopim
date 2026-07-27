@@ -76,6 +76,7 @@ return [
             'general'             => 'Geral',
             'invalid-password'    => 'A senha atual está incorreta.',
             'name'                => 'Nome',
+            'password-whitespace' => 'A senha não pode consistir apenas em espaços.',
             'password'            => 'Senha',
             'gravatar-preview'    => 'Usando sua imagem do Gravatar.com',
             'profile-image'       => 'Imagem de perfil',
@@ -1360,6 +1361,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Falha ao iniciar o processo de importação. Tente novamente.',
+                'rerun-no-file'     => 'Este trabalho não possui arquivo de importação, portanto não pode ser executado novamente.',
                 'create'            => [
                     'code'                => 'Código',
                     'action'              => 'Ação',
@@ -2046,7 +2048,6 @@ return [
                 'all'            => 'Todos',
                 'back-btn'       => 'Voltar',
                 'custom'         => 'Personalizado',
-                'assign-user'    => 'Atribuir Usuário',
                 'general'        => 'Geral',
                 'name'           => 'Nome',
                 'permissions'    => 'Permissões',
@@ -2058,7 +2059,6 @@ return [
                 'all'                         => 'Todos',
                 'back-btn'                    => 'Voltar',
                 'custom'                      => 'Personalizado',
-                'assign-user'                 => 'Atribuir Usuário',
                 'general'                     => 'Geral',
                 'name'                        => 'Nome',
                 'credentials'                 => 'Credenciais',

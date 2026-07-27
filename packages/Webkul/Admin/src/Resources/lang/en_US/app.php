@@ -83,6 +83,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'The current password you entered is incorrect.',
             'name'                => 'Name',
+            'password-whitespace' => 'Password cannot consist only of spaces.',
             'password'            => 'Password',
             'gravatar-preview'    => 'Using your Gravatar.com image',
             'profile-image'       => 'Profile Image',
@@ -1453,6 +1454,7 @@ return [
 
             'imports' => [
                 'import-start-fail' => 'Failed to start the import process. Please try again.',
+                'rerun-no-file'     => 'This job has no import file, so it cannot be re-run.',
 
                 'create' => [
                     'code'                => 'Code',
@@ -2184,7 +2186,6 @@ return [
                 'all'            => 'All',
                 'back-btn'       => 'Back',
                 'custom'         => 'Custom',
-                'assign-user'    => 'Assign User',
                 'general'        => 'General',
                 'name'           => 'Name',
                 'permissions'    => 'Permissions',
@@ -2197,7 +2198,6 @@ return [
                 'all'                         => 'All',
                 'back-btn'                    => 'Back',
                 'custom'                      => 'Custom',
-                'assign-user'                 => 'Assign User',
                 'general'                     => 'General',
                 'name'                        => 'Name',
                 'credentials'                 => 'Credentials',

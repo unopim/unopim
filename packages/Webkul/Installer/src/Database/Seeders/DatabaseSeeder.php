@@ -10,6 +10,7 @@ use Webkul\Installer\Database\Seeders\Core\DatabaseSeeder as CoreSeeder;
 use Webkul\Installer\Database\Seeders\User\DatabaseSeeder as UserSeeder;
 use Webkul\MagicAI\Database\Seeders\MagicAiPromptSeeder;
 use Webkul\MagicAI\Database\Seeders\MagicAISystemPromptSeeder;
+use Webkul\Measurement\Database\Seeders\MeasurementFamilySeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call(AttributeSeeder::class, false, ['parameters' => $parameters]);
         $this->call(CategorySeeder::class, false, ['parameters' => $parameters]);
         $this->call(CoreSeeder::class, false, ['parameters' => $parameters]);
+        $this->call(MeasurementFamilySeeder::class, false, ['parameters' => $parameters]);
         $this->call(UserSeeder::class, false, ['parameters' => $parameters]);
         $this->call(MagicAiPromptSeeder::class, false, ['parameters' => $parameters]);
         $this->call(MagicAISystemPromptSeeder::class, false, ['parameters' => $parameters]);

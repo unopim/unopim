@@ -76,6 +76,7 @@ return [
             'general'             => 'Generelt',
             'invalid-password'    => 'Nåværende passord er feil.',
             'name'                => 'Navn',
+            'password-whitespace' => 'Passordet kan ikke bare bestå av mellomrom.',
             'password'            => 'Passord',
             'gravatar-preview'    => 'Bruker Gravatar.com-bildet ditt',
             'profile-image'       => 'Profilbilde',
@@ -1360,6 +1361,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Importprosessen kunne ikke startes. Prøv igjen.',
+                'rerun-no-file'     => 'Denne jobben har ingen importfil, så den kan ikke kjøres på nytt.',
                 'create'            => [
                     'code'                => 'Kode',
                     'action'              => 'Handling',
@@ -2046,7 +2048,6 @@ return [
                 'all'            => 'Alle',
                 'back-btn'       => 'Tilbake',
                 'custom'         => 'Egendefinert',
-                'assign-user'    => 'Tildel bruker',
                 'general'        => 'Generelt',
                 'name'           => 'Navn',
                 'permissions'    => 'Tillatelser',
@@ -2058,7 +2059,6 @@ return [
                 'all'                         => 'Alle',
                 'back-btn'                    => 'Tilbake',
                 'custom'                      => 'Egendefinert',
-                'assign-user'                 => 'Tildel bruker',
                 'general'                     => 'Generelt',
                 'name'                        => 'Navn',
                 'credentials'                 => 'Legitimasjon',

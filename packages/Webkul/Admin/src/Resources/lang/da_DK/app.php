@@ -76,6 +76,7 @@ return [
             'general'             => 'Generelt',
             'invalid-password'    => 'Den indtastede adgangskode er forkert.',
             'name'                => 'Navn',
+            'password-whitespace' => 'Adgangskoden må ikke kun bestå af mellemrum.',
             'password'            => 'Adgangskode',
             'gravatar-preview'    => 'Bruger dit Gravatar.com-billede',
             'profile-image'       => 'Profilbillede',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Importen kunne ikke startes. Prøv igen.',
+                'rerun-no-file'     => 'Dette job har ingen importfil, så det kan ikke køres igen.',
                 'create'            => [
                     'code'                => 'Kode',
                     'action'              => 'Handling',
@@ -2044,7 +2046,6 @@ return [
                 'all'            => 'Alle',
                 'back-btn'       => 'Tilbage',
                 'custom'         => 'Tilpasset',
-                'assign-user'    => 'Tildel bruger',
                 'general'        => 'Generel',
                 'name'           => 'Navn',
                 'permissions'    => 'Tilladelser',
@@ -2056,7 +2057,6 @@ return [
                 'all'                         => 'Alle',
                 'back-btn'                    => 'Tilbage',
                 'custom'                      => 'Tilpasset',
-                'assign-user'                 => 'Tildel bruger',
                 'general'                     => 'Generel',
                 'name'                        => 'Navn',
                 'credentials'                 => 'Legitimationsoplysninger',
