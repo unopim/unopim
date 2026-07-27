@@ -6,16 +6,6 @@
         ])
         ->values()
         ->toJson();
-
-    $validations = collect(['none', 'number', 'decimal', 'email', 'url', 'regex'])
-        ->map(fn ($validation) => [
-            'id'    => $validation,
-            'label' => $validation === 'none'
-                ? trans('admin::app.catalog.category_fields.create.no')
-                : trans('admin::app.catalog.category_fields.create.'.$validation),
-        ])
-        ->values()
-        ->toJson();
 @endphp
 
 <x-admin::layouts>
@@ -40,9 +30,6 @@
                     :type-label="trans('admin::app.catalog.category_fields.create.type')"
                     :type-placeholder="trans('admin::app.catalog.category_fields.create.select-type')"
                     :type-options="$categoryFieldTypes"
-                    :validation-label="trans('admin::app.catalog.category_fields.create.input-validation')"
-                    :validation-placeholder="trans('admin::app.catalog.category_fields.create.input-validation')"
-                    :validation-options="$validations"
                     :save-label="trans('admin::app.catalog.category_fields.create.save-btn')"
                 />
             @endif
