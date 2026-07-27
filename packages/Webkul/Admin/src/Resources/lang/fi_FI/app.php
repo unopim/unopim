@@ -76,6 +76,7 @@ return [
             'general'             => 'Yleinen',
             'invalid-password'    => 'Nykyinen salasana on virheellinen.',
             'name'                => 'Nimi',
+            'password-whitespace' => 'Salasana ei voi koostua pelkistä välilyönneistä.',
             'password'            => 'Salasana',
             'gravatar-preview'    => 'Käytetään Gravatar.com-kuvaasi',
             'profile-image'       => 'Profiilikuva',

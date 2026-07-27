@@ -76,6 +76,7 @@ return [
             'general'             => 'Allgemein',
             'invalid-password'    => 'Das aktuelle Passwort, das Sie eingegeben haben, ist falsch.',
             'name'                => 'Name',
+            'password-whitespace' => 'Das Passwort darf nicht nur aus Leerzeichen bestehen.',
             'password'            => 'Passwort',
             'gravatar-preview'    => 'Ihr Gravatar.com-Bild wird verwendet',
             'profile-image'       => 'Profilbild',

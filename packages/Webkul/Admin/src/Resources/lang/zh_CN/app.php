@@ -76,6 +76,7 @@ return [
             'general'             => '一般的',
             'invalid-password'    => '您输入的当前密码不正确。',
             'name'                => '姓名',
+            'password-whitespace' => '密码不能仅由空格组成。',
             'password'            => '密码',
             'gravatar-preview'    => '正在使用您的 Gravatar.com 图片',
             'profile-image'       => '个人资料图像',

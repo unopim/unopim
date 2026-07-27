@@ -76,6 +76,7 @@ return [
             'general'             => 'Umum',
             'invalid-password'    => 'Kata sandi saat ini yang Anda masukkan salah.',
             'name'                => 'Nama',
+            'password-whitespace' => 'Kata sandi tidak boleh hanya terdiri dari spasi.',
             'password'            => 'Kata sandi',
             'gravatar-preview'    => 'Menggunakan gambar Gravatar.com Anda',
             'profile-image'       => 'Gambar profil',

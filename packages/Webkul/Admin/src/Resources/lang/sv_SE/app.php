@@ -76,6 +76,7 @@ return [
             'general'             => 'Allmänt',
             'invalid-password'    => 'Det aktuella lösenordet är felaktigt.',
             'name'                => 'Namn',
+            'password-whitespace' => 'Lösenordet kan inte bestå av enbart mellanslag.',
             'password'            => 'Lösenord',
             'gravatar-preview'    => 'Använder din Gravatar.com-bild',
             'profile-image'       => 'Profilbild',

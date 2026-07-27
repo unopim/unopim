@@ -76,6 +76,7 @@ return [
             'general'             => 'Generelt',
             'invalid-password'    => 'Nåværende passord er feil.',
             'name'                => 'Navn',
+            'password-whitespace' => 'Passordet kan ikke bare bestå av mellomrom.',
             'password'            => 'Passord',
             'gravatar-preview'    => 'Bruker Gravatar.com-bildet ditt',
             'profile-image'       => 'Profilbilde',

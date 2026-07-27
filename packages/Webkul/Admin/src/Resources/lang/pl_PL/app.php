@@ -76,6 +76,7 @@ return [
             'general'             => 'Ogólne',
             'invalid-password'    => 'Wprowadzone aktualne hasło jest nieprawidłowe.',
             'name'                => 'Nazwa',
+            'password-whitespace' => 'Hasło nie może składać się wyłącznie ze spacji.',
             'password'            => 'Hasło',
             'gravatar-preview'    => 'Używane jest Twoje zdjęcie z Gravatar.com',
             'profile-image'       => 'Obraz profilowy',

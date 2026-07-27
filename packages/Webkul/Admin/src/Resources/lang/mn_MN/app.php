@@ -76,6 +76,7 @@ return [
             'general'             => 'Жанжин',
             'invalid-password'    => 'Таны оруулсан нууц үг буруу байна.',
             'name'                => 'Нэр',
+            'password-whitespace' => 'Нууц үг зөвхөн зайнаас бүрдэж болохгүй.',
             'password'            => 'Нууц үг',
             'gravatar-preview'    => 'Таны Gravatar.com зургийг ашиглаж байна',
             'profile-image'       => 'Хувийн мэдээллийг',

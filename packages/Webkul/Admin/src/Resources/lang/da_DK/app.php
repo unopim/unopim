@@ -76,6 +76,7 @@ return [
             'general'             => 'Generelt',
             'invalid-password'    => 'Den indtastede adgangskode er forkert.',
             'name'                => 'Navn',
+            'password-whitespace' => 'Adgangskoden må ikke kun bestå af mellemrum.',
             'password'            => 'Adgangskode',
             'gravatar-preview'    => 'Bruger dit Gravatar.com-billede',
             'profile-image'       => 'Profilbillede',

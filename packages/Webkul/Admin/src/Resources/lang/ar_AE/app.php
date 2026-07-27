@@ -76,6 +76,7 @@ return [
             'general'             => 'عام',
             'invalid-password'    => 'كلمة المرور الحالية التي أدخلتها غير صحيحة.',
             'name'                => 'اسم',
+            'password-whitespace' => 'كلمة المرور لا يمكن أن تتكون من مسافات فقط.',
             'password'            => 'كلمة المرور',
             'gravatar-preview'    => 'استخدام صورة Gravatar.com الخاصة بك',
             'profile-image'       => 'صورة الملف الشخصي',

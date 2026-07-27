@@ -76,6 +76,7 @@ return [
             'general'             => 'Pangkalahatan',
             'invalid-password'    => 'Ang kasalukuyang password na iyong ipinasok ay mali.',
             'name'                => 'Pangalan',
+            'password-whitespace' => 'Ang password ay hindi maaaring binubuo lamang ng mga espasyo.',
             'password'            => 'Password',
             'gravatar-preview'    => 'Ginagamit ang iyong larawan sa Gravatar.com',
             'profile-image'       => 'Larawan ng Profile',

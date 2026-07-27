@@ -76,6 +76,7 @@ return [
             'general'             => 'Generale',
             'invalid-password'    => 'La password attuale è errata.',
             'name'                => 'Nome',
+            'password-whitespace' => 'La password non può essere composta solo da spazi.',
             'password'            => 'Password',
             'gravatar-preview'    => 'Utilizzo della tua immagine Gravatar.com',
             'profile-image'       => 'Immagine del profilo',

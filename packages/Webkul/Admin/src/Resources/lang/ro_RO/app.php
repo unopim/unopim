@@ -76,6 +76,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'Parola curentă este greșită.',
             'name'                => 'Nume',
+            'password-whitespace' => 'Parola nu poate conține doar spații.',
             'password'            => 'Parolă',
             'gravatar-preview'    => 'Se folosește imaginea ta de pe Gravatar.com',
             'profile-image'       => 'Imagine de profil',

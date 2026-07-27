@@ -76,6 +76,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'La contrasenya actual introduïda és incorrecta.',
             'name'                => 'Nom',
+            'password-whitespace' => 'La contrasenya no pot consistir només en espais.',
             'password'            => 'Contrasenya',
             'gravatar-preview'    => 'Utilitzant la teva imatge de Gravatar.com',
             'profile-image'       => 'Imatge del perfil',

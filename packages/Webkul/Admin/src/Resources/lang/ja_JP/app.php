@@ -76,6 +76,7 @@ return [
             'general'             => '全般',
             'invalid-password'    => '入力した現在のパスワードは正しくありません。',
             'name'                => '名前',
+            'password-whitespace' => 'パスワードはスペースのみで構成することはできません。',
             'password'            => 'パスワード',
             'gravatar-preview'    => 'あなたの Gravatar.com 画像を使用中',
             'profile-image'       => 'プロフィール画像',

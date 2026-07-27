@@ -76,6 +76,7 @@ return [
             'general'             => 'Общий',
             'invalid-password'    => 'Введенный вами текущий пароль неверен.',
             'name'                => 'Имя',
+            'password-whitespace' => 'Пароль не может состоять только из пробелов.',
             'password'            => 'Пароль',
             'gravatar-preview'    => 'Используется изображение Gravatar.com',
             'profile-image'       => 'Изображение профиля',

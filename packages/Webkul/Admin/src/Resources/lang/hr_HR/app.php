@@ -76,6 +76,7 @@ return [
             'general'             => 'Opće',
             'invalid-password'    => 'Trenutna lozinka je neispravna.',
             'name'                => 'Ime',
+            'password-whitespace' => 'Lozinka ne može sadržavati samo razmake.',
             'password'            => 'Lozinka',
             'gravatar-preview'    => 'Koristi se vaša Gravatar.com slika',
             'profile-image'       => 'Profilna slika',

@@ -76,6 +76,7 @@ return [
             'general'             => '일반',
             'invalid-password'    => '입력하신 현재 비밀번호가 잘못되었습니다.',
             'name'                => '이름',
+            'password-whitespace' => '비밀번호는 공백으로만 구성될 수 없습니다.',
             'password'            => '비밀번호',
             'gravatar-preview'    => 'Gravatar.com 이미지 사용 중',
             'profile-image'       => '프로필 이미지',

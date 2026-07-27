@@ -83,6 +83,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'The current password you entered is incorrect.',
             'name'                => 'Name',
+            'password-whitespace' => 'Password cannot consist only of spaces.',
             'password'            => 'Password',
             'gravatar-preview'    => 'Using your Gravatar.com image',
             'profile-image'       => 'Profile Image',

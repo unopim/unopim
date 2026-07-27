@@ -76,6 +76,7 @@ return [
             'general'             => 'सामान्य',
             'invalid-password'    => 'आपके द्वारा दर्ज किया गया वर्तमान पासवर्ड गलत है।',
             'name'                => 'नाम',
+            'password-whitespace' => 'पासवर्ड केवल रिक्त स्थान से नहीं बन सकता।',
             'password'            => 'पासवर्ड',
             'gravatar-preview'    => 'आपकी Gravatar.com छवि का उपयोग किया जा रहा है',
             'profile-image'       => 'प्रोफ़ाइल छवि',

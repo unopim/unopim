@@ -76,6 +76,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'La contraseña que acaba de ingresar es incorrecta.',
             'name'                => 'Nombre',
+            'password-whitespace' => 'La contraseña no puede consistir únicamente en espacios.',
             'password'            => 'Contraseña',
             'gravatar-preview'    => 'Usando tu imagen de Gravatar.com',
             'profile-image'       => 'Imagen de perfil',

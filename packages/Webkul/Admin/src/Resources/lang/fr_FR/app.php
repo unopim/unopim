@@ -76,6 +76,7 @@ return [
             'general'             => 'Général',
             'invalid-password'    => 'Le mot de passe actuel que vous avez saisi est incorrect.',
             'name'                => 'Nom',
+            'password-whitespace' => 'Le mot de passe ne peut pas être composé uniquement d\'espaces.',
             'password'            => 'Mot de passe',
             'gravatar-preview'    => 'Utilisation de votre image Gravatar.com',
             'profile-image'       => 'Image de profil',

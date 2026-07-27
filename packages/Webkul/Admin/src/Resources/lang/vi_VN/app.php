@@ -76,6 +76,7 @@ return [
             'general'             => 'Tổng quát',
             'invalid-password'    => 'Mật khẩu hiện tại bạn nhập không chính xác.',
             'name'                => 'Tên',
+            'password-whitespace' => 'Mật khẩu không được chỉ chứa khoảng trắng.',
             'password'            => 'Mật khẩu',
             'gravatar-preview'    => 'Đang dùng ảnh Gravatar.com của bạn',
             'profile-image'       => 'Ảnh hồ sơ',

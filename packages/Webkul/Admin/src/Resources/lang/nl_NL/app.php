@@ -76,6 +76,7 @@ return [
             'general'             => 'Algemeen',
             'invalid-password'    => 'Het huidige wachtwoord dat je hebt ingevoerd, is onjuist.',
             'name'                => 'Naam',
+            'password-whitespace' => 'Het wachtwoord mag niet alleen uit spaties bestaan.',
             'password'            => 'Wachtwoord',
             'gravatar-preview'    => 'Je Gravatar.com-afbeelding wordt gebruikt',
             'profile-image'       => 'Profielfoto',

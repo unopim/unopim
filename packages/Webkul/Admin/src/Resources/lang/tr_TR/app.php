@@ -76,6 +76,7 @@ return [
             'general'             => 'Genel',
             'invalid-password'    => 'Girdiğiniz mevcut şifre hatalı.',
             'name'                => 'Ad',
+            'password-whitespace' => 'Şifre yalnızca boşluklardan oluşamaz.',
             'password'            => 'Şifre',
             'gravatar-preview'    => 'Gravatar.com resminiz kullanılıyor',
             'profile-image'       => 'Profil Resmi',

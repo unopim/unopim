@@ -76,6 +76,7 @@ return [
             'general'             => 'Загальне',
             'invalid-password'    => 'Введений вами поточний пароль неправильний.',
             'name'                => 'Ім\'я',
+            'password-whitespace' => 'Пароль не може складатися лише з пробілів.',
             'password'            => 'Пароль',
             'gravatar-preview'    => 'Використовується зображення Gravatar.com',
             'profile-image'       => 'Зображення профілю',
