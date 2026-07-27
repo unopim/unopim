@@ -39,9 +39,6 @@ class CategoryFieldForm extends FormRequest
     {
         $id = $this->route('id');
 
-        // `type` is immutable and stripped on update, so the stored one decides what
-        // may be sent — otherwise posting `type=text` would unlock a validation on
-        // any field.
         $type = $id
             ? (app(CategoryFieldRepository::class)->find($id)?->type ?? $this->input('type'))
             : $this->input('type');
@@ -57,7 +54,6 @@ class CategoryFieldForm extends FormRequest
             'value_per_locale' => ['sometimes', 'boolean'],
         ];
 
-        // The edit form posts the type back as a hidden input, so this holds on update too.
         return $rules + CategoryFieldValidationRules::for($type, $this->input('validation'));
     }
 }

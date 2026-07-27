@@ -6,11 +6,6 @@ beforeEach(function () {
     $this->headers = $this->getAuthenticationHeaders();
 });
 
-/*
- * The API must apply the same type/validation coupling as the admin form, so a
- * client cannot persist an input validation on a field type that has no text
- * input to validate.
- */
 it('should reject an input validation on a non-text category field', function (string $type) {
     $data = [
         'code'    => 'api_iv_'.uniqid(),

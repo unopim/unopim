@@ -357,7 +357,6 @@ it('should create text category field with these validation types', function () 
 
         $data['validation'] = $validation;
 
-        // A regex validation is meaningless without the pattern it applies.
         $data['regex_pattern'] = $validation === 'regex' ? '/^[a-z]+$/' : null;
 
         try {

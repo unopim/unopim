@@ -191,7 +191,6 @@
                             class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded {{ in_array($categoryField->type, ['select', 'multiselect', 'checkbox', 'price']) ?: 'hidden' }}"
                             v-if="showSwatch"
                         >
-                            {{-- Stable name the unsaved-changes tracker can watch for option changes. --}}
                             <input
                                 type="hidden"
                                 name="_options_dirty"
@@ -447,7 +446,6 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                {{-- Uniqueness only means something for a single typed value. --}}
                                 @if (in_array($categoryField->type, ['text', 'date', 'datetime']))
                                     <x-admin::form.control-group class="flex gap-2.5 items-center !mb-0 select-none">
                                         <input type="hidden" name="is_unique" value="0">
@@ -715,8 +713,6 @@
 
         <script type="module">
             app.component('v-edit-category-fields', {
-                // Passed as markup, not '#id': Vue caches compiled templates by selector,
-                // so ajax-navigating between fields would render the previous one's data.
                 template: document.querySelector('#v-edit-category-fields-template').innerHTML,
 
                 props: ['locales'],
@@ -770,8 +766,6 @@
                 },
 
                 methods: {
-                    // The form sits in this component's template, so the root's handlers
-                    // are out of scope and the browser would submit natively.
                     onAjaxSubmit(...args) {
                         return this.$root.onAjaxSubmit(...args);
                     },
@@ -780,20 +774,16 @@
                         return this.$root.onInvalidSubmit(...args);
                     },
 
-                    // Discard reverts native inputs only; option rows are Vue state.
                     restoreOptions() {
                         this.optionsTick = 0;
 
                         this.getCatgoryFieldOptions();
                     },
 
-                    // Option rows are hidden inputs written by Vue, so no native event
-                    // reaches the tracker and their names are absent from its snapshot.
                     signalOptionsChanged() {
                         this.optionsTick++;
 
                         this.$nextTick(() => {
-                            // By ref: this component renders a fragment, so it has no root element.
                             const marker = this.$refs.optionsDirtyMarker;
 
                             if (! marker) {
@@ -889,7 +879,6 @@
                             .then(response => {
                                 let options = response.data;
 
-                                // Rebuilt, not appended, so a discard reload cannot duplicate rows.
                                 this.optionsData = [];
 
                                 options.forEach((option) => {

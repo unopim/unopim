@@ -11,9 +11,6 @@ class UpdateCategoryFieldRequest extends ApiFormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * `type` is immutable on update, so the stored field decides whether an input
-     * validation may be sent. An unknown code is left to the controller's 404.
-     *
      * @return array<string, array<int, mixed>>
      */
     protected function prepareForValidation(): void
@@ -37,8 +34,6 @@ class UpdateCategoryFieldRequest extends ApiFormRequest
 
         $rules = CategoryFieldValidationRules::for($categoryField->type, $validation);
 
-        // A partial update that touches neither key must not be forced to resend
-        // the pattern of an already-stored regex validation.
         if (! $this->has('validation') && ! $this->has('regex_pattern')) {
             unset($rules['regex_pattern']);
         }

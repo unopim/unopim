@@ -9,8 +9,6 @@ const {
   generateUid,
 } = require('../../utils/helpers');
 
-// Which controls each field type may expose. Input Validation is text-only, and
-// never offered on create.
 const TYPE_MATRIX = [
   { type: 'Text',        code: 'text',        inputValidation: true,  isUnique: true,  valuePerLocale: true, wysiwyg: false, options: false },
   { type: 'Textarea',    code: 'textarea',    inputValidation: false, isUnique: false, valuePerLocale: true, wysiwyg: true,  options: false },
@@ -24,29 +22,24 @@ const TYPE_MATRIX = [
   { type: 'Checkbox',    code: 'checkbox',    inputValidation: false, isUnique: false, valuePerLocale: true, wysiwyg: false, options: true  },
 ];
 
-// The Input Validation dropdown, located by its control rather than its label.
 const validationControl = (page) =>
   page.locator('div[data-control-group]').filter({ has: page.locator('input[name="validation"]') });
 
-// Targets `.multiselect__tags`, present whether or not a type is already chosen.
 async function selectType(page, type) {
   await page.locator('input[name="type"]').locator('..').locator('.multiselect__tags').click();
 
-  // Exact label text: the accessible name carries markup, and "Text" also matches "Textarea".
   await page
     .locator('.multiselect__content-wrapper li span span', { hasText: new RegExp(`^${type}$`) })
     .first()
     .click();
 }
 
-// Category fields are created from a quick-create modal on the index page.
 async function openCreateModal(page) {
   await navigateTo(page, 'categoryFields');
   await page.getByRole('button', { name: 'Create Category Field' }).click();
   await page.locator('input[name="code"]').waitFor({ state: 'visible', timeout: 30000 });
 }
 
-// Create a field of the given type and land on its edit page.
 async function createField(page, code, type) {
   await openCreateModal(page);
   await page.locator('input[name$="[name]"]').first().fill(`PW ${type} ${code}`);
@@ -68,7 +61,6 @@ test.describe('Category field — create modal never offers Input Validation', (
 
     await expect(validationControl(adminPage)).toHaveCount(0);
 
-    // Absent for every type, including Text.
     for (const { type } of TYPE_MATRIX) {
       await selectType(adminPage, type);
       await expect(validationControl(adminPage), `Input Validation must not render for ${type}`).toHaveCount(0);
@@ -78,7 +70,6 @@ test.describe('Category field — create modal never offers Input Validation', (
   test('a Textarea field can be created without choosing a validation', async ({ adminPage }) => {
     const code = `cfm_ta_${generateUid()}`;
 
-    // Regression: `validation` was required for every type but only rendered for Text.
     await createField(adminPage, code, 'Textarea');
     await expect(adminPage).toHaveURL(/category-fields\/edit/);
 
@@ -108,7 +99,6 @@ test.describe('Category field — option changes are tracked and saved', () => {
 
       await adminPage.getByRole('button', { name: 'Save Option' }).click();
 
-      // Option rows are Vue-written hidden inputs the tracker cannot see unsignalled.
       await expect(saveBar).toBeVisible();
 
       await clickSave(adminPage, 'Save Category Field');
@@ -127,7 +117,6 @@ test.describe('Category field — option changes are tracked and saved', () => {
 
     await createField(adminPage, code, 'Select');
 
-    // Add an option and save it so it exists server-side.
     await adminPage.getByText('Add Row', { exact: true }).first().click();
     await adminPage.getByRole('button', { name: 'Save Option' }).waitFor({ state: 'visible', timeout: 15000 });
     await adminPage.locator('input[name="code"]').last().fill(optionCode);
@@ -141,18 +130,14 @@ test.describe('Category field — option changes are tracked and saved', () => {
     await adminPage.reload({ waitUntil: 'load' });
     await expect(adminPage.getByText(optionCode).first()).toBeVisible({ timeout: 20000 });
 
-    // Remove it, then discard instead of saving. An already-saved row is hidden
-    // and flagged for deletion rather than detached, so assert on visibility.
     await adminPage.locator('span.icon-delete').first().click();
     await expect(adminPage.getByText(optionCode).first()).toBeHidden();
 
-    // The bar's Discard opens the shared confirm modal; its Discard applies it.
     await adminPage.getByRole('button', { name: 'Discard' }).first().click();
 
     const confirmModal = adminPage.locator('div.max-w-\\[400px\\]').filter({ hasText: 'Discard changes' });
     await confirmModal.getByRole('button', { name: 'Discard' }).click();
 
-    // Discard reverts native inputs; Vue-held option rows must come back too.
     await expect(adminPage.getByText(optionCode).first()).toBeVisible({ timeout: 20000 });
 
     await deleteField(adminPage, code);
@@ -168,7 +153,6 @@ test.describe('Category field — edit form control matrix', () => {
 
       const isUnique = adminPage.locator('input#is_unique');
       const valuePerLocale = adminPage.locator('input#value_per_locale');
-      // The toggles ship a hidden `0` companion, so match the control itself.
       const wysiwyg = adminPage.locator('input[name="enable_wysiwyg"][value="1"]');
 
       await expect(validationControl(adminPage)).toHaveCount(row.inputValidation ? 1 : 0);
@@ -176,7 +160,6 @@ test.describe('Category field — edit form control matrix', () => {
       await expect(valuePerLocale).toHaveCount(row.valuePerLocale ? 1 : 0);
       await expect(wysiwyg).toHaveCount(row.wysiwyg ? 1 : 0);
 
-      // Both configuration flags must be changeable after creation, not read-only.
       if (row.isUnique) {
         await expect(isUnique).toBeEnabled();
       }

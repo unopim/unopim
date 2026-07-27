@@ -78,7 +78,6 @@ class CategoryFieldRepository extends Repository
 
         $categoryField = parent::update($data, $id);
 
-        // Toggling the flag changes where values are read from, so carry them over.
         if (array_key_exists('value_per_locale', $data) && (bool) $categoryField->value_per_locale !== $wasPerLocale) {
             $this->categoryFieldValueService->moveValues($categoryField->code, (bool) $categoryField->value_per_locale);
         }
@@ -109,10 +108,6 @@ class CategoryFieldRepository extends Repository
         return $categoryField;
     }
 
-    /**
-     * A pattern only belongs to a regex validation; keeping it once the validation
-     * changes leaves a value behind that nothing reads.
-     */
     protected function withoutStaleRegexPattern(array $data): array
     {
         if (array_key_exists('validation', $data) && $data['validation'] !== 'regex') {

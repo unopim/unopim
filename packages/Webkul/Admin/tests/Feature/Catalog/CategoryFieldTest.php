@@ -47,8 +47,6 @@ it('should return the category field datagrid', function () {
 it('should show validations for code and type fields on creating category field', function () {
     $this->loginAsAdmin();
 
-    // The input validation is not asked for on create — only a text field can
-    // carry one, and it is chosen later on the edit screen.
     $this->post(route('admin.catalog.category_fields.store'))
         ->assertRedirect()
         ->assertInvalid('code')
@@ -202,11 +200,6 @@ it('should not update the type and code property in Category Field', function ()
 
     $this->assertDatabaseMissing($this->getFullTableName(CategoryField::class), $updatedData);
 
-    /**
-     * Code and type stay immutable; everything else the edit screen exposes —
-     * including the is_unique and value_per_locale configuration flags — is
-     * saved.
-     */
     $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), [
         'code'             => 'test_Category_Field_00_0',
         'type'             => 'text',

@@ -39,10 +39,6 @@ it('accepts a valid category field', function () {
     ])->assertStatus(302);
 });
 
-/*
- * Input validations only apply to free-text input, so they can neither be
- * demanded from, nor accepted for, any other field type.
- */
 it('creates a non-text category field without an input validation', function (string $type) {
     $this->loginWithPermissions('all', ['dashboard']);
 
@@ -71,7 +67,6 @@ it('rejects an input validation on a non-text category field', function (string 
 it('tolerates an empty input validation on a non-text category field', function () {
     $this->loginWithPermissions('all', ['dashboard']);
 
-    // The API and factories send an empty string rather than omitting the key.
     postJson(route('admin.catalog.category_fields.store'), [
         'code'       => 'ev_field_'.uniqid(),
         'type'       => 'boolean',

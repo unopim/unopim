@@ -103,7 +103,6 @@ class CategoryFieldController extends Controller
      */
     public function update(CategoryFieldForm $request, int $id): RedirectResponse
     {
-        // `_options_dirty` only exists to drive the unsaved-changes bar.
         $requestData = request()->except(['code', 'type', '_options_dirty']);
 
         Event::dispatch('catalog.category_field.update.before', $id);
