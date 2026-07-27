@@ -437,7 +437,7 @@
                                         $selectedOption = old('is_required') ?? $attribute->is_required
                                     @endphp
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="is_required"
                                         value="0"
@@ -519,10 +519,10 @@
                                         @lang('admin::app.catalog.attributes.edit.value-per-locale')
                                     </label>   
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="value_per_locale"
-                                        :value="(boolean) $valuePerLocale"
+                                        value="{{ (boolean) $valuePerLocale }}"
                                     />
                                 </x-admin::form.control-group>
                                 @php
@@ -551,10 +551,10 @@
                                             @lang('admin::app.catalog.attributes.edit.ai-translate')
                                         </label>
 
-                                        <x-admin::form.control-group.control
+                                        <input
                                             type="hidden"
                                             name="ai_translate"
-                                            :value="(boolean) $valueTranslate"
+                                            value="{{ (boolean) $valueTranslate }}"
                                         />
                                     </x-admin::form.control-group>
                                 @endif
@@ -581,10 +581,10 @@
                                         @lang('admin::app.catalog.attributes.edit.value-per-channel')
                                     </label>   
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="value_per_channel"
-                                        :value="(boolean) $valuePerChannel"
+                                        value="{{ (boolean) $valuePerChannel }}"
                                     />
                                 </x-admin::form.control-group>
 
@@ -593,7 +593,7 @@
                                         $isFilterable = old('is_filterable') ?? $attribute->is_filterable;
                                     @endphp
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="is_filterable"
                                         value="0"
@@ -758,7 +758,7 @@
 
         <script type="module">
             app.component('v-edit-attributes', {
-                template: '#v-edit-attributes-template',
+                template: document.querySelector('#v-edit-attributes-template').innerHTML,
 
                 props: ['locales'],
 

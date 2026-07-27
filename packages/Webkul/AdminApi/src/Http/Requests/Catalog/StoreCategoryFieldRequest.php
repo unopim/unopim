@@ -3,9 +3,9 @@
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\Category\Rules\CategoryFieldValidationRules;
 use Webkul\Category\Rules\FieldTypes;
 use Webkul\Category\Rules\NotSupportedFields;
-use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
 class StoreCategoryFieldRequest extends ApiFormRequest
@@ -15,6 +15,13 @@ class StoreCategoryFieldRequest extends ApiFormRequest
      *
      * @return array<string, array<int, mixed>>
      */
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('validation')) {
+            $this->merge(['validation' => CategoryFieldValidationRules::normalize($this->input('validation'))]);
+        }
+    }
+
     public function rules(): array
     {
         $rules = [
@@ -30,10 +37,6 @@ class StoreCategoryFieldRequest extends ApiFormRequest
             ],
         ];
 
-        if ($this->input('validation')) {
-            $rules['validation'] = [new ValidationTypes];
-        }
-
-        return $rules;
+        return $rules + CategoryFieldValidationRules::for($this->input('type'), $this->input('validation'));
     }
 }

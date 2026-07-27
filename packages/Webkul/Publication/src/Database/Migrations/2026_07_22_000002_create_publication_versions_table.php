@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('is_current')->default(false);
 
             $table->unsignedInteger('current_locale_id')
+                ->nullable()
                 ->storedAs('case when is_current then locale_id else null end');
 
             $table->dateTime('published_at');

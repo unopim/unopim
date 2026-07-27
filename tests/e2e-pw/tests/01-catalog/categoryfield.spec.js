@@ -12,10 +12,6 @@ async function createCategoryField(adminPage, code, name, type = 'Text') {
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: type }).first().click();
   await adminPage.locator('input[name$="[name]"]').first().fill(name);
-  // Input validation is required; pick the "No" (none) option.
-  const validationMs = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="validation"]') });
-  await validationMs.click();
-  await validationMs.locator('.multiselect__option', { hasText: /^No$/ }).first().click();
   await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Created Successfully/i);
 }
 
