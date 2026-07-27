@@ -2,9 +2,6 @@
 
 namespace Webkul\Measurement\Providers;
 
-use Illuminate\Console\Events\CommandFinished;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
@@ -14,7 +11,6 @@ use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\Measurement\Console\Commands\RecalculateMeasurementValues;
-use Webkul\Measurement\Database\Seeders\MeasurementFamilySeeder;
 use Webkul\Measurement\DataGrids\MeasurementProductDataGrid;
 use Webkul\Measurement\Filter\Database\MeasurementFilter;
 use Webkul\Measurement\Filter\ElasticSearch\MeasurementFilter as MeasurementElasticSearchFilter;
@@ -63,19 +59,6 @@ class MeasurementServiceProvider extends ServiceProvider
             $this->commands([
                 RecalculateMeasurementValues::class,
             ]);
-
-            Event::listen(CommandFinished::class, function ($event): void {
-
-                if (
-                    $event->command === 'unopim:install'
-                    && class_exists(MeasurementFamilySeeder::class)
-                ) {
-
-                    Artisan::call('db:seed', [
-                        '--class' => MeasurementFamilySeeder::class,
-                    ]);
-                }
-            });
         }
 
         Product::observe(ProductObserver::class);

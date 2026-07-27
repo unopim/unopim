@@ -57,3 +57,4 @@ tests/e2e-pw/.secrets.local
 .env.e2e
 
 .env.live-backup
+.factory

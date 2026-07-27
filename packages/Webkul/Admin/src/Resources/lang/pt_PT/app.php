@@ -76,6 +76,7 @@ return [
             'general'             => 'Geral',
             'invalid-password'    => 'A palavra-passe atual está incorreta.',
             'name'                => 'Nome',
+            'password-whitespace' => 'A palavra-passe não pode consistir apenas em espaços.',
             'password'            => 'Palavra-passe',
             'gravatar-preview'    => 'A utilizar a sua imagem do Gravatar.com',
             'profile-image'       => 'Imagem do perfil',
@@ -1360,6 +1361,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Não foi possível iniciar o processo de importação. Tente novamente.',
+                'rerun-no-file'     => 'Esta tarefa não tem ficheiro de importação, pelo que não pode ser executada novamente.',
                 'create'            => [
                     'code'                => 'Código',
                     'action'              => 'Ação',
@@ -2046,7 +2048,6 @@ return [
                 'all'            => 'Todos',
                 'back-btn'       => 'Voltar',
                 'custom'         => 'Personalizado',
-                'assign-user'    => 'Atribuir Usuário',
                 'general'        => 'Geral',
                 'name'           => 'Nome',
                 'permissions'    => 'Permissões',
@@ -2058,7 +2059,6 @@ return [
                 'all'                         => 'Todos',
                 'back-btn'                    => 'Voltar',
                 'custom'                      => 'Personalizado',
-                'assign-user'                 => 'Atribuir Usuário',
                 'general'                     => 'Geral',
                 'name'                        => 'Nome',
                 'credentials'                 => 'Credenciais',

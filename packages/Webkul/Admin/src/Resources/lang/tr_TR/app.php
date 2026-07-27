@@ -76,6 +76,7 @@ return [
             'general'             => 'Genel',
             'invalid-password'    => 'Girdiğiniz mevcut şifre hatalı.',
             'name'                => 'Ad',
+            'password-whitespace' => 'Şifre yalnızca boşluklardan oluşamaz.',
             'password'            => 'Şifre',
             'gravatar-preview'    => 'Gravatar.com resminiz kullanılıyor',
             'profile-image'       => 'Profil Resmi',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'İçe aktarma işlemi başlatılamadı. Lütfen tekrar deneyin.',
+                'rerun-no-file'     => 'Bu işin bir içe aktarma dosyası yok, bu nedenle yeniden çalıştırılamaz.',
                 'create'            => [
                     'code'                => 'Kod',
                     'action'              => 'Eylem',
@@ -2046,7 +2048,6 @@ return [
                 'all'            => 'Tümü',
                 'back-btn'       => 'Geri Dön',
                 'custom'         => 'Özel',
-                'assign-user'    => 'Kullanıcı Atayın',
                 'general'        => 'Genel',
                 'name'           => 'Ad',
                 'permissions'    => 'İzinler',
@@ -2058,7 +2059,6 @@ return [
                 'all'                         => 'Tümü',
                 'back-btn'                    => 'Geri Dön',
                 'custom'                      => 'Özel',
-                'assign-user'                 => 'Kullanıcı Atayın',
                 'general'                     => 'Genel',
                 'name'                        => 'Ad',
                 'credentials'                 => 'Kimlik Bilgileri',

@@ -76,6 +76,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'Parola curentă este greșită.',
             'name'                => 'Nume',
+            'password-whitespace' => 'Parola nu poate conține doar spații.',
             'password'            => 'Parolă',
             'gravatar-preview'    => 'Se folosește imaginea ta de pe Gravatar.com',
             'profile-image'       => 'Imagine de profil',
@@ -1360,6 +1361,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Procesul de import nu a putut fi pornit. Vă rugăm să încercați din nou.',
+                'rerun-no-file'     => 'Această operațiune nu are un fișier de import, deci nu poate fi reluată.',
                 'create'            => [
                     'code'                => 'Cod',
                     'action'              => 'Acțiune',
@@ -2046,7 +2048,6 @@ return [
                 'all'            => 'Toate',
                 'back-btn'       => 'Înapoi',
                 'custom'         => 'Customizat',
-                'assign-user'    => 'Atribuie Utilizator',
                 'general'        => 'General',
                 'name'           => 'Nume',
                 'permissions'    => 'Permisiuni',
@@ -2058,7 +2059,6 @@ return [
                 'all'                         => 'Toate',
                 'back-btn'                    => 'Înapoi',
                 'custom'                      => 'Customizat',
-                'assign-user'                 => 'Atribuie Utilizator',
                 'general'                     => 'General',
                 'name'                        => 'Nume',
                 'credentials'                 => 'Credențiale',

@@ -76,6 +76,7 @@ return [
             'general'             => '一般的',
             'invalid-password'    => '您输入的当前密码不正确。',
             'name'                => '姓名',
+            'password-whitespace' => '密码不能仅由空格组成。',
             'password'            => '密码',
             'gravatar-preview'    => '正在使用您的 Gravatar.com 图片',
             'profile-image'       => '个人资料图像',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => '无法启动导入流程，请重试。',
+                'rerun-no-file'     => '此任务没有导入文件，因此无法重新运行。',
                 'create'            => [
                     'code'                => '代码',
                     'action'              => '行动',
@@ -2046,7 +2048,6 @@ return [
                 'all'            => '全部',
                 'back-btn'       => '后退',
                 'custom'         => '风俗',
-                'assign-user'    => '分配用户',
                 'general'        => '一般的',
                 'name'           => '姓名',
                 'permissions'    => '权限',
@@ -2058,7 +2059,6 @@ return [
                 'all'                         => '全部',
                 'back-btn'                    => '后退',
                 'custom'                      => '风俗',
-                'assign-user'                 => '分配用户',
                 'general'                     => '一般的',
                 'name'                        => '姓名',
                 'credentials'                 => '证书',

@@ -76,6 +76,7 @@ return [
             'general'             => '常規',
             'invalid-password'    => '您輸入的當前密碼不正確。',
             'name'                => '名稱',
+            'password-whitespace' => '密碼不能僅由空格組成。',
             'password'            => '密碼',
             'gravatar-preview'    => '正在使用您的 Gravatar.com 圖片',
             'profile-image'       => '個人資料圖片',
@@ -1359,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => '無法啟動匯入程序，請重試。',
+                'rerun-no-file'     => '此工作沒有匯入檔案，因此無法重新執行。',
                 'create'            => [
                     'code'                => '代碼',
                     'action'              => '操作',
@@ -2046,7 +2048,6 @@ return [
                 'all'            => '全部',
                 'back-btn'       => '返回',
                 'custom'         => '自定義',
-                'assign-user'    => '分配用戶',
                 'general'        => '常規',
                 'name'           => '名稱',
                 'permissions'    => '許可權',
@@ -2058,7 +2059,6 @@ return [
                 'all'                         => '全部',
                 'back-btn'                    => '返回',
                 'custom'                      => '自定義',
-                'assign-user'                 => '分配用戶',
                 'general'                     => '常規',
                 'name'                        => '名稱',
                 'credentials'                 => '憑證',
