@@ -280,10 +280,13 @@ return [
                         'title'      => '交叉销售产品',
                     ],
                     'add-btn'           => '添加',
+                    'add-type-btn'      => '添加关联类型',
                     'delete'            => '删除',
                     'empty-info'        => '要添加 :type 产品。',
                     'empty-title'       => '添加产品',
                     'image-placeholder' => '产品图像',
+                    'no-types-info'     => '使用“添加关联类型”将此产品链接到某个关联类型下。',
+                    'no-types-title'    => '尚未添加关联',
                     'sku'               => '滑雪 - :sku',
                     'title'             => '协会',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => '无法找到代码为":fields"的关联类型字段',
 
             'create' => [
-                'title'    => '创建关联类型',
-                'save-btn' => '保存关联类型',
+                'title'      => '创建关联类型',
+                'name'       => '名称',
+                'enter-name' => '输入名称',
+                'code'       => '代码',
+                'enter-code' => '输入代码',
+                'save-btn'   => '保存关联类型',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '添加',
+                'empty-info'         => '尝试其他搜索。',
+                'empty-title'        => '未找到关联类型',
+                'search-placeholder' => '按名称或代码搜索',
+                'title'              => '添加关联类型',
+            ],
+        ],
         'pagination' => [
             'page' => '页',
         ],

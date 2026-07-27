@@ -20,13 +20,13 @@ use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
+use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Models\AttributeOptionProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
-use Webkul\Product\Contracts\AssociationTypeField as AssociationTypeFieldContract;
 use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Product\Contracts\ProductAssociation as ProductAssociationContract;
 use Webkul\Product\Contracts\VariantStructurePlanner;
@@ -555,63 +555,29 @@ class ProductController extends Controller
      */
     private function getAssociationTypesForView(ProductContract $product): array
     {
-        $activeAssociationTypes = $this->associationTypeRepository->getActiveTypes();
-
         $linksByAssociationTypeId = $this->productAssociationRepository
             ->getLinksForProduct($product->id)
             ->groupBy('association_type_id');
 
-        return $activeAssociationTypes
+        $linkedTypes = $this->associationTypeRepository
+            ->getActiveTypesByIds($linksByAssociationTypeId->keys()->all());
+
+        return $linkedTypes
             ->map(function ($associationType) use ($linksByAssociationTypeId) {
                 $links = $linksByAssociationTypeId->get($associationType->id, collect());
 
-                return [
-                    'code'   => $associationType->code,
-                    'name'   => $associationType->getTranslatedValueWithFallback('name') ?? "[{$associationType->code}]",
-                    'fields' => $associationType->fields
-                        ->where('status', 1)
-                        ->map(fn ($field) => $this->getAssociationTypeFieldForView($field))
-                        ->values()
-                        ->all(),
-                    'links' => $links
-                        ->map(fn ($link) => $this->getAssociationLinkForView($link))
-                        ->values()
-                        ->all(),
-                ];
+                return array_merge(
+                    (new AssociationTypeLinkResource($associationType))->resolve(),
+                    [
+                        'links' => $links
+                            ->map(fn ($link) => $this->getAssociationLinkForView($link))
+                            ->values()
+                            ->all(),
+                    ]
+                );
             })
             ->values()
             ->all();
-    }
-
-    /**
-     * Normalizes an `AssociationTypeField` into the compact shape the Links
-     * panel's Vue component consumes: code/type/validation metadata plus a
-     * locale-resolved label and, for choice fields, locale-resolved option
-     * labels.
-     */
-    private function getAssociationTypeFieldForView(AssociationTypeFieldContract $field): array
-    {
-        return [
-            'id'               => $field->id,
-            'code'             => $field->code,
-            'type'             => $field->type,
-            'label'            => $field->getTranslatedValueWithFallback('name') ?? "[{$field->code}]",
-            'is_required'      => (bool) $field->is_required,
-            'is_unique'        => (bool) $field->is_unique,
-            'value_per_locale' => (bool) $field->value_per_locale,
-            'validation'       => $field->validation,
-            'regex_pattern'    => $field->regex_pattern,
-            'section'          => $field->section,
-            'rules'            => $field->getValidationsField(),
-            'options'          => $field->options
-                ->map(fn ($option) => [
-                    'id'    => $option->id,
-                    'code'  => $option->code,
-                    'label' => $option->getTranslatedValueWithFallback('label') ?? "[{$option->code}]",
-                ])
-                ->values()
-                ->all(),
-        ];
     }
 
     /**

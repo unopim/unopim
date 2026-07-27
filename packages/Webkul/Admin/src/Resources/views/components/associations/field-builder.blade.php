@@ -687,6 +687,23 @@
                 validationType(value) {
                     this.selectedValidationType = this.parseValue(value)?.id ?? '';
                 },
+
+                /**
+                 * Field rows submit through hidden inputs bound to `localFields`, so
+                 * adding, editing, removing or reordering a field never fires a
+                 * trusted event the unsaved-changes tracker can see. Emit its
+                 * `unsaved-changes:touch` signal for the `fields` group instead so
+                 * structural edits raise the shared save bar like every other page.
+                 */
+                localFields: {
+                    deep: true,
+                    handler() {
+                        this.$el?.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                            detail: { name: 'fields' },
+                            bubbles: true,
+                        }));
+                    },
+                },
             },
 
             methods: {

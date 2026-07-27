@@ -280,10 +280,13 @@ return [
                         'title'      => 'Productos de venta cruzada',
                     ],
                     'add-btn'           => 'Agregar',
+                    'add-type-btn'      => 'Agregar tipo de asociación',
                     'delete'            => 'Borrar',
                     'empty-info'        => 'Para agregar :type productos sobre una oportunidad.',
                     'empty-title'       => 'Agregar producto',
                     'image-placeholder' => 'Imagen del producto',
+                    'no-types-info'     => 'Usa «Agregar tipo de asociación» para vincular este producto a un tipo de asociación.',
+                    'no-types-title'    => 'No se han agregado asociaciones',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asociaciones',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Campo de tipo de asociación con código ":fields" no se pudo encontrar',
 
             'create' => [
-                'title'    => 'Crear tipo de asociación',
-                'save-btn' => 'Guardar tipo de asociación',
+                'title'      => 'Crear tipo de asociación',
+                'name'       => 'Nombre',
+                'enter-name' => 'Introduce el nombre',
+                'code'       => 'Código',
+                'enter-code' => 'Introduzca el código',
+                'save-btn'   => 'Guardar tipo de asociación',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Agregar',
+                'empty-info'         => 'Prueba con otra búsqueda.',
+                'empty-title'        => 'No se encontraron tipos de asociación',
+                'search-placeholder' => 'Buscar por nombre o código',
+                'title'              => 'Agregar tipo de asociación',
+            ],
+        ],
         'pagination' => [
             'page' => 'Página',
         ],

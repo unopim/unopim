@@ -281,10 +281,13 @@ return [
                         'title'      => 'Produtos de venda cruzada',
                     ],
                     'add-btn'           => 'Adicionar',
+                    'add-type-btn'      => 'Adicionar tipo de associação',
                     'delete'            => 'Excluir',
                     'empty-info'        => 'Adicione produtos :type de uma vez.',
                     'empty-title'       => 'Adicionar produto',
                     'image-placeholder' => 'Imagem do produto',
+                    'no-types-info'     => 'Utilize «Adicionar tipo de associação» para associar este produto a um tipo de associação.',
+                    'no-types-title'    => 'Nenhuma associação adicionada',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produtos',
                 ],
@@ -1003,8 +1006,12 @@ return [
             'unknown-fields'    => 'Campo do tipo de associação com código ":fields" não encontrado',
 
             'create' => [
-                'title'    => 'Criar tipo de associação',
-                'save-btn' => 'Guardar tipo de associação',
+                'title'      => 'Criar tipo de associação',
+                'name'       => 'Nome',
+                'enter-name' => 'Introduza o nome',
+                'code'       => 'Código',
+                'enter-code' => 'Digite o código',
+                'save-btn'   => 'Guardar tipo de associação',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Adicionar',
+                'empty-info'         => 'Tente uma pesquisa diferente.',
+                'empty-title'        => 'Nenhum tipo de associação encontrado',
+                'search-placeholder' => 'Pesquisar por nome ou código',
+                'title'              => 'Adicionar tipo de associação',
+            ],
+        ],
         'pagination' => [
             'page' => 'Página',
         ],

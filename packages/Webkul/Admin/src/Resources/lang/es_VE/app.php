@@ -280,10 +280,13 @@ return [
                         'title'      => 'Productos de cross-sell',
                     ],
                     'add-btn'           => 'Agregar',
+                    'add-type-btn'      => 'Agregar Tipo de Asociación',
                     'delete'            => 'Eliminar',
                     'empty-info'        => 'Agrega productos de tipo :type.',
                     'empty-title'       => 'Agregar producto',
                     'image-placeholder' => 'Imagen del producto',
+                    'no-types-info'     => 'Usa «Agregar Tipo de Asociación» para vincular este producto a un tipo de asociación.',
+                    'no-types-title'    => 'No se han agregado asociaciones',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Producto',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'No se pudo encontrar el campo del tipo de asociación con código ":fields"',
 
             'create' => [
-                'title'    => 'Crear tipo de asociación',
-                'save-btn' => 'Guardar tipo de asociación',
+                'title'      => 'Crear tipo de asociación',
+                'name'       => 'Nombre',
+                'enter-name' => 'Ingresa el nombre',
+                'code'       => 'Código',
+                'enter-code' => 'Ingrese el código',
+                'save-btn'   => 'Guardar tipo de asociación',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Agregar',
+                'empty-info'         => 'Prueba con otra búsqueda.',
+                'empty-title'        => 'No se encontraron tipos de asociación',
+                'search-placeholder' => 'Buscar por nombre o código',
+                'title'              => 'Agregar Tipo de Asociación',
+            ],
+        ],
         'pagination' => [
             'page' => 'Página',
         ],

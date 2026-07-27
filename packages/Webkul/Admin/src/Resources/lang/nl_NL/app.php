@@ -281,10 +281,13 @@ return [
                         'title'      => 'Cross-sell-producten',
                     ],
                     'add-btn'           => 'Toevoegen',
+                    'add-type-btn'      => 'Associatietype toevoegen',
                     'delete'            => 'Verwijderen',
                     'empty-info'        => ':type producten toevoegen.',
                     'empty-title'       => 'Product toevoegen',
                     'image-placeholder' => 'Productafbeelding',
+                    'no-types-info'     => 'Gebruik „Associatietype toevoegen” om dit product onder een associatietype te koppelen.',
+                    'no-types-title'    => 'Geen associaties toegevoegd',
                     'sku'               => 'SKU: :sku',
                     'title'             => 'Koppelingen',
                 ],
@@ -1003,8 +1006,12 @@ return [
             'unknown-fields'    => 'Associatietype-veld met code ":fields" kon niet worden gevonden.',
 
             'create' => [
-                'title'    => 'Associatietype aanmaken',
-                'save-btn' => 'Associatietype opslaan',
+                'title'      => 'Associatietype aanmaken',
+                'name'       => 'Naam',
+                'enter-name' => 'Voer naam in',
+                'code'       => 'Code',
+                'enter-code' => 'Voer code in',
+                'save-btn'   => 'Associatietype opslaan',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Toevoegen',
+                'empty-info'         => 'Probeer een andere zoekopdracht.',
+                'empty-title'        => 'Geen associatietypes gevonden',
+                'search-placeholder' => 'Zoek op naam of code',
+                'title'              => 'Associatietype toevoegen',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pagina',
         ],

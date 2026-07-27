@@ -281,10 +281,13 @@ return [
                         'title'      => 'Produkty cross-sell',
                     ],
                     'add-btn'           => 'Dodaj',
+                    'add-type-btn'      => 'Dodaj typ powiązania',
                     'delete'            => 'Usuń',
                     'empty-info'        => 'Dodaj produkty :type jednocześnie.',
                     'empty-title'       => 'Dodaj produkt',
                     'image-placeholder' => 'Obraz produktu',
+                    'no-types-info'     => 'Użyj „Dodaj typ powiązania”, aby powiązać ten produkt z typem powiązania.',
+                    'no-types-title'    => 'Nie dodano żadnych powiązań',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkty',
                 ],
@@ -1003,8 +1006,12 @@ return [
             'unknown-fields'    => 'Nie znaleziono pola typu powiązania o kodzie ":fields"',
 
             'create' => [
-                'title'    => 'Utwórz typ powiązania',
-                'save-btn' => 'Zapisz typ powiązania',
+                'title'      => 'Utwórz typ powiązania',
+                'name'       => 'Nazwa',
+                'enter-name' => 'Wprowadź nazwę',
+                'code'       => 'Kod',
+                'enter-code' => 'Wprowadź kod',
+                'save-btn'   => 'Zapisz typ powiązania',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Dodaj',
+                'empty-info'         => 'Spróbuj innego wyszukiwania.',
+                'empty-title'        => 'Nie znaleziono typów powiązań',
+                'search-placeholder' => 'Szukaj według nazwy lub kodu',
+                'title'              => 'Dodaj typ powiązania',
+            ],
+        ],
         'pagination' => [
             'page' => 'Strona',
         ],

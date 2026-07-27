@@ -280,10 +280,13 @@ return [
                         'title'      => 'Proizvodi koji se prodaju zajedno',
                     ],
                     'add-btn'           => 'Dodaj',
+                    'add-type-btn'      => 'Dodaj vrstu povezivanja',
                     'delete'            => 'Izbriši',
                     'empty-info'        => 'Dodajte :type proizvode u jednom potezu.',
                     'empty-title'       => 'Dodajte proizvod',
                     'image-placeholder' => 'Slika proizvoda',
+                    'no-types-info'     => 'Upotrijebite „Dodaj vrstu povezivanja” za povezivanje ovog proizvoda pod vrstom povezivanja.',
+                    'no-types-title'    => 'Nije dodano nijedno povezivanje',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Proizvodi',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Polje vrste povezivanja s kodom ":fields" nije pronađeno',
 
             'create' => [
-                'title'    => 'Izradi vrstu povezivanja',
-                'save-btn' => 'Spremi vrstu povezivanja',
+                'title'      => 'Izradi vrstu povezivanja',
+                'name'       => 'Naziv',
+                'enter-name' => 'Unesite naziv',
+                'code'       => 'Kod',
+                'enter-code' => 'Unesite kod',
+                'save-btn'   => 'Spremi vrstu povezivanja',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Dodaj',
+                'empty-info'         => 'Pokušajte s drugom pretragom.',
+                'empty-title'        => 'Nije pronađena nijedna vrsta povezivanja',
+                'search-placeholder' => 'Pretraži po nazivu ili šifri',
+                'title'              => 'Dodaj vrstu povezivanja',
+            ],
+        ],
         'pagination' => [
             'page' => 'Stranica',
         ],

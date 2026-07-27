@@ -280,10 +280,13 @@ return [
                         'title'      => 'Ristiinmyyntituotteet',
                     ],
                     'add-btn'           => 'Lisää',
+                    'add-type-btn'      => 'Lisää assosiaatiotyyppi',
                     'delete'            => 'Poista',
                     'empty-info'        => 'Lisää :type tuotteet yhdellä kertaa.',
                     'empty-title'       => 'Lisää tuote',
                     'image-placeholder' => 'Tuotekuva',
+                    'no-types-info'     => 'Käytä ”Lisää assosiaatiotyyppi” liittääksesi tämän tuotteen assosiaatiotyypin alle.',
+                    'no-types-title'    => 'Ei lisättyjä assosiaatioita',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Liitännäiset tuotteet',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Assosiaatiotyypin kenttää koodilla ":fields" ei löytynyt',
 
             'create' => [
-                'title'    => 'Luo assosiaatiotyyppi',
-                'save-btn' => 'Tallenna assosiaatiotyyppi',
+                'title'      => 'Luo assosiaatiotyyppi',
+                'name'       => 'Nimi',
+                'enter-name' => 'Anna nimi',
+                'code'       => 'Koodi',
+                'enter-code' => 'Syötä Koodi',
+                'save-btn'   => 'Tallenna assosiaatiotyyppi',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Lisää',
+                'empty-info'         => 'Kokeile eri hakua.',
+                'empty-title'        => 'Assosiaatiotyyppejä ei löytynyt',
+                'search-placeholder' => 'Hae nimellä tai koodilla',
+                'title'              => 'Lisää assosiaatiotyyppi',
+            ],
+        ],
         'pagination' => [
             'page' => 'Sivu',
         ],

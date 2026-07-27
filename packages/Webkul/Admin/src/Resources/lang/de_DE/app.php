@@ -280,10 +280,13 @@ return [
                         'title'      => 'Cross-Selling-Produkte',
                     ],
                     'add-btn'           => 'Hinzufügen',
+                    'add-type-btn'      => 'Assoziationstyp hinzufügen',
                     'delete'            => 'Löschen',
                     'empty-info'        => 'Um :type Produkte auf einmal hinzuzufügen.',
                     'empty-title'       => 'Produkt hinzufügen',
                     'image-placeholder' => 'Produktbild',
+                    'no-types-info'     => 'Verwenden Sie „Assoziationstyp hinzufügen“, um dieses Produkt einem Assoziationstyp zuzuordnen.',
+                    'no-types-title'    => 'Keine Assoziationen hinzugefügt',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Verbände',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Assoziationstyp-Feld mit Code „:fields“ konnte nicht gefunden werden',
 
             'create' => [
-                'title'    => 'Zuordnungstyp erstellen',
-                'save-btn' => 'Zuordnungstyp speichern',
+                'title'      => 'Zuordnungstyp erstellen',
+                'name'       => 'Name',
+                'enter-name' => 'Namen eingeben',
+                'code'       => 'Code',
+                'enter-code' => 'Code eingeben',
+                'save-btn'   => 'Zuordnungstyp speichern',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Hinzufügen',
+                'empty-info'         => 'Versuchen Sie eine andere Suche.',
+                'empty-title'        => 'Keine Assoziationstypen gefunden',
+                'search-placeholder' => 'Nach Name oder Code suchen',
+                'title'              => 'Assoziationstyp hinzufügen',
+            ],
+        ],
         'pagination' => [
             'page' => 'Seite',
         ],

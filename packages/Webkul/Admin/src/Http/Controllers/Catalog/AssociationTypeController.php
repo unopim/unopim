@@ -11,6 +11,7 @@ use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AssociationTypeRequest;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 
@@ -38,6 +39,37 @@ class AssociationTypeController extends Controller
         }
 
         return view('admin::catalog.associations.types.index');
+    }
+
+    /**
+     * Paginated, locale-aware search over active association types for the
+     * product-edit "add association" picker. Server-side so the panel never
+     * loads the full type set — the only shape that scales as types grow.
+     */
+    public function search(): JsonResponse
+    {
+        if (! bouncer()->hasPermission('catalog.products')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $query = $this->associationTypeRepository->getModel()->newQuery()
+            ->where('status', 1)
+            ->with(['translations', 'fields.translations', 'fields.options.translations']);
+
+        $search = trim((string) request('query', ''));
+
+        if ($search !== '') {
+            $query->where(function ($builder) use ($search) {
+                $builder->whereTranslationLike('name', '%'.$search.'%')
+                    ->orWhere('code', 'LIKE', '%'.$search.'%');
+            });
+        }
+
+        $page = max(1, (int) request('page', 1));
+
+        $paginator = $query->orderBy('position')->paginate(20, ['*'], 'page', $page);
+
+        return AssociationTypeLinkResource::collection($paginator)->response();
     }
 
     /**

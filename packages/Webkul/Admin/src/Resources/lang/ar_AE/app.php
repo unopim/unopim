@@ -280,10 +280,13 @@ return [
                         'title'      => 'منتجات المبيعات',
                     ],
                     'add-btn'           => 'يضيف',
+                    'add-type-btn'      => 'إضافة نوع ارتباط',
                     'delete'            => 'يمسح',
                     'empty-info'        => 'لإضافة منتجات :type أثناء التنقل.',
                     'empty-title'       => 'أضف منتج',
                     'image-placeholder' => 'صورة المنتج',
+                    'no-types-info'     => 'استخدم «إضافة نوع ارتباط» لربط هذا المنتج ضمن نوع ارتباط.',
+                    'no-types-title'    => 'لم تتم إضافة أي ارتباطات',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'ذات الصلة',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'لم يتم العثور على حقل نوع الارتباط برمز ":fields"',
 
             'create' => [
-                'title'    => 'إنشاء نوع ارتباط',
-                'save-btn' => 'حفظ نوع الارتباط',
+                'title'      => 'إنشاء نوع ارتباط',
+                'name'       => 'اسم',
+                'enter-name' => 'أدخل الاسم',
+                'code'       => 'شفرة',
+                'enter-code' => 'ادخل الرمز',
+                'save-btn'   => 'حفظ نوع الارتباط',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'يضيف',
+                'empty-info'         => 'جرّب بحثًا مختلفًا.',
+                'empty-title'        => 'لم يتم العثور على أنواع ارتباط',
+                'search-placeholder' => 'ابحث بالاسم أو الرمز',
+                'title'              => 'إضافة نوع ارتباط',
+            ],
+        ],
         'pagination' => [
             'page' => 'صفحة',
         ],

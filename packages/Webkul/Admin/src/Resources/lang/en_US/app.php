@@ -320,10 +320,13 @@ return [
                     ],
 
                     'add-btn'           => 'Add',
+                    'add-type-btn'      => 'Add Association Type',
                     'delete'            => 'Delete',
                     'empty-info'        => 'To add :type products on a go.',
                     'empty-title'       => 'Add Product',
                     'image-placeholder' => 'Product Image',
+                    'no-types-info'     => 'Use \"Add Association Type\" to link this product under an association type.',
+                    'no-types-title'    => 'No Associations Added',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associations',
                 ],
@@ -1068,8 +1071,12 @@ return [
             'unknown-fields'    => 'Association Type Field with code ":fields" could not be found',
 
             'create' => [
-                'title'    => 'Create Association Type',
-                'save-btn' => 'Save Association Type',
+                'title'      => 'Create Association Type',
+                'name'       => 'Name',
+                'enter-name' => 'Enter Name',
+                'code'       => 'Code',
+                'enter-code' => 'Enter Code',
+                'save-btn'   => 'Save Association Type',
             ],
 
             'edit' => [
@@ -2482,6 +2489,15 @@ return [
     ],
 
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Add',
+                'empty-info'         => 'Try a different search.',
+                'empty-title'        => 'No association types found',
+                'search-placeholder' => 'Search by name or code',
+                'title'              => 'Add Association Type',
+            ],
+        ],
         'flash-group' => [
             'close' => 'Close',
         ],

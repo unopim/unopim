@@ -281,10 +281,13 @@ return [
                         'title'      => '크로스셀 제품',
                     ],
                     'add-btn'           => '추가',
+                    'add-type-btn'      => '연관 유형 추가',
                     'delete'            => '삭제',
                     'empty-info'        => ':type 제품을 한 번에 추가하십시오.',
                     'empty-title'       => '제품 추가',
                     'image-placeholder' => '제품 이미지',
+                    'no-types-info'     => '이 제품을 연관 유형에 연결하려면 "연관 유형 추가"를 사용하세요.',
+                    'no-types-title'    => '추가된 연관이 없습니다',
                     'sku'               => 'SKU - :sku',
                     'title'             => '제품',
                 ],
@@ -1003,8 +1006,12 @@ return [
             'unknown-fields'    => '필드 코드 ":fields"인 연관 유형 필드를 찾을 수 없습니다.',
 
             'create' => [
-                'title'    => '연관 유형 생성',
-                'save-btn' => '연관 유형 저장',
+                'title'      => '연관 유형 생성',
+                'name'       => '이름',
+                'enter-name' => '이름 입력',
+                'code'       => '코드',
+                'enter-code' => '코드를 입력하세요',
+                'save-btn'   => '연관 유형 저장',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '추가',
+                'empty-info'         => '다른 검색어를 사용해 보세요.',
+                'empty-title'        => '연관 유형을 찾을 수 없습니다',
+                'search-placeholder' => '이름 또는 코드로 검색',
+                'title'              => '연관 유형 추가',
+            ],
+        ],
         'pagination' => [
             'page' => '페이지',
         ],

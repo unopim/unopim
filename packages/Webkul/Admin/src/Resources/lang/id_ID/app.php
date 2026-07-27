@@ -280,10 +280,13 @@ return [
                         'title'      => 'Produk Cross-Sell',
                     ],
                     'add-btn'           => 'Menambahkan',
+                    'add-type-btn'      => 'Tambah Jenis Asosiasi',
                     'delete'            => 'Menghapus',
                     'empty-info'        => 'Untuk menambahkan produk :type saat bepergian.',
                     'empty-title'       => 'Tambahkan produk',
                     'image-placeholder' => 'gambar produk',
+                    'no-types-info'     => 'Gunakan "Tambah Jenis Asosiasi" untuk menautkan produk ini di bawah suatu jenis asosiasi.',
+                    'no-types-title'    => 'Belum ada asosiasi ditambahkan',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asosiasi',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Bidang jenis asosiasi dengan kode ":fields" tidak dapat ditemukan',
 
             'create' => [
-                'title'    => 'Buat Jenis Asosiasi',
-                'save-btn' => 'Simpan Jenis Asosiasi',
+                'title'      => 'Buat Jenis Asosiasi',
+                'name'       => 'Nama',
+                'enter-name' => 'Masukkan nama',
+                'code'       => 'Kode',
+                'enter-code' => 'Memasukkan kode',
+                'save-btn'   => 'Simpan Jenis Asosiasi',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Menambahkan',
+                'empty-info'         => 'Coba pencarian lain.',
+                'empty-title'        => 'Tidak ada jenis asosiasi ditemukan',
+                'search-placeholder' => 'Cari berdasarkan nama atau kode',
+                'title'              => 'Tambah Jenis Asosiasi',
+            ],
+        ],
         'pagination' => [
             'page' => 'Halaman',
         ],

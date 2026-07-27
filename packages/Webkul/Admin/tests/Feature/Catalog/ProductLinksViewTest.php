@@ -111,6 +111,13 @@ it('exposes only active (status = 1) association type fields, filtering out disa
     ]);
 
     $product = Product::factory()->withInitialValues()->create();
+    $relatedProduct = Product::factory()->withInitialValues()->create();
+
+    // The product must link to the type for it to load on edit (only linked
+    // types are sent to the view; the rest are attached via the picker).
+    app(ProductAssociationRepository::class)->syncTypeWithData($product->id, $customType->id, [
+        ['related_product_id' => $relatedProduct->id, 'position' => 1, 'additional_data' => null],
+    ]);
 
     $response = $this->get(route('admin.catalog.products.edit', $product->id));
 
@@ -128,6 +135,37 @@ it('exposes only active (status = 1) association type fields, filtering out disa
 
         return true;
     });
+});
+
+it('sends only the types this product links to on edit -- unlinked active types are attached via the picker (scalability)', function () {
+    $this->loginAsAdmin();
+
+    $associationTypeRepository = app(AssociationTypeRepository::class);
+
+    $unlinkedType = $associationTypeRepository->create([
+        'code'            => 'unlinked_type_'.uniqid(),
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Unlinked Type'],
+        'fields'          => [],
+    ]);
+
+    $product = Product::factory()->withInitialValues()->create();
+
+    $response = $this->get(route('admin.catalog.products.edit', $product->id));
+
+    $response->assertOk();
+
+    $response->assertViewHas('associationTypes', function ($associationTypes) use ($unlinkedType) {
+        expect(collect($associationTypes)->pluck('code'))->not->toContain($unlinkedType->code);
+
+        return true;
+    });
+
+    // It remains reachable through the async picker search endpoint.
+    $search = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'Unlinked Type']))->assertOk();
+    expect(collect($search->json('data'))->pluck('code'))->toContain($unlinkedType->code);
 });
 
 it('renders the dynamic association type panel, its field label, and the field-editor control for an existing link', function () {
@@ -176,12 +214,12 @@ it('renders the dynamic association type panel, its field label, and the field-e
     $response->assertSee('Bundle Kit');
     $response->assertSee('Quantity');
 
-    // The field-editor control (`link-fields.blade.php`) itself renders for
-    // this field: its field-definition JSON (embedded via a plain
-    // `json_encode()` + Blade `{{ }}` escape, so `"` becomes the predictable
-    // `&quot;`) is present in the reactive `::name`/`::value` bindings.
-    $response->assertSee('&quot;code&quot;:&quot;quantity&quot;', false);
-    $response->assertSee('&quot;type&quot;:&quot;text&quot;', false);
+    // The field-editor control (`link-fields.blade.php`) renders entirely at
+    // Vue runtime now: it loops the link's fields and binds each control's
+    // name/value off the runtime `field` object (field definitions arrive via
+    // the `association-types` prop below, not inlined per field).
+    $response->assertSee('v-for="field in type.fields"', false);
+    $response->assertSee('assocFieldName(type.code, index, field)', false);
 
     // The exact `associationTypes` array the controller built (Task 4) --
     // including this existing link's stored `additional_data` (quantity
@@ -321,12 +359,12 @@ it('never emits a bracket-array `name` for a checkbox association field (regress
 
     expect($template)->not->toContain("+ '[]'");
 
-    // The single authoritative hidden input for the field (carrying the
-    // real, unified `associations[...]` name) is present and reads the
-    // comma-joined value back via `assocFieldValue()`. Blade's `{{ }}`-based
-    // component-attribute compiler HTML-escapes the embedded field JSON, so
-    // `"` becomes `&quot;` in the rendered source.
-    expect($template)->toContain('assocFieldValue(link, {&quot;id&quot;');
+    // The single authoritative hidden input for the field (carrying the real,
+    // unified `associations[...]` name) reads the comma-joined value back via
+    // `assocFieldValue()`. Field definitions now come from the `type.fields`
+    // Vue loop variable (not inlined per-field JSON), so the call references
+    // the runtime `field` object.
+    expect($template)->toContain('assocFieldValue(link, field)');
 });
 
 it('persists a checkbox association field with multiple selected options as a comma-joined string via the real update route', function () {
@@ -628,7 +666,7 @@ it('persists a boolean association field as a "true"/"false" string via the real
         ->and($link->additional_data)->toBe(['common' => ['is_featured' => 'true']]);
 });
 
-it('emits an `associations[<typeCode>][__present]=1` sentinel input for EVERY active association type, regardless of link count (Important 2)', function () {
+it('emits an `associations[<typeCode>][__present]=1` sentinel input for every RENDERED (linked) type, and none for types the product does not link to (scalability)', function () {
     $this->loginAsAdmin();
 
     $associationTypeRepository = app(AssociationTypeRepository::class);
@@ -655,14 +693,27 @@ it('emits an `associations[<typeCode>][__present]=1` sentinel input for EVERY ac
 
     $response->assertOk();
 
-    // The sentinel is emitted for the type WITH links...
-    $response->assertSee('name="associations['.$customType->code.'][__present]"', false);
+    // The panel is Vue-rendered, so the concrete per-type `__present` input name
+    // is bound at runtime; the template carries the sentinel binding once,
+    // emitted for every rendered (linked) type. It stays rendered even after the
+    // user removes its last link client-side, so a present-but-empty payload
+    // still prunes the type's rows on save (verified by the remove-last-link
+    // test below).
+    $response->assertSee(":name=\"'associations[' + type.code + '][__present]'\"", false);
 
-    // ...and, since `up_sells` (a legacy section, also always in
-    // `associationTypes`) has NO links for this fresh product, for a type
-    // with ZERO links too -- proving it's unconditional, not gated on
-    // `links.length`.
-    $response->assertSee('name="associations[up_sells][__present]"', false);
+    // Only linked types are sent to the view. The product links to the custom
+    // type, so it is present; it does not link to `up_sells` (a legacy section),
+    // so -- unlike the old design that rendered every active type -- `up_sells`
+    // is absent (attachable on demand via the async picker), and no type's links
+    // are ever pruned by simply not rendering it.
+    $response->assertViewHas('associationTypes', function ($associationTypes) use ($customType) {
+        $codes = collect($associationTypes)->pluck('code');
+
+        expect($codes)->toContain($customType->code)
+            ->and($codes)->not->toContain('up_sells');
+
+        return true;
+    });
 });
 
 it('prunes all `product_associations` rows for a CUSTOM type via the real update route when the submitted payload carries only the `__present` sentinel (Important 2, remove-last-link)', function () {

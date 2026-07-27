@@ -280,10 +280,13 @@ return [
                         'title'      => 'Korsförsäljningsprodukter',
                     ],
                     'add-btn'           => 'Lägg till',
+                    'add-type-btn'      => 'Lägg till associationstyp',
                     'delete'            => 'Radera',
                     'empty-info'        => 'Lägg till produkter :type åt gången.',
                     'empty-title'       => 'Lägg till produkt',
                     'image-placeholder' => 'Produktbild',
+                    'no-types-info'     => 'Använd ”Lägg till associationstyp” för att koppla den här produkten till en associationstyp.',
+                    'no-types-title'    => 'Inga associationer tillagda',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Fält för associationstyp med kod ":fields" kunde inte hittas',
 
             'create' => [
-                'title'    => 'Skapa associationstyp',
-                'save-btn' => 'Spara associationstyp',
+                'title'      => 'Skapa associationstyp',
+                'name'       => 'Namn',
+                'enter-name' => 'Ange namn',
+                'code'       => 'Kod',
+                'enter-code' => 'Ange kod',
+                'save-btn'   => 'Spara associationstyp',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Lägg till',
+                'empty-info'         => 'Prova en annan sökning.',
+                'empty-title'        => 'Inga associationstyper hittades',
+                'search-placeholder' => 'Sök efter namn eller kod',
+                'title'              => 'Lägg till associationstyp',
+            ],
+        ],
         'pagination' => [
             'page' => 'Sida',
         ],

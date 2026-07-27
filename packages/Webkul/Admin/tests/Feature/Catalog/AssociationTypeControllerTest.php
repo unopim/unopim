@@ -404,14 +404,79 @@ it('no longer exposes a full-page create route', function () {
         ->toThrow(RouteNotFoundException::class);
 });
 
-it('renders the code-only create modal on the index page', function () {
+it('renders the create modal with a locale-aware name field and a code field on the index page', function () {
     $this->loginAsAdmin();
+
+    $localeCode = core()->getRequestedLocaleCode();
 
     $response = $this->get(route('admin.catalog.association_types.index'));
 
     $response->assertStatus(200);
     $response->assertSee(trans('admin::app.catalog.association_types.create.title'), false);
+    $response->assertSee('name="'.$localeCode.'[name]"', false);
     $response->assertSee('name="code"', false);
+});
+
+it('persists the submitted requested-locale name instead of seeding it from the code', function () {
+    $this->loginAsAdmin();
+
+    $code = 'named_type_'.uniqid();
+
+    $this->post(route('admin.catalog.association_types.store'), [
+        'code'                            => $code,
+        core()->getRequestedLocaleCode()  => ['name' => 'Spare Parts'],
+    ])->assertRedirect();
+
+    $associationType = AssociationType::where('code', $code)->firstOrFail();
+
+    expect($associationType->translate(core()->getRequestedLocaleCode())?->name)->toBe('Spare Parts');
+});
+
+it('searches active association types by name and code for the product-edit picker', function () {
+    $this->loginAsAdmin();
+
+    $match = createAssociationType(['code' => 'spare_parts_kit_'.uniqid(), 'en_US' => ['name' => 'Spare Parts Kit']]);
+    $byCode = createAssociationType(['code' => 'zzcodehit_'.uniqid(), 'en_US' => ['name' => 'Nothing Alike']]);
+    $miss = createAssociationType(['code' => 'unrelated_'.uniqid(), 'en_US' => ['name' => 'Totally Different']]);
+
+    $byName = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'Spare Parts']))->assertOk();
+    $names = collect($byName->json('data'))->pluck('code');
+    expect($names)->toContain($match->code)->and($names)->not->toContain($miss->code);
+
+    $codeHit = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'zzcodehit']))->assertOk();
+    expect(collect($codeHit->json('data'))->pluck('code'))->toContain($byCode->code);
+});
+
+it('excludes disabled association types from the picker search', function () {
+    $this->loginAsAdmin();
+
+    $disabled = createAssociationType(['code' => 'disabled_pick_'.uniqid(), 'status' => 0, 'en_US' => ['name' => 'Hidden Type']]);
+
+    $response = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'Hidden Type']))->assertOk();
+
+    expect(collect($response->json('data'))->pluck('code'))->not->toContain($disabled->code);
+});
+
+it('returns association types with their active field definitions in the picker payload', function () {
+    $this->loginAsAdmin();
+
+    $code = 'picker_fields_'.uniqid();
+
+    $this->post(route('admin.catalog.association_types.store'), [
+        'code'   => $code,
+        'en_US'  => ['name' => 'With Fields'],
+        'fields' => [
+            ['code' => 'note', 'type' => 'text', 'status' => 1, 'section' => 'left', 'en_US' => ['name' => 'Note']],
+        ],
+    ])->assertRedirect();
+
+    $response = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'With Fields']))->assertOk();
+
+    $type = collect($response->json('data'))->firstWhere('code', $code);
+
+    expect($type)->not->toBeNull()
+        ->and($type['name'])->toBe('With Fields')
+        ->and(collect($type['fields'])->pluck('code'))->toContain('note');
 });
 
 it('should render the edit page with the reusable field-builder component', function () {

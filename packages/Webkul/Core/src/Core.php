@@ -174,7 +174,7 @@ class Core
      */
     public function getDefaultChannelCode(): string
     {
-        return $this->getDefaultChannel()?->code;
+        return $this->getDefaultChannel()?->code ?? config('app.channel');
     }
 
     /**

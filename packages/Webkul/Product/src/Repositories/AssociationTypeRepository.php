@@ -94,6 +94,25 @@ class AssociationTypeRepository extends Repository
             ->get();
     }
 
+    /**
+     * Active association types for the given ids, with the same translation/
+     * field/option graph as getActiveTypes() but bounded to the supplied set,
+     * so the product edit page loads only the types a product actually links to
+     * rather than every active type (which does not scale as types grow).
+     */
+    public function getActiveTypesByIds(array $ids): Collection
+    {
+        if (empty($ids)) {
+            return new Collection;
+        }
+
+        return $this->where(['status' => 1])
+            ->whereIn('id', $ids)
+            ->with(['translations', 'fields.translations', 'fields.options.translations'])
+            ->orderBy('position')
+            ->get();
+    }
+
     public function queryBuilder()
     {
         return $this->with(['translations']);

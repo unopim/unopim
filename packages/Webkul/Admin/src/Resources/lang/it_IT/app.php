@@ -280,10 +280,13 @@ return [
                         'title'      => 'Prodotti Cross-Sell',
                     ],
                     'add-btn'           => 'Aggiungi',
+                    'add-type-btn'      => 'Aggiungi tipo di associazione',
                     'delete'            => 'Elimina',
                     'empty-info'        => 'Aggiungi :type prodotti in un colpo solo.',
                     'empty-title'       => 'Aggiungi prodotto',
                     'image-placeholder' => 'Immagine prodotto',
+                    'no-types-info'     => 'Usa «Aggiungi tipo di associazione» per collegare questo prodotto a un tipo di associazione.',
+                    'no-types-title'    => 'Nessuna associazione aggiunta',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Prodotti',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Campo del tipo di associazione con codice ":fields" non trovato',
 
             'create' => [
-                'title'    => 'Crea tipo di associazione',
-                'save-btn' => 'Salva tipo di associazione',
+                'title'      => 'Crea tipo di associazione',
+                'name'       => 'Nome',
+                'enter-name' => 'Inserisci il nome',
+                'code'       => 'Codice',
+                'enter-code' => 'Inserisci codice',
+                'save-btn'   => 'Salva tipo di associazione',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Aggiungi',
+                'empty-info'         => 'Prova una ricerca diversa.',
+                'empty-title'        => 'Nessun tipo di associazione trovato',
+                'search-placeholder' => 'Cerca per nome o codice',
+                'title'              => 'Aggiungi tipo di associazione',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pagina',
         ],

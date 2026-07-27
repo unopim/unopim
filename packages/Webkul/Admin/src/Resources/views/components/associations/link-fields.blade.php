@@ -1,173 +1,167 @@
-@props([
-    'fields'            => [],
-    'typeCode'          => '',
-    'currentLocaleCode' => core()->getRequestedLocaleCode(),
-])
-
 {{--
-    Renders the custom-field inputs for ONE association type's active
-    `fields` (already resolved/translated by
-    `ProductController::getAssociationTypeFieldForView()`), used by
-    `catalog/products/edit/links.blade.php`.
+    Renders the custom-field inputs for ONE association link, entirely at Vue
+    runtime so a type loaded on page-load and a type attached later via the
+    async picker render identically.
 
-    Field DEFINITIONS are static (known once per page load — you cannot add
-    a new custom field from the product edit page), so this partial is
-    emitted exactly ONCE per (association type, field) pair. Only the LIST
-    OF LINKS (products) for a type is dynamic (added/removed at runtime via
-    the product-search drawer), so the caller must place this component
-    INSIDE its own `v-for="(link, index) in ..."` block — every `::name` /
-    `::value` binding below intentionally references the fixed Vue-scope
-    identifiers `link` and `index` supplied by that loop, plus the
-    `assocField*` helper methods defined once on the enclosing
-    `v-product-links` Vue component. Vue then replays this markup once per
-    link, so no field markup is ever duplicated per link.
-
-    Mirrors `components/categories/dynamic-fields.blade.php`'s per-type
-    switch, adapted so values are read reactively from a link's
-    `additional_data` (via the `assocField*` helpers) instead of a single
-    Blade-resolved value.
+    MUST be placed inside the caller's `v-for="(link, index) in type.links"`
+    block: every binding references the fixed Vue-scope identifiers `type`,
+    `link` and `index`, plus the `assocField*` / `toggleAssocCheckboxOption`
+    helpers and `currentLocaleCode` defined once on the enclosing
+    `v-product-links` component. Field type drives which control renders via
+    `v-if` branches (the control's `type` must be static at Blade compile time,
+    so it cannot be a single dynamic binding).
 --}}
-
-@foreach ($fields as $field)
-    @php
-        $isLocalizable = (bool) ($field['value_per_locale'] ?? false);
-
-        $fieldJson = json_encode($field);
-
-        $nameExpr = "assocFieldName('{$typeCode}', index, {$fieldJson})";
-
-        $controlType = in_array($field['type'], ['image', 'file']) ? 'text' : $field['type'];
-    @endphp
-
-    {!! view_render_event('unopim.admin.catalog.product.edit.form.links.field.before', ['field' => $field]) !!}
-
+<template
+    v-for="field in type.fields"
+    :key="'assoc-field-' + type.code + '-' + field.code + '-' + index"
+>
     <x-admin::form.control-group>
         <div class="inline-flex justify-between w-full">
-            <x-admin::form.control-group.label ::for="{{ $nameExpr }}">
-                {{ $field['label'] }}
+            <x-admin::form.control-group.label ::for="assocFieldName(type.code, index, field)">
+                @{{ field.label }}
 
-                @if (! empty($field['is_required']))
-                    <span class="required"></span>
-                @endif
+                <span v-if="field.is_required" class="required"></span>
             </x-admin::form.control-group.label>
 
-            @if ($isLocalizable)
-                <div class="self-end mb-2 text-xs flex gap-1">
-                    <span class="icon-language uppercase box-shadow p-1 rounded-full bg-gray-100 border border-gray-200 rounded text-gray-600 dark:!text-gray-600">
-                        {{ $currentLocaleCode }}
-                    </span>
-                </div>
-            @endif
+            <div
+                v-if="field.value_per_locale"
+                class="self-end mb-2 text-xs flex gap-1"
+            >
+                <span
+                    class="icon-language uppercase box-shadow p-1 rounded-full bg-gray-100 border border-gray-200 rounded text-gray-600 dark:!text-gray-600"
+                    v-text="currentLocaleCode"
+                >
+                </span>
+            </div>
         </div>
 
-        @switch ($field['type'])
-            @case ('checkbox')
-                @foreach ($field['options'] ?? [] as $option)
-                    <div class="flex py-2 items-center gap-2">
-                        {{--
-                            NOTE: this checkbox is UI-only. Its `::name` is
-                            deliberately NOT the real `associations[...]`
-                            field path (and never carries a `[]` suffix) --
-                            native `FormData(form)` submission (see
-                            `packages/Webkul/Admin/src/Resources/assets/js/app.js`'s
-                            `onAjaxSubmit`) would otherwise turn N checked
-                            boxes sharing one array-style name into a PHP
-                            ARRAY for `additional_data.common.<field>`, which
-                            `AssociationValidator::fieldTypeRules()`'s
-                            `'string'` rule rejects, throwing a
-                            `ValidationException` that aborts the entire
-                            product save. The single hidden input below is
-                            the ONLY input that carries the real field name;
-                            `toggleAssocCheckboxOption()` keeps its
-                            comma-joined value in sync as options are
-                            (un)checked.
-                        --}}
-                        <x-admin::form.control-group.control
-                            type="checkbox"
-                            ::id="{{ $nameExpr }} + '_{{ $option['code'] }}_' + index"
-                            ::name="'_assoc_checkbox_ui_' + index + '_{{ $option['code'] }}'"
-                            :value="$option['code']"
-                            :label="$field['label']"
-                            ::for="{{ $nameExpr }} + '_{{ $option['code'] }}_' + index"
-                            ::checked="assocFieldChecked(link, {{ $fieldJson }}, '{{ $option['code'] }}')"
-                            @change="toggleAssocCheckboxOption(link, {{ $fieldJson }}, '{{ $option['code'] }}', $event.target.checked)"
-                        />
-
-                        <label
-                            class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer select-none"
-                            :for="{{ $nameExpr }} + '_{{ $option['code'] }}_' + index"
-                        >
-                            {{ $option['label'] }}
-                        </label>
-                    </div>
-                @endforeach
-
+        <template v-if="field.type === 'checkbox'">
+            {{--
+                UI-only checkboxes: their `:name` is deliberately NOT the real
+                `associations[...]` field path (and carries no `[]` suffix), so
+                native FormData submission never collapses N checked boxes into a
+                PHP array that `AssociationValidator`'s `string` rule would
+                reject. The single hidden input below carries the real field
+                name; `toggleAssocCheckboxOption()` keeps its comma-joined value
+                in sync.
+            --}}
+            <div
+                class="flex py-2 items-center gap-2"
+                v-for="option in field.options"
+                :key="'assoc-checkbox-' + field.code + '-' + option.code + '-' + index"
+            >
                 <x-admin::form.control-group.control
-                    type="hidden"
-                    ::name="{{ $nameExpr }}"
-                    ::rules="{{ $field['rules'] }}"
-                    :label="$field['label']"
-                    ::value="assocFieldValue(link, {{ $fieldJson }})"
+                    type="checkbox"
+                    ::id="assocFieldName(type.code, index, field) + '_' + option.code + '_' + index"
+                    ::name="'_assoc_checkbox_ui_' + index + '_' + option.code"
+                    ::value="option.code"
+                    ::for="assocFieldName(type.code, index, field) + '_' + option.code + '_' + index"
+                    ::checked="assocFieldChecked(link, field, option.code)"
+                    @change="toggleAssocCheckboxOption(link, field, option.code, $event.target.checked)"
                 />
 
-                @break
+                <label
+                    class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer select-none"
+                    :for="assocFieldName(type.code, index, field) + '_' + option.code + '_' + index"
+                    v-text="option.label"
+                >
+                </label>
+            </div>
 
-            @case ('boolean')
-                <input type="hidden" :name="{{ $nameExpr }}" value="false" />
+            <x-admin::form.control-group.control
+                type="hidden"
+                ::name="assocFieldName(type.code, index, field)"
+                ::rules="field.rules"
+                ::value="assocFieldValue(link, field)"
+            />
+        </template>
 
-                <x-admin::form.control-group.control
-                    type="switch"
-                    ::id="{{ $nameExpr }}"
-                    ::name="{{ $nameExpr }}"
-                    :label="$field['label']"
-                    ::checked="assocFieldBoolean(link, {{ $fieldJson }})"
-                    value="true"
-                />
+        <template v-else-if="field.type === 'boolean'">
+            <input
+                type="hidden"
+                :name="assocFieldName(type.code, index, field)"
+                value="false"
+            />
 
-                @break
+            <x-admin::form.control-group.control
+                type="switch"
+                ::id="assocFieldName(type.code, index, field)"
+                ::name="assocFieldName(type.code, index, field)"
+                ::checked="assocFieldBoolean(link, field)"
+                value="true"
+            />
+        </template>
 
-            @case ('select')
-                <x-admin::form.control-group.control
-                    type="select"
-                    ::id="{{ $nameExpr }}"
-                    ::name="{{ $nameExpr }}"
-                    ::rules="{{ $field['rules'] }}"
-                    :label="$field['label']"
-                    ::value="JSON.stringify(assocFieldOption(link, {{ $fieldJson }}))"
-                    :options="json_encode($field['options'] ?? [])"
-                    track-by="code"
-                    label-by="label"
-                />
+        <template v-else-if="field.type === 'select'">
+            <x-admin::form.control-group.control
+                type="select"
+                ::id="assocFieldName(type.code, index, field)"
+                ::name="assocFieldName(type.code, index, field)"
+                ::rules="field.rules"
+                ::value="JSON.stringify(assocFieldOption(link, field))"
+                ::options="field.options"
+                track-by="code"
+                label-by="label"
+            />
+        </template>
 
-                @break
+        <template v-else-if="field.type === 'multiselect'">
+            <x-admin::form.control-group.control
+                type="multiselect"
+                ::id="assocFieldName(type.code, index, field)"
+                ::name="assocFieldName(type.code, index, field)"
+                ::rules="field.rules"
+                ::value="JSON.stringify(assocFieldOptions(link, field))"
+                ::options="field.options"
+                track-by="code"
+                label-by="label"
+            />
+        </template>
 
-            @case ('multiselect')
-                <x-admin::form.control-group.control
-                    type="multiselect"
-                    ::id="{{ $nameExpr }}"
-                    ::name="{{ $nameExpr }}"
-                    ::rules="{{ $field['rules'] }}"
-                    :label="$field['label']"
-                    ::value="JSON.stringify(assocFieldOptions(link, {{ $fieldJson }}))"
-                    :options="json_encode($field['options'] ?? [])"
-                    track-by="code"
-                    label-by="label"
-                />
+        <template v-else-if="field.type === 'textarea'">
+            <x-admin::form.control-group.control
+                type="textarea"
+                ::id="assocFieldName(type.code, index, field)"
+                ::name="assocFieldName(type.code, index, field)"
+                ::rules="field.rules"
+                ::value="assocFieldValue(link, field)"
+            />
+        </template>
 
-                @break
+        <template v-else-if="field.type === 'date'">
+            <x-admin::form.control-group.control
+                type="date"
+                ::id="assocFieldName(type.code, index, field)"
+                ::name="assocFieldName(type.code, index, field)"
+                ::rules="field.rules"
+                ::value="assocFieldValue(link, field)"
+            />
+        </template>
 
-            @default
-                <x-admin::form.control-group.control
-                    :type="$controlType"
-                    ::id="{{ $nameExpr }}"
-                    ::name="{{ $nameExpr }}"
-                    ::rules="{{ $field['rules'] }}"
-                    :label="$field['label']"
-                    ::value="assocFieldValue(link, {{ $fieldJson }})"
-                />
-        @endswitch
+        <template v-else-if="field.type === 'datetime'">
+            <x-admin::form.control-group.control
+                type="datetime"
+                ::id="assocFieldName(type.code, index, field)"
+                ::name="assocFieldName(type.code, index, field)"
+                ::rules="field.rules"
+                ::value="assocFieldValue(link, field)"
+            />
+        </template>
 
-        <v-error-message :name="{{ $nameExpr }}" v-slot="{ message }">
+        <template v-else>
+            <x-admin::form.control-group.control
+                type="text"
+                ::id="assocFieldName(type.code, index, field)"
+                ::name="assocFieldName(type.code, index, field)"
+                ::rules="field.rules"
+                ::value="assocFieldValue(link, field)"
+            />
+        </template>
+
+        <v-error-message
+            :name="assocFieldName(type.code, index, field)"
+            v-slot="{ message }"
+        >
             <p
                 class="mt-1 text-red-600 text-xs italic"
                 v-text="message"
@@ -175,6 +169,4 @@
             </p>
         </v-error-message>
     </x-admin::form.control-group>
-
-    {!! view_render_event('unopim.admin.catalog.product.edit.form.links.field.after', ['field' => $field]) !!}
-@endforeach
+</template>

@@ -280,10 +280,13 @@ return [
                         'title'      => 'Cross-Sell Produkter',
                     ],
                     'add-btn'           => 'Tilføj',
+                    'add-type-btn'      => 'Tilføj associationstype',
                     'delete'            => 'Slet',
                     'empty-info'        => 'For at tilføje :type produkter med det samme.',
                     'empty-title'       => 'Tilføj Produkt',
                     'image-placeholder' => 'Produktbillede',
+                    'no-types-info'     => 'Brug »Tilføj associationstype« for at knytte dette produkt til en associationstype.',
+                    'no-types-title'    => 'Ingen associationer tilføjet',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Forbindelser',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Associationstype-felt med kode ":fields" kunne ikke findes',
 
             'create' => [
-                'title'    => 'Opret associeringstype',
-                'save-btn' => 'Gem associeringstype',
+                'title'      => 'Opret associeringstype',
+                'name'       => 'Navn',
+                'enter-name' => 'Indtast navn',
+                'code'       => 'Kode',
+                'enter-code' => 'Indtast Kode',
+                'save-btn'   => 'Gem associeringstype',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Tilføj',
+                'empty-info'         => 'Prøv en anden søgning.',
+                'empty-title'        => 'Ingen associationstyper fundet',
+                'search-placeholder' => 'Søg efter navn eller kode',
+                'title'              => 'Tilføj associationstype',
+            ],
+        ],
         'pagination' => [
             'page' => 'Side',
         ],

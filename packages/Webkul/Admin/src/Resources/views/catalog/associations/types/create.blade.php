@@ -1,10 +1,15 @@
 {{--
-    Code-only create modal for association types, rendered on the index page.
+    Create modal for association types, rendered on the index page.
 
-    The modal collects the `code` only; on success the store() redirect is
-    converted to a JSON `redirect_url` (ajax form contract) and the browser is
-    sent to the edit page to configure labels, per-link fields and status.
+    The modal collects the requested-locale `name` and the `code` (auto-generated
+    from the name via v-code-generator, still editable). On success the store()
+    redirect is converted to a JSON `redirect_url` (ajax form contract) and the
+    browser is sent to the edit page to configure per-link fields and status.
 --}}
+@php
+    $currentLocaleCode = core()->getRequestedLocaleCode();
+@endphp
+
 <v-association-type-create></v-association-type-create>
 
 @pushOnce('scripts')
@@ -30,7 +35,9 @@
                 as="div"
             >
                 <form
-                    @submit="handleSubmit($event, create)"
+                    method="POST"
+                    action="{{ route('admin.catalog.association_types.store') }}"
+                    @submit="handleSubmit($event, onAjaxSubmit)"
                     ref="associationTypeCreateForm"
                 >
                     <x-admin::modal ref="associationTypeCreateModal">
@@ -46,17 +53,38 @@
                             {!! view_render_event('unopim.admin.catalog.association_types.create.form_controls.before') !!}
 
                             <x-admin::form.control-group>
+                                <x-admin::form.control-group.label
+                                    class="required w-full"
+                                    localizable="true"
+                                    :current-locale-code="$currentLocaleCode"
+                                >
+                                    @lang('admin::app.catalog.association_types.create.name')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="{{ $currentLocaleCode }}[name]"
+                                    rules="required"
+                                    v-code-generator="'code'"
+                                    :label="trans('admin::app.catalog.association_types.create.name')"
+                                    :placeholder="trans('admin::app.catalog.association_types.create.enter-name')"
+                                />
+
+                                <x-admin::form.control-group.error control-name="{{ $currentLocaleCode }}[name]" />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.catalog.category_fields.create.code')
+                                    @lang('admin::app.catalog.association_types.create.code')
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control
                                     type="text"
                                     name="code"
                                     rules="required"
-                                    :label="trans('admin::app.catalog.category_fields.create.code')"
-                                    :placeholder="trans('admin::app.catalog.category_fields.create.code')"
                                     v-code
+                                    :label="trans('admin::app.catalog.association_types.create.code')"
+                                    :placeholder="trans('admin::app.catalog.association_types.create.enter-code')"
                                 />
 
                                 <x-admin::form.control-group.error control-name="code" />
@@ -87,20 +115,11 @@
             template: '#v-association-type-create-template',
 
             methods: {
-                create(params, { setErrors }) {
-                    let formData = new FormData(this.$refs.associationTypeCreateForm);
-
-                    this.$axios.post("{{ route('admin.catalog.association_types.store') }}", formData)
-                        .then((response) => {
-                            if (response.data.redirect_url) {
-                                this.$navigate(response.data.redirect_url);
-                            }
-                        })
-                        .catch(error => {
-                            if (error.response?.status == 422) {
-                                setErrors(error.response.data.errors);
-                            }
-                        });
+                onAjaxSubmit(values, context) {
+                    return this.$root.onAjaxSubmit(values, {
+                        ...context,
+                        evt: { target: this.$refs.associationTypeCreateForm },
+                    });
                 },
             },
         });

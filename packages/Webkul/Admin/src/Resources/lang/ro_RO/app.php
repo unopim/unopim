@@ -281,10 +281,13 @@ return [
                         'title'      => 'Produse de vânzare încrucișată',
                     ],
                     'add-btn'           => 'Adaugă',
+                    'add-type-btn'      => 'Adaugă tip de asociere',
                     'delete'            => 'Șterge',
                     'empty-info'        => 'Adăugați produse :type deodată.',
                     'empty-title'       => 'Adăugați produs',
                     'image-placeholder' => 'Imagine produs',
+                    'no-types-info'     => 'Utilizează „Adaugă tip de asociere” pentru a lega acest produs la un tip de asociere.',
+                    'no-types-title'    => 'Nicio asociere adăugată',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produse',
                 ],
@@ -1003,8 +1006,12 @@ return [
             'unknown-fields'    => 'Câmpul tipului de asociere cu codul ":fields" nu a fost găsit',
 
             'create' => [
-                'title'    => 'Creați tip de asociere',
-                'save-btn' => 'Salvați tipul de asociere',
+                'title'      => 'Creați tip de asociere',
+                'name'       => 'Nume',
+                'enter-name' => 'Introduceți numele',
+                'code'       => 'Cod',
+                'enter-code' => 'Introdu codul',
+                'save-btn'   => 'Salvați tipul de asociere',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Adaugă',
+                'empty-info'         => 'Încearcă o altă căutare.',
+                'empty-title'        => 'Nu s-a găsit niciun tip de asociere',
+                'search-placeholder' => 'Caută după nume sau cod',
+                'title'              => 'Adaugă tip de asociere',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pagină',
         ],

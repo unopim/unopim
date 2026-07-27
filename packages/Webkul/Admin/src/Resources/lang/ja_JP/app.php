@@ -280,10 +280,13 @@ return [
                         'title'      => 'クロスセル製品',
                     ],
                     'add-btn'           => '追加',
+                    'add-type-btn'      => '関連タイプを追加',
                     'delete'            => '削除',
                     'empty-info'        => ':type 追加するには、製品を入力します。',
                     'empty-title'       => '製品の追加',
                     'image-placeholder' => '製品画像',
+                    'no-types-info'     => 'この製品を関連タイプに紐付けるには「関連タイプを追加」を使用します。',
+                    'no-types-title'    => '関連付けが追加されていません',
                     'sku'               => 'SKU - :sku',
                     'title'             => '関連付け',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'コード ":fields" の関連タイプフィールドが見つかりませんでした',
 
             'create' => [
-                'title'    => '関連タイプを作成',
-                'save-btn' => '関連タイプを保存',
+                'title'      => '関連タイプを作成',
+                'name'       => '名前',
+                'enter-name' => '名前を入力',
+                'code'       => 'コード',
+                'enter-code' => 'コードを入力',
+                'save-btn'   => '関連タイプを保存',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '追加',
+                'empty-info'         => '別のキーワードで検索してください。',
+                'empty-title'        => '関連タイプが見つかりません',
+                'search-placeholder' => '名前またはコードで検索',
+                'title'              => '関連タイプを追加',
+            ],
+        ],
         'pagination' => [
             'page' => 'ページ',
         ],

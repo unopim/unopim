@@ -280,10 +280,13 @@ return [
                         'title'      => '交叉銷售產品',
                     ],
                     'add-btn'           => '添加',
+                    'add-type-btn'      => '新增關聯類型',
                     'delete'            => '刪除',
                     'empty-info'        => '請添加 :type 類型的產品。',
                     'empty-title'       => '添加產品',
                     'image-placeholder' => '產品圖片',
+                    'no-types-info'     => '使用「新增關聯類型」將此產品連結至某個關聯類型下。',
+                    'no-types-title'    => '尚未新增關聯',
                     'sku'               => 'SKU - :sku',
                     'title'             => '產品',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => '找不到代碼為":fields"的關聯類型欄位',
 
             'create' => [
-                'title'    => '建立關聯類型',
-                'save-btn' => '儲存關聯類型',
+                'title'      => '建立關聯類型',
+                'name'       => '名稱',
+                'enter-name' => '輸入名稱',
+                'code'       => '代碼',
+                'enter-code' => '輸入代碼',
+                'save-btn'   => '儲存關聯類型',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '添加',
+                'empty-info'         => '請嘗試其他搜尋。',
+                'empty-title'        => '找不到關聯類型',
+                'search-placeholder' => '依名稱或代碼搜尋',
+                'title'              => '新增關聯類型',
+            ],
+        ],
         'pagination' => [
             'page' => '頁',
         ],

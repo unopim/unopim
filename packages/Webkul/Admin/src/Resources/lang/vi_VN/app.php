@@ -280,10 +280,13 @@ return [
                         'title'      => 'Sản phẩm bán chéo',
                     ],
                     'add-btn'           => 'Thêm',
+                    'add-type-btn'      => 'Thêm Loại Liên Kết',
                     'delete'            => 'Xóa',
                     'empty-info'        => 'Thêm sản phẩm loại :type.',
                     'empty-title'       => 'Thêm sản phẩm',
                     'image-placeholder' => 'Hình ảnh sản phẩm',
+                    'no-types-info'     => 'Sử dụng "Thêm Loại Liên Kết" để liên kết sản phẩm này dưới một loại liên kết.',
+                    'no-types-title'    => 'Chưa thêm liên kết nào',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Sản phẩm',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Không tìm thấy trường Loại Liên Kết với mã ":fields"',
 
             'create' => [
-                'title'    => 'Tạo loại liên kết',
-                'save-btn' => 'Lưu loại liên kết',
+                'title'      => 'Tạo loại liên kết',
+                'name'       => 'Tên',
+                'enter-name' => 'Nhập tên',
+                'code'       => 'Mã',
+                'enter-code' => 'Nhập mã',
+                'save-btn'   => 'Lưu loại liên kết',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Thêm',
+                'empty-info'         => 'Hãy thử tìm kiếm khác.',
+                'empty-title'        => 'Không tìm thấy loại liên kết nào',
+                'search-placeholder' => 'Tìm theo tên hoặc mã',
+                'title'              => 'Thêm Loại Liên Kết',
+            ],
+        ],
         'pagination' => [
             'page' => 'Trang',
         ],

@@ -280,10 +280,13 @@ return [
                         'title'      => 'Çapraz Satış Ürünleri',
                     ],
                     'add-btn'           => 'Ekle',
+                    'add-type-btn'      => 'İlişki Türü Ekle',
                     'delete'            => 'Sil',
                     'empty-info'        => 'Bir kerede :type ürün ekleyin.',
                     'empty-title'       => 'Ürün ekle',
                     'image-placeholder' => 'Ürün resmi',
+                    'no-types-info'     => 'Bu ürünü bir ilişki türü altında bağlamak için "İlişki Türü Ekle" seçeneğini kullanın.',
+                    'no-types-title'    => 'Hiç ilişki eklenmedi',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Ürünler',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => '":fields" koduna sahip ilişki türü alanı bulunamadı',
 
             'create' => [
-                'title'    => 'İlişki Türü Oluştur',
-                'save-btn' => 'İlişki Türünü Kaydet',
+                'title'      => 'İlişki Türü Oluştur',
+                'name'       => 'Ad',
+                'enter-name' => 'Ad girin',
+                'code'       => 'Kod',
+                'enter-code' => 'Kodu girin',
+                'save-btn'   => 'İlişki Türünü Kaydet',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Ekle',
+                'empty-info'         => 'Farklı bir arama deneyin.',
+                'empty-title'        => 'İlişki türü bulunamadı',
+                'search-placeholder' => 'Ada veya koda göre ara',
+                'title'              => 'İlişki Türü Ekle',
+            ],
+        ],
         'pagination' => [
             'page' => 'Sayfa',
         ],

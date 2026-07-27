@@ -280,10 +280,13 @@ return [
                         'title'      => 'Vente additionnelle',
                     ],
                     'add-btn'           => 'Ajouter',
+                    'add-type-btn'      => 'Ajouter un type d\'association',
                     'delete'            => 'Supprimer',
                     'empty-info'        => 'Ajouter rapidement des produits :type.',
                     'empty-title'       => 'Ajouter un produit',
                     'image-placeholder' => 'Image du produit',
+                    'no-types-info'     => 'Utilisez « Ajouter un type d\'association » pour lier ce produit à un type d\'association.',
+                    'no-types-title'    => 'Aucune association ajoutée',
                     'sku'               => 'sku - :sku',
                     'title'             => 'Associations',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Le champ de type d\'association avec le code ":fields" est introuvable',
 
             'create' => [
-                'title'    => 'Créer un type d\'association',
-                'save-btn' => 'Enregistrer le type d\'association',
+                'title'      => 'Créer un type d\'association',
+                'name'       => 'Nom',
+                'enter-name' => 'Saisissez le nom',
+                'code'       => 'Code',
+                'enter-code' => 'Entrez le code',
+                'save-btn'   => 'Enregistrer le type d\'association',
             ],
 
             'edit' => [
@@ -2324,6 +2331,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Ajouter',
+                'empty-info'         => 'Essayez une autre recherche.',
+                'empty-title'        => 'Aucun type d\'association trouvé',
+                'search-placeholder' => 'Rechercher par nom ou code',
+                'title'              => 'Ajouter un type d\'association',
+            ],
+        ],
         'pagination' => [
             'page' => 'Page',
         ],

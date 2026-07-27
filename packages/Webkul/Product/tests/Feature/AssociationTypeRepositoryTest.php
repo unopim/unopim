@@ -26,6 +26,42 @@ it('creates a type with translations and a field via the repository', function (
     expect($repo->getActiveTypes()->pluck('code')->all())->toContain('spare_parts');
 });
 
+it('loads only the requested active types via getActiveTypesByIds', function () {
+    $repo = app(AssociationTypeRepository::class);
+
+    $wanted = $repo->create([
+        'code'            => 'wanted_type_'.uniqid(),
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Wanted'],
+    ]);
+
+    $disabled = $repo->create([
+        'code'            => 'disabled_type_'.uniqid(),
+        'status'          => 0,
+        'position'        => 2,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Disabled'],
+    ]);
+
+    $other = $repo->create([
+        'code'            => 'other_type_'.uniqid(),
+        'status'          => 1,
+        'position'        => 3,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Other'],
+    ]);
+
+    $result = $repo->getActiveTypesByIds([$wanted->id, $disabled->id]);
+
+    expect($result->pluck('id')->all())->toContain($wanted->id)
+        ->and($result->pluck('id')->all())->not->toContain($disabled->id)
+        ->and($result->pluck('id')->all())->not->toContain($other->id);
+
+    expect($repo->getActiveTypesByIds([])->all())->toBe([]);
+});
+
 it('updates a type, its translation, and manages fields (new/update/delete)', function () {
     $repo = app(AssociationTypeRepository::class);
 

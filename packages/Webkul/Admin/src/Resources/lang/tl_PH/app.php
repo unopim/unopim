@@ -280,10 +280,13 @@ return [
                         'title'      => 'Mga Cross-sell na Produkto',
                     ],
                     'add-btn'           => 'Magdagdag',
+                    'add-type-btn'      => 'Magdagdag ng Uri ng Asosasyon',
                     'delete'            => 'Tanggalin',
                     'empty-info'        => 'Magdagdag ng mga produkto :type nang sabay.',
                     'empty-title'       => 'Magdagdag ng produkto',
                     'image-placeholder' => 'Larawan ng produkto',
+                    'no-types-info'     => 'Gamitin ang "Magdagdag ng Uri ng Asosasyon" upang iugnay ang produktong ito sa ilalim ng isang uri ng asosasyon.',
+                    'no-types-title'    => 'Walang naidagdag na asosasyon',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Mga Produkto',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'Hindi natagpuan ang field ng uri ng asosasyon na may kodigong ":fields"',
 
             'create' => [
-                'title'    => 'Gumawa ng Uri ng Asosasyon',
-                'save-btn' => 'I-save ang Uri ng Asosasyon',
+                'title'      => 'Gumawa ng Uri ng Asosasyon',
+                'name'       => 'Pangalan',
+                'enter-name' => 'Ilagay ang pangalan',
+                'code'       => 'Kodigo',
+                'enter-code' => 'Ilagay ang kodigo',
+                'save-btn'   => 'I-save ang Uri ng Asosasyon',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Magdagdag',
+                'empty-info'         => 'Sumubok ng ibang paghahanap.',
+                'empty-title'        => 'Walang nahanap na uri ng asosasyon',
+                'search-placeholder' => 'Maghanap ayon sa pangalan o code',
+                'title'              => 'Magdagdag ng Uri ng Asosasyon',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pahina',
         ],

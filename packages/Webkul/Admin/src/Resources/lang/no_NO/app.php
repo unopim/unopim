@@ -281,10 +281,13 @@ return [
                         'title'      => 'Kryss-salg-produkter',
                     ],
                     'add-btn'           => 'Legg til',
+                    'add-type-btn'      => 'Legg til assosiasjonstype',
                     'delete'            => 'Slett',
                     'empty-info'        => 'Legg til :type produkter samtidig.',
                     'empty-title'       => 'Legg til produkt',
                     'image-placeholder' => 'Produktbilde',
+                    'no-types-info'     => 'Bruk «Legg til assosiasjonstype» for å knytte dette produktet til en assosiasjonstype.',
+                    'no-types-title'    => 'Ingen assosiasjoner lagt til',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
@@ -1003,8 +1006,12 @@ return [
             'unknown-fields'    => 'Assosiasjonstype-felt med kode ":fields" ble ikke funnet',
 
             'create' => [
-                'title'    => 'Opprett assosiasjonstype',
-                'save-btn' => 'Lagre assosiasjonstype',
+                'title'      => 'Opprett assosiasjonstype',
+                'name'       => 'Navn',
+                'enter-name' => 'Skriv inn navn',
+                'code'       => 'Kode',
+                'enter-code' => 'Skriv inn kode',
+                'save-btn'   => 'Lagre assosiasjonstype',
             ],
 
             'edit' => [
@@ -2328,6 +2335,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Legg til',
+                'empty-info'         => 'Prøv et annet søk.',
+                'empty-title'        => 'Ingen assosiasjonstyper funnet',
+                'search-placeholder' => 'Søk etter navn eller kode',
+                'title'              => 'Legg til assosiasjonstype',
+            ],
+        ],
         'pagination' => [
             'page' => 'Side',
         ],

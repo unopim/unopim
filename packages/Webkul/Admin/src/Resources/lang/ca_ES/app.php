@@ -280,10 +280,13 @@ return [
                         'title'      => 'Productes de Venda Creuada',
                     ],
                     'add-btn'           => 'Afegir',
+                    'add-type-btn'      => 'Afegir Tipus d\'Associació',
                     'delete'            => 'Eliminar',
                     'empty-info'        => 'Afegiu :type productes a l\'instant.',
                     'empty-title'       => 'Afegir Producte',
                     'image-placeholder' => 'Imatge del Producte',
+                    'no-types-info'     => 'Utilitza «Afegir Tipus d\'Associació» per enllaçar aquest producte sota un tipus d\'associació.',
+                    'no-types-title'    => 'No s\'ha afegit cap associació',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associacions',
                 ],
@@ -1002,8 +1005,12 @@ return [
             'unknown-fields'    => 'No s\'ha pogut trobar el camp de tipus d\'associació amb codi ":fields"',
 
             'create' => [
-                'title'    => 'Crear tipus d\'associació',
-                'save-btn' => 'Desar tipus d\'associació',
+                'title'      => 'Crear tipus d\'associació',
+                'name'       => 'Nom',
+                'enter-name' => 'Introdueix el nom',
+                'code'       => 'Codi',
+                'enter-code' => 'Introduïu el Codi',
+                'save-btn'   => 'Desar tipus d\'associació',
             ],
 
             'edit' => [
@@ -2325,6 +2332,15 @@ return [
         ],
     ],
     'components' => [
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Afegir',
+                'empty-info'         => 'Prova una cerca diferent.',
+                'empty-title'        => 'No s\'ha trobat cap tipus d\'associació',
+                'search-placeholder' => 'Cerca per nom o codi',
+                'title'              => 'Afegir Tipus d\'Associació',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pàgina',
         ],

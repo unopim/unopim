@@ -14,6 +14,9 @@
 - Component-first UI: use `x-admin::form.control-group[.label|.control|.error]` and existing components; no raw HTML form controls.
 - No hardcoded user-facing text: `trans('admin::…')`, add `en_US` first, propagate to ALL 33 locales, keep `:placeholders` untranslated.
 - Design tokens from existing admin theme only: card = `p-4 bg-white dark:bg-cherry-900 rounded box-shadow`; title = `text-base font-semibold text-gray-800 dark:text-white`; primary = cherry (`cherry-600/700`, `text-violet-700`); dark mode everywhere. No mockup-specific hex, no new font.
+- **Icons are UnoPim icon-font CLASSES only (e.g. `icon-folder`, `icon-product`, `icon-information`) — NO emoji, no custom SVG.** `section-card` and the workspace chrome render the `$icon`/registered icon as a CSS class (`<span class="{{ $icon }}">` / `:class="activeIcon"`), never as raw HTML/emoji.
+- **Vue inline expressions that embed `@json(...)` must use SINGLE-quoted attributes** (`v-text='… @json(…)'`) so `@json`'s double quotes don't terminate the attribute — a double-quoted `v-text="… @json(…)"` produces a Vue compile `SyntaxError` that breaks the whole page mount.
+- **No global `Vue` object exists.** app.js imports `createApp` from `vue/dist/vue.esm-bundler` and only globalizes `window.app`. To build a reactive store in an inline blade script, use `window.Vue.reactive(...)` (app.js exposes `window.Vue = { reactive, ref, computed, watch }` alongside `window.DOMPurify`). Never write bare `Vue.reactive`. Guard template store refs with optional chaining (`$productWorkspace?.open(...)`) so a load-order gap can't hard-crash the page.
 - Fields must remain DOM descendants of the product `<x-admin::form>`. Never `<Teleport>` section bodies out of the form.
 - All sections mounted with `v-show` (never `v-if`) so tab-switching never drops unsaved edits.
 - Supported locales (33): ar_AE ca_ES da_DK de_DE en_AU en_GB en_NZ en_US es_ES es_VE fi_FI fr_FR hi_IN hr_HR id_ID it_IT ja_JP ko_KR mn_MN nl_NL no_NO pl_PL pt_BR pt_PT ro_RO ru_RU sv_SE tl_PH tr_TR uk_UA vi_VN zh_CN zh_TW.
@@ -333,13 +336,13 @@ Create `packages/Webkul/Admin/src/Resources/views/components/product/workspace-p
     </div>
 </div>
 
-@pushOnce('scripts')
+@pushOnce('scripts', 'product-workspace-panel-' . $id)
     <script type="module">
         (function register() {
             const store = app.config.globalProperties.$productWorkspace;
             if (! store) { window.requestAnimationFrame(register); return; }
             store.register({
-                id: '{{ $id }}',
+                id: @json($id),
                 title: @json($title),
                 subtitle: @json($subtitle),
                 icon: @json($icon),
@@ -350,7 +353,7 @@ Create `packages/Webkul/Admin/src/Resources/views/components/product/workspace-p
 @endPushOnce
 ```
 
-Note: `@pushOnce` here dedupes only if the exact same partial include is repeated; each section uses a distinct `id`, so include with a unique push key by wrapping — handled by callers using `@push` is unnecessary because each section's script differs. (Callers in Tasks 4–5 include this component once per section.)
+Note: `@pushOnce('scripts', <key>)` MUST pass a per-`$id` key. A bare `@pushOnce('scripts')` dedupes by a uuid baked in at COMPILE time — one cached compiled file is reused for every section, so all instances share the same key and only the first section's registration script is emitted. The per-`$id` key makes each section's push distinct; the store's `register()` is idempotent by id as a second safety net.
 
 - [ ] **Step 3: Add `v-cloak` style if missing**
 
@@ -600,16 +603,17 @@ with:
 <x-admin::product.section-card
     id="associations"
     :title="trans('admin::app.catalog.products.edit.links.title')"
-    icon="🔗"
+    icon="icon-product"
 >
-    <span v-text="$productWorkspace.getCount('associations') + ' ' + @json(trans('admin::app.catalog.products.edit.workspace.associations.linked'))"></span>
+    {{-- v-text attribute is SINGLE-quoted so @json's double quotes don't collide --}}
+    <span v-text='$productWorkspace.getCount("associations") + " " + @json(trans("admin::app.catalog.products.edit.workspace.associations.linked"))'></span>
 </x-admin::product.section-card>
 
 <x-admin::product.workspace-panel
     id="associations"
     :title="trans('admin::app.catalog.products.edit.links.title')"
     :subtitle="trans('admin::app.catalog.products.edit.workspace.associations.subtitle')"
-    icon="🔗"
+    icon="icon-product"
     :order="20"
 >
     <v-product-links :association-types='@json($associationTypes)'></v-product-links>
