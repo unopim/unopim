@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\ProductPassport\Console\InstallPassportAttributesCommand;
-use Webkul\ProductPassport\DataGrids\Catalog\PassportProductDataGrid;
 use Webkul\ProductPassport\Http\Controllers\PublicationController;
 use Webkul\ProductPassport\Listeners\AutoPublishPassport;
 use Webkul\ProductPassport\Listeners\ValidateProductGtin;
@@ -17,11 +16,22 @@ use Webkul\ProductPassport\View\Composers\PassportPanelComposer;
 class ProductPassportServiceProvider extends ServiceProvider
 {
     /**
-     * Bound (not singleton) so each product-grid resolution is fresh and request-scoped.
+     * Decorates the resolved product grid instead of rebinding it, so any other
+     * package that swaps the concrete ProductDataGrid keeps its own behaviour.
      */
     public function register(): void
     {
-        $this->app->bind(ProductDataGrid::class, PassportProductDataGrid::class);
+        $this->app->extend(ProductDataGrid::class, function (ProductDataGrid $dataGrid): ProductDataGrid {
+            if (PublicationController::featureEnabled() && bouncer()->hasPermission('catalog.passport.publish')) {
+                $dataGrid->addMassAction([
+                    'title'  => trans('passport::app.publications.mass-publish.action'),
+                    'url'    => route('admin.catalog.passports.mass_publish'),
+                    'method' => 'POST',
+                ]);
+            }
+
+            return $dataGrid;
+        });
     }
 
     /**

@@ -96,20 +96,32 @@ class Handler extends ExceptionHandler
     private function handleHttpException(): void
     {
         $this->renderable(function (HttpException $exception, Request $request) {
-            $errorCode = in_array($exception->getStatusCode(), self::RENDERABLE_STATUS_CODES, true)
-                ? $exception->getStatusCode()
+            $status = $exception->getStatusCode();
+
+            /**
+             * Only the listed codes have error-page copy; anything else borrows the
+             * generic 500 wording. The response still carries the thrown status, so
+             * an `abort(422, ...)` stays a client error instead of reading as a crash.
+             */
+            $errorCode = in_array($status, self::RENDERABLE_STATUS_CODES, true)
+                ? $status
                 : JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
 
             $headers = $exception->getHeaders();
 
             if ($request->wantsJson() || $this->isApiRequest($request)) {
+                $message = $exception->getMessage();
+
                 return response()->json([
                     'error'       => trans("admin::app.errors.{$errorCode}.title"),
-                    'description' => trans("admin::app.errors.{$errorCode}.description"),
-                ], $errorCode, $headers);
+                    // Only 422 aborts carry a translated, user-facing reason; other statuses keep the generic copy.
+                    'description' => $status === JsonResponse::HTTP_UNPROCESSABLE_ENTITY && $message !== ''
+                        ? $message
+                        : trans("admin::app.errors.{$errorCode}.description"),
+                ], $status, $headers);
             }
 
-            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $errorCode, $headers);
+            return response()->view('admin::errors.index', ['errorCode' => $errorCode], $status, $headers);
         });
     }
 

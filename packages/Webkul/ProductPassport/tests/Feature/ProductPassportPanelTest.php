@@ -3,23 +3,28 @@
 use Webkul\Publication\Models\Publication;
 
 it('renders the panel into the product edit page for an authorised admin', function (): void {
-    [$product] = $this->productWithSecretAndDppAttributes();
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
+
+    $this->enablePassportPublishing($context->channel->code);
 
     $this->loginWithPermissions('all');
 
-    $this->get(route('admin.catalog.products.edit', $product->id))
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code]))
         ->assertOk()
-        ->assertSee(trans('passport::app.catalog.products.edit.passport.title'));
+        // The panel id, not its heading: the fixture's attribute group carries the same label.
+        ->assertSee('id="passport-panel"', false);
 });
 
 it('does not render the panel for an admin without view permission', function (): void {
-    [$product] = $this->productWithSecretAndDppAttributes();
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
 
-    $this->loginWithPermissions('custom', ['dashboard']);
+    $this->enablePassportPublishing($context->channel->code);
 
-    $this->get(route('admin.catalog.products.edit', $product->id))
+    $this->loginWithPermissions('custom', ['catalog.products', 'catalog.products.edit']);
+
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code]))
         ->assertOk()
-        ->assertDontSee(trans('passport::app.catalog.products.edit.passport.title'));
+        ->assertDontSee('id="passport-panel"', false);
 });
 
 it('shows per-locale passport status with missing field counts', function (): void {
@@ -27,7 +32,7 @@ it('shows per-locale passport status with missing field counts', function (): vo
 
     $this->loginWithPermissions('all');
 
-    $this->getJson(route('admin.catalog.products.passport.show', $product))
+    $this->getJson(route('admin.catalog.products.passport.show', ['product' => $product, 'channel' => $channel->code]))
         ->assertOk()
         ->assertJsonFragment(['locale_code' => $complete->code])
         ->assertJsonFragment(['locale_code' => $incomplete->code]);
