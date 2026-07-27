@@ -258,16 +258,18 @@ class ImportController extends Controller
         $jobTrackInstance = null;
 
         try {
-            // Retrieve the import instance or fail with a 404
             $import = $this->jobInstancesRepository->findOrFail($id);
 
-            // Get the authenticated user's ID
+            if (empty($import->file_path)) {
+                return redirect()
+                    ->route('admin.settings.data_transfer.imports.import-view', $import->id)
+                    ->with('error', trans('admin::app.settings.data-transfer.imports.rerun-no-file'));
+            }
+
             $userId = auth()->guard('admin')->user()->id;
 
-            // Dispatch an event before the import process starts
             Event::dispatch('data_transfer.imports.import.now.before', $import);
 
-            // Create a job track instance
             $jobTrackInstance = $this->jobTrackRepository->create([
                 'type'                  => 'import',
                 'state'                 => Import::STATE_PENDING,
@@ -284,13 +286,10 @@ class ImportController extends Controller
                 'action'                => $import->action,
             ]);
 
-            // Dispatch the import job
             ImportTrackBatch::dispatch($jobTrackInstance);
 
-            // Redirect to the tracker view
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
         } catch (\Throwable $e) {
-            // Log the error and redirect with an error message
             \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
             $batchId = $jobTrackInstance?->id ?? $id;

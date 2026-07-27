@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => '无法启动导入流程，请重试。',
+                'rerun-no-file'     => '此任务没有导入文件，因此无法重新运行。',
                 'create'            => [
                     'code'                => '代码',
                     'action'              => '行动',

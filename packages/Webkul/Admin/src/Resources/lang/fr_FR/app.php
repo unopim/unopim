@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Échec du démarrage du processus d\'importation. Veuillez réessayer.',
+                'rerun-no-file'     => 'Cette tâche n\'a pas de fichier d\'importation, elle ne peut donc pas être relancée.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Action',

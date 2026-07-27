@@ -1360,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Het importproces kon niet worden gestart. Probeer het opnieuw.',
+                'rerun-no-file'     => 'Deze taak heeft geen importbestand en kan daarom niet opnieuw worden uitgevoerd.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Actie',

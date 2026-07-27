@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'İçe aktarma işlemi başlatılamadı. Lütfen tekrar deneyin.',
+                'rerun-no-file'     => 'Bu işin bir içe aktarma dosyası yok, bu nedenle yeniden çalıştırılamaz.',
                 'create'            => [
                     'code'                => 'Kod',
                     'action'              => 'Eylem',

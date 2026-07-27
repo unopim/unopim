@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Gagal memulai proses impor. Silakan coba lagi.',
+                'rerun-no-file'     => 'Pekerjaan ini tidak memiliki file impor, sehingga tidak dapat dijalankan ulang.',
                 'create'            => [
                     'code'                => 'Kode',
                     'action'              => 'Tindakan',

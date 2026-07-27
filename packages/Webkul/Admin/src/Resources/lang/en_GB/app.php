@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Failed to start the import process. Please try again.',
+                'rerun-no-file'     => 'This job has no import file, so it cannot be re-run.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Action',

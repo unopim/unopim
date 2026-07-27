@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Không thể bắt đầu quá trình nhập. Vui lòng thử lại.',
+                'rerun-no-file'     => 'Công việc này không có tệp nhập, vì vậy không thể chạy lại.',
                 'create'            => [
                     'code'                => 'Mã',
                     'action'              => 'Hành động',

@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => '無法啟動匯入程序，請重試。',
+                'rerun-no-file'     => '此工作沒有匯入檔案，因此無法重新執行。',
                 'create'            => [
                     'code'                => '代碼',
                     'action'              => '操作',

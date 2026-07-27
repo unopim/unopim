@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'No s\'ha pogut iniciar el procés d\'importació. Torneu-ho a provar.',
+                'rerun-no-file'     => 'Aquesta tasca no té cap fitxer d\'importació, per la qual cosa no es pot tornar a executar.',
                 'create'            => [
                     'code'                => 'Codi',
                     'action'              => 'Acció',

@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Impossibile avviare il processo di importazione. Riprova.',
+                'rerun-no-file'     => 'Questo processo non ha un file di importazione, quindi non può essere rieseguito.',
                 'create'            => [
                     'code'                => 'Codice',
                     'action'              => 'Azione',

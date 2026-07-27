@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Tuontiprosessin käynnistäminen epäonnistui. Yritä uudelleen.',
+                'rerun-no-file'     => 'Tällä työllä ei ole tuontitiedostoa, joten sitä ei voida ajaa uudelleen.',
                 'create'            => [
                     'code'                => 'Koodi',
                     'action'              => 'Toiminto',

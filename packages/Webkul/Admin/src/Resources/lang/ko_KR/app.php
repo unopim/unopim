@@ -1360,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => '가져오기 프로세스를 시작하지 못했습니다. 다시 시도해 주세요.',
+                'rerun-no-file'     => '이 작업에는 가져오기 파일이 없으므로 다시 실행할 수 없습니다.',
                 'create'            => [
                     'code'                => '코드',
                     'action'              => '작업',

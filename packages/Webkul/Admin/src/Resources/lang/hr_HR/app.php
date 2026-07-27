@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Pokretanje procesa uvoza nije uspjelo. Pokušajte ponovno.',
+                'rerun-no-file'     => 'Ovaj posao nema datoteku za uvoz, stoga se ne može ponovno pokrenuti.',
                 'create'            => [
                     'code'                => 'Kod',
                     'action'              => 'Akcija',

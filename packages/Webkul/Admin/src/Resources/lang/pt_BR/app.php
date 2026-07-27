@@ -1360,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Falha ao iniciar o processo de importação. Tente novamente.',
+                'rerun-no-file'     => 'Este trabalho não possui arquivo de importação, portanto não pode ser executado novamente.',
                 'create'            => [
                     'code'                => 'Código',
                     'action'              => 'Ação',

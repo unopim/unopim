@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Hindi masimulan ang proseso ng pag-import. Pakisubukan muli.',
+                'rerun-no-file'     => 'Ang trabahong ito ay walang import file, kaya hindi ito maaaring i-rerun.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Aksyon',

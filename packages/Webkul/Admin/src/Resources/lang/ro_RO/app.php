@@ -1360,6 +1360,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Procesul de import nu a putut fi pornit. Vă rugăm să încercați din nou.',
+                'rerun-no-file'     => 'Această operațiune nu are un fișier de import, deci nu poate fi reluată.',
                 'create'            => [
                     'code'                => 'Cod',
                     'action'              => 'Acțiune',

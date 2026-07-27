@@ -1359,6 +1359,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Importen kunne ikke startes. Prøv igen.',
+                'rerun-no-file'     => 'Dette job har ingen importfil, så det kan ikke køres igen.',
                 'create'            => [
                     'code'                => 'Kode',
                     'action'              => 'Handling',
