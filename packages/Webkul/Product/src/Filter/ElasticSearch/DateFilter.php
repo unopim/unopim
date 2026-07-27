@@ -52,7 +52,7 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::RANGE:
@@ -66,24 +66,24 @@ class DateFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::LESS_THAN:
             case FilterOperators::GREATER_THAN:
-                $this->queryBuilder::where([
+                $this->queryBuilder->where([
                     'range' => [$attributePath => [$operator->value => current((array) $value)]],
                 ]);
 
                 break;
 
             case FilterOperators::IS_EMPTY:
-                $this->queryBuilder::whereNot(['exists' => ['field' => $attributePath]]);
+                $this->queryBuilder->whereNot(['exists' => ['field' => $attributePath]]);
 
                 break;
 
             case FilterOperators::IS_NOT_EMPTY:
-                $this->queryBuilder::where(['exists' => ['field' => $attributePath]]);
+                $this->queryBuilder->where(['exists' => ['field' => $attributePath]]);
 
                 break;
         }

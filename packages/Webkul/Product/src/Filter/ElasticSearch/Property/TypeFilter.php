@@ -43,7 +43,7 @@ class TypeFilter extends AbstractPropertyFilter
                     $property => $value,
                 ],
             ];
-            $this->queryBuilder::where($clause);
+            $this->queryBuilder->where($clause);
         }
 
         return $this;

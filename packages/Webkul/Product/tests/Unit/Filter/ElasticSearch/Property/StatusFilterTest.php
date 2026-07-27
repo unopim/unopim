@@ -1,24 +1,8 @@
 <?php
 
-use Webkul\ElasticSearch\ElasticSearchQuery as RealElasticSearchQuery;
+use Webkul\ElasticSearch\ElasticSearchQuery;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 use Webkul\Product\Filter\ElasticSearch\Property\StatusFilter;
-
-/**
- * Rebind the `elastic-search-query` container singleton to a fresh instance
- * before every test and return it, so each case inspects an isolated query
- * state. Production wires the singleton up the same way — see
- * ElasticSearchServiceProvider::registerFacades.
- */
-function freshElasticQuery(): RealElasticSearchQuery
-{
-    $instance = new RealElasticSearchQuery;
-
-    app()->instance('elastic-search-query', $instance);
-
-    return $instance;
-}
 
 beforeEach(function () {
     config(['elasticsearch.enabled' => true]);
@@ -27,10 +11,10 @@ beforeEach(function () {
 describe('StatusFilter coerces filter values to booleans for ES8 strict parsing', function () {
 
     it('coerces status=1 to boolean true in the terms clause', function () {
-        $query = freshElasticQuery();
+        $query = new ElasticSearchQuery;
 
         $filter = new StatusFilter;
-        $filter->setQueryManager(new ElasticSearchQuery);
+        $filter->setQueryManager($query);
 
         $filter->applyPropertyFilter('status', FilterOperators::IN, ['1']);
 
@@ -42,10 +26,10 @@ describe('StatusFilter coerces filter values to booleans for ES8 strict parsing'
     });
 
     it('coerces status=0 to boolean false in the terms clause', function () {
-        $query = freshElasticQuery();
+        $query = new ElasticSearchQuery;
 
         $filter = new StatusFilter;
-        $filter->setQueryManager(new ElasticSearchQuery);
+        $filter->setQueryManager($query);
 
         $filter->applyPropertyFilter('status', FilterOperators::IN, ['0']);
 
@@ -57,10 +41,10 @@ describe('StatusFilter coerces filter values to booleans for ES8 strict parsing'
     });
 
     it('coerces mixed "1"/"0" values to [true, false]', function () {
-        $query = freshElasticQuery();
+        $query = new ElasticSearchQuery;
 
         $filter = new StatusFilter;
-        $filter->setQueryManager(new ElasticSearchQuery);
+        $filter->setQueryManager($query);
 
         $filter->applyPropertyFilter('status', FilterOperators::IN, ['1', '0']);
 
@@ -70,10 +54,10 @@ describe('StatusFilter coerces filter values to booleans for ES8 strict parsing'
     });
 
     it('passes through native booleans unchanged', function () {
-        $query = freshElasticQuery();
+        $query = new ElasticSearchQuery;
 
         $filter = new StatusFilter;
-        $filter->setQueryManager(new ElasticSearchQuery);
+        $filter->setQueryManager($query);
 
         $filter->applyPropertyFilter('status', FilterOperators::IN, [true, false]);
 

@@ -50,7 +50,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::CONTAINS:
@@ -78,7 +78,7 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::WILDCARD:
@@ -96,30 +96,30 @@ class TextFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::EQUAL:
-                $this->queryBuilder::where([
+                $this->queryBuilder->where([
                     'term' => [$attributePath.'.keyword' => current((array) $value)],
                 ]);
 
                 break;
 
             case FilterOperators::NOT_IN:
-                $this->queryBuilder::whereNot([
+                $this->queryBuilder->whereNot([
                     'terms' => [$attributePath.'.keyword' => (array) $value],
                 ]);
 
                 break;
 
             case FilterOperators::IS_EMPTY:
-                $this->queryBuilder::whereNot(['exists' => ['field' => $attributePath]]);
+                $this->queryBuilder->whereNot(['exists' => ['field' => $attributePath]]);
 
                 break;
 
             case FilterOperators::IS_NOT_EMPTY:
-                $this->queryBuilder::where(['exists' => ['field' => $attributePath]]);
+                $this->queryBuilder->where(['exists' => ['field' => $attributePath]]);
 
                 break;
         }

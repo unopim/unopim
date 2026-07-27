@@ -1,10 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Facade;
 use Webkul\Attribute\Models\Attribute;
-use Webkul\ElasticSearch\ElasticSearchQuery as ElasticSearchQueryAccumulator;
+use Webkul\ElasticSearch\ElasticSearchQuery;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 use Webkul\Product\Filter\ElasticSearch\BooleanFilter;
 use Webkul\Product\Filter\ElasticSearch\DateFilter;
 use Webkul\Product\Filter\ElasticSearch\DateTimeFilter;
@@ -14,10 +12,6 @@ use Webkul\Product\Filter\ElasticSearch\TextFilter;
 
 beforeEach(function () {
     config(['elasticsearch.enabled' => true]);
-
-    app()->instance('elastic-search-query', new ElasticSearchQueryAccumulator);
-
-    Facade::clearResolvedInstance('elastic-search-query');
 });
 
 function esConditionAttribute(string $code, string $type): Attribute
@@ -38,11 +32,13 @@ function esConditionAttribute(string $code, string $type): Attribute
  */
 function applyElasticSearchFilter($filter, Attribute $attribute, FilterOperators $operator, $value): array
 {
-    $filter->setQueryManager(new ElasticSearchQuery);
+    $query = new ElasticSearchQuery;
+
+    $filter->setQueryManager($query);
 
     $filter->addAttributeFilter($attribute, $operator, $value, 'en_US', 'default');
 
-    return ElasticSearchQuery::build();
+    return $query->build();
 }
 
 /**

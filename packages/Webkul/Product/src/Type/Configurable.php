@@ -167,6 +167,8 @@ class Configurable extends AbstractType
 
         $previousVariantIds = $product->variants->pluck('id');
 
+        $this->product->loadMissing('variantStructure.placements.attribute');
+
         foreach ($data['variants'] as $variantId => $variantData) {
             if (Str::contains($variantId, 'variant_')) {
                 $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
@@ -212,6 +214,8 @@ class Configurable extends AbstractType
             ->with('variants')
             ->get()
             ->keyBy('id');
+
+        $this->product->loadMissing('variantStructure.placements.attribute');
 
         foreach ($data['variant_groups'] as $groupKey => $groupData) {
             if (Str::contains($groupKey, 'group_')) {
@@ -409,10 +413,7 @@ class Configurable extends AbstractType
 
         $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
 
-        if (
-            ($configurable = $this->resolveConfigurableAncestor($variant))
-            && $structure = $configurable->variantStructure
-        ) {
+        if ($structure = $this->product->variantStructure) {
             $this->applyVariantLevelAttributes(
                 $variantValues,
                 $structure,
@@ -457,24 +458,6 @@ class Configurable extends AbstractType
 
             $variantValues[self::COMMON_VALUES_KEY][$attributeCode] = $suppliedCommonValues[$attributeCode];
         }
-    }
-
-    /**
-     * Walk up from a leaf variant to its owning configurable: a 2-level
-     * leaf's parent is a `variant_group` whose parent is the configurable; a
-     * 1-level leaf's parent IS the configurable. Returns null for a broken
-     * or legacy chain (no ancestor found).
-     */
-    protected function resolveConfigurableAncestor(Product $variant): ?Product
-    {
-        $ancestor = $variant->parent;
-        $guard = 0;
-
-        while ($ancestor && $ancestor->type !== 'configurable' && $guard++ < 10) {
-            $ancestor = $ancestor->parent;
-        }
-
-        return $ancestor;
     }
 
     /**

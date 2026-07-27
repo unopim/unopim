@@ -4,11 +4,7 @@ use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\User\Models\Admin;
 
-/*
- * A persistent queue worker keeps the admin guard populated between jobs. The
- * import job must run as its own batch owner and must not inherit — or leave
- * behind — another admin's identity.
- */
+// A persistent worker keeps the admin guard populated between jobs, so the import must not inherit another identity.
 it('does not leak the acting admin identity across import jobs', function () {
     $adminA = Admin::factory()->create();
     $adminB = Admin::factory()->create();
@@ -21,8 +17,7 @@ it('does not leak the acting admin identity across import jobs', function () {
     try {
         (new ImportTrackBatch($jobTrack))->handle();
     } catch (Throwable) {
-        // The import pipeline may abort on the factory's minimal batch; the
-        // identity handling (set own user, clear on exit) is what this asserts.
+        // May abort on the factory's minimal batch; only the identity clear-on-exit is under test.
     }
 
     expect(auth()->guard('admin')->user()?->id)->not->toBe($adminA->id);

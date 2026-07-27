@@ -3,7 +3,6 @@
 namespace Webkul\ElasticSearch;
 
 use Webkul\ElasticSearch\Contracts\QueryBuilder as QueryBuilderContract;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 
 abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
 {
@@ -12,9 +11,34 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
 
     protected array $rawFilters = [];
 
+    protected ElasticSearchQuery $elasticSearchQuery;
+
+    public function __construct(?ElasticSearchQuery $elasticSearchQuery = null)
+    {
+        $this->elasticSearchQuery = $elasticSearchQuery ?? new ElasticSearchQuery;
+    }
+
     abstract public function prepareQueryBuilder();
 
     abstract public function applyFilter($property, $operator, $value, array $context = []);
+
+    /**
+     * Build the Elasticsearch query owned by this operation.
+     */
+    public function build(array $source = []): array
+    {
+        return $this->elasticSearchQuery->build($source);
+    }
+
+    /**
+     * Add sorting to the Elasticsearch query owned by this operation.
+     */
+    public function orderBy(array $sort): static
+    {
+        $this->elasticSearchQuery->orderBy($sort);
+
+        return $this;
+    }
 
     /**
      * {@inheritdoc}
@@ -59,7 +83,7 @@ abstract class AbstractFilterableQueryBuilder implements QueryBuilderContract
      */
     protected function applyPropertyFilter($filter, $property, $operator, $value, array $context)
     {
-        $filter->setQueryManager(new ElasticSearchQuery);
+        $filter->setQueryManager($this->elasticSearchQuery);
 
         if (! $filter->isOperatorAllowed($operator)) {
             throw new \InvalidArgumentException(

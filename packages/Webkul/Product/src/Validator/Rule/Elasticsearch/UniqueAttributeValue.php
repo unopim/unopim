@@ -4,7 +4,6 @@ namespace Webkul\Product\Validator\Rule\Elasticsearch;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 use Webkul\Product\Builders\ElasticProductQueryBuilder;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 
@@ -30,7 +29,7 @@ class UniqueAttributeValue implements ValidationRule
             $queryBuilder->applyFilter('product_id', FilterOperators::NOT_EQUAL, $this->productId);
         }
 
-        $esQuery = ElasticSearchQuery::build();
+        $esQuery = $queryBuilder->build();
 
         $results = ResultCursorFactory::createCursor($esQuery, ['pagination' => ['per_page' => 1]]);
 

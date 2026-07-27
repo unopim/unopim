@@ -45,7 +45,7 @@ class IdFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::NOT_IN:
@@ -55,7 +55,7 @@ class IdFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::whereNot($clause);
+                $this->queryBuilder->whereNot($clause);
                 break;
 
             case FilterOperators::NOT_EQUAL:
@@ -65,7 +65,7 @@ class IdFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::whereNot($clause);
+                $this->queryBuilder->whereNot($clause);
                 break;
         }
 

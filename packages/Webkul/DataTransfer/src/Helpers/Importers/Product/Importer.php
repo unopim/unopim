@@ -1501,6 +1501,55 @@ class Importer extends AbstractImporter
 
                 $this->createdItemsCount++;
             }
+
+            $this->bulkInsertSuperAttributes($insertProducts);
+        }
+    }
+
+    /**
+     * Persist the configurable → super-attribute pivot for freshly inserted parents.
+     *
+     * The bulk product insert only writes the base `products` columns, so the
+     * variant axes prepared in prepareConfigurableAttributes() must be attached
+     * to `product_super_attributes` here or configurable imports lose their axes.
+     */
+    protected function bulkInsertSuperAttributes(array $insertProducts): void
+    {
+        $pivotRows = [];
+
+        foreach ($insertProducts as $productData) {
+            if (empty($productData['super_attributes'])) {
+                continue;
+            }
+
+            $productId = $this->skuStorage->get($productData['sku'])['id'] ?? null;
+
+            if (! $productId) {
+                continue;
+            }
+
+            foreach ($productData['super_attributes'] as $attributeCode) {
+                $attributeId = ($this->allAttributesByCode[$attributeCode] ?? null)?->id;
+
+                if (! $attributeId) {
+                    continue;
+                }
+
+                $pivotRows[] = [
+                    'product_id'   => $productId,
+                    'attribute_id' => $attributeId,
+                ];
+            }
+        }
+
+        if ($pivotRows === []) {
+            return;
+        }
+
+        $chunkSize = (int) config('import.bulk_chunk_size', 500);
+
+        foreach (array_chunk($pivotRows, $chunkSize) as $chunk) {
+            DB::table('product_super_attributes')->insert($chunk);
         }
     }
 

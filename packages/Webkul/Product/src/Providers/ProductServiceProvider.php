@@ -96,9 +96,7 @@ class ProductServiceProvider extends ServiceProvider
      */
     protected function registerBindings(): void
     {
-        // Bound (fresh per resolve), not scoped: the resolver's per-product memo
-        // must not survive a mutation within the same request (read-after-write in
-        // variant save/index flows), so a fresh instance per call is intentional.
+        // Bound (fresh per resolve), not scoped: the per-product memo must not survive a same-request mutation.
         $this->app->bind(VariantValueResolverContract::class, VariantValueResolver::class);
         $this->app->bind(VariantPlacementSuggesterContract::class, VariantPlacementSuggester::class);
         $this->app->bind(VariantStructurePlannerContract::class, VariantStructurePlanner::class);
@@ -111,6 +109,8 @@ class ProductServiceProvider extends ServiceProvider
     public function registerConfig(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_types.php', 'product_types');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/products.php', 'products');
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/suggesters.php', 'suggesters');
 
@@ -153,7 +153,6 @@ class ProductServiceProvider extends ServiceProvider
 
     protected function registerTags(): void
     {
-        // Register elasticSearch attribute type filters
         $this->app->tag([
             ElasticSearchTextFilter::class,
             ElasticSearchBooleanFilter::class,
@@ -164,7 +163,6 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchDefaultFilter::class,
         ], 'unopim.elasticsearch.attribute.filters');
 
-        // Register elasticSearch product Properties filters
         $this->app->tag([
             ElasticSearchTypeFilter::class,
             ElasticSearchStatusFilter::class,
@@ -177,7 +175,6 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchCategoryFilter::class,
         ], 'unopim.elasticsearch.product.property.filters');
 
-        // Register database attribute type filters
         $this->app->tag([
             DatabaseTextFilter::class,
             DatabaseBooleanFilter::class,
@@ -185,7 +182,6 @@ class ProductServiceProvider extends ServiceProvider
             DatabasePriceFilter::class,
         ], 'unopim.database.attribute.filters');
 
-        // Register database product Properties filters
         $this->app->tag([
             DatabaseFamilyFilter::class,
             DatabaseIdFilter::class,
