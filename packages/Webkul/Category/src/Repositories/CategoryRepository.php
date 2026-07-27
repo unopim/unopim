@@ -186,9 +186,10 @@ class CategoryRepository extends Repository
      * paginated listings instead of walking the whole tree.
      *
      * @param  int[]  $ids
+     * @param  string|null  $locale  Locale the names are resolved in; the requested one when omitted.
      * @return array<int, string> Map of category id => breadcrumb path.
      */
-    public function getBreadcrumbsForIds(array $ids): array
+    public function getBreadcrumbsForIds(array $ids, ?string $locale = null): array
     {
         $ids = array_values(array_unique(array_filter(array_map(intval(...), $ids))));
 
@@ -203,10 +204,67 @@ class CategoryRepository extends Repository
             ->mapWithKeys(fn ($category): array => [
                 (int) $category->id => $category->ancestors
                     ->push($category)
-                    ->map(fn ($node) => $node->name)
+                    ->map(fn ($node) => $this->resolveName($node, $locale))
                     ->implode(' / '),
             ])
             ->all();
+    }
+
+    /**
+     * Name of a category in the given locale, falling back to the configured
+     * locale and finally to the code so a path never renders with holes.
+     */
+    protected function resolveName(Category $category, ?string $locale = null): string
+    {
+        $names = $category->{self::ADDITIONAL_VALUES_KEY}[self::LOCALE_VALUES_KEY] ?? [];
+
+        return $names[$locale ?? core()->getRequestedLocaleCode()]['name']
+            ?? $names[config('app.fallback_locale')]['name']
+            ?? '['.$category->code.']';
+    }
+
+    /**
+     * Nodes needed to reveal the given categories inside a lazily loaded tree:
+     * the categories themselves plus every ancestor, deduplicated.
+     *
+     * Ancestors are resolved one level at a time by primary key, so the query
+     * count follows tree depth rather than the number of selected categories,
+     * and no sibling is loaded — a level with thousands of children stays cheap
+     * because the rest of it is fetched on demand when the branch is expanded.
+     *
+     * @param  string[]  $codes
+     * @return \Kalnoy\Nestedset\Collection<int, \Webkul\Category\Models\Category>
+     */
+    public function getPathNodes(array $codes)
+    {
+        $columns = ['id', 'code', 'parent_id', '_lft', '_rgt', 'additional_data'];
+
+        $nodes = $this->getModel()
+            ->newQuery()
+            ->whereIn('code', $codes)
+            ->get($columns)
+            ->keyBy('id');
+
+        $pending = $nodes->pluck('parent_id')->filter()->unique()->diff($nodes->keys());
+
+        while ($pending->isNotEmpty()) {
+            $ancestors = $this->getModel()
+                ->newQuery()
+                ->whereIn('id', $pending->all())
+                ->get($columns);
+
+            if ($ancestors->isEmpty()) {
+                break;
+            }
+
+            foreach ($ancestors as $ancestor) {
+                $nodes[$ancestor->id] = $ancestor;
+            }
+
+            $pending = $ancestors->pluck('parent_id')->filter()->unique()->diff($nodes->keys());
+        }
+
+        return $nodes->values();
     }
 
     /**
@@ -237,6 +295,9 @@ class CategoryRepository extends Repository
         return $query->get()->toTree();
     }
 
+    /**
+     * @return array{data: \Illuminate\Database\Eloquent\Collection<int, \Webkul\Category\Models\Category>, page: int, has_more: bool, total: int}
+     */
     public function getChildCategoriesPaginated(int $parentId, int $categoryId = 0, int $page = self::DEFAULT_PAGE, int $limit = self::DEFAULT_PER_PAGE): array
     {
         $page = max($page, self::DEFAULT_PAGE);
@@ -255,7 +316,7 @@ class CategoryRepository extends Repository
             ->get();
 
         return [
-            'data'     => $children->toArray(),
+            'data'     => $children,
             'page'     => $page,
             'has_more' => ($page * $limit) < $total,
             'total'    => $total,

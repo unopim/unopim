@@ -63,6 +63,7 @@
             return {
                 children: this.item[this.categorytree.childrenField] || [],
                 hasFetchedChildren: false,
+                isPartial: !! this.item.partial,
                 showChildren: false,
                 name: this.categorytree.nameField,
                 childrenPage: 0,
@@ -76,7 +77,12 @@
             if (this.children.length > 0) {
                 this.showChildren = true;
 
-                if (this.paginateChildren) {
+                /**
+                 * A partial branch only carries the nodes that had to be revealed --
+                 * the path down to an already selected category -- so the level is
+                 * still fetched in full the first time it is expanded.
+                 */
+                if (this.paginateChildren && ! this.isPartial) {
                     this.hasFetchedChildren = true;
                 }
             }

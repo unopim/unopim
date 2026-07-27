@@ -4,15 +4,18 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\CategoryChildrenForm;
 use Webkul\Admin\Http\Requests\CategoryRequest;
+use Webkul\Admin\Http\Requests\CategorySearchForm;
+use Webkul\Admin\Http\Requests\CategoryTreeForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Http\Resources\Catalog\CategoryTreeResource;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryRequestValidator;
@@ -280,82 +283,61 @@ class CategoryController extends Controller
     }
 
     /**
-     * Get all categories in tree format.
+     * Roots of every category tree, plus the branches that have to be revealed
+     * so the already selected categories are visible without expanding.
+     *
+     * Only the path down to each selection is sent — siblings at every level
+     * are left to the lazy children endpoint, which keeps the payload
+     * proportional to the number of selections rather than to the width of the
+     * tree they sit in.
      */
-    public function tree(Request $request): JsonResponse
+    public function tree(CategoryTreeForm $request): JsonResponse
     {
-        $validated = $request->validate([
-            'locale'     => 'required|string',
-            'selected'   => 'nullable|array',
-            'selected.*' => 'string',
-        ]);
-
-        $selectedCodes = $validated['selected'] ?? [];
-
-        $selectedCategories = $this->categoryRepository->findWhereIn('code', $selectedCodes);
-
-        $allBranches = collect();
-
-        foreach ($selectedCategories as $category) {
-            if (! $category->parent) {
-                continue;
-            }
-
-            $branches = $this->categoryRepository->getTreeBranchToParent($category, false);
-
-            if ($branches && $branches->isNotEmpty()) {
-                $allBranches[] = $branches->first();
-            }
-        }
-
-        $categories = $this->categoryRepository->getRootCategories();
+        $pathNodes = $this->categoryRepository->getPathNodes($request->selectedCodes());
 
         return new JsonResponse([
-            'data'          => $categories,
-            'selected_tree' => $allBranches,
+            'data'          => CategoryTreeResource::collection($this->categoryRepository->getRootCategories())->toArray($request),
+            'selected_tree' => CategoryTreeResource::collection($pathNodes->toTree())->toArray($request),
         ]);
     }
 
     /**
      * Fetch child categories for a given category ID.
      */
-    public function children(): JsonResponse
+    public function children(CategoryChildrenForm $request): JsonResponse
     {
-        if (! bouncer()->hasPermission('catalog.categories')) {
-            abort(403, trans('admin::app.common.unauthorized'));
-        }
+        $parentId = (int) $request->validated('id');
 
-        $parentId = (int) request()->input('id');
+        $categoryId = (int) ($request->validated('category') ?? 0);
 
-        $categoryId = (int) (request()->input('category') ?? 0);
-
-        $this->categoryRepository->findOrFail($parentId);
-
-        if (request()->filled('page')) {
-            return new JsonResponse(
-                $this->categoryRepository->getChildCategoriesPaginated(
-                    $parentId,
-                    $categoryId,
-                    (int) request()->input('page'),
-                    (int) request()->input('limit', CategoryRepository::DEFAULT_PER_PAGE),
-                )
+        if ($request->filled('page')) {
+            $children = $this->categoryRepository->getChildCategoriesPaginated(
+                $parentId,
+                $categoryId,
+                (int) $request->validated('page'),
+                (int) ($request->validated('limit') ?? CategoryRepository::DEFAULT_PER_PAGE),
             );
+
+            return new JsonResponse([
+                ...$children,
+                'data' => CategoryTreeResource::collection($children['data'])->toArray($request),
+            ]);
         }
 
         $childCategories = $this->categoryRepository->getChildCategories($parentId, $categoryId);
 
-        return new JsonResponse($childCategories->toArray());
+        return new JsonResponse(CategoryTreeResource::collection($childCategories)->toArray($request));
     }
 
-    public function search(): JsonResponse
+    /**
+     * Paginated flat search across every tree, each hit carrying its breadcrumb
+     * so identically named categories in different trees stay distinguishable.
+     */
+    public function search(CategorySearchForm $request): JsonResponse
     {
-        if (! bouncer()->hasPermission('catalog.categories')) {
-            abort(403, trans('admin::app.common.unauthorized'));
-        }
+        $locale = $request->validated('locale') ?? core()->getRequestedLocaleCode();
 
-        $locale = preg_replace('/[^A-Za-z_]/', '', (string) (request('locale') ?? core()->getRequestedLocaleCode()));
-
-        $searchQuery = trim((string) request('query', ''));
+        $searchQuery = trim((string) $request->validated('query', ''));
 
         $query = $this->categoryRepository->getModel()->newQuery();
 
@@ -366,14 +348,20 @@ class CategoryController extends Controller
             });
         }
 
-        $page = max(self::DEFAULT_PAGE, (int) request('page', self::DEFAULT_PAGE));
+        $page = max(self::DEFAULT_PAGE, (int) ($request->validated('page') ?? self::DEFAULT_PAGE));
 
         $paginator = $query->defaultOrder()->paginate(self::SEARCH_PER_PAGE, ['*'], 'page', $page);
+
+        $breadcrumbs = $this->categoryRepository->getBreadcrumbsForIds(
+            $paginator->getCollection()->pluck('id')->all(),
+            $locale
+        );
 
         $results = $paginator->getCollection()->map(fn ($category) => [
             'id'    => $category->id,
             'code'  => $category->code,
             'label' => $category->additional_data['locale_specific'][$locale]['name'] ?? '['.$category->code.']',
+            'path'  => $breadcrumbs[(int) $category->id] ?? null,
         ])->values();
 
         return new JsonResponse([
