@@ -4,9 +4,10 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Webkul\Category\Repositories\CategoryFieldRepository;
+use Webkul\Category\Rules\CategoryFieldValidationRules;
 use Webkul\Category\Rules\FieldTypes;
 use Webkul\Category\Rules\NotSupportedFields;
-use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
 class CategoryFieldForm extends FormRequest
@@ -17,6 +18,13 @@ class CategoryFieldForm extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('validation')) {
+            $this->merge(['validation' => CategoryFieldValidationRules::normalize($this->input('validation'))]);
+        }
     }
 
     /**
@@ -31,24 +39,25 @@ class CategoryFieldForm extends FormRequest
     {
         $id = $this->route('id');
 
+        // `type` is immutable and stripped on update, so the stored one decides what
+        // may be sent — otherwise posting `type=text` would unlock a validation on
+        // any field.
+        $type = $id
+            ? (app(CategoryFieldRepository::class)->find($id)?->type ?? $this->input('type'))
+            : $this->input('type');
+
         $rules = [
-            'code'     => ['required', Rule::unique('category_fields', 'code')->ignore($id), new Code, new NotSupportedFields],
-            'type'     => ['required', new FieldTypes],
-            'section'  => ['sometimes', Rule::in(['left', 'right'])],
-            'status'   => ['sometimes', 'boolean'],
-            'position' => ['sometimes', 'integer', 'min:0'],
+            'code'             => ['required', Rule::unique('category_fields', 'code')->ignore($id), new Code, new NotSupportedFields],
+            'type'             => ['required', new FieldTypes],
+            'section'          => ['sometimes', Rule::in(['left', 'right'])],
+            'status'           => ['sometimes', 'boolean'],
+            'position'         => ['sometimes', 'integer', 'min:0'],
+            'is_required'      => ['sometimes', 'boolean'],
+            'is_unique'        => CategoryFieldValidationRules::uniqueFlagRules($type),
+            'value_per_locale' => ['sometimes', 'boolean'],
         ];
 
-        // Create requires a validation choice; update leaves it untouched. In both
-        // cases a concrete rule (other than the 'none' sentinel) is enum-checked.
-        if (! $id) {
-            $rules['validation'] = ['required'];
-        }
-
-        if ($this->filled('validation') && $this->input('validation') !== 'none') {
-            $rules['validation'][] = new ValidationTypes;
-        }
-
-        return $rules;
+        // The edit form posts the type back as a hidden input, so this holds on update too.
+        return $rules + CategoryFieldValidationRules::for($type, $this->input('validation'));
     }
 }

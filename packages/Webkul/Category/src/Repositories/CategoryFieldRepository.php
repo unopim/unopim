@@ -7,6 +7,7 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Webkul\Category\Contracts\CategoryField;
+use Webkul\Category\Services\CategoryFieldValueService;
 use Webkul\Core\Eloquent\Repository;
 
 class CategoryFieldRepository extends Repository
@@ -20,8 +21,11 @@ class CategoryFieldRepository extends Repository
     /**
      * Create a new category field repository instance
      */
-    public function __construct(Container $container, protected CategoryFieldOptionRepository $categoryFieldOptionRepository)
-    {
+    public function __construct(
+        Container $container,
+        protected CategoryFieldOptionRepository $categoryFieldOptionRepository,
+        protected CategoryFieldValueService $categoryFieldValueService
+    ) {
         parent::__construct($container);
     }
 
@@ -40,6 +44,8 @@ class CategoryFieldRepository extends Repository
      */
     public function create(array $data)
     {
+        $data = $this->withoutStaleRegexPattern($data);
+
         $categoryField = parent::create($data);
 
         if (
@@ -66,7 +72,16 @@ class CategoryFieldRepository extends Repository
      */
     public function update(array $data, $id)
     {
+        $data = $this->withoutStaleRegexPattern($data);
+
+        $wasPerLocale = (bool) $this->find($id)?->value_per_locale;
+
         $categoryField = parent::update($data, $id);
+
+        // Toggling the flag changes where values are read from, so carry them over.
+        if (array_key_exists('value_per_locale', $data) && (bool) $categoryField->value_per_locale !== $wasPerLocale) {
+            $this->categoryFieldValueService->moveValues($categoryField->code, (bool) $categoryField->value_per_locale);
+        }
 
         if (
             ! in_array($categoryField->type, $this->fieldWithOptions)
@@ -92,6 +107,19 @@ class CategoryFieldRepository extends Repository
         }
 
         return $categoryField;
+    }
+
+    /**
+     * A pattern only belongs to a regex validation; keeping it once the validation
+     * changes leaves a value behind that nothing reads.
+     */
+    protected function withoutStaleRegexPattern(array $data): array
+    {
+        if (array_key_exists('validation', $data) && $data['validation'] !== 'regex') {
+            $data['regex_pattern'] = null;
+        }
+
+        return $data;
     }
 
     /**
