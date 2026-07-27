@@ -32,8 +32,7 @@ async function createAttribute(adminPage, code, name, type = 'Text') {
  * @param {string} swatchType - 'Text Swatch', 'Color Swatch', or 'Image Swatch'
  */
 async function createSelectSwatchAttribute(adminPage, code, name, swatchType = 'Text Swatch') {
-  // Swatch type is only selectable on the full create page; the quick-create
-  // modal omits it and locks new attributes to the text swatch.
+  // Swatch type is only selectable on the full create page; the quick-create modal locks it to text swatch.
   await adminPage.goto('/admin/catalog/attributes/create');
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
@@ -100,8 +99,7 @@ async function addOption(adminPage, optionCode, optionLabel) {
   await adminPage.locator('form').filter({ hasText: 'Add Option' }).getByPlaceholder('Code').fill(optionCode);
   await adminPage.locator('input[name="locales.en_US"]').fill(optionLabel);
   await clickSave(adminPage, 'Save Option');
-  // Modal auto-closes on successful save (storeOption toggles addOptionsRow); no manual Close needed.
-  // Success toasts stack, so assert the most recent one to avoid strict-mode multi-match.
+  // Modal auto-closes on save; toasts stack, so assert the last one to avoid strict-mode multi-match.
   await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
@@ -143,9 +141,6 @@ async function addImageSwatchOption(adminPage, optionCode, optionLabel, imagePat
   await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
 }
 
-// ============================================================================
-// DESCRIBE BLOCK 1: UnoPim Attribute — basic CRUD for text attributes
-// ============================================================================
 test.describe('UnoPim Attribute', () => {
 
   test('Create attribute with empty code field', async ({ adminPage }) => {
@@ -189,7 +184,6 @@ test.describe('UnoPim Attribute', () => {
     const uid = generateUid();
     const code = `attr_${uid}`;
     await createAttribute(adminPage, code, 'Product Name', 'Text');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -220,21 +214,18 @@ test.describe('UnoPim Attribute', () => {
     const code = `attr_${uid}`;
     await createAttribute(adminPage, code, 'Actions Test', 'Text');
 
-    // Search and verify Edit action
     await navigateTo(adminPage, 'attributes');
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/attributes\/edit/);
 
-    // Go back and verify Delete action shows confirmation
     await navigateTo(adminPage, 'attributes');
     await searchAttribute(adminPage, code);
     const itemRow2 = adminPage.locator('div', { hasText: code });
     await itemRow2.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    // Cleanup — confirm delete
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/Attribute Deleted Successfully/i)).toBeVisible();
   });
@@ -250,7 +241,6 @@ test.describe('UnoPim Attribute', () => {
     const code = `attr_${uid}`;
     await createAttribute(adminPage, code, 'Before Update', 'Text');
 
-    // Search and edit
     await navigateTo(adminPage, 'attributes');
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
@@ -259,7 +249,6 @@ test.describe('UnoPim Attribute', () => {
     await adminPage.locator('#is_required').nth(1).click();
     await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
 
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -268,7 +257,6 @@ test.describe('UnoPim Attribute', () => {
     const code = `attr_${uid}`;
     await createAttribute(adminPage, code, 'To Delete', 'Text');
 
-    // Search and delete
     await navigateTo(adminPage, 'attributes');
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
@@ -279,9 +267,6 @@ test.describe('UnoPim Attribute', () => {
 });
 
 
-// ============================================================================
-// DESCRIBE BLOCK 2: Checkbox Type Attribute Option Grid
-// ============================================================================
 test.describe('Checkbox Type Attribute Option Grid', () => {
 
   test('Adding options should not be visible while creating the attribute (checkbox type)', async ({ adminPage }) => {
@@ -305,7 +290,6 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await createAttribute(adminPage, code, 'In the Box', 'Checkbox');
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -317,7 +301,6 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await addOption(adminPage, `cable_${uid}`, 'Cable');
     await addOption(adminPage, `manual_${uid}`, 'Instruction Manual');
     await addOption(adminPage, `cover_${uid}`, 'Phone Cover');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -327,13 +310,11 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     const optCode = `cable_${uid}`;
     await createAttribute(adminPage, code, 'In the Box', 'Checkbox');
     await addOption(adminPage, optCode, 'Cable');
-    // Search for the option
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Cable', { exact: true })).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -346,7 +327,6 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await perPageBtn.click();
     await adminPage.locator('#app').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -356,15 +336,12 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     const optCode = `cable_${uid}`;
     await createAttribute(adminPage, code, 'In the Box', 'Checkbox');
     await addOption(adminPage, optCode, 'Cable');
-    // Edit action
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Cable' });
     await itemRow1.locator('span[title="Edit"]').first().click();
     await expect(adminPage.locator('#app').getByText('Add Option')).toBeVisible();
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
-    // Delete action
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    // Cleanup — dismiss modal and delete the attribute
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await adminPage.waitForLoadState('networkidle');
     await deleteAttribute(adminPage, code);
@@ -386,7 +363,6 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
       await button.click();
       await adminPage.waitForLoadState('networkidle');
     }
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -394,7 +370,6 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     const uid = generateUid();
     const code = `chk_${uid}`;
     await createAttribute(adminPage, code, 'In the Box', 'Checkbox');
-    // Navigate back to listing and delete
     await navigateTo(adminPage, 'attributes');
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
@@ -405,9 +380,6 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
 });
 
 
-// ============================================================================
-// DESCRIBE BLOCK 3: Multiselect Type Attribute Options Grid
-// ============================================================================
 test.describe('Multiselect Type Attribute Options Grid', () => {
 
   test('Adding options should not be visible while creating the attribute (multiselect type)', async ({ adminPage }) => {
@@ -431,7 +403,6 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await createAttribute(adminPage, code, 'Features', 'Multiselect');
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -443,7 +414,6 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await addOption(adminPage, `bluetooth_${uid}`, 'Bluetooth');
     await addOption(adminPage, `rechargeable_${uid}`, 'Rechargeable');
     await addOption(adminPage, `charger_${uid}`, 'Charger');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -453,13 +423,11 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     const optCode = `charger_${uid}`;
     await createAttribute(adminPage, code, 'Features', 'Multiselect');
     await addOption(adminPage, optCode, 'Charger');
-    // Search for the option
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Charger', { exact: true })).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -472,7 +440,6 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await perPageBtn.click();
     await adminPage.locator('#app').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -482,15 +449,12 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     const optCode = `charger_${uid}`;
     await createAttribute(adminPage, code, 'Features', 'Multiselect');
     await addOption(adminPage, optCode, 'Charger');
-    // Edit action
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Charger' });
     await itemRow1.locator('span[title="Edit"]').first().click();
     await expect(adminPage.locator('#app').getByText('Add Option')).toBeVisible();
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
-    // Delete action
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    // Cleanup — confirm delete of option, then delete attribute
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await adminPage.waitForLoadState('networkidle');
     await deleteAttribute(adminPage, code);
@@ -512,7 +476,6 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
       await button.click();
       await adminPage.waitForLoadState('networkidle');
     }
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -520,7 +483,6 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     const uid = generateUid();
     const code = `msel_${uid}`;
     await createAttribute(adminPage, code, 'Features', 'Multiselect');
-    // Navigate back to listing and delete
     await navigateTo(adminPage, 'attributes');
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
@@ -531,9 +493,6 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
 });
 
 
-// ============================================================================
-// DESCRIBE BLOCK 4: Select Type Attribute
-// ============================================================================
 test.describe('Select Type Attribute', () => {
 
   test('Adding options should not be visible while creating the attribute (select type)', async ({ adminPage }) => {
@@ -557,7 +516,6 @@ test.describe('Select Type Attribute', () => {
     await createAttribute(adminPage, code, 'Material', 'Select');
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -569,7 +527,6 @@ test.describe('Select Type Attribute', () => {
     await addOption(adminPage, `fabric_${uid}`, 'Fabric');
     await addOption(adminPage, `leather_${uid}`, 'Leather');
     await addOption(adminPage, `polyester_${uid}`, 'Polyester');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -579,13 +536,11 @@ test.describe('Select Type Attribute', () => {
     const optCode = `cotton_${uid}`;
     await createAttribute(adminPage, code, 'Material', 'Select');
     await addOption(adminPage, optCode, 'Cotton');
-    // Search for the option
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Cotton', { exact: true })).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -598,7 +553,6 @@ test.describe('Select Type Attribute', () => {
     await perPageBtn.click();
     await adminPage.locator('#app').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -608,15 +562,12 @@ test.describe('Select Type Attribute', () => {
     const optCode = `cotton_${uid}`;
     await createAttribute(adminPage, code, 'Material', 'Select');
     await addOption(adminPage, optCode, 'Cotton');
-    // Edit action
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Cotton' });
     await itemRow1.locator('span[title="Edit"]').first().click();
     await expect(adminPage.locator('#app').getByText('Add Option')).toBeVisible();
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
-    // Delete action
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    // Cleanup — confirm delete of option, then delete attribute
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await adminPage.waitForLoadState('networkidle');
     await deleteAttribute(adminPage, code);
@@ -638,7 +589,6 @@ test.describe('Select Type Attribute', () => {
       await button.click();
       await adminPage.waitForLoadState('networkidle');
     }
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -646,7 +596,6 @@ test.describe('Select Type Attribute', () => {
     const uid = generateUid();
     const code = `sel_${uid}`;
     await createAttribute(adminPage, code, 'Material', 'Select');
-    // Navigate back to listing and delete
     await navigateTo(adminPage, 'attributes');
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
@@ -657,13 +606,9 @@ test.describe('Select Type Attribute', () => {
 });
 
 
-// ============================================================================
-// DESCRIBE BLOCK 5: Swatch Type Attribute Option
-// ============================================================================
 test.describe('Swatch Type Attribute Option', () => {
 
-  // Swatch type moved from the create modal to the edit page, so each case
-  // creates a Select attribute first and then works on its edit screen.
+  // Swatch type moved from the create modal to the edit page; each case creates a Select attr then edits it.
   const swatchMultiselect = (adminPage) =>
     adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="swatch_type"]') });
 
@@ -692,7 +637,6 @@ test.describe('Swatch Type Attribute Option', () => {
     const uid = generateUid();
     const code = `tsw_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Text Swatch', 'Text Swatch');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -700,13 +644,11 @@ test.describe('Swatch Type Attribute Option', () => {
     const uid = generateUid();
     const code = `tsw_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Text Swatch', 'Text Swatch');
-    // Navigate to edit page
     await searchAndEditAttribute(adminPage, code);
     const swatchTypeInput = adminPage.locator('input[name="swatch_type"][type="text"]');
     await expect(swatchTypeInput).toBeDisabled();
     const hiddenInput = adminPage.locator('input[name="swatch_type"][type="hidden"]');
     await expect(hiddenInput).toHaveValue('text');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -714,13 +656,11 @@ test.describe('Swatch Type Attribute Option', () => {
     const uid = generateUid();
     const code = `tsw_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Text Swatch', 'Text Swatch');
-    // Navigate to edit page to add options
     await searchAndEditAttribute(adminPage, code);
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addTextSwatchOption(adminPage, `red_${uid}`, 'Red');
     await addTextSwatchOption(adminPage, `blue_${uid}`, 'Blue');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -729,15 +669,12 @@ test.describe('Swatch Type Attribute Option', () => {
     const code = `tsw_${uid}`;
     const optCode = `red_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Text Swatch', 'Text Swatch');
-    // Navigate to edit page and add an option to delete
     await searchAndEditAttribute(adminPage, code);
     await addTextSwatchOption(adminPage, optCode, 'Red');
-    // Delete the option
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Red' });
     await itemRow1.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Option Deleted Successfully')).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -760,7 +697,6 @@ test.describe('Swatch Type Attribute Option', () => {
       clickSave(adminPage, 'Save Attribute'),
     ]);
     await expect(adminPage.locator('#app').getByText('Edit Attribute').first()).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -768,13 +704,11 @@ test.describe('Swatch Type Attribute Option', () => {
     const uid = generateUid();
     const code = `csw_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Color Swatch', 'Color Swatch');
-    // Navigate to edit page
     await searchAndEditAttribute(adminPage, code);
     const swatchTypeInput = adminPage.locator('input[name="swatch_type"][type="text"]');
     await expect(swatchTypeInput).toBeDisabled();
     const hiddenInput = adminPage.locator('input[name="swatch_type"][type="hidden"]');
     await expect(hiddenInput).toHaveValue('color');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -782,13 +716,11 @@ test.describe('Swatch Type Attribute Option', () => {
     const uid = generateUid();
     const code = `csw_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Color Swatch', 'Color Swatch');
-    // Navigate to edit page
     await searchAndEditAttribute(adminPage, code);
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
     await addColorSwatchOption(adminPage, `red_${uid}`, 'Red', '#ff0000');
     await addColorSwatchOption(adminPage, `aqua_${uid}`, 'Aqua Blue', '#00faf6');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -797,15 +729,12 @@ test.describe('Swatch Type Attribute Option', () => {
     const code = `csw_${uid}`;
     const optCode = `red_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Color Swatch', 'Color Swatch');
-    // Navigate to edit page and add an option to delete
     await searchAndEditAttribute(adminPage, code);
     await addColorSwatchOption(adminPage, optCode, 'Red', '#ff0000');
-    // Delete the option
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Red' });
     await itemRow1.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Option Deleted Successfully')).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -828,7 +757,6 @@ test.describe('Swatch Type Attribute Option', () => {
       clickSave(adminPage, 'Save Attribute'),
     ]);
     await expect(adminPage.locator('#app').getByText('Edit Attribute').first()).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -836,13 +764,11 @@ test.describe('Swatch Type Attribute Option', () => {
     const uid = generateUid();
     const code = `isw_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Image Swatch', 'Image Swatch');
-    // Navigate to edit page
     await searchAndEditAttribute(adminPage, code);
     const swatchTypeInput = adminPage.locator('input[name="swatch_type"][type="text"]');
     await expect(swatchTypeInput).toBeDisabled();
     const hiddenInput = adminPage.locator('input[name="swatch_type"][type="hidden"]');
     await expect(hiddenInput).toHaveValue('image');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -850,7 +776,6 @@ test.describe('Swatch Type Attribute Option', () => {
     const uid = generateUid();
     const code = `isw_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Image Swatch', 'Image Swatch');
-    // Navigate to edit page
     await searchAndEditAttribute(adminPage, code);
     await expect(adminPage.locator('#app').getByText('Options', { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Add Row')).toBeVisible();
@@ -858,7 +783,6 @@ test.describe('Swatch Type Attribute Option', () => {
     await addImageSwatchOption(adminPage, `stripes_${uid}`, 'Stripes Pattern', 'assets/stripes.jpg');
     await addImageSwatchOption(adminPage, `dots_${uid}`, 'Dots Pattern', 'assets/dotted.png');
     await addImageSwatchOption(adminPage, `checked_${uid}`, 'Checked Pattern', 'assets/check.jpeg');
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -867,20 +791,16 @@ test.describe('Swatch Type Attribute Option', () => {
     const code = `isw_${uid}`;
     const optCode = `dots_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Image Swatch', 'Image Swatch');
-    // Navigate to edit page and add an option to delete
     await searchAndEditAttribute(adminPage, code);
     await addImageSwatchOption(adminPage, optCode, 'Dots Pattern', 'assets/dotted.png');
-    // Search for the option
     const searchBox = adminPage.getByRole('textbox', { name: 'Search', exact: true });
     await searchBox.fill(optCode);
     await searchBox.press('Enter');
     await adminPage.waitForLoadState('networkidle');
-    // Delete the option
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Dots Pattern' });
     await itemRow1.locator('span[title="Delete"]').first().click();
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Option Deleted Successfully')).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 
@@ -889,16 +809,13 @@ test.describe('Swatch Type Attribute Option', () => {
     const code = `isw_${uid}`;
     const optCode = `floral_${uid}`;
     await createSelectSwatchAttribute(adminPage, code, 'Image Swatch', 'Image Swatch');
-    // Navigate to edit page and add an option
     await searchAndEditAttribute(adminPage, code);
     await addImageSwatchOption(adminPage, optCode, 'Floral Pattern', 'assets/floral.jpg');
-    // Search for the option
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(optCode);
     await adminPage.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(optCode, { exact: true })).toBeVisible();
     await expect(adminPage.locator('#app').getByText('Floral Pattern', { exact: true })).toBeVisible();
-    // Cleanup
     await deleteAttribute(adminPage, code);
   });
 });

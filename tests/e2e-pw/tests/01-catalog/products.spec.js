@@ -1,21 +1,16 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
 
-/**
- * Fill a TinyMCE editor by its textarea ID.
- * Scrolls the iframe into view, waits for initialization, clicks, types,
- * then forces content sync to the underlying textarea for VeeValidate.
- */
+/** Fill a TinyMCE editor by textarea ID, then sync content to the textarea for VeeValidate. */
 async function fillTinyMCE(page, editorId, text) {
   const iframe = page.locator(`#${editorId}_ifr`);
   await iframe.scrollIntoViewIfNeeded();
   await iframe.waitFor({ state: 'visible', timeout: 10000 });
-  // Wait for TinyMCE to fully initialize (body becomes contenteditable)
   const frame = page.frameLocator(`#${editorId}_ifr`);
   await frame.locator('body[contenteditable="true"]').waitFor({ state: 'visible', timeout: 10000 });
   await frame.locator('body').click();
   await page.keyboard.type(text);
-  // Force TinyMCE to sync content to the hidden textarea
+  // Force TinyMCE to sync content to the hidden textarea.
   await page.evaluate((id) => {
     const editor = tinymce.get(id);
     if (editor) {
@@ -25,34 +20,24 @@ async function fillTinyMCE(page, editorId, text) {
   }, editorId);
 }
 
-/**
- * Select a value from a Vue-multiselect dropdown by field name.
- * Clicks the tags area, waits for the listbox, picks the option, then closes.
- */
+/** Select a value from a Vue-multiselect dropdown by field name. */
 async function selectMultiselect(page, fieldName, optionLabel) {
   const wrapper = page.locator(`input[name="${fieldName}"]`).locator('..');
-  // Click tags area (works whether placeholder or tag is showing)
   await wrapper.locator('.multiselect__tags').click();
-  // Wait for dropdown list to appear (scoped to this field)
   await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   if (optionLabel) {
     // Options carry no role="option"; match on the option element text.
     await wrapper.locator('.multiselect__option', { hasText: optionLabel }).first().click();
   } else {
-    // Pick first enabled option when label not provided
     await wrapper
       .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
       .first()
       .click();
   }
-  // Close dropdown by pressing Escape
   await page.keyboard.press('Escape');
 }
 
-/**
- * Create a simple product and return to the product listing.
- * Returns the SKU used.
- */
+/** Create a simple product; returns the SKU used. */
 async function createSimpleProduct(adminPage, sku) {
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
@@ -61,17 +46,12 @@ async function createSimpleProduct(adminPage, sku) {
   await selectMultiselect(adminPage, 'attribute_family_id');
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
-  // After creation, the app redirects to the product edit page
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
   await adminPage.waitForLoadState('networkidle').catch(() => {});
   return sku;
 }
 
-/**
- * Create a configurable product and land on its edit page. A configurable
- * needs a family that declares a variant structure (Electronics carries the
- * seeded ones), which the modal asks for after the first save.
- */
+// Configurable needs a family declaring a variant structure (Electronics has the seeded ones).
 async function createConfigurableProduct(adminPage, sku) {
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
@@ -79,8 +59,7 @@ async function createConfigurableProduct(adminPage, sku) {
   await selectMultiselect(adminPage, 'type', 'Configurable');
   await selectMultiselect(adminPage, 'attribute_family_id', 'Electronics');
   await adminPage.locator('input[name="sku"]').fill(sku);
-  // Configurable submit reads "Next" until a variant structure is chosen;
-  // scope to the modal's submit so the grid's pagination "Next" is not matched.
+  // Scope to the modal's submit so the grid's pagination "Next" is not matched.
   await adminPage.locator('button[type="submit"]').filter({ hasText: 'Next' }).click();
 
   await adminPage.locator('input[name="variant_structure_id"]').locator('..')
@@ -93,14 +72,10 @@ async function createConfigurableProduct(adminPage, sku) {
   return sku;
 }
 
-/**
- * Delete a product by SKU using the row delete icon.
- * Searches for the SKU first to isolate the row.
- */
+/** Delete a product by SKU via the row delete icon; searches first to isolate the row. */
 async function deleteProductBySku(adminPage, sku) {
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
-  // Check if any results exist
   const editIcon = adminPage.locator('span[title="Delete"]').first();
   const visible = await editIcon.isVisible({ timeout: 3000 }).catch(() => false);
   if (!visible) return;
@@ -109,8 +84,6 @@ async function deleteProductBySku(adminPage, sku) {
   await adminPage.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
   await adminPage.waitForLoadState('networkidle');
 }
-
-// ─── Validation Tests ────────────────────────────────────────────────
 
 test.describe('Product Creation - Validation', () => {
   test('1 - with empty product type field', async ({ adminPage }) => {
@@ -177,8 +150,6 @@ test.describe('Product Creation - Validation', () => {
   });
 });
 
-// ─── SKU Format Tests ────────────────────────────────────────────────
-
 test.describe('Product Creation - SKU Formats', () => {
   test('8 - create product with simple alphanumeric SKU', async ({ adminPage }) => {
     const sku = `ABC123-${generateUid()}`;
@@ -224,7 +195,7 @@ test.describe('Product Creation - SKU Formats', () => {
     const sku = `-PROD001-${generateUid()}`;
     await adminPage.locator('input[name="sku"]').fill(sku);
     await clickSave(adminPage, 'Save Product');
-    // Should not create — either validation error or no success toast
+    // Should not create: expect no success toast and no row for the SKU.
     await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).not.toBeVisible({ timeout: 3000 }).catch(() => {});
     await expect(adminPage.locator('#app').getByText(sku)).toHaveCount(0);
   });
@@ -274,8 +245,6 @@ test.describe('Product Creation - SKU Formats', () => {
   });
 });
 
-// ─── Simple Product CRUD ─────────────────────────────────────────────
-
 test.describe('Simple Product CRUD', () => {
   test('19 - Create Simple Product with all inputs', async ({ adminPage }) => {
     const sku = `simple-${generateUid()}`;
@@ -286,9 +255,7 @@ test.describe('Simple Product CRUD', () => {
   test('20 - Create Simple Product with same SKU should fail', async ({ adminPage }) => {
     test.setTimeout(60000);
     const sku = `dup-${generateUid()}`;
-    // Create first product
     await createSimpleProduct(adminPage, sku);
-    // Try to create with same SKU
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
@@ -296,7 +263,6 @@ test.describe('Simple Product CRUD', () => {
     await adminPage.locator('input[name="sku"]').fill(sku);
     await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The sku has already been taken.');
-    // Cleanup
     await deleteProductBySku(adminPage, sku);
   });
 
@@ -305,32 +271,28 @@ test.describe('Simple Product CRUD', () => {
     const sku = `upd-${generateUid()}`;
     await createSimpleProduct(adminPage, sku);
 
-    // Navigate back to listing and open edit from there
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
     await adminPage.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
 
-    // Fill required fields (use unique values to avoid duplicate conflicts)
     const uid = generateUid();
     await adminPage.locator('#name').fill(`Test Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
-    // Default channel has multiple currencies in demo seed; fill every
-    // #price input so required-per-currency validation passes.
+    // Multi-currency default channel in demo seed; fill every #price for per-currency validation.
     const priceInputs = adminPage.locator('#price');
     const priceCount = await priceInputs.count();
     for (let i = 0; i < priceCount; i++) {
       await priceInputs.nth(i).fill('40000');
     }
 
-    // Fill required TinyMCE fields (triggers VeeValidate via keyup handler)
+    // TinyMCE fields are required; filling triggers VeeValidate via the keyup handler.
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
     await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
-    // Cleanup
     await deleteProductBySku(adminPage, sku);
   });
 
@@ -346,30 +308,24 @@ test.describe('Simple Product CRUD', () => {
   });
 });
 
-// ─── Configurable Product CRUD ───────────────────────────────────────
-
 test.describe('Configurable Product CRUD', () => {
   test('23 - Create Configurable Product', async ({ adminPage }) => {
     const sku = `cfg-${generateUid()}`;
     await createConfigurableProduct(adminPage, sku);
 
-    // Cleanup
     await deleteProductBySku(adminPage, sku);
   });
 
   test('24 - Update Configurable Product', async ({ adminPage }) => {
     test.setTimeout(60000);
     const sku = `cfgu-${generateUid()}`;
-    // Create configurable product
     await createConfigurableProduct(adminPage, sku);
 
-    // Navigate back to listing and re-open edit for a clean page state
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
     await adminPage.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
 
-    // Fill in fields on the edit page (use unique values)
     const uid = generateUid();
     await adminPage.locator('#name').fill(`Config Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
@@ -384,23 +340,20 @@ test.describe('Configurable Product CRUD', () => {
       }
     }
 
-    // Fill required TinyMCE fields (triggers VeeValidate via keyup handler)
+    // TinyMCE fields are required; filling triggers VeeValidate via the keyup handler.
     await fillTinyMCE(adminPage, 'short_description', 'Short description text');
     await fillTinyMCE(adminPage, 'description', 'Full description text');
 
     await clickSave(adminPage, 'Save Product');
     await expect(adminPage.locator('#app').getByText(/Product updated successfully/i)).toBeVisible({ timeout: 20000 });
 
-    // Cleanup
     await deleteProductBySku(adminPage, sku);
   });
 
   test('25 - Delete configurable product', async ({ adminPage }) => {
     const sku = `cfgd-${generateUid()}`;
-    // Create configurable product
     await createConfigurableProduct(adminPage, sku);
 
-    // Delete via listing
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
     await adminPage.locator('span[title="Delete"]').first().click();
@@ -408,8 +361,6 @@ test.describe('Configurable Product CRUD', () => {
     await expect(adminPage.locator('#app').getByText(/Product deleted successfully/i)).toBeVisible();
   });
 });
-
-// ─── Product Actions (Edit, Copy, Delete) ────────────────────────────
 
 test.describe('Product Actions', () => {
   test('26 - should perform Edit action on a product', async ({ adminPage }) => {
@@ -421,7 +372,6 @@ test.describe('Product Actions', () => {
     await adminPage.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/products\/edit/);
 
-    // Cleanup
     await navigateTo(adminPage, 'products');
     await deleteProductBySku(adminPage, sku);
   });
@@ -437,7 +387,7 @@ test.describe('Product Actions', () => {
     await adminPage.getByRole('button', { name: 'Agree', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Product copied successfully/i)).toBeVisible({ timeout: 20000 });
 
-    // Cleanup original (copy has a different auto-generated SKU, harmless leftover)
+    // Delete the original only; the copy gets a different auto-generated SKU (harmless leftover).
     await deleteProductBySku(adminPage, sku);
   });
 
@@ -454,8 +404,6 @@ test.describe('Product Actions', () => {
   });
 });
 
-// ─── Product Listing Features ────────────────────────────────────────
-
 test.describe('Product Listing Features', () => {
   test('29 - should allow product search', async ({ adminPage }) => {
     const sku = `srch-${generateUid()}`;
@@ -466,7 +414,6 @@ test.describe('Product Listing Features', () => {
     await expect(adminPage.locator('#app').getByText('1 Results')).toBeVisible({ timeout: 20000 });
     await expect(adminPage.locator('#app').getByText(sku)).toBeVisible();
 
-    // Cleanup
     await deleteProductBySku(adminPage, sku);
   });
 
@@ -500,36 +447,28 @@ test.describe('Product Listing Features', () => {
     await navigateTo(adminPage, 'products');
     await adminPage.waitForLoadState('networkidle');
 
-    // Select the product using its row mass-action checkbox.
-    // The datagrid has TWO types of `.peer hidden` checkboxes:
-    //   - #mass_action_select_all_records (header, select-all)
-    //   - mass_action_select_record_${id} (per row)
-    // Use the row checkbox selector to target a single product row.
-    // The checkbox is `display: none` by design; click the label instead.
+    // Row mass-action checkbox is display:none by design; click its label to select one row.
     const rowCheckboxLabel = adminPage.locator('label[for^="mass_action_select_record_"]').first();
     await rowCheckboxLabel.waitFor({ state: 'visible', timeout: 10000 });
     await rowCheckboxLabel.click();
 
-    // Open Quick Export modal
     await adminPage.getByRole('button', { name: 'Quick Export' }).click();
     await expect(adminPage.locator('#app').getByText('Download')).toBeVisible();
 
-    // XLS is the default format, so just click the Export button and wait for download
+    // XLS is the default format; click Export and wait for the download.
     const [download] = await Promise.all([
       adminPage.waitForEvent('download', { timeout: 30000 }).catch(() => null),
       adminPage.locator('.primary-button').filter({ hasText: 'Quick Export' }).click(),
     ]);
 
-    // If download event fires, the export succeeded as a file download
     if (download) {
       const fileName = download.suggestedFilename();
       expect(fileName).toMatch(/\.(xls|xlsx)$/);
     } else {
-      // If no download event, verify no error was shown (AJAX blob approach)
+      // No download event: fall back to asserting no error (AJAX blob path).
       await expect(adminPage.locator('#app').getByText(/Return value must be of type/i)).not.toBeVisible({ timeout: 5000 });
     }
 
-    // Cleanup
     await deleteProductBySku(adminPage, sku);
   });
 
@@ -539,8 +478,6 @@ test.describe('Product Listing Features', () => {
     await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
   });
 });
-
-// ─── Dynamic Columns ────────────────────────────────────────────────
 
 test.describe('Dynamic Columns', () => {
   test('34 - Dynamic Column should be clickable', async ({ adminPage }) => {

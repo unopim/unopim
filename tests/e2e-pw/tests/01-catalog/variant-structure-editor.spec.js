@@ -1,18 +1,12 @@
 const { test, expect } = require('../../utils/fixtures');
 
-/**
- * Variant structure editor: common pool on the left, one card per variant
- * level on the right. Axis attributes are pinned read-only inside their
- * attribute group; everything else moves between common and a level and must
- * survive a save.
- */
+// Editor: common pool on the left, one card per variant level; axes pinned read-only, rest movable.
 async function openFirstStructure(page) {
   // A save redirect can still be in flight, which aborts a competing goto.
   await page.waitForLoadState('domcontentloaded').catch(() => {});
 
   for (let attempt = 0; attempt < 3; attempt++) {
-    // The electronics family carries the seeded variant structures; family 1
-    // (default) has none, so its variants tab shows nothing to edit.
+    // Electronics family carries the seeded variant structures; family 1 (default) has none.
     const navigated = await page
       .goto('/admin/catalog/attribute-families/edit/3?variants=1', { waitUntil: 'domcontentloaded' })
       .then(() => true)

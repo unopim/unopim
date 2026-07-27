@@ -9,7 +9,6 @@ test.describe('Attribute Family — General tab & index', () => {
     const page = adminPage;
     await gotoIndex(page);
 
-    // Required-field validation (Name + Code both required)
     await page.getByRole('button', { name: 'Create Attribute Family' }).click();
     await page.getByPlaceholder('Enter Name').fill('');
     await page.getByPlaceholder('Enter Code').fill('');
@@ -17,14 +16,12 @@ test.describe('Attribute Family — General tab & index', () => {
     await expect(page.locator('#app').getByText(/The (Name|Code) field is required/).first()).toBeVisible();
     await page.keyboard.press('Escape').catch(() => {});
 
-    // Search seeded 'default'
     await gotoIndex(page);
     await page.getByRole('textbox', { name: 'Search' }).fill('default');
     await page.keyboard.press('Enter');
     await page.waitForTimeout(1500);
     await expect(page.locator('#app').getByText('default', { exact: true }).first()).toBeVisible();
 
-    // Filter menu
     await page.getByText('Filter', { exact: true }).click();
     await expect(page.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
@@ -77,7 +74,7 @@ test.describe('Attribute Family — General tab & index', () => {
     const { code } = await createFamily(page);
     const groupsBefore = await page.locator('.group_node').count();
 
-    await assignGroup(page); // pick first available group
+    await assignGroup(page);
     await expect(page.locator('.group_node')).toHaveCount(groupsBefore + 1);
 
     await saveFamilyEdit(page);
@@ -89,8 +86,7 @@ test.describe('Attribute Family — General tab & index', () => {
     const page = adminPage;
     const { code } = await createFamily(page);
 
-    // Both panels start with a magnifying-glass toggle; clicking it must reveal
-    // the search field AND focus it so the user can type without a second click.
+    // Clicking a panel's search toggle must reveal AND focus the field, so the user types without a second click.
     for (const title of ['Assigned Groups', 'Unassigned Attributes']) {
       const panel = page.locator('div.mb-4').filter({ hasText: title }).first();
 
@@ -124,8 +120,7 @@ test.describe('Attribute Family — General tab & index', () => {
     const row = page.locator('#unassigned-attributes div.group', { hasText: /name/i }).first();
     await expect(row).toBeVisible();
 
-    // A single click must select it — clicking the checkbox blurs the search
-    // input, which used to re-run the query and tear the list down mid-click.
+    // Single click must select it: the checkbox blur used to re-run the query and tear the list down mid-click.
     const checkbox = row.locator('button').first();
     await checkbox.click();
     await expect(checkbox).toHaveClass(/icon-checkbox-check/);

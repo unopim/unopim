@@ -16,7 +16,6 @@ test.describe.serial('Attribute Family — Completeness tab', () => {
   test('completeness tab renders datagrid with attributes', async ({ adminPage }) => {
     const page = adminPage;
     await gotoTab(page, family.id, 'completeness');
-    // Grid header + at least one per-row channel-requirements multiselect.
     await expect(page.locator('#app').getByText('Required in Channels').first())
       .toBeVisible({ timeout: 25000 });
     await expect(page.locator('.multiselect').first()).toBeVisible();
@@ -28,10 +27,7 @@ test.describe.serial('Attribute Family — Completeness tab', () => {
     await gotoTab(page, family.id, 'completeness');
 
     await page.locator('input[name="channel_requirements"]').first().waitFor({ state: 'attached', timeout: 25000 });
-    // The completeness datagrid re-creates its row nodes on each notification poll, so
-    // Playwright never sees the option as "stable" for a click. Drive vue-multiselect's
-    // native select synchronously (focus opens the dropdown; the option's mouse events
-    // fire @select) so the re-render can't interleave.
+    // Grid re-creates row nodes on each notification poll (never "stable"); drive vue-multiselect's select synchronously so the re-render can't interleave.
     await page.waitForTimeout(1500);
 
     const updateSaved = page.waitForResponse(

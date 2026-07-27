@@ -33,8 +33,7 @@ async function fillChannelForm(adminPage, opts = {}) {
     await adminPage.keyboard.press('Escape');
   };
 
-  // Only fill when there is a value: fill('') marks the field touched-but-empty,
-  // which suppresses the required message the empty-code test asserts.
+  // fill('') marks the field touched-but-empty, suppressing the required message the empty-code test asserts.
   if (code) {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
   }
@@ -83,20 +82,13 @@ async function deleteChannel(adminPage, code) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// Tests
-// ---------------------------------------------------------------------------
-
 test.describe('Channel Management', () => {
-
-  // --- Validation Tests (no cleanup needed) ---
 
   test('Create Channel with empty Code shows validation error', async ({ adminPage }) => {
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: '', name: 'E-Commerce' });
-    // v-code auto-generates the code from the name, so clear it afterwards to
-    // actually submit an empty code and trigger the required rule.
+    // v-code auto-generates the code from the name; clear it to submit an empty code and trigger the rule.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.getByRole('textbox', { name: 'Code' }).blur();
     await clickSave(adminPage, 'Save Channel');
@@ -141,15 +133,12 @@ test.describe('Channel Management', () => {
     await expect(adminPage.locator('#app').getByText('The Currencies field is required')).toBeVisible();
   });
 
-  // --- CRUD Tests (each creates its own data) ---
-
   test('Create Channel successfully', async ({ adminPage }) => {
     const uid = generateUid();
     const code = `${uid}ch`;
     const name = `${uid} Channel`;
     await createChannel(adminPage, code, name);
 
-    // Cleanup
     await deleteChannel(adminPage, code);
   });
 
@@ -169,17 +158,14 @@ test.describe('Channel Management', () => {
     const code = `${uid}dup`;
     const name = `${uid} Dup`;
 
-    // Create first channel
     await createChannel(adminPage, code, name);
 
-    // Try to create another with same code
     await navigateTo(adminPage, 'channels');
     await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: 'Other Name' });
     await clickSave(adminPage, 'Save Channel');
     await expect(adminPage.locator('#app').getByText('The code has already been taken.').first()).toBeVisible();
 
-    // Cleanup
     await deleteChannel(adminPage, code);
   });
 
@@ -194,10 +180,8 @@ test.describe('Channel Management', () => {
     const code = `${uid}upd`;
     const originalName = `${uid} Original`;
 
-    // Create
     await createChannel(adminPage, code, originalName);
 
-    // Search and edit
     await navigateTo(adminPage, 'channels');
     await searchInDataGrid(adminPage, code);
     const row = adminPage.locator('#app div').filter({ hasText: code });
@@ -206,7 +190,6 @@ test.describe('Channel Management', () => {
     await adminPage.locator('input[name$="[name]"]').first().fill(`${uid} Updated`);
     await clickSaveAndExpect(adminPage, 'Save Channel', /Update Channel Successfully/i);
 
-    // Cleanup
     await deleteChannel(adminPage, code);
   });
 
@@ -215,10 +198,8 @@ test.describe('Channel Management', () => {
     const code = `${uid}del`;
     const name = `${uid} Delete`;
 
-    // Create
     await createChannel(adminPage, code, name);
 
-    // Search and delete
     await navigateTo(adminPage, 'channels');
     await searchInDataGrid(adminPage, code);
     const row = adminPage.locator('#app div').filter({ hasText: code });

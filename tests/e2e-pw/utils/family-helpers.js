@@ -1,8 +1,5 @@
-// Reusable operations for the attribute-family E2E suite (runs against BASE_URL via
-// family-fixtures). Selectors verified against the live rendered admin.
-//
-// NOTE: the admin polls /admin/get-notifications, so `networkidle` never settles.
-// Every navigation uses `domcontentloaded` + an explicit wait for a page element.
+// Reusable operations for the attribute-family E2E suite (runs against BASE_URL via family-fixtures).
+// Admin polls /admin/get-notifications so `networkidle` never settles; navigations use `domcontentloaded` + explicit waits.
 const { expect } = require('@playwright/test');
 const { generateUid } = require('./helpers');
 const { ensureFamilyState, STATE_PATH, FAMILY_BASE_URL } = require('./ensure-family-state');
@@ -80,9 +77,7 @@ async function gotoTab(page, id, tab = '') {
  */
 async function selectMultiselect(page, inputName, optionText) {
   const input = page.locator(`input[name="${inputName}"]`).first();
-  // Scope to the real `.multiselect` root, not the inner `.multiselect__tags` (both
-  // contain the substring "multiselect", so match the class as a whole word) — the
-  // option list is a sibling of `__tags` and falls outside a `__tags`-scoped search.
+  // Match `.multiselect` as a whole word (not inner `.multiselect__tags`); the option list is a sibling of `__tags`.
   const wrapper = input.locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
   await wrapper.click();
   if (optionText) {

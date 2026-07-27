@@ -16,7 +16,6 @@ test.describe.serial('Attribute Family — History tab', () => {
   test('history tab renders', async ({ adminPage }) => {
     const page = adminPage;
     await gotoTab(page, family.id, 'history');
-    // The History tab is active and its panel container loads.
     await expect(page.getByText('History', { exact: true }).first()).toBeVisible({ timeout: 20000 });
     await expect(page.locator('#app')).toBeVisible();
   });
@@ -24,11 +23,9 @@ test.describe.serial('Attribute Family — History tab', () => {
   test('editing the family records a history entry', async ({ adminPage }) => {
     const page = adminPage;
 
-    // Make a change on the General tab to generate history.
     await gotoTab(page, family.id, '');
     await page.waitForSelector('.group_node', { timeout: 30000 });
-    // The unsaved-changes tracker snapshots initial field values on mount; editing
-    // before that snapshot bakes the new value into the baseline, so it never dirties.
+    // Unsaved-changes tracker snapshots field values on mount; editing before that bakes the value into the baseline so it never dirties.
     await page.waitForTimeout(1000);
     const nameInput = page.locator('input[name="en_US[name]"]').first();
     await nameInput.fill(`History Edit ${generateUid()}`);
@@ -36,7 +33,6 @@ test.describe.serial('Attribute Family — History tab', () => {
     await expect(page.getByRole('button', { name: 'Save changes' })).toBeVisible({ timeout: 10000 });
     await saveFamilyEdit(page);
 
-    // History tab should now show at least one entry (version/date/user row).
     await gotoTab(page, family.id, 'history');
     await page.waitForTimeout(2500);
     const historyText = await page.locator('#app').innerText();

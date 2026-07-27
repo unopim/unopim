@@ -1,9 +1,7 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
-/**
- * Helper: Create a category field via UI.
- */
+/** Create a category field via UI. */
 async function createCategoryField(adminPage, code, name, type = 'Text') {
   await navigateTo(adminPage, 'categoryFields');
   await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
@@ -19,9 +17,7 @@ async function createCategoryField(adminPage, code, name, type = 'Text') {
   await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Created Successfully/i);
 }
 
-/**
- * Helper: Delete a category field by code.
- */
+/** Delete a category field by code. */
 async function deleteCategoryField(adminPage, code) {
   await navigateTo(adminPage, 'categoryFields');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
@@ -77,12 +73,11 @@ test.describe('UnoPim Category Field Tests', () => {
 
     await createCategoryField(adminPage, code, 'Test Field');
 
-    // Cleanup
     await deleteCategoryField(adminPage, code);
   });
 
   test('should allow category field search', async ({ adminPage }) => {
-    // Use seeded data — 'name' category field always exists
+    // Seeded 'name' category field always exists.
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('name');
     await adminPage.keyboard.press('Enter');
@@ -109,10 +104,8 @@ test.describe('UnoPim Category Field Tests', () => {
     const uid = generateUid();
     const code = `cf_${uid}`;
 
-    // Create test data
     await createCategoryField(adminPage, code, 'Actions Test');
 
-    // Search and verify Edit action
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -121,7 +114,6 @@ test.describe('UnoPim Category Field Tests', () => {
     await row.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/category-fields\/edit/);
 
-    // Go back, search again, verify Delete shows confirmation
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -130,7 +122,6 @@ test.describe('UnoPim Category Field Tests', () => {
     await row2.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    // Cleanup — confirm delete
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/Category Field Deleted Successfully/i)).toBeVisible();
   });
@@ -145,10 +136,8 @@ test.describe('UnoPim Category Field Tests', () => {
     const uid = generateUid();
     const code = `cf_${uid}`;
 
-    // Create test data
     await createCategoryField(adminPage, code, 'Before Update');
 
-    // Search and edit
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -158,7 +147,6 @@ test.describe('UnoPim Category Field Tests', () => {
     await adminPage.locator('input[name$="[name]"]').first().fill('After Update');
     await clickSaveAndExpect(adminPage, 'Save changes', /Category Field Updated Successfully/i);
 
-    // Cleanup
     await deleteCategoryField(adminPage, code);
   });
 
@@ -166,10 +154,8 @@ test.describe('UnoPim Category Field Tests', () => {
     const uid = generateUid();
     const code = `cf_${uid}`;
 
-    // Create test data specifically for deletion
     await createCategoryField(adminPage, code, 'To Delete');
 
-    // Search and delete
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -181,7 +167,7 @@ test.describe('UnoPim Category Field Tests', () => {
   });
 
   test('delete default category field', async ({ adminPage }) => {
-    // Use seeded 'name' field — should not be deletable
+    // Seeded 'name' field should not be deletable.
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('name');
     await adminPage.keyboard.press('Enter');
