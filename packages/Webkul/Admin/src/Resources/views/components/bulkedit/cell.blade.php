@@ -297,6 +297,7 @@
                         case 'boolean': return 'v-spreadsheet-boolean';
                         case 'image': return 'v-spreadsheet-image';
                         case 'gallery': return 'v-spreadsheet-gallery';
+                        case 'measurement': return 'v-spreadsheet-measurement';
                         default: return 'v-spreadsheet-text';
                     }
                 },
