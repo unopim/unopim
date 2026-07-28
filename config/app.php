@@ -161,6 +161,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Previous Encryption Keys
+    |--------------------------------------------------------------------------
+    |
+    | Comma-separated list of retired APP_KEY values. Payloads encrypted with
+    | them (sessions, cookies, signed URLs) still decrypt, so APP_KEY can be
+    | rotated without logging every admin out or bricking stored ciphertext.
+    |
+    */
+
+    'previous_keys' => array_values(array_filter(array_map(
+        trim(...),
+        explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
+    ), strlen(...))),
+
+    /*
+    |--------------------------------------------------------------------------
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------
     */
