@@ -42,9 +42,6 @@
         />
     </x-slot>
 
-    {{-- The with-history layout renders the default slot only for the "general" tab.
-         This editor page runs under the "variants" tab, so its content must live in
-         the tabContents slot (rendered for every tab) or the page renders blank. --}}
     <x-slot:tabContents>
         <v-variant-structure-editor
             :axis-options='@json($axisOptions)'
@@ -113,7 +110,6 @@
             <div class="grid gap-4 rounded bg-white p-4 box-shadow dark:bg-cherry-900 xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
                 :class="structure.levels === 2 ? 'xl:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]' : ''"
             >
-                {{-- Common pool: the only column that shows the full group tree. --}}
                 <div class="min-w-0">
                     <x-admin::list.panel-header
                         :title="trans('admin::app.catalog.families.edit.parent-product')"
@@ -136,7 +132,6 @@
                         >
                         </span>
 
-                        {{-- Bulk actions stay out of the way until something is ticked. --}}
                         <div class="flex flex-wrap justify-end gap-2" v-if="selected.common.length">
                             <button
                                 type="button"
@@ -217,7 +212,6 @@
                 />
             </div>
 
-            {{-- Add-attributes picker: the click-driven alternative to dragging. --}}
             <x-admin::modal ref="addAttributesModal" prevent-submit @close="cancelAddPicker">
                 <x-slot:header>
                     <div>
@@ -481,8 +475,6 @@
                     return byCode;
                 },
 
-                // An axis belongs to the level it splits on: level_1 axes make the
-                // sub parent, level_2 (or the only level) axes make the leaf.
                 subParentAxisAttributes() {
                     if (this.structure.levels !== 2) {
                         return [];
@@ -548,6 +540,8 @@
             },
 
             created() {
+                this.structure.placements = this.enforceUniquePlacements(this.structure.placements);
+
                 this.refreshLists();
             },
 
@@ -678,7 +672,6 @@
 
                     this.picker = { target: null, query: '', codes: [] };
 
-                    // close() flips isOpen before it emits, so this re-entry from @close stops here.
                     if (target && this.$refs.addAttributesModal && this.$refs.addAttributesModal.isOpen) {
                         this.$refs.addAttributesModal.close();
                     }
@@ -857,11 +850,34 @@
                     this.sanitizeSelection();
                 },
 
+                uniqueCodes() {
+                    return (this.allAttributes || [])
+                        .filter(attribute => attribute.is_unique && attribute.code !== 'sku')
+                        .map(attribute => attribute.code);
+                },
+
+                enforceUniquePlacements(placements) {
+                    const axes = this.axisCodes || [];
+                    const unique = this.uniqueCodes().filter(code => ! axes.includes(code));
+
+                    if (! unique.length) {
+                        return placements;
+                    }
+
+                    return {
+                        common: (placements.common || []).filter(code => ! unique.includes(code)),
+                        sub_parent: (placements.sub_parent || []).filter(code => ! unique.includes(code)),
+                        variant: [...new Set([...(placements.variant || []), ...unique])],
+                    };
+                },
+
                 syncPlacements() {
                     this.emitVariantEvent('placements.sync.before');
 
                     this.structure.placements.sub_parent = this.subParentList.filter(attribute => ! attribute.locked).map(attribute => attribute.code);
                     this.structure.placements.variant = this.variantList.filter(attribute => ! attribute.locked).map(attribute => attribute.code);
+
+                    this.structure.placements = this.enforceUniquePlacements(this.structure.placements);
 
                     const subCodes = new Set(this.structure.placements.sub_parent);
                     const variantCodes = new Set(this.structure.placements.variant);
@@ -982,8 +998,6 @@
                                 common: this.allAttributes
                                     .filter(attribute => ! assigned.has(attribute.code))
                                     .map(attribute => attribute.code),
-                                // A single-level structure has no sub parent: fold anything
-                                // sitting there into the leaf rather than dropping it.
                                 sub_parent: structure.levels === 2 ? structure.placements.sub_parent : [],
                                 variant: structure.levels === 2
                                     ? structure.placements.variant
@@ -1038,7 +1052,7 @@
                         });
 
                         if (savedStructure) {
-                            window.location.href = this.backUrl;
+                            this.$navigate ? this.$navigate(this.backUrl) : (window.location.href = this.backUrl);
                         }
 
                         return savedStructure;
@@ -1055,6 +1069,7 @@
                     return this.$axios.put(this.saveUrl, this.structurePayload(structure))
                         .then(({ data }) => {
                             this.structure = this.normalizeStructure(data.data);
+                            this.structure.placements = this.enforceUniquePlacements(this.structure.placements);
                             this.draft = JSON.parse(JSON.stringify(this.structure));
                             this.refreshLists();
 
