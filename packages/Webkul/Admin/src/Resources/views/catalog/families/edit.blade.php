@@ -466,6 +466,7 @@
                             assignedSearchTerm: '',
                             params: {},
                             selectedAttrs: [],
+                            selectedAttrDetails: {},
                             allMatchingAttributes: [],
                             selectAllAcrossPages: false,
                             isSelectingAll: false,
@@ -655,11 +656,34 @@
 
                             const i = this.selectedAttrs.indexOf(code);
 
-                            i >= 0 ? this.selectedAttrs.splice(i, 1) : this.selectedAttrs.push(code);
+                            if (i >= 0) {
+                                this.selectedAttrs.splice(i, 1);
+
+                                this.forgetAttrDetail(code);
+
+                                return;
+                            }
+
+                            this.selectedAttrs.push(code);
+
+                            this.rememberAttrDetail(code);
+                        },
+
+                        rememberAttrDetail(code) {
+                            const attribute = this.customAttributes.find(a => this.attributeCode(a) === code);
+
+                            if (attribute) {
+                                this.selectedAttrDetails[code] = attribute;
+                            }
+                        },
+
+                        forgetAttrDetail(code) {
+                            delete this.selectedAttrDetails[code];
                         },
 
                         clearSelectedAttrs() {
                             this.selectedAttrs = [];
+                            this.selectedAttrDetails = {};
                             this.bulkGroup = null;
                             this.selectAllAcrossPages = false;
                             this.allMatchingAttributes = [];
@@ -686,8 +710,12 @@
                                     if (! this.selectedAttrs.includes(code)) {
                                         this.selectedAttrs.push(code);
                                     }
+
+                                    this.rememberAttrDetail(code);
                                 });
                             } else {
+                                this.customAttributes.forEach(a => this.forgetAttrDetail(this.attributeCode(a)));
+
                                 this.selectedAttrs = this.selectedAttrs.filter(
                                     code => ! this.customAttributes.find(a => this.attributeCode(a) === code)
                                 );
@@ -738,7 +766,10 @@
 
                             const moving = this.selectAllAcrossPages
                                 ? this.allMatchingAttributes.slice()
-                                : this.customAttributes.filter(a => this.selectedAttrs.includes(this.attributeCode(a)));
+                                : this.selectedAttrs
+                                    .map(code => this.selectedAttrDetails[code]
+                                        ?? this.customAttributes.find(a => this.attributeCode(a) === code))
+                                    .filter(Boolean);
 
                             moving.forEach(attribute => group.customAttributes.push(attribute));
 
@@ -852,6 +883,8 @@
                                 delete changedAttribute.group_id;
 
                                 this.selectedAttrs = this.selectedAttrs.filter(selectedCode => selectedCode !== code);
+
+                                this.forgetAttrDetail(code);
                             }
 
                             this.$emitter.emit('assigned-attributes-changed', e);
