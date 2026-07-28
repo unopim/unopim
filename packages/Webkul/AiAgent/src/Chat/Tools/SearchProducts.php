@@ -68,8 +68,6 @@ class SearchProducts implements PimTool
                 $categoryCode = $request->string('category_code')->toString() ?: null;
                 $limit = $request->integer('limit', 10);
 
-                // Codes participate in SQL (bound) and JSON semantics — reject
-                // anything outside the safe code alphabet up front.
                 foreach (['family_code' => $familyCode, 'category_code' => $categoryCode] as $field => $code) {
                     if ($code !== null && ! preg_match('/^[a-zA-Z0-9_-]+$/', $code)) {
                         return json_encode(['error' => "Invalid {$field}: only letters, numbers, underscores and hyphens are allowed."]);
@@ -79,13 +77,11 @@ class SearchProducts implements PimTool
                 $limit = min(max($limit, 1), 50);
                 $candidateLimit = min(max($limit * 5, $limit), 200);
 
-                // Laravel prefixes the alias (e.g. `p` → `wk_p`), but table
-                // prefixes are not applied inside DB::raw(). Build the raw
-                // alias explicitly so JSON selects resolve to the same alias
-                // Laravel generates for the FROM clause.
                 $prefix = DB::getTablePrefix();
                 $grammar = GrammarQueryManager::getGrammar();
                 $searchable = $this->searchableAttributes();
+
+                $valuesColumn = DB::getQueryGrammar()->wrap("{$prefix}p.values");
 
                 $nameAttribute = $searchable->firstWhere('code', 'name');
                 $namePath = $nameAttribute
@@ -96,7 +92,7 @@ class SearchProducts implements PimTool
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
                     ->select(
                         'p.id', 'p.sku', 'p.type', 'p.status', 'af.code as family_code',
-                        DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")),
+                        DB::raw($valuesColumn),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", ...$namePath).' as product_name'),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", 'common', 'url_key').' as url_key'),
                     );
@@ -105,9 +101,7 @@ class SearchProducts implements PimTool
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $query);
                     $term = "%{$escaped}%";
 
-                    $valuesAsText = DB::getDriverName() === 'pgsql'
-                        ? "\"{$prefix}p\".\"values\"::text"
-                        : "CAST(`{$prefix}p`.`values` AS CHAR)";
+                    $valuesAsText = $grammar->castToText($valuesColumn);
 
                     // The raw-text pre-filter compares against the serialized
                     // JSON, so it is only a valid superset when no character

@@ -41,6 +41,11 @@ class MySQLGrammar implements Grammar
         return "CHAR_LENGTH({$column})";
     }
 
+    public function castToText(string $column): string
+    {
+        return "CAST({$column} AS CHAR)";
+    }
+
     public function jsonExtract(string $column, string ...$pathSegments): string
     {
         $segments = array_map($this->escapeJsonPathSegment(...), $pathSegments);

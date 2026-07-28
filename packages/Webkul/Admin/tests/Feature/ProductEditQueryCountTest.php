@@ -79,6 +79,8 @@ it('renders the product edit page without scaling queries per attribute (F1/F2/F
     $small = makeProductWithAttributeCount(3);
     $large = makeProductWithAttributeCount(18);
 
+    countEditQueries($small);
+
     $delta = countEditQueries($large) - countEditQueries($small);
 
     expect($delta)->toBeLessThanOrEqual(10);

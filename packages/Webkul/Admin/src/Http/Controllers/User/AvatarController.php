@@ -23,7 +23,8 @@ class AvatarController extends Controller
         $payload = Admin::gravatarPayload($hash);
 
         if (! $payload['found']) {
-            abort(404);
+            return response('', 404)
+                ->header('Cache-Control', 'public, max-age=3600');
         }
 
         return response($payload['body'])

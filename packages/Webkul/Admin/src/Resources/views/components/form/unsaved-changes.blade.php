@@ -210,7 +210,7 @@
                 this.$nextTick(() => {
                     this.snapshot();
 
-                    ['input', 'change', 'click', 'keyup'].forEach(evt => {
+                    ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.addEventListener(evt, this.onFormEvent, true);
                     });
 
@@ -235,7 +235,7 @@
 
             beforeUnmount() {
                 if (this.$refs.root) {
-                    ['input', 'change', 'click', 'keyup'].forEach(evt => {
+                    ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.removeEventListener(evt, this.onFormEvent, true);
                     });
 
@@ -417,6 +417,10 @@
                         const init = this.elementInitial && this.elementInitial.get(el);
 
                         if (! init) {
+                            return;
+                        }
+
+                        if (el.hasAttribute('data-unsaved-managed')) {
                             return;
                         }
 
