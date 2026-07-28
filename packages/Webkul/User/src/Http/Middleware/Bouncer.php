@@ -87,8 +87,24 @@ class Bouncer
             return;
         }
 
-        if (isset($acl->roles[Route::currentRouteName()])) {
-            bouncer()->allow($acl->roles[Route::currentRouteName()]);
+        $routeName = Route::currentRouteName();
+
+        if (! isset($acl->roles[$routeName])) {
+            return;
         }
+
+        /**
+         * A route may also be owned by capabilities other than its canonical
+         * key — the attribute family editor, for instance, hosts the variant
+         * structures tab. Holding any one of them is enough to open the page;
+         * the individual write routes remain guarded by their own keys.
+         */
+        foreach ($acl->alternateRoles[$routeName] ?? [] as $permission) {
+            if (bouncer()->hasPermission($permission)) {
+                return;
+            }
+        }
+
+        bouncer()->allow($acl->roles[$routeName]);
     }
 }

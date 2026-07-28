@@ -21,6 +21,17 @@ class Tree
     public $roles = [];
 
     /**
+     * Extra permission keys that also authorize a route, keyed by route name.
+     *
+     * A page shared by more than one capability (e.g. the attribute family
+     * editor, whose tabs are owned by different permissions) is reachable when
+     * the user holds any one of them, not only the route's canonical key.
+     *
+     * @var array<string, array<int, string>>
+     */
+    public array $alternateRoles = [];
+
+    /**
      * Contains current item route
      *
      * @var string
@@ -84,6 +95,10 @@ class Tree
              */
             if (! empty($item['route'])) {
                 $this->roles[$item['route']] = $item['key'];
+            }
+
+            foreach ($item['also_authorizes'] ?? [] as $route) {
+                $this->alternateRoles[$route][] = $item['key'];
             }
         }
 
