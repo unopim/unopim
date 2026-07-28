@@ -17,6 +17,7 @@ use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\ProductAttributeGroupsForm;
 use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
@@ -465,6 +466,21 @@ class ProductController extends Controller
             'lastPage' => $paginator->lastPage(),
             'total'    => $paginator->total(),
         ]);
+    }
+
+    /**
+     * Get one page of the product family's attribute groups for the editor sidebar.
+     */
+    public function attributeGroups(ProductAttributeGroupsForm $request, int $id): JsonResponse
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        return new JsonResponse($this->attributeGroupPage(
+            $product->attribute_family,
+            max(1, (int) $request->input('page', 1)),
+            trim((string) $request->input('query', '')),
+            $request->filled('active') ? (int) $request->input('active') : null
+        ));
     }
 
     /**

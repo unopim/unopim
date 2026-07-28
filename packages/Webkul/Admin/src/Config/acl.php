@@ -66,6 +66,11 @@ return [
         'route' => 'admin.catalog.products.update',
         'sort'  => 3,
     ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.attribute_groups',
+        'sort'  => 3,
+    ], [
         'key'   => 'catalog.products.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.catalog.products.delete',

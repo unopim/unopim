@@ -84,6 +84,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('edit/{id}', 'edit')->name('admin.catalog.families.edit');
 
+            Route::get('edit/{id}/groups', 'groups')->name('admin.catalog.families.groups');
+
+            Route::get('edit/{id}/groups/{groupId}/attributes', 'groupAttributes')->name('admin.catalog.families.group-attributes');
+
             Route::get('edit/{id}/variant-structures', 'variantStructures')->name('admin.catalog.families.variant-structures.index');
 
             Route::get('edit/{id}/variant-structures/{structureId}/edit', 'editVariantStructure')->name('admin.catalog.families.variant-structures.edit');
@@ -192,6 +196,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::post('{configurableId}/variant-node', 'createVariantNode')->name('admin.catalog.products.variant_node.create');
 
             Route::get('{configurableId}/variant-children', 'variantChildren')->name('admin.catalog.products.variant_children');
+
+            Route::get('edit/{id}/attribute-groups', 'attributeGroups')->name('admin.catalog.products.attribute_groups');
 
             Route::get('edit/{id}', 'edit')->name('admin.catalog.products.edit')->middleware(EnsureChannelLocaleIsValid::class);
 
