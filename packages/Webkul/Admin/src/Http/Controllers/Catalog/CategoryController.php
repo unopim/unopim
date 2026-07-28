@@ -129,9 +129,9 @@ class CategoryController extends Controller
 
         $categories = $this->transformCategoryTree($categories);
 
-        $category = $this->categoryRepository->find($id);
-
-        $branchToParent = $this->categoryRepository->getTreeBranchToParent($category);
+        $branchToParent = CategoryTreeResource::collection(
+            $this->categoryRepository->getTreeBranchToParent($category) ?? collect()
+        )->toArray(request());
 
         $leftCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left');
 

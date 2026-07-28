@@ -139,40 +139,27 @@ class CategoryRepository extends Repository
     /**
      * Retrieves the tree branch from the given category up to its parent categories.
      *
+     * Only the path itself is loaded — the siblings at every level along it are
+     * left to the lazy children endpoint, so a parent holding tens of thousands
+     * of categories no longer hydrates its whole level to reveal one node.
+     *
      * @param  Category  $category  The category instance to start from.
-     * @param  bool  $present  Whether to include the present category in the result.
+     * @param  bool  $present  Retained for backward compatibility; the present category is never part of the path.
      * @return \Kalnoy\Nestedset\Collection|null The branch of categories from the given category to its parent(s).
      */
     public function getTreeBranchToParent(Category $category, bool $present = true)
     {
-        $parent = $category->parent;
+        if (! $category->parent_id) {
+            return;
+        }
 
-        $id = $category->id;
+        $parent = $this->getModel()->newQuery()->find($category->parent_id, ['code']);
 
         if (! $parent) {
             return;
         }
 
-        $ancestors = $this->model->ancestorsAndSelf($parent->id);
-
-        $ancestorIds = $ancestors->pluck('id')->toArray();
-
-        $query = $this->model->whereIn('parent_id', $ancestorIds);
-
-        if ($present) {
-            $query->where('id', '!=', $id);
-        }
-
-        $siblingMap = $query->get()->groupBy('parent_id');
-
-        $allIds = collect($ancestorIds)
-            ->merge($siblingMap->flatten()->pluck('id'))
-            ->unique()
-            ->values();
-
-        return $this->model
-            ->whereIn('id', $allIds)
-            ->get()
+        return $this->getPathNodes([$parent->code])
             ->toTree()
             ->values();
     }
