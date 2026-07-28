@@ -439,13 +439,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareMassActions()
     {
-        if (bouncer()->hasPermission('catalog.products.mass_update')) {
+        if (bouncer()->hasPermission('catalog.products.bulk_edit')) {
             $this->addMassAction([
                 'title'   => trans('admin::app.catalog.products.bulk-edit.action'),
                 'url'     => route('admin.catalog.products.bulkedit.filters'),
                 'method'  => 'POST',
                 'options' => ['actionType' => 'redirect', 'modal' => 'open-bulk-edit-modal'],
-
             ]);
         }
 
@@ -465,15 +464,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     ],
                 ],
             ]);
+        }
 
-            if (bouncer()->hasPermission('catalog.products.mass_delete')) {
-                $this->addMassAction([
-                    'title'   => trans('admin::app.catalog.products.index.datagrid.delete'),
-                    'url'     => route('admin.catalog.products.mass_delete'),
-                    'method'  => 'POST',
-                    'options' => ['actionType' => 'delete'],
-                ]);
-            }
+        if (bouncer()->hasPermission('catalog.products.mass_delete')) {
+            $this->addMassAction([
+                'title'   => trans('admin::app.catalog.products.index.datagrid.delete'),
+                'url'     => route('admin.catalog.products.mass_delete'),
+                'method'  => 'POST',
+                'options' => ['actionType' => 'delete'],
+            ]);
         }
     }
 

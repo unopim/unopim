@@ -2974,6 +2974,7 @@ return [
         'exports'                  => 'Exports',
         'mass-update'              => 'Mass Update',
         'mass-delete'              => 'Mass Delete',
+        'bulk-edit'                => 'Bulk Edit',
         'quick-export'             => 'Quick Export',
         'variant-structures'       => 'Variant Structures',
     ],
