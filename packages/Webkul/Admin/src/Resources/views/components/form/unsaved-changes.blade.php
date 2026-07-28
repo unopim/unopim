@@ -649,6 +649,31 @@
                 return confirmLeave();
             };
 
+            window.unopimConfirmUnsavedLeave = (proceed, cancel = () => {}) => {
+                if (! (window.__unsavedBarCount > 0)) {
+                    proceed();
+
+                    return;
+                }
+
+                window.app.config.globalProperties.$emitter.emit('open-confirm-modal', {
+                    title: unsavedNavStrings.title,
+                    message: unsavedNavStrings.message,
+                    options: {
+                        btnAgree: unsavedNavStrings.leave,
+                        btnDisagree: unsavedNavStrings.stay,
+                        btnAgreeClass: 'primary-button',
+                        btnDisagreeClass: 'transparent-button',
+                    },
+                    agree: () => {
+                        window.__unsavedNavBypass = true;
+
+                        proceed();
+                    },
+                    disagree: cancel,
+                });
+            };
+
             const installUnsavedNavGuard = () => {
                 if (window.unopim && typeof window.unopim.registerNavigationGuard === 'function') {
                     window.unopim.registerNavigationGuard(unsavedNavGuard);

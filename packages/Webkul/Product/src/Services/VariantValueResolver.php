@@ -8,6 +8,8 @@ use Webkul\Product\Type\AbstractType;
 
 class VariantValueResolver implements VariantValueResolverContract
 {
+    const CATEGORIES_KEY = 'categories';
+
     /** @var array<int, array> */
     protected array $memo = [];
 
@@ -34,14 +36,23 @@ class VariantValueResolver implements VariantValueResolverContract
         $commonKey = AbstractType::COMMON_VALUES_KEY;
 
         $mergedCommon = [];
+        $categories = null;
 
         foreach ($chainRootToLeaf as $values) {
             $mergedCommon = array_merge($mergedCommon, $values[$commonKey] ?? []);
+
+            if (array_key_exists(self::CATEGORIES_KEY, $values)) {
+                $categories = $values[self::CATEGORIES_KEY];
+            }
         }
 
         $leaf = end($chainRootToLeaf) ?: [];
 
         $leaf[$commonKey] = $mergedCommon;
+
+        if ($categories !== null) {
+            $leaf[self::CATEGORIES_KEY] = $categories;
+        }
 
         return $leaf;
     }

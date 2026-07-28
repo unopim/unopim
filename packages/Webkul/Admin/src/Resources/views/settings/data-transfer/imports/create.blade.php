@@ -318,6 +318,13 @@
                         }
                     },
 
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
                 },
             })
         </script>

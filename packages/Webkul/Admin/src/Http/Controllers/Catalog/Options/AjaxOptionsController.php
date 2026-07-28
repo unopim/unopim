@@ -90,29 +90,24 @@ class AjaxOptionsController extends Controller
 
         $currentLocaleCode = core()->getRequestedLocaleCode();
 
-        $swatchAttribute = $entityName === self::ENTITY_ATTRIBUTE_OPTION && $attributeId
-            ? $this->attributeRepository->find($attributeId)
-            : null;
-
         $formattedOptions = [];
+
+        $swatchType = $entityName === self::ENTITY_ATTRIBUTE_OPTION && $attributeId
+            ? $this->attributeRepository->find($attributeId)?->swatch_type
+            : null;
 
         foreach ($options as $option) {
             $translatedOptionLabel = $entityName === self::ENTITY_CATEGORY
                 ? $option->name
                 : $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
-            $formattedOption = [
+            $formattedOptions[] = [
                 'id'    => $option->id,
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
-                ...$option->makeHidden(['translations', 'label', 'attribute'])->toArray(),
+                ...$option->makeHidden(['translations', 'label'])->toArray(),
+                'attribute' => ['swatch_type' => $swatchType],
             ];
-
-            if ($swatchAttribute) {
-                $formattedOption['attribute'] = ['swatch_type' => $swatchAttribute->swatch_type];
-            }
-
-            $formattedOptions[] = $formattedOption;
         }
 
         return new JsonResponse([
@@ -146,6 +141,8 @@ class AjaxOptionsController extends Controller
             : $this->getRepository($entityName);
 
         if (! $isCategory) {
+            // Labels are resolved per row via translate()/toArray(); eager load the
+            // translations up front so formatting the page is a single query, not N+1.
             $repository = $repository->with(['translations']);
         }
 
