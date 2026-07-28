@@ -43,6 +43,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     protected $primaryColumn = 'product_id';
 
+    protected ?string $exportPermission = 'catalog.products.quick_export';
+
     protected $sortColumn = 'products.updated_at';
 
     protected $elasticSearchSortColumn = 'updated_at';

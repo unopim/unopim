@@ -2779,6 +2779,7 @@ return [
         'exports'                  => 'Экспорт',
         'mass-update'              => '[translation needed]',
         'mass-delete'              => '[translation needed]',
+        'quick-export'             => 'Хурдан экспорт',
         'variant-structures'       => 'Хувилбарын бүтэц',
     ],
     'errors' => [

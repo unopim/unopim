@@ -2970,6 +2970,7 @@ return [
         'exports'                  => 'Exports',
         'mass-update'              => 'Mass Update',
         'mass-delete'              => 'Mass Delete',
+        'quick-export'             => 'Quick Export',
         'variant-structures'       => 'Variant Structures',
     ],
 

@@ -2779,6 +2779,7 @@ return [
         'exports'                  => '出口',
         'mass-update'              => '批次更新',
         'mass-delete'              => '批次刪除',
+        'quick-export'             => '快速匯出',
         'variant-structures'       => '變體結構',
     ],
     'errors' => [

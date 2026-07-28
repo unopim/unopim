@@ -2779,6 +2779,7 @@ return [
         'exports'                  => 'Експорти',
         'mass-update'              => 'Масове оновлення',
         'mass-delete'              => 'Масове видалення',
+        'quick-export'             => 'Швидкий експорт',
         'variant-structures'       => 'Структури варіантів',
     ],
     'errors' => [

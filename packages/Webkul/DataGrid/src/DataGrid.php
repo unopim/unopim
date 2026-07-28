@@ -102,6 +102,11 @@ abstract class DataGrid
     protected bool $exportable = false;
 
     /**
+     * Permission required to export this grid. Null leaves export ungated.
+     */
+    protected ?string $exportPermission = null;
+
+    /**
      * Every matching primary-key value for the current filter/search context.
      *
      * Populated only when the request asks for a "select all matching" id list,
@@ -405,7 +410,29 @@ abstract class DataGrid
      */
     public function setExportFile($records, $format = 'csv'): void
     {
+        $this->enforceExportPermission();
+
         $this->exportFile = Excel::download(new DataGridExport($records), $this->getExportFileName().'.'.$format);
+    }
+
+    /**
+     * Deny an export the admin is not permitted to run. Export is a query
+     * parameter on the grid's own index route rather than a route of its own, so
+     * the Bouncer middleware can only ever apply the grid's read permission.
+     * Every export path funnels through setExportFile(), making this the one
+     * choke point that a new query implementation cannot bypass.
+     */
+    protected function enforceExportPermission(): void
+    {
+        if ($this->exportPermission === null) {
+            return;
+        }
+
+        abort_unless(
+            bouncer()->hasPermission($this->exportPermission),
+            403,
+            trans('admin::app.errors.403.message')
+        );
     }
 
     /**

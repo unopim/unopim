@@ -2776,6 +2776,7 @@ return [
         'exports'                  => 'Ekspor',
         'mass-update'              => 'Pembaruan massal',
         'mass-delete'              => 'Penghapusan massal',
+        'quick-export'             => 'Ekspor cepat',
         'variant-structures'       => 'Struktur Varian',
     ],
     'errors' => [

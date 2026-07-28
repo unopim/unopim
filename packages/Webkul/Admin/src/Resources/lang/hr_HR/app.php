@@ -2776,6 +2776,7 @@ return [
         'exports'                  => 'Izvozi',
         'mass-update'              => 'Masovno ažuriranje',
         'mass-delete'              => 'Masovno brisanje',
+        'quick-export'             => 'Brzi izvoz',
         'variant-structures'       => 'Strukture varijanti',
     ],
     'errors' => [

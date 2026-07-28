@@ -2775,6 +2775,7 @@ return [
         'exports'                  => 'التصديرات',
         'mass-update'              => 'تحديث جماعي',
         'mass-delete'              => 'حذف جماعي',
+        'quick-export'             => 'تصدير سريع',
         'variant-structures'       => 'هياكل المتغيرات',
     ],
     'errors' => [

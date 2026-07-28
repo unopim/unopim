@@ -2779,6 +2779,7 @@ return [
         'exports'                  => 'Dışa Aktarımlar',
         'mass-update'              => 'Toplu güncelleme',
         'mass-delete'              => 'Toplu silme',
+        'quick-export'             => 'Hızlı dışa aktarma',
         'variant-structures'       => 'Varyant Yapıları',
     ],
     'errors' => [

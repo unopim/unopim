@@ -2779,6 +2779,7 @@ return [
         'exports'                  => 'Exporturi',
         'mass-update'              => 'Actualizare în masă',
         'mass-delete'              => 'Ștergere în masă',
+        'quick-export'             => 'Export rapid',
         'variant-structures'       => 'Structuri de variante',
     ],
     'errors' => [

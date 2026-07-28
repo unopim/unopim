@@ -7,7 +7,9 @@
         <x-admin::page-header :title="trans('admin::app.catalog.products.index.title')">
             <x-slot:actions>
                 <!-- Export Modal -->
+                @if (bouncer()->hasPermission('catalog.products.quick_export'))
                 <x-admin::datagrid.export src="{{ route('admin.catalog.products.index') }}" />
+                @endif
 
                 {!! view_render_event('unopim.admin.catalog.products.create.before') !!}
 

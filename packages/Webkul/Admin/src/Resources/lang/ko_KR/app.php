@@ -2779,6 +2779,7 @@ return [
         'exports'                  => '임포트',
         'mass-update'              => '대량 업데이트',
         'mass-delete'              => '대량 삭제',
+        'quick-export'             => '빠른 내보내기',
         'variant-structures'       => '배리언트 구조',
     ],
     'errors' => [

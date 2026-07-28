@@ -2779,6 +2779,7 @@ return [
         'exports'                  => 'Xuất khẩu',
         'mass-update'              => 'Cập nhật hàng loạt',
         'mass-delete'              => 'Xóa hàng loạt',
+        'quick-export'             => 'Xuất khẩu nhanh',
         'variant-structures'       => 'Cấu trúc biến thể',
     ],
     'errors' => [

@@ -2776,6 +2776,7 @@ return [
         'exports'                  => 'निर्यात',
         'mass-update'              => 'सामूहिक अद्यतन',
         'mass-delete'              => 'सामूहिक हटाना',
+        'quick-export'             => 'त्वरित निर्यात',
         'variant-structures'       => 'वेरिएंट संरचनाएं',
     ],
     'errors' => [

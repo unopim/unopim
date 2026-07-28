@@ -2779,6 +2779,7 @@ return [
         'exports'                  => 'Exporter',
         'mass-update'              => 'Massuppdatering',
         'mass-delete'              => 'Massradering',
+        'quick-export'             => 'Snabbexport',
         'variant-structures'       => 'Variantstrukturer',
     ],
     'errors' => [

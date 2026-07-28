@@ -2776,6 +2776,7 @@ return [
         'exports'                  => 'Vienti',
         'mass-update'              => 'Määräpäivitys',
         'mass-delete'              => 'Määräpoisto',
+        'quick-export'             => 'Pikavienti',
         'variant-structures'       => 'Varianttirakenteet',
     ],
     'errors' => [

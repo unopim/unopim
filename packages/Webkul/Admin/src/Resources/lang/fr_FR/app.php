@@ -2774,6 +2774,7 @@ return [
         'exports'                  => 'Exports',
         'mass-update'              => 'Mise à jour en masse',
         'mass-delete'              => 'Suppression en masse',
+        'quick-export'             => 'Export rapide',
         'variant-structures'       => 'Structures de variantes',
     ],
     'errors' => [

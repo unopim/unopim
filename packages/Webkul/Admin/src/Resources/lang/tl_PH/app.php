@@ -2779,6 +2779,7 @@ return [
         'exports'                  => 'Mga Pag-export',
         'mass-update'              => 'Maramihang pag-update',
         'mass-delete'              => 'Maramihang pagtanggal',
+        'quick-export'             => 'Mabilis na Pag-export',
         'variant-structures'       => 'Mga Istraktura ng Variant',
     ],
     'errors' => [
