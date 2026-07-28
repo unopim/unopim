@@ -82,4 +82,16 @@ return [
         'route' => 'admin.measurement.families.units.delete',
         'sort'  => 3,
     ],
+
+    [
+        /**
+         * Routeless section permission: the measurement precision row shares the
+         * generic system settings editor route, so access is enforced per-row in
+         * SystemSettingsController against the hub row's `acl`.
+         */
+        'key'   => 'configuration.system_settings.measurement',
+        'name'  => 'measurement::app.config.catalog.measurement.title',
+        'route' => null,
+        'sort'  => 7,
+    ],
 ];
