@@ -97,7 +97,15 @@
                     loading: false,
                     currentCode: this.activeCode,
                     debounceTimer: null,
+                    dirty: false,
+                    pending: null,
                 };
+            },
+
+            mounted() {
+                this.$emitter.on('unsaved-changes:state', ({ dirty }) => {
+                    this.dirty = dirty;
+                });
             },
 
             methods: {
@@ -133,7 +141,46 @@
                         return;
                     }
 
-                    this.go(group);
+                    if (! this.dirty) {
+                        this.go(group);
+
+                        return;
+                    }
+
+                    this.pending = group;
+
+                    this.$emitter.emit('open-confirm-modal', {
+                        title: "@lang('admin::app.catalog.products.edit.attribute-groups.unsaved-title')",
+                        message: "@lang('admin::app.catalog.products.edit.attribute-groups.unsaved-message')".replace(':group', this.currentName()),
+                        options: {
+                            btnAgree: "@lang('admin::app.catalog.products.edit.attribute-groups.save-and-continue')",
+                            btnDisagree: "@lang('admin::app.catalog.products.edit.attribute-groups.discard-and-leave')",
+                            btnAgreeClass: 'primary-button',
+                            btnDisagreeClass: 'transparent-button',
+                        },
+                        agree: () => this.saveThenGo(),
+                        disagree: () => this.go(this.pending),
+                    });
+                },
+
+                saveThenGo() {
+                    const input = document.querySelector('form input[name="group"]');
+
+                    if (input) {
+                        input.value = this.pending.code;
+                    }
+
+                    const save = document.querySelector('[data-unsaved-save]');
+
+                    if (save) {
+                        save.click();
+                    }
+                },
+
+                currentName() {
+                    const current = this.groups.find((group) => group.code === this.currentCode);
+
+                    return current ? current.name : this.currentCode;
                 },
 
                 go(group) {

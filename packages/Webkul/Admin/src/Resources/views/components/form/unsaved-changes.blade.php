@@ -116,6 +116,16 @@
                 },
             },
 
+            watch: {
+                isDirty: {
+                    immediate: true,
+
+                    handler(dirty) {
+                        this.$emitter.emit('unsaved-changes:state', { dirty });
+                    },
+                },
+            },
+
             mounted() {
                 this.debounced = this.debounce(this.recompute, 80);
 
