@@ -1,10 +1,14 @@
 @php
     $activeTab = match (true) {
+        request()->has('history')      => 'history',
         request()->has('variants')     => 'variants',
         request()->has('completeness') => 'completeness',
-        request()->has('history')      => 'history',
         default                        => 'general',
     };
+
+    $historyQuery = array_diff_key(request()->query(), array_flip(['variants', 'completeness', 'history']));
+
+    $familyHistoryUrl = request()->url().'?'.http_build_query($historyQuery + ['history' => 1]);
 
     $tabItems = [
         [
@@ -28,6 +32,7 @@
 <x-admin::layouts.with-history
     :activeTab="$activeTab"
     :tab-items="$tabItems"
+    :history-url="$familyHistoryUrl"
 >
     <x-slot:entityName>
         attributeFamily
