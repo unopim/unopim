@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Ürün gezinmesi',
                 'preview'    => 'Önizleme',
                 'remove'     => 'Kaldır',
                 'save-btn'   => 'Ürünü kaydet',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategoriler',
                     'root-not-allowed' => 'Kök kategori bir ürüne atanamaz.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Öznitelik grubu:',
+                    'title'              => 'Öznitelik Grupları',
+                    'search-placeholder' => 'Grup ara',
+                    'empty'              => 'Aramanızla eşleşen öznitelik grubu yok.',
+                    'attributes-count'   => ':count öznitelik',
+                    'loading'            => 'Yükleniyor...',
+                    'retry'              => 'Yeniden dene',
+                    'load-more'          => 'Daha fazla yükle',
+                    'unsaved-title'      => 'Kaydedilmemiş değişiklikler',
+                    'unsaved-message'    => 'Devam etmeden önce :group grubundaki değişikliklerinizi kaydedin veya iptal edin.',
+                    'save-and-continue'  => 'Kaydet ve devam et',
+                    'discard-and-leave'  => 'Vazgeç ve devam et',
+                    'cancel'             => 'İptal',
                 ],
                 'images' => [
                     'info'  => 'Resimler 560px X 609px çözünürlüğünde olmalıdır',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'Çapraz Satış Ürünleri',
                     ],
                     'add-btn'           => 'Ekle',
+                    'add-type-btn'      => 'İlişki Türü Ekle',
                     'delete'            => 'Sil',
                     'empty-info'        => 'Bir kerede :type ürün ekleyin.',
                     'empty-title'       => 'Ürün ekle',
                     'image-placeholder' => 'Ürün resmi',
+                    'more-types'        => 'Daha fazla',
+                    'no-types-info'     => 'Bu ürünü bir ilişki türü altında bağlamak için "İlişki Türü Ekle" seçeneğini kullanın.',
+                    'no-types-title'    => 'Hiç ilişki eklenmedi',
+                    'search-types'      => 'İlişki türlerini ara',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Ürünler',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Oluşturulma Tarihi',
                     'product-type' => 'Ürün Türü',
                 ],
+                'sections' => [
+                    'view'    => 'Görüntüle',
+                    'unsaved' => 'Kaydedilmemiş değişiklikler',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Seçilenleri ekle',
+                    'close'        => 'Kapat',
+                    'clear-search' => 'Aramayı temizle',
+                    'categories'   => [
+                        'subtitle'        => 'Bu ürünü katalog kategorilerine atayın.',
+                        'search'          => 'Kategori ara…',
+                        'searching'       => 'Aranıyor…',
+                        'no-results'      => 'Eşleşen kategori bulunamadı',
+                        'load-more'       => 'Daha fazla yükle',
+                        'none-selected'   => 'Henüz kategori seçilmedi',
+                        'and-more'        => 've :count tane daha',
+                        'review-selected' => 'Seçili kategorileri göster',
+                        'selected'        => 'seçildi',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'İlgili, ek satış, çapraz satış ve özel ürünleri bağlayın.',
+                        'linked'   => 'bağlı ürün',
+                    ],
+                ],
+
                 'more'         => 'Daha Fazla',
                 'more-actions' => 'Daha Fazla İşlem',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Kategori Alanı ":code" bulunamadı',
             'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'İlişki Türleri',
+                'create-btn' => 'İlişki Türü Oluştur',
+                'add-btn'    => 'İlişki Türü Oluştur',
+
+                'datagrid' => [
+                    'code'                => 'Kod',
+                    'name'                => 'İsim',
+                    'status'              => 'Durum',
+                    'position'            => 'Pozisyon',
+                    'edit'                => 'Düzenle',
+                    'delete'              => 'Sil',
+                    'activated'           => 'Aktif Edildi',
+                    'disabled'            => 'Devre Dışı Bırakıldı',
+                    'active'              => 'Aktif',
+                    'disable'             => 'Devre Dışı Bırak',
+                    'update-status'       => 'Durum Güncelle',
+                    'delete-failed'       => 'Bu ilişki türü silinemiyor.',
+                    'mass-delete-success' => 'Seçilen ilişki türleri başarıyla silindi.',
+                    'mass-delete-failed'  => 'Seçilen ilişki türleri silinemiyor.',
+                    'mass-update-success' => 'Başarıyla güncellendi.',
+                ],
+            ],
+
+            'create-success'    => 'İlişki Türü başarıyla oluşturuldu',
+            'update-success'    => 'İlişki Türü başarıyla güncellendi',
+            'delete-success'    => 'İlişki Türü başarıyla silindi',
+            'delete-failed'     => 'İlişki Türü silinemedi',
+            'user-define-error' => 'Sistem tanımlı ilişki türü silinemez',
+            'unknown-fields'    => '":fields" koduna sahip ilişki türü alanı bulunamadı',
+
+            'create' => [
+                'title'      => 'İlişki Türü Oluştur',
+                'name'       => 'Ad',
+                'enter-name' => 'Ad girin',
+                'code'       => 'Kod',
+                'enter-code' => 'Kodu girin',
+                'save-btn'   => 'İlişki Türünü Kaydet',
+            ],
+
+            'edit' => [
+                'title'    => 'İlişki Türünü Düzenle',
+                'save-btn' => 'İlişki Türünü Güncelle',
+            ],
+
+            'fields' => [
+                'title'                => 'Alanlar',
+                'info'                 => 'Bu ilişki türü için ek veri toplamak üzere özel alanlar ekleyin.',
+                'add-field-btn'        => 'Alan Ekle',
+                'modal-title'          => 'Alan Ekle',
+                'edit-modal-title'     => 'Alanı Düzenle',
+                'save-field-btn'       => 'Alanı Kaydet',
+                'same-code-error'      => 'Alan kodu benzersiz olmalıdır.',
+                'add-fields-info'      => 'Bu ilişki türü için özel alanlar oluşturmak üzere.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Kategori alanı seçeneği başarıyla silindi',
             'create-success'      => 'Kategori alanı seçeneği başarıyla oluşturuldu',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Yerel ayar',
                 'level-parent'                     => 'Üst ürün',
                 'level-sub-parent'                 => 'Alt-üst',
                 'level-variant'                    => 'Varyant',
@@ -2272,6 +2380,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Genişlet',
+            'collapse' => 'Daralt',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Ekle',
+                'already-added'      => 'Eklendi',
+                'empty-info'         => 'Farklı bir arama deneyin.',
+                'empty-title'        => 'İlişki türü bulunamadı',
+                'search-placeholder' => 'Ada veya koda göre ara',
+                'select-all'         => 'Tümünü seç',
+                'title'              => 'İlişki Türü Ekle',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Seçilenleri ekle',
+                'selected' => ':count ürün seçildi',
+                'title'    => 'Ürün seç',
+            ],
+        ],
         'pagination' => [
             'page' => 'Sayfa',
         ],
@@ -2282,6 +2411,13 @@ return [
             'close' => 'Kapat',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total çeviriden :filled tanesi tamamlandı',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Sonuç bulunamadı',
+                'search' => 'Ara',
+            ],
             'ajax-error'      => 'Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
             'file-uploader'   => [
                 'upload-cta'  => 'Yüklemek için tıklayın',
@@ -2307,6 +2443,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Paneli daralt',
+                'expand'   => 'Paneli genişlet',
+            ],
             'breadcrumbs' => [
                 'label' => 'Gezinti yolu',
             ],
@@ -2333,6 +2473,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategoriler',
                 'category_fields'    => 'Kategori Alanları',
+                'association_types'  => 'İlişki Türleri',
                 'channels'           => 'Kanallar',
                 'collapse'           => 'Daralt',
                 'configure'          => 'Yapılandırma',
@@ -2773,6 +2914,7 @@ return [
         'url-rewrites'             => 'URL Yeniden Yazım',
         'users'                    => 'Kullanıcılar',
         'category_fields'          => 'Kategori Alanları',
+        'association_types'        => 'İlişki Türleri',
         'view'                     => 'Görünüm',
         'execute'                  => 'Çalıştır',
         'history'                  => 'Geçmiş',

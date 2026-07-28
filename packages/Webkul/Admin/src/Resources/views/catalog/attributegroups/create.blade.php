@@ -86,19 +86,11 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group class="last:!mb-0">
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            :name="$locale->code . '[name]'"
-                                            :value="old($locale->code)['name'] ?? ''"
-                                        />
-                                    </x-admin::form.control-group>
-                                @endforeach
+                                <x-admin::form.translatable-field
+                                    :locales="$locales"
+                                    :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ''])->all()"
+                                    :label="trans('admin::app.catalog.attribute-groups.create.label')"
+                                />
                             </div>
                         </div>
                     </div>

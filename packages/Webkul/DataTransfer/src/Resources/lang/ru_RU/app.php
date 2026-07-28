@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Связи товаров',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Поле \'%s\' обязательно для заполнения.',
+                    'self-link-not-allowed'       => 'Товар \'%s\' не может быть связан сам с собой.',
+                    'sku-not-found'               => 'Товар с артикулом (SKU) \'%s\' не найден.',
+                    'related-sku-not-found'       => 'Связанный товар с артикулом (SKU) \'%s\' не найден.',
+                    'association-type-not-found'  => 'Тип связи \'%s\' не существует или неактивен.',
+                    'invalid-field-value'         => 'Указано недопустимое значение для поля связи.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Группы атрибутов',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Этот экспорт слишком велик для выполнения: примерно :rows строк × :columns столбцов (~:estimated) превышают доступное пространство (~:available). Сократите экспорт, выбрав меньше каналов/локалей (и атрибутов), и повторите попытку.',
         'fields'           => [
-            'file-format'         => 'Формат файла',
-            'with-media'          => 'С медиафайлами',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Формат файла',
+            'with-media'             => 'С медиафайлами',
+            'with-associations'      => 'С ассоциациями',
+            'with-associations-info' => 'Включить в экспорт устаревшие столбцы списков SKU (up_sells, cross_sells и related_products)',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Атрибуты',
+        ],
+        'product-associations' => [
+            'title' => 'Связи товаров',
         ],
         'attribute-groups' => [
             'title' => 'Группы атрибутов',

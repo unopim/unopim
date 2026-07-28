@@ -22,6 +22,7 @@ class UpdateSimpleProductRequest extends ApiFormRequest
             'additional'        => ['nullable', 'array'],
             'values'            => ['required', 'array'],
             'values.common.sku' => ['required'],
+            'associations'      => ['nullable', 'array'],
         ];
     }
 }

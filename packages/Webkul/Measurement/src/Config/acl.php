@@ -18,12 +18,6 @@ return [
     [
         'key'   => 'catalog.measurements.families.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.measurement.families.create',
-        'sort'  => 1,
-    ],
-    [
-        'key'   => 'catalog.measurements.families.create',
-        'name'  => 'admin::app.acl.create',
         'route' => 'admin.measurement.families.store',
         'sort'  => 1,
     ],

@@ -114,7 +114,7 @@ class Core
      */
     public function getAllChannels()
     {
-        return $this->channelRepository->all();
+        return $this->channelRepository->with('translations')->all();
     }
 
     /**
@@ -174,7 +174,7 @@ class Core
      */
     public function getDefaultChannelCode(): ?string
     {
-        return $this->getDefaultChannel()?->code;
+        return $this->getDefaultChannel()?->code ?? config('app.channel');
     }
 
     /**

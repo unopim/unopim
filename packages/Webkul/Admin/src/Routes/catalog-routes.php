@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\Admin\Http\Controllers\Catalog\AssociationTypeController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeFamilyController;
 use Webkul\Admin\Http\Controllers\Catalog\AttributeGroupController;
@@ -83,6 +84,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('edit/{id}', 'edit')->name('admin.catalog.families.edit');
 
+            Route::get('edit/{id}/groups', 'groups')->name('admin.catalog.families.groups');
+
+            Route::get('edit/{id}/groups/{groupId}/attributes', 'groupAttributes')->name('admin.catalog.families.group-attributes');
+
             Route::get('edit/{id}/variant-structures', 'variantStructures')->name('admin.catalog.families.variant-structures.index');
 
             Route::get('edit/{id}/variant-structures/{structureId}/edit', 'editVariantStructure')->name('admin.catalog.families.variant-structures.edit');
@@ -141,11 +146,28 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::post('mass-update', 'massUpdate')->name('admin.catalog.category_fields.mass_update');
 
-            Route::get('search', 'search')->name('admin.catalog.category_fields.search');
-
             Route::get('{id}/options', 'getCategoryFieldOptions')->name('admin.catalog.category_fields.options');
+        });
 
-            Route::get('tree', 'tree')->name('admin.catalog.category_fields.tree');
+        /**
+         * Association types routes.
+         */
+        Route::controller(AssociationTypeController::class)->prefix('association-types')->group(function () {
+            Route::get('', 'index')->name('admin.catalog.association_types.index');
+
+            Route::get('search', 'search')->name('admin.catalog.association_types.search');
+
+            Route::post('create', 'store')->name('admin.catalog.association_types.store');
+
+            Route::get('edit/{id}', 'edit')->name('admin.catalog.association_types.edit');
+
+            Route::put('edit/{id}', 'update')->name('admin.catalog.association_types.update');
+
+            Route::delete('{id}', 'destroy')->name('admin.catalog.association_types.delete');
+
+            Route::post('mass-delete', 'massDestroy')->name('admin.catalog.association_types.mass_delete');
+
+            Route::post('mass-update', 'massUpdate')->name('admin.catalog.association_types.mass_update');
         });
 
         Route::controller(AjaxOptionsController::class)->prefix('ajax-options')->group(function () {
@@ -170,6 +192,10 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::post('{configurableId}/variant-node', 'createVariantNode')->name('admin.catalog.products.variant_node.create');
 
             Route::get('{configurableId}/variant-children', 'variantChildren')->name('admin.catalog.products.variant_children');
+
+            Route::get('edit/{id}/attribute-groups', 'attributeGroups')->name('admin.catalog.products.attribute_groups');
+
+            Route::get('edit/{id}/attribute-groups/{groupId}/fields', 'attributeGroupFields')->name('admin.catalog.products.attribute_group_fields');
 
             Route::get('edit/{id}', 'edit')->name('admin.catalog.products.edit')->middleware(EnsureChannelLocaleIsValid::class);
 

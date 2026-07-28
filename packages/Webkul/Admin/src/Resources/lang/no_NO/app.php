@@ -250,6 +250,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigasjon',
                 'preview'    => 'Forhåndsvisning',
                 'remove'     => 'Fjern',
                 'save-btn'   => 'Lagre produkt',
@@ -257,6 +258,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorier',
                     'root-not-allowed' => 'Rotkategorien kan ikke tildeles et produkt.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributtgruppe:',
+                    'title'              => 'Attributtgrupper',
+                    'search-placeholder' => 'Søk i grupper',
+                    'empty'              => 'Ingen attributtgrupper samsvarer med søket ditt.',
+                    'attributes-count'   => ':count attributter',
+                    'loading'            => 'Laster...',
+                    'retry'              => 'Prøv igjen',
+                    'load-more'          => 'Last inn flere',
+                    'unsaved-title'      => 'Ulagrede endringer',
+                    'unsaved-message'    => 'Lagre endringene i :group før du går videre, eller forkast dem.',
+                    'save-and-continue'  => 'Lagre og fortsett',
+                    'discard-and-leave'  => 'Forkast og fortsett',
+                    'cancel'             => 'Avbryt',
                 ],
                 'images' => [
                     'info'  => 'Bilder bør ha oppløsningen 560px X 609px',
@@ -284,10 +301,15 @@ return [
                         'title'      => 'Kryss-salg-produkter',
                     ],
                     'add-btn'           => 'Legg til',
+                    'add-type-btn'      => 'Legg til assosiasjonstype',
                     'delete'            => 'Slett',
                     'empty-info'        => 'Legg til :type produkter samtidig.',
                     'empty-title'       => 'Legg til produkt',
                     'image-placeholder' => 'Produktbilde',
+                    'more-types'        => 'Flere',
+                    'no-types-info'     => 'Bruk «Legg til assosiasjonstype» for å knytte dette produktet til en assosiasjonstype.',
+                    'no-types-title'    => 'Ingen assosiasjoner lagt til',
+                    'search-types'      => 'Søk i tilknytningstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
@@ -396,6 +418,33 @@ return [
                     'created-at'   => 'Opprettet',
                     'product-type' => 'Produkttype',
                 ],
+                'sections' => [
+                    'view'    => 'Vis',
+                    'unsaved' => 'Ulagrede endringer',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Legg til valgte',
+                    'close'        => 'Lukk',
+                    'clear-search' => 'Tøm søk',
+                    'categories'   => [
+                        'subtitle'        => 'Tilordne dette produktet til katalogkategorier.',
+                        'search'          => 'Søk i kategorier…',
+                        'searching'       => 'Søker…',
+                        'no-results'      => 'Ingen samsvarende kategorier funnet',
+                        'load-more'       => 'Last inn flere',
+                        'none-selected'   => 'Ingen kategorier er valgt ennå',
+                        'and-more'        => 'og :count til',
+                        'review-selected' => 'Vis valgte kategorier',
+                        'selected'        => 'valgt',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Koble relaterte, mersalgs-, kryssalgs- og tilpassede produkter.',
+                        'linked'   => 'koblede produkter',
+                    ],
+                ],
+
                 'more'         => 'Mer',
                 'more-actions' => 'Flere handlinger',
                 'variations'   => [
@@ -959,6 +1008,64 @@ return [
             'not-found'         => 'Kategorifelt med kode ":code" ble ikke funnet',
             'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Assosiasjonstyper',
+                'create-btn' => 'Opprett Assosiasjonstype',
+                'add-btn'    => 'Opprett Assosiasjonstype',
+
+                'datagrid' => [
+                    'code'                => 'Kode',
+                    'name'                => 'Navn',
+                    'status'              => 'Status',
+                    'position'            => 'Posisjon',
+                    'edit'                => 'Rediger',
+                    'delete'              => 'Slett',
+                    'activated'           => 'Aktivert',
+                    'disabled'            => 'Deaktivert',
+                    'active'              => 'Aktiver',
+                    'disable'             => 'Deaktiver',
+                    'update-status'       => 'Oppdater status',
+                    'delete-failed'       => 'Denne assosiasjonstypen kan ikke slettes.',
+                    'mass-delete-success' => 'Valgte assosiasjonstyper ble slettet',
+                    'mass-delete-failed'  => 'Valgte assosiasjonstyper kan ikke slettes.',
+                    'mass-update-success' => 'Oppdatert suksessfullt',
+                ],
+            ],
+
+            'create-success'    => 'Assosiasjonstype Opprettet',
+            'update-success'    => 'Assosiasjonstype Oppdatert',
+            'delete-success'    => 'Assosiasjonstype Slettet',
+            'delete-failed'     => 'Assosiasjonstype Sletting Feilet',
+            'user-define-error' => 'Kan ikke slette system Assosiasjonstype',
+            'unknown-fields'    => 'Assosiasjonstype-felt med kode ":fields" ble ikke funnet',
+
+            'create' => [
+                'title'      => 'Opprett assosiasjonstype',
+                'name'       => 'Navn',
+                'enter-name' => 'Skriv inn navn',
+                'code'       => 'Kode',
+                'enter-code' => 'Skriv inn kode',
+                'save-btn'   => 'Lagre assosiasjonstype',
+            ],
+
+            'edit' => [
+                'title'    => 'Rediger assosiasjonstype',
+                'save-btn' => 'Oppdater assosiasjonstype',
+            ],
+
+            'fields' => [
+                'title'                => 'Felt',
+                'info'                 => 'Legg til egendefinerte felt for å fange opp tilleggsdata for denne assosiasjonstypen.',
+                'add-field-btn'        => 'Legg til felt',
+                'modal-title'          => 'Legg til felt',
+                'edit-modal-title'     => 'Rediger felt',
+                'save-field-btn'       => 'Lagre felt',
+                'same-code-error'      => 'Feltkoden må være unik.',
+                'add-fields-info'      => 'For å opprette egendefinerte felt for denne assosiasjonstypen.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Kategorifeltvalg slettet',
             'create-success'      => 'Kategori feltalternativ opprettet',
@@ -994,6 +1101,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Språk',
                 'level-parent'                     => 'Overordnet produkt',
                 'level-sub-parent'                 => 'Mellomliggende nivå',
                 'level-variant'                    => 'Variant',
@@ -2272,6 +2380,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Utvid',
+            'collapse' => 'Skjul',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Legg til',
+                'already-added'      => 'Lagt til',
+                'empty-info'         => 'Prøv et annet søk.',
+                'empty-title'        => 'Ingen assosiasjonstyper funnet',
+                'search-placeholder' => 'Søk etter navn eller kode',
+                'select-all'         => 'Velg alle',
+                'title'              => 'Legg til assosiasjonstype',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Legg til valgte',
+                'selected' => ':count produkter valgt',
+                'title'    => 'Velg produkter',
+            ],
+        ],
         'pagination' => [
             'page' => 'Side',
         ],
@@ -2282,6 +2411,13 @@ return [
             'close' => 'Lukk',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled av :total oversatt',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Ingen resultater',
+                'search' => 'Søk',
+            ],
             'ajax-error'      => 'Noe gikk galt under lagringen. Prøv igjen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klikk for å laste opp',
@@ -2307,6 +2443,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Skjul panel',
+                'expand'   => 'Vis panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Brødsmulesti',
             ],
@@ -2333,6 +2473,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategorier',
                 'category_fields'    => 'Kategorifelt',
+                'association_types'  => 'Assosiasjonstyper',
                 'channels'           => 'Kanaler',
                 'collapse'           => 'Kollaps',
                 'configure'          => 'Konfigurering',
@@ -2773,6 +2914,7 @@ return [
         'url-rewrites'             => 'URL-omskrivninger',
         'users'                    => 'Brukere',
         'category_fields'          => 'Kategori felt',
+        'association_types'        => 'Assosiasjonstyper',
         'view'                     => 'Visning',
         'execute'                  => 'Utfør',
         'history'                  => 'Historie',

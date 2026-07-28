@@ -7,7 +7,8 @@
  *
  * Blade caveat: `*.blade.php` and PHP cannot import this file. The matching
  * literals there — the `ajax` / `data-ajax-form` / `data-ajax-error-message`
- * attributes on `<x-admin::form>`, and the `X-Ajax-Form` check inside the
+ * attributes on `<x-admin::form>`, the `unopim:form:*` listeners in the
+ * unsaved-changes bar, and the `X-Ajax-Form` check inside the
  * `ConvertAjaxFormRedirect` middleware — must be kept in step with the values
  * below.
  */
@@ -41,6 +42,21 @@ export const ATTRIBUTES = {
 export const EMITTER_EVENTS = {
     ADD_FLASH: 'add-flash',
     FORM_SAVED: 'form-saved',
+};
+
+/**
+ * Submit lifecycle events, dispatched on the `<form>` element itself so any
+ * wrapper (the unsaved-changes bar, a drawer, a plugin) can tell an attempt
+ * that never left the browser from one the server answered — without timing
+ * guesses.
+ *
+ * INVALID — client-side validation blocked the submit; no request was sent.
+ *           detail: { errors, message }
+ * SETTLED — an ajax submit finished, successfully or not. detail: { ok }
+ */
+export const FORM_EVENTS = {
+    INVALID: 'unopim:form:invalid',
+    SETTLED: 'unopim:form:settled',
 };
 
 /**

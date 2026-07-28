@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Product Associations',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => "The '%s' field is required.",
+                    'self-link-not-allowed'       => "Product '%s' cannot be associated with itself.",
+                    'sku-not-found'               => "Product with SKU '%s' not found.",
+                    'related-sku-not-found'       => "Related product with SKU '%s' not found.",
+                    'association-type-not-found'  => "Association type '%s' does not exist or is inactive.",
+                    'invalid-field-value'         => 'Invalid value provided for an association field.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attribute Groups',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
         'fields'           => [
-            'file-format'         => 'File Format',
-            'with-media'          => 'With Media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'File Format',
+            'with-media'             => 'With Media',
+            'with-associations'      => 'With Associations',
+            'with-associations-info' => 'Include the legacy up_sells, cross_sells and related_products SKU-list columns in the export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Attributes',
+        ],
+        'product-associations' => [
+            'title' => 'Product Associations',
         ],
         'attribute-groups' => [
             'title' => 'Attribute Groups',

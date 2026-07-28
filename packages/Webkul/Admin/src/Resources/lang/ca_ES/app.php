@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navegació del producte',
                 'preview'    => 'Vista prèvia',
                 'remove'     => 'Eliminar',
                 'save-btn'   => 'Desar Producte',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Categories',
                     'root-not-allowed' => 'La categoria arrel no es pot assignar a un producte.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grup d\'atributs:',
+                    'title'              => 'Grups d\'atributs',
+                    'search-placeholder' => 'Cerca grups',
+                    'empty'              => 'Cap grup d\'atributs coincideix amb la teva cerca.',
+                    'attributes-count'   => ':count atributs',
+                    'loading'            => 'Carregant...',
+                    'retry'              => 'Torna-ho a provar',
+                    'load-more'          => 'Carrega\'n més',
+                    'unsaved-title'      => 'Canvis sense desar',
+                    'unsaved-message'    => 'Desa els canvis a :group abans de continuar, o descarta’ls.',
+                    'save-and-continue'  => 'Desa i continua',
+                    'discard-and-leave'  => 'Descarta i continua',
+                    'cancel'             => 'Cancel·la',
                 ],
                 'images' => [
                     'info'  => 'La resolució de la imatge hauria de ser com 560px X 609px',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'Productes de Venda Creuada',
                     ],
                     'add-btn'           => 'Afegir',
+                    'add-type-btn'      => 'Afegir Tipus d\'Associació',
                     'delete'            => 'Eliminar',
                     'empty-info'        => 'Afegiu :type productes a l\'instant.',
                     'empty-title'       => 'Afegir Producte',
                     'image-placeholder' => 'Imatge del Producte',
+                    'more-types'        => 'Més',
+                    'no-types-info'     => 'Utilitza «Afegir Tipus d\'Associació» per enllaçar aquest producte sota un tipus d\'associació.',
+                    'no-types-title'    => 'No s\'ha afegit cap associació',
+                    'search-types'      => 'Cerca tipus d\'associació',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associacions',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Data de creació',
                     'product-type' => 'Tipus de producte',
                 ],
+                'sections' => [
+                    'view'    => 'Veure',
+                    'unsaved' => 'Canvis sense desar',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Afegeix la selecció',
+                    'close'        => 'Tanca',
+                    'clear-search' => 'Esborra la cerca',
+                    'categories'   => [
+                        'subtitle'        => 'Assigneu aquest producte a categories del catàleg.',
+                        'search'          => 'Cerca categories…',
+                        'searching'       => 'S\'està cercant…',
+                        'no-results'      => 'No s\'ha trobat cap categoria coincident',
+                        'load-more'       => 'Carrega\'n més',
+                        'none-selected'   => 'Encara no s\'ha seleccionat cap categoria',
+                        'and-more'        => 'i :count més',
+                        'review-selected' => 'Mostra les categories seleccionades',
+                        'selected'        => 'seleccionat(s)',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Vincula productes relacionats, de venda addicional, de venda creuada i personalitzats.',
+                        'linked'   => 'productes vinculats',
+                    ],
+                ],
+
                 'more'         => 'Més',
                 'more-actions' => 'Més accions',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'No s\'ha trobat el Camp de Categoria amb el codi ":code"',
             'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Tipus d\'associació',
+                'create-btn' => 'Crear Tipus d\'Associació',
+                'add-btn'    => 'Crear Tipus d\'Associació',
+
+                'datagrid' => [
+                    'code'                => 'Codi',
+                    'name'                => 'Nom',
+                    'status'              => 'Estat',
+                    'position'            => 'Posició',
+                    'edit'                => 'Editar',
+                    'delete'              => 'Eliminar',
+                    'activated'           => 'Activat',
+                    'disabled'            => 'Desactivat',
+                    'active'              => 'Activar',
+                    'disable'             => 'Desactivar',
+                    'update-status'       => 'Actualitzar Estat',
+                    'delete-failed'       => 'Aquest tipus d\'associació no es pot eliminar.',
+                    'mass-delete-success' => 'Tipus d\'Associació seleccionats eliminats correctament',
+                    'mass-delete-failed'  => 'Els tipus d\'associació seleccionats no es poden eliminar.',
+                    'mass-update-success' => 'Actualitzat amb èxit',
+                ],
+            ],
+
+            'create-success'    => 'Tipus d\'Associació Creat Correctament',
+            'update-success'    => 'Tipus d\'Associació Actualitzat Correctament',
+            'delete-success'    => 'Tipus d\'Associació Eliminat Correctament',
+            'delete-failed'     => 'No s\'ha pogut eliminar el Tipus d\'Associació',
+            'user-define-error' => 'No es pot eliminar un Tipus d\'Associació del sistema',
+            'unknown-fields'    => 'No s\'ha pogut trobar el camp de tipus d\'associació amb codi ":fields"',
+
+            'create' => [
+                'title'      => 'Crear tipus d\'associació',
+                'name'       => 'Nom',
+                'enter-name' => 'Introdueix el nom',
+                'code'       => 'Codi',
+                'enter-code' => 'Introduïu el Codi',
+                'save-btn'   => 'Desar tipus d\'associació',
+            ],
+
+            'edit' => [
+                'title'    => 'Editar tipus d\'associació',
+                'save-btn' => 'Actualitzar tipus d\'associació',
+            ],
+
+            'fields' => [
+                'title'                => 'Camps',
+                'info'                 => 'Afegiu camps personalitzats per capturar dades addicionals per a aquest tipus d\'associació.',
+                'add-field-btn'        => 'Afegir camp',
+                'modal-title'          => 'Afegir camp',
+                'edit-modal-title'     => 'Edita el camp',
+                'save-field-btn'       => 'Desar camp',
+                'same-code-error'      => 'El codi del camp ha de ser únic.',
+                'add-fields-info'      => 'Per crear camps personalitzats per a aquest tipus d\'associació.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Opció de camp de categoria eliminada correctament',
             'create-success'      => 'Opció de Camp de Categoria Creada Correctament',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Idioma',
                 'level-parent'                     => 'Producte pare',
                 'level-sub-parent'                 => 'Subpare',
                 'level-variant'                    => 'Variant',
@@ -2269,6 +2377,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Desplega',
+            'collapse' => 'Replega',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Afegir',
+                'already-added'      => 'Afegit',
+                'empty-info'         => 'Prova una cerca diferent.',
+                'empty-title'        => 'No s\'ha trobat cap tipus d\'associació',
+                'search-placeholder' => 'Cerca per nom o codi',
+                'select-all'         => 'Selecciona-ho tot',
+                'title'              => 'Afegir Tipus d\'Associació',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Afegeix la selecció',
+                'selected' => ':count productes seleccionats',
+                'title'    => 'Selecciona productes',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pàgina',
         ],
@@ -2279,6 +2408,13 @@ return [
             'close' => 'Tanca',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled de :total traduïts',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Sense resultats',
+                'search' => 'Cerca',
+            ],
             'ajax-error'      => 'Alguna cosa ha anat malament en desar. Torneu-ho a provar.',
             'file-uploader'   => [
                 'upload-cta'  => 'Fes clic per pujar',
@@ -2304,6 +2440,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Replega el panell',
+                'expand'   => 'Desplega el panell',
+            ],
             'breadcrumbs' => [
                 'label' => 'Ruta de navegació',
             ],
@@ -2330,6 +2470,7 @@ return [
                 'catalog'            => 'Catálogo',
                 'categories'         => 'Categorías',
                 'category_fields'    => 'Campos de categoría',
+                'association_types'  => 'Tipus d\'associació',
                 'channels'           => 'Canales',
                 'collapse'           => 'Colapsar',
                 'configure'          => 'Configuración',
@@ -2770,6 +2911,7 @@ return [
         'url-rewrites'             => 'Reescripcions URL',
         'users'                    => 'Usuaris',
         'category_fields'          => 'Campaments de categoria',
+        'association_types'        => 'Tipus d\'associació',
         'view'                     => 'Vista',
         'execute'                  => 'Executar treball',
         'history'                  => 'Historial',

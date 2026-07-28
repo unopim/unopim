@@ -159,25 +159,11 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label
-                                            class="w-full"
-                                            localizable="true"
-                                            :current-locale-code="$locale->code"
-                                        >
-                                            @lang('admin::app.catalog.attributes.edit.label')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            :name="$locale->code . '[name]'"
-                                            :value="old($locale->code)['name'] ?? ($attribute->translate($locale->code)->name ?? '')"
-                                        />
-
-                                        <x-admin::form.control-group.error :control-name="$locale->code . '[name]'" />
-                                    </x-admin::form.control-group>
-                                @endforeach
+                                <x-admin::form.translatable-field
+                                    :locales="$locales"
+                                    :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($attribute->translate($locale->code)->name ?? '')])->all()"
+                                    :label="trans('admin::app.catalog.attributes.edit.label')"
+                                />
                             </div>
                         </div>
 
@@ -698,6 +684,27 @@
                                     ::value="optionIsNew"
                                 />
 
+                                <x-admin::form.translatable-fields
+                                    :locales="$locales"
+                                    :label="trans('admin::app.catalog.attributes.edit.label')"
+                                >
+                                    @foreach ($locales as $locale)
+                                        <x-admin::form.control-group
+                                            class="w-full mb-2.5"
+                                            v-show="locale === '{{ $locale->code }}'"
+                                        >
+                                            <x-admin::form.control-group.control
+                                                type="text"
+                                                name="locales.{{ $locale->code }}"
+                                                :label="$locale->name"
+                                                :v-code-generator="$locale->code === core()->getRequestedLocaleCode() ? '\'code\'' : null"
+                                            />
+
+                                            <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
+                                        </x-admin::form.control-group>
+                                    @endforeach
+                                </x-admin::form.translatable-fields>
+
                                 <x-admin::form.control-group class="w-full mb-2.5">
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.attributes.edit.code')
@@ -716,26 +723,6 @@
 
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
-
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label
-                                            class="w-full"
-                                            localizable="true"
-                                            :current-locale-code="$locale->code"
-                                        >
-                                            @lang('admin::app.catalog.attributes.edit.label')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            name="locales.{{ $locale->code }}"
-                                            :label="$locale->name"
-                                        />
-
-                                        <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
-                                    </x-admin::form.control-group>
-                                @endforeach
                                 </div>
                             </div>
                         </x-slot>

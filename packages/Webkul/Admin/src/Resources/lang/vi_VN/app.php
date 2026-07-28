@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Điều hướng sản phẩm',
                 'preview'    => 'Xem trước',
                 'remove'     => 'Xóa',
                 'save-btn'   => 'Lưu sản phẩm',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Danh mục',
                     'root-not-allowed' => 'Danh mục gốc không thể được gán cho sản phẩm.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Nhóm thuộc tính:',
+                    'title'              => 'Nhóm thuộc tính',
+                    'search-placeholder' => 'Tìm kiếm nhóm',
+                    'empty'              => 'Không có nhóm thuộc tính nào khớp với tìm kiếm của bạn.',
+                    'attributes-count'   => ':count thuộc tính',
+                    'loading'            => 'Đang tải...',
+                    'retry'              => 'Thử lại',
+                    'load-more'          => 'Tải thêm',
+                    'unsaved-title'      => 'Thay đổi chưa lưu',
+                    'unsaved-message'    => 'Hãy lưu các thay đổi trong :group trước khi tiếp tục, hoặc hủy bỏ chúng.',
+                    'save-and-continue'  => 'Lưu và tiếp tục',
+                    'discard-and-leave'  => 'Hủy bỏ và tiếp tục',
+                    'cancel'             => 'Hủy',
                 ],
                 'images' => [
                     'info'  => 'Hình ảnh phải có độ phân giải 560px X 609px',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'Sản phẩm bán chéo',
                     ],
                     'add-btn'           => 'Thêm',
+                    'add-type-btn'      => 'Thêm Loại Liên Kết',
                     'delete'            => 'Xóa',
                     'empty-info'        => 'Thêm sản phẩm loại :type.',
                     'empty-title'       => 'Thêm sản phẩm',
                     'image-placeholder' => 'Hình ảnh sản phẩm',
+                    'more-types'        => 'Thêm',
+                    'no-types-info'     => 'Sử dụng "Thêm Loại Liên Kết" để liên kết sản phẩm này dưới một loại liên kết.',
+                    'no-types-title'    => 'Chưa thêm liên kết nào',
+                    'search-types'      => 'Tìm loại liên kết',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Sản phẩm',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Ngày tạo',
                     'product-type' => 'Loại sản phẩm',
                 ],
+                'sections' => [
+                    'view'    => 'Xem',
+                    'unsaved' => 'Thay đổi chưa lưu',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Thêm mục đã chọn',
+                    'close'        => 'Đóng',
+                    'clear-search' => 'Xoá tìm kiếm',
+                    'categories'   => [
+                        'subtitle'        => 'Gán sản phẩm này vào danh mục.',
+                        'search'          => 'Tìm kiếm danh mục…',
+                        'searching'       => 'Đang tìm kiếm…',
+                        'no-results'      => 'Không tìm thấy danh mục phù hợp',
+                        'load-more'       => 'Tải thêm',
+                        'none-selected'   => 'Chưa chọn danh mục nào',
+                        'and-more'        => 'và :count mục khác',
+                        'review-selected' => 'Hiển thị danh mục đã chọn',
+                        'selected'        => 'đã chọn',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Liên kết sản phẩm liên quan, bán thêm, bán chéo và tùy chỉnh.',
+                        'linked'   => 'sản phẩm đã liên kết',
+                    ],
+                ],
+
                 'more'         => 'Thêm',
                 'more-actions' => 'Hành động khác',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
             'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Loại liên kết',
+                'create-btn' => 'Tạo Loại Liên Kết',
+                'add-btn'    => 'Tạo Loại Liên Kết',
+
+                'datagrid' => [
+                    'code'                => 'Mã',
+                    'name'                => 'Tên',
+                    'status'              => 'Trạng Thái',
+                    'position'            => 'Vị Trí',
+                    'edit'                => 'Chỉnh Sửa',
+                    'delete'              => 'Xóa',
+                    'activated'           => 'Đã Kích Hoạt',
+                    'disabled'            => 'Đã Vô Hiệu Hóa',
+                    'active'              => 'Kích Hoạt',
+                    'disable'             => 'Vô Hiệu Hóa',
+                    'update-status'       => 'Cập Nhật Trạng Thái',
+                    'delete-failed'       => 'Không thể xóa loại liên kết này.',
+                    'mass-delete-success' => 'Đã Xóa Loại Liên Kết Chọn',
+                    'mass-delete-failed'  => 'Không thể xóa các loại liên kết đã chọn.',
+                    'mass-update-success' => 'Cập Nhật Thành Công',
+                ],
+            ],
+
+            'create-success'    => 'Loại Liên Kết Tạo Thành Công',
+            'update-success'    => 'Cập Nhật Loại Liên Kết Thành Công',
+            'delete-success'    => 'Xóa Loại Liên Kết Thành Công',
+            'delete-failed'     => 'Xóa Loại Liên Kết Thất Bại',
+            'user-define-error' => 'Không thể xóa Loại Liên Kết hệ thống',
+            'unknown-fields'    => 'Không tìm thấy trường Loại Liên Kết với mã ":fields"',
+
+            'create' => [
+                'title'      => 'Tạo loại liên kết',
+                'name'       => 'Tên',
+                'enter-name' => 'Nhập tên',
+                'code'       => 'Mã',
+                'enter-code' => 'Nhập mã',
+                'save-btn'   => 'Lưu loại liên kết',
+            ],
+
+            'edit' => [
+                'title'    => 'Chỉnh sửa loại liên kết',
+                'save-btn' => 'Cập nhật loại liên kết',
+            ],
+
+            'fields' => [
+                'title'                => 'Trường',
+                'info'                 => 'Thêm các trường tùy chỉnh để thu thập dữ liệu bổ sung cho loại liên kết này.',
+                'add-field-btn'        => 'Thêm trường',
+                'modal-title'          => 'Thêm trường',
+                'edit-modal-title'     => 'Chỉnh sửa trường',
+                'save-field-btn'       => 'Lưu trường',
+                'same-code-error'      => 'Mã trường phải là duy nhất.',
+                'add-fields-info'      => 'Để tạo các trường tùy chỉnh cho loại liên kết này.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Đã xóa tùy chọn trường danh mục thành công',
             'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Ngôn ngữ',
                 'level-parent'                     => 'Sản phẩm cha',
                 'level-sub-parent'                 => 'Cha phụ',
                 'level-variant'                    => 'Biến thể',
@@ -2272,6 +2380,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Mở rộng',
+            'collapse' => 'Thu gọn',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Thêm',
+                'already-added'      => 'Đã thêm',
+                'empty-info'         => 'Hãy thử tìm kiếm khác.',
+                'empty-title'        => 'Không tìm thấy loại liên kết nào',
+                'search-placeholder' => 'Tìm theo tên hoặc mã',
+                'select-all'         => 'Chọn tất cả',
+                'title'              => 'Thêm Loại Liên Kết',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Thêm mục đã chọn',
+                'selected' => 'Đã chọn :count sản phẩm',
+                'title'    => 'Chọn sản phẩm',
+            ],
+        ],
         'pagination' => [
             'page' => 'Trang',
         ],
@@ -2282,6 +2411,13 @@ return [
             'close' => 'Đóng',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => 'Đã dịch :filled trên :total',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Không có kết quả',
+                'search' => 'Tìm kiếm',
+            ],
             'ajax-error'      => 'Đã xảy ra lỗi khi lưu. Vui lòng thử lại.',
             'file-uploader'   => [
                 'upload-cta'  => 'Nhấp để tải lên',
@@ -2307,6 +2443,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Thu gọn bảng',
+                'expand'   => 'Mở rộng bảng',
+            ],
             'breadcrumbs' => [
                 'label' => 'Đường dẫn điều hướng',
             ],
@@ -2333,6 +2473,7 @@ return [
                 'catalog'            => 'Danh mục',
                 'categories'         => 'Danh mục',
                 'category_fields'    => 'Các trường danh mục',
+                'association_types'  => 'Loại liên kết',
                 'channels'           => 'Kênh',
                 'collapse'           => 'Gập lại',
                 'configure'          => 'Cấu hình',
@@ -2773,6 +2914,7 @@ return [
         'url-rewrites'             => 'Tái viết URL',
         'users'                    => 'Người dùng',
         'category_fields'          => 'Các trường danh mục',
+        'association_types'        => 'Loại liên kết',
         'view'                     => 'Xem',
         'execute'                  => 'Thực hiện',
         'history'                  => 'Lịch sử',

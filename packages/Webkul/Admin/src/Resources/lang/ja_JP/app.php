@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '製品ナビゲーション',
                 'preview'    => 'プレビュー',
                 'remove'     => '削除',
                 'save-btn'   => '商品を保存',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'カテゴリー',
                     'root-not-allowed' => 'ルートカテゴリを製品に割り当てることはできません。',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '属性グループ:',
+                    'title'              => '属性グループ',
+                    'search-placeholder' => 'グループを検索',
+                    'empty'              => '検索条件に一致する属性グループはありません。',
+                    'attributes-count'   => ':count 件の属性',
+                    'loading'            => '読み込み中...',
+                    'retry'              => '再試行',
+                    'load-more'          => 'さらに読み込む',
+                    'unsaved-title'      => '未保存の変更',
+                    'unsaved-message'    => '続行する前に :group の変更を保存するか、破棄してください。',
+                    'save-and-continue'  => '保存して続行',
+                    'discard-and-leave'  => '破棄して続行',
+                    'cancel'             => 'キャンセル',
                 ],
                 'images' => [
                     'info'  => '画像の解像度は 560 x 609 ピクセル程度にしてください',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'クロスセル製品',
                     ],
                     'add-btn'           => '追加',
+                    'add-type-btn'      => '関連タイプを追加',
                     'delete'            => '削除',
                     'empty-info'        => ':type 追加するには、製品を入力します。',
                     'empty-title'       => '製品の追加',
                     'image-placeholder' => '製品画像',
+                    'more-types'        => 'その他',
+                    'no-types-info'     => 'この製品を関連タイプに紐付けるには「関連タイプを追加」を使用します。',
+                    'no-types-title'    => '関連付けが追加されていません',
+                    'search-types'      => '関連タイプを検索',
                     'sku'               => 'SKU - :sku',
                     'title'             => '関連付け',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => '作成日',
                     'product-type' => '製品タイプ',
                 ],
+                'sections' => [
+                    'view'    => '表示',
+                    'unsaved' => '未保存の変更',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => '選択した項目を追加',
+                    'close'        => '閉じる',
+                    'clear-search' => '検索をクリア',
+                    'categories'   => [
+                        'subtitle'        => 'この商品をカタログカテゴリーに割り当てます。',
+                        'search'          => 'カテゴリーを検索…',
+                        'searching'       => '検索しています…',
+                        'no-results'      => '一致するカテゴリーが見つかりません',
+                        'load-more'       => 'さらに読み込む',
+                        'none-selected'   => 'カテゴリーがまだ選択されていません',
+                        'and-more'        => '他 :count 件',
+                        'review-selected' => '選択したカテゴリーを表示',
+                        'selected'        => '選択済み',
+                    ],
+                    'associations' => [
+                        'subtitle' => '関連商品、アップセル、クロスセル、カスタム商品をリンクします。',
+                        'linked'   => 'リンクされた商品',
+                    ],
+                ],
+
                 'more'         => 'その他',
                 'more-actions' => 'その他の操作',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'コード ":code" のカテゴリ フィールドが見つかりませんでした',
             'immutable-fields'  => '次のフィールドは変更できません: :fields。',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => '関連タイプ',
+                'create-btn' => '関連タイプの作成',
+                'add-btn'    => '関連タイプの作成',
+
+                'datagrid' => [
+                    'code'                => 'コード',
+                    'name'                => '名前',
+                    'status'              => 'ステータス',
+                    'position'            => '位置',
+                    'edit'                => '編集',
+                    'delete'              => '削除',
+                    'activated'           => '有効',
+                    'disabled'            => '無効',
+                    'active'              => '有効',
+                    'disable'             => '無効',
+                    'update-status'       => '更新ステータス',
+                    'delete-failed'       => 'この関連タイプは削除できません。',
+                    'mass-delete-success' => '選択された関連タイプが正常に削除されました',
+                    'mass-delete-failed'  => '選択された関連タイプは削除できません。',
+                    'mass-update-success' => '正常に更新されました',
+                ],
+            ],
+
+            'create-success'    => '関連タイプが正常に作成されました',
+            'update-success'    => '関連タイプが正常に更新されました',
+            'delete-success'    => '関連タイプが正常に削除されました',
+            'delete-failed'     => '関連タイプの削除に失敗しました',
+            'user-define-error' => 'システム関連タイプを削除できません',
+            'unknown-fields'    => 'コード ":fields" の関連タイプフィールドが見つかりませんでした',
+
+            'create' => [
+                'title'      => '関連タイプを作成',
+                'name'       => '名前',
+                'enter-name' => '名前を入力',
+                'code'       => 'コード',
+                'enter-code' => 'コードを入力',
+                'save-btn'   => '関連タイプを保存',
+            ],
+
+            'edit' => [
+                'title'    => '関連タイプを編集',
+                'save-btn' => '関連タイプを更新',
+            ],
+
+            'fields' => [
+                'title'                => 'フィールド',
+                'info'                 => 'この関連タイプの追加データを取得するためにカスタムフィールドを追加します。',
+                'add-field-btn'        => 'フィールドを追加',
+                'modal-title'          => 'フィールドを追加',
+                'edit-modal-title'     => 'フィールドを編集',
+                'save-field-btn'       => 'フィールドを保存',
+                'same-code-error'      => 'フィールドコードは一意である必要があります。',
+                'add-fields-info'      => 'この関連タイプのカスタムフィールドを作成するには。',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'カテゴリフィールドオプションが正常に削除されました',
             'create-success'      => 'カテゴリ フィールド オプションが正常に作成されました',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'ロケール',
                 'level-parent'                     => '親製品',
                 'level-sub-parent'                 => 'サブ親',
                 'level-variant'                    => 'バリエーション',
@@ -2269,6 +2377,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '展開',
+            'collapse' => '折りたたむ',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '追加',
+                'already-added'      => '追加済み',
+                'empty-info'         => '別のキーワードで検索してください。',
+                'empty-title'        => '関連タイプが見つかりません',
+                'search-placeholder' => '名前またはコードで検索',
+                'select-all'         => 'すべて選択',
+                'title'              => '関連タイプを追加',
+            ],
+            'product-picker' => [
+                'add-btn'  => '選択した商品を追加',
+                'selected' => ':count 件の商品を選択中',
+                'title'    => '商品を選択',
+            ],
+        ],
         'pagination' => [
             'page' => 'ページ',
         ],
@@ -2279,6 +2408,13 @@ return [
             'close' => '閉じる',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total 件中 :filled 件を翻訳済み',
+            ],
+            'searchable-menu' => [
+                'empty'  => '結果がありません',
+                'search' => '検索',
+            ],
             'ajax-error'      => '保存中に問題が発生しました。もう一度お試しください。',
             'file-uploader'   => [
                 'upload-cta'  => 'クリックしてアップロード',
@@ -2304,6 +2440,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'パネルを折りたたむ',
+                'expand'   => 'パネルを展開する',
+            ],
             'breadcrumbs' => [
                 'label' => 'パンくずリスト',
             ],
@@ -2330,6 +2470,7 @@ return [
                 'catalog'            => 'カタログ',
                 'categories'         => 'カテゴリ',
                 'category_fields'    => 'カテゴリ フィールド',
+                'association_types'  => '関連タイプ',
                 'channels'           => 'チャネル',
                 'collapse'           => '折りたたみ',
                 'configure'          => '構成',
@@ -2770,6 +2911,7 @@ return [
         'url-rewrites'             => 'URL 書き換え',
         'users'                    => 'ユーザー',
         'category_fields'          => 'カテゴリ フィールド',
+        'association_types'        => '関連タイプ',
         'view'                     => '表示',
         'execute'                  => 'ジョブ実行',
         'history'                  => '履歴',

@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navegación del producto',
                 'preview'    => 'Avance',
                 'remove'     => 'Eliminar',
                 'save-btn'   => 'Guardar el producto',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Categorías',
                     'root-not-allowed' => 'La categoría raíz no se puede asignar a un producto.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grupo de atributos:',
+                    'title'              => 'Grupos de atributos',
+                    'search-placeholder' => 'Buscar grupos',
+                    'empty'              => 'Ningún grupo de atributos coincide con tu búsqueda.',
+                    'attributes-count'   => ':count atributos',
+                    'loading'            => 'Cargando...',
+                    'retry'              => 'Reintentar',
+                    'load-more'          => 'Cargar más',
+                    'unsaved-title'      => 'Cambios sin guardar',
+                    'unsaved-message'    => 'Guarda los cambios de :group antes de continuar, o descártalos.',
+                    'save-and-continue'  => 'Guardar y continuar',
+                    'discard-and-leave'  => 'Descartar y continuar',
+                    'cancel'             => 'Cancelar',
                 ],
                 'images' => [
                     'info'  => 'La resolución de la imagen debe ser como 560px x 609px',
@@ -279,14 +296,19 @@ return [
                     ],
                     'cross-sells' => [
                         'empty-info' => 'Agregar productos de asociación de venta cruzada.',
-                        'info'       => 'Adyacente al carrito de compras, usted \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'Adyacente al carrito de compras, usted \'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Productos de venta cruzada',
                     ],
                     'add-btn'           => 'Agregar',
+                    'add-type-btn'      => 'Agregar tipo de asociación',
                     'delete'            => 'Borrar',
                     'empty-info'        => 'Para agregar :type productos sobre una oportunidad.',
                     'empty-title'       => 'Agregar producto',
                     'image-placeholder' => 'Imagen del producto',
+                    'more-types'        => 'Más',
+                    'no-types-info'     => 'Usa «Agregar tipo de asociación» para vincular este producto a un tipo de asociación.',
+                    'no-types-title'    => 'No se han agregado asociaciones',
+                    'search-types'      => 'Buscar tipos de asociación',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asociaciones',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Fecha de creación',
                     'product-type' => 'Tipo de producto',
                 ],
+                'sections' => [
+                    'view'    => 'Ver',
+                    'unsaved' => 'Cambios sin guardar',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Añadir selección',
+                    'close'        => 'Cerrar',
+                    'clear-search' => 'Borrar búsqueda',
+                    'categories'   => [
+                        'subtitle'        => 'Asigna este producto a categorías del catálogo.',
+                        'search'          => 'Buscar categorías…',
+                        'searching'       => 'Buscando…',
+                        'no-results'      => 'No se han encontrado categorías coincidentes',
+                        'load-more'       => 'Cargar más',
+                        'none-selected'   => 'Aún no se ha seleccionado ninguna categoría',
+                        'and-more'        => 'y :count más',
+                        'review-selected' => 'Mostrar categorías seleccionadas',
+                        'selected'        => 'seleccionado(s)',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Vincula productos relacionados, de venta adicional, venta cruzada y personalizados.',
+                        'linked'   => 'productos vinculados',
+                    ],
+                ],
+
                 'more'         => 'Más',
                 'more-actions' => 'Más acciones',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Campo de categoría con código ":code" no se pudo encontrar',
             'immutable-fields'  => 'Los siguientes campos no se pueden modificar: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Tipos de asociación',
+                'create-btn' => 'Crear tipo de asociación',
+                'add-btn'    => 'Crear tipo de asociación',
+
+                'datagrid' => [
+                    'code'                => 'Código',
+                    'name'                => 'Nombre',
+                    'status'              => 'Estado',
+                    'position'            => 'Posición',
+                    'edit'                => 'Editar',
+                    'delete'              => 'Borrar',
+                    'activated'           => 'Habilitado',
+                    'disabled'            => 'Deshabilitado',
+                    'active'              => 'Permitir',
+                    'disable'             => 'Desactivar',
+                    'update-status'       => 'Estado de actualización',
+                    'delete-failed'       => 'Este tipo de asociación no se puede eliminar.',
+                    'mass-delete-success' => 'Tipos de asociación seleccionados eliminados con éxito',
+                    'mass-delete-failed'  => 'No se pueden eliminar los tipos de asociación seleccionados.',
+                    'mass-update-success' => 'Actualizado con éxito',
+                ],
+            ],
+
+            'create-success'    => 'Tipo de asociación creado con éxito',
+            'update-success'    => 'Tipo de asociación actualizado correctamente',
+            'delete-success'    => 'Tipo de asociación eliminado con éxito',
+            'delete-failed'     => 'Error al eliminar el tipo de asociación',
+            'user-define-error' => 'No puede eliminar el tipo de asociación del sistema',
+            'unknown-fields'    => 'Campo de tipo de asociación con código ":fields" no se pudo encontrar',
+
+            'create' => [
+                'title'      => 'Crear tipo de asociación',
+                'name'       => 'Nombre',
+                'enter-name' => 'Introduce el nombre',
+                'code'       => 'Código',
+                'enter-code' => 'Introduzca el código',
+                'save-btn'   => 'Guardar tipo de asociación',
+            ],
+
+            'edit' => [
+                'title'    => 'Editar tipo de asociación',
+                'save-btn' => 'Actualizar tipo de asociación',
+            ],
+
+            'fields' => [
+                'title'                => 'Campos',
+                'info'                 => 'Agregue campos personalizados para capturar datos adicionales para este tipo de asociación.',
+                'add-field-btn'        => 'Agregar campo',
+                'modal-title'          => 'Agregar campo',
+                'edit-modal-title'     => 'Editar campo',
+                'save-field-btn'       => 'Guardar campo',
+                'same-code-error'      => 'El código del campo debe ser único.',
+                'add-fields-info'      => 'Para crear campos personalizados para este tipo de asociación.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Opción de campo de categoría eliminada correctamente',
             'create-success'      => 'Opción de campo de categoría creada correctamente',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Idioma',
                 'level-parent'                     => 'Producto padre',
                 'level-sub-parent'                 => 'Subpadre',
                 'level-variant'                    => 'Variante',
@@ -2269,6 +2377,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Expandir',
+            'collapse' => 'Contraer',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Agregar',
+                'already-added'      => 'Añadido',
+                'empty-info'         => 'Prueba con otra búsqueda.',
+                'empty-title'        => 'No se encontraron tipos de asociación',
+                'search-placeholder' => 'Buscar por nombre o código',
+                'select-all'         => 'Seleccionar todo',
+                'title'              => 'Agregar tipo de asociación',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Añadir selección',
+                'selected' => ':count productos seleccionados',
+                'title'    => 'Seleccionar productos',
+            ],
+        ],
         'pagination' => [
             'page' => 'Página',
         ],
@@ -2279,6 +2408,13 @@ return [
             'close' => 'Cerrar',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled de :total traducidos',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Sin resultados',
+                'search' => 'Buscar',
+            ],
             'ajax-error'      => 'Algo salió mal al guardar. Por favor, inténtelo de nuevo.',
             'file-uploader'   => [
                 'upload-cta'  => 'Haz clic para subir',
@@ -2304,6 +2440,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Contraer panel',
+                'expand'   => 'Expandir panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Ruta de navegación',
             ],
@@ -2330,6 +2470,7 @@ return [
                 'catalog'            => 'Catalogar',
                 'categories'         => 'Categorías',
                 'category_fields'    => 'Campos de categoría',
+                'association_types'  => 'Tipos de asociación',
                 'channels'           => 'Canales',
                 'collapse'           => 'Colapsar',
                 'configure'          => 'Configuración',
@@ -2770,6 +2911,7 @@ return [
         'url-rewrites'             => 'URL reescribe',
         'users'                    => 'Usuarios',
         'category_fields'          => 'Campos de categoría',
+        'association_types'        => 'Tipos de asociación',
         'view'                     => 'Vista',
         'execute'                  => 'Ejecutar trabajo',
         'history'                  => 'Historia',

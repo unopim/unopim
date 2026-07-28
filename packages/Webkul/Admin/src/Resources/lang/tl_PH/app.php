@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Nabigasyon ng produkto',
                 'preview'    => 'Preview',
                 'remove'     => 'Alisin',
                 'save-btn'   => 'I-save ang produkto',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Mga Kategorya',
                     'root-not-allowed' => 'Ang kategoryang ugat ay hindi maaaring italaga sa isang produkto.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Pangkat ng katangian:',
+                    'title'              => 'Mga Pangkat ng Katangian',
+                    'search-placeholder' => 'Maghanap ng mga pangkat',
+                    'empty'              => 'Walang pangkat ng katangian na tumutugma sa iyong paghahanap.',
+                    'attributes-count'   => ':count na katangian',
+                    'loading'            => 'Naglo-load...',
+                    'retry'              => 'Subukan ulit',
+                    'load-more'          => 'Mag-load pa',
+                    'unsaved-title'      => 'Hindi na-save na mga pagbabago',
+                    'unsaved-message'    => 'I-save ang iyong mga pagbabago sa :group bago magpatuloy, o itapon ang mga ito.',
+                    'save-and-continue'  => 'I-save at magpatuloy',
+                    'discard-and-leave'  => 'Itapon at magpatuloy',
+                    'cancel'             => 'Kanselahin',
                 ],
                 'images' => [
                     'info'  => 'Ang mga larawan ay dapat may resolusyon na 560px X 609px',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'Mga Cross-sell na Produkto',
                     ],
                     'add-btn'           => 'Magdagdag',
+                    'add-type-btn'      => 'Magdagdag ng Uri ng Asosasyon',
                     'delete'            => 'Tanggalin',
                     'empty-info'        => 'Magdagdag ng mga produkto :type nang sabay.',
                     'empty-title'       => 'Magdagdag ng produkto',
                     'image-placeholder' => 'Larawan ng produkto',
+                    'more-types'        => 'Higit pa',
+                    'no-types-info'     => 'Gamitin ang "Magdagdag ng Uri ng Asosasyon" upang iugnay ang produktong ito sa ilalim ng isang uri ng asosasyon.',
+                    'no-types-title'    => 'Walang naidagdag na asosasyon',
+                    'search-types'      => 'Maghanap ng uri ng asosasyon',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Mga Produkto',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Petsa ng Pagkakalikha',
                     'product-type' => 'Uri ng Produkto',
                 ],
+                'sections' => [
+                    'view'    => 'Tingnan',
+                    'unsaved' => 'Hindi na-save na mga pagbabago',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Idagdag ang Napili',
+                    'close'        => 'Isara',
+                    'clear-search' => 'I-clear ang paghahanap',
+                    'categories'   => [
+                        'subtitle'        => 'I-assign ang produktong ito sa mga kategorya ng katalogo.',
+                        'search'          => 'Maghanap ng mga kategorya…',
+                        'searching'       => 'Naghahanap…',
+                        'no-results'      => 'Walang natagpuang tugmang kategorya',
+                        'load-more'       => 'Mag-load pa',
+                        'none-selected'   => 'Wala pang napiling kategorya',
+                        'and-more'        => 'at :count pa',
+                        'review-selected' => 'Ipakita ang mga napiling kategorya',
+                        'selected'        => 'napili',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'I-link ang mga kaugnay, up-sell, cross-sell, at custom na produkto.',
+                        'linked'   => 'naka-link na mga produkto',
+                    ],
+                ],
+
                 'more'         => 'Higit pa',
                 'more-actions' => 'Higit Pang Aksyon',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Hindi natagpuan ang field ng kategorya na may code ":code"',
             'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Mga Uri ng Asosasyon',
+                'create-btn' => 'Lumikha ng Uri ng Asosasyon',
+                'add-btn'    => 'Lumikha ng Uri ng Asosasyon',
+
+                'datagrid' => [
+                    'code'                => 'Code',
+                    'name'                => 'Pangalan',
+                    'status'              => 'Katayuan',
+                    'position'            => 'Posisyon',
+                    'edit'                => 'I-edit',
+                    'delete'              => 'Tanggalin',
+                    'activated'           => 'Na-activate',
+                    'disabled'            => 'Na-disable',
+                    'active'              => 'Aktibo',
+                    'disable'             => 'I-disable',
+                    'update-status'       => 'I-update ang status',
+                    'delete-failed'       => 'Ang uri ng asosasyon na ito ay hindi maaaring tanggalin.',
+                    'mass-delete-success' => 'Ang napiling mga uri ng asosasyon ay matagumpay na natanggal.',
+                    'mass-delete-failed'  => 'Ang mga napiling uri ng asosasyon ay hindi maaaring tanggalin.',
+                    'mass-update-success' => 'Matagumpay na na-update.',
+                ],
+            ],
+
+            'create-success'    => 'Matagumpay na nalikha ang uri ng asosasyon',
+            'update-success'    => 'Matagumpay na na-update ang uri ng asosasyon',
+            'delete-success'    => 'Matagumpay na natanggal ang uri ng asosasyon',
+            'delete-failed'     => 'Nabigong tanggalin ang uri ng asosasyon',
+            'user-define-error' => 'Hindi maaaring tanggalin ang uri ng asosasyon ng sistema',
+            'unknown-fields'    => 'Hindi natagpuan ang field ng uri ng asosasyon na may kodigong ":fields"',
+
+            'create' => [
+                'title'      => 'Gumawa ng Uri ng Asosasyon',
+                'name'       => 'Pangalan',
+                'enter-name' => 'Ilagay ang pangalan',
+                'code'       => 'Kodigo',
+                'enter-code' => 'Ilagay ang kodigo',
+                'save-btn'   => 'I-save ang Uri ng Asosasyon',
+            ],
+
+            'edit' => [
+                'title'    => 'I-edit ang Uri ng Asosasyon',
+                'save-btn' => 'I-update ang Uri ng Asosasyon',
+            ],
+
+            'fields' => [
+                'title'                => 'Mga Field',
+                'info'                 => 'Magdagdag ng mga custom na field upang makuha ang karagdagang datos para sa uri ng asosasyong ito.',
+                'add-field-btn'        => 'Magdagdag ng Field',
+                'modal-title'          => 'Magdagdag ng Field',
+                'edit-modal-title'     => 'I-edit ang Field',
+                'save-field-btn'       => 'I-save ang Field',
+                'same-code-error'      => 'Ang code ng field ay dapat natatangi.',
+                'add-fields-info'      => 'Upang lumikha ng mga custom na field para sa uri ng asosasyong ito.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Matagumpay na natanggal ang opsyon ng field ng kategorya',
             'create-success'      => 'Nagtagumpay ang paglikha ng opsyon ng kategorya',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Wika',
                 'level-parent'                     => 'Magulang na produkto',
                 'level-sub-parent'                 => 'Sub-parent',
                 'level-variant'                    => 'Variant',
@@ -2272,6 +2380,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Palawakin',
+            'collapse' => 'Itiklop',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Magdagdag',
+                'already-added'      => 'Naidagdag',
+                'empty-info'         => 'Sumubok ng ibang paghahanap.',
+                'empty-title'        => 'Walang nahanap na uri ng asosasyon',
+                'search-placeholder' => 'Maghanap ayon sa pangalan o code',
+                'select-all'         => 'Piliin lahat',
+                'title'              => 'Magdagdag ng Uri ng Asosasyon',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Idagdag ang Napili',
+                'selected' => ':count na produkto ang napili',
+                'title'    => 'Pumili ng Produkto',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pahina',
         ],
@@ -2282,6 +2411,13 @@ return [
             'close' => 'Isara',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled sa :total ang naisalin',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Walang resulta',
+                'search' => 'Maghanap',
+            ],
             'ajax-error'      => 'May nangyaring mali habang nagse-save. Pakisubukang muli.',
             'file-uploader'   => [
                 'upload-cta'  => 'I-click para mag-upload',
@@ -2307,6 +2443,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Itago ang panel',
+                'expand'   => 'Ipakita ang panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Landas ng nabigasyon',
             ],
@@ -2333,6 +2473,7 @@ return [
                 'catalog'            => 'Katalogo',
                 'categories'         => 'Mga Kategorya',
                 'category_fields'    => 'Mga Patlang ng Kategorya',
+                'association_types'  => 'Mga Uri ng Asosasyon',
                 'channels'           => 'Mga Channel',
                 'collapse'           => 'Bumagsak',
                 'configure'          => 'Configuration',
@@ -2773,6 +2914,7 @@ return [
         'url-rewrites'             => 'Mga Rewritten na URL',
         'users'                    => 'Mga Gumagamit',
         'category_fields'          => 'Mga Field ng Kategorya',
+        'association_types'        => 'Mga Uri ng Asosasyon',
         'view'                     => 'Tingnan',
         'execute'                  => 'Isagawa',
         'history'                  => 'Kasaysayan',

@@ -24,6 +24,9 @@ return new class extends Migration
 
             $table->boolean('is_current')->default(false);
 
+            // NULL when not current, so only current rows collide on the unique
+            // index below: enforces one current version per (publication, locale).
+            // The flag is tested bare — PostgreSQL has no boolean = integer operator.
             $table->unsignedInteger('current_locale_id')
                 ->nullable()
                 ->storedAs('case when is_current then locale_id else null end');

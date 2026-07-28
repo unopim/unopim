@@ -1,5 +1,6 @@
 <?php
 
+use App\Providers\AppServiceProvider;
 use Webkul\Admin\Providers\AdminServiceProvider;
 use Webkul\AdminApi\Providers\AdminApiServiceProvider;
 use Webkul\AiAgent\Providers\AiAgentServiceProvider;
@@ -27,17 +28,13 @@ use Webkul\User\Providers\UserServiceProvider;
 use Webkul\Webhook\Providers\WebhookServiceProvider;
 
 return [
-    /*
-     * Webkul package service providers.
-     * Third-party packages (DomPDF, Translatable, Concord, Excel,
-     * Repository, Auditing) and AppServiceProvider are auto-discovered.
-     */
+    EnvValidatorServiceProvider::class,
+    AppServiceProvider::class,
     AdminApiServiceProvider::class,
     AdminServiceProvider::class,
     AttributeServiceProvider::class,
     CategoryServiceProvider::class,
     CoreServiceProvider::class,
-    EnvValidatorServiceProvider::class,
     DataGridServiceProvider::class,
     DataTransferServiceProvider::class,
     DebugBarServiceProvider::class,

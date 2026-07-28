@@ -52,7 +52,10 @@ it('routes mail through the smtp transport once a host is configured in the admi
 });
 
 it('leaves the environment mailer untouched when no host is configured in the admin', function () {
-    CoreConfig::where('code', 'emails.configure.email_settings.mail_host')->delete();
+    CoreConfig::updateOrCreate(
+        ['code' => 'emails.configure.email_settings.mail_host'],
+        ['value' => '']
+    );
 
     Cache::flush();
 
