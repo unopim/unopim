@@ -268,8 +268,16 @@
                     if (this.c.open && !inside(this.$refs.cWrap)) { this.c.open = false; }
                 };
                 document.addEventListener('mousedown', this._away);
+
+                this._refreshSelected = () => this.refreshSelectedNode();
+
+                this.$emitter.on('form-saved', this._refreshSelected);
             },
-            beforeUnmount() { document.removeEventListener('mousedown', this._away); clearTimeout(this._navTimer); },
+            beforeUnmount() {
+                document.removeEventListener('mousedown', this._away);
+                clearTimeout(this._navTimer);
+                this.$emitter.off('form-saved', this._refreshSelected);
+            },
             computed: {
                 pNode() { return this.currentNode('p'); },
                 cNode() { return this.currentNode('c'); },
@@ -391,12 +399,28 @@
                         .then(r => {
                             const d = r.data || {};
                             const mapped = (d.options || []).map(o => ({ id: o.id, label: o.label || o.code || o.sku, sku: o.sku, image: o.image || null, completeness: o.completeness != null ? o.completeness : null, variantTotal: o.variantTotal != null ? o.variantTotal : null, variantComplete: o.variantComplete != null ? o.variantComplete : null }));
+                            mapped.forEach(item => this.syncNode(item));
                             st.items = reset ? mapped : st.items.concat(mapped);
                             if (reset) { st.active = -1; }
                             st.page = d.page || nextPage; st.lastPage = d.lastPage || st.page; st.total = d.total != null ? d.total : st.items.length;
                             st.loading = false; st.loadingMore = false; st.loaded = true;
                         })
                         .catch(() => { st.loading = false; st.loadingMore = false; });
+                },
+                syncNode(item) {
+                    const node = this.nodes[item.id];
+                    if (!node) { return; }
+                    ['image', 'sku', 'completeness', 'variantTotal', 'variantComplete'].forEach(key => {
+                        if (item[key] !== undefined) { node[key] = item[key]; }
+                    });
+                },
+                refreshSelectedNode() {
+                    const id = this.selected;
+                    if (!id || !this.nodes[id]) { return; }
+                    const parentId = this.nodes[id].parent && this.nodes[id].parent !== this.configurableId ? this.nodes[id].parent : null;
+                    this.$axios.get(CHILDREN_URL(this.configurableId), { params: { parent_id: parentId, query: this.nodes[id].sku || '' } })
+                        .then(r => ((r.data || {}).options || []).forEach(o => this.syncNode({ id: o.id, sku: o.sku, image: o.image || null, completeness: o.completeness != null ? o.completeness : null, variantTotal: o.variantTotal != null ? o.variantTotal : null, variantComplete: o.variantComplete != null ? o.variantComplete : null })))
+                        .catch(() => {});
                 },
                 onSearch(w) { const st = this.stateFor(w); clearTimeout(st.timer); st.timer = setTimeout(() => this.fetch(w, true), 300); },
                 onScroll(e, w) {
