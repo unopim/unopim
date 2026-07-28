@@ -247,12 +247,20 @@ async function fillDppField(page, code, value, opts = {}) {
 exports.fillDppField = fillDppField;
 
 /**
+ * A field name carries array syntax (`values[common][sku]`), which is not a usable id; controls render
+ * the tokenised form instead and labels point their `for` at that. Mirrors `form_control_id()`.
+ */
+function controlId(name) {
+  return name.replace(/[^A-Za-z0-9_.:-]+/g, '_').replace(/^_+|_+$/g, '');
+}
+
+/**
  * Attach a file to a dpp document field by attribute code. The media component's file input carries a
  * dynamic Vue id and a `[]`-suffixed name, so scope to the field's control-group via its `label[for]`.
  */
 async function uploadDppFile(page, code, filePath, opts = {}) {
   const name = fieldInputName(code, opts);
-  const label = page.locator(`label[for="${name}"]`).first();
+  const label = page.locator(`label[for="${controlId(name)}"]`).first();
   await label.waitFor({ state: 'attached', timeout: 20000 });
   const group = label.locator('xpath=ancestor::*[@data-control-group][1]');
   await group.locator('input[type="file"]').first().setInputFiles(filePath);
