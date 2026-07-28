@@ -250,6 +250,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '제품 탐색',
                 'preview'    => '미리 보기',
                 'remove'     => '제거',
                 'save-btn'   => '제품 저장',
@@ -257,6 +258,22 @@ return [
                 'categories' => [
                     'title'            => '카테고리',
                     'root-not-allowed' => '루트 카테고리는 제품에 할당할 수 없습니다.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '속성 그룹:',
+                    'title'              => '속성 그룹',
+                    'search-placeholder' => '그룹 검색',
+                    'empty'              => '검색과 일치하는 속성 그룹이 없습니다.',
+                    'attributes-count'   => '속성 :count개',
+                    'loading'            => '불러오는 중...',
+                    'retry'              => '다시 시도',
+                    'load-more'          => '더 불러오기',
+                    'unsaved-title'      => '저장되지 않은 변경사항',
+                    'unsaved-message'    => '계속하기 전에 :group의 변경사항을 저장하거나 취소하세요.',
+                    'save-and-continue'  => '저장하고 계속',
+                    'discard-and-leave'  => '변경사항 버리고 계속',
+                    'cancel'             => '취소',
                 ],
                 'images' => [
                     'info'  => '이미지 해상도는 560px X 609px이어야 합니다',
@@ -284,10 +301,15 @@ return [
                         'title'      => '크로스셀 제품',
                     ],
                     'add-btn'           => '추가',
+                    'add-type-btn'      => '연관 유형 추가',
                     'delete'            => '삭제',
                     'empty-info'        => ':type 제품을 한 번에 추가하십시오.',
                     'empty-title'       => '제품 추가',
                     'image-placeholder' => '제품 이미지',
+                    'more-types'        => '더 보기',
+                    'no-types-info'     => '이 제품을 연관 유형에 연결하려면 "연관 유형 추가"를 사용하세요.',
+                    'no-types-title'    => '추가된 연관이 없습니다',
+                    'search-types'      => '연관 유형 검색',
                     'sku'               => 'SKU - :sku',
                     'title'             => '제품',
                 ],
@@ -396,6 +418,33 @@ return [
                     'created-at'   => '생성일',
                     'product-type' => '제품 유형',
                 ],
+                'sections' => [
+                    'view'    => '보기',
+                    'unsaved' => '저장되지 않은 변경 사항',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => '선택 항목 추가',
+                    'close'        => '닫기',
+                    'clear-search' => '검색 지우기',
+                    'categories'   => [
+                        'subtitle'        => '이 제품을 카탈로그 카테고리에 할당합니다.',
+                        'search'          => '카테고리 검색…',
+                        'searching'       => '검색 중…',
+                        'no-results'      => '일치하는 카테고리가 없습니다',
+                        'load-more'       => '더 불러오기',
+                        'none-selected'   => '아직 선택된 카테고리가 없습니다',
+                        'and-more'        => '외 :count개',
+                        'review-selected' => '선택한 카테고리 보기',
+                        'selected'        => '선택됨',
+                    ],
+                    'associations' => [
+                        'subtitle' => '관련, 상향 판매, 교차 판매 및 맞춤 제품을 연결합니다.',
+                        'linked'   => '연결된 제품',
+                    ],
+                ],
+
                 'more'         => '더보기',
                 'more-actions' => '추가 작업',
                 'variations'   => [
@@ -959,6 +1008,64 @@ return [
             'not-found'         => '코드 ":code"의 카테고리 필드를 찾을 수 없습니다.',
             'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => '연관 유형',
+                'create-btn' => '연관 유형 만들기',
+                'add-btn'    => '연관 유형 추가',
+
+                'datagrid' => [
+                    'code'                => '코드',
+                    'name'                => '이름',
+                    'status'              => '상태',
+                    'position'            => '위치',
+                    'edit'                => '수정',
+                    'delete'              => '삭제',
+                    'activated'           => '활성화됨',
+                    'disabled'            => '비활성화됨',
+                    'active'              => '활성화',
+                    'disable'             => '비활성화',
+                    'update-status'       => '상태 업데이트',
+                    'delete-failed'       => '이 연관 유형은 삭제할 수 없습니다.',
+                    'mass-delete-success' => '선택한 연관 유형이 성공적으로 삭제되었습니다.',
+                    'mass-delete-failed'  => '선택한 연관 유형을 삭제할 수 없습니다.',
+                    'mass-update-success' => '성공적으로 업데이트되었습니다.',
+                ],
+            ],
+
+            'create-success'    => '연관 유형이 성공적으로 생성되었습니다.',
+            'update-success'    => '연관 유형 업데이트 성공',
+            'delete-success'    => '연관 유형 삭제 성공',
+            'delete-failed'     => '연관 유형 삭제 실패',
+            'user-define-error' => '시스템 연관 유형은 삭제할 수 없습니다.',
+            'unknown-fields'    => '필드 코드 ":fields"인 연관 유형 필드를 찾을 수 없습니다.',
+
+            'create' => [
+                'title'      => '연관 유형 생성',
+                'name'       => '이름',
+                'enter-name' => '이름 입력',
+                'code'       => '코드',
+                'enter-code' => '코드를 입력하세요',
+                'save-btn'   => '연관 유형 저장',
+            ],
+
+            'edit' => [
+                'title'    => '연관 유형 편집',
+                'save-btn' => '연관 유형 업데이트',
+            ],
+
+            'fields' => [
+                'title'                => '필드',
+                'info'                 => '이 연관 유형에 대한 추가 데이터를 캡처하기 위해 사용자 지정 필드를 추가하세요.',
+                'add-field-btn'        => '필드 추가',
+                'modal-title'          => '필드 추가',
+                'edit-modal-title'     => '필드 편집',
+                'save-field-btn'       => '필드 저장',
+                'same-code-error'      => '필드 코드는 고유해야 합니다.',
+                'add-fields-info'      => '이 연관 유형에 대한 사용자 지정 필드를 만들려면.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => '카테고리 필드 옵션이 성공적으로 삭제되었습니다',
             'create-success'      => '카테고리 필드 옵션이 성공적으로 생성되었습니다.',
@@ -994,6 +1101,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => '로케일',
                 'level-parent'                     => '상위 제품',
                 'level-sub-parent'                 => '하위 상위',
                 'level-variant'                    => '변형',
@@ -2268,6 +2376,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '펼치기',
+            'collapse' => '접기',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '추가',
+                'already-added'      => '추가됨',
+                'empty-info'         => '다른 검색어를 사용해 보세요.',
+                'empty-title'        => '연관 유형을 찾을 수 없습니다',
+                'search-placeholder' => '이름 또는 코드로 검색',
+                'select-all'         => '모두 선택',
+                'title'              => '연관 유형 추가',
+            ],
+            'product-picker' => [
+                'add-btn'  => '선택 항목 추가',
+                'selected' => ':count개 제품 선택됨',
+                'title'    => '제품 선택',
+            ],
+        ],
         'pagination' => [
             'page' => '페이지',
         ],
@@ -2278,6 +2407,13 @@ return [
             'close' => '닫기',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total개 중 :filled개 번역됨',
+            ],
+            'searchable-menu' => [
+                'empty'  => '결과가 없습니다',
+                'search' => '검색',
+            ],
             'ajax-error'      => '저장하는 동안 문제가 발생했습니다. 다시 시도해 주세요.',
             'file-uploader'   => [
                 'upload-cta'  => '클릭하여 업로드',
@@ -2303,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => '패널 접기',
+                'expand'   => '패널 펼치기',
+            ],
             'breadcrumbs' => [
                 'label' => '탐색 경로',
             ],
@@ -2329,6 +2469,7 @@ return [
                 'catalog'            => '카탈로그',
                 'categories'         => '카테고리',
                 'category_fields'    => '카테고리 필드',
+                'association_types'  => '연관 유형',
                 'channels'           => '채널',
                 'collapse'           => '축소',
                 'configure'          => '구성',
@@ -2769,6 +2910,7 @@ return [
         'url-rewrites'             => 'URL 리라이트',
         'users'                    => '사용자',
         'category_fields'          => '카테고리 필드',
+        'association_types'        => '연관 유형',
         'view'                     => '보기',
         'execute'                  => '실행',
         'history'                  => '기록',

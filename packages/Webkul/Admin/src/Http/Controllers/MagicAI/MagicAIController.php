@@ -116,7 +116,13 @@ class MagicAIController extends Controller
         }
 
         return new JsonResponse([
-            'platforms' => $platforms,
+            'platforms'      => $platforms,
+            'system_prompts' => $this->magicAiSystemPromptRepository->getModel()->newQuery()
+                ->select(['id', 'title', 'tone', 'is_enabled', 'max_tokens', 'temperature'])
+                ->orderByDesc('is_enabled')
+                ->orderBy('id')
+                ->get()
+                ->all(),
         ]);
     }
 

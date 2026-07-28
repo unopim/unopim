@@ -112,7 +112,11 @@ class ProductServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_types.php', 'product_types');
 
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/association_field_types.php', 'association_field_types');
+
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/suggesters.php', 'suggesters');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_editor.php', 'product_editor');
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/acl.php', 'acl');
     }
@@ -153,7 +157,6 @@ class ProductServiceProvider extends ServiceProvider
 
     protected function registerTags(): void
     {
-        // Register elasticSearch attribute type filters
         $this->app->tag([
             ElasticSearchTextFilter::class,
             ElasticSearchBooleanFilter::class,
@@ -164,7 +167,6 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchDefaultFilter::class,
         ], 'unopim.elasticsearch.attribute.filters');
 
-        // Register elasticSearch product Properties filters
         $this->app->tag([
             ElasticSearchTypeFilter::class,
             ElasticSearchStatusFilter::class,
@@ -177,7 +179,6 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchCategoryFilter::class,
         ], 'unopim.elasticsearch.product.property.filters');
 
-        // Register database attribute type filters
         $this->app->tag([
             DatabaseTextFilter::class,
             DatabaseBooleanFilter::class,
@@ -185,7 +186,6 @@ class ProductServiceProvider extends ServiceProvider
             DatabasePriceFilter::class,
         ], 'unopim.database.attribute.filters');
 
-        // Register database product Properties filters
         $this->app->tag([
             DatabaseFamilyFilter::class,
             DatabaseIdFilter::class,

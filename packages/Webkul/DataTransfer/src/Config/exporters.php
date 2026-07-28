@@ -60,6 +60,12 @@ return [
                     'required' => false,
                     'type'     => 'boolean',
                 ], [
+                    'name'     => 'with_associations',
+                    'title'    => 'data_transfer::app.exporters.fields.with-associations',
+                    'info'     => 'data_transfer::app.exporters.fields.with-associations-info',
+                    'required' => false,
+                    'type'     => 'boolean',
+                ], [
                     'name'     => 'header_row',
                     'title'    => 'data_transfer::app.exporters.fields.header-row',
                     'info'     => 'data_transfer::app.exporters.fields.header-row-info',
@@ -336,6 +342,37 @@ return [
         'source'      => AttributeRepository::class,
         'sample_path' => 'data-transfer/samples/attributes.csv',
         'validator'   => AttributeJobValidator::class,
+        'filters'     => [
+            'fields' => [
+                [
+                    'name'       => 'file_format',
+                    'title'      => 'data_transfer::app.exporters.fields.file-format',
+                    'type'       => 'select',
+                    'required'   => true,
+                    'validation' => 'required',
+                    'options'    => [
+                        [
+                            'value' => 'Csv',
+                            'label' => 'CSV',
+                        ], [
+                            'value' => 'Xls',
+                            'label' => 'XLS',
+                        ], [
+                            'value' => 'Xlsx',
+                            'label' => 'XLSX',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ],
+
+    'product-associations' => [
+        'title'       => 'data_transfer::app.exporters.product-associations.title',
+        'exporter'    => 'Webkul\DataTransfer\Helpers\Exporters\ProductAssociation\Exporter',
+        'source'      => 'Webkul\Product\Repositories\ProductAssociationRepository',
+        'sample_path' => 'data-transfer/samples/product-associations.csv',
+        'validator'   => 'Webkul\DataTransfer\Validators\JobInstances\Export\ProductAssociationJobValidator',
         'filters'     => [
             'fields' => [
                 [

@@ -4,7 +4,6 @@ namespace Webkul\Core\Exceptions;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -41,8 +40,6 @@ class Handler extends ExceptionHandler
         $this->handleValidationException();
 
         $this->handleServerException();
-
-        $this->handlePostTooLargeException();
     }
 
     /**
@@ -60,18 +57,6 @@ class Handler extends ExceptionHandler
         }
 
         return redirect()->guest(route('admin.session.create'));
-    }
-
-    /**
-     * Render an exception into an HTTP response.
-     */
-    public function render($request, Throwable $exception)
-    {
-        if ($exception instanceof PostTooLargeException) {
-            return response()->view('admin::errors.index', ['errorCode' => JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE]);
-        }
-
-        return parent::render($request, $exception);
     }
 
     /**
@@ -138,25 +123,6 @@ class Handler extends ExceptionHandler
     private function handleValidationException(): void
     {
         $this->renderable(fn (ValidationException $exception, Request $request) => parent::convertValidationExceptionToResponse($exception, $request));
-    }
-
-    /**
-     * Handle postTooLarge Exception exceptions.
-     */
-    private function handlePostTooLargeException(): void
-    {
-        $this->renderable(function (PostTooLargeException $exception, Request $request) {
-            $errorCode = JsonResponse::HTTP_REQUEST_ENTITY_TOO_LARGE;
-
-            if ($request->wantsJson() || $this->isApiRequest($request)) {
-                return response()->json([
-                    'message'   => trans('admin::app.errors.413.title'),
-                    'errorCode' => $errorCode,
-                ], $errorCode);
-            }
-
-            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
-        });
     }
 
     /**

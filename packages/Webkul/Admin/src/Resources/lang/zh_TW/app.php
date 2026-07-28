@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '產品導覽',
                 'preview'    => '預覽',
                 'remove'     => '刪除',
                 'save-btn'   => '保存產品',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => '分類',
                     'root-not-allowed' => '根類別不能指派給產品。',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '屬性群組：',
+                    'title'              => '屬性群組',
+                    'search-placeholder' => '搜尋群組',
+                    'empty'              => '沒有符合搜尋條件的屬性群組。',
+                    'attributes-count'   => ':count 個屬性',
+                    'loading'            => '載入中...',
+                    'retry'              => '重試',
+                    'load-more'          => '載入更多',
+                    'unsaved-title'      => '未儲存的變更',
+                    'unsaved-message'    => '繼續之前請先儲存 :group 的變更，或捨棄這些變更。',
+                    'save-and-continue'  => '儲存並繼續',
+                    'discard-and-leave'  => '捨棄並繼續',
+                    'cancel'             => '取消',
                 ],
                 'images' => [
                     'info'  => '圖片尺寸應為560px X 609px',
@@ -283,10 +300,15 @@ return [
                         'title'      => '交叉銷售產品',
                     ],
                     'add-btn'           => '添加',
+                    'add-type-btn'      => '新增關聯類型',
                     'delete'            => '刪除',
                     'empty-info'        => '請添加 :type 類型的產品。',
                     'empty-title'       => '添加產品',
                     'image-placeholder' => '產品圖片',
+                    'more-types'        => '更多',
+                    'no-types-info'     => '使用「新增關聯類型」將此產品連結至某個關聯類型下。',
+                    'no-types-title'    => '尚未新增關聯',
+                    'search-types'      => '搜尋關聯類型',
                     'sku'               => 'SKU - :sku',
                     'title'             => '產品',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => '創建日期',
                     'product-type' => '產品類型',
                 ],
+                'sections' => [
+                    'view'    => '檢視',
+                    'unsaved' => '未儲存的變更',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => '新增所選',
+                    'close'        => '關閉',
+                    'clear-search' => '清除搜尋',
+                    'categories'   => [
+                        'subtitle'        => '將此產品指派至目錄類別。',
+                        'search'          => '搜尋類別…',
+                        'searching'       => '搜尋中…',
+                        'no-results'      => '找不到相符的類別',
+                        'load-more'       => '載入更多',
+                        'none-selected'   => '尚未選擇任何類別',
+                        'and-more'        => '等 :count 項',
+                        'review-selected' => '顯示已選類別',
+                        'selected'        => '已選取',
+                    ],
+                    'associations' => [
+                        'subtitle' => '連結相關、追加銷售、交叉銷售及自訂產品。',
+                        'linked'   => '已連結產品',
+                    ],
+                ],
+
                 'more'         => '更多',
                 'more-actions' => '更多操作',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => '找不到代碼為 ":code" 的類別欄位',
             'immutable-fields'  => '以下欄位無法修改：:fields。',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => '關聯類型',
+                'create-btn' => '創建關聯類型',
+                'add-btn'    => '創建關聯類型',
+
+                'datagrid' => [
+                    'code'                => '代碼',
+                    'name'                => '名稱',
+                    'status'              => '狀態',
+                    'position'            => '位置',
+                    'edit'                => '編輯',
+                    'delete'              => '刪除',
+                    'activated'           => '已啟用',
+                    'disabled'            => '已禁用',
+                    'active'              => '啟用',
+                    'disable'             => '禁用',
+                    'update-status'       => '更新狀態',
+                    'delete-failed'       => '此關聯類型無法刪除。',
+                    'mass-delete-success' => '選定的關聯類型已成功刪除',
+                    'mass-delete-failed'  => '選定的關聯類型無法刪除。',
+                    'mass-update-success' => '更新成功',
+                ],
+            ],
+
+            'create-success'    => '關聯類型創建成功',
+            'update-success'    => '關聯類型更新成功',
+            'delete-success'    => '關聯類型刪除成功',
+            'delete-failed'     => '關聯類型刪除失敗',
+            'user-define-error' => '無法刪除系統預設關聯類型',
+            'unknown-fields'    => '找不到代碼為":fields"的關聯類型欄位',
+
+            'create' => [
+                'title'      => '建立關聯類型',
+                'name'       => '名稱',
+                'enter-name' => '輸入名稱',
+                'code'       => '代碼',
+                'enter-code' => '輸入代碼',
+                'save-btn'   => '儲存關聯類型',
+            ],
+
+            'edit' => [
+                'title'    => '編輯關聯類型',
+                'save-btn' => '更新關聯類型',
+            ],
+
+            'fields' => [
+                'title'                => '欄位',
+                'info'                 => '新增自訂欄位以擷取此關聯類型的附加資料。',
+                'add-field-btn'        => '新增欄位',
+                'modal-title'          => '新增欄位',
+                'edit-modal-title'     => '編輯欄位',
+                'save-field-btn'       => '儲存欄位',
+                'same-code-error'      => '欄位代碼必須是唯一的。',
+                'add-fields-info'      => '為此關聯類型建立自訂欄位。',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => '分類欄位選項刪除成功',
             'create-success'      => '類別欄位選項建立成功',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => '語言',
                 'level-parent'                     => '父產品',
                 'level-sub-parent'                 => '子父層',
                 'level-variant'                    => '變體',
@@ -2268,6 +2376,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '展開',
+            'collapse' => '收合',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '添加',
+                'already-added'      => '已新增',
+                'empty-info'         => '請嘗試其他搜尋。',
+                'empty-title'        => '找不到關聯類型',
+                'search-placeholder' => '依名稱或代碼搜尋',
+                'select-all'         => '全選',
+                'title'              => '新增關聯類型',
+            ],
+            'product-picker' => [
+                'add-btn'  => '新增所選',
+                'selected' => '已選擇 :count 個產品',
+                'title'    => '選擇產品',
+            ],
+        ],
         'pagination' => [
             'page' => '頁',
         ],
@@ -2278,6 +2407,13 @@ return [
             'close' => '關閉',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => '已翻譯 :total 個中的 :filled 個',
+            ],
+            'searchable-menu' => [
+                'empty'  => '找不到結果',
+                'search' => '搜尋',
+            ],
             'ajax-error'      => '儲存時發生問題。請再試一次。',
             'file-uploader'   => [
                 'upload-cta'  => '點擊上傳',
@@ -2303,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => '收合面板',
+                'expand'   => '展開面板',
+            ],
             'breadcrumbs' => [
                 'label' => '麵包屑導航',
             ],
@@ -2329,6 +2469,7 @@ return [
                 'catalog'            => '目錄',
                 'categories'         => '分類',
                 'category_fields'    => '分類字段',
+                'association_types'  => '關聯類型',
                 'channels'           => '頻道',
                 'collapse'           => '折疊',
                 'configure'          => '配置',
@@ -2769,6 +2910,7 @@ return [
         'url-rewrites'             => 'URL 重新編寫',
         'users'                    => '用戶',
         'category_fields'          => '分類字段',
+        'association_types'        => '關聯類型',
         'view'                     => '查看',
         'execute'                  => '執行',
         'history'                  => '歷史記錄',

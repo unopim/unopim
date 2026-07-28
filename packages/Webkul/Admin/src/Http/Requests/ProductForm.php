@@ -41,7 +41,11 @@ class ProductForm extends FormRequest
      */
     public function rules()
     {
-        $product = $this->productRepository->find($this->id);
+        /**
+         * A product deleted while its edit page was still open would otherwise
+         * fatal here on a null instance rather than reporting it as gone.
+         */
+        $product = $this->productRepository->findOrFail($this->id);
 
         $this->rules = $product->getTypeInstance()->getTypeValidationRules();
 

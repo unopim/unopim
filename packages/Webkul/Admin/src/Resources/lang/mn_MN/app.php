@@ -250,6 +250,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Бүтээгдэхүүний навигаци',
                 'preview'    => 'Киноны урөдчилсан үзлэг',
                 'remove'     => 'Зөөх',
                 'save-btn'   => 'Бүтээгдэхүүнийг хадгалах',
@@ -257,6 +258,22 @@ return [
                 'categories' => [
                     'title'            => 'Ангилал',
                     'root-not-allowed' => 'Үндсэн ангиллыг бүтээгдэхүүнд оноох боломжгүй.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Шинж чанарын бүлэг:',
+                    'title'              => 'Шинж чанарын бүлгүүд',
+                    'search-placeholder' => 'Бүлэг хайх',
+                    'empty'              => 'Таны хайлтад тохирох шинж чанарын бүлэг олдсонгүй.',
+                    'attributes-count'   => ':count шинж чанар',
+                    'loading'            => 'Ачаалж байна...',
+                    'retry'              => 'Дахин оролдох',
+                    'load-more'          => 'Илүү ихийг ачаалах',
+                    'unsaved-title'      => 'Хадгалаагүй өөрчлөлтүүд',
+                    'unsaved-message'    => 'Үргэлжлүүлэхийн өмнө :group дэх өөрчлөлтөө хадгална уу, эсвэл цуцлана уу.',
+                    'save-and-continue'  => 'Хадгалаад үргэлжлүүлэх',
+                    'discard-and-leave'  => 'Цуцлаад үргэлжлүүлэх',
+                    'cancel'             => 'Болих',
                 ],
                 'images' => [
                     'info'  => 'Зургийн нарийвчлал нь 560px x 609px шиг байх ёстой',
@@ -280,14 +297,19 @@ return [
                     ],
                     'cross-sells' => [
                         'empty-info' => 'Борлуулах холбооны холболтын бүтээгдэхүүн нэмнэ.',
-                        'info'       => 'Дэлгүүрийн тэрэгтэй зэргэлдээ, та \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'Дэлгүүрийн тэрэгтэй зэргэлдээ, та \'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Хөндлөн зарах бүтээгдэхүүнүүд',
                     ],
                     'add-btn'           => 'Нэмэх',
+                    'add-type-btn'      => 'Холбооны төрөл нэмэх',
                     'delete'            => 'Эдгээх',
                     'empty-info'        => ':type бүтээгдэхүүн нэмэхийн тулд.',
                     'empty-title'       => 'Бүтээгдэхүүнийг нэмэх',
                     'image-placeholder' => 'Дуут ургамийн зураг',
+                    'more-types'        => 'Бусад',
+                    'no-types-info'     => 'Энэ бүтээгдэхүүнийг холбооны төрөлд холбохын тулд "Холбооны төрөл нэмэх"-ийг ашиглана уу.',
+                    'no-types-title'    => 'Холбоо нэмэгдээгүй байна',
+                    'search-types'      => 'Холбоосын төрөл хайх',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Хүнтгал',
                 ],
@@ -396,6 +418,33 @@ return [
                     'created-at'   => 'Үүсгэсэн огноо',
                     'product-type' => 'Бүтээгдэхүүний төрөл',
                 ],
+                'sections' => [
+                    'view'    => 'Харах',
+                    'unsaved' => 'Хадгалагдаагүй өөрчлөлтүүд',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Сонгосныг нэмэх',
+                    'close'        => 'Хаах',
+                    'clear-search' => 'Хайлтыг арилгах',
+                    'categories'   => [
+                        'subtitle'        => 'Энэ бүтээгдэхүүнийг каталогийн ангилалд оноох.',
+                        'search'          => 'Ангилал хайх…',
+                        'searching'       => 'Хайж байна…',
+                        'no-results'      => 'Тохирох ангилал олдсонгүй',
+                        'load-more'       => 'Илүү ихийг ачаалах',
+                        'none-selected'   => 'Одоогоор ангилал сонгоогүй байна',
+                        'and-more'        => 'болон бусад :count',
+                        'review-selected' => 'Сонгосон ангиллуудыг харуулах',
+                        'selected'        => 'сонгогдсон',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Холбоотой, нэмэлт борлуулалт, хөндлөн борлуулалт болон захиалгат бүтээгдэхүүнүүдийг холбоно уу.',
+                        'linked'   => 'холбогдсон бүтээгдэхүүн',
+                    ],
+                ],
+
                 'more'         => 'Дэлгэрэнгүй',
                 'more-actions' => 'Нэмэлт үйлдлүүд',
                 'variations'   => [
@@ -959,6 +1008,64 @@ return [
             'not-found'         => '":code" кодтой ангиллын талбар олдсонгүй',
             'immutable-fields'  => 'Дараах талбаруудыг өөрчилөх боломжгүй: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Холбооны төрлүүд',
+                'create-btn' => 'Холбооны төрөл үүсгэх',
+                'add-btn'    => 'Холбооны төрөл үүсгэх',
+
+                'datagrid' => [
+                    'code'                => 'Хуулө цааз',
+                    'name'                => 'Нэр',
+                    'status'              => 'Байдал',
+                    'position'            => 'Байрлал',
+                    'edit'                => 'Хянан засварлах / хэвлэлд бэлтгэх',
+                    'delete'              => 'Устгах',
+                    'activated'           => 'Оруулах',
+                    'disabled'            => 'Эрэмдэг зэрэмдэг',
+                    'active'              => 'Болоцоо огох',
+                    'disable'             => 'Солих',
+                    'update-status'       => 'Статтын шинэчлэлтийн',
+                    'delete-failed'       => 'Энэ холбооны төрлийг устгах боломжгүй.',
+                    'mass-delete-success' => 'Сонгосон холбооны төрлүүд амжилттай устгагдсан',
+                    'mass-delete-failed'  => 'Сонгосон холбооны төрлүүдийг устгах боломжгүй.',
+                    'mass-update-success' => 'Амжилттай шинэчлэгдсэн',
+                ],
+            ],
+
+            'create-success'    => 'Холбооны төрөл амжилттай бүтээгдсэн',
+            'update-success'    => 'Холбооны төрөл амжилттай шинэчлэгдсэн',
+            'delete-success'    => 'Холбооны төрөл амжилттай устгагдсан',
+            'delete-failed'     => 'Холбооны төрлийг устгаж чадсангүй',
+            'user-define-error' => 'Системийн холбооны төрлийг устгах боломжгүй',
+            'unknown-fields'    => '":fields" кодтой холбооны төрлийн талбар олдсонгүй',
+
+            'create' => [
+                'title'      => 'Холбооны төрөл үүсгэх',
+                'name'       => 'Нэр',
+                'enter-name' => 'Нэр оруулна уу',
+                'code'       => 'Хуулө цааз',
+                'enter-code' => 'Код оруулах',
+                'save-btn'   => 'Холбооны төрлийг хадгалах',
+            ],
+
+            'edit' => [
+                'title'    => 'Холбооны төрлийг засах',
+                'save-btn' => 'Холбооны төрлийг шинэчлэх',
+            ],
+
+            'fields' => [
+                'title'                => 'Талбарууд',
+                'info'                 => 'Энэ холбооны төрлийн нэмэлт өгөгдлийг авахын тулд захиалгат талбар нэмнэ үү.',
+                'add-field-btn'        => 'Талбар нэмэх',
+                'modal-title'          => 'Талбар нэмэх',
+                'edit-modal-title'     => 'Талбар засах',
+                'save-field-btn'       => 'Талбарыг хадгалах',
+                'same-code-error'      => 'Талбарын код давхцахгүй байх ёстой.',
+                'add-fields-info'      => 'Энэ холбооны төрлийн захиалгат талбар үүсгэхийн тулд.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Ангиллын талбарын сонголтыг амжилттай устгалаа',
             'create-success'      => 'Ангилалын талбарын сонголт амжилттай бүтээгдсэн',
@@ -994,6 +1101,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Хэл',
                 'level-parent'                     => 'Эцэг бүтээгдэхүүн',
                 'level-sub-parent'                 => 'Дэд эцэг',
                 'level-variant'                    => 'Хувилбар',
@@ -2268,6 +2376,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Дэлгэх',
+            'collapse' => 'Хураах',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Нэмэх',
+                'already-added'      => 'Нэмсэн',
+                'empty-info'         => 'Өөр хайлт хийж үзнэ үү.',
+                'empty-title'        => 'Холбооны төрөл олдсонгүй',
+                'search-placeholder' => 'Нэр эсвэл кодоор хайх',
+                'select-all'         => 'Бүгдийг сонгох',
+                'title'              => 'Холбооны төрөл нэмэх',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Сонгосныг нэмэх',
+                'selected' => ':count бүтээгдэхүүн сонгосон',
+                'title'    => 'Бүтээгдэхүүн сонгох',
+            ],
+        ],
         'pagination' => [
             'page' => 'Хуудас',
         ],
@@ -2278,6 +2407,13 @@ return [
             'close' => 'Хаах',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total-с :filled орчуулагдсан',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Үр дүн олдсонгүй',
+                'search' => 'Хайх',
+            ],
             'ajax-error'      => 'Хадгалах явцад алдаа гарлаа. Дахин оролдоно уу.',
             'file-uploader'   => [
                 'upload-cta'  => 'Дарж байршуулах',
@@ -2303,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Самбарыг хумих',
+                'expand'   => 'Самбарыг дэлгэх',
+            ],
             'breadcrumbs' => [
                 'label' => 'Замын мөр',
             ],
@@ -2329,6 +2469,7 @@ return [
                 'catalog'            => 'Каталог',
                 'categories'         => 'Ангилал',
                 'category_fields'    => 'Ангилалын талбар',
+                'association_types'  => 'Холбооны төрлүүд',
                 'channels'           => 'Сувгууд',
                 'collapse'           => 'Сүйрэл',
                 'configure'          => 'Тохиролцоо',
@@ -2769,6 +2910,7 @@ return [
         'url-rewrites'             => 'URL Дахин бичих',
         'users'                    => 'Хэрэглэгчид',
         'category_fields'          => 'Ангилалын талбар',
+        'association_types'        => 'Холбооны төрлүүд',
         'view'                     => 'Харагдац',
         'execute'                  => 'Ажлыг гүйцэтгэх',
         'history'                  => 'Түүх',

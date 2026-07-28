@@ -57,6 +57,12 @@ return [
         'route'      => 'admin.catalog.families.index',
         'sort'       => 6,
         'icon'       => '',
+    ], [
+        'key'        => 'catalog.association_types',
+        'name'       => 'admin::app.components.layouts.sidebar.association_types',
+        'route'      => 'admin.catalog.association_types.index',
+        'sort'       => 7,
+        'icon'       => '',
     ],
 
     /**

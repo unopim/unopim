@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Ürün İlişkilendirmeleri',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' alanı zorunludur.',
+                    'self-link-not-allowed'       => '\'%s\' ürünü kendisiyle ilişkilendirilemez.',
+                    'sku-not-found'               => 'SKU \'%s\' olan ürün bulunamadı.',
+                    'related-sku-not-found'       => 'SKU \'%s\' olan ilişkili ürün bulunamadı.',
+                    'association-type-not-found'  => '\'%s\' ilişki türü mevcut değil veya pasif.',
+                    'invalid-field-value'         => 'İlişki alanı için geçersiz bir değer girildi.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Nitelik Grupları',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
         'fields'           => [
-            'file-format'         => 'Dosya biçimi',
-            'with-media'          => 'Medya ile',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Dosya biçimi',
+            'with-media'             => 'Medya ile',
+            'with-associations'      => 'İlişkilendirmelerle',
+            'with-associations-info' => 'Eski up_sells, cross_sells ve related_products SKU liste sütunlarını dışa aktarıma dahil et',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Nitelikler',
+        ],
+        'product-associations' => [
+            'title' => 'Ürün İlişkilendirmeleri',
         ],
         'attribute-groups' => [
             'title' => 'Nitelik Grupları',

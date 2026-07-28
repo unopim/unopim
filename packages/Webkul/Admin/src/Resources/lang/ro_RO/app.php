@@ -250,6 +250,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navigare produs',
                 'preview'    => 'Previzualizează',
                 'remove'     => 'Elimină',
                 'save-btn'   => 'Salvează produs',
@@ -257,6 +258,22 @@ return [
                 'categories' => [
                     'title'            => 'Categorii',
                     'root-not-allowed' => 'Categoria rădăcină nu poate fi atribuită unui produs.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grup de atribute:',
+                    'title'              => 'Grupuri de atribute',
+                    'search-placeholder' => 'Caută grupuri',
+                    'empty'              => 'Niciun grup de atribute nu corespunde căutării tale.',
+                    'attributes-count'   => ':count atribute',
+                    'loading'            => 'Se încarcă...',
+                    'retry'              => 'Reîncearcă',
+                    'load-more'          => 'Încarcă mai multe',
+                    'unsaved-title'      => 'Modificări nesalvate',
+                    'unsaved-message'    => 'Salvează modificările din :group înainte de a continua sau renunță la ele.',
+                    'save-and-continue'  => 'Salvează și continuă',
+                    'discard-and-leave'  => 'Renunță și continuă',
+                    'cancel'             => 'Anulează',
                 ],
                 'images' => [
                     'info'  => 'Imaginile trebuie să aibă o rezoluție de 560px X 609px',
@@ -284,10 +301,15 @@ return [
                         'title'      => 'Produse de vânzare încrucișată',
                     ],
                     'add-btn'           => 'Adaugă',
+                    'add-type-btn'      => 'Adaugă tip de asociere',
                     'delete'            => 'Șterge',
                     'empty-info'        => 'Adăugați produse :type deodată.',
                     'empty-title'       => 'Adăugați produs',
                     'image-placeholder' => 'Imagine produs',
+                    'more-types'        => 'Mai multe',
+                    'no-types-info'     => 'Utilizează „Adaugă tip de asociere” pentru a lega acest produs la un tip de asociere.',
+                    'no-types-title'    => 'Nicio asociere adăugată',
+                    'search-types'      => 'Caută tipuri de asociere',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produse',
                 ],
@@ -396,6 +418,33 @@ return [
                     'created-at'   => 'Data Creării',
                     'product-type' => 'Tip Produs',
                 ],
+                'sections' => [
+                    'view'    => 'Vizualizare',
+                    'unsaved' => 'Modificări nesalvate',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Adaugă selecția',
+                    'close'        => 'Închide',
+                    'clear-search' => 'Șterge căutarea',
+                    'categories'   => [
+                        'subtitle'        => 'Atribuiți acest produs categoriilor din catalog.',
+                        'search'          => 'Căutare categorii…',
+                        'searching'       => 'Se caută…',
+                        'no-results'      => 'Nu au fost găsite categorii corespunzătoare',
+                        'load-more'       => 'Încarcă mai multe',
+                        'none-selected'   => 'Nicio categorie selectată încă',
+                        'and-more'        => 'și încă :count',
+                        'review-selected' => 'Afișează categoriile selectate',
+                        'selected'        => 'selectat(e)',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Conectați produse asociate, up-sell, cross-sell și personalizate.',
+                        'linked'   => 'produse conectate',
+                    ],
+                ],
+
                 'more'         => 'Mai multe',
                 'more-actions' => 'Mai multe acțiuni',
                 'variations'   => [
@@ -959,6 +1008,64 @@ return [
             'not-found'         => 'Câmp de categorie cu codul ":code" nu a fost găsit',
             'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Tipuri de asociere',
+                'create-btn' => 'Creează tip de asociere',
+                'add-btn'    => 'Creează tip de asociere',
+
+                'datagrid' => [
+                    'code'                => 'Cod',
+                    'name'                => 'Nume',
+                    'status'              => 'Statut',
+                    'position'            => 'Poziție',
+                    'edit'                => 'Editează',
+                    'delete'              => 'Șterge',
+                    'activated'           => 'Activat',
+                    'disabled'            => 'Dezactivat',
+                    'active'              => 'Activează',
+                    'disable'             => 'Dezactivează',
+                    'update-status'       => 'Actualizează statutul',
+                    'delete-failed'       => 'Acest tip de asociere nu poate fi șters.',
+                    'mass-delete-success' => 'Tipurile de asociere selectate au fost șterse cu succes',
+                    'mass-delete-failed'  => 'Tipurile de asociere selectate nu pot fi șterse.',
+                    'mass-update-success' => 'Actualizat cu succes',
+                ],
+            ],
+
+            'create-success'    => 'Tip de asociere creat cu succes',
+            'update-success'    => 'Tip de asociere actualizat cu succes',
+            'delete-success'    => 'Tip de asociere șters cu succes',
+            'delete-failed'     => 'Ștergere tip de asociere eșuată',
+            'user-define-error' => 'Nu se poate șterge tipul de asociere sistem',
+            'unknown-fields'    => 'Câmpul tipului de asociere cu codul ":fields" nu a fost găsit',
+
+            'create' => [
+                'title'      => 'Creați tip de asociere',
+                'name'       => 'Nume',
+                'enter-name' => 'Introduceți numele',
+                'code'       => 'Cod',
+                'enter-code' => 'Introdu codul',
+                'save-btn'   => 'Salvați tipul de asociere',
+            ],
+
+            'edit' => [
+                'title'    => 'Editați tipul de asociere',
+                'save-btn' => 'Actualizați tipul de asociere',
+            ],
+
+            'fields' => [
+                'title'                => 'Câmpuri',
+                'info'                 => 'Adăugați câmpuri personalizate pentru a captura date suplimentare pentru acest tip de asociere.',
+                'add-field-btn'        => 'Adăugați câmp',
+                'modal-title'          => 'Adăugați câmp',
+                'edit-modal-title'     => 'Editează câmpul',
+                'save-field-btn'       => 'Salvați câmpul',
+                'same-code-error'      => 'Codul câmpului trebuie să fie unic.',
+                'add-fields-info'      => 'Pentru a crea câmpuri personalizate pentru acest tip de asociere.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Opțiunea câmpului de categorie a fost ștearsă cu succes',
             'create-success'      => 'Opțiune câmp categorie creată',
@@ -994,6 +1101,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Limbă',
                 'level-parent'                     => 'Produs părinte',
                 'level-sub-parent'                 => 'Sub-părinte',
                 'level-variant'                    => 'Variantă',
@@ -2268,6 +2376,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Extinde',
+            'collapse' => 'Restrânge',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Adaugă',
+                'already-added'      => 'Adăugat',
+                'empty-info'         => 'Încearcă o altă căutare.',
+                'empty-title'        => 'Nu s-a găsit niciun tip de asociere',
+                'search-placeholder' => 'Caută după nume sau cod',
+                'select-all'         => 'Selectează tot',
+                'title'              => 'Adaugă tip de asociere',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Adaugă selecția',
+                'selected' => ':count produse selectate',
+                'title'    => 'Selectează produse',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pagină',
         ],
@@ -2278,6 +2407,13 @@ return [
             'close' => 'Închide',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled din :total traduse',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Niciun rezultat',
+                'search' => 'Caută',
+            ],
             'ajax-error'      => 'A apărut o eroare la salvare. Vă rugăm să încercați din nou.',
             'file-uploader'   => [
                 'upload-cta'  => 'Faceți clic pentru a încărca',
@@ -2303,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Restrânge panoul',
+                'expand'   => 'Extinde panoul',
+            ],
             'breadcrumbs' => [
                 'label' => 'Cale de navigare',
             ],
@@ -2329,6 +2469,7 @@ return [
                 'catalog'            => 'Catalog',
                 'categories'         => 'Categorii',
                 'category_fields'    => 'Câmpuri de Categorii',
+                'association_types'  => 'Tipuri de asociere',
                 'channels'           => 'Canale',
                 'collapse'           => 'Colapsare',
                 'configure'          => 'Configurare',
@@ -2769,6 +2910,7 @@ return [
         'url-rewrites'             => 'Rescriere URL',
         'users'                    => 'Utilizatori',
         'category_fields'          => 'Câmpuri categorie',
+        'association_types'        => 'Tipuri de asociere',
         'view'                     => 'Vizualizare',
         'execute'                  => 'Executare',
         'history'                  => 'Istoric',

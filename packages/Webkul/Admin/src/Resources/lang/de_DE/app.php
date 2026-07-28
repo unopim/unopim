@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigation',
                 'preview'    => 'Vorschau',
                 'remove'     => 'Entfernen',
                 'save-btn'   => 'Produkt speichern',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorien',
                     'root-not-allowed' => 'Die Stammkategorie kann einem Produkt nicht zugewiesen werden.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributgruppe:',
+                    'title'              => 'Attributgruppen',
+                    'search-placeholder' => 'Gruppen suchen',
+                    'empty'              => 'Keine Attributgruppe entspricht Ihrer Suche.',
+                    'attributes-count'   => ':count Attribute',
+                    'loading'            => 'Wird geladen...',
+                    'retry'              => 'Erneut versuchen',
+                    'load-more'          => 'Mehr laden',
+                    'unsaved-title'      => 'Nicht gespeicherte Änderungen',
+                    'unsaved-message'    => 'Speichern Sie Ihre Änderungen an :group, bevor Sie fortfahren, oder verwerfen Sie sie.',
+                    'save-and-continue'  => 'Speichern und fortfahren',
+                    'discard-and-leave'  => 'Verwerfen und fortfahren',
+                    'cancel'             => 'Abbrechen',
                 ],
                 'images' => [
                     'info'  => 'Die Bildauflösung sollte etwa 560 x 609 Pixel betragen.',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'Cross-Selling-Produkte',
                     ],
                     'add-btn'           => 'Hinzufügen',
+                    'add-type-btn'      => 'Assoziationstyp hinzufügen',
                     'delete'            => 'Löschen',
                     'empty-info'        => 'Um :type Produkte auf einmal hinzuzufügen.',
                     'empty-title'       => 'Produkt hinzufügen',
                     'image-placeholder' => 'Produktbild',
+                    'more-types'        => 'Mehr',
+                    'no-types-info'     => 'Verwenden Sie „Assoziationstyp hinzufügen“, um dieses Produkt einem Assoziationstyp zuzuordnen.',
+                    'no-types-title'    => 'Keine Assoziationen hinzugefügt',
+                    'search-types'      => 'Verknüpfungstypen suchen',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Verbände',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Erstellt am',
                     'product-type' => 'Produkttyp',
                 ],
+                'sections' => [
+                    'view'    => 'Ansehen',
+                    'unsaved' => 'Nicht gespeicherte Änderungen',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Auswahl hinzufügen',
+                    'close'        => 'Schließen',
+                    'clear-search' => 'Suche löschen',
+                    'categories'   => [
+                        'subtitle'        => 'Weisen Sie dieses Produkt Katalogkategorien zu.',
+                        'search'          => 'Kategorien suchen…',
+                        'searching'       => 'Suche läuft…',
+                        'no-results'      => 'Keine passenden Kategorien gefunden',
+                        'load-more'       => 'Mehr laden',
+                        'none-selected'   => 'Noch keine Kategorien ausgewählt',
+                        'and-more'        => 'und :count weitere',
+                        'review-selected' => 'Ausgewählte Kategorien anzeigen',
+                        'selected'        => 'ausgewählt',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Verknüpfen Sie verwandte, Zusatzverkaufs-, Cross-Selling- und benutzerdefinierte Produkte.',
+                        'linked'   => 'verknüpfte Produkte',
+                    ],
+                ],
+
                 'more'         => 'Mehr',
                 'more-actions' => 'Mehr Aktionen',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Kategoriefeld mit Code „:code“ konnte nicht gefunden werden',
             'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Assoziationstypen',
+                'create-btn' => 'Assoziationstyp erstellen',
+                'add-btn'    => 'Assoziationstyp erstellen',
+
+                'datagrid' => [
+                    'code'                => 'Code',
+                    'name'                => 'Name',
+                    'status'              => 'Status',
+                    'position'            => 'Position',
+                    'edit'                => 'Bearbeiten',
+                    'delete'              => 'Löschen',
+                    'activated'           => 'Aktiviert',
+                    'disabled'            => 'Deaktiviert',
+                    'active'              => 'Aktivieren',
+                    'disable'             => 'Deaktivieren',
+                    'update-status'       => 'Aktualisierungsstatus',
+                    'delete-failed'       => 'Dieser Assoziationstyp kann nicht gelöscht werden.',
+                    'mass-delete-success' => 'Ausgewählte Assoziationstypen erfolgreich gelöscht',
+                    'mass-delete-failed'  => 'Ausgewählte Assoziationstypen können nicht gelöscht werden.',
+                    'mass-update-success' => 'Erfolgreich aktualisiert',
+                ],
+            ],
+
+            'create-success'    => 'Assoziationstyp erfolgreich erstellt',
+            'update-success'    => 'Assoziationstyp erfolgreich aktualisiert',
+            'delete-success'    => 'Assoziationstyp erfolgreich gelöscht',
+            'delete-failed'     => 'Assoziationstyp konnte nicht gelöscht werden',
+            'user-define-error' => 'Systemassoziationstyp kann nicht gelöscht werden',
+            'unknown-fields'    => 'Assoziationstyp-Feld mit Code „:fields“ konnte nicht gefunden werden',
+
+            'create' => [
+                'title'      => 'Zuordnungstyp erstellen',
+                'name'       => 'Name',
+                'enter-name' => 'Namen eingeben',
+                'code'       => 'Code',
+                'enter-code' => 'Code eingeben',
+                'save-btn'   => 'Zuordnungstyp speichern',
+            ],
+
+            'edit' => [
+                'title'    => 'Zuordnungstyp bearbeiten',
+                'save-btn' => 'Zuordnungstyp aktualisieren',
+            ],
+
+            'fields' => [
+                'title'                => 'Felder',
+                'info'                 => 'Fügen Sie benutzerdefinierte Felder hinzu, um zusätzliche Daten für diesen Zuordnungstyp zu erfassen.',
+                'add-field-btn'        => 'Feld hinzufügen',
+                'modal-title'          => 'Feld hinzufügen',
+                'edit-modal-title'     => 'Feld bearbeiten',
+                'save-field-btn'       => 'Feld speichern',
+                'same-code-error'      => 'Der Feldcode muss eindeutig sein.',
+                'add-fields-info'      => 'Um benutzerdefinierte Felder für diesen Zuordnungstyp zu erstellen.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Kategoriefeldoption erfolgreich gelöscht',
             'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Sprache',
                 'level-parent'                     => 'Übergeordnetes Produkt',
                 'level-sub-parent'                 => 'Zwischenebene',
                 'level-variant'                    => 'Variante',
@@ -2265,6 +2373,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Aufklappen',
+            'collapse' => 'Zuklappen',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Hinzufügen',
+                'already-added'      => 'Hinzugefügt',
+                'empty-info'         => 'Versuchen Sie eine andere Suche.',
+                'empty-title'        => 'Keine Assoziationstypen gefunden',
+                'search-placeholder' => 'Nach Name oder Code suchen',
+                'select-all'         => 'Alle auswählen',
+                'title'              => 'Assoziationstyp hinzufügen',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Auswahl hinzufügen',
+                'selected' => ':count Produkte ausgewählt',
+                'title'    => 'Produkte auswählen',
+            ],
+        ],
         'pagination' => [
             'page' => 'Seite',
         ],
@@ -2275,6 +2404,13 @@ return [
             'close' => 'Schließen',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled von :total übersetzt',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Keine Ergebnisse',
+                'search' => 'Suchen',
+            ],
             'ajax-error'      => 'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'file-uploader'   => [
                 'upload-cta'  => 'Zum Hochladen klicken',
@@ -2300,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Bereich einklappen',
+                'expand'   => 'Bereich ausklappen',
+            ],
             'breadcrumbs' => [
                 'label' => 'Navigationspfad',
             ],
@@ -2326,6 +2466,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategorien',
                 'category_fields'    => 'Kategoriefelder',
+                'association_types'  => 'Assoziationstypen',
                 'channels'           => 'Kanäle',
                 'collapse'           => 'Zusammenklappen',
                 'configure'          => 'Konfiguration',
@@ -2766,6 +2907,7 @@ return [
         'url-rewrites'             => 'URL-Umschreibungen',
         'users'                    => 'Benutzer',
         'category_fields'          => 'Kategoriefelder',
+        'association_types'        => 'Assoziationstypen',
         'view'                     => 'Anzeigen',
         'execute'                  => 'Job ausführen',
         'history'                  => 'Verlauf',

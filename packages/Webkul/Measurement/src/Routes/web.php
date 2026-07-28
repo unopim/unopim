@@ -8,9 +8,8 @@ use Webkul\Measurement\Http\Controllers\MeasurementUnitsController;
 
 Route::group(['middleware' => ['web', 'admin'], 'prefix' => 'admin/measurement'], function (): void {
 
-    Route::controller(MeasurementFamilyController::class)->prefix('families')->group(function (): void {
+    Route::controller(MeasurementFamilyController::class)->prefix('families')->whereNumber('id')->group(function (): void {
         Route::get('/', 'index')->name('admin.measurement.families.index');
-        Route::get('/create', 'create')->name('admin.measurement.families.create');
         Route::post('/', 'store')->name('admin.measurement.families.store');
         Route::get('/{id}/edit', 'edit')->name('admin.measurement.families.edit');
         Route::put('/{id}', 'update')->name('admin.measurement.families.update');

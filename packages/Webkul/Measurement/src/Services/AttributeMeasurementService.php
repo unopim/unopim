@@ -26,7 +26,12 @@ class AttributeMeasurementService
         $currentLocale = app()->getLocale();
         $currentLang = strtok($currentLocale, '_');
 
-        $families = $this->familyRepository->all();
+        $families = $this->familyRepository
+            ->getModel()
+            ->newQuery()
+            ->with(['units.translations', 'units.conversions'])
+            ->orderBy('id')
+            ->get();
 
         $familyOptions = $families->map(fn ($f) => [
             'id'    => $f->code,

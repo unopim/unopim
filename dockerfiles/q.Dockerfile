@@ -51,6 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libicu-dev \
     libgmp-dev \
+    libpq-dev \
     && docker-php-ext-configure gd \
         --with-freetype \
         --with-jpeg \
@@ -64,6 +65,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         intl \
         pcntl \
         pdo_mysql \
+        pdo_pgsql \
+        pgsql \
         zip \
     && pecl install redis-6.1.0 \
     && docker-php-ext-enable redis \

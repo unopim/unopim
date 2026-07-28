@@ -147,38 +147,44 @@ class Controller extends BaseController
 
     /**
      * Get the full image path from the filename.
+     *
+     * The route pattern permits "." and "/", so an unconstrained join would let
+     * "../../.env" escape the media roots and serve any file the process can read.
+     * Every candidate is therefore resolved and confirmed to sit inside its root.
      */
     protected function getImagePath(string $filename): string
     {
-        $paths = config('imagecache.paths', []);
+        $roots = array_merge(
+            array_map(fn ($path): string => (string) $path, config('imagecache.paths', [])),
+            [storage_path('app/public'), public_path(), public_path('storage')]
+        );
 
-        foreach ($paths as $basePath) {
-            $fullPath = rtrim((string) $basePath, '/').'/'.ltrim($filename, '/');
+        $relative = ltrim(str_replace('\\', '/', $filename), '/');
 
-            if (file_exists($fullPath)) {
-                return $fullPath;
+        if (in_array('..', explode('/', $relative), true)) {
+            return '';
+        }
+
+        foreach ($roots as $root) {
+            $candidate = rtrim($root, '/').'/'.$relative;
+
+            if (! is_file($candidate)) {
+                continue;
+            }
+
+            $resolved = realpath($candidate);
+            $resolvedRoot = realpath($root);
+
+            if ($resolved === false || $resolvedRoot === false) {
+                continue;
+            }
+
+            if (str_starts_with($resolved, rtrim($resolvedRoot, '/').'/')) {
+                return $resolved;
             }
         }
 
-        $storagePath = storage_path('app/public/'.$filename);
-
-        if (file_exists($storagePath)) {
-            return $storagePath;
-        }
-
-        $publicPath = public_path($filename);
-
-        if (file_exists($publicPath)) {
-            return $publicPath;
-        }
-
-        $storagePublicPath = public_path('storage/'.$filename);
-
-        if (file_exists($storagePublicPath)) {
-            return $storagePublicPath;
-        }
-
-        return $storagePath;
+        return storage_path('app/public/'.$relative);
     }
 
     /**

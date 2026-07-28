@@ -17,7 +17,7 @@ class EnableDebugForAllowedIps
     {
         $featureEnabled = (bool) core()->getConfigData('general.debug.settings.enabled');
 
-        if ($featureEnabled && $this->isAllowedIp($request)) {
+        if ($featureEnabled && $this->isAllowedIp($request) && $this->isAllowedByEnvironment($request)) {
             config(['app.debug' => true]);
             config(['debugbar.enabled' => true]);
 
@@ -64,11 +64,32 @@ class EnableDebugForAllowedIps
      */
     protected function isAllowedIp(Request $request): bool
     {
-        $allowedIps = array_filter(array_map(
-            trim(...),
-            explode(',', (string) core()->getConfigData('general.debug.settings.allowed_ips'))
-        ));
+        return $this->matchesList(
+            $request,
+            (string) core()->getConfigData('general.debug.settings.allowed_ips')
+        );
+    }
 
-        return in_array((string) $request->ip(), $allowedIps, true);
+    /**
+     * Whether the deployment-level `APP_DEBUG_ALLOWED_IPS` allow-list admits the
+     * request. An unset list imposes no restriction, so hosts that do not pin the
+     * value keep relying on the database-backed allow-list alone.
+     */
+    protected function isAllowedByEnvironment(Request $request): bool
+    {
+        $allowedIps = (string) config('app.debug_allowed_ips');
+
+        return $allowedIps === '' || $this->matchesList($request, $allowedIps);
+    }
+
+    /**
+     * Match the resolved client IP against a comma-separated allow-list.
+     */
+    protected function matchesList(Request $request, string $allowedIps): bool
+    {
+        return in_array((string) $request->ip(), array_filter(array_map(
+            trim(...),
+            explode(',', $allowedIps)
+        )), true);
     }
 }

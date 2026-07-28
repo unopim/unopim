@@ -23,6 +23,7 @@ class StoreSimpleProductRequest extends ApiFormRequest
             'values'            => ['required', 'array'],
             'values.common.sku' => ['required', 'unique:products,sku'],
             'variant'           => ['nullable', 'array'],
+            'associations'      => ['nullable', 'array'],
         ];
     }
 }

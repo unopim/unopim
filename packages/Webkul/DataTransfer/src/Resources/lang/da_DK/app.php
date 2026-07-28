@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Produktassociationer',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Feltet \'%s\' er påkrævet.',
+                    'self-link-not-allowed'       => 'Produktet \'%s\' kan ikke tilknyttes sig selv.',
+                    'sku-not-found'               => 'Produkt med SKU \'%s\' blev ikke fundet.',
+                    'related-sku-not-found'       => 'Relateret produkt med SKU \'%s\' blev ikke fundet.',
+                    'association-type-not-found'  => 'Associationstypen \'%s\' findes ikke eller er inaktiv.',
+                    'invalid-field-value'         => 'Ugyldig værdi angivet for et associationsfelt.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attributgrupper',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Denne eksport er for stor til at køre: anslået :rows rækker × :columns kolonner (~:estimated) overstiger den tilgængelige plads (~:available). Indsnævr eksporten ved at vælge færre kanaler/sprog (og attributter), og prøv igen.',
         'fields'           => [
-            'file-format'         => 'Filformat',
-            'with-media'          => 'Med medier',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Filformat',
+            'with-media'             => 'Med medier',
+            'with-associations'      => 'Med tilknytninger',
+            'with-associations-info' => 'Inkluder de gamle SKU-listekolonner (up_sells, cross_sells og related_products) i eksporten',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Attributter',
+        ],
+        'product-associations' => [
+            'title' => 'Produktassociationer',
         ],
         'attribute-groups' => [
             'title' => 'Attributgrupper',

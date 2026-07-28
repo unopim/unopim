@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '제품 연관 관계',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' 필드는 필수입니다.',
+                    'self-link-not-allowed'       => '제품 \'%s\'은(는) 자기 자신과 연결할 수 없습니다.',
+                    'sku-not-found'               => 'SKU \'%s\'에 해당하는 제품을 찾을 수 없습니다.',
+                    'related-sku-not-found'       => 'SKU \'%s\'에 해당하는 연관 제품을 찾을 수 없습니다.',
+                    'association-type-not-found'  => '연관 유형 \'%s\'이(가) 존재하지 않거나 비활성 상태입니다.',
+                    'invalid-field-value'         => '연관 필드에 유효하지 않은 값이 지정되었습니다.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '속성 그룹',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => '이 내보내기는 너무 커서 실행할 수 없습니다: 예상 :rows 행 × :columns 열(~:estimated)이 사용 가능한 공간(~:available)을 초과합니다. 채널/로케일(및 속성)을 줄여 범위를 좁힌 후 다시 시도하세요.',
         'fields'           => [
-            'file-format'         => '파일 형식',
-            'with-media'          => '미디어 포함',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => '파일 형식',
+            'with-media'             => '미디어 포함',
+            'with-associations'      => '연관 관계 포함',
+            'with-associations-info' => '레거시 up_sells, cross_sells, related_products SKU 목록 열을 내보내기에 포함합니다',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => '속성',
+        ],
+        'product-associations' => [
+            'title' => '제품 연관 관계',
         ],
         'attribute-groups' => [
             'title' => '속성 그룹',
