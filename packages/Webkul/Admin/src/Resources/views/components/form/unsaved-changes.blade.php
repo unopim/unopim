@@ -395,6 +395,15 @@
                             return;
                         }
 
+                        // Inputs owned by a component that derives them from its own state
+                        // (e.g. the permission tree). Writing to them here and firing the
+                        // synthetic events below would re-enter that component's change
+                        // handler and mutate the selection instead of restoring it, so
+                        // leave them to the `unsaved-changes:reset` broadcast.
+                        if (el.hasAttribute('data-unsaved-managed')) {
+                            return;
+                        }
+
                         if ('checked' in init) {
                             el.checked = init.checked;
                         } else if ('selected' in init) {
