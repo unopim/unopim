@@ -5,6 +5,7 @@
     'title',
     'nameLabel' => null,
     'namePlaceholder' => null,
+    'nameRequired' => true,
     'codeLabel',
     'codePlaceholder' => null,
     'codeHint' => null,
@@ -60,7 +61,7 @@
             @if ($nameLabel)
                 <x-admin::form.control-group>
                     <x-admin::form.control-group.label
-                        class="required w-full"
+                        class="{{ $nameRequired ? 'required' : '' }} w-full"
                         localizable="true"
                         :current-locale-code="$currentLocaleCode"
                     >
@@ -70,7 +71,7 @@
                     <x-admin::form.control-group.control
                         type="text"
                         name="{{ $currentLocaleCode }}[name]"
-                        rules="required"
+                        rules="{{ $nameRequired ? 'required' : '' }}"
                         v-code-generator="'code'"
                         :label="$nameLabel"
                         :placeholder="$namePlaceholder ?: $nameLabel"
