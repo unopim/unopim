@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Type;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -831,7 +832,7 @@ abstract class AbstractType
 
         return $this->product->attribute_family
             ->customAttributesByGroup()
-            ->get($group->id, new Collection)
+            ->get($group->id, new EloquentCollection)
             ->whereNotIn('code', $this->skipAttributes);
     }
 

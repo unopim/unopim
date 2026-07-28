@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -48,4 +49,23 @@ it('returns an empty collection for a group that is not in the family', function
     $product = Product::factory()->create(['type' => 'simple']);
 
     expect($product->getEditableAttributesForGroup(987654)->all())->toBe([]);
+});
+
+it('returns an eloquent collection for a group holding no editable attributes', function () {
+    $family = AttributeFamily::factory()->create();
+
+    $empty = AttributeGroup::factory()->create();
+
+    mapGroupToFamily($family, $empty, [], 1);
+
+    $product = Product::factory()->create([
+        'type'                => 'simple',
+        'attribute_family_id' => $family->id,
+    ]);
+
+    $attributes = $product->getTypeInstance()->getEditableAttributes($empty);
+
+    expect($attributes)->toBeInstanceOf(EloquentCollection::class);
+
+    $attributes->loadMissing('translations');
 });
