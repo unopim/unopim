@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Cache;
 use Webkul\Admin\DataGrids\Settings\UserDataGrid;
 use Webkul\Core\Models\Locale;
 use Webkul\User\Models\Admin;
@@ -89,6 +90,16 @@ describe('Gravatar opt-out persistence', function () {
 
         $optedIn = Admin::factory()->create(['image' => null, 'use_gravatar' => true]);
         $optedOut = Admin::factory()->create(['image' => null, 'use_gravatar' => false]);
+
+        // The grid only renders a gravatar the cached upstream lookup already confirmed, so prime
+        // both rows: the opted-out row must then stay empty because of the flag, not a cache miss.
+        foreach ([$optedIn, $optedOut] as $user) {
+            Cache::put('admin.gravatar.'.md5(mb_strtolower(trim($user->email))), [
+                'found'        => true,
+                'body'         => '',
+                'content_type' => 'image/png',
+            ]);
+        }
 
         $records = collect(app(UserDataGrid::class)->toJson()->getData(true)['records']);
 
