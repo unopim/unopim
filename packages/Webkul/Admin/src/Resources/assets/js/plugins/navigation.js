@@ -7,8 +7,18 @@ export default function initAjaxNavigation() {
 
     window.__ajaxNavInitialised = true;
 
+    const navigationGuards = [];
+
+    let navigating = false;
+
     window.unopim = window.unopim || {};
     window.unopim.visit = (url) => visit(url, true);
+
+    window.unopim.registerNavigationGuard = (guard) => {
+        if (typeof guard === 'function' && ! navigationGuards.includes(guard)) {
+            navigationGuards.push(guard);
+        }
+    };
 
     document.addEventListener('click', onDocumentClick, true);
 
@@ -74,6 +84,38 @@ export default function initAjaxNavigation() {
     }
 
     async function visit(url, push) {
+        if (navigating) {
+            return;
+        }
+
+        navigating = true;
+
+        try {
+            if (! (await guardsAllow(url))) {
+                return;
+            }
+
+            await performVisit(url, push);
+        } finally {
+            navigating = false;
+        }
+    }
+
+    async function guardsAllow(url) {
+        for (const guard of navigationGuards) {
+            try {
+                if ((await guard(url)) === false) {
+                    return false;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        return true;
+    }
+
+    async function performVisit(url, push) {
         const before = dispatch(NAV_EVENTS.BEFORE, { url }, true);
 
         if (before.defaultPrevented) {

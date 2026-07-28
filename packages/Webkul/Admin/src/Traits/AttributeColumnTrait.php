@@ -4,6 +4,8 @@ namespace Webkul\Admin\Traits;
 
 use Illuminate\Support\Facades\Storage;
 use Webkul\Admin\Filters\ProductFilterOperators;
+use Webkul\Attribute\Models\Attribute;
+use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
 
 trait AttributeColumnTrait
 {
@@ -52,7 +54,9 @@ trait AttributeColumnTrait
                 $column['options'] = $this->getBooleanOptions();
                 break;
             case 'price':
-                $column['options'] = $this->getPriceOptions();
+                $column['options'] = $attribute->type === Attribute::MEASUREMENT_FIELD_TYPE
+                    ? $this->getMeasurementUnitOptions($attribute)
+                    : $this->getPriceOptions();
                 break;
             case 'image':
                 $column['closure'] = $this->getImageClosure();
@@ -82,6 +86,45 @@ trait AttributeColumnTrait
             'label' => $currency->name ?: '['.$currency->code.']',
             'value' => $currency->code,
         ], core()->getAllActiveCurrencies()->all());
+    }
+
+    /**
+     * Unit dropdown options for a measurement attribute. A measurement column
+     * reuses the price filter layout, so the leading dropdown lists the units of
+     * the attribute's measurement family instead of currencies.
+     *
+     * @param  object  $attribute
+     */
+    protected function getMeasurementUnitOptions($attribute): array
+    {
+        if (! class_exists(AttributeMeasurementRepository::class)) {
+            return [];
+        }
+
+        $measurement = resolve(AttributeMeasurementRepository::class)->getByAttributeId($attribute->id);
+
+        if (! $measurement || ! $measurement->family) {
+            return [];
+        }
+
+        $locale = core()->getRequestedLocaleCode();
+
+        return collect($measurement->family->units ?? [])
+            ->map(function ($unit) use ($locale): array {
+                $label = $unit['labels'][$locale] ?? null;
+
+                if (empty($label)) {
+                    $label = empty($unit['symbol']) ? $unit['code'] ?? '' : $unit['symbol'];
+                }
+
+                return [
+                    'label' => $label,
+                    'value' => $unit['code'] ?? '',
+                ];
+            })
+            ->filter(fn ($option): bool => $option['value'] !== '')
+            ->values()
+            ->all();
     }
 
     protected function getImageClosure()

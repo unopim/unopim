@@ -28,12 +28,12 @@ class SendNotificationListener implements ShouldQueue
 
         $mailConfigured = Config::get('mail.default') &&
             Config::get('mail.mailers.smtp.host') &&
-            Config::get('mail.mailers.smtp.port') &&
-            Config::get('mail.mailers.smtp.username') &&
-            Config::get('mail.mailers.smtp.password');
+            Config::get('mail.mailers.smtp.port');
 
-        $metaData = json_decode((string) $event->meta);
-        // @TODO: manage user details with relation to the event
+        $metaData = (object) array_merge(
+            ['type' => '', 'code' => ''],
+            (array) ($event->meta ?? [])
+        );
         $admin = $this->adminRepository->find($event->user_id);
 
         event(new NotificationEvent([

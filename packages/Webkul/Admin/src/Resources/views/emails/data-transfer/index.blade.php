@@ -1,6 +1,6 @@
 @component('admin::emails.layout')
     @php
-        $metaData = json_decode($templateData->meta) ?? (object) ['type' => '', 'code' => ''];
+        $metaData = (object) array_merge(['type' => '', 'code' => ''], (array) ($templateData->meta ?? []));
     @endphp
 
     <p style="font-family: 'Inter', Arial, sans-serif;font-weight: 600;font-size: 20px;color: #1F2937;line-height: 24px;margin: 0 0 24px 0;">

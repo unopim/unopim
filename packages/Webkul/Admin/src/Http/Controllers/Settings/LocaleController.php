@@ -130,6 +130,10 @@ class LocaleController extends Controller
     {
         $localeIds = $massDestroyRequest->input('indices');
 
+        $deleted = 0;
+
+        $skipped = 0;
+
         foreach ($localeIds as $localeId) {
             $locale = $this->localeRepository->find($localeId);
 
@@ -144,11 +148,15 @@ class LocaleController extends Controller
             }
 
             if ($locale->isLocaleBeingUsed()) {
+                $skipped++;
+
                 continue;
             }
 
             try {
                 $this->localeRepository->delete($localeId);
+
+                $deleted++;
             } catch (\Exception $e) {
                 report($e);
 
@@ -156,6 +164,18 @@ class LocaleController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
             }
+        }
+
+        if ($skipped > 0 && $deleted === 0) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.locales.index.can-not-delete-error'),
+            ], JsonResponse::HTTP_BAD_REQUEST);
+        }
+
+        if ($skipped > 0) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.locales.index.partial-delete-success', ['count' => $skipped]),
+            ], JsonResponse::HTTP_OK);
         }
 
         return new JsonResponse([
@@ -170,7 +190,11 @@ class LocaleController extends Controller
     {
         $localeIds = $massUpdateRequest->input('indices');
 
-        $value = $massUpdateRequest->input('value');
+        $value = (int) $massUpdateRequest->input('value');
+
+        $updated = 0;
+
+        $skipped = 0;
 
         foreach ($localeIds as $localeId) {
             $locale = $this->localeRepository->find($localeId);
@@ -180,6 +204,8 @@ class LocaleController extends Controller
             }
 
             if ($locale->isLocaleBeingUsed() && $value === 0) {
+                $skipped++;
+
                 continue;
             }
 
@@ -187,6 +213,8 @@ class LocaleController extends Controller
                 $locale->status = $value;
 
                 $locale->save();
+
+                $updated++;
             } catch (\Exception $e) {
                 report($e);
 
@@ -194,6 +222,18 @@ class LocaleController extends Controller
                     'message' => $e->getMessage(),
                 ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
             }
+        }
+
+        if ($skipped > 0 && $updated === 0) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.locales.index.can-not-disable-error'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($skipped > 0) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.locales.index.partial-update-success', ['count' => $skipped]),
+            ]);
         }
 
         return new JsonResponse([

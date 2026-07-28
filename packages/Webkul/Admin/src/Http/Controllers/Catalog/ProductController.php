@@ -234,6 +234,10 @@ class ProductController extends Controller
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        if ($role !== 'variant_group') {
+            Event::dispatch('catalog.product.create.after', $node);
+        }
+
         return new JsonResponse([
             'data' => [
                 'id'           => $node->id,

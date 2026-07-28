@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Admin\Http\Requests\ConfigurationSearchForm;
+use Webkul\Admin\SystemSettings;
 use Webkul\Core\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\Core\Tree;
@@ -28,8 +29,10 @@ class ConfigurationController extends Controller
      *
      * @return void
      */
-    public function __construct(protected CoreConfigRepository $coreConfigRepository)
-    {
+    public function __construct(
+        protected CoreConfigRepository $coreConfigRepository,
+        protected SystemSettings $systemSettings
+    ) {
         $this->prepareConfigTree();
     }
 
@@ -56,6 +59,10 @@ class ConfigurationController extends Controller
      */
     public function index(): View|RedirectResponse
     {
+        $this->enforceSectionAccess(
+            $this->systemSettings->aclKeysForConfigGroup($this->requestedGroupKey())
+        );
+
         $groups = Arr::get(
             $this->configTree->items,
             request()->route('slug').'.children.'.request()->route('slug2').'.children'
@@ -87,9 +94,29 @@ class ConfigurationController extends Controller
         ]);
     }
 
+    /** Config group addressed by the request slugs. */
+    protected function requestedGroupKey(): string
+    {
+        return implode('.', array_filter([
+            request()->route('slug'),
+            request()->route('slug2'),
+        ]));
+    }
+
     /**
-     * Store a newly created resource in storage.
+     * @param  array<int, string>  $aclKeys
      */
+    protected function enforceSectionAccess(array $aclKeys): void
+    {
+        foreach ($aclKeys as $aclKey) {
+            abort_unless(
+                bouncer()->hasPermission($aclKey),
+                403,
+                trans('admin::app.errors.403.message')
+            );
+        }
+    }
+
     /**
      * Restrict the persisted payload to declared config fields, so a crafted
      * request cannot write arbitrary/undeclared core-config codes. When the group
@@ -146,11 +173,16 @@ class ConfigurationController extends Controller
 
     public function store(ConfigurationForm $request): RedirectResponse
     {
+        $groupKey = $this->requestedGroupKey();
+
+        $payload = $this->allowedConfig($request, $groupKey);
+
+        $this->enforceSectionAccess(
+            $this->systemSettings->aclKeysForConfigCodes(array_keys(Arr::dot($payload)))
+        );
+
         try {
             $data = $request->all();
-            $slug = request()->route('slug');
-            $slug2 = request()->route('slug2');
-            $groupKey = implode('.', array_filter([$slug, $slug2]));
 
             foreach (config('core') as $section) {
                 if (($section['key'] ?? null) === $groupKey) {
@@ -164,7 +196,7 @@ class ConfigurationController extends Controller
                 }
             }
 
-            $this->coreConfigRepository->create($this->allowedConfig($request, $groupKey));
+            $this->coreConfigRepository->create($payload);
 
             session()->flash('success', trans('admin::app.configuration.index.save-message'));
 
