@@ -846,6 +846,11 @@ return [
         'route'  => 'admin.configuration.download',
         'sort'   => 10,
     ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.edit',
+        'sort'   => 10,
+    ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
         'route' => 'admin.configuration.integrations.index',
