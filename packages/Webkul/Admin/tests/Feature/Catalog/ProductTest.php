@@ -108,7 +108,7 @@ function makeVariantStructureFor(int $familyId): VariantStructure
 
     if ($axis) {
         $structure->axes()->create([
-            'level'          => 1,
+            'level'          => 'level_1',
             'attribute_id'   => $axis->id,
             'position'       => 1,
         ]);
@@ -579,7 +579,7 @@ it('should render the product edit form with the ajax submit handler enabled', f
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
         ->assertSee('data-ajax-form="true"', false)
-        ->assertSee('submit="onAjaxSubmit"', false);
+        ->assertSee('submit="$root.onAjaxSubmit"', false);
 });
 
 it('should return a json success message without redirect when updating a product via ajax', function () {

@@ -92,6 +92,10 @@ class AjaxOptionsController extends Controller
 
         $formattedOptions = [];
 
+        $swatchType = $entityName === self::ENTITY_ATTRIBUTE_OPTION && $attributeId
+            ? $this->attributeRepository->find($attributeId)?->swatch_type
+            : null;
+
         foreach ($options as $option) {
             $translatedOptionLabel = $entityName === self::ENTITY_CATEGORY
                 ? $option->name
@@ -102,6 +106,7 @@ class AjaxOptionsController extends Controller
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
                 ...$option->makeHidden(['translations', 'label'])->toArray(),
+                'attribute' => ['swatch_type' => $swatchType],
             ];
         }
 

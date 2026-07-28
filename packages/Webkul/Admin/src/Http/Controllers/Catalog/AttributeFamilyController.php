@@ -26,8 +26,6 @@ class AttributeFamilyController extends Controller
 
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeFamilyRepository $attributeFamilyRepository,
@@ -37,8 +35,6 @@ class AttributeFamilyController extends Controller
 
     /**
      * Display a listing of the resource.
-     *
-     * @return View
      */
     public function index(): View|JsonResponse
     {
@@ -93,8 +89,6 @@ class AttributeFamilyController extends Controller
 
     /**
      * Normalize attribute family, custom attributes, and custom attribute groups data.
-     *
-     * @return array
      */
     private function normalize($attributeFamily = null)
     {
@@ -234,11 +228,6 @@ class AttributeFamilyController extends Controller
     {
         $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
 
-        // History is a drawer overlay that coexists with any tab, so the active
-        // tab must be resolved with the same precedence the edit view uses —
-        // otherwise `?completeness&history` (history opened on the completeness
-        // tab) would take the history fast-path and omit the completeness data
-        // the view still renders. Keep this match in sync with edit.blade.php.
         $activeTab = match (true) {
             request()->has('variants')     => 'variants',
             request()->has('completeness') => 'completeness',
@@ -359,6 +348,9 @@ class AttributeFamilyController extends Controller
         $seenStructureCodes = [];
 
         foreach ($structures as $index => $structure) {
+            $structures[$index]['placements'] = $this->forceUniqueAttributesToVariant($structure['placements'] ?? [], $familyAttributes);
+            $structure = $structures[$index];
+
             $code = $structure['code'];
 
             if (in_array($code, $seenStructureCodes, true)) {
@@ -479,6 +471,7 @@ class AttributeFamilyController extends Controller
 
         $familyAttributes = $attributeFamily->customAttributes()->get()->keyBy('code');
         $configurableAttributes = $attributeFamily->getConfigurableAttributes()->keyBy('code');
+        $structureData['placements'] = $this->forceUniqueAttributesToVariant($structureData['placements'] ?? [], $familyAttributes);
         $levels = (int) $structureData['levels'];
         $axes = $this->normalizeVariantAxes($structureData['axes'] ?? []);
         $activeAxes = $levels === 2
@@ -543,6 +536,15 @@ class AttributeFamilyController extends Controller
             }
         }
 
+        $previousSnapshot = $this->variantStructureSnapshot(
+            empty($structureData['id'])
+                ? null
+                : VariantStructure::query()
+                    ->with(['axes.attribute', 'placements.attribute'])
+                    ->where('attribute_family_id', $attributeFamily->id)
+                    ->find($structureData['id'])
+        );
+
         $structure = DB::transaction(function () use ($attributeFamily, $structureData, $familyAttributes, $levels) {
             $structure = ! empty($structureData['id'])
                 ? VariantStructure::query()
@@ -597,6 +599,14 @@ class AttributeFamilyController extends Controller
             return $structure;
         });
 
+        Event::dispatch('core.model.proxy.sync.variantStructure', [
+            'old_values' => $previousSnapshot,
+            'new_values' => $this->variantStructureSnapshot(
+                VariantStructure::query()->with(['axes.attribute', 'placements.attribute'])->find($structure->id)
+            ),
+            'model'      => $structure,
+        ]);
+
         return new JsonResponse([
             'message' => trans('admin::app.catalog.families.edit.variant-saved'),
             'data'    => $this->variantStructuresPayload($attributeFamily, $structure->id)[0] ?? null,
@@ -610,14 +620,103 @@ class AttributeFamilyController extends Controller
     {
         $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
 
-        VariantStructure::query()
+        $structure = VariantStructure::query()
+            ->with(['axes.attribute', 'placements.attribute'])
             ->where('attribute_family_id', $attributeFamily->id)
-            ->where('id', $structureId)
-            ->delete();
+            ->find($structureId);
+
+        if ($structure instanceof VariantStructure) {
+            $snapshot = $this->variantStructureSnapshot($structure);
+
+            $structure->delete();
+
+            Event::dispatch('core.model.proxy.sync.variantStructure', [
+                'old_values' => $snapshot,
+                'new_values' => [],
+                'model'      => $structure,
+            ]);
+        }
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.families.delete-success'),
         ]);
+    }
+
+    /**
+     * Readable snapshot of a variant structure, used for the family history diff.
+     */
+    protected function variantStructureSnapshot(?VariantStructure $structure): array
+    {
+        if (! $structure instanceof VariantStructure) {
+            return [];
+        }
+
+        $snapshot = [
+            'code'   => $structure->code,
+            'name'   => $structure->name,
+            'levels' => (string) $structure->levels,
+        ];
+
+        $grouped = [];
+
+        foreach ($structure->axes as $axis) {
+            if ($axis->attribute?->code) {
+                $grouped['axes_'.$axis->level][] = $axis->attribute->code;
+            }
+        }
+
+        foreach ($structure->placements as $placement) {
+            if ($placement->attribute?->code) {
+                $grouped['attributes_'.$placement->level][] = $placement->attribute->code;
+            }
+        }
+
+        foreach ($grouped as $key => $codes) {
+            sort($codes);
+
+            $snapshot[$key] = implode(', ', $codes);
+        }
+
+        return $snapshot;
+    }
+
+    /**
+     * Force unique attributes onto the variant level, keeping sku common.
+     */
+    protected function forceUniqueAttributesToVariant(array $placements, $familyAttributes): array
+    {
+        $uniqueCodes = $familyAttributes
+            ->filter(fn ($attribute): bool => (bool) $attribute->is_unique && $attribute->code !== 'sku')
+            ->keys()
+            ->all();
+
+        if ($uniqueCodes === []) {
+            return $placements;
+        }
+
+        $relocated = [];
+
+        foreach (['common', 'sub_parent'] as $level) {
+            if (empty($placements[$level])) {
+                continue;
+            }
+
+            $found = array_values(array_intersect($placements[$level], $uniqueCodes));
+
+            if ($found === []) {
+                continue;
+            }
+
+            $placements[$level] = array_values(array_diff($placements[$level], $uniqueCodes));
+
+            $relocated = [...$relocated, ...$found];
+        }
+
+        if ($relocated !== []) {
+            $placements['variant'] = array_values(array_unique([...($placements['variant'] ?? []), ...$relocated]));
+        }
+
+        return $placements;
     }
 
     /**
@@ -668,9 +767,10 @@ class AttributeFamilyController extends Controller
                     'label'      => ! empty($attributeGroup?->name) ? $attributeGroup->name : '['.$attributeGroup?->code.']',
                     'attributes' => $attributeGroup?->customAttributes($familyGroupMapping->attribute_family_id)
                         ->map(fn ($attribute) => [
-                            'code'  => $attribute->code,
-                            'label' => ! empty($attribute->name) ? $attribute->name : '['.$attribute->code.']',
-                            'type'  => $attribute->type ?? '',
+                            'code'      => $attribute->code,
+                            'label'     => ! empty($attribute->name) ? $attribute->name : '['.$attribute->code.']',
+                            'type'      => $attribute->type ?? '',
+                            'is_unique' => (bool) $attribute->is_unique,
                         ])
                         ->values()
                         ->toArray() ?? [],
@@ -713,7 +813,7 @@ class AttributeFamilyController extends Controller
     }
 
     /**
-     * Check product has variant products and return family if exists
+     * Check product has variant products and return family if exists.
      */
     protected function hasVariantProducts($id): ?AttributeFamily
     {

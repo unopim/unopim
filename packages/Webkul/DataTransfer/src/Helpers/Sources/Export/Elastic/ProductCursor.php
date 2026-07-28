@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources\Export\Elastic;
 
+use Illuminate\Support\Facades\Date;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
@@ -102,9 +103,9 @@ class ProductCursor extends AbstractElasticCursor
         }
 
         $range = array_filter([
-            'gte' => $filter->updatedAfter($filters),
-            'lte' => $filter->updatedBefore($filters),
-        ], fn (?string $bound): bool => ! in_array($bound, [null, '', '0'], true));
+            'gte' => $this->toElasticDate($filter->updatedAfter($filters)),
+            'lte' => $this->toElasticDate($filter->updatedBefore($filters)),
+        ], fn (?string $bound): bool => $bound !== null);
 
         if ($range !== []) {
             $clauses[] = ['range' => ['updated_at' => $range]];
@@ -117,6 +118,18 @@ class ProductCursor extends AbstractElasticCursor
         }
 
         return $clauses !== [] ? ['filter' => $clauses] : [];
+    }
+
+    /**
+     * Convert a filter bound to the UTC ISO-8601 format Elasticsearch can parse.
+     */
+    protected function toElasticDate(?string $date): ?string
+    {
+        if (in_array($date, [null, '', '0'], true)) {
+            return null;
+        }
+
+        return Date::parse($date)->utc()->toIso8601ZuluString();
     }
 
     /**

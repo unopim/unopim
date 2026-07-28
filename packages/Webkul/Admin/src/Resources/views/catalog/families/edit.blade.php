@@ -1,33 +1,49 @@
 @php
-    $activeTab = match (true) {
+    $requestedTab = match (true) {
+        request()->has('history')      => 'history',
         request()->has('variants')     => 'variants',
         request()->has('completeness') => 'completeness',
-        request()->has('history')      => 'history',
         default                        => 'general',
     };
 
-    $tabItems = [
+    $historyQuery = array_diff_key(request()->query(), array_flip(['variants', 'completeness', 'history']));
+
+    $familyHistoryUrl = request()->url().'?'.http_build_query($historyQuery + ['history' => 1]);
+
+    $tabItems = array_values(array_filter([
         [
-            'key'   => 'general',
-            'url'   => '?',
-            'label' => 'admin::app.components.layouts.sidebar.general',
+            'key'        => 'general',
+            'url'        => '?',
+            'label'      => 'admin::app.components.layouts.sidebar.general',
+            'permission' => 'catalog.families.edit',
         ],
         [
-            'key'   => 'variants',
-            'url'   => '?variants',
-            'label' => 'admin::app.catalog.families.edit.variants',
+            'key'        => 'variants',
+            'url'        => '?variants',
+            'label'      => 'admin::app.catalog.families.edit.variants',
+            'permission' => 'catalog.families.variant-structures',
         ],
         [
-            'key'   => 'completeness',
-            'url'   => '?completeness',
-            'label' => 'completeness::app.components.layouts.sidebar.completeness',
+            'key'        => 'completeness',
+            'url'        => '?completeness',
+            'label'      => 'completeness::app.components.layouts.sidebar.completeness',
+            'permission' => 'catalog.families.edit',
         ],
-    ];
+    ], fn ($tab) => bouncer()->hasPermission($tab['permission'])));
+
+    $permittedTabs = array_column($tabItems, 'key');
+
+    abort_if(empty($permittedTabs), 403, 'This action is unauthorized');
+
+    $activeTab = in_array($requestedTab, [...$permittedTabs, 'history'], true)
+        ? $requestedTab
+        : $permittedTabs[0];
 @endphp
 
 <x-admin::layouts.with-history
     :activeTab="$activeTab"
     :tab-items="$tabItems"
+    :history-url="$familyHistoryUrl"
 >
     <x-slot:entityName>
         attributeFamily
@@ -469,11 +485,13 @@
                             retainedGroupMappings: @json($attributeFamily['groupMappingIds'] ?? []),
                             customAttributes: [],
                             familyDefaultGroups: @json($attributeFamily['familyGroupMappings']),
+                            initialFamilyGroups: @json($attributeFamily['familyGroupMappings']),
                             dropReverted: false,
                             searchTerm: '',
                             assignedSearchTerm: '',
                             params: {},
                             selectedAttrs: [],
+                            selectedAttrDetails: {},
                             allMatchingAttributes: [],
                             selectAllAcrossPages: false,
                             isSelectingAll: false,
@@ -554,9 +572,27 @@
                         if (firstGroup) {
                             this.toggleGroup(firstGroup);
                         }
+
+                        this.$emitter.on('unsaved-changes:reset', this.restoreFamilyGroups);
+                    },
+
+                    beforeUnmount() {
+                        this.$emitter.off('unsaved-changes:reset', this.restoreFamilyGroups);
                     },
 
                     methods: {
+                        restoreFamilyGroups() {
+                            this.familyDefaultGroups = JSON.parse(JSON.stringify(this.initialFamilyGroups));
+
+                            this.selectedAttrs = [];
+                            this.selectAllAcrossPages = false;
+                            this.allMatchingAttributes = [];
+                            this.bulkGroup = null;
+                            this.dirtyTick = 0;
+
+                            this.getAttributes();
+                        },
+
                         onMove: function(e) {
                             if (
                                 e.to.id === 'unassigned-attributes'
@@ -713,11 +749,34 @@
 
                             const i = this.selectedAttrs.indexOf(code);
 
-                            i >= 0 ? this.selectedAttrs.splice(i, 1) : this.selectedAttrs.push(code);
+                            if (i >= 0) {
+                                this.selectedAttrs.splice(i, 1);
+
+                                this.forgetAttrDetail(code);
+
+                                return;
+                            }
+
+                            this.selectedAttrs.push(code);
+
+                            this.rememberAttrDetail(code);
+                        },
+
+                        rememberAttrDetail(code) {
+                            const attribute = this.customAttributes.find(a => this.attributeCode(a) === code);
+
+                            if (attribute) {
+                                this.selectedAttrDetails[code] = attribute;
+                            }
+                        },
+
+                        forgetAttrDetail(code) {
+                            delete this.selectedAttrDetails[code];
                         },
 
                         clearSelectedAttrs() {
                             this.selectedAttrs = [];
+                            this.selectedAttrDetails = {};
                             this.bulkGroup = null;
                             this.selectAllAcrossPages = false;
                             this.allMatchingAttributes = [];
@@ -744,8 +803,12 @@
                                     if (! this.selectedAttrs.includes(code)) {
                                         this.selectedAttrs.push(code);
                                     }
+
+                                    this.rememberAttrDetail(code);
                                 });
                             } else {
+                                this.customAttributes.forEach(a => this.forgetAttrDetail(this.attributeCode(a)));
+
                                 this.selectedAttrs = this.selectedAttrs.filter(
                                     code => ! this.customAttributes.find(a => this.attributeCode(a) === code)
                                 );
@@ -793,7 +856,10 @@
 
                             const moving = this.selectAllAcrossPages
                                 ? this.allMatchingAttributes.slice()
-                                : this.customAttributes.filter(a => this.selectedAttrs.includes(this.attributeCode(a)));
+                                : this.selectedAttrs
+                                    .map(code => this.selectedAttrDetails[code]
+                                        ?? this.customAttributes.find(a => this.attributeCode(a) === code))
+                                    .filter(Boolean);
 
                             this.loadGroupAttributes(group).then(() => {
                                 moving.forEach(attribute => group.customAttributes.push(attribute));
@@ -922,6 +988,8 @@
                                 delete changedAttribute.group_id;
 
                                 this.selectedAttrs = this.selectedAttrs.filter(selectedCode => selectedCode !== code);
+
+                                this.forgetAttrDetail(code);
                             }
 
                             this.$emitter.emit('assigned-attributes-changed', e);

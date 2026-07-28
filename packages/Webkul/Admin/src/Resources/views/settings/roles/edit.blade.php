@@ -27,7 +27,7 @@
     @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-edit-user-role-template"
+            id="v-edit-user-role-template-{{ $role->id }}"
         >
             <div>
                 <x-admin::form
@@ -169,7 +169,7 @@
 
         <script type="module">
             app.component('v-edit-user-role', {
-                template: '#v-edit-user-role-template',
+                template: '#v-edit-user-role-template-{{ $role->id }}',
 
                 data() {
                     return {
@@ -185,13 +185,21 @@
                 },
 
                 methods: {
-                    parseValue(value) {  
+                    parseValue(value) {
                         try {
                             return value ? JSON.parse(value) : null;
                         } catch (error) {
                             return value;
                         }
-                    }
+                    },
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
                 }
             })
         </script>

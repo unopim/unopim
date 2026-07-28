@@ -87,8 +87,18 @@ class Bouncer
             return;
         }
 
-        if (isset($acl->roles[Route::currentRouteName()])) {
-            bouncer()->allow($acl->roles[Route::currentRouteName()]);
+        $routeName = Route::currentRouteName();
+
+        if (! isset($acl->roles[$routeName])) {
+            return;
         }
+
+        foreach ($acl->alternateRoles[$routeName] ?? [] as $permission) {
+            if (bouncer()->hasPermission($permission)) {
+                return;
+            }
+        }
+
+        bouncer()->allow($acl->roles[$routeName]);
     }
 }

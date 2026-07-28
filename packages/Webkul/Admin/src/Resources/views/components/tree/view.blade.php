@@ -92,6 +92,8 @@
                     formattedItems: null,
 
                     formattedValues: null,
+
+                    savedValues: [],
                 };
             },
 
@@ -99,9 +101,31 @@
                 this.formattedItems = this.getInitialFormattedItems();
 
                 this.formattedValues = this.getInitialFormattedValues();
+
+                this.savedValues = [...this.formattedValues];
+            },
+
+            mounted() {
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+                this.$emitter.on('form-saved', this.commitValues);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
+                this.$emitter.off('form-saved', this.commitValues);
             },
 
             methods: {
+                resetToInitial() {
+                    this.formattedValues = [...this.savedValues];
+
+                    this.$emit('change-input', this.formattedValues);
+                },
+
+                commitValues() {
+                    this.savedValues = [...this.formattedValues];
+                },
+
                 getInitialFormattedItems() {
                     return (typeof this.items == 'string')
                         ? JSON.parse(this.items)

@@ -7,15 +7,11 @@ use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
 use RuntimeException;
 use Webkul\Publication\Contracts\PublicationVersionPayload as PublicationVersionPayloadContract;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 
-/**
- * Derived storage for `PublicationVersion::payload` (see the 000003 migration).
- * `payload` is gzip-9 compressed JSON; only PublicationVersion::redact() may
- * ever write to it after creation, and only to null.
- */
 #[Fillable([
     'publication_version_id',
     'payload',
@@ -64,12 +60,14 @@ class PublicationVersionPayload extends Model implements PublicationVersionPaylo
     protected function payload(): Attribute
     {
         return Attribute::make(
-            get: function (?string $value): ?array {
-                if ($value === null) {
+            get: function (mixed $value): ?array {
+                $binary = static::decodeBinary($value);
+
+                if ($binary === null) {
                     return null;
                 }
 
-                $json = gzdecode($value);
+                $json = gzdecode($binary);
 
                 if ($json === false) {
                     throw new RuntimeException('Publication version payload '.$this->getKey().' is corrupt: gzip decompression failed.');
@@ -77,7 +75,42 @@ class PublicationVersionPayload extends Model implements PublicationVersionPaylo
 
                 return json_decode($json, true, 512, JSON_THROW_ON_ERROR);
             },
-            set: fn (?array $value): ?string => $value === null ? null : gzencode(json_encode($value, JSON_THROW_ON_ERROR), 9),
+            set: function (?array $value): ?string {
+                if ($value === null) {
+                    return null;
+                }
+
+                $gzip = gzencode(json_encode($value, JSON_THROW_ON_ERROR), 9);
+
+                return DB::getDriverName() === 'pgsql'
+                    ? '\x'.bin2hex($gzip)
+                    : $gzip;
+            },
         );
+    }
+
+    protected static function decodeBinary(mixed $value): ?string
+    {
+        if ($value === null) {
+            return null;
+        }
+
+        if (is_resource($value)) {
+            $value = stream_get_contents($value);
+        }
+
+        if (! is_string($value) || $value === '') {
+            return null;
+        }
+
+        if (str_starts_with($value, '\x')) {
+            $decoded = @hex2bin(substr($value, 2));
+
+            if ($decoded !== false) {
+                return $decoded;
+            }
+        }
+
+        return $value;
     }
 }

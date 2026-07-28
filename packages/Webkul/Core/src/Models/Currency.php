@@ -35,6 +35,13 @@ class Currency extends Model implements CurrencyContract, HistoryAuditable
      */
     protected array $historyTags = ['currency'];
 
+    protected function casts(): array
+    {
+        return [
+            'status' => 'integer',
+        ];
+    }
+
     /**
      * Set currency code in capital
      */
