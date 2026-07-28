@@ -4,18 +4,14 @@ namespace Webkul\Measurement\Providers;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
-use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 use Webkul\Attribute\Services\AttributeNormalizerFactory;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
 use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\Measurement\Console\Commands\RecalculateMeasurementValues;
-use Webkul\Measurement\DataGrids\MeasurementProductDataGrid;
 use Webkul\Measurement\Filter\Database\MeasurementFilter;
 use Webkul\Measurement\Filter\ElasticSearch\MeasurementFilter as MeasurementElasticSearchFilter;
 use Webkul\Measurement\Helpers\Exporters\ProductExporter;
-use Webkul\Measurement\Http\Controllers\MeasurementProductController;
 use Webkul\Measurement\Normalizer\ProductAttributeValuesNormalizer as MeasurementProductAttributeValuesNormalizer;
 use Webkul\Measurement\Observers\ProductObserver;
 use Webkul\Measurement\Services\Normalizers\MeasurementNormalizer;
@@ -97,16 +93,6 @@ class MeasurementServiceProvider extends ServiceProvider
         $this->app->bind(
             Importer::class,
             \Webkul\Measurement\Helpers\Importers\Product\Importer::class
-        );
-
-        $this->app->bind(
-            ProductDataGrid::class,
-            MeasurementProductDataGrid::class
-        );
-
-        $this->app->bind(
-            ProductController::class,
-            MeasurementProductController::class
         );
 
         $this->app->tag(
