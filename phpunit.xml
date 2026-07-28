@@ -105,7 +105,7 @@
 
     <php>
         <env name="APP_ENV" value="testing" force="true"/>
-        <env name="APP_DEBUG" value="true"/>
+        <env name="APP_DEBUG" value="true" force="true"/>
 
         <!-- Forced so container environments (docker-compose env_file) cannot pull
              tests onto the real Redis, queue or mail transports. -->
