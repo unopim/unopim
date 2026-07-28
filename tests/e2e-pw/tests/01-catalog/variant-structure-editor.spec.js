@@ -24,14 +24,20 @@ async function openFirstStructure(page) {
   // The variants list is a datagrid: its edit action is an icon, not a link.
   const editAction = page.locator('.icon-edit, span[title="Edit"]').first();
 
+  // The list is an async datagrid, so give it a chance to paint before deciding it is empty.
+  const listed = await editAction
+    .waitFor({ state: 'visible', timeout: 10000 })
+    .then(() => true)
+    .catch(() => false);
+
   // Nothing seeds a variant structure, so the suite creates its own on first use.
-  if (!(await editAction.isVisible().catch(() => false))) {
+  if (!listed) {
     await ensureStructure(page);
 
     await page.goto(`/admin/catalog/attribute-families/edit/${FAMILY_ID}?variants=1`, { waitUntil: 'domcontentloaded' });
-  }
 
-  await editAction.waitFor({ state: 'visible', timeout: 20000 });
+    await editAction.waitFor({ state: 'visible', timeout: 20000 });
+  }
 
   await editAction.click();
 
