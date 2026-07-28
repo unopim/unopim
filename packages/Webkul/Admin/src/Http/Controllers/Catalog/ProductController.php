@@ -762,7 +762,7 @@ class ProductController extends Controller
             return null;
         }
 
-        $structure->loadMissing(['axes.attribute', 'placements.attribute']);
+        $structure->loadMissing(['axes.attribute.translations', 'placements.attribute.translations']);
 
         $allAxisCodes = $this->variantStructurePlanner->allAxisCodes($structure);
 
@@ -850,7 +850,7 @@ class ProductController extends Controller
             return null;
         }
 
-        $structure->loadMissing(['axes.attribute', 'placements.attribute']);
+        $structure->loadMissing(['axes.attribute.translations', 'placements.attribute.translations']);
 
         $allAxisCodes = $this->variantStructurePlanner->allAxisCodes($structure);
 
