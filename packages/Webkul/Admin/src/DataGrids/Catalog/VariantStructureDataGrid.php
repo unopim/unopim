@@ -119,24 +119,28 @@ class VariantStructureDataGrid extends DataGrid
      */
     public function prepareActions(): void
     {
-        $this->addAction([
-            'icon'   => 'icon-edit',
-            'index'  => 'edit',
-            'title'  => trans('admin::app.catalog.families.edit.edit-variant'),
-            'method' => 'GET',
-            'url'    => function ($row) {
-                return route('admin.catalog.families.variant-structures.edit', [$this->familyId, $row->id]);
-            },
-        ]);
+        if (bouncer()->hasPermission('catalog.families.variant-structures.edit')) {
+            $this->addAction([
+                'icon'   => 'icon-edit',
+                'index'  => 'edit',
+                'title'  => trans('admin::app.catalog.families.edit.edit-variant'),
+                'method' => 'GET',
+                'url'    => function ($row) {
+                    return route('admin.catalog.families.variant-structures.edit', [$this->familyId, $row->id]);
+                },
+            ]);
+        }
 
-        $this->addAction([
-            'icon'   => 'icon-delete',
-            'index'  => 'delete',
-            'title'  => trans('admin::app.catalog.families.edit.delete-variant'),
-            'method' => 'DELETE',
-            'url'    => function ($row) {
-                return route('admin.catalog.families.variant-structures.delete', [$this->familyId, $row->id]);
-            },
-        ]);
+        if (bouncer()->hasPermission('catalog.families.variant-structures.delete')) {
+            $this->addAction([
+                'icon'   => 'icon-delete',
+                'index'  => 'delete',
+                'title'  => trans('admin::app.catalog.families.edit.delete-variant'),
+                'method' => 'DELETE',
+                'url'    => function ($row) {
+                    return route('admin.catalog.families.variant-structures.delete', [$this->familyId, $row->id]);
+                },
+            ]);
+        }
     }
 }
