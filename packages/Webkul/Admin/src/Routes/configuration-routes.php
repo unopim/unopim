@@ -62,7 +62,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::post('', 'store')->name('admin.configuration.store');
 
             Route::get('{path}', 'download')->defaults('_config', [
-                'redirect' => 'admin.configuration.index',
+                'redirect' => 'admin.configuration.edit',
             ])->name('admin.configuration.download');
         });
 });

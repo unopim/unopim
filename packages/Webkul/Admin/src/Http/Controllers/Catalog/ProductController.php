@@ -17,6 +17,7 @@ use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\ProductAttributeForm;
 use Webkul\Admin\Http\Requests\ProductAttributeGroupsForm;
 use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
@@ -1459,9 +1460,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getAttribute(): JsonResponse
+    public function getAttribute(ProductAttributeForm $request): JsonResponse
     {
-        $product = $this->productRepository->findByField('id', request()->productId)->first();
+        $product = $this->productRepository->findOrFail((int) $request->validated('productId'));
         $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'name', 'type', 'ai_translate');
         $attributeOptions = [];
 

@@ -162,7 +162,8 @@
                     try {
                         window.localStorage.setItem(key, this.isOpen ? '1' : '0');
                     } catch (error) {
-                        //
+                        // storage unavailable (private mode, quota); the panel just
+                        // falls back to its default state
                     }
                 },
             },

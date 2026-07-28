@@ -259,11 +259,6 @@ abstract class AbstractType
                 continue;
             }
 
-            // Strip the UI's presence-only sentinel (see docblock above) so
-            // it's never mistaken for a link row below; its sole purpose was
-            // to force this typeCode's key to survive form submission even
-            // when the user removed every link, so this loop -- and
-            // therefore pruning -- still runs for it.
             unset($links['__present']);
 
             $associationType = $associationTypeRepository->findByCode($typeCode);
@@ -461,9 +456,6 @@ abstract class AbstractType
 
         $productChannelLocaleValues = $product->values[self::CHANNEL_LOCALE_VALUES_KEY] ?? [];
 
-        /**
-         * For Channel And Locale Values
-         */
         if (! empty($channelAndLocaleValues[$currentChannelCode][$currentLocaleCode])) {
             $productChannelLocaleValues[$currentChannelCode][$currentLocaleCode] = $this->processValues(
                 productId: $product->id,
@@ -482,9 +474,6 @@ abstract class AbstractType
             ? array_filter($channelAndLocaleValues)
             : $channelAndLocaleValues;
 
-        /**
-         * For Channel Values
-         */
         if (! empty($channelValues[$currentChannelCode])) {
             $productChannelValues[$currentChannelCode] = $this->processValues(
                 productId: $product->id,
@@ -499,9 +488,6 @@ abstract class AbstractType
             ? array_filter($channelValues)
             : $channelValues;
 
-        /**
-         * For Locale Values
-         */
         if (! empty($localeValues[$currentLocaleCode])) {
             $productLocaleValues[$currentLocaleCode] = $this->processValues(
                 productId: $product->id,
@@ -516,9 +502,6 @@ abstract class AbstractType
             ? array_filter($localeValues)
             : $localeValues;
 
-        /**
-         * For common values
-         */
         if (! empty($commonValues)) {
             $commonValues = $this->processValues(
                 productId: $product->id,

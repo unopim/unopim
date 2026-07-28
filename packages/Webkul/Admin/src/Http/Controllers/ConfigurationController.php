@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Requests\ConfigurationForm;
+use Webkul\Admin\Http\Requests\ConfigurationSearchForm;
 use Webkul\Core\Contracts\Validator\ConfigValidator;
 use Webkul\Core\Repositories\CoreConfigRepository;
 use Webkul\Core\Tree;
@@ -77,9 +78,9 @@ class ConfigurationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function search(): JsonResponse
+    public function search(ConfigurationSearchForm $request): JsonResponse
     {
-        $results = $this->coreConfigRepository->search($this->configTree->items, request()->query('query'));
+        $results = $this->coreConfigRepository->search($this->configTree->items, $request->validated('query'));
 
         return new JsonResponse([
             'data' => $results,

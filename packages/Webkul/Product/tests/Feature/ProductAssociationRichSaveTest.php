@@ -92,10 +92,8 @@ it('validates and rich-syncs a unified associations payload, mirroring legacy se
         ],
     ], $source->id);
 
-    // (a1) legacy JSON back-compat: derived sku list is written exactly like the flat path.
     expect($updated->values['associations']['up_sells'] ?? null)->toBe([$a->sku]);
 
-    // (a2) rich sync: up_sells row carries the submitted quantity.
     $upSellsRow = DB::table('product_associations')
         ->where('product_id', $source->id)
         ->where('association_type_id', $upSellsType->id)
@@ -104,7 +102,6 @@ it('validates and rich-syncs a unified associations payload, mirroring legacy se
     expect($upSellsRow)->not->toBeNull();
     expect(json_decode($upSellsRow->additional_data, true))->toBe(['common' => ['quantity' => '2']]);
 
-    // (a3) rich sync: bundle_kit (a non-legacy, custom type) row carries its quantity.
     $bundleKitRow = DB::table('product_associations')
         ->where('product_id', $source->id)
         ->where('association_type_id', $bundleKitType->id)
@@ -186,7 +183,6 @@ it('allows re-saving a product unchanged when a link sets an `is_unique` field -
         ],
     ];
 
-    // First save persists the link with its `is_unique` field value.
     $this->productRepository->update($payload, $source->id);
 
     // Re-saving the SAME product with the SAME, unchanged link value must

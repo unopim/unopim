@@ -65,7 +65,6 @@ it('backfills product_associations from legacy JSON, skipping ghost SKUs and sel
 
     $totalBefore = DB::table('product_associations')->where('product_id', $source->id)->count();
 
-    // Idempotency: running the backfill again must not create duplicates.
     runProductAssociationBackfill();
 
     $totalAfter = DB::table('product_associations')->where('product_id', $source->id)->count();

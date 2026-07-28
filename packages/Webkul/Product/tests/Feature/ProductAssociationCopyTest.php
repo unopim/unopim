@@ -34,11 +34,9 @@ it('dual-writes associations to the link table when a product is copied', functi
 
     $copiedProduct = $this->productRepository->copy($source->id);
 
-    // The legacy JSON was already replicated verbatim by `replicate()`.
     expect($copiedProduct->values['associations']['related_products'] ?? null)->toBe([$related->sku])
         ->and($copiedProduct->values['associations']['up_sells'] ?? null)->toBe([$upSell->sku]);
 
-    // The copy must get its own matching product_associations rows.
     $this->assertDatabaseCount('product_associations', 4);
 
     expect(
@@ -58,7 +56,6 @@ it('dual-writes associations to the link table when a product is copied', functi
                 ->exists()
         )->toBeTrue();
 
-    // The original product's own rows are untouched.
     expect(
         DB::table('product_associations')->where('product_id', $source->id)->count()
     )->toBe(2);

@@ -133,7 +133,6 @@
                                     />
                                 </div>
 
-                                {{-- Per-locale completeness --}}
                                 @foreach ($currentChannel->locales->sortBy('name') as $locale)
                                     @php
                                         $localeScore = $scores[$locale->id] ?? null;

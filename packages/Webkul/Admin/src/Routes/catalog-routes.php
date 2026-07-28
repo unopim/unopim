@@ -146,11 +146,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::post('mass-update', 'massUpdate')->name('admin.catalog.category_fields.mass_update');
 
-            Route::get('search', 'search')->name('admin.catalog.category_fields.search');
-
             Route::get('{id}/options', 'getCategoryFieldOptions')->name('admin.catalog.category_fields.options');
-
-            Route::get('tree', 'tree')->name('admin.catalog.category_fields.tree');
         });
 
         /**

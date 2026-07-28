@@ -1048,16 +1048,6 @@ return [
         'route' => 'admin.catalog.category_fields.options',
         'sort'  => 3,
     ], [
-        'key'   => 'catalog.category_fields',
-        'name'  => 'admin::app.acl.category_fields',
-        'route' => 'admin.catalog.category_fields.search',
-        'sort'  => 3,
-    ], [
-        'key'   => 'catalog.category_fields',
-        'name'  => 'admin::app.acl.category_fields',
-        'route' => 'admin.catalog.category_fields.tree',
-        'sort'  => 3,
-    ], [
         'key'   => 'catalog.products',
         'name'  => 'admin::app.acl.products',
         'route' => 'admin.catalog.products.search',

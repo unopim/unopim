@@ -44,8 +44,6 @@ it('does not abort the product save when association link-table sync throws', fu
         'up_sells'         => [$upSell->sku],
     ], $source->id);
 
-    // The legacy JSON write (the product save) still succeeded, despite the
-    // link-table sync throwing for every section.
     expect($updated->values['associations']['related_products'] ?? null)->toBe([$related->sku])
         ->and($updated->values['associations']['up_sells'] ?? null)->toBe([$upSell->sku]);
 
@@ -53,7 +51,5 @@ it('does not abort the product save when association link-table sync throws', fu
         'id' => $source->id,
     ]);
 
-    // No exception propagated out of ->update(), and no rows made it into
-    // the (broken) link table.
     $this->assertDatabaseCount('product_associations', 0);
 });

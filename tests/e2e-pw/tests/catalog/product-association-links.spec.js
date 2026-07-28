@@ -130,23 +130,10 @@ async function addAssociationTypeField(page, { name, code, type, validation, req
 async function ensureBundleKitAssociationTypeExists(page) {
 	await page.goto(ASSOCIATION_TYPES_INDEX_URL, { waitUntil: 'load' });
 
-	// NOTE: deliberately not using `searchInDataGrid()` + a plain
-	// `.isVisible({ timeout })` check here (the pattern `association-
-	// types.spec.js`'s own `ensureAssociationTypeAbsent()` uses) --
-	// `Locator.isVisible()` probes the CURRENT DOM state once and returns
-	// immediately (confirmed empirically: it resolved in ~4ms against a
-	// freshly-searched grid), it does NOT poll/wait the way
-	// `expect(...).toBeVisible()` does. The DataGrid's search-filter
-	// round-trip on this box measurably lags the fixed 500ms
-	// `searchInDataGrid()` already sleeps (observed 1-2s to actually filter
-	// down to one row), so an immediate `isVisible()` right after it
-	// reliably raced to `false` even when `bundle_kit` already existed,
-	// causing a duplicate "Create Association Type" attempt that failed
-	// server-side with "The code has already been taken." Skipping the
-	// search entirely and polling for the code's plain-text cell (via a
-	// real `expect().toBeVisible()`, which DOES wait) on the always-first
-	// page of the (currently tiny, <=10-row) unfiltered grid sidesteps the
-	// race altogether.
+	// Polls the unfiltered grid rather than searching it: `isVisible()` reads
+	// the DOM once without waiting, and the DataGrid's filter round-trip
+	// outlasts the fixed sleep in `searchInDataGrid()`, so the check raced to
+	// false and tried to create `bundle_kit` a second time.
 	let alreadyExists = true;
 
 	try {
@@ -320,8 +307,7 @@ test.describe('Product Edit — rich association Links (bundle_kit custom type)'
 			await test.step('create the related product and the main product under test', async () => {
 				await createSimpleProduct(adminPage, relatedSku);
 				await createSimpleProduct(adminPage, mainSku);
-				// adminPage is now on the main product's edit page.
-
+		
 				// Fill the main product's other required attributes up front
 				// so the later "Save changes" clicks (adding the bundle_kit
 				// link, and the unrelated Status toggle) aren't blocked by

@@ -157,7 +157,6 @@ class ProductServiceProvider extends ServiceProvider
 
     protected function registerTags(): void
     {
-        // Register elasticSearch attribute type filters
         $this->app->tag([
             ElasticSearchTextFilter::class,
             ElasticSearchBooleanFilter::class,
@@ -168,7 +167,6 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchDefaultFilter::class,
         ], 'unopim.elasticsearch.attribute.filters');
 
-        // Register elasticSearch product Properties filters
         $this->app->tag([
             ElasticSearchTypeFilter::class,
             ElasticSearchStatusFilter::class,
@@ -181,7 +179,6 @@ class ProductServiceProvider extends ServiceProvider
             ElasticSearchCategoryFilter::class,
         ], 'unopim.elasticsearch.product.property.filters');
 
-        // Register database attribute type filters
         $this->app->tag([
             DatabaseTextFilter::class,
             DatabaseBooleanFilter::class,
@@ -189,7 +186,6 @@ class ProductServiceProvider extends ServiceProvider
             DatabasePriceFilter::class,
         ], 'unopim.database.attribute.filters');
 
-        // Register database product Properties filters
         $this->app->tag([
             DatabaseFamilyFilter::class,
             DatabaseIdFilter::class,

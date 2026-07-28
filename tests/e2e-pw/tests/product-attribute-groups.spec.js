@@ -193,7 +193,6 @@ test('a required field in an unloaded group is fetched, shown and explained', as
 
     test.skip(! firstError, 'this product has no required attribute left empty');
 
-    // The rejected field lives in a group that was never scrolled to.
     await expect.poll(() => panels(page).count(), { timeout: 15000 }).toBeGreaterThan(1);
 
     const notice = page.locator('[data-server-error]').first();

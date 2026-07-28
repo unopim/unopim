@@ -31,15 +31,10 @@ const appOptions = {
         onSubmit() {},
 
         /**
-         * Bring an invalid field into view. A field inside a collapsed section
-         * cannot be scrolled to or focused while it is hidden, so the section is
-         * asked to open first — the event bubbles up to whichever accordion
-         * wraps the field, if any.
+         * Bring an invalid field into view, loading its attribute group first
+         * when the editor has not scrolled that far yet.
          */
         revealInvalidField(element, name = null, groupId = null, message = null) {
-            // The field's section may not be on the page yet: the product editor
-            // loads attribute groups on demand, and the server can reject a
-            // required field the editor never scrolled to.
             if (! element && name && groupId) {
                 this.$emitter.emit("attribute-group:reveal-field", { name, groupId, message });
 
@@ -184,7 +179,7 @@ const appOptions = {
                         const firstField = Object.keys(errors)[0];
 
                         // Every rejected field gets its notice; the first one is
-                        // also scrolled to and focused.
+                        // also scrolled into view.
                         Object.entries(errors).forEach(([field, message]) => {
                             const control = form
                                 .querySelector('[name="' + CSS.escape(field) + '"]')
@@ -352,7 +347,7 @@ window.markFieldInvalid = (controlGroup, message) => {
  * so the section is asked to open first — the event bubbles up to whichever
  * accordion wraps the field. A field a rich editor has taken over (wysiwyg,
  * file uploader) has no box of its own either, so the surrounding control group
- * stands in for it. The caret is left where the editor put it.
+ * stands in for it.
  */
 window.revealInvalidField = (element, message = null) => {
     if (! element) {

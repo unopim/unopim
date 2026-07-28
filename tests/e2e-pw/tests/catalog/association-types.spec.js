@@ -127,8 +127,7 @@ test.describe('UnoPim Association Type Tests', () => {
 		await test.step('create bundle_kit via the code-only modal', async () => {
 			await adminPage.goto(INDEX_URL, { waitUntil: 'load' });
 
-			// Create is now a code-only modal on the index page, not a full page.
-			await adminPage.getByRole('button', { name: 'Create Association Type' }).click();
+					await adminPage.getByRole('button', { name: 'Create Association Type' }).click();
 
 			// Scope to the modal's own form (identified by its "Save Association
 			// Type" button) so its "Code" field is unambiguous.
@@ -140,8 +139,6 @@ test.describe('UnoPim Association Type Tests', () => {
 			await createModal.getByRole('textbox', { name: 'Enter Code' }).fill('bundle_kit');
 			await createModal.getByRole('button', { name: 'Save Association Type' }).click();
 
-			// Saving the code-only modal redirects to the edit page to configure
-			// the rest.
 			await expect(adminPage).toHaveURL(/\/admin\/catalog\/association-types\/edit\//);
 		});
 

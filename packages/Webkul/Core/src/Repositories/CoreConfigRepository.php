@@ -122,7 +122,7 @@ class CoreConfigRepository extends Repository
 
                 $results[] = [
                     'title' => implode(' > ', [...Arr::pluck($path, 'title'), $title]),
-                    'url'   => route('admin.configuration.index', Str::replace('.', '/', $queryParam)),
+                    'url'   => route('admin.configuration.edit', Str::replace('.', '/', $queryParam)),
                 ];
             }
 
