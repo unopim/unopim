@@ -1150,13 +1150,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Nie znaleziono ustawień regionalnych o kodzie :code.',
-                'create-btn'            => 'Utwórz Lokalizację',
-                'locale'                => 'Lokalizacja',
-                'title'                 => 'Lokalizacje',
-                'can-not-delete-error'  => 'Nie można usunąć lokalizacji powiązanej z kanałem lub użytkownikiem',
-                'can-not-disable-error' => 'Nie można wyłączyć lokalizacji powiązanej z kanałem lub użytkownikiem',
-
+                'not-found'              => 'Nie znaleziono ustawień regionalnych o kodzie :code.',
+                'create-btn'             => 'Utwórz Lokalizację',
+                'locale'                 => 'Lokalizacja',
+                'title'                  => 'Lokalizacje',
+                'can-not-delete-error'   => 'Nie można usunąć lokalizacji powiązanej z kanałem lub użytkownikiem',
+                'can-not-disable-error'  => 'Nie można wyłączyć lokalizacji powiązanej z kanałem lub użytkownikiem',
                 'partial-delete-success' => 'Wybrane lokalizacje zostały usunięte, z wyjątkiem :count powiązanych z kanałem lub użytkownikiem.',
                 'partial-update-success' => 'Wybrane lokalizacje zostały zaktualizowane, z wyjątkiem :count powiązanych z kanałem lub użytkownikiem.',
 

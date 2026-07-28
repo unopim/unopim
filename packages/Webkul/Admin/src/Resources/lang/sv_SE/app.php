@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Språkinställning med koden :code hittades inte.',
-                'create-btn'            => 'Skapa Lokalitet',
-                'locale'                => 'Lokalitet',
-                'title'                 => 'Lokaliteter',
-                'can-not-delete-error'  => 'Du kan inte radera en lokalitet kopplad till en kanal eller användare',
-                'can-not-disable-error' => 'Du kan inte inaktivera en lokalitet kopplad till en kanal eller användare',
-
+                'not-found'              => 'Språkinställning med koden :code hittades inte.',
+                'create-btn'             => 'Skapa Lokalitet',
+                'locale'                 => 'Lokalitet',
+                'title'                  => 'Lokaliteter',
+                'can-not-delete-error'   => 'Du kan inte radera en lokalitet kopplad till en kanal eller användare',
+                'can-not-disable-error'  => 'Du kan inte inaktivera en lokalitet kopplad till en kanal eller användare',
                 'partial-delete-success' => 'Valda lokaliteter raderades, förutom :count som är kopplade till en kanal eller användare.',
                 'partial-update-success' => 'Valda lokaliteter uppdaterades, förutom :count som är kopplade till en kanal eller användare.',
 

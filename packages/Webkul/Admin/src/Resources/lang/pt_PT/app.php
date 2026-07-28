@@ -1150,13 +1150,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Localidade com o código :code não encontrada.',
-                'create-btn'            => 'Criar Localização',
-                'locale'                => 'Localização',
-                'title'                 => 'Localizações',
-                'can-not-delete-error'  => 'Não pode eliminar uma localização associada a um canal ou utilizador',
-                'can-not-disable-error' => 'Não pode desativar uma localização associada a um canal ou utilizador',
-
+                'not-found'              => 'Localidade com o código :code não encontrada.',
+                'create-btn'             => 'Criar Localização',
+                'locale'                 => 'Localização',
+                'title'                  => 'Localizações',
+                'can-not-delete-error'   => 'Não pode eliminar uma localização associada a um canal ou utilizador',
+                'can-not-disable-error'  => 'Não pode desativar uma localização associada a um canal ou utilizador',
                 'partial-delete-success' => 'As localizações selecionadas foram eliminadas, exceto :count associadas a um canal ou utilizador.',
                 'partial-update-success' => 'As localizações selecionadas foram atualizadas, exceto :count associadas a um canal ou utilizador.',
 

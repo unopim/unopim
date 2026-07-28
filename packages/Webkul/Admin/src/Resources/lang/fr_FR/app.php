@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Langue avec le code :code introuvable.',
-                'create-btn'            => 'Ajouter un langage',
-                'locale'                => 'Langue',
-                'title'                 => 'Langues',
-                'can-not-delete-error'  => 'Vous ne pouvez pas supprimer une langue liée à un canal ou à un utilisateur',
-                'can-not-disable-error' => 'Vous ne pouvez pas désactiver une langue liée à un canal ou à un utilisateur',
-
+                'not-found'              => 'Langue avec le code :code introuvable.',
+                'create-btn'             => 'Ajouter un langage',
+                'locale'                 => 'Langue',
+                'title'                  => 'Langues',
+                'can-not-delete-error'   => 'Vous ne pouvez pas supprimer une langue liée à un canal ou à un utilisateur',
+                'can-not-disable-error'  => 'Vous ne pouvez pas désactiver une langue liée à un canal ou à un utilisateur',
                 'partial-delete-success' => 'Les langues sélectionnées ont été supprimées, sauf :count liées à un canal ou à un utilisateur.',
                 'partial-update-success' => 'Les langues sélectionnées ont été mises à jour, sauf :count liées à un canal ou à un utilisateur.',
 

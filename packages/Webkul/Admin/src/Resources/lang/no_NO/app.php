@@ -1150,13 +1150,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Fant ingen lokalitet med koden :code.',
-                'create-btn'            => 'Opprett Lokale',
-                'locale'                => 'Lokale',
-                'title'                 => 'Lokale',
-                'can-not-delete-error'  => 'Du kan ikke slette et lokale knyttet til en kanal eller bruker',
-                'can-not-disable-error' => 'Du kan ikke deaktivere et lokale knyttet til en kanal eller bruker',
-
+                'not-found'              => 'Fant ingen lokalitet med koden :code.',
+                'create-btn'             => 'Opprett Lokale',
+                'locale'                 => 'Lokale',
+                'title'                  => 'Lokale',
+                'can-not-delete-error'   => 'Du kan ikke slette et lokale knyttet til en kanal eller bruker',
+                'can-not-disable-error'  => 'Du kan ikke deaktivere et lokale knyttet til en kanal eller bruker',
                 'partial-delete-success' => 'Valgte lokaler ble slettet, unntatt :count knyttet til en kanal eller bruker.',
                 'partial-update-success' => 'Valgte lokaler ble oppdatert, unntatt :count knyttet til en kanal eller bruker.',
 

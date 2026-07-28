@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'コード :code のロケールが見つかりません。',
-                'create-btn'            => 'ロケールの作成',
-                'locale'                => 'ロケール',
-                'title'                 => 'ロケール',
-                'can-not-delete-error'  => 'チャンネルまたはユーザーにリンクされたロケールは削除できません',
-                'can-not-disable-error' => 'チャンネルまたはユーザーにリンクされたロケールを無効にすることはできません',
-
+                'not-found'              => 'コード :code のロケールが見つかりません。',
+                'create-btn'             => 'ロケールの作成',
+                'locale'                 => 'ロケール',
+                'title'                  => 'ロケール',
+                'can-not-delete-error'   => 'チャンネルまたはユーザーにリンクされたロケールは削除できません',
+                'can-not-disable-error'  => 'チャンネルまたはユーザーにリンクされたロケールを無効にすることはできません',
                 'partial-delete-success' => '選択したロケールのうち、チャンネルまたはユーザーにリンクされている :count 件を除いて削除しました。',
                 'partial-update-success' => '選択したロケールのうち、チャンネルまたはユーザーにリンクされている :count 件を除いて更新しました。',
 

@@ -1150,13 +1150,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => '코드가 :code인 로케일을 찾을 수 없습니다.',
-                'create-btn'            => '로케일 생성',
-                'locale'                => '로케일',
-                'title'                 => '로케일',
-                'can-not-delete-error'  => '채널 또는 사용자와 연결된 로케일은 삭제할 수 없습니다',
-                'can-not-disable-error' => '채널 또는 사용자와 연결된 로케일은 비활성화할 수 없습니다',
-
+                'not-found'              => '코드가 :code인 로케일을 찾을 수 없습니다.',
+                'create-btn'             => '로케일 생성',
+                'locale'                 => '로케일',
+                'title'                  => '로케일',
+                'can-not-delete-error'   => '채널 또는 사용자와 연결된 로케일은 삭제할 수 없습니다',
+                'can-not-disable-error'  => '채널 또는 사용자와 연결된 로케일은 비활성화할 수 없습니다',
                 'partial-delete-success' => '선택한 로케일이 삭제되었습니다. 단, 채널 또는 사용자와 연결된 :count개는 제외됩니다.',
                 'partial-update-success' => '선택한 로케일이 업데이트되었습니다. 단, 채널 또는 사용자와 연결된 :count개는 제외됩니다.',
 

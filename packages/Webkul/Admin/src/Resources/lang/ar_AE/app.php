@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'لم يتم العثور على لغة بالرمز :code.',
-                'create-btn'            => 'إنشاء لغة',
-                'locale'                => 'لغة',
-                'title'                 => 'أماكن',
-                'can-not-delete-error'  => 'لا يمكنك حذف لغة مرتبطة بقناة أو مستخدم.',
-                'can-not-disable-error' => 'لا يمكنك تعطيل لغة مرتبطة بقناة أو مستخدم',
-
+                'not-found'              => 'لم يتم العثور على لغة بالرمز :code.',
+                'create-btn'             => 'إنشاء لغة',
+                'locale'                 => 'لغة',
+                'title'                  => 'أماكن',
+                'can-not-delete-error'   => 'لا يمكنك حذف لغة مرتبطة بقناة أو مستخدم.',
+                'can-not-disable-error'  => 'لا يمكنك تعطيل لغة مرتبطة بقناة أو مستخدم',
                 'partial-delete-success' => 'تم حذف اللغات المحددة، باستثناء :count المرتبطة بقناة أو مستخدم.',
                 'partial-update-success' => 'تم تحديث اللغات المحددة، باستثناء :count المرتبطة بقناة أو مستخدم.',
 

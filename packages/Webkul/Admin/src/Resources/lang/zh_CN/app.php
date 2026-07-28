@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => '未找到代码为 :code 的语言环境。',
-                'create-btn'            => '创建语言环境',
-                'locale'                => '语言环境',
-                'title'                 => '地区',
-                'can-not-delete-error'  => '您无法删除链接到频道或用户的语言环境',
-                'can-not-disable-error' => '您无法禁用链接到频道或用户的语言环境',
-
+                'not-found'              => '未找到代码为 :code 的语言环境。',
+                'create-btn'             => '创建语言环境',
+                'locale'                 => '语言环境',
+                'title'                  => '地区',
+                'can-not-delete-error'   => '您无法删除链接到频道或用户的语言环境',
+                'can-not-disable-error'  => '您无法禁用链接到频道或用户的语言环境',
                 'partial-delete-success' => '已删除所选语言环境，但链接到频道或用户的 :count 个除外。',
                 'partial-update-success' => '已更新所选语言环境，但链接到频道或用户的 :count 个除外。',
 

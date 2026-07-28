@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Landestandard med koden :code blev ikke fundet.',
-                'create-btn'            => 'Opret Lokalitet',
-                'locale'                => 'Lokalitet',
-                'title'                 => 'Lokaliteter',
-                'can-not-delete-error'  => 'Du kan ikke slette en lokalitet, der er knyttet til en kanal eller bruger',
-                'can-not-disable-error' => 'Du kan ikke deaktivere en lokalitet, der er knyttet til en kanal eller bruger',
-
+                'not-found'              => 'Landestandard med koden :code blev ikke fundet.',
+                'create-btn'             => 'Opret Lokalitet',
+                'locale'                 => 'Lokalitet',
+                'title'                  => 'Lokaliteter',
+                'can-not-delete-error'   => 'Du kan ikke slette en lokalitet, der er knyttet til en kanal eller bruger',
+                'can-not-disable-error'  => 'Du kan ikke deaktivere en lokalitet, der er knyttet til en kanal eller bruger',
                 'partial-delete-success' => 'De valgte lokaliteter blev slettet, undtagen :count der er knyttet til en kanal eller bruger.',
                 'partial-update-success' => 'De valgte lokaliteter blev opdateret, undtagen :count der er knyttet til en kanal eller bruger.',
 

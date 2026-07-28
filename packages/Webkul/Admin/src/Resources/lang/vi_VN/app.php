@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Không tìm thấy ngôn ngữ có mã :code.',
-                'create-btn'            => 'Tạo Ngôn Ngữ',
-                'locale'                => 'Ngôn Ngữ',
-                'title'                 => 'Các Ngôn Ngữ',
-                'can-not-delete-error'  => 'Bạn không thể xóa ngôn ngữ liên kết với kênh hoặc người dùng',
-                'can-not-disable-error' => 'Bạn không thể tắt ngôn ngữ liên kết với kênh hoặc người dùng',
-
+                'not-found'              => 'Không tìm thấy ngôn ngữ có mã :code.',
+                'create-btn'             => 'Tạo Ngôn Ngữ',
+                'locale'                 => 'Ngôn Ngữ',
+                'title'                  => 'Các Ngôn Ngữ',
+                'can-not-delete-error'   => 'Bạn không thể xóa ngôn ngữ liên kết với kênh hoặc người dùng',
+                'can-not-disable-error'  => 'Bạn không thể tắt ngôn ngữ liên kết với kênh hoặc người dùng',
                 'partial-delete-success' => 'Các ngôn ngữ đã chọn đã được xóa, ngoại trừ :count liên kết với kênh hoặc người dùng.',
                 'partial-update-success' => 'Các ngôn ngữ đã chọn đã được cập nhật, ngoại trừ :count liên kết với kênh hoặc người dùng.',
 

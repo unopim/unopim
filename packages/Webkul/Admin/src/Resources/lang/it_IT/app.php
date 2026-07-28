@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Localizzazione con codice :code non trovata.',
-                'create-btn'            => 'Crea Località',
-                'locale'                => 'Località',
-                'title'                 => 'Località',
-                'can-not-delete-error'  => 'Non è possibile eliminare una località collegata a un canale o a un utente',
-                'can-not-disable-error' => 'Non è possibile disabilitare una località collegata a un canale o a un utente',
-
+                'not-found'              => 'Localizzazione con codice :code non trovata.',
+                'create-btn'             => 'Crea Località',
+                'locale'                 => 'Località',
+                'title'                  => 'Località',
+                'can-not-delete-error'   => 'Non è possibile eliminare una località collegata a un canale o a un utente',
+                'can-not-disable-error'  => 'Non è possibile disabilitare una località collegata a un canale o a un utente',
                 'partial-delete-success' => 'Le località selezionate sono state eliminate, tranne :count collegate a un canale o a un utente.',
                 'partial-update-success' => 'Le località selezionate sono state aggiornate, tranne :count collegate a un canale o a un utente.',
 

@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => ':code kodlu yerel ayar bulunamadı.',
-                'create-btn'            => 'Lumikha ng Wika',
-                'locale'                => 'Wika',
-                'title'                 => 'Mga Wika',
-                'can-not-delete-error'  => 'Hindi mo maaaring tanggalin ang isang wika na nakakabit sa isang channel o user',
-                'can-not-disable-error' => 'Hindi mo maaaring i-disable ang isang wika na nakakabit sa isang channel o user',
-
+                'not-found'              => ':code kodlu yerel ayar bulunamadı.',
+                'create-btn'             => 'Lumikha ng Wika',
+                'locale'                 => 'Wika',
+                'title'                  => 'Mga Wika',
+                'can-not-delete-error'   => 'Hindi mo maaaring tanggalin ang isang wika na nakakabit sa isang channel o user',
+                'can-not-disable-error'  => 'Hindi mo maaaring i-disable ang isang wika na nakakabit sa isang channel o user',
                 'partial-delete-success' => 'Seçili yerel ayarlar silindi, bir kanala veya kullanıcıya bağlı olan :count hariç.',
                 'partial-update-success' => 'Seçili yerel ayarlar güncellendi, bir kanala veya kullanıcıya bağlı olan :count hariç.',
 

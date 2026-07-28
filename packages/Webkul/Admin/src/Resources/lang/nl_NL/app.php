@@ -1150,13 +1150,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Landinstelling met code :code niet gevonden.',
-                'create-btn'            => 'Taalinstelling aanmaken',
-                'locale'                => 'Taalinstelling',
-                'title'                 => 'Taalinstellingen',
-                'can-not-delete-error'  => 'Je kunt een taalinstelling niet verwijderen die is gekoppeld aan een kanaal of gebruiker.',
-                'can-not-disable-error' => 'Je kunt een taalinstelling niet uitschakelen die is gekoppeld aan een kanaal of gebruiker.',
-
+                'not-found'              => 'Landinstelling met code :code niet gevonden.',
+                'create-btn'             => 'Taalinstelling aanmaken',
+                'locale'                 => 'Taalinstelling',
+                'title'                  => 'Taalinstellingen',
+                'can-not-delete-error'   => 'Je kunt een taalinstelling niet verwijderen die is gekoppeld aan een kanaal of gebruiker.',
+                'can-not-disable-error'  => 'Je kunt een taalinstelling niet uitschakelen die is gekoppeld aan een kanaal of gebruiker.',
                 'partial-delete-success' => 'Geselecteerde taalinstellingen zijn verwijderd, behalve :count die gekoppeld zijn aan een kanaal of gebruiker.',
                 'partial-update-success' => 'Geselecteerde taalinstellingen zijn bijgewerkt, behalve :count die gekoppeld zijn aan een kanaal of gebruiker.',
 

@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Kielialuetta koodilla :code ei löytynyt.',
-                'create-btn'            => 'Luo käännöskieli',
-                'locale'                => 'Kieli',
-                'title'                 => 'Käännöskielet',
-                'can-not-delete-error'  => 'Et voi poistaa kieltä, joka on liitetty kanavaan tai käyttäjään',
-                'can-not-disable-error' => 'Et voi poistaa käytöstä kieltä, joka on liitetty kanavaan tai käyttäjään',
-
+                'not-found'              => 'Kielialuetta koodilla :code ei löytynyt.',
+                'create-btn'             => 'Luo käännöskieli',
+                'locale'                 => 'Kieli',
+                'title'                  => 'Käännöskielet',
+                'can-not-delete-error'   => 'Et voi poistaa kieltä, joka on liitetty kanavaan tai käyttäjään',
+                'can-not-disable-error'  => 'Et voi poistaa käytöstä kieltä, joka on liitetty kanavaan tai käyttäjään',
                 'partial-delete-success' => 'Valitut kielet poistettiin, paitsi :count, jotka on liitetty kanavaan tai käyttäjään.',
                 'partial-update-success' => 'Valitut kielet päivitettiin, paitsi :count, jotka on liitetty kanavaan tai käyttäjään.',
 

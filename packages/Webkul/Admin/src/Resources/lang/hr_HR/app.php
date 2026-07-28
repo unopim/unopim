@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Lokalizacija s kodom :code nije pronađena.',
-                'create-btn'            => 'Kreiraj lokalitet',
-                'locale'                => 'Lokalitet',
-                'title'                 => 'Lokaliteti',
-                'can-not-delete-error'  => 'Ne možete izbrisati lokalitet povezan s kanalom ili korisnikom',
-                'can-not-disable-error' => 'Ne možete onemogućiti lokalitet povezan s kanalom ili korisnikom',
-
+                'not-found'              => 'Lokalizacija s kodom :code nije pronađena.',
+                'create-btn'             => 'Kreiraj lokalitet',
+                'locale'                 => 'Lokalitet',
+                'title'                  => 'Lokaliteti',
+                'can-not-delete-error'   => 'Ne možete izbrisati lokalitet povezan s kanalom ili korisnikom',
+                'can-not-disable-error'  => 'Ne možete onemogućiti lokalitet povezan s kanalom ili korisnikom',
                 'partial-delete-success' => 'Odabrani lokaliteti su izbrisani, osim :count povezanih s kanalom ili korisnikom.',
                 'partial-update-success' => 'Odabrani lokaliteti su ažurirani, osim :count povezanih s kanalom ili korisnikom.',
 

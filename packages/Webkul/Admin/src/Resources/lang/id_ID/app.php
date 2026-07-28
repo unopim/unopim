@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Lokal dengan kode :code tidak ditemukan.',
-                'create-btn'            => 'Buat lokal',
-                'locale'                => 'Lokal',
-                'title'                 => 'Lokal',
-                'can-not-delete-error'  => 'Anda tidak dapat menghapus lokasi yang terhubung ke saluran atau pengguna',
-                'can-not-disable-error' => 'Anda tidak dapat menonaktifkan lokasi yang terhubung ke saluran atau pengguna',
-
+                'not-found'              => 'Lokal dengan kode :code tidak ditemukan.',
+                'create-btn'             => 'Buat lokal',
+                'locale'                 => 'Lokal',
+                'title'                  => 'Lokal',
+                'can-not-delete-error'   => 'Anda tidak dapat menghapus lokasi yang terhubung ke saluran atau pengguna',
+                'can-not-disable-error'  => 'Anda tidak dapat menonaktifkan lokasi yang terhubung ke saluran atau pengguna',
                 'partial-delete-success' => 'Lokasi yang dipilih telah dihapus, kecuali :count yang terhubung ke saluran atau pengguna.',
                 'partial-update-success' => 'Lokasi yang dipilih telah diperbarui, kecuali :count yang terhubung ke saluran atau pengguna.',
 

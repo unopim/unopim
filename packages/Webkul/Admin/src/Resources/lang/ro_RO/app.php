@@ -1150,13 +1150,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Nu s-a găsit nicio localizare cu codul :code.',
-                'create-btn'            => 'Creare Localitate',
-                'locale'                => 'Localitate',
-                'title'                 => 'Localități',
-                'can-not-delete-error'  => 'Nu puteți șterge o localitate legată de un canal sau utilizator',
-                'can-not-disable-error' => 'Nu puteți dezactiva o localitate legată de un canal sau utilizator',
-
+                'not-found'              => 'Nu s-a găsit nicio localizare cu codul :code.',
+                'create-btn'             => 'Creare Localitate',
+                'locale'                 => 'Localitate',
+                'title'                  => 'Localități',
+                'can-not-delete-error'   => 'Nu puteți șterge o localitate legată de un canal sau utilizator',
+                'can-not-disable-error'  => 'Nu puteți dezactiva o localitate legată de un canal sau utilizator',
                 'partial-delete-success' => 'Localitățile selectate au fost șterse, cu excepția a :count legate de un canal sau utilizator.',
                 'partial-update-success' => 'Localitățile selectate au fost actualizate, cu excepția a :count legate de un canal sau utilizator.',
 

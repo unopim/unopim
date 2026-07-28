@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Hindi natagpuan ang lokal na may code na :code.',
-                'create-btn'            => 'Lumikha ng Wika',
-                'locale'                => 'Wika',
-                'title'                 => 'Mga Wika',
-                'can-not-delete-error'  => 'Hindi mo maaaring tanggalin ang isang wika na nakakabit sa isang channel o user',
-                'can-not-disable-error' => 'Hindi mo maaaring i-disable ang isang wika na nakakabit sa isang channel o user',
-
+                'not-found'              => 'Hindi natagpuan ang lokal na may code na :code.',
+                'create-btn'             => 'Lumikha ng Wika',
+                'locale'                 => 'Wika',
+                'title'                  => 'Mga Wika',
+                'can-not-delete-error'   => 'Hindi mo maaaring tanggalin ang isang wika na nakakabit sa isang channel o user',
+                'can-not-disable-error'  => 'Hindi mo maaaring i-disable ang isang wika na nakakabit sa isang channel o user',
                 'partial-delete-success' => 'Ang mga napiling wika ay natanggal, maliban sa :count na nakakabit sa isang channel o user.',
                 'partial-update-success' => 'Ang mga napiling wika ay na-update, maliban sa :count na nakakabit sa isang channel o user.',
 

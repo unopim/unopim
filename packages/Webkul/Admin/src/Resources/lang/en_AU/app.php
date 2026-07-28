@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Locale with code :code not found.',
-                'create-btn'            => 'Create Locale',
-                'locale'                => 'Locale',
-                'title'                 => 'Locales',
-                'can-not-delete-error'  => 'You cannot delete a locale linked to a channel or user',
-                'can-not-disable-error' => 'You cannot disable a locale linked to a channel or user',
-
+                'not-found'              => 'Locale with code :code not found.',
+                'create-btn'             => 'Create Locale',
+                'locale'                 => 'Locale',
+                'title'                  => 'Locales',
+                'can-not-delete-error'   => 'You cannot delete a locale linked to a channel or user',
+                'can-not-disable-error'  => 'You cannot disable a locale linked to a channel or user',
                 'partial-delete-success' => 'Selected locales were deleted, except :count linked to a channel or user.',
                 'partial-update-success' => 'Selected locales were updated, except :count linked to a channel or user.',
 

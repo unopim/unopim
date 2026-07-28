@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'No s\'ha trobat cap configuració regional amb el codi :code.',
-                'create-btn'            => 'Crear Local',
-                'locale'                => 'Local',
-                'title'                 => 'Locals',
-                'can-not-delete-error'  => 'No es pot eliminar un local associat a un canal o usuari',
-                'can-not-disable-error' => 'No es pot desactivar un local associat a un canal o usuari',
-
+                'not-found'              => 'No s\'ha trobat cap configuració regional amb el codi :code.',
+                'create-btn'             => 'Crear Local',
+                'locale'                 => 'Local',
+                'title'                  => 'Locals',
+                'can-not-delete-error'   => 'No es pot eliminar un local associat a un canal o usuari',
+                'can-not-disable-error'  => 'No es pot desactivar un local associat a un canal o usuari',
                 'partial-delete-success' => 'Els locals seleccionats s\'han eliminat, excepte :count associats a un canal o usuari.',
                 'partial-update-success' => 'Els locals seleccionats s\'han actualitzat, excepte :count associats a un canal o usuari.',
 

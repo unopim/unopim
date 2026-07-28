@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'No se encontró la configuración regional con el código :code.',
-                'create-btn'            => 'Crear localidad',
-                'locale'                => 'Lugar',
-                'title'                 => 'Locales',
-                'can-not-delete-error'  => 'No puede eliminar un local vinculado a un canal o usuario',
-                'can-not-disable-error' => 'No puede deshabilitar un local vinculado a un canal o usuario',
-
+                'not-found'              => 'No se encontró la configuración regional con el código :code.',
+                'create-btn'             => 'Crear localidad',
+                'locale'                 => 'Lugar',
+                'title'                  => 'Locales',
+                'can-not-delete-error'   => 'No puede eliminar un local vinculado a un canal o usuario',
+                'can-not-disable-error'  => 'No puede deshabilitar un local vinculado a un canal o usuario',
                 'partial-delete-success' => 'Los locales seleccionados fueron eliminados, excepto :count vinculados a un canal o usuario.',
                 'partial-update-success' => 'Los locales seleccionados fueron actualizados, excepto :count vinculados a un canal o usuario.',
 

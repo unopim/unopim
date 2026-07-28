@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Gebietsschema mit dem Code :code nicht gefunden.',
-                'create-btn'            => 'Gebietsschema erstellen',
-                'locale'                => 'Gebietsschema',
-                'title'                 => 'Gebietsschemas',
-                'can-not-delete-error'  => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht löschen',
-                'can-not-disable-error' => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht deaktivieren',
-
+                'not-found'              => 'Gebietsschema mit dem Code :code nicht gefunden.',
+                'create-btn'             => 'Gebietsschema erstellen',
+                'locale'                 => 'Gebietsschema',
+                'title'                  => 'Gebietsschemas',
+                'can-not-delete-error'   => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht löschen',
+                'can-not-disable-error'  => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht deaktivieren',
                 'partial-delete-success' => 'Die ausgewählten Gebietsschemas wurden gelöscht, mit Ausnahme von :count, die mit einem Kanal oder Benutzer verknüpft sind.',
                 'partial-update-success' => 'Die ausgewählten Gebietsschemas wurden aktualisiert, mit Ausnahme von :count, die mit einem Kanal oder Benutzer verknüpft sind.',
 

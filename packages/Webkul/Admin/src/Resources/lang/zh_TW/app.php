@@ -1149,13 +1149,12 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => '找不到代碼為 :code 的語言環境。',
-                'create-btn'            => '創建語言',
-                'locale'                => '語言',
-                'title'                 => '語言',
-                'can-not-delete-error'  => '無法刪除與頻道或用戶關聯的語言',
-                'can-not-disable-error' => '無法禁用與頻道或用戶關聯的語言',
-
+                'not-found'              => '找不到代碼為 :code 的語言環境。',
+                'create-btn'             => '創建語言',
+                'locale'                 => '語言',
+                'title'                  => '語言',
+                'can-not-delete-error'   => '無法刪除與頻道或用戶關聯的語言',
+                'can-not-disable-error'  => '無法禁用與頻道或用戶關聯的語言',
                 'partial-delete-success' => '已刪除所選語言，但與頻道或用戶關聯的 :count 個除外。',
                 'partial-update-success' => '已更新所選語言，但與頻道或用戶關聯的 :count 個除外。',
 
