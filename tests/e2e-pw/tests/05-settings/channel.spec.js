@@ -142,7 +142,7 @@ test.describe('Channel Management', () => {
     await deleteChannel(adminPage, code);
   });
 
-  test('Create Channel requires a name in the quick-create modal', async ({ adminPage }) => {
+  test('Create Channel allows a blank name in the quick-create modal', async ({ adminPage }) => {
     const uid = generateUid();
     const code = `${uid}nt`;
 
@@ -150,7 +150,9 @@ test.describe('Channel Management', () => {
     await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code, name: '' });
     await clickSave(adminPage, 'Save Channel');
-    await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Name field is required')).toHaveCount(0);
+
+    await deleteChannel(adminPage, code);
   });
 
   test('Create Channel with duplicate Code shows error', async ({ adminPage }) => {

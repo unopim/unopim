@@ -76,6 +76,7 @@ return [
             'general'             => 'Algemeen',
             'invalid-password'    => 'Het huidige wachtwoord dat je hebt ingevoerd, is onjuist.',
             'name'                => 'Naam',
+            'password-whitespace' => 'Het wachtwoord mag niet alleen uit spaties bestaan.',
             'password'            => 'Wachtwoord',
             'gravatar-preview'    => 'Je Gravatar.com-afbeelding wordt gebruikt',
             'use-gravatar'        => 'Gravatar-afbeelding gebruiken',
@@ -252,6 +253,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Productnavigatie',
                 'preview'    => 'Voorbeeld',
                 'remove'     => 'Verwijderen',
                 'save-btn'   => 'Product opslaan',
@@ -259,6 +261,22 @@ return [
                 'categories' => [
                     'title'            => 'Categorieën',
                     'root-not-allowed' => 'De hoofdcategorie kan niet aan een product worden toegewezen.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attribuutgroep:',
+                    'title'              => 'Attribuutgroepen',
+                    'search-placeholder' => 'Groepen zoeken',
+                    'empty'              => 'Geen attribuutgroepen komen overeen met je zoekopdracht.',
+                    'attributes-count'   => ':count attributen',
+                    'loading'            => 'Laden...',
+                    'retry'              => 'Opnieuw proberen',
+                    'load-more'          => 'Meer laden',
+                    'unsaved-title'      => 'Niet-opgeslagen wijzigingen',
+                    'unsaved-message'    => 'Sla je wijzigingen in :group op voordat je verdergaat, of verwerp ze.',
+                    'save-and-continue'  => 'Opslaan en doorgaan',
+                    'discard-and-leave'  => 'Verwerpen en doorgaan',
+                    'cancel'             => 'Annuleren',
                 ],
                 'images' => [
                     'info'  => 'Aanbevolen afbeeldingsformaat: 560 x 609 px',
@@ -286,10 +304,15 @@ return [
                         'title'      => 'Cross-sell-producten',
                     ],
                     'add-btn'           => 'Toevoegen',
+                    'add-type-btn'      => 'Associatietype toevoegen',
                     'delete'            => 'Verwijderen',
                     'empty-info'        => ':type producten toevoegen.',
                     'empty-title'       => 'Product toevoegen',
                     'image-placeholder' => 'Productafbeelding',
+                    'more-types'        => 'Meer',
+                    'no-types-info'     => 'Gebruik „Associatietype toevoegen” om dit product onder een associatietype te koppelen.',
+                    'no-types-title'    => 'Geen associaties toegevoegd',
+                    'search-types'      => 'Zoek associatietypes',
                     'sku'               => 'SKU: :sku',
                     'title'             => 'Koppelingen',
                 ],
@@ -398,6 +421,33 @@ return [
                     'created-at'   => 'Aanmaakdatum',
                     'product-type' => 'Producttype',
                 ],
+                'sections' => [
+                    'view'    => 'Bekijken',
+                    'unsaved' => 'Niet-opgeslagen wijzigingen',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Selectie toevoegen',
+                    'close'        => 'Sluiten',
+                    'clear-search' => 'Zoekopdracht wissen',
+                    'categories'   => [
+                        'subtitle'        => 'Wijs dit product toe aan catalogus­categorieën.',
+                        'search'          => 'Categorieën zoeken…',
+                        'searching'       => 'Bezig met zoeken…',
+                        'no-results'      => 'Geen overeenkomende categorieën gevonden',
+                        'load-more'       => 'Meer laden',
+                        'none-selected'   => 'Nog geen categorieën geselecteerd',
+                        'and-more'        => 'en nog :count',
+                        'review-selected' => 'Geselecteerde categorieën tonen',
+                        'selected'        => 'geselecteerd',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Koppel gerelateerde, upsell-, cross-sell- en aangepaste producten.',
+                        'linked'   => 'gekoppelde producten',
+                    ],
+                ],
+
                 'more'         => 'Meer',
                 'more-actions' => 'Meer acties',
                 'variations'   => [
@@ -961,6 +1011,64 @@ return [
             'not-found'         => 'Categorieveld met code ":code" kon niet worden gevonden.',
             'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Associatietypen',
+                'create-btn' => 'Associatietype aanmaken',
+                'add-btn'    => 'Associatietype aanmaken',
+
+                'datagrid' => [
+                    'code'                => 'Code',
+                    'name'                => 'Naam',
+                    'status'              => 'Status',
+                    'position'            => 'Positie',
+                    'edit'                => 'Bewerken',
+                    'delete'              => 'Verwijderen',
+                    'activated'           => 'Ingeschakeld',
+                    'disabled'            => 'Uitgeschakeld',
+                    'active'              => 'Inschakelen',
+                    'disable'             => 'Uitschakelen',
+                    'update-status'       => 'Status bijwerken',
+                    'delete-failed'       => 'Dit associatietype kan niet worden verwijderd.',
+                    'mass-delete-success' => 'Geselecteerde associatietypen succesvol verwijderd.',
+                    'mass-delete-failed'  => 'Geselecteerde associatietypen kunnen niet worden verwijderd.',
+                    'mass-update-success' => 'Succesvol bijgewerkt.',
+                ],
+            ],
+
+            'create-success'    => 'Associatietype succesvol aangemaakt.',
+            'update-success'    => 'Associatietype succesvol bijgewerkt.',
+            'delete-success'    => 'Associatietype succesvol verwijderd.',
+            'delete-failed'     => 'Verwijderen van associatietype mislukt.',
+            'user-define-error' => 'Kan het systeemassociatietype niet verwijderen.',
+            'unknown-fields'    => 'Associatietype-veld met code ":fields" kon niet worden gevonden.',
+
+            'create' => [
+                'title'      => 'Associatietype aanmaken',
+                'name'       => 'Naam',
+                'enter-name' => 'Voer naam in',
+                'code'       => 'Code',
+                'enter-code' => 'Voer code in',
+                'save-btn'   => 'Associatietype opslaan',
+            ],
+
+            'edit' => [
+                'title'    => 'Associatietype bewerken',
+                'save-btn' => 'Associatietype bijwerken',
+            ],
+
+            'fields' => [
+                'title'                => 'Velden',
+                'info'                 => 'Voeg aangepaste velden toe om extra gegevens voor dit associatietype vast te leggen.',
+                'add-field-btn'        => 'Veld toevoegen',
+                'modal-title'          => 'Veld toevoegen',
+                'edit-modal-title'     => 'Veld bewerken',
+                'save-field-btn'       => 'Veld opslaan',
+                'same-code-error'      => 'De veldcode moet uniek zijn.',
+                'add-fields-info'      => 'Om aangepaste velden voor dit associatietype te maken.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Categorieveldoptie succesvol verwijderd',
             'create-success'      => 'Categorieveldoptie succesvol aangemaakt.',
@@ -996,6 +1104,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Taal',
                 'level-parent'                     => 'Bovenliggend product',
                 'level-sub-parent'                 => 'Tussenliggend niveau',
                 'level-variant'                    => 'Variant',
@@ -1152,12 +1261,15 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Landinstelling met code :code niet gevonden.',
-                'create-btn'            => 'Taalinstelling aanmaken',
-                'locale'                => 'Taalinstelling',
-                'title'                 => 'Taalinstellingen',
-                'can-not-delete-error'  => 'Je kunt een taalinstelling niet verwijderen die is gekoppeld aan een kanaal of gebruiker.',
-                'can-not-disable-error' => 'Je kunt een taalinstelling niet uitschakelen die is gekoppeld aan een kanaal of gebruiker.',
+                'not-found'              => 'Landinstelling met code :code niet gevonden.',
+                'create-btn'             => 'Taalinstelling aanmaken',
+                'locale'                 => 'Taalinstelling',
+                'title'                  => 'Taalinstellingen',
+                'can-not-delete-error'   => 'Je kunt een taalinstelling niet verwijderen die is gekoppeld aan een kanaal of gebruiker.',
+                'can-not-disable-error'  => 'Je kunt een taalinstelling niet uitschakelen die is gekoppeld aan een kanaal of gebruiker.',
+                'partial-delete-success' => 'Geselecteerde taalinstellingen zijn verwijderd, behalve :count die gekoppeld zijn aan een kanaal of gebruiker.',
+                'partial-update-success' => 'Geselecteerde taalinstellingen zijn bijgewerkt, behalve :count die gekoppeld zijn aan een kanaal of gebruiker.',
+
                 'datagrid'              => [
                     'actions'     => 'Acties',
                     'code'        => 'Code',
@@ -1363,6 +1475,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Het importproces kon niet worden gestart. Probeer het opnieuw.',
+                'rerun-no-file'     => 'Deze taak heeft geen importbestand en kan daarom niet opnieuw worden uitgevoerd.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Actie',
@@ -1811,19 +1924,20 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Gebruiker bewerken',
             ],
-            'activate-warning'             => 'Je account moet nog worden geactiveerd, neem contact op met de beheerder.',
-            'cannot-change'                => 'Gebruiker kan niet worden gewijzigd.',
-            'cannot-escalate-role'         => 'Je hebt geen toestemming om een rol met volledige toegang toe te wijzen.',
-            'create-success'               => 'Gebruiker succesvol aangemaakt.',
-            'delete-failed'                => 'Gebruiker verwijderen mislukt.',
-            'delete-success'               => 'Gebruiker succesvol verwijderd.',
-            'delete-warning'               => 'Weet je zeker dat je deze actie wilt uitvoeren?',
-            'incorrect-password'           => 'Onjuist wachtwoord.',
-            'last-delete-error'            => 'Laatste gebruiker kan niet worden verwijderd.',
-            'login-error'                  => 'Controleer je inloggegevens en probeer het opnieuw.',
-            'update-success'               => 'Gebruiker succesvol bijgewerkt.',
-            'current-user-delete-error'    => 'De ingelogde gebruiker kan niet worden verwijderd.',
-            'last-all-access-delete-error' => 'De laatste actieve beheerder met volledige toegang kan niet worden verwijderd.',
+            'activate-warning'                 => 'Je account moet nog worden geactiveerd, neem contact op met de beheerder.',
+            'cannot-change'                    => 'Gebruiker kan niet worden gewijzigd.',
+            'cannot-assign-unheld-permissions' => 'Je kunt geen rol toewijzen die rechten bevat die je zelf niet hebt.',
+            'cannot-escalate-role'             => 'Je hebt geen toestemming om een rol met volledige toegang toe te wijzen.',
+            'create-success'                   => 'Gebruiker succesvol aangemaakt.',
+            'delete-failed'                    => 'Gebruiker verwijderen mislukt.',
+            'delete-success'                   => 'Gebruiker succesvol verwijderd.',
+            'delete-warning'                   => 'Weet je zeker dat je deze actie wilt uitvoeren?',
+            'incorrect-password'               => 'Onjuist wachtwoord.',
+            'last-delete-error'                => 'Laatste gebruiker kan niet worden verwijderd.',
+            'login-error'                      => 'Controleer je inloggegevens en probeer het opnieuw.',
+            'update-success'                   => 'Gebruiker succesvol bijgewerkt.',
+            'current-user-delete-error'        => 'De ingelogde gebruiker kan niet worden verwijderd.',
+            'last-all-access-delete-error'     => 'De laatste actieve beheerder met volledige toegang kan niet worden verwijderd.',
         ],
         'system-settings' => [
             'info'               => 'Beheer systeeminstellingen vanaf één plek.',
@@ -2049,7 +2163,6 @@ return [
                 'all'            => 'Alle',
                 'back-btn'       => 'Terug',
                 'custom'         => 'Aangepast',
-                'assign-user'    => 'Gebruiker toewijzen',
                 'general'        => 'Algemeen',
                 'name'           => 'Naam',
                 'permissions'    => 'Rechten',
@@ -2061,7 +2174,6 @@ return [
                 'all'                         => 'Alle',
                 'back-btn'                    => 'Terug',
                 'custom'                      => 'Aangepast',
-                'assign-user'                 => 'Gebruiker toewijzen',
                 'general'                     => 'Algemeen',
                 'name'                        => 'Naam',
                 'credentials'                 => 'API-gegevens',
@@ -2271,6 +2383,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Uitklappen',
+            'collapse' => 'Inklappen',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Toevoegen',
+                'already-added'      => 'Toegevoegd',
+                'empty-info'         => 'Probeer een andere zoekopdracht.',
+                'empty-title'        => 'Geen associatietypes gevonden',
+                'search-placeholder' => 'Zoek op naam of code',
+                'select-all'         => 'Alles selecteren',
+                'title'              => 'Associatietype toevoegen',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Selectie toevoegen',
+                'selected' => ':count producten geselecteerd',
+                'title'    => 'Producten selecteren',
+            ],
+        ],
         'pagination' => [
             'page' => 'Pagina',
         ],
@@ -2281,6 +2414,13 @@ return [
             'close' => 'Sluiten',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled van :total vertaald',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Geen resultaten',
+                'search' => 'Zoeken',
+            ],
             'ajax-error'      => 'Er is iets misgegaan tijdens het opslaan. Probeer het opnieuw.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik om te uploaden',
@@ -2306,6 +2446,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Paneel inklappen',
+                'expand'   => 'Paneel uitklappen',
+            ],
             'breadcrumbs' => [
                 'label' => 'Kruimelpad',
             ],
@@ -2332,6 +2476,7 @@ return [
                 'catalog'            => 'Catalogus',
                 'categories'         => 'Categorieën',
                 'category_fields'    => 'Categorievelden',
+                'association_types'  => 'Associatietypen',
                 'channels'           => 'Kanalen',
                 'collapse'           => 'Inklappen',
                 'configure'          => 'Configuratie',
@@ -2772,6 +2917,7 @@ return [
         'url-rewrites'             => 'URL-herschrijvingen',
         'users'                    => 'Gebruikers',
         'category_fields'          => 'Categorievelden',
+        'association_types'        => 'Associatietypen',
         'view'                     => 'Weergave',
         'execute'                  => 'Taak uitvoeren',
         'history'                  => 'Geschiedenis',
@@ -2782,6 +2928,8 @@ return [
         'exports'                  => 'Exporteren',
         'mass-update'              => 'Bulkbewerking',
         'mass-delete'              => 'Bulkverwijdering',
+        'bulk-edit'                => 'Bulkbewerking',
+        'quick-export'             => 'Snelle export',
         'variant-structures'       => 'Variantstructuren',
     ],
     'errors' => [

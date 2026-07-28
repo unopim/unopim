@@ -21,8 +21,8 @@
 
         <template v-if="showChildren">
             <v-tree-item
-                v-for="(child, index) in children"
-                :key="index"
+                v-for="child in children"
+                :key="child[categorytree.valueField]"
                 :item="child"
                 :level="level + 1"
                 @change-input="$emit('change-input', $event)"
@@ -63,20 +63,30 @@
             return {
                 children: this.item[this.categorytree.childrenField] || [],
                 hasFetchedChildren: false,
+                isPartial: !! this.item.partial,
                 showChildren: false,
                 name: this.categorytree.nameField,
                 childrenPage: 0,
                 childrenHasMore: true,
+                revealedChildren: null,
                 childrenLoading: false,
                 childrenObserver: null,
             };
         },
 
         mounted() {
+            this.categorytree.registerLabel?.(this.value, this.label);
+
             if (this.children.length > 0) {
                 this.showChildren = true;
 
-                if (this.paginateChildren) {
+                if (! this.paginateChildren) {
+                    return;
+                }
+
+                if (this.isPartial) {
+                    this.setupChildrenObserver();
+                } else {
                     this.hasFetchedChildren = true;
                 }
             }
@@ -215,20 +225,33 @@
 
                 const nextPage = this.childrenPage + 1;
 
+                if (this.isPartial && this.childrenPage === 0) {
+                    this.revealedChildren = new Map(
+                        this.children.map(child => [this.childKey(child), child])
+                    );
+                }
+
                 return this.$axios
                     .get(this.buildChildrenUrl({ page: nextPage, limit: this.pageSize }))
                     .then((response) => {
                         const payload = response.data || {};
                         const batch = Array.isArray(payload.data) ? payload.data : [];
 
-                        this.children = this.children.concat(batch);
+                        this.children = (this.childrenPage === 0 && this.revealedChildren ? [] : this.children)
+                            .concat(this.takeRevealed(batch));
+
                         this.childrenPage = payload.page || nextPage;
                         this.childrenHasMore = !! payload.has_more;
                         this.hasFetchedChildren = true;
+
+                        if (! this.childrenHasMore) {
+                            this.flushRevealedChildren();
+                        }
                     })
                     .catch((err) => {
                         console.error('Failed to fetch children for node', this.id, err);
                         this.childrenHasMore = false;
+                        this.flushRevealedChildren();
                     })
                     .finally(() => {
                         this.childrenLoading = false;
@@ -239,6 +262,48 @@
                             this.$nextTick(() => this.rearmChildrenObserver());
                         }
                     });
+            },
+
+            childKey(node) {
+                return String(node[this.categorytree.valueField]);
+            },
+
+            /**
+             * A partially revealed branch already holds the nodes on the path to a
+             * selection, each carrying its own expanded subtree. Prefer those over the
+             * freshly fetched copy so expanding the level neither duplicates them nor
+             * collapses what was revealed underneath.
+             */
+            takeRevealed(batch) {
+                if (! this.revealedChildren) {
+                    return batch;
+                }
+
+                return batch.map((node) => {
+                    const key = this.childKey(node);
+                    const revealed = this.revealedChildren.get(key);
+
+                    if (! revealed) {
+                        return node;
+                    }
+
+                    this.revealedChildren.delete(key);
+
+                    return revealed;
+                });
+            },
+
+            flushRevealedChildren() {
+                if (! this.revealedChildren) {
+                    return;
+                }
+
+                if (this.revealedChildren.size) {
+                    this.children = this.children.concat([...this.revealedChildren.values()]);
+                }
+
+                this.revealedChildren = null;
+                this.isPartial = false;
             },
 
             setupChildrenObserver() {

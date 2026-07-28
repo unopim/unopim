@@ -177,10 +177,6 @@ test.describe('Code field validation — Category Field', () => {
   async function selectTextType(adminPage) {
     await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
-    // Input validation is required on category fields; pick the "No" option.
-    const validationMs = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="validation"]') });
-    await validationMs.click();
-    await validationMs.locator('.multiselect__option', { hasText: /^No$/ }).first().click();
   }
 
   test('less than 191 characters', async ({ adminPage }) => {

@@ -17,13 +17,12 @@
         />
     </x-slot>
 
-    <!-- Edit Attributes Vue Components -->
     <v-edit-attributes :locales="{{ $locales->toJson() }}"></v-edit-attributes>
 
     @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-edit-attributes-template"
+            id="v-edit-attributes-template-{{ $attribute->id }}"
         >
             {!! view_render_event('unopim.admin.catalog.attributes.edit.before') !!}
 
@@ -37,7 +36,6 @@
                 
                 {!! view_render_event('unopim.admin.catalog.attributes.create._form_controls.before') !!}
 
-                <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
                     <div class="flex flex-col flex-1 gap-2 overflow-auto">
 
@@ -125,7 +123,6 @@
                                 <x-admin::form.control-group.error control-name="type" />
                             </x-admin::form.control-group>
 
-                            <!-- Textarea Switcher -->
                                 <x-admin::form.control-group v-show="{{ $attribute->type === 'textarea' ? 'true' : 'false' }}">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.attributes.edit.enable-wysiwyg')
@@ -159,25 +156,11 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label
-                                            class="w-full"
-                                            localizable="true"
-                                            :current-locale-code="$locale->code"
-                                        >
-                                            @lang('admin::app.catalog.attributes.edit.label')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            :name="$locale->code . '[name]'"
-                                            :value="old($locale->code)['name'] ?? ($attribute->translate($locale->code)->name ?? '')"
-                                        />
-
-                                        <x-admin::form.control-group.error :control-name="$locale->code . '[name]'" />
-                                    </x-admin::form.control-group>
-                                @endforeach
+                                <x-admin::form.translatable-field
+                                    :locales="$locales"
+                                    :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($attribute->translate($locale->code)->name ?? '')])->all()"
+                                    :label="trans('admin::app.catalog.attributes.edit.label')"
+                                />
                             </div>
                         </div>
 
@@ -253,7 +236,6 @@
                                                 class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-primary-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
                                                 :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType == 'color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                             >
-                                            {{-- Empty div to manage layout --}}
                                             <div>
                                             </div>
                                                  <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')"
@@ -437,7 +419,7 @@
                                         $selectedOption = old('is_required') ?? $attribute->is_required
                                     @endphp
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="is_required"
                                         value="0"
@@ -519,10 +501,10 @@
                                         @lang('admin::app.catalog.attributes.edit.value-per-locale')
                                     </label>   
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="value_per_locale"
-                                        :value="(boolean) $valuePerLocale"
+                                        value="{{ (boolean) $valuePerLocale }}"
                                     />
                                 </x-admin::form.control-group>
                                 @php
@@ -551,10 +533,10 @@
                                             @lang('admin::app.catalog.attributes.edit.ai-translate')
                                         </label>
 
-                                        <x-admin::form.control-group.control
+                                        <input
                                             type="hidden"
                                             name="ai_translate"
-                                            :value="(boolean) $valueTranslate"
+                                            value="{{ (boolean) $valueTranslate }}"
                                         />
                                     </x-admin::form.control-group>
                                 @endif
@@ -581,10 +563,10 @@
                                         @lang('admin::app.catalog.attributes.edit.value-per-channel')
                                     </label>   
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="value_per_channel"
-                                        :value="(boolean) $valuePerChannel"
+                                        value="{{ (boolean) $valuePerChannel }}"
                                     />
                                 </x-admin::form.control-group>
 
@@ -593,7 +575,7 @@
                                         $isFilterable = old('is_filterable') ?? $attribute->is_filterable;
                                     @endphp
 
-                                    <x-admin::form.control-group.control
+                                    <input
                                         type="hidden"
                                         name="is_filterable"
                                         value="0"
@@ -698,6 +680,27 @@
                                     ::value="optionIsNew"
                                 />
 
+                                <x-admin::form.translatable-fields
+                                    :locales="$locales"
+                                    :label="trans('admin::app.catalog.attributes.edit.label')"
+                                >
+                                    @foreach ($locales as $locale)
+                                        <x-admin::form.control-group
+                                            class="w-full mb-2.5"
+                                            v-show="locale === '{{ $locale->code }}'"
+                                        >
+                                            <x-admin::form.control-group.control
+                                                type="text"
+                                                name="locales.{{ $locale->code }}"
+                                                :label="$locale->name"
+                                                :v-code-generator="$locale->code === core()->getRequestedLocaleCode() ? '\'code\'' : null"
+                                            />
+
+                                            <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
+                                        </x-admin::form.control-group>
+                                    @endforeach
+                                </x-admin::form.translatable-fields>
+
                                 <x-admin::form.control-group class="w-full mb-2.5">
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.catalog.attributes.edit.code')
@@ -716,26 +719,6 @@
 
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
-
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label
-                                            class="w-full"
-                                            localizable="true"
-                                            :current-locale-code="$locale->code"
-                                        >
-                                            @lang('admin::app.catalog.attributes.edit.label')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            name="locales.{{ $locale->code }}"
-                                            :label="$locale->name"
-                                        />
-
-                                        <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
-                                    </x-admin::form.control-group>
-                                @endforeach
                                 </div>
                             </div>
                         </x-slot>
@@ -758,7 +741,7 @@
 
         <script type="module">
             app.component('v-edit-attributes', {
-                template: '#v-edit-attributes-template',
+                template: '#v-edit-attributes-template-{{ $attribute->id }}',
 
                 props: ['locales'],
 
@@ -816,6 +799,14 @@
                 },
 
                 methods: {
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
+
                     storeOption(params, { resetForm, setValues }) {
                         const formData = new FormData();
 

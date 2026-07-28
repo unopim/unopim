@@ -18,7 +18,7 @@
     @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-edit-user-api-integration-template"
+            id="v-edit-user-api-integration-template-{{ $apiKey->id }}"
         >
             <div>
                 <x-admin::form
@@ -140,23 +140,6 @@
 
                                     <x-admin::form.control-group.error control-name="name" />
                                 </x-admin::form.control-group>
-                                <!-- User -->
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.configuration.integrations.create.assign-user')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        class="cursor-not-allowed"
-                                        name="admin_id"
-                                        rules="required"
-                                        value="{{$apiKey->admins->name}}"
-                                        readonly
-                                        :label="trans('admin::app.configuration.integrations.edit.assign-user')"
-                                        :placeholder="trans('admin::app.configuration.integrations.edit.assign-user')"
-                                    />
-                                </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>
 
@@ -171,7 +154,6 @@
                             </x-slot>
 
                             <x-slot:content>
-                                {{-- Credential values are static v-text displays, not named form controls, so they never round-trip through FormData / the update request. --}}
                                 <div
                                     v-if="oauth_client_id"
                                     class="mb-4 rounded-md border border-blue-200 bg-blue-50 px-3 py-2.5 text-xs text-gray-700 dark:border-gray-600 dark:bg-cherry-800 dark:text-gray-300"
@@ -279,7 +261,7 @@
 
         <script type="module">
             app.component('v-edit-user-api-integration', {
-                template: '#v-edit-user-api-integration-template',
+                template: '#v-edit-user-api-integration-template-{{ $apiKey->id }}',
 
                 data() {
                     return {
@@ -287,7 +269,6 @@
                         selected_permission_type: "{{ $apiKey->permission_type }}",
                         client_id: "{{ $client_id }}",
                         secret_key: "{{ $secret_key }}",
-                        admin_id: "{{ $apiKey->admin_id }}",
                         name: "{{ $apiKey->name }}",
                         apiId: "{{ $apiKey->id }}",
                         oauth_client_id: "{{ $oauth_client_id }}",
@@ -335,8 +316,6 @@
                     copy(value) {
                         const onCopied = () => this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.edit.copied')" });
 
-                        // navigator.clipboard only exists in a secure context (HTTPS/localhost);
-                        // fall back to execCommand so copy still works over plain HTTP / LAN IP.
                         if (navigator.clipboard && window.isSecureContext) {
                             navigator.clipboard.writeText(value).then(onCopied);
 
@@ -392,8 +371,16 @@
 
                             })
                             .catch(error => {
-                                
+
                             });
+                    },
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
                     },
                 }
             })

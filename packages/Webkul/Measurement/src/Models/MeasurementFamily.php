@@ -4,6 +4,7 @@ namespace Webkul\Measurement\Models;
 
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -96,7 +97,9 @@ class MeasurementFamily extends Model implements HistoryAuditable, MeasurementFa
      */
     protected function labels(): Attribute
     {
-        return Attribute::make(get: fn () => $this->translations()->pluck('label', 'locale')->toArray());
+        return Attribute::make(get: fn () => $this->loadedOrQueried('translations')
+            ->pluck('label', 'locale')
+            ->toArray());
     }
 
     /**
@@ -107,12 +110,30 @@ class MeasurementFamily extends Model implements HistoryAuditable, MeasurementFa
      */
     protected function getUnitsAttribute(): array
     {
-        return $this->units()
-            ->with(['translations', 'conversions'])
-            ->get()
+        return $this->loadedOrQueried('units', ['translations', 'conversions'])
             ->map(fn (MeasurementUnit $unit): array => $unit->toLegacyArray())
             ->values()
             ->toArray();
+    }
+
+    /**
+     * Read a relation the caller may already have eager-loaded, falling back to
+     * a query only when it has not. Without this the legacy `labels`/`units`
+     * accessors re-query per family, which turns listing every family into
+     * thousands of round trips no amount of eager loading can prevent.
+     *
+     * @param  string[]  $nested
+     * @return Collection<int, Model>
+     */
+    protected function loadedOrQueried(string $relation, array $nested = [])
+    {
+        if ($this->relationLoaded($relation)) {
+            $loaded = $this->getRelation($relation);
+
+            return $nested === [] ? $loaded : $loaded->loadMissing($nested);
+        }
+
+        return $this->{$relation}()->with($nested)->get();
     }
 
     /**

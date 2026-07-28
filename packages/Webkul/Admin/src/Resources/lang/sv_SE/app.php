@@ -76,6 +76,7 @@ return [
             'general'             => 'Allmänt',
             'invalid-password'    => 'Det aktuella lösenordet är felaktigt.',
             'name'                => 'Namn',
+            'password-whitespace' => 'Lösenordet kan inte bestå av enbart mellanslag.',
             'password'            => 'Lösenord',
             'gravatar-preview'    => 'Använder din Gravatar.com-bild',
             'use-gravatar'        => 'Använd Gravatar-bild',
@@ -251,6 +252,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigering',
                 'preview'    => 'Förhandsgranska',
                 'remove'     => 'Ta bort',
                 'save-btn'   => 'Spara produkt',
@@ -258,6 +260,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorier',
                     'root-not-allowed' => 'Rotkategorin kan inte tilldelas en produkt.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributgrupp:',
+                    'title'              => 'Attributgrupper',
+                    'search-placeholder' => 'Sök grupper',
+                    'empty'              => 'Inga attributgrupper matchar din sökning.',
+                    'attributes-count'   => ':count attribut',
+                    'loading'            => 'Laddar...',
+                    'retry'              => 'Försök igen',
+                    'load-more'          => 'Ladda fler',
+                    'unsaved-title'      => 'Osparade ändringar',
+                    'unsaved-message'    => 'Spara dina ändringar i :group innan du går vidare, eller släng dem.',
+                    'save-and-continue'  => 'Spara och fortsätt',
+                    'discard-and-leave'  => 'Släng och fortsätt',
+                    'cancel'             => 'Avbryt',
                 ],
                 'images' => [
                     'info'  => 'Bilder måste ha upplösningen 560px X 609px',
@@ -285,10 +303,15 @@ return [
                         'title'      => 'Korsförsäljningsprodukter',
                     ],
                     'add-btn'           => 'Lägg till',
+                    'add-type-btn'      => 'Lägg till associationstyp',
                     'delete'            => 'Radera',
                     'empty-info'        => 'Lägg till produkter :type åt gången.',
                     'empty-title'       => 'Lägg till produkt',
                     'image-placeholder' => 'Produktbild',
+                    'more-types'        => 'Fler',
+                    'no-types-info'     => 'Använd ”Lägg till associationstyp” för att koppla den här produkten till en associationstyp.',
+                    'no-types-title'    => 'Inga associationer tillagda',
+                    'search-types'      => 'Sök associationstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
@@ -397,6 +420,33 @@ return [
                     'created-at'   => 'Skapad datum',
                     'product-type' => 'Produkttyp',
                 ],
+                'sections' => [
+                    'view'    => 'Visa',
+                    'unsaved' => 'Osparade ändringar',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Lägg till valda',
+                    'close'        => 'Stäng',
+                    'clear-search' => 'Rensa sökning',
+                    'categories'   => [
+                        'subtitle'        => 'Tilldela denna produkt till katalogkategorier.',
+                        'search'          => 'Sök kategorier…',
+                        'searching'       => 'Söker…',
+                        'no-results'      => 'Inga matchande kategorier hittades',
+                        'load-more'       => 'Ladda fler',
+                        'none-selected'   => 'Inga kategorier har valts ännu',
+                        'and-more'        => 'och :count till',
+                        'review-selected' => 'Visa valda kategorier',
+                        'selected'        => 'vald',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Länka relaterade, mersälj-, korsförsäljnings- och anpassade produkter.',
+                        'linked'   => 'länkade produkter',
+                    ],
+                ],
+
                 'more'         => 'Mer',
                 'more-actions' => 'Fler åtgärder',
                 'variations'   => [
@@ -960,6 +1010,64 @@ return [
             'not-found'         => 'Kategori fält med kod ":code" kunde inte hittas',
             'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Associationstyper',
+                'create-btn' => 'Skapa Associationstyp',
+                'add-btn'    => 'Skapa Associationstyp',
+
+                'datagrid' => [
+                    'code'                => 'Kod',
+                    'name'                => 'Namn',
+                    'status'              => 'Status',
+                    'position'            => 'Position',
+                    'edit'                => 'Redigera',
+                    'delete'              => 'Radera',
+                    'activated'           => 'Aktiverad',
+                    'disabled'            => 'Inaktiverad',
+                    'active'              => 'Aktivera',
+                    'disable'             => 'Inaktivera',
+                    'update-status'       => 'Uppdatera status',
+                    'delete-failed'       => 'Denna associationstyp kan inte raderas.',
+                    'mass-delete-success' => 'Valda associationstyper raderade framgångsrikt',
+                    'mass-delete-failed'  => 'De valda associationstyperna kan inte raderas.',
+                    'mass-update-success' => 'Uppdaterad framgångsrikt',
+                ],
+            ],
+
+            'create-success'    => 'Associationstyp skapades framgångsrikt',
+            'update-success'    => 'Associationstyp uppdaterades framgångsrikt',
+            'delete-success'    => 'Associationstyp raderades framgångsrikt',
+            'delete-failed'     => 'Det gick inte att radera associationstyp',
+            'user-define-error' => 'Det går inte att radera systemdefinierad associationstyp',
+            'unknown-fields'    => 'Fält för associationstyp med kod ":fields" kunde inte hittas',
+
+            'create' => [
+                'title'      => 'Skapa associationstyp',
+                'name'       => 'Namn',
+                'enter-name' => 'Ange namn',
+                'code'       => 'Kod',
+                'enter-code' => 'Ange kod',
+                'save-btn'   => 'Spara associationstyp',
+            ],
+
+            'edit' => [
+                'title'    => 'Redigera associationstyp',
+                'save-btn' => 'Uppdatera associationstyp',
+            ],
+
+            'fields' => [
+                'title'                => 'Fält',
+                'info'                 => 'Lägg till anpassade fält för att fånga ytterligare data för denna associationstyp.',
+                'add-field-btn'        => 'Lägg till fält',
+                'modal-title'          => 'Lägg till fält',
+                'edit-modal-title'     => 'Redigera fält',
+                'save-field-btn'       => 'Spara fält',
+                'same-code-error'      => 'Fältkoden måste vara unik.',
+                'add-fields-info'      => 'För att skapa anpassade fält för denna associationstyp.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Kategorifältalternativ har tagits bort',
             'create-success'      => 'Kategoriens fältalternativ skapades',
@@ -995,6 +1103,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Språk',
                 'level-parent'                     => 'Överordnad produkt',
                 'level-sub-parent'                 => 'Mellanliggande nivå',
                 'level-variant'                    => 'Variant',
@@ -1151,12 +1260,15 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Språkinställning med koden :code hittades inte.',
-                'create-btn'            => 'Skapa Lokalitet',
-                'locale'                => 'Lokalitet',
-                'title'                 => 'Lokaliteter',
-                'can-not-delete-error'  => 'Du kan inte radera en lokalitet kopplad till en kanal eller användare',
-                'can-not-disable-error' => 'Du kan inte inaktivera en lokalitet kopplad till en kanal eller användare',
+                'not-found'              => 'Språkinställning med koden :code hittades inte.',
+                'create-btn'             => 'Skapa Lokalitet',
+                'locale'                 => 'Lokalitet',
+                'title'                  => 'Lokaliteter',
+                'can-not-delete-error'   => 'Du kan inte radera en lokalitet kopplad till en kanal eller användare',
+                'can-not-disable-error'  => 'Du kan inte inaktivera en lokalitet kopplad till en kanal eller användare',
+                'partial-delete-success' => 'Valda lokaliteter raderades, förutom :count som är kopplade till en kanal eller användare.',
+                'partial-update-success' => 'Valda lokaliteter uppdaterades, förutom :count som är kopplade till en kanal eller användare.',
+
                 'datagrid'              => [
                     'actions'     => 'Åtgärder',
                     'code'        => 'Kod',
@@ -1362,6 +1474,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Importprocessen kunde inte startas. Försök igen.',
+                'rerun-no-file'     => 'Det här jobbet har ingen importfil, så det kan inte köras igen.',
                 'create'            => [
                     'code'                => 'Kod',
                     'action'              => 'Åtgärd',
@@ -1811,19 +1924,20 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Redigera Användare',
             ],
-            'activate-warning'             => 'Ditt konto har ännu inte aktiverats, vänligen kontakta administratören.',
-            'cannot-change'                => 'Användaren kan inte ändras',
-            'cannot-escalate-role'         => 'Du har inte behörighet att tilldela en roll med full åtkomst.',
-            'create-success'               => 'Användare skapades framgångsrikt.',
-            'delete-failed'                => 'Det gick inte att ta bort användaren.',
-            'delete-success'               => 'Användaren togs bort framgångsrikt.',
-            'delete-warning'               => 'Är du säker på att du vill utföra denna åtgärd?',
-            'incorrect-password'           => 'Felaktigt lösenord',
-            'last-delete-error'            => 'Det gick inte att ta bort den sista användaren',
-            'login-error'                  => 'Kontrollera dina uppgifter och försök igen.',
-            'update-success'               => 'Användare uppdaterad framgångsrikt.',
-            'current-user-delete-error'    => 'Den inloggade användaren kan inte tas bort.',
-            'last-all-access-delete-error' => 'Den sista aktiva administratören med full åtkomst kan inte tas bort.',
+            'activate-warning'                 => 'Ditt konto har ännu inte aktiverats, vänligen kontakta administratören.',
+            'cannot-change'                    => 'Användaren kan inte ändras',
+            'cannot-assign-unheld-permissions' => 'Du kan inte tilldela en roll som har behörigheter du inte själv har.',
+            'cannot-escalate-role'             => 'Du har inte behörighet att tilldela en roll med full åtkomst.',
+            'create-success'                   => 'Användare skapades framgångsrikt.',
+            'delete-failed'                    => 'Det gick inte att ta bort användaren.',
+            'delete-success'                   => 'Användaren togs bort framgångsrikt.',
+            'delete-warning'                   => 'Är du säker på att du vill utföra denna åtgärd?',
+            'incorrect-password'               => 'Felaktigt lösenord',
+            'last-delete-error'                => 'Det gick inte att ta bort den sista användaren',
+            'login-error'                      => 'Kontrollera dina uppgifter och försök igen.',
+            'update-success'                   => 'Användare uppdaterad framgångsrikt.',
+            'current-user-delete-error'        => 'Den inloggade användaren kan inte tas bort.',
+            'last-all-access-delete-error'     => 'Den sista aktiva administratören med full åtkomst kan inte tas bort.',
         ],
         'system-settings' => [
             'title'              => 'Systeminställningar',
@@ -2049,7 +2163,6 @@ return [
                 'all'            => 'Alla',
                 'back-btn'       => 'Tillbaka',
                 'custom'         => 'Egen',
-                'assign-user'    => 'Tilldela Användare',
                 'general'        => 'Allmänt',
                 'name'           => 'Namn',
                 'permissions'    => 'Tillstånd',
@@ -2061,7 +2174,6 @@ return [
                 'all'                         => 'Alla',
                 'back-btn'                    => 'Tillbaka',
                 'custom'                      => 'Egen',
-                'assign-user'                 => 'Tilldela Användare',
                 'general'                     => 'Allmänt',
                 'name'                        => 'Namn',
                 'credentials'                 => 'Kredentialer',
@@ -2271,6 +2383,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Expandera',
+            'collapse' => 'Fäll ihop',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Lägg till',
+                'already-added'      => 'Tillagd',
+                'empty-info'         => 'Prova en annan sökning.',
+                'empty-title'        => 'Inga associationstyper hittades',
+                'search-placeholder' => 'Sök efter namn eller kod',
+                'select-all'         => 'Välj alla',
+                'title'              => 'Lägg till associationstyp',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Lägg till valda',
+                'selected' => ':count produkter valda',
+                'title'    => 'Välj produkter',
+            ],
+        ],
         'pagination' => [
             'page' => 'Sida',
         ],
@@ -2281,6 +2414,13 @@ return [
             'close' => 'Stäng',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled av :total översatta',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Inga resultat',
+                'search' => 'Sök',
+            ],
             'ajax-error'      => 'Något gick fel när det skulle sparas. Försök igen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klicka för att ladda upp',
@@ -2306,6 +2446,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Fäll ihop panelen',
+                'expand'   => 'Expandera panelen',
+            ],
             'breadcrumbs' => [
                 'label' => 'Brödsmulor',
             ],
@@ -2332,6 +2476,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategorier',
                 'category_fields'    => 'Kategorifält',
+                'association_types'  => 'Associationstyper',
                 'channels'           => 'Kanaler',
                 'collapse'           => 'Kollapsa',
                 'configure'          => 'Konfiguration',
@@ -2772,6 +2917,7 @@ return [
         'url-rewrites'             => 'URL-omskrivningar',
         'users'                    => 'Användare',
         'category_fields'          => 'Kategori-fält',
+        'association_types'        => 'Associationstyper',
         'view'                     => 'Visa',
         'execute'                  => 'Utföra',
         'history'                  => 'Historik',
@@ -2782,6 +2928,8 @@ return [
         'exports'                  => 'Exporter',
         'mass-update'              => 'Massuppdatering',
         'mass-delete'              => 'Massradering',
+        'bulk-edit'                => 'Massredigering',
+        'quick-export'             => 'Snabbexport',
         'variant-structures'       => 'Variantstrukturer',
     ],
     'errors' => [

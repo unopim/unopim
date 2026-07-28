@@ -112,7 +112,11 @@ class ProductServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/products.php', 'products');
 
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/association_field_types.php', 'association_field_types');
+
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/suggesters.php', 'suggesters');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/product_editor.php', 'product_editor');
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/acl.php', 'acl');
     }

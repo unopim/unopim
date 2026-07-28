@@ -76,6 +76,7 @@ return [
             'general'             => 'Ogólne',
             'invalid-password'    => 'Wprowadzone aktualne hasło jest nieprawidłowe.',
             'name'                => 'Nazwa',
+            'password-whitespace' => 'Hasło nie może składać się wyłącznie ze spacji.',
             'password'            => 'Hasło',
             'gravatar-preview'    => 'Używane jest Twoje zdjęcie z Gravatar.com',
             'use-gravatar'        => 'Użyj obrazu Gravatar',
@@ -252,6 +253,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Nawigacja produktu',
                 'preview'    => 'Podgląd',
                 'remove'     => 'Usuń',
                 'save-btn'   => 'Zapisz produkt',
@@ -259,6 +261,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorie',
                     'root-not-allowed' => 'Kategorii głównej nie można przypisać do produktu.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grupa atrybutów:',
+                    'title'              => 'Grupy atrybutów',
+                    'search-placeholder' => 'Szukaj grup',
+                    'empty'              => 'Żadna grupa atrybutów nie pasuje do wyszukiwania.',
+                    'attributes-count'   => ':count atrybutów',
+                    'loading'            => 'Ładowanie...',
+                    'retry'              => 'Spróbuj ponownie',
+                    'load-more'          => 'Załaduj więcej',
+                    'unsaved-title'      => 'Niezapisane zmiany',
+                    'unsaved-message'    => 'Zapisz zmiany w grupie :group przed przejściem dalej lub je odrzuć.',
+                    'save-and-continue'  => 'Zapisz i kontynuuj',
+                    'discard-and-leave'  => 'Odrzuć i kontynuuj',
+                    'cancel'             => 'Anuluj',
                 ],
                 'images' => [
                     'info'  => 'Obrazy powinny mieć rozdzielczość 560px X 609px',
@@ -286,10 +304,15 @@ return [
                         'title'      => 'Produkty cross-sell',
                     ],
                     'add-btn'           => 'Dodaj',
+                    'add-type-btn'      => 'Dodaj typ powiązania',
                     'delete'            => 'Usuń',
                     'empty-info'        => 'Dodaj produkty :type jednocześnie.',
                     'empty-title'       => 'Dodaj produkt',
                     'image-placeholder' => 'Obraz produktu',
+                    'more-types'        => 'Więcej',
+                    'no-types-info'     => 'Użyj „Dodaj typ powiązania”, aby powiązać ten produkt z typem powiązania.',
+                    'no-types-title'    => 'Nie dodano żadnych powiązań',
+                    'search-types'      => 'Szukaj typów powiązań',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkty',
                 ],
@@ -398,6 +421,33 @@ return [
                     'created-at'   => 'Data utworzenia',
                     'product-type' => 'Typ produktu',
                 ],
+                'sections' => [
+                    'view'    => 'Wyświetl',
+                    'unsaved' => 'Niezapisane zmiany',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Dodaj wybrane',
+                    'close'        => 'Zamknij',
+                    'clear-search' => 'Wyczyść wyszukiwanie',
+                    'categories'   => [
+                        'subtitle'        => 'Przypisz ten produkt do kategorii katalogu.',
+                        'search'          => 'Szukaj kategorii…',
+                        'searching'       => 'Wyszukiwanie…',
+                        'no-results'      => 'Nie znaleziono pasujących kategorii',
+                        'load-more'       => 'Załaduj więcej',
+                        'none-selected'   => 'Nie wybrano jeszcze żadnej kategorii',
+                        'and-more'        => 'i :count więcej',
+                        'review-selected' => 'Pokaż wybrane kategorie',
+                        'selected'        => 'wybrano',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Połącz produkty powiązane, up-sell, cross-sell i niestandardowe.',
+                        'linked'   => 'powiązanych produktów',
+                    ],
+                ],
+
                 'more'         => 'Więcej',
                 'more-actions' => 'Więcej akcji',
                 'variations'   => [
@@ -961,6 +1011,64 @@ return [
             'not-found'         => 'Nie znaleziono pola kategorii o kodzie ":code"',
             'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Typy powiązań',
+                'create-btn' => 'Utwórz Typ Powiązania',
+                'add-btn'    => 'Utwórz Typ Powiązania',
+
+                'datagrid' => [
+                    'code'                => 'Kod',
+                    'name'                => 'Nazwa',
+                    'status'              => 'Status',
+                    'position'            => 'Pozycja',
+                    'edit'                => 'Edytuj',
+                    'delete'              => 'Usuń',
+                    'activated'           => 'Aktywowane',
+                    'disabled'            => 'Wyłączone',
+                    'active'              => 'Aktywne',
+                    'disable'             => 'Wyłącz',
+                    'update-status'       => 'Aktualizuj status',
+                    'delete-failed'       => 'Nie można usunąć tego typu powiązania.',
+                    'mass-delete-success' => 'Wybrane Typy Powiązań zostały pomyślnie usunięte',
+                    'mass-delete-failed'  => 'Nie można usunąć wybranych typów powiązań.',
+                    'mass-update-success' => 'Zaktualizowano pomyślnie',
+                ],
+            ],
+
+            'create-success'    => 'Typ powiązania został pomyślnie utworzony',
+            'update-success'    => 'Typ powiązania został zaktualizowany',
+            'delete-success'    => 'Typ powiązania został pomyślnie usunięty',
+            'delete-failed'     => 'Usunięcie typu powiązania nie powiodło się',
+            'user-define-error' => 'Nie można usunąć systemowego typu powiązania',
+            'unknown-fields'    => 'Nie znaleziono pola typu powiązania o kodzie ":fields"',
+
+            'create' => [
+                'title'      => 'Utwórz typ powiązania',
+                'name'       => 'Nazwa',
+                'enter-name' => 'Wprowadź nazwę',
+                'code'       => 'Kod',
+                'enter-code' => 'Wprowadź kod',
+                'save-btn'   => 'Zapisz typ powiązania',
+            ],
+
+            'edit' => [
+                'title'    => 'Edytuj typ powiązania',
+                'save-btn' => 'Zaktualizuj typ powiązania',
+            ],
+
+            'fields' => [
+                'title'                => 'Pola',
+                'info'                 => 'Dodaj niestandardowe pola, aby przechwycić dodatkowe dane dla tego typu powiązania.',
+                'add-field-btn'        => 'Dodaj pole',
+                'modal-title'          => 'Dodaj pole',
+                'edit-modal-title'     => 'Edytuj pole',
+                'save-field-btn'       => 'Zapisz pole',
+                'same-code-error'      => 'Kod pola musi być unikalny.',
+                'add-fields-info'      => 'Aby utworzyć niestandardowe pola dla tego typu powiązania.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Opcja pola kategorii została pomyślnie usunięta',
             'create-success'      => 'Opcja pola kategorii została utworzona',
@@ -996,6 +1104,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Język',
                 'level-parent'                     => 'Produkt nadrzędny',
                 'level-sub-parent'                 => 'Podnadrzędny',
                 'level-variant'                    => 'Wariant',
@@ -1152,12 +1261,15 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Nie znaleziono ustawień regionalnych o kodzie :code.',
-                'create-btn'            => 'Utwórz Lokalizację',
-                'locale'                => 'Lokalizacja',
-                'title'                 => 'Lokalizacje',
-                'can-not-delete-error'  => 'Nie można usunąć lokalizacji powiązanej z kanałem lub użytkownikiem',
-                'can-not-disable-error' => 'Nie można wyłączyć lokalizacji powiązanej z kanałem lub użytkownikiem',
+                'not-found'              => 'Nie znaleziono ustawień regionalnych o kodzie :code.',
+                'create-btn'             => 'Utwórz Lokalizację',
+                'locale'                 => 'Lokalizacja',
+                'title'                  => 'Lokalizacje',
+                'can-not-delete-error'   => 'Nie można usunąć lokalizacji powiązanej z kanałem lub użytkownikiem',
+                'can-not-disable-error'  => 'Nie można wyłączyć lokalizacji powiązanej z kanałem lub użytkownikiem',
+                'partial-delete-success' => 'Wybrane lokalizacje zostały usunięte, z wyjątkiem :count powiązanych z kanałem lub użytkownikiem.',
+                'partial-update-success' => 'Wybrane lokalizacje zostały zaktualizowane, z wyjątkiem :count powiązanych z kanałem lub użytkownikiem.',
+
                 'datagrid'              => [
                     'actions'     => 'Akcje',
                     'code'        => 'Kod',
@@ -1363,6 +1475,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Nie udało się rozpocząć procesu importu. Spróbuj ponownie.',
+                'rerun-no-file'     => 'To zadanie nie ma pliku importu, więc nie można go ponownie uruchomić.',
                 'create'            => [
                     'code'                => 'Kod',
                     'action'              => 'Akcja',
@@ -1811,19 +1924,20 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Edytuj użytkownika',
             ],
-            'activate-warning'             => 'Twoje konto nie zostało jeszcze aktywowane. Skontaktuj się z administratorem.',
-            'cannot-change'                => 'Użytkownika nie można zmienić',
-            'cannot-escalate-role'         => 'Nie masz uprawnień do przypisania roli z pełnym dostępem.',
-            'create-success'               => 'Użytkownik został utworzony pomyślnie.',
-            'delete-failed'                => 'Usuwanie użytkownika nie powiodło się.',
-            'delete-success'               => 'Użytkownik został pomyślnie usunięty.',
-            'delete-warning'               => 'Czy na pewno chcesz wykonać tę akcję?',
-            'incorrect-password'           => 'Niepoprawne hasło',
-            'last-delete-error'            => 'Ostatni użytkownik nie został usunięty',
-            'login-error'                  => 'Sprawdź swoje dane logowania i spróbuj ponownie.',
-            'update-success'               => 'Użytkownik został pomyślnie zaktualizowany.',
-            'current-user-delete-error'    => 'Nie można usunąć zalogowanego użytkownika.',
-            'last-all-access-delete-error' => 'Nie można usunąć ostatniego aktywnego administratora z pełnym dostępem.',
+            'activate-warning'                 => 'Twoje konto nie zostało jeszcze aktywowane. Skontaktuj się z administratorem.',
+            'cannot-change'                    => 'Użytkownika nie można zmienić',
+            'cannot-assign-unheld-permissions' => 'Nie możesz przypisać roli, która zawiera uprawnienia, których nie masz.',
+            'cannot-escalate-role'             => 'Nie masz uprawnień do przypisania roli z pełnym dostępem.',
+            'create-success'                   => 'Użytkownik został utworzony pomyślnie.',
+            'delete-failed'                    => 'Usuwanie użytkownika nie powiodło się.',
+            'delete-success'                   => 'Użytkownik został pomyślnie usunięty.',
+            'delete-warning'                   => 'Czy na pewno chcesz wykonać tę akcję?',
+            'incorrect-password'               => 'Niepoprawne hasło',
+            'last-delete-error'                => 'Ostatni użytkownik nie został usunięty',
+            'login-error'                      => 'Sprawdź swoje dane logowania i spróbuj ponownie.',
+            'update-success'                   => 'Użytkownik został pomyślnie zaktualizowany.',
+            'current-user-delete-error'        => 'Nie można usunąć zalogowanego użytkownika.',
+            'last-all-access-delete-error'     => 'Nie można usunąć ostatniego aktywnego administratora z pełnym dostępem.',
         ],
         'system-settings' => [
             'info'               => 'Zarządzaj ustawieniami systemu w jednym miejscu.',
@@ -2049,7 +2163,6 @@ return [
                 'all'            => 'Wszystkie',
                 'back-btn'       => 'Powrót',
                 'custom'         => 'Własne',
-                'assign-user'    => 'Przypisz użytkownika',
                 'general'        => 'Ogólne',
                 'name'           => 'Nazwa',
                 'permissions'    => 'Uprawnienia',
@@ -2061,7 +2174,6 @@ return [
                 'all'                         => 'Wszystkie',
                 'back-btn'                    => 'Powrót',
                 'custom'                      => 'Własne',
-                'assign-user'                 => 'Przypisz użytkownika',
                 'general'                     => 'Ogólne',
                 'name'                        => 'Nazwa',
                 'credentials'                 => 'Dane dostępu',
@@ -2271,6 +2383,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Rozwiń',
+            'collapse' => 'Zwiń',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Dodaj',
+                'already-added'      => 'Dodano',
+                'empty-info'         => 'Spróbuj innego wyszukiwania.',
+                'empty-title'        => 'Nie znaleziono typów powiązań',
+                'search-placeholder' => 'Szukaj według nazwy lub kodu',
+                'select-all'         => 'Zaznacz wszystko',
+                'title'              => 'Dodaj typ powiązania',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Dodaj wybrane',
+                'selected' => 'Wybrano produktów: :count',
+                'title'    => 'Wybierz produkty',
+            ],
+        ],
         'pagination' => [
             'page' => 'Strona',
         ],
@@ -2281,6 +2414,13 @@ return [
             'close' => 'Zamknij',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => 'Przetłumaczono :filled z :total',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Brak wyników',
+                'search' => 'Szukaj',
+            ],
             'ajax-error'      => 'Coś poszło nie tak podczas zapisywania. Spróbuj ponownie.',
             'file-uploader'   => [
                 'upload-cta'  => 'Kliknij, aby przesłać',
@@ -2306,6 +2446,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Zwiń panel',
+                'expand'   => 'Rozwiń panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Ścieżka nawigacji',
             ],
@@ -2332,6 +2476,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategorie',
                 'category_fields'    => 'Pola Kategorii',
+                'association_types'  => 'Typy powiązań',
                 'channels'           => 'Kanały',
                 'collapse'           => 'Zwiń',
                 'configure'          => 'Konfiguracja',
@@ -2772,6 +2917,7 @@ return [
         'url-rewrites'             => 'Przekształcenia URL',
         'users'                    => 'Użytkownicy',
         'category_fields'          => 'Pole kategorii',
+        'association_types'        => 'Typy powiązań',
         'view'                     => 'Podgląd',
         'execute'                  => 'Wykonaj',
         'history'                  => 'Historia',
@@ -2782,6 +2928,8 @@ return [
         'exports'                  => 'Eksporty',
         'mass-update'              => 'Masowa aktualizacja',
         'mass-delete'              => 'Masowe usuwanie',
+        'bulk-edit'                => 'Masowa edycja',
+        'quick-export'             => 'Szybki eksport',
         'variant-structures'       => 'Struktury wariantów',
     ],
     'errors' => [

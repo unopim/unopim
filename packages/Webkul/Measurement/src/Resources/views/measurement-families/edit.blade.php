@@ -55,19 +55,12 @@
                             </p>
                         </div>
 
-                        @foreach ($locales as $locale)
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label>
-                                    {{ $locale->name }}
-                                </x-admin::form.control-group.label>
-
-                                <x-admin::form.control-group.control
-                                    type="text"
-                                    name="labels[{{ $locale->code }}]"
-                                    value="{{ old('labels.' . $locale->code, $labels[$locale->code] ?? '') }}"
-                                />
-                            </x-admin::form.control-group>
-                        @endforeach
+                        <x-admin::form.translatable-field
+                            :locales="$locales"
+                            :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old('labels.' . $locale->code, $labels[$locale->code] ?? '')])->all()"
+                            name-template="labels[:locale]"
+                            :label="trans('measurement::app.measurement.edit.label')"
+                        />
                     </div>
                 </div>
             </div>

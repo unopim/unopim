@@ -29,9 +29,9 @@
                         class="secondary-button"
                         role="button"
                         tabindex="0"
-                        @click="$refs.variantCreateModal.open()"
-                        @keydown.enter.prevent="$refs.variantCreateModal.open()"
-                        @keydown.space.prevent="$refs.variantCreateModal.open()"
+                        @click="openVariantCreate()"
+                        @keydown.enter.prevent="openVariantCreate()"
+                        @keydown.space.prevent="openVariantCreate()"
                     >
                         @lang('admin::app.catalog.products.edit.types.configurable.add-btn')
                     </div>
@@ -791,6 +791,18 @@
             },
 
             methods: {
+                openVariantCreate() {
+                    const open = () => this.$refs.variantCreateModal.open();
+
+                    if (window.unopimConfirmUnsavedLeave) {
+                        window.unopimConfirmUnsavedLeave(open);
+
+                        return;
+                    }
+
+                    open();
+                },
+
                 async addVariant(params, { resetForm, setErrors }) {
                     let formData = new FormData(this.$refs.variantCreateForm);
 

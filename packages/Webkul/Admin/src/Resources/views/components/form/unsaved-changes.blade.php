@@ -116,6 +116,16 @@
                 },
             },
 
+            watch: {
+                isDirty: {
+                    immediate: true,
+
+                    handler(dirty) {
+                        this.$emitter.emit('unsaved-changes:state', { dirty });
+                    },
+                },
+            },
+
             mounted() {
                 this.debounced = this.debounce(this.recompute, 80);
 
@@ -164,17 +174,48 @@
                         }
                     });
 
+                    /**
+                     * Controls that join the form after the snapshot — a teleported
+                     * drawer claiming its fields via `form=`, for instance — are in
+                     * neither list above, so the emitter's group would mark nothing.
+                     */
+                    Object.keys(this.serializeForm()).forEach(name => {
+                        if (matches(name)) {
+                            this.touched[name] = true;
+                        }
+                    });
+
+                    this.debounced();
+                };
+
+                /**
+                 * Controls can join the form long after the baseline is taken — a
+                 * teleported drawer claims its fields with `form=` once its content
+                 * loads. Their current values become the baseline (they are, by
+                 * definition, the saved state) without clearing dirt already tracked
+                 * elsewhere on the page.
+                 */
+                this.onCustomSync = () => {
+                    const current = this.serializeForm();
+
+                    Object.keys(current).forEach(name => {
+                        if (! (name in this.initial)) {
+                            this.initial[name] = current[name];
+                        }
+                    });
+
                     this.debounced();
                 };
 
                 this.$nextTick(() => {
                     this.snapshot();
 
-                    ['input', 'change', 'click', 'keyup'].forEach(evt => {
+                    ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.addEventListener(evt, this.onFormEvent, true);
                     });
 
                     this.$refs.root.addEventListener('unsaved-changes:touch', this.onCustomTouch, true);
+                    this.$refs.root.addEventListener('unsaved-changes:sync', this.onCustomSync, true);
 
                     setTimeout(() => {
                         if (! this.hasTrusted) {
@@ -183,7 +224,6 @@
                         }
                     }, 700);
 
-                    // Remove the form's own save button so the bar's is the only one; retried in case it renders late.
                     if (this.hideSaveWhenTracked) {
                         this.removeInFormSave();
                         setTimeout(() => this.removeInFormSave(), 400);
@@ -195,16 +235,17 @@
 
             beforeUnmount() {
                 if (this.$refs.root) {
-                    ['input', 'change', 'click', 'keyup'].forEach(evt => {
+                    ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.removeEventListener(evt, this.onFormEvent, true);
                     });
 
                     this.$refs.root.removeEventListener('unsaved-changes:touch', this.onCustomTouch, true);
+                    this.$refs.root.removeEventListener('unsaved-changes:sync', this.onCustomSync, true);
                 }
 
                 this.$emitter.off('form-saved', this.onFormSaved);
 
-                clearInterval(this._savingWatch);
+                this.clearSubmitWatch();
 
                 this.toggleBeforeUnload(false);
                 this.setBarOpen(false);
@@ -215,11 +256,9 @@
                     return [...this.$refs.root.querySelectorAll('input[name], select[name], textarea[name]')]
                         .filter(el => ! ['submit', 'button'].includes(el.type))
                         .filter(el => ! ['_token', '_method'].includes(el.name))
-                        // Read-only / disabled fields can't be edited, so they never count as an unsaved change.
                         .filter(el => ! el.disabled && ! el.readOnly);
                 },
 
-                // Serialize the form as the browser would submit it (via FormData) so a value returned to its original reads as unchanged.
                 serializeForm() {
                     const form = this.$refs.root.querySelector('form');
                     const map = {};
@@ -326,7 +365,6 @@
 
                         group.classList.add('unsaved-dirty');
 
-                        // control-group.label fields already carry a CSS badge; inject one for checkboxes/toggles that use a plain <label>.
                         if (! group.querySelector('.unsaved-badge')) {
                             const badge = document.createElement('span');
 
@@ -361,7 +399,6 @@
                 },
 
                 discard() {
-                    // Confirm first — discarding is destructive with no undo; reuse the shared confirm modal.
                     this.$emitter.emit('open-confirm-modal', {
                         title: "@lang('admin::app.components.form.unsaved-changes.discard-title')",
                         message: "@lang('admin::app.components.form.unsaved-changes.discard-message')",
@@ -383,6 +420,10 @@
                             return;
                         }
 
+                        if (el.hasAttribute('data-unsaved-managed')) {
+                            return;
+                        }
+
                         if ('checked' in init) {
                             el.checked = init.checked;
                         } else if ('selected' in init) {
@@ -395,17 +436,16 @@
                         el.dispatchEvent(new Event('change', { bubbles: true }));
                     });
 
-                    // Rich fields (select, media, WYSIWYG) hold value in Vue state, not the DOM; broadcast a reset they restore from.
                     this.$emitter.emit('unsaved-changes:reset');
 
                     this.touched = {};
                     this.recompute();
 
-                    // Rich-field resets settle next tick; re-evaluate then so the bar clears once their inputs hold originals.
                     this.$nextTick(() => this.recompute());
                 },
 
                 onFormSaved() {
+                    this.saving = false;
                     this.hasTrusted = false;
                     this.touched = {};
 
@@ -420,55 +460,86 @@
                         return;
                     }
 
-                    // Ignore extra clicks during a slow save so requestSubmit can't queue a second AJAX before the first settles.
                     if (form.dataset.ajaxSubmitting === "true" || this.saving) {
                         return;
                     }
 
                     this.toggleBeforeUnload(false);
 
-                    // Native submit navigates away; the AJAX watcher would only false-alarm.
+                    // Native submit navigates away, so there is no outcome to wait for.
+                    // requestSubmit still runs HTML validation; submit() skips it.
                     if (form.dataset.ajaxForm !== "true" || ! form.requestSubmit) {
                         form.requestSubmit ? form.requestSubmit() : form.submit();
 
                         return;
                     }
 
+                    this.saving = true;
+
+                    this.watchSubmitOutcome(form);
+
                     form.requestSubmit();
+                },
 
-                    clearInterval(this._savingWatch);
+                /**
+                 * The submit outcome is reported by the form itself: `form:invalid`
+                 * when validation blocked it (no request left the browser) and
+                 * `form:settled` when an ajax save answered. Waiting for those beats
+                 * polling — validation is async, so a slow-but-valid form used to be
+                 * declared failed while its request was still being prepared.
+                 */
+                watchSubmitOutcome(form) {
+                    this.clearSubmitWatch();
 
-                    let wasBusy = false;
-                    let idleTicks = 0;
+                    const done = () => {
+                        this.clearSubmitWatch();
 
-                    this._savingWatch = setInterval(() => {
-                        const busy = form.dataset.ajaxSubmitting === "true";
+                        this.saving = false;
 
-                        this.saving = busy;
+                        this.toggleBeforeUnload(this.isDirty);
+                    };
 
-                        if (busy) {
-                            wasBusy = true;
+                    // The failing fields already carry their own inline messages, so the
+                    // toast states the outcome instead of repeating the first one.
+                    this._onSubmitInvalid = () => {
+                        done();
 
-                            return;
-                        }
+                        this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: "@lang('admin::app.components.form.unsaved-changes.save-failed')",
+                        });
 
-                        if (wasBusy) {
-                            clearInterval(this._savingWatch);
+                        this.focusFirstInvalid(form);
+                    };
 
-                            return;
-                        }
+                    this._onSubmitSettled = done;
 
-                        if (++idleTicks >= 4) {
-                            clearInterval(this._savingWatch);
+                    form.addEventListener('unopim:form:invalid', this._onSubmitInvalid);
+                    form.addEventListener('unopim:form:settled', this._onSubmitSettled);
 
-                            this.$emitter.emit('add-flash', {
-                                type: 'error',
-                                message: form.dataset.ajaxErrorMessage || "@lang('admin::app.components.form.unsaved-changes.save-failed')",
-                            });
+                    this._watchedForm = form;
 
-                            this.focusFirstInvalid(form);
-                        }
-                    }, 100);
+                    // A non-ajax form navigates away and never settles; a plugin may
+                    // also swallow the submit. Release the button rather than leave it
+                    // spinning forever — silently, since nothing actually failed.
+                    this._savingWatch = setTimeout(() => {
+                        this.clearSubmitWatch();
+
+                        this.saving = false;
+                    }, 30000);
+                },
+
+                clearSubmitWatch() {
+                    clearTimeout(this._savingWatch);
+
+                    if (! this._watchedForm) {
+                        return;
+                    }
+
+                    this._watchedForm.removeEventListener('unopim:form:invalid', this._onSubmitInvalid);
+                    this._watchedForm.removeEventListener('unopim:form:settled', this._onSubmitSettled);
+
+                    this._watchedForm = null;
                 },
 
                 focusFirstInvalid(form) {
@@ -501,15 +572,12 @@
                         return;
                     }
 
-                    // Keep the submit on action-only forms (no editable fields) — the bar never goes dirty, so it's the only trigger.
-                    // A media-only form still uses the bar: it marks dirty via `unsaved-changes:touch` despite having no named field.
                     if (this.controls().length === 0 && ! form.querySelector('[data-media-control]')) {
                         return;
                     }
 
                     const selector = 'button[type="submit"], button:not([type]), input[type="submit"]';
 
-                    // Collect in-form buttons plus ones outside the form associated via `form="<id>"` (querySelectorAll can't reach those).
                     const buttons = Array.from(form.querySelectorAll(selector));
 
                     if (form.id) {
@@ -523,12 +591,10 @@
                     }
 
                     buttons.forEach(btn => {
-                        // Keep submit buttons belonging to a modal/dialog inside this form — they have their own submit.
                         if (btn.closest('[data-unsaved-ignore]')) {
                             return;
                         }
 
-                        // Remove outright: a hidden button still triggers submit-on-Enter; the SPA re-renders it cleanly next visit.
                         btn.remove();
                     });
                 },
@@ -544,7 +610,6 @@
             },
         });
 
-        // Internal-navigation guard (once): while any tracked form is dirty, in-app link clicks confirm first. Fail-open otherwise.
         if (! window.__unsavedNavGuardInstalled) {
             window.__unsavedNavGuardInstalled = true;
 
@@ -555,8 +620,43 @@
                 leave:   "@lang('admin::app.components.form.unsaved-changes.leave')",
             };
 
-            const showUnsavedNavModal = (href) => {
-                // Reuse the shared confirm modal so the leave-page prompt matches every other confirmation.
+            const confirmLeave = () => new Promise((resolve) => {
+                window.app.config.globalProperties.$emitter.emit('open-confirm-modal', {
+                    title: unsavedNavStrings.title,
+                    message: unsavedNavStrings.message,
+                    options: {
+                        btnAgree: unsavedNavStrings.leave,
+                        btnDisagree: unsavedNavStrings.stay,
+                        btnAgreeClass: 'primary-button',
+                        btnDisagreeClass: 'transparent-button',
+                    },
+                    agree: () => {
+                        window.__unsavedBarCount = 0;
+                        window.__unsavedNavBypass = true;
+
+                        resolve(true);
+                    },
+                    disagree: () => resolve(false),
+                });
+            });
+
+            const unsavedNavGuard = () => {
+                window.__unsavedNavBypass = false;
+
+                if (! (window.__unsavedBarCount > 0)) {
+                    return true;
+                }
+
+                return confirmLeave();
+            };
+
+            window.unopimConfirmUnsavedLeave = (proceed, cancel = () => {}) => {
+                if (! (window.__unsavedBarCount > 0)) {
+                    proceed();
+
+                    return;
+                }
+
                 window.app.config.globalProperties.$emitter.emit('open-confirm-modal', {
                     title: unsavedNavStrings.title,
                     message: unsavedNavStrings.message,
@@ -568,53 +668,22 @@
                     },
                     agree: () => {
                         window.__unsavedNavBypass = true;
-                        window.location.href = href;
+
+                        proceed();
                     },
+                    disagree: cancel,
                 });
             };
 
-            document.addEventListener('click', (event) => {
-                if (! (window.__unsavedBarCount > 0)) {
-                    return;
+            const installUnsavedNavGuard = () => {
+                if (window.unopim && typeof window.unopim.registerNavigationGuard === 'function') {
+                    window.unopim.registerNavigationGuard(unsavedNavGuard);
                 }
+            };
 
-                const link = event.target.closest ? event.target.closest('a[href]') : null;
+            installUnsavedNavGuard();
 
-                if (! link) {
-                    return;
-                }
-
-                const raw = link.getAttribute('href') || '';
-
-                if (! raw || raw[0] === '#' || /^(javascript|mailto|tel):/i.test(raw)) {
-                    return;
-                }
-
-                if ((link.target && link.target !== '_self') || link.hasAttribute('download')) {
-                    return;
-                }
-
-                if (link.closest('.unsaved-bar') || link.closest('#unsaved-nav-modal')) {
-                    return;
-                }
-
-                let url;
-
-                try {
-                    url = new URL(link.href, window.location.href);
-                } catch (e) {
-                    return;
-                }
-
-                if (url.origin !== window.location.origin || url.href === window.location.href) {
-                    return;
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                showUnsavedNavModal(url.href);
-            }, true);
+            window.addEventListener('load', installUnsavedNavGuard, { once: true });
         }
     </script>
 @endPushOnce

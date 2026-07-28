@@ -218,9 +218,13 @@ class Import
         try {
             $source = $this->getSource();
 
+            if (! $source) {
+                throw new \RuntimeException('The import source file is missing or unreadable, so this job cannot be validated.');
+            }
+
             $typeImporter = $this->getTypeImporter()->setSource($source);
             $typeImporter->validateData();
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $state = self::STATE_FAILED;
             $this->errorHelper->addError(
                 AbstractImporter::ERROR_CODE_SYSTEM_EXCEPTION,

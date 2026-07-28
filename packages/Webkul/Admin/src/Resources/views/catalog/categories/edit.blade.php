@@ -142,6 +142,7 @@
                                         label-field="name"
                                         value-field="id"
                                         id-field="id"
+                                        children-page-size="100"
                                         :current-category="$category->id"
                                         :expanded-branch="json_encode($branchToParent)"
                                         :items="json_encode($categories)"

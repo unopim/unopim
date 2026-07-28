@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '商品関連付け',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' フィールドは必須です。',
+                    'self-link-not-allowed'       => '商品 \'%s\' は自分自身と関連付けることはできません。',
+                    'sku-not-found'               => 'SKU \'%s\' の商品が見つかりません。',
+                    'related-sku-not-found'       => 'SKU \'%s\' の関連商品が見つかりません。',
+                    'association-type-not-found'  => '関連付けタイプ \'%s\' は存在しないか無効です。',
+                    'invalid-field-value'         => '関連付けフィールドに無効な値が指定されました。',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '属性グループ',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'このエクスポートは大きすぎて実行できません：推定 :rows 行 × :columns 列（~:estimated）が利用可能な容量（~:available）を超えています。チャネル／ロケール（および属性）を絞り込んでから再試行してください。',
         'fields'           => [
-            'file-format'         => 'ファイル形式',
-            'with-media'          => 'メディアを含む',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'ファイル形式',
+            'with-media'             => 'メディアを含む',
+            'with-associations'      => '関連付けを含む',
+            'with-associations-info' => 'レガシーな up_sells、cross_sells、related_products の SKU リスト列をエクスポートに含めます',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => '属性',
+        ],
+        'product-associations' => [
+            'title' => '商品関連付け',
         ],
         'attribute-groups' => [
             'title' => '属性グループ',

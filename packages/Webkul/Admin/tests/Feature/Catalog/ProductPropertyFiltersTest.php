@@ -2,6 +2,7 @@
 
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Filters\ProductPropertyFilters;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 
 function productPropertyColumns(): array
@@ -89,6 +90,52 @@ describe('the product datagrid filter drawer', function () {
         expect($columns->where('index', 'completeness'))->toHaveCount(1)
             ->and($columns->firstWhere('index', 'completeness')->filterable)->toBeTrue()
             ->and($columns->firstWhere('index', 'completeness')->default_filter)->toBeFalse();
+
+        request()->replace([]);
+    });
+});
+
+/**
+ * Regression guard for issue #558: a plain product grid render must not fan out over every
+ * `is_filterable` attribute. Catalogs with thousands of filterable attributes made
+ * addFilterableAttributes() materialise a column per attribute on every load (10-20s stalls).
+ * Filterable attributes now surface through the lazy filter-picker endpoint and only become
+ * grid columns when the request actually filters on them.
+ */
+describe('filterable attributes stay out of the base grid render (#558)', function () {
+
+    beforeEach(function () {
+        $this->filterable = Attribute::factory()->create([
+            'code'          => 'issue558_filter_attr',
+            'type'          => 'text',
+            'is_filterable' => true,
+        ]);
+    });
+
+    it('does not materialise filterable attributes when no filter is requested', function () {
+        $datagrid = app(ProductDataGrid::class);
+        $datagrid->setQueryBuilder();
+        $datagrid->prepareColumns();
+
+        $indexes = collect($datagrid->getColumns())->pluck('index');
+
+        expect($indexes)->not->toContain($this->filterable->code);
+    });
+
+    it('adds the filterable attribute as a hidden column only once it is filtered on', function () {
+        request()->merge(['filters' => [
+            $this->filterable->code => [['operator' => 'equals', 'value' => 'foo']],
+        ]]);
+
+        $datagrid = app(ProductDataGrid::class);
+        $datagrid->setQueryBuilder();
+        $datagrid->prepareColumns();
+
+        $column = collect($datagrid->getColumns())->firstWhere('index', $this->filterable->code);
+
+        expect($column)->not->toBeNull()
+            ->and($column->visible)->toBeFalse()
+            ->and($column->filterable)->toBeTrue();
 
         request()->replace([]);
     });

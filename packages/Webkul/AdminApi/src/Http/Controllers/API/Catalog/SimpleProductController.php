@@ -75,6 +75,7 @@ class SimpleProductController extends ProductController
             'additional',
             'values',
             'variant',
+            'associations',
         ]);
 
         try {
@@ -91,6 +92,12 @@ class SimpleProductController extends ProductController
             } catch (ValidationException $e) {
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
+
+            // Validated BEFORE any product row is written below (plain
+            // create or the `parent`-variant create), so an invalid link's
+            // `additional_data` aborts here with nothing persisted -- see
+            // `validateRichAssociationsBeforeCreate()`.
+            $this->validateRichAssociationsBeforeCreate($data);
 
             if ($data['parent']) {
                 $data[AbstractType::PRODUCT_VALUES_KEY][AbstractType::COMMON_VALUES_KEY] = array_merge(
@@ -129,6 +136,7 @@ class SimpleProductController extends ProductController
             'parent',
             'additional',
             'values',
+            'associations',
         ]);
 
         try {
@@ -166,6 +174,7 @@ class SimpleProductController extends ProductController
             'status',
             'additional',
             'values',
+            'associations',
         ]);
 
         try {

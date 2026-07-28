@@ -14,9 +14,10 @@ class PartialUpdateConfigurableProductRequest extends ApiFormRequest
     public function rules(): array
     {
         return [
-            'status'     => ['nullable', 'boolean'],
-            'additional' => ['nullable', 'array'],
-            'values'     => ['nullable', 'array'],
+            'status'       => ['nullable', 'boolean'],
+            'additional'   => ['nullable', 'array'],
+            'values'       => ['nullable', 'array'],
+            'associations' => ['nullable', 'array'],
         ];
     }
 }

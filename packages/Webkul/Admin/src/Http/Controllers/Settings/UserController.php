@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -41,7 +42,7 @@ class UserController extends Controller
             return app(UserDataGrid::class)->toJson();
         }
 
-        $roles = $this->roleRepository->all();
+        $roles = $this->assignableRoles();
 
         return view('admin::settings.users.index', compact('roles'));
     }
@@ -55,21 +56,40 @@ class UserController extends Controller
      */
     protected function cannotAssignRole(?Role $targetRole): bool
     {
+        return $this->roleAssignmentError($targetRole) !== null;
+    }
+
+    protected function roleAssignmentError(?Role $targetRole): ?string
+    {
         if (! $targetRole) {
-            return false;
+            return null;
         }
 
         $actingRole = auth()->guard('admin')->user()->role;
 
         if ($actingRole->permission_type === 'all') {
-            return false;
+            return null;
         }
 
         if ($targetRole->permission_type === 'all') {
-            return true;
+            return 'admin::app.settings.users.cannot-escalate-role';
         }
 
-        return (bool) array_diff($targetRole->permissions ?? [], $actingRole->permissions ?? []);
+        if (array_diff($targetRole->permissions ?? [], $actingRole->permissions ?? [])) {
+            return 'admin::app.settings.users.cannot-assign-unheld-permissions';
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Collection<int, Role>
+     */
+    protected function assignableRoles(?int $keepRoleId = null)
+    {
+        return $this->roleRepository->all()
+            ->filter(fn ($role): bool => (int) $role->id === $keepRoleId || ! $this->cannotAssignRole($role))
+            ->values();
     }
 
     /**
@@ -92,9 +112,9 @@ class UserController extends Controller
 
         $data['use_gravatar'] = $request->boolean('use_gravatar', true);
 
-        if ($this->cannotAssignRole($this->roleRepository->find($data['role_id']))) {
+        if ($error = $this->roleAssignmentError($this->roleRepository->find($data['role_id']))) {
             return new JsonResponse([
-                'message' => trans('admin::app.settings.users.cannot-escalate-role'),
+                'message' => trans($error),
             ], JsonResponse::HTTP_FORBIDDEN);
         }
 
@@ -124,10 +144,13 @@ class UserController extends Controller
 
         Event::dispatch('user.admin.create.after', $admin);
 
-        return new JsonResponse([
-            'message'      => trans('admin::app.settings.users.create-success'),
-            'redirect_url' => route('admin.settings.users.edit', $admin->id),
-        ]);
+        $response = ['message' => trans('admin::app.settings.users.create-success')];
+
+        if (bouncer()->hasPermission('settings.users.users.edit')) {
+            $response['redirect_url'] = route('admin.settings.users.edit', $admin->id);
+        }
+
+        return new JsonResponse($response);
     }
 
     /**
@@ -143,7 +166,7 @@ class UserController extends Controller
             abort(404);
         }
 
-        $roles = $this->roleRepository->all();
+        $roles = $this->assignableRoles((int) $user->role_id);
 
         $timezone = ['id' => $user?->timezone, 'label' => $user?->timezone];
 
@@ -337,7 +360,7 @@ class UserController extends Controller
         /**
          * Is user with `permission_type` all changed status.
          */
-        $data['status'] = isset($data['status']);
+        $data['status'] = filter_var($data['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         $data['use_gravatar'] = $request->boolean('use_gravatar', true);
 

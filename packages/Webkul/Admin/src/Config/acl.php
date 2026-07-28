@@ -66,6 +66,16 @@ return [
         'route' => 'admin.catalog.products.update',
         'sort'  => 3,
     ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.attribute_groups',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.products.attribute_group_fields',
+        'sort'  => 3,
+    ], [
         'key'   => 'catalog.products.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.catalog.products.delete',
@@ -81,30 +91,35 @@ return [
         'route' => 'admin.catalog.products.mass_delete',
         'sort'  => 6,
     ], [
-        'key'   => 'catalog.products.edit',
-        'name'  => 'admin::app.acl.edit',
+        'key'   => 'catalog.products.quick_export',
+        'name'  => 'admin::app.acl.quick-export',
+        'route' => null,
+        'sort'  => 8,
+    ], [
+        'key'   => 'catalog.products.bulk_edit',
+        'name'  => 'admin::app.acl.bulk-edit',
         'route' => 'admin.catalog.products.bulk-edit.save',
-        'sort'  => 3,
+        'sort'  => 7,
     ], [
-        'key'   => 'catalog.products.edit',
-        'name'  => 'admin::app.acl.edit',
+        'key'   => 'catalog.products.bulk_edit',
+        'name'  => 'admin::app.acl.bulk-edit',
         'route' => 'admin.catalog.products.bulk-edit.save-media',
-        'sort'  => 3,
+        'sort'  => 7,
     ], [
-        'key'   => 'catalog.products',
-        'name'  => 'admin::app.acl.products',
+        'key'   => 'catalog.products.bulk_edit',
+        'name'  => 'admin::app.acl.bulk-edit',
         'route' => 'admin.catalog.products.bulkedit',
-        'sort'  => 1,
+        'sort'  => 7,
     ], [
-        'key'   => 'catalog.products',
-        'name'  => 'admin::app.acl.products',
+        'key'   => 'catalog.products.bulk_edit',
+        'name'  => 'admin::app.acl.bulk-edit',
         'route' => 'admin.catalog.bulkedit.attributes.fetch-all',
-        'sort'  => 1,
+        'sort'  => 7,
     ], [
-        'key'   => 'catalog.products',
-        'name'  => 'admin::app.acl.products',
+        'key'   => 'catalog.products.bulk_edit',
+        'name'  => 'admin::app.acl.bulk-edit',
         'route' => 'admin.catalog.products.bulkedit.filters',
-        'sort'  => 1,
+        'sort'  => 7,
     ], [
         'key'   => 'catalog.products',
         'name'  => 'admin::app.acl.products',
@@ -191,10 +206,45 @@ return [
         'route' => 'admin.catalog.category_fields.mass_delete',
         'sort'  => 5,
     ], [
+        'key'   => 'catalog.association_types',
+        'name'  => 'admin::app.acl.association_types',
+        'route' => 'admin.catalog.association_types.index',
+        'sort'  => 4,
+    ], [
+        'key'   => 'catalog.association_types.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.catalog.association_types.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.association_types.edit',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.catalog.association_types.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.association_types.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.catalog.association_types.delete',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.association_types.mass_update',
+        'name'  => 'admin::app.acl.mass-update',
+        'route' => 'admin.catalog.association_types.mass_update',
+        'sort'  => 4,
+    ], [
+        'key'   => 'catalog.association_types.mass_delete',
+        'name'  => 'admin::app.acl.mass-delete',
+        'route' => 'admin.catalog.association_types.mass_delete',
+        'sort'  => 5,
+    ], [
         'key'   => 'catalog.attributes',
         'name'  => 'admin::app.acl.attributes',
         'route' => 'admin.catalog.attributes.index',
-        'sort'  => 4,
+        'sort'  => 5,
     ], [
         'key'   => 'catalog.attributes.create',
         'name'  => 'admin::app.acl.create',
@@ -249,7 +299,7 @@ return [
         'key'   => 'catalog.attribute_groups',
         'name'  => 'admin::app.acl.attribute-groups',
         'route' => 'admin.catalog.attribute.groups.index',
-        'sort'  => 5,
+        'sort'  => 6,
     ], [
         'key'   => 'catalog.attribute_groups.create',
         'name'  => 'admin::app.acl.create',
@@ -284,7 +334,7 @@ return [
         'key'   => 'catalog.families',
         'name'  => 'admin::app.acl.attribute-families',
         'route' => 'admin.catalog.families.index',
-        'sort'  => 6,
+        'sort'  => 7,
     ], [
         'key'   => 'catalog.families.create',
         'name'  => 'admin::app.acl.create',
@@ -306,10 +356,11 @@ return [
         'route' => 'admin.catalog.families.delete',
         'sort'  => 3,
     ], [
-        'key'   => 'catalog.families.variant-structures',
-        'name'  => 'admin::app.acl.variant-structures',
-        'route' => 'admin.catalog.families.variant-structures.index',
-        'sort'  => 4,
+        'key'             => 'catalog.families.variant-structures',
+        'name'            => 'admin::app.acl.variant-structures',
+        'route'           => 'admin.catalog.families.variant-structures.index',
+        'sort'            => 4,
+        'also_authorizes' => ['admin.catalog.families.edit'],
     ], [
         'key'   => 'catalog.families.variant-structures.edit',
         'name'  => 'admin::app.acl.edit',
@@ -846,6 +897,11 @@ return [
         'route'  => 'admin.configuration.download',
         'sort'   => 10,
     ], [
+        'key'    => 'configuration',
+        'name'   => 'admin::app.acl.configuration',
+        'route'  => 'admin.configuration.edit',
+        'sort'   => 10,
+    ], [
         'key'   => 'configuration.integrations',
         'name'  => 'admin::app.acl.integrations',
         'route' => 'admin.configuration.integrations.index',
@@ -1001,16 +1057,6 @@ return [
         'key'   => 'catalog.category_fields',
         'name'  => 'admin::app.acl.category_fields',
         'route' => 'admin.catalog.category_fields.options',
-        'sort'  => 3,
-    ], [
-        'key'   => 'catalog.category_fields',
-        'name'  => 'admin::app.acl.category_fields',
-        'route' => 'admin.catalog.category_fields.search',
-        'sort'  => 3,
-    ], [
-        'key'   => 'catalog.category_fields',
-        'name'  => 'admin::app.acl.category_fields',
-        'route' => 'admin.catalog.category_fields.tree',
         'sort'  => 3,
     ], [
         'key'   => 'catalog.products',

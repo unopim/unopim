@@ -92,6 +92,7 @@
                             label-field="name"
                             name-field="parent_id"
                             value-field="id"
+                            children-page-size="100"
                             :items="json_encode($categories)"
                             :fallback-locale="config('app.fallback_locale')"
                             :value="old('parent_id') ?? ''"

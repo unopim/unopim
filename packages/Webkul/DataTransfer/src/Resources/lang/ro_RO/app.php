@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Asocieri de produse',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Câmpul \'%s\' este obligatoriu.',
+                    'self-link-not-allowed'       => 'Produsul \'%s\' nu poate fi asociat cu el însuși.',
+                    'sku-not-found'               => 'Produsul cu SKU \'%s\' nu a fost găsit.',
+                    'related-sku-not-found'       => 'Produsul asociat cu SKU \'%s\' nu a fost găsit.',
+                    'association-type-not-found'  => 'Tipul de asociere \'%s\' nu există sau este inactiv.',
+                    'invalid-field-value'         => 'Valoare nevalidă furnizată pentru un câmp de asociere.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grupuri de atribute',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
         'fields'           => [
-            'file-format'         => 'Format fișier',
-            'with-media'          => 'Cu media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format fișier',
+            'with-media'             => 'Cu media',
+            'with-associations'      => 'Cu asocieri',
+            'with-associations-info' => 'Include coloanele vechi cu liste de SKU-uri (up_sells, cross_sells și related_products) în export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Atribute',
+        ],
+        'product-associations' => [
+            'title' => 'Asocieri de produse',
         ],
         'attribute-groups' => [
             'title' => 'Grupuri de atribute',

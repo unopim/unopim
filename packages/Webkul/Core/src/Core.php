@@ -114,7 +114,7 @@ class Core
      */
     public function getAllChannels()
     {
-        return $this->channelRepository->all();
+        return $this->channelRepository->with('translations')->all();
     }
 
     /**
@@ -172,9 +172,9 @@ class Core
     /**
      * Returns the default channel code configured in `config/app.php`.
      */
-    public function getDefaultChannelCode(): string
+    public function getDefaultChannelCode(): ?string
     {
-        return $this->getDefaultChannel()?->code;
+        return $this->getDefaultChannel()?->code ?? config('app.channel');
     }
 
     /**

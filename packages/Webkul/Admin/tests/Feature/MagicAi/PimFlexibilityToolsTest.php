@@ -13,6 +13,7 @@ use Webkul\AiAgent\Http\Controllers\ChatController;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Core\RequestMemo;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\Product\Models\Product;
@@ -289,13 +290,7 @@ function setPimFlexCoreConfig(string $code, string $value): void
     ]);
 
     // getConfigData memoises per request; drop the stale entry after changing the row within a test.
-    $attributes = request()->attributes;
-
-    foreach ($attributes->keys() as $key) {
-        if (str_starts_with((string) $key, 'core_config_memo.')) {
-            $attributes->remove($key);
-        }
-    }
+    app(RequestMemo::class)->forget('core_config.');
 }
 
 function insertPimFlexTokenUsage(int $userId, int $tokens): void

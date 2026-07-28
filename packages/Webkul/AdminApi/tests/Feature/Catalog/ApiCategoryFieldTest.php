@@ -357,6 +357,8 @@ it('should create text category field with these validation types', function () 
 
         $data['validation'] = $validation;
 
+        $data['regex_pattern'] = $validation === 'regex' ? '/^[a-z]+$/' : null;
+
         try {
             $this->withHeaders($this->headers)->json('POST', route('admin.api.category-fields.store'), $data)
                 ->assertCreated();

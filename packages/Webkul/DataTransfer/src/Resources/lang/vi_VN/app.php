@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Liên kết sản phẩm',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Trường \'%s\' là bắt buộc.',
+                    'self-link-not-allowed'       => 'Sản phẩm \'%s\' không thể tự liên kết với chính nó.',
+                    'sku-not-found'               => 'Không tìm thấy sản phẩm có SKU \'%s\'.',
+                    'related-sku-not-found'       => 'Không tìm thấy sản phẩm liên kết có SKU \'%s\'.',
+                    'association-type-not-found'  => 'Loại liên kết \'%s\' không tồn tại hoặc không hoạt động.',
+                    'invalid-field-value'         => 'Giá trị không hợp lệ được cung cấp cho trường liên kết.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Nhóm thuộc tính',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
         'fields'           => [
-            'file-format'         => 'Định dạng tệp',
-            'with-media'          => 'Kèm phương tiện',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Định dạng tệp',
+            'with-media'             => 'Kèm phương tiện',
+            'with-associations'      => 'Kèm liên kết',
+            'with-associations-info' => 'Bao gồm các cột danh sách SKU cũ (up_sells, cross_sells và related_products) trong tệp xuất',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Thuộc tính',
+        ],
+        'product-associations' => [
+            'title' => 'Liên kết sản phẩm',
         ],
         'attribute-groups' => [
             'title' => 'Nhóm thuộc tính',

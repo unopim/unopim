@@ -103,7 +103,7 @@ class CategoryFieldController extends Controller
      */
     public function update(CategoryFieldForm $request, int $id): RedirectResponse
     {
-        $requestData = request()->except(['code', 'type', 'value_per_locale', 'is_unique']);
+        $requestData = request()->except(['code', 'type', '_options_dirty']);
 
         Event::dispatch('catalog.category_field.update.before', $id);
 

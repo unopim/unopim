@@ -103,17 +103,10 @@ class FindSimilarProducts implements PimTool
                     return json_encode(['error' => 'Either query or sku is required.']);
                 }
 
-                // Scope candidates to the source product's attribute family by
-                // default so "similar" means comparable products. Falls back to
-                // an unscoped pool when the family cannot be resolved.
                 $familyScoped = $sameFamilyOnly
                     && $sourceProduct
                     && ! empty($sourceProduct->attribute_family_id);
 
-                // Preferred path: persistent vector-store kNN searches the whole
-                // indexed catalog instead of a bounded recent pool. Returns []
-                // when the store is disabled or unavailable, falling back to the
-                // in-memory ranking below.
                 $knnRanked = $this->embeddingSimilarityService->rankProducts(
                     $queryText,
                     $limit + 1,
@@ -128,7 +121,7 @@ class FindSimilarProducts implements PimTool
 
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw("`{$prefix}p`.`values`"), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")), 'af.code as family_code')
                     ->orderByDesc('p.id')
                     ->limit($poolLimit);
 
@@ -243,7 +236,7 @@ class FindSimilarProducts implements PimTool
 
                 $products = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw("`{$prefix}p`.`values`"), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")), 'af.code as family_code')
                     ->whereIn('p.id', array_keys($scores))
                     ->get()
                     ->keyBy('id');

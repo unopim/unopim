@@ -74,6 +74,8 @@ class ProductTableSeeder extends Seeder
                     DB::table('products')->insert($variantRows);
                 }
 
+                $this->relocateProductImages();
+
                 $this->insertSuperAttributes($data['super_attributes'], $parentMap);
             });
 
@@ -295,6 +297,48 @@ class ProductTableSeeder extends Seeder
         if ($pivotRows !== []) {
             DB::table('product_super_attributes')->insertOrIgnore($pivotRows);
         }
+    }
+
+    protected function relocateProductImages(): void
+    {
+        $disk = Storage::disk('public');
+
+        DB::table('products')
+            ->select('id', 'values')
+            ->orderBy('id')
+            ->chunkById(200, function ($products) use ($disk): void {
+                foreach ($products as $product) {
+                    $values = json_decode((string) $product->values, true);
+
+                    if (! is_array($values)) {
+                        continue;
+                    }
+
+                    $path = $values['common']['image'] ?? null;
+
+                    if (! is_string($path) || $path === '') {
+                        continue;
+                    }
+
+                    $target = 'product/'.$product->id.'/image/'.basename($path);
+
+                    if ($path === $target) {
+                        continue;
+                    }
+
+                    if (! $disk->exists($path)) {
+                        continue;
+                    }
+
+                    $disk->put($target, $disk->get($path));
+
+                    $values['common']['image'] = $target;
+
+                    DB::table('products')
+                        ->where('id', $product->id)
+                        ->update(['values' => json_encode($values, JSON_THROW_ON_ERROR)]);
+                }
+            });
     }
 
     /**

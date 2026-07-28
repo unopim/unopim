@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Catalog\Options;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
@@ -91,6 +92,10 @@ class AjaxOptionsController extends Controller
 
         $formattedOptions = [];
 
+        $swatchType = $entityName === self::ENTITY_ATTRIBUTE_OPTION && $attributeId
+            ? $this->attributeRepository->find($attributeId)?->swatch_type
+            : null;
+
         foreach ($options as $option) {
             $translatedOptionLabel = $entityName === self::ENTITY_CATEGORY
                 ? $option->name
@@ -101,6 +106,7 @@ class AjaxOptionsController extends Controller
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
                 ...$option->makeHidden(['translations', 'label'])->toArray(),
+                'attribute' => ['swatch_type' => $swatchType],
             ];
         }
 
@@ -113,7 +119,12 @@ class AjaxOptionsController extends Controller
     }
 
     /**
-     * Fetch options according to parameters for search, page and id
+     * Fetch options according to parameters for search, page and id.
+     *
+     * `notInFamily` drops attributes already assigned to the given family. It
+     * exists because listing their codes in `exclude` does not scale: a large
+     * family assigns tens of thousands of attributes, and the caller would have
+     * to send every code on every page request.
      */
     protected function getOptionsByParams(
         int|string|null $id,
@@ -156,6 +167,32 @@ class AjaxOptionsController extends Controller
 
         if (isset($queryParams['exclude']) && is_array($queryParams['exclude']) && isset($queryParams['exclude']['values'])) {
             $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
+        }
+
+        if ($familyId = (int) ($queryParams['notInFamily'] ?? 0)) {
+            if ($entityName === self::ENTITY_ATTRIBUTE) {
+                $repository = $repository->whereNotExists(function ($builder) use ($familyId) {
+                    $builder->select(DB::raw(1))
+                        ->from('attribute_group_mappings')
+                        ->join(
+                            'attribute_family_group_mappings',
+                            'attribute_group_mappings.attribute_family_group_id',
+                            '=',
+                            'attribute_family_group_mappings.id'
+                        )
+                        ->whereColumn('attribute_group_mappings.attribute_id', 'attributes.id')
+                        ->where('attribute_family_group_mappings.attribute_family_id', $familyId);
+                });
+            }
+
+            if ($entityName === self::ENTITY_ATTRIBUTE_GROUP) {
+                $repository = $repository->whereNotExists(function ($builder) use ($familyId) {
+                    $builder->select(DB::raw(1))
+                        ->from('attribute_family_group_mappings')
+                        ->whereColumn('attribute_family_group_mappings.attribute_group_id', 'attribute_groups.id')
+                        ->where('attribute_family_group_mappings.attribute_family_id', $familyId);
+                });
+            }
         }
 
         if ($isCategory) {

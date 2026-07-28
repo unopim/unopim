@@ -50,9 +50,10 @@ class CoreConfigRepository extends Repository
                     $value = isset($field['default_value']) && $field['default_value'] !== '' ? $field['default_value'] : '';
                 }
 
-                if (($field['type'] ?? null) === 'password' && preg_match('/^\*+$/', $value)) {
+                if (($field['type'] ?? null) === 'password' && is_string($value) && preg_match('/^\*+$/', $value)) {
                     $original = core()->getConfigData($fieldName);
-                    if (strlen($value) === strlen((string) $original)) {
+
+                    if (! is_null($original)) {
                         $value = $original;
                     }
                 }
@@ -119,7 +120,7 @@ class CoreConfigRepository extends Repository
 
                 $results[] = [
                     'title' => implode(' > ', [...Arr::pluck($path, 'title'), $title]),
-                    'url'   => route('admin.configuration.index', Str::replace('.', '/', $queryParam)),
+                    'url'   => route('admin.configuration.edit', Str::replace('.', '/', $queryParam)),
                 ];
             }
 

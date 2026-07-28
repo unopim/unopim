@@ -76,6 +76,7 @@ return [
             'general'             => 'Tổng quát',
             'invalid-password'    => 'Mật khẩu hiện tại bạn nhập không chính xác.',
             'name'                => 'Tên',
+            'password-whitespace' => 'Mật khẩu không được chỉ chứa khoảng trắng.',
             'password'            => 'Mật khẩu',
             'gravatar-preview'    => 'Đang dùng ảnh Gravatar.com của bạn',
             'use-gravatar'        => 'Dùng ảnh Gravatar',
@@ -251,6 +252,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Điều hướng sản phẩm',
                 'preview'    => 'Xem trước',
                 'remove'     => 'Xóa',
                 'save-btn'   => 'Lưu sản phẩm',
@@ -258,6 +260,22 @@ return [
                 'categories' => [
                     'title'            => 'Danh mục',
                     'root-not-allowed' => 'Danh mục gốc không thể được gán cho sản phẩm.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Nhóm thuộc tính:',
+                    'title'              => 'Nhóm thuộc tính',
+                    'search-placeholder' => 'Tìm kiếm nhóm',
+                    'empty'              => 'Không có nhóm thuộc tính nào khớp với tìm kiếm của bạn.',
+                    'attributes-count'   => ':count thuộc tính',
+                    'loading'            => 'Đang tải...',
+                    'retry'              => 'Thử lại',
+                    'load-more'          => 'Tải thêm',
+                    'unsaved-title'      => 'Thay đổi chưa lưu',
+                    'unsaved-message'    => 'Hãy lưu các thay đổi trong :group trước khi tiếp tục, hoặc hủy bỏ chúng.',
+                    'save-and-continue'  => 'Lưu và tiếp tục',
+                    'discard-and-leave'  => 'Hủy bỏ và tiếp tục',
+                    'cancel'             => 'Hủy',
                 ],
                 'images' => [
                     'info'  => 'Hình ảnh phải có độ phân giải 560px X 609px',
@@ -285,10 +303,15 @@ return [
                         'title'      => 'Sản phẩm bán chéo',
                     ],
                     'add-btn'           => 'Thêm',
+                    'add-type-btn'      => 'Thêm Loại Liên Kết',
                     'delete'            => 'Xóa',
                     'empty-info'        => 'Thêm sản phẩm loại :type.',
                     'empty-title'       => 'Thêm sản phẩm',
                     'image-placeholder' => 'Hình ảnh sản phẩm',
+                    'more-types'        => 'Thêm',
+                    'no-types-info'     => 'Sử dụng "Thêm Loại Liên Kết" để liên kết sản phẩm này dưới một loại liên kết.',
+                    'no-types-title'    => 'Chưa thêm liên kết nào',
+                    'search-types'      => 'Tìm loại liên kết',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Sản phẩm',
                 ],
@@ -397,6 +420,33 @@ return [
                     'created-at'   => 'Ngày tạo',
                     'product-type' => 'Loại sản phẩm',
                 ],
+                'sections' => [
+                    'view'    => 'Xem',
+                    'unsaved' => 'Thay đổi chưa lưu',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Thêm mục đã chọn',
+                    'close'        => 'Đóng',
+                    'clear-search' => 'Xoá tìm kiếm',
+                    'categories'   => [
+                        'subtitle'        => 'Gán sản phẩm này vào danh mục.',
+                        'search'          => 'Tìm kiếm danh mục…',
+                        'searching'       => 'Đang tìm kiếm…',
+                        'no-results'      => 'Không tìm thấy danh mục phù hợp',
+                        'load-more'       => 'Tải thêm',
+                        'none-selected'   => 'Chưa chọn danh mục nào',
+                        'and-more'        => 'và :count mục khác',
+                        'review-selected' => 'Hiển thị danh mục đã chọn',
+                        'selected'        => 'đã chọn',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Liên kết sản phẩm liên quan, bán thêm, bán chéo và tùy chỉnh.',
+                        'linked'   => 'sản phẩm đã liên kết',
+                    ],
+                ],
+
                 'more'         => 'Thêm',
                 'more-actions' => 'Hành động khác',
                 'variations'   => [
@@ -960,6 +1010,64 @@ return [
             'not-found'         => 'Không tìm thấy Trường Danh Mục với mã ":code"',
             'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Loại liên kết',
+                'create-btn' => 'Tạo Loại Liên Kết',
+                'add-btn'    => 'Tạo Loại Liên Kết',
+
+                'datagrid' => [
+                    'code'                => 'Mã',
+                    'name'                => 'Tên',
+                    'status'              => 'Trạng Thái',
+                    'position'            => 'Vị Trí',
+                    'edit'                => 'Chỉnh Sửa',
+                    'delete'              => 'Xóa',
+                    'activated'           => 'Đã Kích Hoạt',
+                    'disabled'            => 'Đã Vô Hiệu Hóa',
+                    'active'              => 'Kích Hoạt',
+                    'disable'             => 'Vô Hiệu Hóa',
+                    'update-status'       => 'Cập Nhật Trạng Thái',
+                    'delete-failed'       => 'Không thể xóa loại liên kết này.',
+                    'mass-delete-success' => 'Đã Xóa Loại Liên Kết Chọn',
+                    'mass-delete-failed'  => 'Không thể xóa các loại liên kết đã chọn.',
+                    'mass-update-success' => 'Cập Nhật Thành Công',
+                ],
+            ],
+
+            'create-success'    => 'Loại Liên Kết Tạo Thành Công',
+            'update-success'    => 'Cập Nhật Loại Liên Kết Thành Công',
+            'delete-success'    => 'Xóa Loại Liên Kết Thành Công',
+            'delete-failed'     => 'Xóa Loại Liên Kết Thất Bại',
+            'user-define-error' => 'Không thể xóa Loại Liên Kết hệ thống',
+            'unknown-fields'    => 'Không tìm thấy trường Loại Liên Kết với mã ":fields"',
+
+            'create' => [
+                'title'      => 'Tạo loại liên kết',
+                'name'       => 'Tên',
+                'enter-name' => 'Nhập tên',
+                'code'       => 'Mã',
+                'enter-code' => 'Nhập mã',
+                'save-btn'   => 'Lưu loại liên kết',
+            ],
+
+            'edit' => [
+                'title'    => 'Chỉnh sửa loại liên kết',
+                'save-btn' => 'Cập nhật loại liên kết',
+            ],
+
+            'fields' => [
+                'title'                => 'Trường',
+                'info'                 => 'Thêm các trường tùy chỉnh để thu thập dữ liệu bổ sung cho loại liên kết này.',
+                'add-field-btn'        => 'Thêm trường',
+                'modal-title'          => 'Thêm trường',
+                'edit-modal-title'     => 'Chỉnh sửa trường',
+                'save-field-btn'       => 'Lưu trường',
+                'same-code-error'      => 'Mã trường phải là duy nhất.',
+                'add-fields-info'      => 'Để tạo các trường tùy chỉnh cho loại liên kết này.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Đã xóa tùy chọn trường danh mục thành công',
             'create-success'      => 'Tùy chọn trường danh mục đã được tạo thành công',
@@ -995,6 +1103,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Ngôn ngữ',
                 'level-parent'                     => 'Sản phẩm cha',
                 'level-sub-parent'                 => 'Cha phụ',
                 'level-variant'                    => 'Biến thể',
@@ -1151,12 +1260,15 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Không tìm thấy ngôn ngữ có mã :code.',
-                'create-btn'            => 'Tạo Ngôn Ngữ',
-                'locale'                => 'Ngôn Ngữ',
-                'title'                 => 'Các Ngôn Ngữ',
-                'can-not-delete-error'  => 'Bạn không thể xóa ngôn ngữ liên kết với kênh hoặc người dùng',
-                'can-not-disable-error' => 'Bạn không thể tắt ngôn ngữ liên kết với kênh hoặc người dùng',
+                'not-found'              => 'Không tìm thấy ngôn ngữ có mã :code.',
+                'create-btn'             => 'Tạo Ngôn Ngữ',
+                'locale'                 => 'Ngôn Ngữ',
+                'title'                  => 'Các Ngôn Ngữ',
+                'can-not-delete-error'   => 'Bạn không thể xóa ngôn ngữ liên kết với kênh hoặc người dùng',
+                'can-not-disable-error'  => 'Bạn không thể tắt ngôn ngữ liên kết với kênh hoặc người dùng',
+                'partial-delete-success' => 'Các ngôn ngữ đã chọn đã được xóa, ngoại trừ :count liên kết với kênh hoặc người dùng.',
+                'partial-update-success' => 'Các ngôn ngữ đã chọn đã được cập nhật, ngoại trừ :count liên kết với kênh hoặc người dùng.',
+
                 'datagrid'              => [
                     'actions'     => 'Hành động',
                     'code'        => 'Mã',
@@ -1362,6 +1474,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Không thể bắt đầu quá trình nhập. Vui lòng thử lại.',
+                'rerun-no-file'     => 'Công việc này không có tệp nhập, vì vậy không thể chạy lại.',
                 'create'            => [
                     'code'                => 'Mã',
                     'action'              => 'Hành động',
@@ -1811,19 +1924,20 @@ return [
                 'status'           => 'Trạng thái',
                 'title'            => 'Chỉnh sửa người dùng',
             ],
-            'activate-warning'             => 'Tài khoản của bạn chưa được kích hoạt, vui lòng liên hệ với quản trị viên.',
-            'cannot-change'                => 'Không thể thay đổi người dùng',
-            'cannot-escalate-role'         => 'Bạn không có quyền gán vai trò truy cập đầy đủ.',
-            'create-success'               => 'Người dùng đã được tạo thành công.',
-            'delete-failed'                => 'Không thể xóa người dùng.',
-            'delete-success'               => 'Người dùng đã bị xóa thành công.',
-            'delete-warning'               => 'Bạn có chắc chắn muốn thực hiện hành động này?',
-            'incorrect-password'           => 'Mật khẩu không chính xác',
-            'last-delete-error'            => 'Không thể xóa người dùng cuối cùng',
-            'login-error'                  => 'Vui lòng kiểm tra thông tin của bạn và thử lại.',
-            'update-success'               => 'Người dùng đã được cập nhật thành công.',
-            'current-user-delete-error'    => 'Không thể xóa người dùng hiện tại.',
-            'last-all-access-delete-error' => 'Không thể xóa quản trị viên toàn quyền đang hoạt động cuối cùng.',
+            'activate-warning'                 => 'Tài khoản của bạn chưa được kích hoạt, vui lòng liên hệ với quản trị viên.',
+            'cannot-change'                    => 'Không thể thay đổi người dùng',
+            'cannot-assign-unheld-permissions' => 'Bạn không thể gán vai trò có chứa quyền mà bạn không có.',
+            'cannot-escalate-role'             => 'Bạn không có quyền gán vai trò truy cập đầy đủ.',
+            'create-success'                   => 'Người dùng đã được tạo thành công.',
+            'delete-failed'                    => 'Không thể xóa người dùng.',
+            'delete-success'                   => 'Người dùng đã bị xóa thành công.',
+            'delete-warning'                   => 'Bạn có chắc chắn muốn thực hiện hành động này?',
+            'incorrect-password'               => 'Mật khẩu không chính xác',
+            'last-delete-error'                => 'Không thể xóa người dùng cuối cùng',
+            'login-error'                      => 'Vui lòng kiểm tra thông tin của bạn và thử lại.',
+            'update-success'                   => 'Người dùng đã được cập nhật thành công.',
+            'current-user-delete-error'        => 'Không thể xóa người dùng hiện tại.',
+            'last-all-access-delete-error'     => 'Không thể xóa quản trị viên toàn quyền đang hoạt động cuối cùng.',
         ],
         'system-settings' => [
             'title'              => 'Cài đặt hệ thống',
@@ -2049,7 +2163,6 @@ return [
                 'all'            => 'Tất cả',
                 'back-btn'       => 'Quay lại',
                 'custom'         => 'Tùy chỉnh',
-                'assign-user'    => 'Gán người dùng',
                 'general'        => 'Chung',
                 'name'           => 'Tên',
                 'permissions'    => 'Quyền hạn',
@@ -2061,7 +2174,6 @@ return [
                 'all'                         => 'Tất cả',
                 'back-btn'                    => 'Quay lại',
                 'custom'                      => 'Tùy chỉnh',
-                'assign-user'                 => 'Gán người dùng',
                 'general'                     => 'Chung',
                 'name'                        => 'Tên',
                 'credentials'                 => 'Chứng chỉ',
@@ -2271,6 +2383,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Mở rộng',
+            'collapse' => 'Thu gọn',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Thêm',
+                'already-added'      => 'Đã thêm',
+                'empty-info'         => 'Hãy thử tìm kiếm khác.',
+                'empty-title'        => 'Không tìm thấy loại liên kết nào',
+                'search-placeholder' => 'Tìm theo tên hoặc mã',
+                'select-all'         => 'Chọn tất cả',
+                'title'              => 'Thêm Loại Liên Kết',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Thêm mục đã chọn',
+                'selected' => 'Đã chọn :count sản phẩm',
+                'title'    => 'Chọn sản phẩm',
+            ],
+        ],
         'pagination' => [
             'page' => 'Trang',
         ],
@@ -2281,6 +2414,13 @@ return [
             'close' => 'Đóng',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => 'Đã dịch :filled trên :total',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Không có kết quả',
+                'search' => 'Tìm kiếm',
+            ],
             'ajax-error'      => 'Đã xảy ra lỗi khi lưu. Vui lòng thử lại.',
             'file-uploader'   => [
                 'upload-cta'  => 'Nhấp để tải lên',
@@ -2306,6 +2446,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Thu gọn bảng',
+                'expand'   => 'Mở rộng bảng',
+            ],
             'breadcrumbs' => [
                 'label' => 'Đường dẫn điều hướng',
             ],
@@ -2332,6 +2476,7 @@ return [
                 'catalog'            => 'Danh mục',
                 'categories'         => 'Danh mục',
                 'category_fields'    => 'Các trường danh mục',
+                'association_types'  => 'Loại liên kết',
                 'channels'           => 'Kênh',
                 'collapse'           => 'Gập lại',
                 'configure'          => 'Cấu hình',
@@ -2772,6 +2917,7 @@ return [
         'url-rewrites'             => 'Tái viết URL',
         'users'                    => 'Người dùng',
         'category_fields'          => 'Các trường danh mục',
+        'association_types'        => 'Loại liên kết',
         'view'                     => 'Xem',
         'execute'                  => 'Thực hiện',
         'history'                  => 'Lịch sử',
@@ -2782,6 +2928,8 @@ return [
         'exports'                  => 'Xuất khẩu',
         'mass-update'              => 'Cập nhật hàng loạt',
         'mass-delete'              => 'Xóa hàng loạt',
+        'bulk-edit'                => 'Chỉnh sửa hàng loạt',
+        'quick-export'             => 'Xuất khẩu nhanh',
         'variant-structures'       => 'Cấu trúc biến thể',
     ],
     'errors' => [

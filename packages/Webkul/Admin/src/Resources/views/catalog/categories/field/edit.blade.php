@@ -23,7 +23,7 @@
     @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-edit-category-fields-template"
+            id="v-edit-category-fields-template-{{ $categoryField->id }}"
         >
 
             {!! view_render_event('unopim.admin.catalog.category_fields.edit.before') !!}
@@ -164,32 +164,26 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label
-                                            class="w-full"
-                                            localizable="true"
-                                            :current-locale-code="$locale->code"
-                                        >
-                                            @lang('admin::app.catalog.category_fields.edit.label')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            :name="$locale->code . '[name]'"
-                                            :value="old($locale->code)['name'] ?? ($categoryField->translate($locale->code)->name ?? '')"
-                                        />
-
-                                        <x-admin::form.control-group.error :control-name="$locale->code . '[name]'" />
-                                    </x-admin::form.control-group>
-                                @endforeach
+                                <x-admin::form.translatable-field
+                                    :locales="$locales"
+                                    :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($categoryField->translate($locale->code)->name ?? '')])->all()"
+                                    :label="trans('admin::app.catalog.category_fields.edit.label')"
+                                />
                             </div>
                         </div>
 
                         <div
+                            data-dirty-section
                             class="p-4 bg-white dark:bg-cherry-900 box-shadow rounded {{ in_array($categoryField->type, ['select', 'multiselect', 'checkbox', 'price']) ?: 'hidden' }}"
                             v-if="showSwatch"
                         >
+                            <input
+                                type="hidden"
+                                name="_options_dirty"
+                                ref="optionsDirtyMarker"
+                                :value="optionsTick"
+                            />
+
                             <div class="flex justify-between items-center mb-3">
                                 <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                                     @lang('admin::app.catalog.category_fields.edit.options')
@@ -242,6 +236,7 @@
                                                 v-bind="{animation: 200}"
                                                 :list="optionsData"
                                                 item-key="id"
+                                                @change="signalOptionsChanged"
                                             >
                                                 <template #item="{ element, index }">
                                                     <x-admin::table.thead.tr
@@ -437,24 +432,27 @@
                                     </label>
                                 </x-admin::form.control-group>
 
-                                <x-admin::form.control-group class="flex gap-2.5 items-center opacity-70 !mb-0 select-none">
-                                    <x-admin::form.control-group.control
-                                        type="checkbox"
-                                        id="is_unique"
-                                        name="is_unique"
-                                        value="1"
-                                        for="is_unique"
-                                        :checked="(boolean) $categoryField->is_unique"
-                                        disabled
-                                    />
+                                @if (in_array($categoryField->type, ['text', 'date', 'datetime']))
+                                    <x-admin::form.control-group class="flex gap-2.5 items-center !mb-0 select-none">
+                                        <input type="hidden" name="is_unique" value="0">
 
-                                    <label
-                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
-                                        for="is_unique"
-                                    >
-                                        @lang('admin::app.catalog.category_fields.edit.is-unique')
-                                    </label>    
-                                </x-admin::form.control-group>
+                                        <x-admin::form.control-group.control
+                                            type="checkbox"
+                                            id="is_unique"
+                                            name="is_unique"
+                                            value="1"
+                                            for="is_unique"
+                                            :checked="(boolean) (old('is_unique') ?? $categoryField->is_unique)"
+                                        />
+
+                                        <label
+                                            class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
+                                            for="is_unique"
+                                        >
+                                            @lang('admin::app.catalog.category_fields.edit.is-unique')
+                                        </label>
+                                    </x-admin::form.control-group>
+                                @endif
                             </x-slot>
                         </x-admin::accordion>
 
@@ -470,31 +468,28 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 opacity-70 select-none">
+                                <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
                                     @php
                                         $valuePerLocale = old('value_per_locale') ?? $categoryField->value_per_locale;
                                     @endphp
+
+                                    <input type="hidden" name="value_per_locale" value="0">
 
                                     <x-admin::form.control-group.control
                                         type="checkbox"
                                         id="value_per_locale"
                                         name="value_per_locale"
                                         value="1"
+                                        for="value_per_locale"
                                         :checked="(boolean) $valuePerLocale"
-                                        :disabled="(boolean) $valuePerLocale"
                                     />
 
                                     <label
-                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-not-allowed"
+                                        class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
+                                        for="value_per_locale"
                                     >
                                         @lang('admin::app.catalog.category_fields.edit.value-per-locale')
-                                    </label>   
-
-                                    <x-admin::form.control-group.control
-                                        type="hidden"
-                                        name="value_per_locale"
-                                        :value="(boolean) $valuePerLocale"
-                                    />
+                                    </label>
                                 </x-admin::form.control-group>
                             </x-slot>
                         </x-admin::accordion>
@@ -664,25 +659,26 @@
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
 
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label
-                                            class="w-full"
-                                            localizable="true"
-                                            :current-locale-code="$locale->code"
+                                <x-admin::form.translatable-fields
+                                    :locales="$locales"
+                                    :label="trans('admin::app.catalog.category_fields.edit.label')"
+                                >
+                                    @foreach ($locales as $locale)
+                                        <x-admin::form.control-group
+                                            class="w-full mb-2.5"
+                                            v-show="locale === '{{ $locale->code }}'"
                                         >
-                                            @lang('admin::app.catalog.category_fields.edit.label')
-                                        </x-admin::form.control-group.label>
+                                            <x-admin::form.control-group.control
+                                                type="text"
+                                                name="locales.{{ $locale->code }}"
+                                                :label="$locale->name"
+                                                :v-code-generator="$locale->code === core()->getRequestedLocaleCode() ? '\'code\'' : null"
+                                            />
 
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            name="locales.{{ $locale->code }}"
-                                            :label="$locale->name"
-                                        />
-
-                                        <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
-                                    </x-admin::form.control-group>
-                                @endforeach
+                                            <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
+                                        </x-admin::form.control-group>
+                                    @endforeach
+                                </x-admin::form.translatable-fields>
                             </div>
                         </x-slot>
 
@@ -704,7 +700,7 @@
 
         <script type="module">
             app.component('v-edit-category-fields', {
-                template: '#v-edit-category-fields-template',
+                template: '#v-edit-category-fields-template-{{ $categoryField->id }}',
 
                 props: ['locales'],
 
@@ -726,6 +722,8 @@
 
                         optionsData: [],
 
+                        optionsTick: 0,
+
                         optionIsNew: true,
 
                         optionId: 0,
@@ -740,6 +738,14 @@
                     this.getCatgoryFieldOptions();
                 },
 
+                mounted() {
+                    this.$emitter.on('unsaved-changes:reset', this.restoreOptions);
+                },
+
+                beforeUnmount() {
+                    this.$emitter.off('unsaved-changes:reset', this.restoreOptions);
+                },
+
                 watch: {
                     validationType(value) {
                         this.selectedValidationType = this.parseValue(value)?.id;
@@ -747,6 +753,39 @@
                 },
 
                 methods: {
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
+
+                    restoreOptions() {
+                        this.optionsTick = 0;
+
+                        this.getCatgoryFieldOptions();
+                    },
+
+                    signalOptionsChanged() {
+                        this.optionsTick++;
+
+                        this.$nextTick(() => {
+                            const marker = this.$refs.optionsDirtyMarker;
+
+                            if (! marker) {
+                                return;
+                            }
+
+                            marker.dispatchEvent(new Event('input', { bubbles: true }));
+                            marker.dispatchEvent(new Event('change', { bubbles: true }));
+                            marker.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                bubbles: true,
+                                detail: { name: '_options_dirty' },
+                            }));
+                        });
+                    },
+
                     storeOptions(params, { resetForm, setValues }) {
                         if (! params.id) {
                             params.id = 'option_' + this.optionId;
@@ -768,6 +807,8 @@
 
                             this.optionsData.push(params);
                         }
+
+                        this.signalOptionsChanged();
 
                         let formData = new FormData(this.$refs.editOptionsForm);
 
@@ -809,6 +850,8 @@
                             } else {
                                 this.optionsData[foundIndex].isDelete = true;
                             }
+
+                            this.signalOptionsChanged();
                         }
                     },
 
@@ -822,6 +865,8 @@
                         this.$axios.get(`${this.src}`)
                             .then(response => {
                                 let options = response.data;
+
+                                this.optionsData = [];
 
                                 options.forEach((option) => {
                                     let row = {
@@ -858,7 +903,6 @@
 
                         dataTransfer.items.add(file);
 
-                        // Use Set timeout because need to wait for render dom before set the src or get the ref value
                         setTimeout(() => {
                             this.$refs['image_' + id].src =  URL.createObjectURL(file);
 

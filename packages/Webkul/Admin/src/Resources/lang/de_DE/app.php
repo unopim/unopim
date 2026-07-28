@@ -76,6 +76,7 @@ return [
             'general'             => 'Allgemein',
             'invalid-password'    => 'Das aktuelle Passwort, das Sie eingegeben haben, ist falsch.',
             'name'                => 'Name',
+            'password-whitespace' => 'Das Passwort darf nicht nur aus Leerzeichen bestehen.',
             'password'            => 'Passwort',
             'gravatar-preview'    => 'Ihr Gravatar.com-Bild wird verwendet',
             'use-gravatar'        => 'Gravatar-Bild verwenden',
@@ -251,6 +252,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigation',
                 'preview'    => 'Vorschau',
                 'remove'     => 'Entfernen',
                 'save-btn'   => 'Produkt speichern',
@@ -258,6 +260,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorien',
                     'root-not-allowed' => 'Die Stammkategorie kann einem Produkt nicht zugewiesen werden.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributgruppe:',
+                    'title'              => 'Attributgruppen',
+                    'search-placeholder' => 'Gruppen suchen',
+                    'empty'              => 'Keine Attributgruppe entspricht Ihrer Suche.',
+                    'attributes-count'   => ':count Attribute',
+                    'loading'            => 'Wird geladen...',
+                    'retry'              => 'Erneut versuchen',
+                    'load-more'          => 'Mehr laden',
+                    'unsaved-title'      => 'Nicht gespeicherte Änderungen',
+                    'unsaved-message'    => 'Speichern Sie Ihre Änderungen an :group, bevor Sie fortfahren, oder verwerfen Sie sie.',
+                    'save-and-continue'  => 'Speichern und fortfahren',
+                    'discard-and-leave'  => 'Verwerfen und fortfahren',
+                    'cancel'             => 'Abbrechen',
                 ],
                 'images' => [
                     'info'  => 'Die Bildauflösung sollte etwa 560 x 609 Pixel betragen.',
@@ -285,10 +303,15 @@ return [
                         'title'      => 'Cross-Selling-Produkte',
                     ],
                     'add-btn'           => 'Hinzufügen',
+                    'add-type-btn'      => 'Assoziationstyp hinzufügen',
                     'delete'            => 'Löschen',
                     'empty-info'        => 'Um :type Produkte auf einmal hinzuzufügen.',
                     'empty-title'       => 'Produkt hinzufügen',
                     'image-placeholder' => 'Produktbild',
+                    'more-types'        => 'Mehr',
+                    'no-types-info'     => 'Verwenden Sie „Assoziationstyp hinzufügen“, um dieses Produkt einem Assoziationstyp zuzuordnen.',
+                    'no-types-title'    => 'Keine Assoziationen hinzugefügt',
+                    'search-types'      => 'Verknüpfungstypen suchen',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Verbände',
                 ],
@@ -397,6 +420,33 @@ return [
                     'created-at'   => 'Erstellt am',
                     'product-type' => 'Produkttyp',
                 ],
+                'sections' => [
+                    'view'    => 'Ansehen',
+                    'unsaved' => 'Nicht gespeicherte Änderungen',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Auswahl hinzufügen',
+                    'close'        => 'Schließen',
+                    'clear-search' => 'Suche löschen',
+                    'categories'   => [
+                        'subtitle'        => 'Weisen Sie dieses Produkt Katalogkategorien zu.',
+                        'search'          => 'Kategorien suchen…',
+                        'searching'       => 'Suche läuft…',
+                        'no-results'      => 'Keine passenden Kategorien gefunden',
+                        'load-more'       => 'Mehr laden',
+                        'none-selected'   => 'Noch keine Kategorien ausgewählt',
+                        'and-more'        => 'und :count weitere',
+                        'review-selected' => 'Ausgewählte Kategorien anzeigen',
+                        'selected'        => 'ausgewählt',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Verknüpfen Sie verwandte, Zusatzverkaufs-, Cross-Selling- und benutzerdefinierte Produkte.',
+                        'linked'   => 'verknüpfte Produkte',
+                    ],
+                ],
+
                 'more'         => 'Mehr',
                 'more-actions' => 'Mehr Aktionen',
                 'variations'   => [
@@ -960,6 +1010,64 @@ return [
             'not-found'         => 'Kategoriefeld mit Code „:code“ konnte nicht gefunden werden',
             'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Assoziationstypen',
+                'create-btn' => 'Assoziationstyp erstellen',
+                'add-btn'    => 'Assoziationstyp erstellen',
+
+                'datagrid' => [
+                    'code'                => 'Code',
+                    'name'                => 'Name',
+                    'status'              => 'Status',
+                    'position'            => 'Position',
+                    'edit'                => 'Bearbeiten',
+                    'delete'              => 'Löschen',
+                    'activated'           => 'Aktiviert',
+                    'disabled'            => 'Deaktiviert',
+                    'active'              => 'Aktivieren',
+                    'disable'             => 'Deaktivieren',
+                    'update-status'       => 'Aktualisierungsstatus',
+                    'delete-failed'       => 'Dieser Assoziationstyp kann nicht gelöscht werden.',
+                    'mass-delete-success' => 'Ausgewählte Assoziationstypen erfolgreich gelöscht',
+                    'mass-delete-failed'  => 'Ausgewählte Assoziationstypen können nicht gelöscht werden.',
+                    'mass-update-success' => 'Erfolgreich aktualisiert',
+                ],
+            ],
+
+            'create-success'    => 'Assoziationstyp erfolgreich erstellt',
+            'update-success'    => 'Assoziationstyp erfolgreich aktualisiert',
+            'delete-success'    => 'Assoziationstyp erfolgreich gelöscht',
+            'delete-failed'     => 'Assoziationstyp konnte nicht gelöscht werden',
+            'user-define-error' => 'Systemassoziationstyp kann nicht gelöscht werden',
+            'unknown-fields'    => 'Assoziationstyp-Feld mit Code „:fields“ konnte nicht gefunden werden',
+
+            'create' => [
+                'title'      => 'Zuordnungstyp erstellen',
+                'name'       => 'Name',
+                'enter-name' => 'Namen eingeben',
+                'code'       => 'Code',
+                'enter-code' => 'Code eingeben',
+                'save-btn'   => 'Zuordnungstyp speichern',
+            ],
+
+            'edit' => [
+                'title'    => 'Zuordnungstyp bearbeiten',
+                'save-btn' => 'Zuordnungstyp aktualisieren',
+            ],
+
+            'fields' => [
+                'title'                => 'Felder',
+                'info'                 => 'Fügen Sie benutzerdefinierte Felder hinzu, um zusätzliche Daten für diesen Zuordnungstyp zu erfassen.',
+                'add-field-btn'        => 'Feld hinzufügen',
+                'modal-title'          => 'Feld hinzufügen',
+                'edit-modal-title'     => 'Feld bearbeiten',
+                'save-field-btn'       => 'Feld speichern',
+                'same-code-error'      => 'Der Feldcode muss eindeutig sein.',
+                'add-fields-info'      => 'Um benutzerdefinierte Felder für diesen Zuordnungstyp zu erstellen.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Kategoriefeldoption erfolgreich gelöscht',
             'create-success'      => 'Kategoriefeldoption erfolgreich erstellt',
@@ -995,6 +1103,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Sprache',
                 'level-parent'                     => 'Übergeordnetes Produkt',
                 'level-sub-parent'                 => 'Zwischenebene',
                 'level-variant'                    => 'Variante',
@@ -1151,12 +1260,15 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Gebietsschema mit dem Code :code nicht gefunden.',
-                'create-btn'            => 'Gebietsschema erstellen',
-                'locale'                => 'Gebietsschema',
-                'title'                 => 'Gebietsschemas',
-                'can-not-delete-error'  => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht löschen',
-                'can-not-disable-error' => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht deaktivieren',
+                'not-found'              => 'Gebietsschema mit dem Code :code nicht gefunden.',
+                'create-btn'             => 'Gebietsschema erstellen',
+                'locale'                 => 'Gebietsschema',
+                'title'                  => 'Gebietsschemas',
+                'can-not-delete-error'   => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht löschen',
+                'can-not-disable-error'  => 'Sie können ein mit einem Kanal oder Benutzer verknüpftes Gebietsschema nicht deaktivieren',
+                'partial-delete-success' => 'Die ausgewählten Gebietsschemas wurden gelöscht, mit Ausnahme von :count, die mit einem Kanal oder Benutzer verknüpft sind.',
+                'partial-update-success' => 'Die ausgewählten Gebietsschemas wurden aktualisiert, mit Ausnahme von :count, die mit einem Kanal oder Benutzer verknüpft sind.',
+
                 'datagrid'              => [
                     'actions'     => 'Aktionen',
                     'code'        => 'Code',
@@ -1362,6 +1474,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Der Importvorgang konnte nicht gestartet werden. Bitte versuchen Sie es erneut.',
+                'rerun-no-file'     => 'Dieser Job hat keine Importdatei und kann daher nicht erneut ausgeführt werden.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Aktion',
@@ -1809,19 +1922,20 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Benutzer bearbeiten',
             ],
-            'activate-warning'             => 'Ihr Konto muss noch aktiviert werden. Bitte wenden Sie sich an Administrator.',
-            'cannot-change'                => 'Der Benutzer kann nicht geändert werden',
-            'cannot-escalate-role'         => 'Sie haben keine Berechtigung, eine Rolle mit Vollzugriff zuzuweisen.',
-            'create-success'               => 'Benutzer erfolgreich erstellt.',
-            'delete-failed'                => 'Benutzer gelöscht fehlgeschlagen.',
-            'delete-success'               => 'Benutzer erfolgreich gelöscht.',
-            'delete-warning'               => 'Sind Sie sicher, Sie möchten diese Aktion ausführen?',
-            'incorrect-password'           => 'Falsches Passwort',
-            'last-delete-error'            => 'Der letzte Benutzer löschen fehlgeschlagen',
-            'login-error'                  => 'Bitte überprüfen Sie Ihre Anmeldeinformationen und versuchen Sie es erneut.',
-            'update-success'               => 'Benutzer erfolgreich aktualisiert.',
-            'current-user-delete-error'    => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
-            'last-all-access-delete-error' => 'Der letzte aktive Administrator mit Vollzugriff kann nicht gelöscht werden.',
+            'activate-warning'                 => 'Ihr Konto muss noch aktiviert werden. Bitte wenden Sie sich an Administrator.',
+            'cannot-change'                    => 'Der Benutzer kann nicht geändert werden',
+            'cannot-assign-unheld-permissions' => 'Sie können keine Rolle zuweisen, die Berechtigungen enthält, die Sie selbst nicht besitzen.',
+            'cannot-escalate-role'             => 'Sie haben keine Berechtigung, eine Rolle mit Vollzugriff zuzuweisen.',
+            'create-success'                   => 'Benutzer erfolgreich erstellt.',
+            'delete-failed'                    => 'Benutzer gelöscht fehlgeschlagen.',
+            'delete-success'                   => 'Benutzer erfolgreich gelöscht.',
+            'delete-warning'                   => 'Sind Sie sicher, Sie möchten diese Aktion ausführen?',
+            'incorrect-password'               => 'Falsches Passwort',
+            'last-delete-error'                => 'Der letzte Benutzer löschen fehlgeschlagen',
+            'login-error'                      => 'Bitte überprüfen Sie Ihre Anmeldeinformationen und versuchen Sie es erneut.',
+            'update-success'                   => 'Benutzer erfolgreich aktualisiert.',
+            'current-user-delete-error'        => 'Der angemeldete Benutzer kann nicht gelöscht werden.',
+            'last-all-access-delete-error'     => 'Der letzte aktive Administrator mit Vollzugriff kann nicht gelöscht werden.',
         ],
         'system-settings' => [
             'info'               => 'Verwalten Sie die Systemeinstellungen an einem Ort.',
@@ -2047,7 +2161,6 @@ return [
                 'all'            => 'Alle',
                 'back-btn'       => 'Zurück',
                 'custom'         => 'Benutzerdefiniert',
-                'assign-user'    => 'Benutzer zuweisen',
                 'general'        => 'Allgemein',
                 'name'           => 'Name',
                 'permissions'    => 'Berechtigungen',
@@ -2059,7 +2172,6 @@ return [
                 'all'                         => 'Alle',
                 'back-btn'                    => 'Zurück',
                 'custom'                      => 'Benutzerdefiniert',
-                'assign-user'                 => 'Benutzer zuweisen',
                 'general'                     => 'Allgemein',
                 'name'                        => 'Name',
                 'credentials'                 => 'Anmeldeinformationen',
@@ -2268,6 +2380,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Aufklappen',
+            'collapse' => 'Zuklappen',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Hinzufügen',
+                'already-added'      => 'Hinzugefügt',
+                'empty-info'         => 'Versuchen Sie eine andere Suche.',
+                'empty-title'        => 'Keine Assoziationstypen gefunden',
+                'search-placeholder' => 'Nach Name oder Code suchen',
+                'select-all'         => 'Alle auswählen',
+                'title'              => 'Assoziationstyp hinzufügen',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Auswahl hinzufügen',
+                'selected' => ':count Produkte ausgewählt',
+                'title'    => 'Produkte auswählen',
+            ],
+        ],
         'pagination' => [
             'page' => 'Seite',
         ],
@@ -2278,6 +2411,13 @@ return [
             'close' => 'Schließen',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled von :total übersetzt',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Keine Ergebnisse',
+                'search' => 'Suchen',
+            ],
             'ajax-error'      => 'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'file-uploader'   => [
                 'upload-cta'  => 'Zum Hochladen klicken',
@@ -2303,6 +2443,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Bereich einklappen',
+                'expand'   => 'Bereich ausklappen',
+            ],
             'breadcrumbs' => [
                 'label' => 'Navigationspfad',
             ],
@@ -2329,6 +2473,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategorien',
                 'category_fields'    => 'Kategoriefelder',
+                'association_types'  => 'Assoziationstypen',
                 'channels'           => 'Kanäle',
                 'collapse'           => 'Zusammenklappen',
                 'configure'          => 'Konfiguration',
@@ -2769,6 +2914,7 @@ return [
         'url-rewrites'             => 'URL-Umschreibungen',
         'users'                    => 'Benutzer',
         'category_fields'          => 'Kategoriefelder',
+        'association_types'        => 'Assoziationstypen',
         'view'                     => 'Anzeigen',
         'execute'                  => 'Job ausführen',
         'history'                  => 'Verlauf',
@@ -2779,6 +2925,8 @@ return [
         'exports'                  => 'Exporte',
         'mass-update'              => 'Massenaktualisierung',
         'mass-delete'              => 'Massenlöschung',
+        'bulk-edit'                => 'Massenbearbeitung',
+        'quick-export'             => 'Schnellexport',
         'variant-structures'       => 'Variantenstrukturen',
     ],
     'errors' => [

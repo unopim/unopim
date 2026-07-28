@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Produktassociationer',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Fältet \'%s\' är obligatoriskt.',
+                    'self-link-not-allowed'       => 'Produkten \'%s\' kan inte kopplas till sig själv.',
+                    'sku-not-found'               => 'Produkt med SKU \'%s\' hittades inte.',
+                    'related-sku-not-found'       => 'Relaterad produkt med SKU \'%s\' hittades inte.',
+                    'association-type-not-found'  => 'Associationstypen \'%s\' finns inte eller är inaktiv.',
+                    'invalid-field-value'         => 'Ogiltigt värde angavs för ett associationsfält.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attributgrupper',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Den här exporten är för stor för att köras: uppskattade :rows rader × :columns kolumner (~:estimated) överskrider det tillgängliga utrymmet (~:available). Begränsa exporten genom att välja färre kanaler/språk (och attribut) och försök igen.',
         'fields'           => [
-            'file-format'         => 'Filformat',
-            'with-media'          => 'Med media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Filformat',
+            'with-media'             => 'Med media',
+            'with-associations'      => 'Med kopplingar',
+            'with-associations-info' => 'Inkludera de gamla SKU-listkolumnerna (up_sells, cross_sells och related_products) i exporten',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Attribut',
+        ],
+        'product-associations' => [
+            'title' => 'Produktassociationer',
         ],
         'attribute-groups' => [
             'title' => 'Attributgrupper',

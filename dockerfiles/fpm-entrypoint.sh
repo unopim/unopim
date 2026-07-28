@@ -8,6 +8,9 @@ LOCK_FILE="/var/www/html/storage/unopim.lock"
 source /var/www/html/dockerfiles/lib/ensure-app-key.sh
 ensure_app_key
 
+source /var/www/html/dockerfiles/lib/wait-for-db.sh
+wait_for_db
+
 # ─── First-time setup ───────────────────────────────────────────────
 if [ ! -f "$LOCK_FILE" ]; then
 

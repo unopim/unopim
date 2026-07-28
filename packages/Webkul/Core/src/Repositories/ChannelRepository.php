@@ -100,7 +100,7 @@ class ChannelRepository extends Repository
     {
         $model = $this->getModel();
 
-        $data = $this->removeEmptyTranslations($data, $model);
+        $data = $this->removeEmptyTranslations($data, $model, $this->find($id));
 
         $channel = parent::update($data, $id);
 
@@ -151,8 +151,12 @@ class ChannelRepository extends Repository
 
     /**
      * Remove locale translation payloads when every translated attribute is empty.
+     *
+     * When $existing is given the payload is kept for locales that already have a
+     * translation, so clearing a field persists instead of falling back to the
+     * stored value.
      */
-    protected function removeEmptyTranslations(array $data, $model): array
+    protected function removeEmptyTranslations(array $data, $model, $existing = null): array
     {
         foreach (core()->getAllActiveLocales() as $locale) {
             $localeCode = $locale->code;
@@ -175,7 +179,7 @@ class ChannelRepository extends Repository
                 }
             }
 
-            if ($allEmpty) {
+            if ($allEmpty && ! $existing?->hasTranslation($localeCode)) {
                 unset($data[$localeCode]);
             }
         }

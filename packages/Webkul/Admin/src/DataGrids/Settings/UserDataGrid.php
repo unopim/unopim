@@ -86,7 +86,9 @@ class UserDataGrid extends DataGrid
                     return null;
                 }
 
-                return AdminUser::getGravatarUrlFromEmail($row->email);
+                return AdminUser::gravatarCachedForEmail($row->email)
+                    ? AdminUser::getGravatarUrlFromEmail($row->email)
+                    : null;
             },
         ]);
 

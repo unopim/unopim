@@ -6,7 +6,7 @@ return [
         'name'   => 'measurement::app.config.catalog.measurement.title',
         'info'   => 'measurement::app.config.catalog.measurement.info',
         'icon'   => 'icon-attribute',
-        'acl'    => 'configuration.system_settings',
+        'acl'    => 'configuration.system_settings.measurement',
         'sort'   => 5,
         'fields' => [
             [

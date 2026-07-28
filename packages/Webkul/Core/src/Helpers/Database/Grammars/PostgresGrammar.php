@@ -42,6 +42,11 @@ class PostgresGrammar implements Grammar
         return "LENGTH({$column})";
     }
 
+    public function castToText(string $column): string
+    {
+        return "{$column}::text";
+    }
+
     public function jsonExtract(string $column, string ...$pathSegments): string
     {
         $pathSegments = array_map($this->escapeJsonPathSegment(...), $pathSegments);

@@ -52,6 +52,7 @@ class ConfigurableProductController extends ProductController
             'values',
             'super_attributes',
             'variants',
+            'associations',
         ]);
 
         try {
@@ -77,6 +78,11 @@ class ConfigurableProductController extends ProductController
                     return $this->validateErrorResponse($e->validator->errors()->messages());
                 }
             }
+
+            // Validated BEFORE the product row is created below, so an
+            // invalid link's `additional_data` aborts here with nothing
+            // persisted -- see `validateRichAssociationsBeforeCreate()`.
+            $this->validateRichAssociationsBeforeCreate($data);
 
             Event::dispatch('catalog.product.create.before');
             $product = $this->productRepository->create($data);
@@ -104,6 +110,7 @@ class ConfigurableProductController extends ProductController
             'additional',
             'values',
             'variants',
+            'associations',
         ]);
 
         try {
@@ -142,6 +149,7 @@ class ConfigurableProductController extends ProductController
             'status',
             'additional',
             'values',
+            'associations',
         ]);
 
         try {

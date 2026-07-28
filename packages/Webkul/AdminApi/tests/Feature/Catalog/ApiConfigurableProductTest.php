@@ -81,6 +81,7 @@ it('should return the configurable product by code', function () {
         'values'           => $product->values,
         'super_attributes' => $product->super_attributes()->pluck('code')->toArray(),
         'variants'         => [],
+        'associations'     => [],
     ];
 
     foreach ($product->variants as $variant) {
@@ -110,6 +111,7 @@ it('should return the configurable product by code', function () {
             'values',
             'super_attributes',
             'variants',
+            'associations',
         ])
         ->json();
 

@@ -8,6 +8,9 @@
 #
 # Or set in .env:
 #   COMPOSE_FILE=docker-compose.yml:docker-compose.apache.yml
+#
+# Database choice is independent of the web server — see COMPOSE_PROFILES
+# in docker-compose.yml.
 # =============================================================================
 
 services:
@@ -33,16 +36,21 @@ services:
     env_file: .env
     environment:
       APP_URL: "http://localhost:${APP_PORT:-8000}"
-      DB_HOST: unopim-mysql
-      DB_PORT: 3306
+      DB_CONNECTION: "${DB_CONNECTION:-pgsql}"
+      DB_HOST: "${DB_HOST:-unopim-pgsql}"
+      DB_PORT: "${DB_PORT:-5432}"
       REDIS_HOST: unopim-redis
       REDIS_PORT: 6379
       ELASTICSEARCH_HOST: unopim-elasticsearch:9200
       MAIL_HOST: unopim-mailpit
       MAIL_PORT: 1025
     depends_on:
+      unopim-pgsql:
+        condition: service_healthy
+        required: false
       unopim-mysql:
         condition: service_healthy
+        required: false
       unopim-redis:
         condition: service_healthy
       unopim-elasticsearch:

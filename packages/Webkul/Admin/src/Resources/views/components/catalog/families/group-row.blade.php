@@ -11,7 +11,7 @@
         type="button"
         class="icon-chevron-down text-xl rounded-md transition-all hover:bg-white dark:hover:bg-cherry-900"
         :class="{'-rotate-90': element.hide}"
-        @click.stop="element.hide = ! element.hide"
+        @click.stop="toggleGroup(element)"
     >
     </button>
 
@@ -32,14 +32,21 @@
     </span>
 
     <span class="rounded-full bg-gray-100 px-1.5 py-0.5 text-xs font-medium text-gray-600 dark:bg-cherry-800 dark:text-gray-300">
-        @{{ element.customAttributes.length }}
+        @{{ groupAttributesCount(element) }}
     </span>
 
     <input
         v-if="groupFormId(element)"
         type="hidden"
+        :name="'attribute_groups[' + groupFormId(element) + '][attributes_loaded]'"
+        :value="element.attributesLoaded ? 1 : 0"
+    />
+
+    <input
+        v-if="groupFormId(element)"
+        type="hidden"
         :name="'attribute_groups[' + groupFormId(element) + '][position]'"
-        :value="index + 1"
+        :value="groupPositionOffset + index + 1"
     />
 
     <input

@@ -76,6 +76,7 @@ return [
             'general'             => 'Generelt',
             'invalid-password'    => 'Nåværende passord er feil.',
             'name'                => 'Navn',
+            'password-whitespace' => 'Passordet kan ikke bare bestå av mellomrom.',
             'password'            => 'Passord',
             'gravatar-preview'    => 'Bruker Gravatar.com-bildet ditt',
             'use-gravatar'        => 'Bruk Gravatar-bilde',
@@ -252,6 +253,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigasjon',
                 'preview'    => 'Forhåndsvisning',
                 'remove'     => 'Fjern',
                 'save-btn'   => 'Lagre produkt',
@@ -259,6 +261,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorier',
                     'root-not-allowed' => 'Rotkategorien kan ikke tildeles et produkt.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributtgruppe:',
+                    'title'              => 'Attributtgrupper',
+                    'search-placeholder' => 'Søk i grupper',
+                    'empty'              => 'Ingen attributtgrupper samsvarer med søket ditt.',
+                    'attributes-count'   => ':count attributter',
+                    'loading'            => 'Laster...',
+                    'retry'              => 'Prøv igjen',
+                    'load-more'          => 'Last inn flere',
+                    'unsaved-title'      => 'Ulagrede endringer',
+                    'unsaved-message'    => 'Lagre endringene i :group før du går videre, eller forkast dem.',
+                    'save-and-continue'  => 'Lagre og fortsett',
+                    'discard-and-leave'  => 'Forkast og fortsett',
+                    'cancel'             => 'Avbryt',
                 ],
                 'images' => [
                     'info'  => 'Bilder bør ha oppløsningen 560px X 609px',
@@ -286,10 +304,15 @@ return [
                         'title'      => 'Kryss-salg-produkter',
                     ],
                     'add-btn'           => 'Legg til',
+                    'add-type-btn'      => 'Legg til assosiasjonstype',
                     'delete'            => 'Slett',
                     'empty-info'        => 'Legg til :type produkter samtidig.',
                     'empty-title'       => 'Legg til produkt',
                     'image-placeholder' => 'Produktbilde',
+                    'more-types'        => 'Flere',
+                    'no-types-info'     => 'Bruk «Legg til assosiasjonstype» for å knytte dette produktet til en assosiasjonstype.',
+                    'no-types-title'    => 'Ingen assosiasjoner lagt til',
+                    'search-types'      => 'Søk i tilknytningstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
@@ -398,6 +421,33 @@ return [
                     'created-at'   => 'Opprettet',
                     'product-type' => 'Produkttype',
                 ],
+                'sections' => [
+                    'view'    => 'Vis',
+                    'unsaved' => 'Ulagrede endringer',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Legg til valgte',
+                    'close'        => 'Lukk',
+                    'clear-search' => 'Tøm søk',
+                    'categories'   => [
+                        'subtitle'        => 'Tilordne dette produktet til katalogkategorier.',
+                        'search'          => 'Søk i kategorier…',
+                        'searching'       => 'Søker…',
+                        'no-results'      => 'Ingen samsvarende kategorier funnet',
+                        'load-more'       => 'Last inn flere',
+                        'none-selected'   => 'Ingen kategorier er valgt ennå',
+                        'and-more'        => 'og :count til',
+                        'review-selected' => 'Vis valgte kategorier',
+                        'selected'        => 'valgt',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Koble relaterte, mersalgs-, kryssalgs- og tilpassede produkter.',
+                        'linked'   => 'koblede produkter',
+                    ],
+                ],
+
                 'more'         => 'Mer',
                 'more-actions' => 'Flere handlinger',
                 'variations'   => [
@@ -961,6 +1011,64 @@ return [
             'not-found'         => 'Kategorifelt med kode ":code" ble ikke funnet',
             'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Assosiasjonstyper',
+                'create-btn' => 'Opprett Assosiasjonstype',
+                'add-btn'    => 'Opprett Assosiasjonstype',
+
+                'datagrid' => [
+                    'code'                => 'Kode',
+                    'name'                => 'Navn',
+                    'status'              => 'Status',
+                    'position'            => 'Posisjon',
+                    'edit'                => 'Rediger',
+                    'delete'              => 'Slett',
+                    'activated'           => 'Aktivert',
+                    'disabled'            => 'Deaktivert',
+                    'active'              => 'Aktiver',
+                    'disable'             => 'Deaktiver',
+                    'update-status'       => 'Oppdater status',
+                    'delete-failed'       => 'Denne assosiasjonstypen kan ikke slettes.',
+                    'mass-delete-success' => 'Valgte assosiasjonstyper ble slettet',
+                    'mass-delete-failed'  => 'Valgte assosiasjonstyper kan ikke slettes.',
+                    'mass-update-success' => 'Oppdatert suksessfullt',
+                ],
+            ],
+
+            'create-success'    => 'Assosiasjonstype Opprettet',
+            'update-success'    => 'Assosiasjonstype Oppdatert',
+            'delete-success'    => 'Assosiasjonstype Slettet',
+            'delete-failed'     => 'Assosiasjonstype Sletting Feilet',
+            'user-define-error' => 'Kan ikke slette system Assosiasjonstype',
+            'unknown-fields'    => 'Assosiasjonstype-felt med kode ":fields" ble ikke funnet',
+
+            'create' => [
+                'title'      => 'Opprett assosiasjonstype',
+                'name'       => 'Navn',
+                'enter-name' => 'Skriv inn navn',
+                'code'       => 'Kode',
+                'enter-code' => 'Skriv inn kode',
+                'save-btn'   => 'Lagre assosiasjonstype',
+            ],
+
+            'edit' => [
+                'title'    => 'Rediger assosiasjonstype',
+                'save-btn' => 'Oppdater assosiasjonstype',
+            ],
+
+            'fields' => [
+                'title'                => 'Felt',
+                'info'                 => 'Legg til egendefinerte felt for å fange opp tilleggsdata for denne assosiasjonstypen.',
+                'add-field-btn'        => 'Legg til felt',
+                'modal-title'          => 'Legg til felt',
+                'edit-modal-title'     => 'Rediger felt',
+                'save-field-btn'       => 'Lagre felt',
+                'same-code-error'      => 'Feltkoden må være unik.',
+                'add-fields-info'      => 'For å opprette egendefinerte felt for denne assosiasjonstypen.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Kategorifeltvalg slettet',
             'create-success'      => 'Kategori feltalternativ opprettet',
@@ -996,6 +1104,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Språk',
                 'level-parent'                     => 'Overordnet produkt',
                 'level-sub-parent'                 => 'Mellomliggende nivå',
                 'level-variant'                    => 'Variant',
@@ -1152,12 +1261,15 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Fant ingen lokalitet med koden :code.',
-                'create-btn'            => 'Opprett Lokale',
-                'locale'                => 'Lokale',
-                'title'                 => 'Lokale',
-                'can-not-delete-error'  => 'Du kan ikke slette et lokale knyttet til en kanal eller bruker',
-                'can-not-disable-error' => 'Du kan ikke deaktivere et lokale knyttet til en kanal eller bruker',
+                'not-found'              => 'Fant ingen lokalitet med koden :code.',
+                'create-btn'             => 'Opprett Lokale',
+                'locale'                 => 'Lokale',
+                'title'                  => 'Lokale',
+                'can-not-delete-error'   => 'Du kan ikke slette et lokale knyttet til en kanal eller bruker',
+                'can-not-disable-error'  => 'Du kan ikke deaktivere et lokale knyttet til en kanal eller bruker',
+                'partial-delete-success' => 'Valgte lokaler ble slettet, unntatt :count knyttet til en kanal eller bruker.',
+                'partial-update-success' => 'Valgte lokaler ble oppdatert, unntatt :count knyttet til en kanal eller bruker.',
+
                 'datagrid'              => [
                     'actions'     => 'Handlinger',
                     'code'        => 'Kode',
@@ -1363,6 +1475,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Importprosessen kunne ikke startes. Prøv igjen.',
+                'rerun-no-file'     => 'Denne jobben har ingen importfil, så den kan ikke kjøres på nytt.',
                 'create'            => [
                     'code'                => 'Kode',
                     'action'              => 'Handling',
@@ -1811,19 +1924,20 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Rediger Bruker',
             ],
-            'activate-warning'             => 'Kontoen din er ennå ikke aktivert. Vennligst kontakt administrator.',
-            'cannot-change'                => 'Bruker kan ikke endres',
-            'cannot-escalate-role'         => 'Du har ikke tillatelse til å tildele en rolle med full tilgang.',
-            'create-success'               => 'Bruker opprettet suksessfullt.',
-            'delete-failed'                => 'Bruker sletting mislyktes.',
-            'delete-success'               => 'Bruker slettet suksessfullt.',
-            'delete-warning'               => 'Er du sikker på at du vil utføre denne handlingen?',
-            'incorrect-password'           => 'Feil passord',
-            'last-delete-error'            => 'Sletting av siste bruker mislyktes',
-            'login-error'                  => 'Vennligst sjekk legitimasjonen din og prøv igjen.',
-            'update-success'               => 'Bruker oppdatert suksessfullt.',
-            'current-user-delete-error'    => 'Innlogget bruker kan ikke slettes.',
-            'last-all-access-delete-error' => 'Den siste aktive administratoren med full tilgang kan ikke slettes.',
+            'activate-warning'                 => 'Kontoen din er ennå ikke aktivert. Vennligst kontakt administrator.',
+            'cannot-change'                    => 'Bruker kan ikke endres',
+            'cannot-assign-unheld-permissions' => 'Du kan ikke tildele en rolle som har tillatelser du ikke selv har.',
+            'cannot-escalate-role'             => 'Du har ikke tillatelse til å tildele en rolle med full tilgang.',
+            'create-success'                   => 'Bruker opprettet suksessfullt.',
+            'delete-failed'                    => 'Bruker sletting mislyktes.',
+            'delete-success'                   => 'Bruker slettet suksessfullt.',
+            'delete-warning'                   => 'Er du sikker på at du vil utføre denne handlingen?',
+            'incorrect-password'               => 'Feil passord',
+            'last-delete-error'                => 'Sletting av siste bruker mislyktes',
+            'login-error'                      => 'Vennligst sjekk legitimasjonen din og prøv igjen.',
+            'update-success'                   => 'Bruker oppdatert suksessfullt.',
+            'current-user-delete-error'        => 'Innlogget bruker kan ikke slettes.',
+            'last-all-access-delete-error'     => 'Den siste aktive administratoren med full tilgang kan ikke slettes.',
         ],
         'system-settings' => [
             'info'               => 'Administrer systeminnstillinger fra ett sted.',
@@ -2049,7 +2163,6 @@ return [
                 'all'            => 'Alle',
                 'back-btn'       => 'Tilbake',
                 'custom'         => 'Egendefinert',
-                'assign-user'    => 'Tildel bruker',
                 'general'        => 'Generelt',
                 'name'           => 'Navn',
                 'permissions'    => 'Tillatelser',
@@ -2061,7 +2174,6 @@ return [
                 'all'                         => 'Alle',
                 'back-btn'                    => 'Tilbake',
                 'custom'                      => 'Egendefinert',
-                'assign-user'                 => 'Tildel bruker',
                 'general'                     => 'Generelt',
                 'name'                        => 'Navn',
                 'credentials'                 => 'Legitimasjon',
@@ -2271,6 +2383,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Utvid',
+            'collapse' => 'Skjul',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Legg til',
+                'already-added'      => 'Lagt til',
+                'empty-info'         => 'Prøv et annet søk.',
+                'empty-title'        => 'Ingen assosiasjonstyper funnet',
+                'search-placeholder' => 'Søk etter navn eller kode',
+                'select-all'         => 'Velg alle',
+                'title'              => 'Legg til assosiasjonstype',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Legg til valgte',
+                'selected' => ':count produkter valgt',
+                'title'    => 'Velg produkter',
+            ],
+        ],
         'pagination' => [
             'page' => 'Side',
         ],
@@ -2281,6 +2414,13 @@ return [
             'close' => 'Lukk',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled av :total oversatt',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Ingen resultater',
+                'search' => 'Søk',
+            ],
             'ajax-error'      => 'Noe gikk galt under lagringen. Prøv igjen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klikk for å laste opp',
@@ -2306,6 +2446,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Skjul panel',
+                'expand'   => 'Vis panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Brødsmulesti',
             ],
@@ -2332,6 +2476,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategorier',
                 'category_fields'    => 'Kategorifelt',
+                'association_types'  => 'Assosiasjonstyper',
                 'channels'           => 'Kanaler',
                 'collapse'           => 'Kollaps',
                 'configure'          => 'Konfigurering',
@@ -2772,6 +2917,7 @@ return [
         'url-rewrites'             => 'URL-omskrivninger',
         'users'                    => 'Brukere',
         'category_fields'          => 'Kategori felt',
+        'association_types'        => 'Assosiasjonstyper',
         'view'                     => 'Visning',
         'execute'                  => 'Utfør',
         'history'                  => 'Historie',
@@ -2782,6 +2928,8 @@ return [
         'exports'                  => 'Eksporter',
         'mass-update'              => 'Masseoppdatering',
         'mass-delete'              => 'Masse sletting',
+        'bulk-edit'                => 'Masse redigering',
+        'quick-export'             => 'Hurtig eksport',
         'variant-structures'       => 'Variantstrukturer',
     ],
     'errors' => [

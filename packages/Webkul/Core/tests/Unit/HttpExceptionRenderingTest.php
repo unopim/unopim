@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Http\Exceptions\PostTooLargeException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -35,6 +36,13 @@ it('keeps the translated 405 copy in the payload', function () {
 
 it('renders an upload that is too large as 413', function () {
     expect(renderHttpException(new HttpException(413))->getStatusCode())->toBe(413);
+});
+
+it('keeps the 413 status when the post size guard rejects the upload', function () {
+    $response = renderHttpException(new PostTooLargeException);
+
+    expect($response->getStatusCode())->toBe(413);
+    expect(json_decode($response->getContent(), true)['error'])->toBe(trans('admin::app.errors.413.title'));
 });
 
 it('keeps the thrown status for a code with no translated page', function () {

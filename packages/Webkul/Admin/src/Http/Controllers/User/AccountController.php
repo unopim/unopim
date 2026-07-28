@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Core\Filesystem\FileStorer;
@@ -60,6 +61,12 @@ class AccountController extends Controller
             'default_channel_id' => 'nullable|integer|exists:channels,id',
             'use_gravatar'       => 'boolean',
         ]);
+
+        if (($submittedPassword = (string) request('password')) !== '' && trim($submittedPassword) === '') {
+            throw ValidationException::withMessages([
+                'password' => [trans('admin::app.account.edit.password-whitespace')],
+            ]);
+        }
 
         $data = request()->only([
             'name',

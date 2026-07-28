@@ -25,6 +25,7 @@
     <x-admin::graphs.radial-progress />
 
     <x-admin::form
+        id="product-edit-form"
         method="PUT"
         enctype="multipart/form-data"
         ajax
@@ -132,7 +133,6 @@
                                     />
                                 </div>
 
-                                {{-- Per-locale completeness --}}
                                 @foreach ($currentChannel->locales->sortBy('name') as $locale)
                                     @php
                                         $localeScore = $scores[$locale->id] ?? null;
@@ -167,93 +167,91 @@
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
         @php
-            $variantAxisCodes = ($variantTree ?? null)
-                ? collect($variantTree['attributes'])->where('isAxis', true)->pluck('code')->all()
-                : [];
-
-            $variantHiddenCodes = array_merge($variantAxisCodes, ($variantFieldLocks['hidden'] ?? []));
+            $variantHiddenCodes = $variantFieldLocks['hidden'] ?? [];
         @endphp
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
-                @foreach ($product->attribute_family->familyGroups()->with('translations')->orderBy('position')->get() as $group)
-                    {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
+                @php
+                    $renderedAttributeCodes = [];
+                @endphp
 
-                        @php
-                            $customAttributes = $product->getEditableAttributes($group);
+                @foreach ($renderGroups as $group)
+                    @php
+                        $groupAttributeSet = ($groupAttributes[$group->id] ?? null)
+                            ?: $product->getEditableAttributes($group);
 
-                            if (! $customAttributes instanceof \Illuminate\Support\Collection) {
-                                $customAttributes = $customAttributes->get();
-                            }
+                        if (! $groupAttributeSet instanceof \Illuminate\Support\Collection) {
+                            $groupAttributeSet = $groupAttributeSet->get();
+                        }
 
-                            if (! empty($variantHiddenCodes)) {
-                                $customAttributes = $customAttributes->reject(fn ($attribute) => in_array($attribute->code, $variantHiddenCodes))->values();
-                            }
+                        /**
+                         * The same attribute may be assigned to several of the
+                         * family's groups; every copy renders the same input name,
+                         * so only the first occurrence may be editable.
+                         */
+                        $groupAttributeSet = $groupAttributeSet
+                            ->reject(fn ($attribute) => in_array($attribute->code, $renderedAttributeCodes, true))
+                            ->values();
 
-                            $customAttributes->loadMissing('translations');
+                        $renderedAttributeCodes = array_merge(
+                            $renderedAttributeCodes,
+                            $groupAttributeSet->pluck('code')->all()
+                        );
+                    @endphp
 
-                            // Only checkbox renders every option; select/multiselect resolve selected labels on demand.
-                            $customAttributes->where('type', 'checkbox')->loadMissing('options.translations');
-
-                            $groupLabel = $group->name;
-                            $groupLabel = empty($groupLabel) ? "[{$group->code}]" : $groupLabel;
-                        @endphp
-
-                        @if (count($customAttributes))
-                            <div class="flex flex-col gap-2">
-
-                                {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.before', ['product' => $product]) !!}
-
-                                <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                                    <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
-                                        {{ $groupLabel }}
-                                    </p>
-
-                                    <x-admin::products.dynamic-attribute-fields
-                                        :fields="$customAttributes"
-                                        :fieldValues="$product->values"
-                                        :currentLocaleCode="$currentLocale->code"
-                                        :currentChannelCode="$currentChannel->code"
-                                        :channelCurrencies="$currentChannel->currencies"
-                                        :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
-                                        :completeness-attributes="$requiredAttributes"
-                                        :locked-fields="($variantFieldLocks['locks'] ?? [])"
-                                        fieldsWrapper="values"
-                                    >
-                                    </x-admin::products.dynamic-attribute-fields>
-
-                                </div>
-
-                                {!! view_render_event('unopim.admin.catalog.product.edit.form.' . $group->code . '.after', ['product' => $product]) !!}
-                            </div>
-                        @endif
-
-                    {!! view_render_event('unopim.admin.catalog.product.edit.form.column_after', ['product' => $product]) !!}
+                    @include('admin::catalog.products.edit.attribute-group-panel', [
+                        'group'              => $group,
+                        'customAttributes'   => $groupAttributeSet,
+                        'variantHiddenCodes' => $variantHiddenCodes,
+                    ])
                 @endforeach
-            </div>
-            <div class="right-column flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                @if ($variantTree ?? null)
-                    <v-variant-axis-nav></v-variant-axis-nav>
+
+                @if ($nextGroupId ?? null)
+                    @include('admin::catalog.products.edit.attribute-group-loader', [
+                        'productId'   => $product->id,
+                        'nextGroupId' => $nextGroupId,
+                    ])
                 @endif
-
-                @include('admin::catalog.products.edit.product-info')
-
-                @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->values['categories'] ?? []])
-
-                @if ($variantTree ?? null)
-                    {{-- The structured UI replaces the flat type view; its render events stay. --}}
-                    {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.before', ['product' => $product]) !!}
-
-                    {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.after', ['product' => $product]) !!}
-                @else
-                    @includeIf('admin::catalog.products.edit.types.' . $product->type)
-                @endif
-
-                @include('admin::catalog.products.edit.links', ['linkedProducts' => $linkedProducts])
-
-                @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
-                    @includeIf($view)
-                @endforeach
             </div>
+            @include('admin::catalog.products.edit.section-store')
+            <x-admin::layouts.side-rail
+                :navigation-title="trans('admin::app.catalog.products.edit.navigation')"
+                :info-title="trans('admin::app.catalog.products.edit.product-info.title')"
+            >
+                <x-slot:navigation>
+                    @if ($variantTree ?? null)
+                        <v-variant-axis-nav></v-variant-axis-nav>
+                    @endif
+
+
+                    @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->resolvedValues()['categories'] ?? []])
+
+                    @if ($variantTree ?? null)
+                        {{-- The structured UI replaces the flat type view; its render events stay. --}}
+                        {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.before', ['product' => $product]) !!}
+
+                        {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.after', ['product' => $product]) !!}
+                    @else
+                        @includeIf('admin::catalog.products.edit.types.' . $product->type)
+                    @endif
+
+                    <!-- Related, Cross Sells, Up Sells View Blade File -->
+                    @include('admin::catalog.products.edit.links', [
+                        'associationTypes'      => $associationTypes,
+                        'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
+                        'crossSellAssociations' => $product->values['associations']['cross_sells'] ?? [],
+                        'relatedAssociations'   => $product->values['associations']['related_products'] ?? [],
+                    ])
+
+                    @foreach ($product->getTypeInstance()->getAdditionalViews() as $view)
+                        @includeIf($view)
+                    @endforeach
+                </x-slot>
+
+                <x-slot:info>
+                    @include('admin::catalog.products.edit.product-info')
+                </x-slot>
+            </x-admin::layouts.side-rail>
         </div>
 
         @if ($variantTree ?? null)

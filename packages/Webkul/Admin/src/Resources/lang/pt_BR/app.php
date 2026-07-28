@@ -76,6 +76,7 @@ return [
             'general'             => 'Geral',
             'invalid-password'    => 'A senha atual está incorreta.',
             'name'                => 'Nome',
+            'password-whitespace' => 'A senha não pode consistir apenas em espaços.',
             'password'            => 'Senha',
             'gravatar-preview'    => 'Usando sua imagem do Gravatar.com',
             'use-gravatar'        => 'Usar imagem do Gravatar',
@@ -252,6 +253,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navegação do produto',
                 'preview'    => 'Visualizar',
                 'remove'     => 'Remover',
                 'save-btn'   => 'Salvar produto',
@@ -259,6 +261,22 @@ return [
                 'categories' => [
                     'title'            => 'Categorias',
                     'root-not-allowed' => 'A categoria raiz não pode ser atribuída a um produto.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grupo de atributos:',
+                    'title'              => 'Grupos de atributos',
+                    'search-placeholder' => 'Pesquisar grupos',
+                    'empty'              => 'Nenhum grupo de atributos corresponde à sua pesquisa.',
+                    'attributes-count'   => ':count atributos',
+                    'loading'            => 'Carregando...',
+                    'retry'              => 'Tentar novamente',
+                    'load-more'          => 'Carregar mais',
+                    'unsaved-title'      => 'Alterações não salvas',
+                    'unsaved-message'    => 'Salve suas alterações em :group antes de continuar, ou descarte-as.',
+                    'save-and-continue'  => 'Salvar e continuar',
+                    'discard-and-leave'  => 'Descartar e continuar',
+                    'cancel'             => 'Cancelar',
                 ],
                 'images' => [
                     'info'  => 'As imagens devem ter a resolução de 560px X 609px',
@@ -286,10 +304,15 @@ return [
                         'title'      => 'Produtos de venda cruzada',
                     ],
                     'add-btn'           => 'Adicionar',
+                    'add-type-btn'      => 'Adicionar tipo de associação',
                     'delete'            => 'Excluir',
                     'empty-info'        => 'Adicione produtos :type de uma vez.',
                     'empty-title'       => 'Adicionar produto',
                     'image-placeholder' => 'Imagem do produto',
+                    'more-types'        => 'Mais',
+                    'no-types-info'     => 'Use “Adicionar tipo de associação” para vincular este produto a um tipo de associação.',
+                    'no-types-title'    => 'Nenhuma associação adicionada',
+                    'search-types'      => 'Pesquisar tipos de associação',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produtos',
                 ],
@@ -398,6 +421,33 @@ return [
                     'created-at'   => 'Data de Criação',
                     'product-type' => 'Tipo de Produto',
                 ],
+                'sections' => [
+                    'view'    => 'Visualizar',
+                    'unsaved' => 'Alterações não salvas',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Adicionar selecionados',
+                    'close'        => 'Fechar',
+                    'clear-search' => 'Limpar pesquisa',
+                    'categories'   => [
+                        'subtitle'        => 'Atribua este produto a categorias do catálogo.',
+                        'search'          => 'Pesquisar categorias…',
+                        'searching'       => 'Pesquisando…',
+                        'no-results'      => 'Nenhuma categoria correspondente encontrada',
+                        'load-more'       => 'Carregar mais',
+                        'none-selected'   => 'Nenhuma categoria selecionada ainda',
+                        'and-more'        => 'e mais :count',
+                        'review-selected' => 'Mostrar categorias selecionadas',
+                        'selected'        => 'selecionado(s)',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Vincule produtos relacionados, de upsell, cross-sell e personalizados.',
+                        'linked'   => 'produtos vinculados',
+                    ],
+                ],
+
                 'more'         => 'Mais',
                 'more-actions' => 'Mais ações',
                 'variations'   => [
@@ -961,6 +1011,64 @@ return [
             'not-found'         => 'Campo de categoria com o código ":code" não encontrado',
             'immutable-fields'  => 'Os seguintes campos não podem ser modificados: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Tipos de associação',
+                'create-btn' => 'Criar Tipo de Associação',
+                'add-btn'    => 'Criar Tipo de Associação',
+
+                'datagrid' => [
+                    'code'                => 'Código',
+                    'name'                => 'Nome',
+                    'status'              => 'Status',
+                    'position'            => 'Posição',
+                    'edit'                => 'Editar',
+                    'delete'              => 'Excluir',
+                    'activated'           => 'Ativado',
+                    'disabled'            => 'Desativado',
+                    'active'              => 'Ativo',
+                    'disable'             => 'Desativar',
+                    'update-status'       => 'Atualizar Status',
+                    'delete-failed'       => 'Este tipo de associação não pode ser excluído.',
+                    'mass-delete-success' => 'Os tipos de associação selecionados foram excluídos com sucesso',
+                    'mass-delete-failed'  => 'Os tipos de associação selecionados não podem ser excluídos.',
+                    'mass-update-success' => 'Atualizado com sucesso',
+                ],
+            ],
+
+            'create-success'    => 'Tipo de associação criado com sucesso',
+            'update-success'    => 'Tipo de associação atualizado com sucesso',
+            'delete-success'    => 'Tipo de associação excluído com sucesso',
+            'delete-failed'     => 'Falha ao excluir tipo de associação',
+            'user-define-error' => 'Não é possível excluir o tipo de associação do sistema',
+            'unknown-fields'    => 'Campo do tipo de associação com código ":fields" não encontrado',
+
+            'create' => [
+                'title'      => 'Criar tipo de associação',
+                'name'       => 'Nome',
+                'enter-name' => 'Digite o nome',
+                'code'       => 'Código',
+                'enter-code' => 'Digite o código',
+                'save-btn'   => 'Salvar tipo de associação',
+            ],
+
+            'edit' => [
+                'title'    => 'Editar tipo de associação',
+                'save-btn' => 'Atualizar tipo de associação',
+            ],
+
+            'fields' => [
+                'title'                => 'Campos',
+                'info'                 => 'Adicione campos personalizados para capturar dados adicionais para este tipo de associação.',
+                'add-field-btn'        => 'Adicionar campo',
+                'modal-title'          => 'Adicionar campo',
+                'edit-modal-title'     => 'Editar campo',
+                'save-field-btn'       => 'Salvar campo',
+                'same-code-error'      => 'O código do campo deve ser único.',
+                'add-fields-info'      => 'Para criar campos personalizados para este tipo de associação.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Opção de campo de categoria excluída com sucesso',
             'create-success'      => 'Opção de campo da categoria criada',
@@ -996,6 +1104,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Idioma',
                 'level-parent'                     => 'Produto pai',
                 'level-sub-parent'                 => 'Subpai',
                 'level-variant'                    => 'Variante',
@@ -1152,12 +1261,15 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Localidade com o código :code não encontrada.',
-                'create-btn'            => 'Criar Localidade',
-                'locale'                => 'Localidade',
-                'title'                 => 'Localidades',
-                'can-not-delete-error'  => 'Você não pode excluir uma localidade vinculada a um canal ou usuário',
-                'can-not-disable-error' => 'Você não pode desativar uma localidade vinculada a um canal ou usuário',
+                'not-found'              => 'Localidade com o código :code não encontrada.',
+                'create-btn'             => 'Criar Localidade',
+                'locale'                 => 'Localidade',
+                'title'                  => 'Localidades',
+                'can-not-delete-error'   => 'Você não pode excluir uma localidade vinculada a um canal ou usuário',
+                'can-not-disable-error'  => 'Você não pode desativar uma localidade vinculada a um canal ou usuário',
+                'partial-delete-success' => 'As localidades selecionadas foram excluídas, exceto :count vinculadas a um canal ou usuário.',
+                'partial-update-success' => 'As localidades selecionadas foram atualizadas, exceto :count vinculadas a um canal ou usuário.',
+
                 'datagrid'              => [
                     'actions'     => 'Ações',
                     'code'        => 'Código',
@@ -1363,6 +1475,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Falha ao iniciar o processo de importação. Tente novamente.',
+                'rerun-no-file'     => 'Este trabalho não possui arquivo de importação, portanto não pode ser executado novamente.',
                 'create'            => [
                     'code'                => 'Código',
                     'action'              => 'Ação',
@@ -1811,19 +1924,20 @@ return [
                 'status'           => 'Status',
                 'title'            => 'Editar Usuário',
             ],
-            'activate-warning'             => 'Sua conta ainda não foi ativada. Por favor, entre em contato com o administrador.',
-            'cannot-change'                => 'O usuário não pode ser alterado',
-            'cannot-escalate-role'         => 'Você não tem permissão para atribuir uma função com acesso total.',
-            'create-success'               => 'Usuário criado com sucesso.',
-            'delete-failed'                => 'Falha ao excluir o usuário.',
-            'delete-success'               => 'Usuário excluído com sucesso.',
-            'delete-warning'               => 'Tem certeza de que deseja realizar esta ação?',
-            'incorrect-password'           => 'Senha incorreta',
-            'last-delete-error'            => 'Falha ao excluir o último usuário',
-            'login-error'                  => 'Verifique suas credenciais e tente novamente.',
-            'update-success'               => 'Usuário atualizado com sucesso.',
-            'current-user-delete-error'    => 'Não é possível excluir o usuário logado.',
-            'last-all-access-delete-error' => 'O último administrador ativo com acesso total não pode ser excluído.',
+            'activate-warning'                 => 'Sua conta ainda não foi ativada. Por favor, entre em contato com o administrador.',
+            'cannot-change'                    => 'O usuário não pode ser alterado',
+            'cannot-assign-unheld-permissions' => 'Você não pode atribuir uma função que contenha permissões que você não possui.',
+            'cannot-escalate-role'             => 'Você não tem permissão para atribuir uma função com acesso total.',
+            'create-success'                   => 'Usuário criado com sucesso.',
+            'delete-failed'                    => 'Falha ao excluir o usuário.',
+            'delete-success'                   => 'Usuário excluído com sucesso.',
+            'delete-warning'                   => 'Tem certeza de que deseja realizar esta ação?',
+            'incorrect-password'               => 'Senha incorreta',
+            'last-delete-error'                => 'Falha ao excluir o último usuário',
+            'login-error'                      => 'Verifique suas credenciais e tente novamente.',
+            'update-success'                   => 'Usuário atualizado com sucesso.',
+            'current-user-delete-error'        => 'Não é possível excluir o usuário logado.',
+            'last-all-access-delete-error'     => 'O último administrador ativo com acesso total não pode ser excluído.',
         ],
         'system-settings' => [
             'info'               => 'Gerencie as configurações do sistema em um único lugar.',
@@ -2049,7 +2163,6 @@ return [
                 'all'            => 'Todos',
                 'back-btn'       => 'Voltar',
                 'custom'         => 'Personalizado',
-                'assign-user'    => 'Atribuir Usuário',
                 'general'        => 'Geral',
                 'name'           => 'Nome',
                 'permissions'    => 'Permissões',
@@ -2061,7 +2174,6 @@ return [
                 'all'                         => 'Todos',
                 'back-btn'                    => 'Voltar',
                 'custom'                      => 'Personalizado',
-                'assign-user'                 => 'Atribuir Usuário',
                 'general'                     => 'Geral',
                 'name'                        => 'Nome',
                 'credentials'                 => 'Credenciais',
@@ -2271,6 +2383,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Expandir',
+            'collapse' => 'Recolher',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Adicionar',
+                'already-added'      => 'Adicionado',
+                'empty-info'         => 'Tente uma pesquisa diferente.',
+                'empty-title'        => 'Nenhum tipo de associação encontrado',
+                'search-placeholder' => 'Pesquisar por nome ou código',
+                'select-all'         => 'Selecionar tudo',
+                'title'              => 'Adicionar tipo de associação',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Adicionar selecionados',
+                'selected' => ':count produtos selecionados',
+                'title'    => 'Selecionar produtos',
+            ],
+        ],
         'pagination' => [
             'page' => 'Página',
         ],
@@ -2281,6 +2414,13 @@ return [
             'close' => 'Fechar',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled de :total traduzidos',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Nenhum resultado',
+                'search' => 'Pesquisar',
+            ],
             'ajax-error'      => 'Algo deu errado ao salvar. Por favor, tente novamente.',
             'file-uploader'   => [
                 'upload-cta'  => 'Clique para enviar',
@@ -2306,6 +2446,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Recolher painel',
+                'expand'   => 'Expandir painel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Trilha de navegação',
             ],
@@ -2332,6 +2476,7 @@ return [
                 'catalog'            => 'Catálogo',
                 'categories'         => 'Categorias',
                 'category_fields'    => 'Campos de Categoria',
+                'association_types'  => 'Tipos de Associação',
                 'channels'           => 'Canais',
                 'collapse'           => 'Reduzir',
                 'configure'          => 'Configuração',
@@ -2772,6 +2917,7 @@ return [
         'url-rewrites'             => 'Reescritas de URL',
         'users'                    => 'Usuários',
         'category_fields'          => 'Campos da Categoria',
+        'association_types'        => 'Tipos de Associação',
         'view'                     => 'Visualizar',
         'execute'                  => 'Executar',
         'history'                  => 'História',
@@ -2782,6 +2928,8 @@ return [
         'exports'                  => 'Exportações',
         'mass-update'              => 'Atualização em massa',
         'mass-delete'              => 'Exclusão em massa',
+        'bulk-edit'                => 'Edição em massa',
+        'quick-export'             => 'Exportação rápida',
         'variant-structures'       => 'Estruturas de variantes',
     ],
     'errors' => [

@@ -102,6 +102,11 @@ abstract class DataGrid
     protected bool $exportable = false;
 
     /**
+     * Permission required to export this grid. Null leaves export ungated.
+     */
+    protected ?string $exportPermission = null;
+
+    /**
      * Every matching primary-key value for the current filter/search context.
      *
      * Populated only when the request asks for a "select all matching" id list,
@@ -405,7 +410,22 @@ abstract class DataGrid
      */
     public function setExportFile($records, $format = 'csv'): void
     {
+        $this->enforceExportPermission();
+
         $this->exportFile = Excel::download(new DataGridExport($records), $this->getExportFileName().'.'.$format);
+    }
+
+    protected function enforceExportPermission(): void
+    {
+        if ($this->exportPermission === null) {
+            return;
+        }
+
+        abort_unless(
+            bouncer()->hasPermission($this->exportPermission),
+            403,
+            trans('admin::app.errors.403.message')
+        );
     }
 
     /**

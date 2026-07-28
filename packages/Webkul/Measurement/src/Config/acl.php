@@ -18,12 +18,6 @@ return [
     [
         'key'   => 'catalog.measurements.families.create',
         'name'  => 'admin::app.acl.create',
-        'route' => 'admin.measurement.families.create',
-        'sort'  => 1,
-    ],
-    [
-        'key'   => 'catalog.measurements.families.create',
-        'name'  => 'admin::app.acl.create',
         'route' => 'admin.measurement.families.store',
         'sort'  => 1,
     ],
@@ -81,5 +75,12 @@ return [
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.measurement.families.units.delete',
         'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'configuration.system_settings.measurement',
+        'name'  => 'measurement::app.config.catalog.measurement.title',
+        'route' => null,
+        'sort'  => 7,
     ],
 ];

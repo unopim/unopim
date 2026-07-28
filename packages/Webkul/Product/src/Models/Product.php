@@ -161,6 +161,15 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             ->getEditableAttributes($group, $skipSuperAttribute);
     }
 
+    /**
+     * Retrieve the product's editable attributes for a single attribute group.
+     */
+    public function getEditableAttributesForGroup(int $groupId, bool $skipSuperAttribute = true): Collection
+    {
+        return $this->getTypeInstance()
+            ->getEditableAttributesForGroup($groupId, $skipSuperAttribute);
+    }
+
     public function completenessScores()
     {
         return $this->hasMany(ProductCompletenessScore::class, 'product_id');

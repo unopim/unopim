@@ -191,11 +191,24 @@ docker compose up -d
 
 Wait ~90 seconds for first-time migrations/seeding, then open `http://localhost:8000/admin` and log in with `admin@example.com` / `admin123`.
 
-**Apache alternative** (instead of Nginx):
+The stack defaults to **Nginx + PHP-FPM** and **PostgreSQL 16**. Both are swappable.
+
+**Apache instead of Nginx:**
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
 ```
+
+**MySQL instead of PostgreSQL** — set these in `.env` before the first `up`; only the selected engine's container starts:
+
+```dotenv
+COMPOSE_PROFILES=mysql
+DB_CONNECTION=mysql
+DB_HOST=unopim-mysql
+DB_PORT=3306
+```
+
+> Switching engines on an existing install needs a fresh database — data is not migrated between them.
 
 > **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
 

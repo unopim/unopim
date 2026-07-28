@@ -78,6 +78,71 @@ class SystemSettings
     }
 
     /**
+     * @param  array<int, string>  $codes
+     * @return array<int, string>
+     */
+    public function aclKeysForConfigCodes(array $codes): array
+    {
+        $keys = [];
+
+        foreach ($this->configGroupOwners() as $configGroup => $acl) {
+            foreach ($codes as $code) {
+                if ($code === $configGroup || str_starts_with($code, $configGroup.'.')) {
+                    $keys[] = $acl;
+
+                    break;
+                }
+            }
+        }
+
+        return array_values(array_unique($keys));
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function aclKeysForConfigGroup(string $groupKey): array
+    {
+        if ($groupKey === '') {
+            return [];
+        }
+
+        $keys = [];
+
+        foreach ($this->configGroupOwners() as $configGroup => $acl) {
+            if (
+                $configGroup === $groupKey
+                || str_starts_with($configGroup, $groupKey.'.')
+                || str_starts_with($groupKey, $configGroup.'.')
+            ) {
+                $keys[] = $acl;
+            }
+        }
+
+        return array_values(array_unique($keys));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function configGroupOwners(): array
+    {
+        $owners = [];
+
+        foreach ((array) config('system_settings', []) as $item) {
+            $configGroup = (string) ($item['config_group'] ?? '');
+
+            if ($configGroup === '' || empty($item['acl'])) {
+                continue;
+            }
+
+            $owners[$configGroup] = (string) $item['acl'];
+        }
+
+        return $owners;
+    }
+
+    /**
      * Registry rows the current admin may see. Rows carrying an `acl` the admin
      * lacks are dropped; sections and acl-less rows always pass.
      *

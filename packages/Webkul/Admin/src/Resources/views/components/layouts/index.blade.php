@@ -93,6 +93,8 @@
             {!! view_render_event('unopim.admin.layout.content.after') !!}
         </div>
 
+        <x-admin::layouts.acl-watcher />
+
         {!! view_render_event('unopim.admin.layout.body.after') !!}
 
         @stack('scripts')

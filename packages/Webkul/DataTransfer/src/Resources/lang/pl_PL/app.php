@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Powiązania produktów',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Pole \'%s\' jest wymagane.',
+                    'self-link-not-allowed'       => 'Produkt \'%s\' nie może być powiązany sam ze sobą.',
+                    'sku-not-found'               => 'Nie znaleziono produktu o SKU \'%s\'.',
+                    'related-sku-not-found'       => 'Nie znaleziono powiązanego produktu o SKU \'%s\'.',
+                    'association-type-not-found'  => 'Typ powiązania \'%s\' nie istnieje lub jest nieaktywny.',
+                    'invalid-field-value'         => 'Podano nieprawidłową wartość dla pola powiązania.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grupy atrybutów',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Ten eksport jest zbyt duży, aby go uruchomić: szacunkowo :rows wierszy × :columns kolumn (~:estimated) przekracza dostępne miejsce (~:available). Zawęź eksport, wybierając mniej kanałów/lokalizacji (i atrybutów), i spróbuj ponownie.',
         'fields'           => [
-            'file-format'         => 'Format pliku',
-            'with-media'          => 'Z multimediami',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format pliku',
+            'with-media'             => 'Z multimediami',
+            'with-associations'      => 'Z powiązaniami',
+            'with-associations-info' => 'Uwzględnij w eksporcie starsze kolumny list SKU (up_sells, cross_sells i related_products)',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Atrybuty',
+        ],
+        'product-associations' => [
+            'title' => 'Powiązania produktów',
         ],
         'attribute-groups' => [
             'title' => 'Grupy atrybutów',
