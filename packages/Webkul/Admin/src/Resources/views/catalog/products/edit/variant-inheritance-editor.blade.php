@@ -309,11 +309,28 @@
                 go(id) {
                     if (this.navigating) { return; }
                     if (id === this.selected) { this.p.open = false; this.c.open = false; return; }
+                    this.leaveGuarded(() => this.startNavigation(id));
+                },
+                startNavigation(id) {
                     this.navigating = true;
                     this.pendingId = id;
                     this._navTimer = setTimeout(() => { this.navigating = false; this.pendingId = null; }, 15000);
                     const url = EDIT_URL(id);
                     if (this.$navigate) { this.$navigate(url); } else { window.location.href = url; }
+                },
+                closeAddModal() {
+                    if (this.$refs.addModal && this.$refs.addModal.isOpen) {
+                        this.$refs.addModal.close();
+                    }
+                },
+                leaveGuarded(proceed, cancel = () => {}) {
+                    if (window.unopimConfirmUnsavedLeave) {
+                        window.unopimConfirmUnsavedLeave(proceed, cancel);
+
+                        return;
+                    }
+
+                    proceed();
                 },
                 selectCommon() { this.go(this.configurableId); },
                 stateFor(w) { return w === 'p' ? this.p : this.c; },
@@ -386,9 +403,11 @@
                     if (el.scrollTop + el.clientHeight >= el.scrollHeight - 40 && st.page < st.lastPage && !st.loadingMore && !st.loading) { this.fetch(w, false); }
                 },
                 openAdd(w) {
-                    this.p.open = false; this.c.open = false;
-                    this.addFor = w; this.newValues = {}; this.newSku = ''; this.skuEdited = false;
-                    this.$nextTick(() => { if (this.$refs.addModal) { this.$refs.addModal.open(); } });
+                    this.leaveGuarded(() => {
+                        this.p.open = false; this.c.open = false;
+                        this.addFor = w; this.newValues = {}; this.newSku = ''; this.skuEdited = false;
+                        this.$nextTick(() => { if (this.$refs.addModal) { this.$refs.addModal.open(); } });
+                    });
                 },
                 cancelAdd() {
                     this.addFor = null; this.newValues = {}; this.newSku = ''; this.skuEdited = false;
@@ -414,7 +433,17 @@
                     const parentId = w === 'p' ? null : this.currentGroupId;
                     this.creating = true;
                     this.$axios.post(CREATE_URL(this.configurableId), { parent_id: parentId, role: role, values: this.newValues, sku: this.newSku || null })
-                        .then(r => { const d = (r.data && r.data.data) || r.data || {}; if (d.redirect_url) { this.$navigate ? this.$navigate(d.redirect_url) : (window.location.href = d.redirect_url); } else if (d.id) { this.go(d.id); } })
+                        .then(r => {
+                            const d = (r.data && r.data.data) || r.data || {};
+
+                            this.closeAddModal();
+
+                            if (d.redirect_url) {
+                                this.$navigate ? this.$navigate(d.redirect_url) : (window.location.href = d.redirect_url);
+                            } else if (d.id) {
+                                this.startNavigation(d.id);
+                            }
+                        })
                         .catch(error => {
                             this.creating = false;
                             const message = (error && error.response && error.response.data && error.response.data.message) || t('create-error');
