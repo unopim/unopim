@@ -590,8 +590,23 @@ class ProductController extends Controller
         $locks = [];
         $hidden = [];
 
+        $resolvedValues = $product->resolvedValues();
+
         foreach ($configurable->attribute_family->customAttributes as $attribute) {
-            if ($attribute->code === 'sku' || in_array($attribute->code, $allAxisCodes, true)) {
+            if ($attribute->code === 'sku') {
+                continue;
+            }
+
+            if (in_array($attribute->code, $allAxisCodes, true)) {
+                if ($currentLevel !== 'common') {
+                    $locks[$attribute->code] = [
+                        'axis'    => true,
+                        'level'   => null,
+                        'ownerId' => null,
+                        'value'   => $attribute->getValueFromProductValues($resolvedValues, $channelCode, $localeCode),
+                    ];
+                }
+
                 continue;
             }
 
