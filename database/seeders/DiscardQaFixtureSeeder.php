@@ -43,6 +43,11 @@ class DiscardQaFixtureSeeder extends Seeder
         ['code' => 'e2e_qa_file', 'type' => 'file', 'name' => 'E2E QA File', 'extensions' => ['pdf']],
     ];
 
+    /**
+     * @var list<string>|null
+     */
+    private ?array $localeCodes = null;
+
     public function __construct(
         private readonly AttributeGroupRepository $groups,
         private readonly AttributeRepository $attributes,
@@ -108,8 +113,9 @@ class DiscardQaFixtureSeeder extends Seeder
      */
     private function translatedNames(string $name): array
     {
-        return LocaleProxy::modelClass()::query()
-            ->pluck('code')
+        $this->localeCodes ??= LocaleProxy::modelClass()::query()->pluck('code')->all();
+
+        return collect($this->localeCodes)
             ->mapWithKeys(fn (string $localeCode): array => [$localeCode => ['name' => $name]])
             ->all();
     }

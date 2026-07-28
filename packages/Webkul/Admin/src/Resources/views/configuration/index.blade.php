@@ -42,7 +42,7 @@
                     @foreach ($item['children'] as $childKey =>  $child)
                         <a 
                             class="flex items-center gap-2 max-w-[360px] p-2 rounded-lg transition-all hover:bg-primary-50 dark:hover:bg-cherry-800"
-                            href="{{ route('admin.configuration.index', ($itemKey . '/' . $childKey)) }}"
+                            href="{{ route('admin.configuration.edit', ($itemKey . '/' . $childKey)) }}"
                         >
                             @if (isset($child['icon']))
                                 <img

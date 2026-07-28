@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Produktverknüpfungen',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Das Feld \'%s\' ist erforderlich.',
+                    'self-link-not-allowed'       => 'Das Produkt \'%s\' kann nicht mit sich selbst verknüpft werden.',
+                    'sku-not-found'               => 'Produkt mit der SKU \'%s\' wurde nicht gefunden.',
+                    'related-sku-not-found'       => 'Verknüpftes Produkt mit der SKU \'%s\' wurde nicht gefunden.',
+                    'association-type-not-found'  => 'Der Verknüpfungstyp \'%s\' existiert nicht oder ist inaktiv.',
+                    'invalid-field-value'         => 'Ungültiger Wert für ein Verknüpfungsfeld angegeben.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attributgruppen',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Dieser Export ist zu groß: geschätzte :rows Zeilen × :columns Spalten (~:estimated) überschreiten den verfügbaren Speicherplatz (~:available). Schränken Sie den Export ein, indem Sie weniger Kanäle/Sprachen (und Attribute) auswählen, und versuchen Sie es erneut.',
         'fields'           => [
-            'file-format'         => 'Dateiformat',
-            'with-media'          => 'Mit Medien',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Dateiformat',
+            'with-media'             => 'Mit Medien',
+            'with-associations'      => 'Mit Verknüpfungen',
+            'with-associations-info' => 'Die alten SKU-Listenspalten (up_sells, cross_sells und related_products) in den Export einschließen',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Attribute',
+        ],
+        'product-associations' => [
+            'title' => 'Produktverknüpfungen',
         ],
         'attribute-groups' => [
             'title' => 'Attributgruppen',

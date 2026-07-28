@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '产品关联',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' 字段为必填项。',
+                    'self-link-not-allowed'       => '产品 \'%s\' 不能与自身关联。',
+                    'sku-not-found'               => '未找到 SKU 为 \'%s\' 的产品。',
+                    'related-sku-not-found'       => '未找到 SKU 为 \'%s\' 的关联产品。',
+                    'association-type-not-found'  => '关联类型 \'%s\' 不存在或未启用。',
+                    'invalid-field-value'         => '关联字段提供了无效的值。',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '属性组',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => '此导出过大，无法运行：预计 :rows 行 × :columns 列（~:estimated）超出了可用空间（~:available）。请通过选择更少的渠道/区域（和属性）来缩小导出范围，然后重试。',
         'fields'           => [
-            'file-format'         => '文件格式',
-            'with-media'          => '包含媒体',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => '文件格式',
+            'with-media'             => '包含媒体',
+            'with-associations'      => '包含关联',
+            'with-associations-info' => '在导出中包含旧版 up_sells、cross_sells、related_products SKU 列表列',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => '属性',
+        ],
+        'product-associations' => [
+            'title' => '产品关联',
         ],
         'attribute-groups' => [
             'title' => '属性组',

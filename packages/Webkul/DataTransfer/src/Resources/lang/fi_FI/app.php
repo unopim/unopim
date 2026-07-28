@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Tuoteyhdistelmät',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kenttä \'%s\' on pakollinen.',
+                    'self-link-not-allowed'       => 'Tuotetta \'%s\' ei voi yhdistää itseensä.',
+                    'sku-not-found'               => 'Tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'related-sku-not-found'       => 'Liittyvää tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'association-type-not-found'  => 'Yhdistelmätyyppiä \'%s\' ei ole olemassa tai se ei ole aktiivinen.',
+                    'invalid-field-value'         => 'Yhdistelmäkentälle annettiin virheellinen arvo.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Attribuuttiryhmät',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
         'fields'           => [
-            'file-format'         => 'Tiedostomuoto',
-            'with-media'          => 'Median kanssa',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Tiedostomuoto',
+            'with-media'             => 'Median kanssa',
+            'with-associations'      => 'Liitoksineen',
+            'with-associations-info' => 'Sisällytä vanhat SKU-luettelosarakkeet (up_sells, cross_sells ja related_products) vientiin',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Attribuutit',
+        ],
+        'product-associations' => [
+            'title' => 'Tuoteyhdistelmät',
         ],
         'attribute-groups' => [
             'title' => 'Attribuuttiryhmät',

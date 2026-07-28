@@ -18,43 +18,14 @@ class VariantStructureDataGrid extends DataGrid
      */
     public function prepareQueryBuilder(): Builder
     {
-        $prefix = DB::getTablePrefix();
-
-        $axes = $prefix.'variant_structure_axes';
-        $attributes = $prefix.'attributes';
-        $structures = $prefix.'variant_structures';
-
-        $axesFor = fn (string $level): string => sprintf(
-            '(
-                SELECT %s
-                FROM %s
-                INNER JOIN %s ON %s.id = %s.attribute_id
-                WHERE %s.variant_structure_id = %s.id
-                    AND %s.level = \'%s\'
-            ) as %s_axes',
-            GrammarQueryManager::getGrammar()->groupConcat(
-                column: $attributes.'.code',
-                orderBy: $axes.'.position',
-            ),
-            $axes,
-            $attributes,
-            $attributes,
-            $axes,
-            $axes,
-            $structures,
-            $axes,
-            $level,
-            $level
-        );
-
         $queryBuilder = DB::table('variant_structures')
             ->select(
                 'variant_structures.id',
                 'variant_structures.code',
                 'variant_structures.name',
                 'variant_structures.levels',
-                DB::raw($axesFor('level_1')),
-                DB::raw($axesFor('level_2'))
+                DB::raw($this->axisCodesSubQuery('level_1').' as level_1_axes'),
+                DB::raw($this->axisCodesSubQuery('level_2').' as level_2_axes')
             )
             ->where('variant_structures.attribute_family_id', $this->familyId);
 
@@ -64,6 +35,29 @@ class VariantStructureDataGrid extends DataGrid
         $this->addFilter('levels', 'variant_structures.levels');
 
         return $queryBuilder;
+    }
+
+    /**
+     * Correlated sub-query returning the axis attribute codes of one level as a
+     * single ordered, comma-separated string. Prefixes are interpolated because
+     * DB::raw() bypasses them; the aggregate comes from the driver grammar.
+     */
+    protected function axisCodesSubQuery(string $level): string
+    {
+        $prefix = DB::getTablePrefix();
+
+        $aggregate = GrammarQueryManager::getGrammar()->groupConcat(
+            "{$prefix}attributes.code",
+            orderBy: "{$prefix}variant_structure_axes.position",
+        );
+
+        return "(
+            SELECT {$aggregate}
+            FROM {$prefix}variant_structure_axes
+            INNER JOIN {$prefix}attributes ON {$prefix}attributes.id = {$prefix}variant_structure_axes.attribute_id
+            WHERE {$prefix}variant_structure_axes.variant_structure_id = {$prefix}variant_structures.id
+                AND {$prefix}variant_structure_axes.level = '{$level}'
+        )";
     }
 
     /**

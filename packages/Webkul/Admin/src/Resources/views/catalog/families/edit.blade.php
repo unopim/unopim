@@ -110,27 +110,13 @@
                                 <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
                                     @lang('admin::app.catalog.attributes.edit.label')
                                 </p>
-                                <x-admin::form.control-group>
-                                    @foreach ($locales as $locale)
-                                        <x-admin::form.control-group>
-                                            <x-admin::form.control-group.label
-                                                class="w-full"
-                                                localizable="true"
-                                                :current-locale-code="$locale->code"
-                                            >
-                                                @lang('admin::app.catalog.families.edit.name')
-                                            </x-admin::form.control-group.label>
 
-                                            <x-admin::form.control-group.control
-                                                type="text"
-                                                :name="$locale->code . '[name]'"
-                                                :value="old($locale->code)['name'] ?? ($attributeFamily['family']->translate($locale->code)->name ?? '')"
-                                            />
-
-                                            <x-admin::form.control-group.error :control-name="$locale->code . '[name]'" />
-                                        </x-admin::form.control-group>
-                                    @endforeach
-                                </x-admin::form.control-group>
+                                <x-admin::form.translatable-field
+                                    :locales="$locales"
+                                    :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($attributeFamily['family']->translate($locale->code)->name ?? '')])->all()"
+                                    :label="trans('admin::app.catalog.families.edit.name')"
+                                    :placeholder="trans('admin::app.catalog.families.edit.enter-name')"
+                                />
                             </div>
                         </div>
 
@@ -161,8 +147,8 @@
     </x-slot>
     @if ($activeTab === 'general')
         @pushOnce('scripts')
-            <script 
-                type="text/x-template" 
+            <script
+                type="text/x-template"
                 id="v-family-attributes-template"
             >
                 <div>
@@ -207,9 +193,12 @@
                                     icon-position="left"
                                     :placeholder="trans('admin::app.catalog.families.edit.search')"
                                     v-model.trim="assignedSearchTerm"
+                                    v-debounce="500"
                                     v-focus
+                                    @change="searchGroups(assignedSearchTerm)"
+                                    @keydown.enter.prevent="searchGroups(assignedSearchTerm)"
                                     clear-when="assignedSearchTerm"
-                                    clear-action="assignedSearchTerm = ''"
+                                    clear-action="assignedSearchTerm = ''; searchGroups('')"
                                 />
                             </x-admin::list.panel-header>
 
@@ -270,9 +259,22 @@
 
                                             <x-admin::catalog.families.drop-attributes-placeholder v-if="! element.customAttributes.length" />
                                         </div>
-                                    </div>  
+                                    </div>
                                 </template>
                             </draggable>
+
+                            <input
+                                type="hidden"
+                                name="retained_group_mappings"
+                                :value="retainedGroupMappings.join(',')"
+                            />
+
+                            <x-admin::pagination.compact
+                                class="mt-3"
+                                current-page="groupsPage"
+                                total-pages="groupsLastPage"
+                                change="changeGroupPage"
+                            />
                         </div>
 
                         <div>
@@ -469,6 +471,13 @@
                                 name: null,
                             },
                             getAttributeRoute: "{{ route('admin.catalog.options.fetch-all')}}",
+                            groupAttributesRoute: "{{ route('admin.catalog.families.group-attributes', ['id' => $attributeFamily['family']->id ?? 0, 'groupId' => '__group_id__']) }}",
+                            groupsRoute: "{{ route('admin.catalog.families.groups', ['id' => $attributeFamily['family']->id ?? 0]) }}",
+                            familyId: {{ $attributeFamily['family']->id ?? 0 }},
+                            groupsPage: 1,
+                            groupsLastPage: {{ $attributeFamily['groupsLastPage'] ?? 1 }},
+                            groupsPerPage: {{ $attributeFamily['groupsPerPage'] ?? 25 }},
+                            retainedGroupMappings: @json($attributeFamily['groupMappingIds'] ?? []),
                             customAttributes: [],
                             familyDefaultGroups: @json($attributeFamily['familyGroupMappings']),
                             dropReverted: false,
@@ -492,16 +501,11 @@
                         },
 
                         visibleFamilyGroups() {
-                            if (! this.assignedSearchTerm) {
-                                return this.familyDefaultGroups;
-                            }
+                            return this.familyDefaultGroups;
+                        },
 
-                            const term = this.assignedSearchTerm.toLowerCase();
-
-                            return this.familyDefaultGroups.filter(group => {
-                                return this.matchesSearch(group, term)
-                                    || group.customAttributes.some(attribute => this.matchesSearch(attribute, term));
-                            });
+                        groupPositionOffset() {
+                            return (this.groupsPage - 1) * this.groupsPerPage;
                         },
 
                         pageAllSelected() {
@@ -548,24 +552,19 @@
 
                         assignedGroupExcludeParams() {
                             return {
-                                exclude: {
-                                    columnName: 'code',
-                                    values: this.familyDefaultGroups.map(group => group.code),
-                                },
+                                notInFamily: this.familyId,
                             };
-                        },
-
-                        assignedAttributes() {
-                            return this.familyDefaultGroups.map(group => {
-                                return group.customAttributes.map(attribute => {
-                                    return attribute.code
-                                })
-                            }).flat();
                         }
                     },
 
                     mounted() {
                         this.getAttributes();
+
+                        const firstGroup = this.familyDefaultGroups[0];
+
+                        if (firstGroup) {
+                            this.toggleGroup(firstGroup);
+                        }
                     },
 
                     methods: {
@@ -617,6 +616,84 @@
                             const id = group?.id ?? group?.value;
 
                             return id && id !== 'undefined' ? id : null;
+                        },
+
+                        groupAttributesCount(group) {
+                            return group.attributesLoaded === false
+                                ? (group.attributesCount ?? 0)
+                                : group.customAttributes.length;
+                        },
+
+                        fetchGroups() {
+                            this.isSearchingAssigned = true;
+
+                            return this.$axios
+                                .get(this.groupsRoute, {
+                                    params: {
+                                        page:  this.groupsPage,
+                                        query: this.assignedSearchTerm,
+                                    },
+                                })
+                                .then(response => {
+                                    this.familyDefaultGroups = response.data.groups || [];
+                                    this.groupsLastPage = response.data.lastPage || 1;
+
+                                    const firstGroup = this.familyDefaultGroups[0];
+
+                                    if (firstGroup) {
+                                        this.toggleGroup(firstGroup);
+                                    }
+                                })
+                                .finally(() => {
+                                    this.isSearchingAssigned = false;
+                                });
+                        },
+
+                        changeGroupPage(page) {
+                            if (page > 0 && page <= this.groupsLastPage) {
+                                this.groupsPage = page;
+
+                                this.fetchGroups();
+                            }
+                        },
+
+                        searchGroups(term) {
+                            this.assignedSearchTerm = term;
+                            this.groupsPage = 1;
+
+                            this.fetchGroups();
+                        },
+
+                        toggleGroup(group) {
+                            group.hide = ! group.hide;
+
+                            if (! group.hide) {
+                                this.loadGroupAttributes(group);
+                            }
+                        },
+
+                        loadGroupAttributes(group) {
+                            const groupId = this.groupFormId(group);
+
+                            if (! groupId || group.attributesLoaded !== false) {
+                                return Promise.resolve(group);
+                            }
+
+                            if (! group.attributesRequest) {
+                                group.attributesRequest = this.$axios
+                                    .get(this.groupAttributesRoute.replace('__group_id__', groupId))
+                                    .then(response => {
+                                        group.customAttributes = response.data.attributes || [];
+                                        group.attributesLoaded = true;
+
+                                        return group;
+                                    })
+                                    .finally(() => {
+                                        group.attributesRequest = null;
+                                    });
+                            }
+
+                            return group.attributesRequest;
                         },
 
                         getVisibleGroupAttributes(group) {
@@ -697,10 +774,7 @@
                                 entityName: 'attributes',
                                 page: 1,
                                 perPage: this.totalAttributes,
-                                exclude: {
-                                    columnName: 'code',
-                                    values: this.assignedAttributes,
-                                },
+                                notInFamily: this.familyId,
                             });
 
                             this.$axios
@@ -732,17 +806,19 @@
                                 ? this.allMatchingAttributes.slice()
                                 : this.customAttributes.filter(a => this.selectedAttrs.includes(this.attributeCode(a)));
 
-                            moving.forEach(attribute => group.customAttributes.push(attribute));
+                            this.loadGroupAttributes(group).then(() => {
+                                moving.forEach(attribute => group.customAttributes.push(attribute));
 
-                            const movedCodes = moving.map(a => this.attributeCode(a));
+                                const movedCodes = moving.map(a => this.attributeCode(a));
 
-                            this.customAttributes = this.customAttributes.filter(a => ! movedCodes.includes(this.attributeCode(a)));
+                                this.customAttributes = this.customAttributes.filter(a => ! movedCodes.includes(this.attributeCode(a)));
 
-                            this.clearSelectedAttrs();
+                                this.clearSelectedAttrs();
 
-                            this.signalUnsaved();
+                                this.signalUnsaved();
 
-                            this.getAttributes();
+                                this.getAttributes();
+                            });
                         },
 
                         assignGroup(params, { resetForm, setErrors }) {
@@ -764,6 +840,9 @@
                                         'code': jsonObject.code,
                                         'group_mapping_id' : '',
                                         'customAttributes': [],
+                                        'attributesCount': 0,
+                                        'attributesLoaded': true,
+                                        'hide': false,
                                     });
                                 }
                             });
@@ -796,35 +875,45 @@
                                         return;
                                     }
 
-                                    if (this.isGroupContainsSku(groupToRemove)) {
-                                        this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.catalog.families.edit.group-contains-system-attributes')" });
-
-                                        return;
-                                    }
-
-                                    const index = this.familyDefaultGroups.findIndex(obj => obj.code === groupToRemove.code);
-
-                                    if (index !== -1) {
-                                        groupToRemove.customAttributes.forEach(attribute => {
-                                            if (! this.customAttributes.find(customAttribute => customAttribute.id === attribute.id)) {
-                                                this.customAttributes.push(attribute);
-                                            }
-                                        });
-
-                                        this.familyDefaultGroups.splice(index, 1);
-
-                                        if (this.selectedGroup.code === groupToRemove.code) {
-                                            this.selectedGroup = {
-                                                id: null,
-                                                code: null,
-                                                name: null,
-                                            };
-                                        }
-
-                                        this.signalUnsaved();
-                                    }
+                                    this.loadGroupAttributes(groupToRemove).then(() => this.confirmGroupRemoval(groupToRemove));
                                 }
                             });
+                        },
+
+                        confirmGroupRemoval(groupToRemove) {
+                            if (this.isGroupContainsSku(groupToRemove)) {
+                                this.$emitter.emit('add-flash', { type: 'warning', message: "@lang('admin::app.catalog.families.edit.group-contains-system-attributes')" });
+
+                                return;
+                            }
+
+                            const index = this.familyDefaultGroups.findIndex(obj => obj.code === groupToRemove.code);
+
+                            if (index === -1) {
+                                return;
+                            }
+
+                            groupToRemove.customAttributes.forEach(attribute => {
+                                if (! this.customAttributes.find(customAttribute => customAttribute.id === attribute.id)) {
+                                    this.customAttributes.push(attribute);
+                                }
+                            });
+
+                            this.familyDefaultGroups.splice(index, 1);
+
+                            this.retainedGroupMappings = this.retainedGroupMappings.filter(
+                                mappingId => Number(mappingId) !== Number(groupToRemove.group_mapping_id)
+                            );
+
+                            if (this.selectedGroup.code === groupToRemove.code) {
+                                this.selectedGroup = {
+                                    id: null,
+                                    code: null,
+                                    name: null,
+                                };
+                            }
+
+                            this.signalUnsaved();
                         },
 
                         onChange(e, group) {
@@ -888,10 +977,7 @@
                             Object.assign(this.params, {
                                 entityName: 'attributes',
                                 page: this.currentPage,
-                                exclude: {
-                                    columnName: 'code',
-                                    values: this.assignedAttributes
-                                }
+                                notInFamily: this.familyId,
                             });
 
                             this.isLoading = true;

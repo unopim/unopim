@@ -67,7 +67,7 @@
         app.component('v-datagrid', {
             template: '#v-datagrid-template',
 
-            props: ['src', 'filterAttributesSrc', 'viewsSrc', 'scopeChannel', 'scopeLocale', 'compact'],
+            props: ['src', 'filterAttributesSrc', 'viewsSrc', 'scopeChannel', 'scopeLocale', 'compact', 'storageKey'],
 
             data() {
                 return {
@@ -196,6 +196,16 @@
             },
 
             computed: {
+                /**
+                 * Persisted state is keyed by this rather than `src` so two grids on
+                 * the same endpoint can keep their own filters — a picker embedded in
+                 * a modal would otherwise inherit whatever the listing page applied.
+                 * Defaults to `src`, leaving already-stored entries matching.
+                 */
+                stateKey() {
+                    return this.storageKey || this.src;
+                },
+
                 filterFields() {
                     const types = {
                         string:  'text',
@@ -284,7 +294,7 @@
                     }
 
                     if (datagrids?.length) {
-                        const currentDatagrid = datagrids.find(({ src }) => src === this.src);
+                        const currentDatagrid = datagrids.find(({ src }) => src === this.stateKey);
 
                         if (currentDatagrid) {
                             this.applied.pagination = currentDatagrid.applied.pagination;
@@ -1120,11 +1130,11 @@
                     }
 
                     if (datagrids?.length) {
-                        const currentDatagrid = datagrids.find(({ src }) => src === this.src);
+                        const currentDatagrid = datagrids.find(({ src }) => src === this.stateKey);
 
                         if (currentDatagrid) {
                             datagrids = datagrids.map(datagrid => {
-                                if (datagrid.src === this.src) {
+                                if (datagrid.src === this.stateKey) {
                                     return {
                                         ...datagrid,
                                         requestCount: ++datagrid.requestCount,
@@ -1162,7 +1172,7 @@
                     }
 
                     return {
-                        src: this.src,
+                        src: this.stateKey,
                         requestCount: 0,
                         available: this.available,
                         applied: appliedForStorage,

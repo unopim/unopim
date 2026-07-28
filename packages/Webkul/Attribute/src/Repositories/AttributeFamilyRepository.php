@@ -4,6 +4,7 @@ namespace Webkul\Attribute\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Contracts\AttributeFamily;
@@ -170,7 +171,7 @@ class AttributeFamilyRepository extends Repository
     public function update(array $data, $id)
     {
         $family = parent::update($data, $id);
-        $previousAttributeGroupMappingIds = $family->attributeFamilyGroupMappings()->pluck('id');
+        $previousAttributeGroupMappingIds = $family->attributeFamilyGroupMappings()->toBase()->pluck('id');
 
         $newValue = [];
         $oldValue = [];
@@ -252,6 +253,10 @@ class AttributeFamilyRepository extends Repository
                 $newValue['attribute_group'][] = $groupCode;
                 $oldValue['attribute_group'][] = $groupCode;
 
+                if (! $this->groupCarriesAttributes($attributeGroupInputs)) {
+                    continue;
+                }
+
                 $previousAttributeIds = $familyGroupMapping->customAttributes()->get()->pluck('id');
 
                 foreach ($attributeGroupInputs['custom_attributes'] ?? [] as $attributeIndex => $attributeInputs) {
@@ -290,7 +295,7 @@ class AttributeFamilyRepository extends Repository
             $oldValue[$groupCode] = implode(', ', $old);
         }
 
-        foreach ($previousAttributeGroupMappingIds as $mappingId) {
+        foreach ($this->removableGroupMappingIds($previousAttributeGroupMappingIds, $data) as $mappingId) {
             $attributeGroup = $this->attributeGroupRepository->find(['id' => $mappingId]);
 
             $oldValue['attribute_group'][] = $attributeGroup->first()?->toArray()['code'];
@@ -313,6 +318,34 @@ class AttributeFamilyRepository extends Repository
         return $family;
     }
 
+    /**
+     * Id/label pairs for family pickers. Deliberately not hydrating models: the translated
+     * `name` accessor lazy-loads one query per family, which is unusable on a large catalog.
+     *
+     * @return Collection<int, array{id: int, label: string}>
+     */
+    public function getOptions(?string $locale = null): Collection
+    {
+        $locale ??= core()->getRequestedLocaleCode();
+
+        return DB::table('attribute_families')
+            ->leftJoin('attribute_family_translations', function ($join) use ($locale): void {
+                $join->on('attribute_family_translations.attribute_family_id', '=', 'attribute_families.id')
+                    ->where('attribute_family_translations.locale', '=', $locale);
+            })
+            ->orderBy('attribute_families.code')
+            ->get([
+                'attribute_families.id',
+                'attribute_families.code',
+                'attribute_family_translations.name',
+            ])
+            ->map(fn ($family): array => [
+                'id'    => (int) $family->id,
+                'label' => filled($family->name) ? $family->name : '['.$family->code.']',
+            ])
+            ->values();
+    }
+
     public function getPartial(): array
     {
         $attributeFamilies = $this->model->all();
@@ -333,6 +366,45 @@ class AttributeFamilyRepository extends Repository
         }
 
         return $trimmed;
+    }
+
+    /**
+     * Resolve which group mappings a save is allowed to delete.
+     *
+     * The editor paginates groups, so an absent group usually means "not on this
+     * page" rather than "removed". When it sends `retained_group_mappings` -- the
+     * mappings it still holds across every page -- only what is missing from that
+     * list is removed. Payloads without the field stay authoritative.
+     *
+     * @param  Collection<int, int>  $previousMappingIds
+     * @return array<int, int>
+     */
+    private function removableGroupMappingIds($previousMappingIds, array $data): array
+    {
+        if (! array_key_exists('retained_group_mappings', $data)) {
+            return $previousMappingIds->all();
+        }
+
+        $retained = collect(is_array($data['retained_group_mappings'])
+            ? $data['retained_group_mappings']
+            : explode(',', (string) $data['retained_group_mappings']))
+            ->map(fn ($id): int => (int) $id)
+            ->filter()
+            ->all();
+
+        return $previousMappingIds->reject(fn ($mappingId): bool => in_array((int) $mappingId, $retained, true))->all();
+    }
+
+    /**
+     * Determine whether a submitted group carries an authoritative attribute list.
+     *
+     * The editor marks groups it never loaded `attributes_loaded=0` so their
+     * assignments survive the save. Payloads without the flag are authoritative.
+     */
+    private function groupCarriesAttributes(array $inputs): bool
+    {
+        return ! array_key_exists('attributes_loaded', $inputs)
+            || filter_var($inputs['attributes_loaded'], FILTER_VALIDATE_BOOLEAN);
     }
 
     private function resolveAttributeGroupId(int|string $groupId, array $inputs): ?int

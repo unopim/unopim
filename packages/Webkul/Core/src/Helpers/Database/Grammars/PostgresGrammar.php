@@ -42,13 +42,6 @@ class PostgresGrammar implements Grammar
         return "LENGTH({$column})";
     }
 
-    public function wrap(string $column): string
-    {
-        $parts = explode('.', $column);
-
-        return implode('.', array_map(fn (string $part): string => "\"{$part}\"", $parts));
-    }
-
     public function castToText(string $column): string
     {
         return "{$column}::text";

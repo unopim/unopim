@@ -49,6 +49,7 @@ class CategoryFieldForm extends FormRequest
             'section'          => ['sometimes', Rule::in(['left', 'right'])],
             'status'           => ['sometimes', 'boolean'],
             'position'         => ['sometimes', 'integer', 'min:0'],
+            'enable_wysiwyg'   => ['sometimes', 'boolean'],
             'is_required'      => ['sometimes', 'boolean'],
             'is_unique'        => CategoryFieldValidationRules::uniqueFlagRules($type),
             'value_per_locale' => ['sometimes', 'boolean'],

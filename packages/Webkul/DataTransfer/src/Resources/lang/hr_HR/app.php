@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Povezanosti proizvoda',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Polje \'%s\' je obavezno.',
+                    'self-link-not-allowed'       => 'Proizvod \'%s\' ne može biti povezan sam sa sobom.',
+                    'sku-not-found'               => 'Proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'related-sku-not-found'       => 'Povezani proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'association-type-not-found'  => 'Vrsta povezanosti \'%s\' ne postoji ili nije aktivna.',
+                    'invalid-field-value'         => 'Navedena je nevažeća vrijednost za polje povezanosti.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grupe značajki',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
         'fields'           => [
-            'file-format'         => 'Format datoteke',
-            'with-media'          => 'S medijima',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format datoteke',
+            'with-media'             => 'S medijima',
+            'with-associations'      => 'S povezivanjima',
+            'with-associations-info' => 'Uključi zastarjele SKU-popis stupce (up_sells, cross_sells i related_products) u izvoz',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Značajke',
+        ],
+        'product-associations' => [
+            'title' => 'Povezanosti proizvoda',
         ],
         'attribute-groups' => [
             'title' => 'Grupe značajki',

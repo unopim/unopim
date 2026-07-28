@@ -18,8 +18,6 @@ interface Grammar
 
     public function length(string $column): string;
 
-    public function wrap(string $column): string;
-
     public function castToText(string $column): string;
 
     public function jsonExtract(string $column, string ...$pathSegments): string;

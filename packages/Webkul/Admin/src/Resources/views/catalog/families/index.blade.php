@@ -1,13 +1,5 @@
 @php
     $currentLocaleCode = core()->getRequestedLocaleCode();
-
-    $families = app(\Webkul\Attribute\Repositories\AttributeFamilyRepository::class)
-        ->all()
-        ->map(fn ($family) => [
-            'id'    => $family->id,
-            'label' => $family->name ?: '['.$family->code.']',
-        ])
-        ->values();
 @endphp
 
 <x-admin::layouts>

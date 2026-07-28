@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Tuotteen navigointi',
                 'preview'    => 'Esikatselu',
                 'remove'     => 'Poista',
                 'save-btn'   => 'Tallenna tuote',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategoriat',
                     'root-not-allowed' => 'Juuriluokkaa ei voi liittää tuotteeseen.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attribuuttiryhmä:',
+                    'title'              => 'Attribuuttiryhmät',
+                    'search-placeholder' => 'Hae ryhmiä',
+                    'empty'              => 'Mikään attribuuttiryhmä ei vastaa hakuasi.',
+                    'attributes-count'   => ':count attribuuttia',
+                    'loading'            => 'Ladataan...',
+                    'retry'              => 'Yritä uudelleen',
+                    'load-more'          => 'Lataa lisää',
+                    'unsaved-title'      => 'Tallentamattomat muutokset',
+                    'unsaved-message'    => 'Tallenna ryhmän :group muutokset ennen jatkamista tai hylkää ne.',
+                    'save-and-continue'  => 'Tallenna ja jatka',
+                    'discard-and-leave'  => 'Hylkää ja jatka',
+                    'cancel'             => 'Peruuta',
                 ],
                 'images' => [
                     'info'  => 'Kuvan tarkkuuden tulisi olla 560px X 609px',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'Ristiinmyyntituotteet',
                     ],
                     'add-btn'           => 'Lisää',
+                    'add-type-btn'      => 'Lisää assosiaatiotyyppi',
                     'delete'            => 'Poista',
                     'empty-info'        => 'Lisää :type tuotteet yhdellä kertaa.',
                     'empty-title'       => 'Lisää tuote',
                     'image-placeholder' => 'Tuotekuva',
+                    'more-types'        => 'Lisää',
+                    'no-types-info'     => 'Käytä ”Lisää assosiaatiotyyppi” liittääksesi tämän tuotteen assosiaatiotyypin alle.',
+                    'no-types-title'    => 'Ei lisättyjä assosiaatioita',
+                    'search-types'      => 'Hae liitostyyppejä',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Liitännäiset tuotteet',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Luotu',
                     'product-type' => 'Tuotetyyppi',
                 ],
+                'sections' => [
+                    'view'    => 'Näytä',
+                    'unsaved' => 'Tallentamattomat muutokset',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Lisää valitut',
+                    'close'        => 'Sulje',
+                    'clear-search' => 'Tyhjennä haku',
+                    'categories'   => [
+                        'subtitle'        => 'Liitä tämä tuote luettelon kategorioihin.',
+                        'search'          => 'Hae kategorioita…',
+                        'searching'       => 'Haetaan…',
+                        'no-results'      => 'Vastaavia kategorioita ei löytynyt',
+                        'load-more'       => 'Lataa lisää',
+                        'none-selected'   => 'Kategorioita ei ole vielä valittu',
+                        'and-more'        => 'ja :count muuta',
+                        'review-selected' => 'Näytä valitut kategoriat',
+                        'selected'        => 'valittu',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Linkitä liittyviä, lisämyynti-, ristiinmyynti- ja mukautettuja tuotteita.',
+                        'linked'   => 'linkitettyä tuotetta',
+                    ],
+                ],
+
                 'more'         => 'Lisää',
                 'more-actions' => 'Lisää toimintoja',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Kategoria kenttää koodilla ":code" ei löydy',
             'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Assosiaatiotyypit',
+                'create-btn' => 'Luo assosiaatiotyyppi',
+                'add-btn'    => 'Luo assosiaatiotyyppi',
+
+                'datagrid' => [
+                    'code'                => 'Koodi',
+                    'name'                => 'Nimi',
+                    'status'              => 'Tila',
+                    'position'            => 'Sijainti',
+                    'edit'                => 'Muokkaa',
+                    'delete'              => 'Poista',
+                    'activated'           => 'Otetaan käyttöön',
+                    'disabled'            => 'Poistettu käytöstä',
+                    'active'              => 'Ota käyttöön',
+                    'disable'             => 'Poista käytöstä',
+                    'update-status'       => 'Päivitä tila',
+                    'delete-failed'       => 'Tätä assosiaatiotyyppiä ei voida poistaa.',
+                    'mass-delete-success' => 'Valitut assosiaatiotyypit poistettiin onnistuneesti',
+                    'mass-delete-failed'  => 'Valittuja assosiaatiotyyppejä ei voida poistaa.',
+                    'mass-update-success' => 'Päivitetty onnistuneesti',
+                ],
+            ],
+
+            'create-success'    => 'Assosiaatiotyyppi luotiin onnistuneesti',
+            'update-success'    => 'Assosiaatiotyyppi päivitettiin onnistuneesti',
+            'delete-success'    => 'Assosiaatiotyyppi poistettu onnistuneesti',
+            'delete-failed'     => 'Assosiaatiotyypin poistaminen epäonnistui',
+            'user-define-error' => 'Ei voida poistaa järjestelmän assosiaatiotyyppiä',
+            'unknown-fields'    => 'Assosiaatiotyypin kenttää koodilla ":fields" ei löytynyt',
+
+            'create' => [
+                'title'      => 'Luo assosiaatiotyyppi',
+                'name'       => 'Nimi',
+                'enter-name' => 'Anna nimi',
+                'code'       => 'Koodi',
+                'enter-code' => 'Syötä Koodi',
+                'save-btn'   => 'Tallenna assosiaatiotyyppi',
+            ],
+
+            'edit' => [
+                'title'    => 'Muokkaa assosiaatiotyyppiä',
+                'save-btn' => 'Päivitä assosiaatiotyyppi',
+            ],
+
+            'fields' => [
+                'title'                => 'Kentät',
+                'info'                 => 'Lisää mukautettuja kenttiä tallentaaksesi lisätietoja tälle assosiaatiotyypille.',
+                'add-field-btn'        => 'Lisää kenttä',
+                'modal-title'          => 'Lisää kenttä',
+                'edit-modal-title'     => 'Muokkaa kenttää',
+                'save-field-btn'       => 'Tallenna kenttä',
+                'same-code-error'      => 'Kentän koodin on oltava yksilöllinen.',
+                'add-fields-info'      => 'Luodaksesi mukautettuja kenttiä tälle assosiaatiotyypille.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Kategoriakentän vaihtoehto poistettu onnistuneesti',
             'create-success'      => 'Kategoriakenttävaihtoehto luotu onnistuneesti',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Kieli',
                 'level-parent'                     => 'Ylätason tuote',
                 'level-sub-parent'                 => 'Välitaso',
                 'level-variant'                    => 'Variantti',
@@ -2265,6 +2373,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Laajenna',
+            'collapse' => 'Tiivistä',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Lisää',
+                'already-added'      => 'Lisätty',
+                'empty-info'         => 'Kokeile eri hakua.',
+                'empty-title'        => 'Assosiaatiotyyppejä ei löytynyt',
+                'search-placeholder' => 'Hae nimellä tai koodilla',
+                'select-all'         => 'Valitse kaikki',
+                'title'              => 'Lisää assosiaatiotyyppi',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Lisää valitut',
+                'selected' => ':count tuotetta valittu',
+                'title'    => 'Valitse tuotteet',
+            ],
+        ],
         'pagination' => [
             'page' => 'Sivu',
         ],
@@ -2275,6 +2404,13 @@ return [
             'close' => 'Sulje',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled / :total käännetty',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Ei tuloksia',
+                'search' => 'Hae',
+            ],
             'ajax-error'      => 'Tallennuksen aikana tapahtui virhe. Yritä uudelleen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Lataa napsauttamalla',
@@ -2300,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Kutista paneeli',
+                'expand'   => 'Laajenna paneeli',
+            ],
             'breadcrumbs' => [
                 'label' => 'Navigointipolku',
             ],
@@ -2326,6 +2466,7 @@ return [
                 'catalog'            => 'Tuoteluettelo',
                 'categories'         => 'Kategoriat',
                 'category_fields'    => 'Kategoriakentät',
+                'association_types'  => 'Assosiaatiotyypit',
                 'channels'           => 'Kanavat',
                 'collapse'           => 'Pudota alas',
                 'configure'          => 'Konfiguroi',
@@ -2766,6 +2907,7 @@ return [
         'url-rewrites'             => 'URL-uudelleenohjaukset',
         'users'                    => 'Käyttäjät',
         'category_fields'          => 'Kategoriakentät',
+        'association_types'        => 'Assosiaatiotyypit',
         'view'                     => 'Näytä',
         'execute'                  => 'Suorita työ',
         'history'                  => 'Historia',

@@ -182,7 +182,7 @@
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
                                 :exporter-config="$exporterConfig"
-                                only="file_format,with_media,header_row,use_labels,date_format,file_path"
+                                only="file_format,with_media,with_associations,header_row,use_labels,date_format,file_path"
                             />
                         </div>
 

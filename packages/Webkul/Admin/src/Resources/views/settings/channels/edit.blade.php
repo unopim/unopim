@@ -113,26 +113,11 @@
                         @lang('admin::app.settings.channels.edit.name-translations')
                     </p>
 
-                    @foreach (core()->getAllActiveLocales() as $locale)
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label
-                                class="w-full"
-                                localizable="true"
-                                :current-locale-code="$locale->code"
-                            >
-                                @lang('admin::app.settings.channels.edit.name')
-                            </x-admin::form.control-group.label>
-    
-                            <x-admin::form.control-group.control
-                                type="text"
-                                :id="$locale->code . '[name]'"
-                                :name="$locale->code . '[name]'"
-                                :value="old($locale->code . '.name') ?? ($channel->translate($locale->code)['name'] ?? '')"
-                                :label="trans('admin::app.settings.channels.edit.name') . ' (' . $locale->name . ')'"
-                            />
-                            <x-admin::form.control-group.error :control-name="'name-' .$locale->code" />
-                        </x-admin::form.control-group>
-                    @endforeach
+                    <x-admin::form.translatable-field
+                        :locales="core()->getAllActiveLocales()"
+                        :values="collect(core()->getAllActiveLocales())->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code . '.name') ?? ($channel->translate($locale->code)['name'] ?? '')])->all()"
+                        :label="trans('admin::app.settings.channels.edit.name')"
+                    />
                 </div>
 
                 {!! view_render_event('unopim.admin.settings.channels.edit.card.translations.after') !!}

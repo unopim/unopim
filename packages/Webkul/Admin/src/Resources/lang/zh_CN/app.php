@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '产品导航',
                 'preview'    => '预览',
                 'remove'     => '消除',
                 'save-btn'   => '保存产品',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => '类别',
                     'root-not-allowed' => '根类别不能分配给产品。',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '属性组：',
+                    'title'              => '属性组',
+                    'search-placeholder' => '搜索属性组',
+                    'empty'              => '没有与搜索匹配的属性组。',
+                    'attributes-count'   => ':count 个属性',
+                    'loading'            => '加载中...',
+                    'retry'              => '重试',
+                    'load-more'          => '加载更多',
+                    'unsaved-title'      => '未保存的更改',
+                    'unsaved-message'    => '继续之前请保存 :group 的更改，或放弃这些更改。',
+                    'save-and-continue'  => '保存并继续',
+                    'discard-and-leave'  => '放弃并继续',
+                    'cancel'             => '取消',
                 ],
                 'images' => [
                     'info'  => '图像分辨率应像560px x 609px',
@@ -279,14 +296,19 @@ return [
                     ],
                     'cross-sells' => [
                         'empty-info' => '添加交叉卖协会产品。',
-                        'info'       => '与购物车相邻，您\'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => '与购物车相邻，您\'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => '交叉销售产品',
                     ],
                     'add-btn'           => '添加',
+                    'add-type-btn'      => '添加关联类型',
                     'delete'            => '删除',
                     'empty-info'        => '要添加 :type 产品。',
                     'empty-title'       => '添加产品',
                     'image-placeholder' => '产品图像',
+                    'more-types'        => '更多',
+                    'no-types-info'     => '使用“添加关联类型”将此产品链接到某个关联类型下。',
+                    'no-types-title'    => '尚未添加关联',
+                    'search-types'      => '搜索关联类型',
                     'sku'               => '滑雪 - :sku',
                     'title'             => '协会',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => '创建日期',
                     'product-type' => '产品类型',
                 ],
+                'sections' => [
+                    'view'    => '查看',
+                    'unsaved' => '未保存的更改',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => '添加所选',
+                    'close'        => '关闭',
+                    'clear-search' => '清除搜索',
+                    'categories'   => [
+                        'subtitle'        => '将此产品分配到目录类别。',
+                        'search'          => '搜索类别…',
+                        'searching'       => '正在搜索…',
+                        'no-results'      => '未找到匹配的类别',
+                        'load-more'       => '加载更多',
+                        'none-selected'   => '尚未选择任何类别',
+                        'and-more'        => '等 :count 项',
+                        'review-selected' => '显示已选类别',
+                        'selected'        => '已选择',
+                    ],
+                    'associations' => [
+                        'subtitle' => '关联相关、追加销售、交叉销售和自定义产品。',
+                        'linked'   => '已关联产品',
+                    ],
+                ],
+
                 'more'         => '更多',
                 'more-actions' => '更多操作',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => '无法找到代码为“:code”的类别字段',
             'immutable-fields'  => '以下字段无法修改：:fields。',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => '关联类型',
+                'create-btn' => '创建关联类型',
+                'add-btn'    => '创建关联类型',
+
+                'datagrid' => [
+                    'code'                => '代码',
+                    'name'                => '姓名',
+                    'status'              => '地位',
+                    'position'            => '位置',
+                    'edit'                => '编辑',
+                    'delete'              => '删除',
+                    'activated'           => '启用',
+                    'disabled'            => '禁用',
+                    'active'              => '使能够',
+                    'disable'             => '禁用',
+                    'update-status'       => '更新状态',
+                    'delete-failed'       => '该关联类型无法删除。',
+                    'mass-delete-success' => '选定的关联类型成功删除',
+                    'mass-delete-failed'  => '所选关联类型无法删除。',
+                    'mass-update-success' => '更新成功',
+                ],
+            ],
+
+            'create-success'    => '关联类型成功创建了',
+            'update-success'    => '关联类型成功更新',
+            'delete-success'    => '关联类型成功删除',
+            'delete-failed'     => '关联类型删除失败',
+            'user-define-error' => '无法删除系统关联类型',
+            'unknown-fields'    => '无法找到代码为":fields"的关联类型字段',
+
+            'create' => [
+                'title'      => '创建关联类型',
+                'name'       => '名称',
+                'enter-name' => '输入名称',
+                'code'       => '代码',
+                'enter-code' => '输入代码',
+                'save-btn'   => '保存关联类型',
+            ],
+
+            'edit' => [
+                'title'    => '编辑关联类型',
+                'save-btn' => '更新关联类型',
+            ],
+
+            'fields' => [
+                'title'                => '字段',
+                'info'                 => '添加自定义字段以捕获此关联类型的附加数据。',
+                'add-field-btn'        => '添加字段',
+                'modal-title'          => '添加字段',
+                'edit-modal-title'     => '编辑字段',
+                'save-field-btn'       => '保存字段',
+                'same-code-error'      => '字段代码必须唯一。',
+                'add-fields-info'      => '为此关联类型创建自定义字段。',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => '分类字段选项删除成功',
             'create-success'      => '类别字段选项成功创建了',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => '语言',
                 'level-parent'                     => '父产品',
                 'level-sub-parent'                 => '子父级',
                 'level-variant'                    => '变体',
@@ -2268,6 +2376,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '展开',
+            'collapse' => '收起',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => '添加',
+                'already-added'      => '已添加',
+                'empty-info'         => '尝试其他搜索。',
+                'empty-title'        => '未找到关联类型',
+                'search-placeholder' => '按名称或代码搜索',
+                'select-all'         => '全选',
+                'title'              => '添加关联类型',
+            ],
+            'product-picker' => [
+                'add-btn'  => '添加所选',
+                'selected' => '已选择 :count 个产品',
+                'title'    => '选择产品',
+            ],
+        ],
         'pagination' => [
             'page' => '页',
         ],
@@ -2278,6 +2407,13 @@ return [
             'close' => '关闭',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => '已翻译 :total 个中的 :filled 个',
+            ],
+            'searchable-menu' => [
+                'empty'  => '未找到结果',
+                'search' => '搜索',
+            ],
             'ajax-error'      => '保存时出现问题。请重试。',
             'file-uploader'   => [
                 'upload-cta'  => '点击上传',
@@ -2303,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => '收起面板',
+                'expand'   => '展开面板',
+            ],
             'breadcrumbs' => [
                 'label' => '面包屑导航',
             ],
@@ -2329,6 +2469,7 @@ return [
                 'catalog'            => '目录',
                 'categories'         => '类别',
                 'category_fields'    => '类别字段',
+                'association_types'  => '关联类型',
                 'channels'           => '频道',
                 'collapse'           => '折叠',
                 'configure'          => '配置',
@@ -2769,6 +2910,7 @@ return [
         'url-rewrites'             => '网址重写',
         'users'                    => '用户',
         'category_fields'          => '类别字段',
+        'association_types'        => '关联类型',
         'view'                     => '看法',
         'execute'                  => '作业执行',
         'history'                  => '历史',

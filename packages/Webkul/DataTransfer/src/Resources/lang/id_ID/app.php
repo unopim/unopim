@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Asosiasi Produk',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kolom \'%s\' wajib diisi.',
+                    'self-link-not-allowed'       => 'Produk \'%s\' tidak dapat diasosiasikan dengan dirinya sendiri.',
+                    'sku-not-found'               => 'Produk dengan SKU \'%s\' tidak ditemukan.',
+                    'related-sku-not-found'       => 'Produk terkait dengan SKU \'%s\' tidak ditemukan.',
+                    'association-type-not-found'  => 'Jenis asosiasi \'%s\' tidak ada atau tidak aktif.',
+                    'invalid-field-value'         => 'Nilai tidak valid diberikan untuk kolom asosiasi.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grup Atribut',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Ekspor ini terlalu besar untuk dijalankan: perkiraan :rows baris × :columns kolom (~:estimated) melebihi ruang yang tersedia (~:available). Persempit ekspor dengan memilih lebih sedikit saluran/lokal (dan atribut) lalu coba lagi.',
         'fields'           => [
-            'file-format'         => 'Format file',
-            'with-media'          => 'Dengan media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format file',
+            'with-media'             => 'Dengan media',
+            'with-associations'      => 'Dengan asosiasi',
+            'with-associations-info' => 'Sertakan kolom daftar SKU lama (up_sells, cross_sells, dan related_products) dalam ekspor',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Atribut',
+        ],
+        'product-associations' => [
+            'title' => 'Asosiasi Produk',
         ],
         'attribute-groups' => [
             'title' => 'Grup Atribut',

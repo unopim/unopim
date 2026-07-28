@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Associazioni prodotto',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Il campo \'%s\' è obbligatorio.',
+                    'self-link-not-allowed'       => 'Il prodotto \'%s\' non può essere associato a se stesso.',
+                    'sku-not-found'               => 'Prodotto con SKU \'%s\' non trovato.',
+                    'related-sku-not-found'       => 'Prodotto correlato con SKU \'%s\' non trovato.',
+                    'association-type-not-found'  => 'Il tipo di associazione \'%s\' non esiste o non è attivo.',
+                    'invalid-field-value'         => 'Valore non valido fornito per un campo di associazione.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Gruppi di attributi',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Questa esportazione è troppo grande per essere eseguita: circa :rows righe × :columns colonne (~:estimated) superano lo spazio disponibile (~:available). Restringi l\'esportazione selezionando meno canali/lingue (e attributi) e riprova.',
         'fields'           => [
-            'file-format'         => 'Formato file',
-            'with-media'          => 'Con media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Formato file',
+            'with-media'             => 'Con media',
+            'with-associations'      => 'Con associazioni',
+            'with-associations-info' => 'Includi le colonne legacy con elenchi di SKU (up_sells, cross_sells e related_products) nell\'esportazione',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Attributi',
+        ],
+        'product-associations' => [
+            'title' => 'Associazioni prodotto',
         ],
         'attribute-groups' => [
             'title' => 'Gruppi di attributi',

@@ -1,8 +1,145 @@
+<?php
+
+/**
+ * Bootstrap installer for hosts without shell access.
+ *
+ * This file runs before the framework exists, so it cannot use Laravel helpers,
+ * translations, or the autoloader — plain PHP and English output only.
+ *
+ * It shells out and rewrites .env, so it refuses to do anything once vendor/
+ * is present. public/index.php only redirects here while the autoloader is
+ * missing; on a deployed site a request to /install.php must be inert.
+ */
+$projectRoot = realpath(__DIR__.'/..') ?: dirname(__DIR__);
+
+$alreadyInstalled = is_file($projectRoot.'/vendor/autoload.php');
+
+$installationSuccessful = false;
+
+/**
+ * Write a line into the streamed output pane, escaped for HTML.
+ *
+ * @param  bool|null  $checked  append a tick / cross marker when not null
+ */
+function unopim_install_write(string $text, string $class = '', ?bool $checked = null): void
+{
+    $escaped = htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+    $marker = $checked === null
+        ? ''
+        : ' <span class="'.($checked ? 'checked' : 'unchecked').'"></span>';
+
+    echo $class === ''
+        ? '<p>'.$escaped.$marker.'</p>'
+        : '<p class="'.$class.'">'.$escaped.$marker.'</p>';
+
+    unopim_install_flush();
+}
+
+/**
+ * Push already-escaped process output straight to the browser.
+ */
+function unopim_install_raw(string $text): void
+{
+    echo htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+
+    unopim_install_flush();
+}
+
+function unopim_install_flush(): void
+{
+    if (ob_get_level() > 0) {
+        ob_flush();
+    }
+
+    flush();
+}
+
+/**
+ * Run a command, streaming stdout and stderr as they arrive.
+ *
+ * Both pipes are polled together: draining stdout to EOF first deadlocks as
+ * soon as a chatty command (composer) fills the stderr buffer.
+ *
+ * @return int the exit code, or -1 when the process could not be started
+ */
+function unopim_install_run(string $command, string $workingDirectory): int
+{
+    $descriptors = [
+        1 => ['pipe', 'w'],
+        2 => ['pipe', 'w'],
+    ];
+
+    $pipes = [];
+
+    $process = @proc_open($command, $descriptors, $pipes, $workingDirectory);
+
+    if (! is_resource($process)) {
+        return -1;
+    }
+
+    stream_set_blocking($pipes[1], false);
+    stream_set_blocking($pipes[2], false);
+
+    $open = [1 => $pipes[1], 2 => $pipes[2]];
+
+    while ($open !== []) {
+        $read = array_values($open);
+        $write = [];
+        $except = [];
+
+        if (@stream_select($read, $write, $except, 1) === false) {
+            break;
+        }
+
+        foreach ($read as $stream) {
+            $chunk = fread($stream, 8192);
+
+            if ($chunk !== false && $chunk !== '') {
+                unopim_install_raw($chunk);
+            }
+
+            if (! feof($stream)) {
+                continue;
+            }
+
+            foreach ($open as $key => $candidate) {
+                if ($candidate === $stream) {
+                    unset($open[$key]);
+                }
+            }
+        }
+    }
+
+    foreach ($pipes as $pipe) {
+        if (is_resource($pipe)) {
+            fclose($pipe);
+        }
+    }
+
+    return proc_close($process);
+}
+
+/**
+ * Resolve the minimum PHP version from composer.json so the two cannot drift.
+ */
+function unopim_install_required_php(string $projectRoot): string
+{
+    $manifest = json_decode((string) @file_get_contents($projectRoot.'/composer.json'), true);
+
+    $constraint = is_array($manifest) ? ($manifest['require']['php'] ?? '') : '';
+
+    return preg_match('/(\d+\.\d+(?:\.\d+)?)/', (string) $constraint, $matches)
+        ? $matches[1]
+        : '8.4.1';
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
     <title>Checking for Dependency</title>
     <style>
         body {
@@ -99,196 +236,159 @@
     <div class="container">
         <div class="header">Checking for Dependency</div>
         <div class="output-container">
-            <div class="output">
+            <div class="output"><pre>
                 <?php
-                    ob_start();
+                ob_start();
 
-                echo '<pre>';
+if ($alreadyInstalled) {
+    unopim_install_write('This application is already installed.', 'error');
+    unopim_install_write('The bootstrap installer is disabled once vendor/autoload.php exists, because it rewrites .env and regenerates the application key.', 'error');
+    unopim_install_write('Remove vendor/ and retry only if you intend to reinstall from scratch.');
+} else {
+    $requiredPhpVersion = unopim_install_required_php($projectRoot);
 
-                $installationSuccessful = true;
+    $phpVersion = PHP_VERSION;
 
-                $requiredPhpVersion = '8.2';
-                $requiredMySqlVersion = '8.0';
+    $ready = true;
 
-                // Function to execute and output command results
-                function executeCommand($command, &$installationSuccessful)
-                {
-                    echo "Executing: $command\n";
-                    flush();
-                    ob_flush();
+    if (version_compare($phpVersion, $requiredPhpVersion, '<')) {
+        unopim_install_write("PHP Version: $phpVersion", 'error', false);
+        unopim_install_write("ERROR: PHP version must be >= $requiredPhpVersion.", 'error');
 
-                    $output = [];
-                    $returnVar = null;
-                    exec($command, $output, $returnVar);
+        $ready = false;
+    } else {
+        unopim_install_write("PHP Version: $phpVersion", '', true);
+    }
 
-                    foreach ($output as $line) {
-                        echo $line."\n";
-                        flush();
-                        ob_flush();
-                    }
+    if ($ready) {
+        $extensions = [
+            'ctype',
+            'curl',
+            'dom',
+            'fileinfo',
+            'filter',
+            'gd',
+            'hash',
+            'intl',
+            'json',
+            'mbstring',
+            'openssl',
+            'pcre',
+            'simplexml',
+        ];
 
-                    if ($returnVar !== 0) {
-                        $installationSuccessful = false;
-                        echo "<p class='error'>ERROR: Command failed with exit code $returnVar.</p>";
+        foreach ($extensions as $extension) {
+            if (extension_loaded($extension)) {
+                unopim_install_write("$extension extension is enabled.", '', true);
+            } else {
+                unopim_install_write("$extension extension is not enabled.", 'error', false);
 
-                        return false;
-                    }
+                $ready = false;
+            }
+        }
 
-                    return implode("\n", $output);
-                }
+        if (extension_loaded('pdo_mysql') || extension_loaded('pdo_pgsql')) {
+            unopim_install_write('pdo_mysql or pdo_pgsql extension is enabled.', '', true);
+        } else {
+            unopim_install_write('Neither pdo_mysql nor pdo_pgsql is enabled.', 'error', false);
 
-                // Check PHP version
-                $phpVersion = phpversion();
-                if (version_compare($phpVersion, $requiredPhpVersion, '<')) {
-                    echo "<p class='error'>PHP Version: $phpVersion <span class='unchecked'></span></p>";
-                    echo "<p class='error'>ERROR: PHP version must be >= $requiredPhpVersion.</p>";
-                    exit(1);
-                } else {
-                    echo "<p>PHP Version: $phpVersion <span class='checked'></span></p>";
-                }
+            $ready = false;
+        }
 
-                $extensions = [
-                    'ctype',
-                    'curl',
-                    'dom',
-                    'fileinfo',
-                    'filter',
-                    'gd',
-                    'hash',
-                    'intl',
-                    'json',
-                    'mbstring',
-                    'openssl',
-                    'pcre',
-                    'pdo_mysql',
-                    'simplexml',
-                ];
+        if (! $ready) {
+            unopim_install_write('ERROR: Required extensions are not enabled. Please enable them and try again.', 'error');
+        }
+    }
 
-                $enabledExtension = true;
+    if ($ready) {
+        $composerPhar = $projectRoot.'/bin/composer/composer.phar';
 
-                foreach ($extensions as $extension) {
-                    if (extension_loaded($extension)) {
-                        echo "<p>$extension extension is enabled. <span class='checked'></span></p>";
-                    } else {
-                        $enabledExtension = false;
-                        echo "<p class='error'>$extension extension is not enabled. <span class='unchecked'></span></p>";
-                    }
-                }
+        if (! is_file($composerPhar)) {
+            unopim_install_write('ERROR: bin/composer/composer.phar is missing.', 'error');
 
-                if (! $enabledExtension) {
-                    $installationSuccessful = false;
-                    echo "<p class='error'>ERROR: Required extensions are not enabled. Please enable them and try again.\n </p>";
-                    exit(1);
-                }
+            $ready = false;
+        }
+    }
 
-                echo '<br>';
+    if ($ready) {
+        $composerHome = $projectRoot.'/storage/composer';
 
-                // Check MySQL version
-                $mysqlVersionOutput = executeCommand('mysql --version', $installationSuccessful);
-                if ($mysqlVersionOutput) {
-                    preg_match('/Ver ([0-9.]+)/', $mysqlVersionOutput, $matches);
-                    $mysqlVersion = $matches[1] ?? null;
-                    if ($mysqlVersion && version_compare($mysqlVersion, $requiredMySqlVersion, '<')) {
-                        $installationSuccessful = false;
-                        echo "<p class='error'>ERROR: MySQL version must be >= $requiredMySqlVersion. <span class='unchecked'></span></p>";
-                        exit(1);
-                    } else {
-                        echo "<p>MySQL Version: $mysqlVersion <span class='checked'></span></p>";
-                    }
-                } else {
-                    $installationSuccessful = false;
-                    echo "<p class='error'>ERROR: MySQL is not installed or not accessible.</p>";
-                    exit(1);
-                }
+        if (! is_dir($composerHome)) {
+            @mkdir($composerHome, 0775, true);
+        }
 
-                echo '<br>';
+        putenv('COMPOSER_HOME='.$composerHome);
 
-                function installProjectDepedencies(&$installationSuccessful)
-                {
-                    $composerPhar = realpath(__DIR__.'/../bin/composer/composer.phar');
-                    $workingDirectory = realpath(__DIR__.'/..');
+        $commands = [
+            escapeshellarg(PHP_BINARY).' '.escapeshellarg($composerPhar)
+                .' install --no-ansi --no-interaction --working-dir='.escapeshellarg($projectRoot),
+        ];
 
-                    // Composer needs a writable home directory for its cache and config
-                    putenv("COMPOSER_HOME=$workingDirectory/storage/composer");
+        $envPath = $projectRoot.'/.env';
+        $envExamplePath = $projectRoot.'/.env.example';
 
-                    // Define multiple commands
-                    $commands = [
-                        "php $composerPhar install --no-ansi --working-dir=$workingDirectory",
-                    ];
+        if (! is_file($envPath) && is_file($envExamplePath)) {
+            if (@copy($envExamplePath, $envPath)) {
+                unopim_install_write('Created .env from .env.example.', '', true);
+            } else {
+                unopim_install_write('ERROR: Unable to create .env from .env.example.', 'error');
 
-                    if (file_exists("$workingDirectory/.env.example")) {
-                        $commands[] = "php -r \"copy('$workingDirectory/.env.example', '$workingDirectory/.env');\"";
-                    }
+                $ready = false;
+            }
+        }
 
-                    $commands[] = "php $workingDirectory/artisan key:generate";
+        if ($ready) {
+            $commands[] = escapeshellarg(PHP_BINARY).' '
+                .escapeshellarg($projectRoot.'/artisan').' key:generate --force';
+        }
 
-                    foreach ($commands as $command) {
-                        echo "Executing: $command\n";
-                        flush();
-                        ob_flush();
+        foreach ($commands as $command) {
+            unopim_install_write("Executing: $command");
 
-                        $descriptorspec = [
-                            1 => ['pipe', 'w'], // stdout
-                            2 => ['pipe', 'w'], // stderr
-                        ];
+            $exitCode = unopim_install_run($command, $projectRoot);
 
-                        $process = proc_open($command, $descriptorspec, $pipes);
+            if ($exitCode === -1) {
+                unopim_install_write("Failed to execute the command: $command", 'error');
 
-                        if (is_resource($process)) {
-                            // Read stdout
-                            while ($line = fgets($pipes[1])) {
-                                echo $line;
-                                flush();
-                                ob_flush();
-                            }
+                $ready = false;
 
-                            // Read stderr
-                            while ($error = fgets($pipes[2])) {
-                                echo $error;
-                                flush();
-                                ob_flush();
-                            }
+                break;
+            }
 
-                            // Close pipes
-                            fclose($pipes[1]);
-                            fclose($pipes[2]);
+            if ($exitCode !== 0) {
+                unopim_install_write("Command failed with exit code: $exitCode.", 'error');
 
-                            // Get the exit code
-                            $return_value = proc_close($process);
+                $ready = false;
 
-                            if ($return_value !== 0) {
-                                echo "\nCommand failed with exit code: $return_value.\n";
-                                $installationSuccessful = false; // Mark failure
-                                break; // Stop execution on failure
-                            }
+                break;
+            }
 
-                            echo "\nCommand finished successfully with exit code: $return_value.\n";
-                        } else {
-                            echo "<p class='error'>Failed to execute the command: $command</p>";
-                            $installationSuccessful = false; // Mark failure
-                            break; // Stop execution if process creation fails
-                        }
-                    }
+            unopim_install_write("Command finished successfully with exit code: $exitCode.");
+        }
+    }
 
-                    echo "\nAll commands executed.\n";
-                    echo '</pre>';
-                }
+    if ($ready) {
+        unopim_install_write('All commands executed.');
+    }
 
-                installProjectDepedencies($installationSuccessful);
+    $installationSuccessful = $ready;
+}
 
-                ob_end_flush();
-                ?>
-            </div>
+ob_end_flush();
+?>
+            </pre></div>
 
             <div class="footer">
                 <?php
-                if ($installationSuccessful) {
-                    echo '<a href="install">Continue</a>';
-                } else {
-                    echo '<p class="error"> Installation Failed. Please check output above and try again. </p>';
-                    echo '<a href="install.php">Try Again</a>';
-                }
-                ?>
+if ($alreadyInstalled) {
+    echo '<a href="./">Go to application</a>';
+} elseif ($installationSuccessful) {
+    echo '<a href="install">Continue</a>';
+} else {
+    echo '<p class="error"> Installation Failed. Please check output above and try again. </p>';
+    echo '<a href="install.php">Try Again</a>';
+}
+?>
             </div>
         </div>
     </div>

@@ -229,6 +229,10 @@ class ProductRepository extends Repository
                 $qb->where('products.sku', 'like', '%'.$params['sku'].'%');
             }
 
+            if (! empty($params['ids'])) {
+                $qb->whereIn('products.id', array_filter((array) $params['ids'], 'is_numeric'));
+            }
+
             if (! empty($params['skipSku'])) {
                 $qb->whereNotIn('products.sku', is_string($params['skipSku']) ? [$params['skipSku']] : $params['skipSku']);
             }

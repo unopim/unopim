@@ -81,7 +81,7 @@ class SearchProducts implements PimTool
                 $grammar = GrammarQueryManager::getGrammar();
                 $searchable = $this->searchableAttributes();
 
-                $valuesColumn = $grammar->wrap("{$prefix}p.values");
+                $valuesColumn = DB::getQueryGrammar()->wrap("{$prefix}p.values");
 
                 $nameAttribute = $searchable->firstWhere('code', 'name');
                 $namePath = $nameAttribute

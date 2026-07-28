@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => 'Associacions de productes',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'El camp \'%s\' és obligatori.',
+                    'self-link-not-allowed'       => 'El producte \'%s\' no es pot associar amb si mateix.',
+                    'sku-not-found'               => 'No s\'ha trobat cap producte amb l\'SKU \'%s\'.',
+                    'related-sku-not-found'       => 'No s\'ha trobat el producte relacionat amb l\'SKU \'%s\'.',
+                    'association-type-not-found'  => 'El tipus d\'associació \'%s\' no existeix o no està actiu.',
+                    'invalid-field-value'         => 'Valor no vàlid per a un camp d\'associació.',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => 'Grups d\'Atributs',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Aquesta exportació és massa gran per executar-se: s\'estimen :rows files × :columns columnes (~:estimated), que superen l\'espai disponible (~:available). Reduïu l\'exportació seleccionant menys canals/idiomes (i atributs) i torneu-ho a provar.',
         'fields'           => [
-            'file-format'         => 'Format de fitxer',
-            'with-media'          => 'Amb mèdia',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format de fitxer',
+            'with-media'             => 'Amb mèdia',
+            'with-associations'      => 'Amb associacions',
+            'with-associations-info' => 'Inclou les columnes heretades de llistes d\'SKU (up_sells, cross_sells i related_products) a l\'exportació',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => 'Atributs',
+        ],
+        'product-associations' => [
+            'title' => 'Associacions de productes',
         ],
         'attribute-groups' => [
             'title' => 'Grups d\'Atributs',

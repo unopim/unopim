@@ -10,7 +10,6 @@ use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
-use Webkul\Core\Helpers\Database\GrammarQueryManager;
 
 class FindSimilarProducts implements PimTool
 {
@@ -120,11 +119,9 @@ class FindSimilarProducts implements PimTool
 
                 $prefix = DB::getTablePrefix();
 
-                $valuesColumn = GrammarQueryManager::getGrammar()->wrap("{$prefix}p.values");
-
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw($valuesColumn), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")), 'af.code as family_code')
                     ->orderByDesc('p.id')
                     ->limit($poolLimit);
 
@@ -237,11 +234,9 @@ class FindSimilarProducts implements PimTool
 
                 $prefix = DB::getTablePrefix();
 
-                $valuesColumn = GrammarQueryManager::getGrammar()->wrap("{$prefix}p.values");
-
                 $products = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw($valuesColumn), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")), 'af.code as family_code')
                     ->whereIn('p.id', array_keys($scores))
                     ->get()
                     ->keyBy('id');
