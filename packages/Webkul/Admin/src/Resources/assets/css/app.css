@@ -669,6 +669,23 @@
     @apply bg-unopim-primary-muted bg-primary-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
 }
 
+/* One tag is rendered per selection, so fields backed by large sets (channel
+   locales/currencies) otherwise stretch their card past the viewport. */
+.multiselect__tags {
+    max-height: 11.5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+}
+
+.multiselect__tags::-webkit-scrollbar {
+    width: 6px;
+}
+
+.multiselect__tags::-webkit-scrollbar-thumb {
+    @apply rounded bg-gray-300 dark:bg-cherry-600;
+}
+
 /**
  * Unsaved-changes bar (v-unsaved-changes component).
  *
