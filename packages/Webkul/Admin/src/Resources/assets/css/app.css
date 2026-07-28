@@ -223,12 +223,20 @@
         @apply outline-none;
     }
 
-    *:focus-visible:not(.sr-only):not(.no-focus-ring) {
+    *:focus-visible:not(.sr-only):not(.no-focus-ring):not(input):not(textarea):not(select) {
         @apply outline outline-2 outline-offset-2 outline-primary-600 rounded-sm;
     }
 
+    /* Fields already draw their own border, so an offset ring reads as a second
+       frame around them. Recolour that border and add a tight halo instead:
+       identical box geometry, no double outline, still a 3:1 focus indicator. */
+    input:focus-visible:not(.multiselect__input),
+    textarea:focus-visible,
+    select:focus-visible,
     .focus-ring-within:focus-within {
-        @apply outline outline-2 outline-offset-2 outline-primary-600;
+        @apply outline-none !border-primary-600 dark:!border-primary-400;
+
+        box-shadow: 0 0 0 3px rgb(var(--c-primary-600) / 0.2);
     }
 
     .primary-button {
@@ -659,6 +667,19 @@
 .multiselect__option--selected.multiselect__option--highlight {
     @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
     @apply !text-red-600 dark:!text-red-600;
+}
+
+/* Focus lives on the inner search input, so ringing it would draw a second
+   frame inside the tags box. Move the indicator onto the box itself. */
+.multiselect:focus-visible,
+.multiselect__input:focus-visible {
+    @apply outline-none;
+}
+
+.multiselect--active > .multiselect__tags {
+    @apply !border-primary-600 dark:!border-primary-400;
+
+    box-shadow: 0 0 0 3px rgb(var(--c-primary-600) / 0.2);
 }
 
 .multiselect__tag-icon:after {
