@@ -196,7 +196,10 @@
 
         {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.control.'.$fieldType.'.before', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
 
-        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-90' : '' }}">
+        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-60 cursor-not-allowed' : '' }}">
+        @if ($isLocked)
+            <div class="pointer-events-none">
+        @endif
         @switch ($fieldType)
             @case ('checkbox')
                 @if (! empty($value))
@@ -519,6 +522,9 @@
                 </x-admin::form.control-group.control>
 
         @endswitch
+        @if ($isLocked)
+            </div>
+        @endif
         </fieldset>
 
         @php
