@@ -15,6 +15,10 @@ class CategoryTreeResource extends JsonResource
      * an order of magnitude larger per node and dominates the payload once a
      * catalogue has thousands of categories.
      *
+     * Children come with a `partial` marker: they only cover the branches that
+     * had to be revealed, so the tree refetches the level in full the first
+     * time it is expanded instead of trusting what it already holds.
+     *
      * @return array<string, mixed>
      */
     public function toArray(Request $request): array
@@ -32,11 +36,6 @@ class CategoryTreeResource extends JsonResource
             return $node;
         }
 
-        /**
-         * Children shipped alongside a node only cover the branches that had to
-         * be revealed, so the tree is told to refetch the level in full the
-         * first time it is expanded instead of trusting what it already holds.
-         */
         return $node + [
             'partial'  => true,
             'children' => static::collection($this->children)->toArray($request),
