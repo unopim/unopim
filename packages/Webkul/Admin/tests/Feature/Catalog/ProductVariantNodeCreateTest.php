@@ -2,6 +2,8 @@
 
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -10,6 +12,8 @@ use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\User\Models\Admin;
+use Webkul\Webhook\Jobs\SendProductWebhook;
+use Webkul\Webhook\Models\Webhook;
 
 uses(DatabaseTransactions::class);
 
@@ -309,4 +313,116 @@ it('rejects a sku already taken by another product', function () {
         ])
         ->assertStatus(422)
         ->assertJsonValidationErrors('sku');
+});
+
+it('announces a leaf variant created from the variations sidebar', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    [$configurable, $colorCode, $sizeCode, $redOptionCode, $sizeOptionCode] = makeConfigurableForVariantNodeCreate();
+
+    $group = $configurable->getTypeInstance()->createVariantGroup($configurable, [
+        'group_values' => [$colorCode => $redOptionCode],
+        'sku'          => $configurable->sku.'-'.$redOptionCode,
+    ]);
+
+    Event::fake(['catalog.product.create.after']);
+
+    $response = $this->actingAs(Admin::factory()->create(), 'admin')
+        ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
+            'parent_id' => $group->id,
+            'role'      => 'simple',
+            'values'    => [$sizeCode => $sizeOptionCode],
+        ])
+        ->assertOk();
+
+    $newId = $response->json('data.id');
+
+    Event::assertDispatched(
+        'catalog.product.create.after',
+        fn ($event, $product): bool => $product->id === $newId
+    );
+
+    Event::assertDispatchedTimes('catalog.product.create.after', 1);
+});
+
+it('queues exactly one product webhook for a leaf variant created from the sidebar', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    [$configurable, $colorCode, $sizeCode, $redOptionCode, $sizeOptionCode] = makeConfigurableForVariantNodeCreate();
+
+    $group = $configurable->getTypeInstance()->createVariantGroup($configurable, [
+        'group_values' => [$colorCode => $redOptionCode],
+        'sku'          => $configurable->sku.'-'.$redOptionCode,
+    ]);
+
+    Webhook::create([
+        'name'      => 'variant-probe-'.Str::random(6),
+        'url'       => 'https://example.test/hook',
+        'method'    => 'POST',
+        'events'    => ['product.created'],
+        'is_active' => 1,
+    ]);
+
+    Queue::fake();
+
+    $response = $this->actingAs(Admin::factory()->create(), 'admin')
+        ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
+            'parent_id' => $group->id,
+            'role'      => 'simple',
+            'values'    => [$sizeCode => $sizeOptionCode],
+        ])
+        ->assertOk();
+
+    Queue::assertPushed(SendProductWebhook::class, 1);
+
+    expect(Product::find($response->json('data.id'))->type)->toBe('simple');
+});
+
+it('stays silent when a variant group node is created', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    [$configurable, $colorCode, , $redOptionCode] = makeConfigurableForVariantNodeCreate();
+
+    Event::fake(['catalog.product.create.after']);
+
+    $this->actingAs(Admin::factory()->create(), 'admin')
+        ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
+            'parent_id' => null,
+            'role'      => 'variant_group',
+            'values'    => [$colorCode => $redOptionCode],
+        ])
+        ->assertOk();
+
+    Event::assertNotDispatched('catalog.product.create.after');
+});
+
+it('stays silent when the requested variant node already exists', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    [$configurable, $colorCode, $sizeCode, $redOptionCode, $sizeOptionCode] = makeConfigurableForVariantNodeCreate();
+
+    $group = $configurable->getTypeInstance()->createVariantGroup($configurable, [
+        'group_values' => [$colorCode => $redOptionCode],
+        'sku'          => $configurable->sku.'-'.$redOptionCode,
+    ]);
+
+    $admin = Admin::factory()->create();
+
+    $payload = [
+        'parent_id' => $group->id,
+        'role'      => 'simple',
+        'values'    => [$sizeCode => $sizeOptionCode],
+    ];
+
+    $this->actingAs($admin, 'admin')
+        ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), $payload)
+        ->assertOk();
+
+    Event::fake(['catalog.product.create.after']);
+
+    $this->actingAs($admin, 'admin')
+        ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), $payload)
+        ->assertStatus(422);
+
+    Event::assertNotDispatched('catalog.product.create.after');
 });

@@ -217,7 +217,11 @@ class ProductController extends ApiController
         if (isset($data['variants'])) {
             foreach ($data['variants'] as $variantId => $variantData) {
                 if (Str::contains($variantId, 'variant_')) {
-                    $productInstance->createVariant($product, $productSuperAttributes, $variantData);
+                    $variant = $productInstance->createVariant($product, $productSuperAttributes, $variantData);
+
+                    if ($variant) {
+                        Event::dispatch('catalog.product.create.after', $variant);
+                    }
                 } else {
                     if (is_numeric($index = $previousVariantIds->search($variantId))) {
                         $previousVariantIds->forget($index);
