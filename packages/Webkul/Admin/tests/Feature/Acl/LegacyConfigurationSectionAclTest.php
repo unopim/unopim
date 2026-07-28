@@ -1,12 +1,5 @@
 <?php
 
-/**
- * The legacy generic configuration editor writes the same core-config codes the
- * System Settings hub owns, but its wildcard route can only carry the coarse
- * `configuration` permission. These cover the per-section enforcement added to
- * ConfigurationController, including the slug-less post that bypasses the
- * URL-derived allow-list.
- */
 $restricted = ['dashboard', 'configuration', 'configuration.integrations'];
 
 $emailPayload = ['emails' => ['configure' => ['email_settings' => ['mail_host' => 'evil.smtp.example']]]];

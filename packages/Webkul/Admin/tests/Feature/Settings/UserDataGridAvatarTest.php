@@ -4,12 +4,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Webkul\User\Models\Admin;
 
-/**
- * The users listing rendered one <img> per row pointing at the unresized original
- * upload, and for rows without an upload at a local avatar proxy route that boots
- * the framework and takes a session lock — so a page of avatars became a burst of
- * serialised requests, most of them 404s.
- */
 $gridRequest = fn ($test) => $test
     ->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
     ->get(route('admin.settings.users.index', ['pagination' => ['page' => 1, 'per_page' => 50]]));

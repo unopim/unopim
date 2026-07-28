@@ -135,13 +135,6 @@ test.describe('Unsaved changes bar', () => {
     expect(nativeDialog).toBe(false);
   });
 
-  /**
-   * Reaching the tracked page through SPA navigation is the case the other specs
-   * miss: they use page.goto, a hard load, where the guard happens to bind before
-   * the SPA navigator. Entering from a page that has no tracked form installs the
-   * guard second, and the confirm used to be destroyed mid-transition while the
-   * unapproved navigation completed anyway.
-   */
   test('confirm survives when the tracked page was entered via SPA navigation', async ({ adminPage }) => {
     let nativeDialog = false;
     adminPage.on('dialog', async (d) => { nativeDialog = true; await d.dismiss().catch(() => {}); });

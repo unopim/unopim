@@ -78,9 +78,6 @@ class SystemSettings
     }
 
     /**
-     * ACL keys of every hub row whose config group owns one of the given
-     * core-config codes.
-     *
      * @param  array<int, string>  $codes
      * @return array<int, string>
      */
@@ -102,10 +99,6 @@ class SystemSettings
     }
 
     /**
-     * ACL keys of every hub row owning the given config group. Matched in both
-     * directions so an ancestor group key still resolves the sections nested
-     * beneath it.
-     *
      * @return array<int, string>
      */
     public function aclKeysForConfigGroup(string $groupKey): array
@@ -130,8 +123,6 @@ class SystemSettings
     }
 
     /**
-     * Config group => owning ACL key, for every registry row that declares both.
-     *
      * @return array<string, string>
      */
     protected function configGroupOwners(): array

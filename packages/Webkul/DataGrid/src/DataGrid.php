@@ -415,13 +415,6 @@ abstract class DataGrid
         $this->exportFile = Excel::download(new DataGridExport($records), $this->getExportFileName().'.'.$format);
     }
 
-    /**
-     * Deny an export the admin is not permitted to run. Export is a query
-     * parameter on the grid's own index route rather than a route of its own, so
-     * the Bouncer middleware can only ever apply the grid's read permission.
-     * Every export path funnels through setExportFile(), making this the one
-     * choke point that a new query implementation cannot bypass.
-     */
     protected function enforceExportPermission(): void
     {
         if ($this->exportPermission === null) {

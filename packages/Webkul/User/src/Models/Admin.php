@@ -151,14 +151,7 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
         return self::gravatarPayload(md5($normalizedEmail))['found'];
     }
 
-    /**
-     * Whether a gravatar is already known to exist for this email, answered purely
-     * from cache and never by contacting gravatar.com.
-     *
-     * A listing renders one avatar per row; resolving each row through the live
-     * lookup would turn a page render into an upstream request per row inside a
-     * single response, so listings consult this instead.
-     */
+    /** Cache-only gravatar check; never contacts gravatar.com. */
     public static function gravatarCachedForEmail(?string $email): bool
     {
         if (! $email) {

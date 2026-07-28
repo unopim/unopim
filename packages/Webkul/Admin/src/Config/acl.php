@@ -81,11 +81,6 @@ return [
         'route' => 'admin.catalog.products.mass_delete',
         'sort'  => 6,
     ], [
-        /**
-         * Routeless permission: quick export is a query parameter on the grid's
-         * own index route, so it is enforced in DataGrid::setExportFile() rather
-         * than by the route-name Bouncer middleware.
-         */
         'key'   => 'catalog.products.quick_export',
         'name'  => 'admin::app.acl.quick-export',
         'route' => null,

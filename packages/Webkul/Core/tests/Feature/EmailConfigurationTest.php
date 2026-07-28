@@ -63,12 +63,6 @@ it('leaves the environment mailer untouched when no host is configured in the ad
     expect(config('mail.default'))->toBe('log');
 });
 
-/**
- * A password field posts back a fixed-length asterisk mask, which never matches
- * the length of the stored secret. Treating only equal-length masks as "unchanged"
- * meant every re-save of the email settings overwrote the SMTP password with
- * literal asterisks, so mail worked once and then silently broke.
- */
 it('keeps the stored password when the masked value is posted back', function (string $mask) {
     CoreConfig::updateOrCreate(
         ['code' => 'emails.configure.email_settings.mail_password'],

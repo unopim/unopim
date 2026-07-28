@@ -571,12 +571,7 @@
             },
         });
 
-        /*
-         * Internal-navigation guard (installed once). While any tracked form is dirty,
-         * navigating within the admin opens a styled confirm and waits for the answer
-         * before the navigation proceeds. Native beforeunload still covers tab-close
-         * and hard reload.
-         */
+        /** Internal-navigation guard, installed once. */
         if (! window.__unsavedNavGuardInstalled) {
             window.__unsavedNavGuardInstalled = true;
 
@@ -607,13 +602,6 @@
                 });
             });
 
-            /**
-             * Registered with the SPA navigator rather than bound as a second
-             * document click listener. The navigator awaits this before fetching, so
-             * the prompt can no longer be destroyed mid-transition by the very
-             * navigation it was meant to hold back, and programmatic $navigate calls
-             * are covered too.
-             */
             const unsavedNavGuard = () => {
                 window.__unsavedNavBypass = false;
 

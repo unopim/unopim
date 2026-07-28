@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Quick export is `?export=1` on the product grid's own index route, not a route
- * of its own, so the Bouncer middleware can only apply the grid's read permission
- * to it. Enforcement lives in DataGrid::setExportFile(); these cover that guard on
- * every export path.
- */
 $viewOnly = ['dashboard', 'catalog', 'catalog.products'];
 
 $permitted = ['dashboard', 'catalog', 'catalog.products', 'catalog.products.quick_export'];

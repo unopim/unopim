@@ -93,9 +93,7 @@ class ConfigurationController extends Controller
         ]);
     }
 
-    /**
-     * Config group addressed by the current request's slugs.
-     */
+    /** Config group addressed by the request slugs. */
     protected function requestedGroupKey(): string
     {
         return implode('.', array_filter([
@@ -105,11 +103,6 @@ class ConfigurationController extends Controller
     }
 
     /**
-     * Deny access unless the admin holds every System Settings section permission
-     * the touched config groups belong to. The generic editor writes the same
-     * config codes the hub owns, while the Bouncer middleware can only gate this
-     * wildcard route at the coarse `configuration` level.
-     *
      * @param  array<int, string>  $aclKeys
      */
     protected function enforceSectionAccess(array $aclKeys): void

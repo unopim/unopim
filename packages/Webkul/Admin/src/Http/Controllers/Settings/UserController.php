@@ -59,11 +59,6 @@ class UserController extends Controller
         return $this->roleAssignmentError($targetRole) !== null;
     }
 
-    /**
-     * Translation key describing why the acting admin may not assign the given
-     * role, or null when the assignment is allowed. The two refusals have
-     * different causes and must not share one message.
-     */
     protected function roleAssignmentError(?Role $targetRole): ?string
     {
         if (! $targetRole) {
@@ -88,11 +83,6 @@ class UserController extends Controller
     }
 
     /**
-     * Roles the acting admin may actually assign. The store and update paths
-     * refuse anything outside this set, so offering the rest in the UI only
-     * produces a guaranteed failure. Pass a role id to keep an existing
-     * assignment visible even when the acting admin could not have made it.
-     *
      * @return Collection<int, Role>
      */
     protected function assignableRoles(?int $keepRoleId = null)

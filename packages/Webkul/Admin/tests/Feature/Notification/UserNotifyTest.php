@@ -42,13 +42,6 @@ it('dispatches NotificationEvent with correct parameters', function () {
     });
 });
 
-/**
- * UserNotify forwards its `templateData` straight into Content(with: ...), so the
- * keys a producer passes become the view's variables. These render each producer's
- * real shape through a queue serialization round trip — the path where the job was
- * failing, from a variable-name mismatch and a json_decode() applied to an
- * attribute Eloquent had already cast to an array.
- */
 $dispatch = function (UserNotify $mailable): void {
     $job = unserialize(serialize(new SendQueuedMailable($mailable)));
 

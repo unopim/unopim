@@ -3,13 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Quick export used to be reachable by anyone who could view the product grid,
- * because it is a query parameter on the grid's own index route rather than a
- * route of its own. Now that it has a dedicated `catalog.products.quick_export`
- * key, grant it to every custom role that already holds `catalog.products` so
- * existing installs keep the capability they had before the upgrade.
- */
+/** Backfill: grant quick export to roles that already hold catalog.products. */
 return new class extends Migration
 {
     private const REQUIRED_KEY = 'catalog.products';

@@ -5,13 +5,6 @@ use Webkul\User\Models\Role;
 
 use function Pest\Laravel\postJson;
 
-/**
- * "Create without edit" is a reachable role configuration, and the escalation
- * guard is stricter than the role dropdown it drives. Both made a legitimate
- * create look like a failure: the dropdown offered roles the server always
- * refuses, and a successful create redirected to the edit screen the actor is
- * not permitted to open.
- */
 $createOnly = [
     'dashboard',
     'settings',

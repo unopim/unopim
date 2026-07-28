@@ -3,12 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-/**
- * Bulk edit had no permission of its own: its entry points rode the product read
- * key and its save endpoints rode `catalog.products.edit`. Now that it owns
- * `catalog.products.bulk_edit`, grant it to every custom role that already holds
- * `catalog.products.edit` so existing installs keep the capability.
- */
+/** Backfill: grant bulk edit to roles that already hold catalog.products.edit. */
 return new class extends Migration
 {
     private const REQUIRED_KEY = 'catalog.products.edit';

@@ -14,11 +14,7 @@ export default function initAjaxNavigation() {
     window.unopim = window.unopim || {};
     window.unopim.visit = (url) => visit(url, true);
 
-    /**
-     * Register a callback that can veto a navigation by resolving to false.
-     * Consulted inside visit(), so link clicks, programmatic $navigate calls and
-     * history changes are all covered regardless of listener registration order.
-     */
+    /** Register a guard that can veto a navigation by resolving to false. */
     window.unopim.registerNavigationGuard = (guard) => {
         if (typeof guard === 'function' && ! navigationGuards.includes(guard)) {
             navigationGuards.push(guard);
@@ -106,10 +102,6 @@ export default function initAjaxNavigation() {
         }
     }
 
-    /**
-     * A guard that throws is treated as "allow": navigation is core to the admin
-     * and must never be bricked by a faulty guard.
-     */
     async function guardsAllow(url) {
         for (const guard of navigationGuards) {
             try {

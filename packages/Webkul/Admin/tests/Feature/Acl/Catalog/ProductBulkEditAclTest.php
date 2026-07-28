@@ -2,12 +2,6 @@
 
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 
-/**
- * Bulk edit previously had no permission identity: its entry points inherited the
- * product read key, its save endpoints inherited the edit key, and the grid button
- * was gated on mass update — three keys that drifted apart. It now owns
- * `catalog.products.bulk_edit`.
- */
 $viewOnly = ['dashboard', 'catalog', 'catalog.products'];
 
 $editOnly = ['dashboard', 'catalog', 'catalog.products', 'catalog.products.edit'];
