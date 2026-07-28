@@ -1,14 +1,16 @@
 const { test, expect } = require('../../utils/fixtures');
 
+// The default family is the one guaranteed to carry configurable attributes on a fresh install.
+const FAMILY_ID = 1;
+
 // Editor: common pool on the left, one card per variant level; axes pinned read-only, rest movable.
 async function openFirstStructure(page) {
   // A save redirect can still be in flight, which aborts a competing goto.
   await page.waitForLoadState('domcontentloaded').catch(() => {});
 
   for (let attempt = 0; attempt < 3; attempt++) {
-    // Electronics family carries the seeded variant structures; family 1 (default) has none.
     const navigated = await page
-      .goto('/admin/catalog/attribute-families/edit/3?variants=1', { waitUntil: 'domcontentloaded' })
+      .goto(`/admin/catalog/attribute-families/edit/${FAMILY_ID}?variants=1`, { waitUntil: 'domcontentloaded' })
       .then(() => true)
       .catch(() => false);
 
@@ -22,6 +24,13 @@ async function openFirstStructure(page) {
   // The variants list is a datagrid: its edit action is an icon, not a link.
   const editAction = page.locator('.icon-edit, span[title="Edit"]').first();
 
+  // Nothing seeds a variant structure, so the suite creates its own on first use.
+  if (!(await editAction.isVisible().catch(() => false))) {
+    await ensureStructure(page);
+
+    await page.goto(`/admin/catalog/attribute-families/edit/${FAMILY_ID}?variants=1`, { waitUntil: 'domcontentloaded' });
+  }
+
   await editAction.waitFor({ state: 'visible', timeout: 20000 });
 
   await editAction.click();
@@ -29,6 +38,40 @@ async function openFirstStructure(page) {
   await page.waitForURL(/\/variant-structures\/\d+\/edit/, { timeout: 20000 });
 
   await page.locator('[data-variant-level-card]').first().waitFor({ state: 'visible', timeout: 20000 });
+}
+
+/**
+ * Create a one-level structure on the family through the same endpoint the editor saves to.
+ * The admin panel has no csrf-token meta tag; it relies on the encrypted `XSRF-TOKEN` cookie that
+ * Laravel's VerifyCsrfToken decrypts from the `X-XSRF-TOKEN` header.
+ */
+async function ensureStructure(page) {
+  const result = await page.evaluate(async (familyId) => {
+    const xsrf = decodeURIComponent((document.cookie.match(/XSRF-TOKEN=([^;]+)/) || [])[1] || '');
+    const res = await fetch(`/admin/catalog/attribute-families/edit/${familyId}/variant-structures`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-XSRF-TOKEN': xsrf,
+      },
+      body: JSON.stringify({
+        _method: 'PUT',
+        structures: [{
+          code: 'e2e_variant_structure',
+          name: 'E2E Variant Structure',
+          levels: 1,
+          axes: { level_1: ['color'] },
+          placements: {},
+        }],
+      }),
+    });
+
+    return { status: res.status, body: await res.text() };
+  }, FAMILY_ID);
+
+  expect(result.status, `variant structure setup failed: ${result.body}`).toBeLessThan(300);
 }
 
 test.describe('Variant structure editor', () => {
@@ -82,7 +125,7 @@ test.describe('Variant structure editor', () => {
 
     await adminPage.getByRole('button', { name: /Save Variant/i }).click();
 
-    await adminPage.waitForURL(/attribute-families\/edit\/3/, { timeout: 30000 });
+    await adminPage.waitForURL(new RegExp(`attribute-families/edit/${FAMILY_ID}`), { timeout: 30000 });
 
     await openFirstStructure(adminPage);
 
