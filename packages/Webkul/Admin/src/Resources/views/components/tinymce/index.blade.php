@@ -295,7 +295,8 @@
                     showRichPreview: true,
                     showSystemPrompt: false,
                     selectedSystemPrompt: null,
-                    systemPrompts: @json($systemPrompts ?? app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->all()->toArray()),
+                    {{-- Filled from the platform-options response, so a page carrying a rich-text editor never inlines the whole prompt library. --}}
+                    systemPrompts: [],
                     platforms: [],
                     aiModels: [],
                     defaultPrompts: [],
@@ -543,6 +544,7 @@
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.platforms') }}");
                         this.platforms = response.data.platforms || [];
+                        this.systemPrompts = response.data.system_prompts || [];
 
                         if (this.platforms.length) {
                             let defaultPlatform = this.platforms.find(p => p.is_default);

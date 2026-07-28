@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Webkul\Attribute\Contracts\AttributeFamily as AttributeFamilyContract;
 use Webkul\Attribute\Database\Factories\AttributeFamilyFactory;
 use Webkul\Core\Eloquent\TranslatableModel;
@@ -44,6 +45,8 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
         'code',
     ];
 
+    protected ?Collection $customAttributesByGroup = null;
+
     /**
      * Get all the attributes for the attribute groups.
      */
@@ -64,6 +67,22 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     protected function getCustomAttributesAttribute()
     {
         return $this->customAttributes()->get();
+    }
+
+    /**
+     * This family's custom attributes keyed by attribute group id, each group in
+     * the order the editor renders them. Memoized per instance because callers
+     * (the product edit form) ask group by group, which otherwise repeats the
+     * same four-table join once per group.
+     *
+     * @return Collection<int, Collection<int, Attribute>>
+     */
+    public function customAttributesByGroup(): Collection
+    {
+        return $this->customAttributesByGroup ??= $this->customAttributes()
+            ->orderBy('attribute_group_mappings.position')
+            ->get()
+            ->groupBy('group_id');
     }
 
     /**

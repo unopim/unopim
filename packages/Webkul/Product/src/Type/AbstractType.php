@@ -762,7 +762,10 @@ abstract class AbstractType
             )->get();
         }
 
-        return $group->customAttributes($this->product->attribute_family->id)->whereNotIn('code', $this->skipAttributes);
+        return $this->product->attribute_family
+            ->customAttributesByGroup()
+            ->get($group->id, new Collection)
+            ->whereNotIn('code', $this->skipAttributes);
     }
 
     /**
