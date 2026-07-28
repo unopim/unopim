@@ -22,13 +22,6 @@ class AvatarController extends Controller
 
         $payload = Admin::gravatarPayload($hash);
 
-        /**
-         * Most admins have no gravatar, and a listing asks for one per row on
-         * every page change. A bare `abort(404)` carries no cache headers, so
-         * the browser re-asked for each missing avatar every single time; answer
-         * with a cacheable 404 instead so it asks once and then falls back to
-         * the initials avatar on its own.
-         */
         if (! $payload['found']) {
             return response('', 404)
                 ->header('Cache-Control', 'public, max-age=3600');

@@ -116,21 +116,12 @@
             },
 
             methods: {
-                /**
-                 * Restore the selection the form was last saved with. The checkboxes
-                 * render from `formattedValues`, so the tree has to revert its own state
-                 * — the unsaved-changes bar deliberately skips these inputs.
-                 */
                 resetToInitial() {
                     this.formattedValues = [...this.savedValues];
 
                     this.$emit('change-input', this.formattedValues);
                 },
 
-                /**
-                 * A successful save makes the current selection the new baseline, so a
-                 * later discard reverts to it rather than to the page-load state.
-                 */
                 commitValues() {
                     this.savedValues = [...this.formattedValues];
                 },

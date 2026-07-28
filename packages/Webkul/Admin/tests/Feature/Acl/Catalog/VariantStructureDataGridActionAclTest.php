@@ -3,11 +3,6 @@
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Models\VariantStructure;
 
-/**
- * The variant-structure grid used to render its edit/delete row actions
- * unconditionally, so a role with those permissions revoked still saw (and
- * could fire) the icons.
- */
 function createVariantStructure(): array
 {
     $attributeFamily = AttributeFamily::factory()->create();

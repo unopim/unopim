@@ -60,8 +60,6 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'image/png');
-        // The proxy returns a buffered response; streamedContent() asserts the
-        // response is streamed and so fails outright rather than falling back.
         expect($response->getContent())->toBe('img-bytes');
     });
 

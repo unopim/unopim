@@ -1,10 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
 
-/**
- * Discarding on My Account has to put every field back to its saved value —
- * including the ones a Vue component owns (the Timezone multiselect keeps its
- * value in component state and a hidden input, not in the visible control).
- */
 test.describe('My Account discard', () => {
   test('discarding reverts text, password and multiselect fields', async ({ adminPage }) => {
     await adminPage.goto('/admin/account', { waitUntil: 'networkidle' });
@@ -21,7 +16,6 @@ test.describe('My Account discard', () => {
     await name.fill(`${savedName} CHANGED`);
     await currentPassword.fill('admin123');
 
-    // The unsaved bar is fixed to the bottom and overlaps the Timezone control.
     const group = adminPage.locator('[data-control-group]:has(input[name="timezone"])');
 
     await group.scrollIntoViewIfNeeded();

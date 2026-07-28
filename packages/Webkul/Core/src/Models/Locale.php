@@ -33,13 +33,6 @@ class Locale extends Model implements HistoryAuditable, LocaleContract
      */
     protected array $historyTags = ['locale'];
 
-    /**
-     * MySQL hands `status` back as 1/0 while PostgreSQL returns a native
-     * boolean. The codebase (and the API payloads it serialises) is written
-     * against 1/0, so normalise it here rather than at every call site.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [

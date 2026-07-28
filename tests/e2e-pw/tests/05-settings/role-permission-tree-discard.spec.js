@@ -1,12 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo } = require('../../utils/helpers');
 
-/**
- * Discarding used to dispatch a synthetic `change` on every control in the form.
- * Each permission checkbox re-entered the tree's own change handler, which
- * toggles the node together with its ancestors and children — so discarding a
- * single tick left most of the tree selected instead of clearing it.
- */
 const checkedPermissions = (page) =>
   page.evaluate(() =>
     [...document.querySelectorAll('.unsaved-root input[name="permissions[]"]')]

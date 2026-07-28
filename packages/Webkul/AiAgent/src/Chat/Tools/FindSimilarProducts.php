@@ -126,8 +126,6 @@ class FindSimilarProducts implements PimTool
 
                 $prefix = DB::getTablePrefix();
 
-                // Identifier quoting differs per driver — backticks are a MySQL
-                // extension and PostgreSQL rejects them outright.
                 $valuesColumn = DB::getDriverName() === 'pgsql'
                     ? "\"{$prefix}p\".\"values\""
                     : "`{$prefix}p`.`values`";
@@ -247,8 +245,6 @@ class FindSimilarProducts implements PimTool
 
                 $prefix = DB::getTablePrefix();
 
-                // Identifier quoting differs per driver — backticks are a MySQL
-                // extension and PostgreSQL rejects them outright.
                 $valuesColumn = DB::getDriverName() === 'pgsql'
                     ? "\"{$prefix}p\".\"values\""
                     : "`{$prefix}p`.`values`";

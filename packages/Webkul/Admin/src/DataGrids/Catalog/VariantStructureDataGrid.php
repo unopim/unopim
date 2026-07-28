@@ -18,8 +18,6 @@ class VariantStructureDataGrid extends DataGrid
      */
     public function prepareQueryBuilder(): Builder
     {
-        // `GROUP_CONCAT ... SEPARATOR` is MySQL-only; PostgreSQL spells it
-        // `STRING_AGG`. Go through the grammar so this grid works on both.
         $axesFor = fn (string $level): string => sprintf(
             '(
                 SELECT %s

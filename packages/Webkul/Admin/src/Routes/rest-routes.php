@@ -19,10 +19,6 @@ use Webkul\HistoryControl\Http\Controllers\HistoryController;
  * Extra routes.
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
-    /**
-     * Fingerprint of the current admin's permissions, polled by open tabs so a
-     * revoked permission stops being offered without a manual refresh.
-     */
     Route::get('acl-version', [AclVersionController::class, 'show'])->name('admin.acl.version');
 
     /**

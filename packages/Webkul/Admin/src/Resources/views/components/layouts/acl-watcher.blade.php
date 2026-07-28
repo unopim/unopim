@@ -4,13 +4,6 @@
 
 @pushOnce('scripts')
     <script type="module">
-        /**
-         * A page is rendered against the permissions the user held at that moment.
-         * When an administrator edits the role afterwards, an already-open tab keeps
-         * offering buttons the user no longer has — the server rejects the action,
-         * but the stale UI still invites the click. Poll the fingerprint and reload
-         * the tab once it moves.
-         */
         (function () {
             if (window.__aclWatcherInstalled) {
                 return;
@@ -26,8 +19,6 @@
             }
 
             const check = async () => {
-                // Never reload out from under unsaved edits, and don't poll a
-                // backgrounded tab — it re-checks as soon as it is looked at again.
                 if (window.__unsavedBarCount > 0 || document.hidden) {
                     return;
                 }
@@ -48,7 +39,6 @@
                         window.location.reload();
                     }
                 } catch (e) {
-                    // Offline or a dropped request: leave the tab alone and retry later.
                 }
             };
 

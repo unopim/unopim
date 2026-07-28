@@ -12,8 +12,8 @@ use Webkul\AiAgent\Chat\Tools\RememberFact;
 use Webkul\AiAgent\Http\Controllers\ChatController;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Core\RequestMemo;
 use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Core\RequestMemo;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\Product\Models\Product;
@@ -289,11 +289,6 @@ function setPimFlexCoreConfig(string $code, string $value): void
         'updated_at' => now(),
     ]);
 
-    // getConfigData memoises per request, so drop the stale entry after the
-    // underlying row changes within a single test. The memo lives in the
-    // scoped RequestMemo service under the `core_config.` prefix — clearing
-    // `request()->attributes` here left the old value in place, so a test that
-    // read a config, changed it, then read it again saw the stale value.
     app(RequestMemo::class)->forget('core_config.');
 }
 

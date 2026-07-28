@@ -1,12 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo } = require('../../utils/helpers');
 
-/**
- * A multiselect drops a tag on `mousedown` and calls preventDefault(), so no
- * click follows. The unsaved-changes tracker only watched input/change/click/
- * keyup, so removing a locale changed the hidden input without ever marking the
- * field touched — the bar (and with it the only Save button) never appeared.
- */
 test.describe('Channel locale removal', () => {
   test('removing a locale reveals the unsaved bar with Save changes', async ({ adminPage }) => {
     await navigateTo(adminPage, 'channels');
@@ -35,7 +29,6 @@ test.describe('Channel locale removal', () => {
     await expect(bar).toBeVisible();
     await expect(bar.locator('[data-unsaved-save]')).toBeVisible();
 
-    // Leave the channel untouched for other specs.
     await bar.getByRole('button', { name: 'Discard' }).click();
     await adminPage.locator('button.danger-button').click();
     await expect(bar).toBeHidden();

@@ -310,11 +310,6 @@ return [
         'name'            => 'admin::app.acl.variant-structures',
         'route'           => 'admin.catalog.families.variant-structures.index',
         'sort'            => 4,
-        /**
-         * The variant structures grid is a tab of the family editor, so this
-         * permission has to open that page on its own — otherwise it can only
-         * ever be exercised by someone who also holds `catalog.families.edit`.
-         */
         'also_authorizes' => ['admin.catalog.families.edit'],
     ], [
         'key'   => 'catalog.families.variant-structures.edit',

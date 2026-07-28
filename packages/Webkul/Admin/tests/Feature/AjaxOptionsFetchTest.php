@@ -51,10 +51,6 @@ it('formats an options page without an N+1 translation load', function () {
         return $queries;
     };
 
-    // The first request through the process also pays for one-off work — memoized
-    // config/role/locale lookups, and on PostgreSQL a `pg_class` table-existence
-    // probe — none of which scales with page size. Warm that up first, otherwise
-    // whichever page size runs first is charged for it.
     $countFor(5);
 
     $small = $countFor(5);

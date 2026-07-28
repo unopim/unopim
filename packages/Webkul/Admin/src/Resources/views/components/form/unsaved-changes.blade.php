@@ -170,10 +170,6 @@
                 this.$nextTick(() => {
                     this.snapshot();
 
-                    // `mousedown` is in the list because a multiselect removes a tag on
-                    // mousedown and calls preventDefault(), so no click ever follows and
-                    // the field would never be marked touched. Marking on mousedown is
-                    // safe: a field still only turns dirty once its value differs.
                     ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.addEventListener(evt, this.onFormEvent, true);
                     });
@@ -399,11 +395,6 @@
                             return;
                         }
 
-                        // Inputs owned by a component that derives them from its own state
-                        // (e.g. the permission tree). Writing to them here and firing the
-                        // synthetic events below would re-enter that component's change
-                        // handler and mutate the selection instead of restoring it, so
-                        // leave them to the `unsaved-changes:reset` broadcast.
                         if (el.hasAttribute('data-unsaved-managed')) {
                             return;
                         }

@@ -2,11 +2,6 @@
 
 use Webkul\Attribute\Models\AttributeFamily;
 
-/**
- * The variant structures grid is a tab of the family editor rather than a page
- * of its own, so the variant structure permission was unusable on its own: the
- * editor route 403'd before the tab could ever be reached.
- */
 it('should open the family editor with only the variant structure permission', function () {
     $this->loginWithPermissions(permissions: [
         'catalog',

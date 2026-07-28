@@ -4,14 +4,6 @@
             :for="id"
             class="inline-flex gap-2.5 w-max p-1.5 items-center cursor-pointer select-none group"
         >
-            {{--
-                `data-unsaved-managed` keeps the unsaved-changes bar from reverting this
-                box through the DOM. Its checked state is derived from the tree's own
-                selection, and a synthetic change event here would re-enter
-                `handleCheckbox` and toggle the node (plus its ancestors and children)
-                instead of restoring it. The tree restores itself on
-                `unsaved-changes:reset`.
-            --}}
             <input
                 type="checkbox"
                 :name="[name + '[]']"

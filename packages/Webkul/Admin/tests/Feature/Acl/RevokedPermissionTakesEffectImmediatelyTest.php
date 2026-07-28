@@ -2,13 +2,6 @@
 
 use Webkul\User\Models\Role;
 
-/**
- * A tab opened before an admin edited the role still shows the buttons it was
- * rendered with. What must never happen is the action behind one of those stale
- * buttons still going through: authorization is re-read from the role on every
- * request, so revoking a permission has to take effect on the very next call
- * from that already-open session, with no re-login and no refresh.
- */
 it('rejects a write as soon as its permission is revoked mid-session', function () {
     $admin = $this->loginWithPermissions(permissions: [
         'catalog',
@@ -22,12 +15,10 @@ it('rejects a write as soon as its permission is revoked mid-session', function 
         'groups' => [],
     ];
 
-    // Whatever the payload does, it is not blocked by authorization yet.
     $before = $this->post(route('admin.catalog.families.store'), $payload('family_before_revoke'));
 
     expect($before->getStatusCode())->not->toBe(403);
 
-    // Same session, no re-login: the admin's role loses the create permission.
     Role::query()->whereKey($admin->role_id)->update([
         'permissions' => json_encode(['catalog', 'catalog.families']),
     ]);

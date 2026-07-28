@@ -6,11 +6,6 @@
         default                        => 'general',
     };
 
-    /**
-     * Each tab is owned by the permission that guards the routes behind it, so
-     * a role holding only variant structure access lands on that tab instead of
-     * a general tab whose save would be rejected.
-     */
     $tabItems = array_values(array_filter([
         [
             'key'        => 'general',
