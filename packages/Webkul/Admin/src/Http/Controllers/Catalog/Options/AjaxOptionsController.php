@@ -107,7 +107,6 @@ class AjaxOptionsController extends Controller
                 ...$option->makeHidden(['translations', 'label', 'attribute'])->toArray(),
             ];
 
-            /** Swatch metadata the option slot reads, resolved once so the shape never varies per row. */
             if ($swatchAttribute) {
                 $formattedOption['attribute'] = ['swatch_type' => $swatchAttribute->swatch_type];
             }

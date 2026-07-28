@@ -14,7 +14,6 @@ export default function initAjaxNavigation() {
     window.unopim = window.unopim || {};
     window.unopim.visit = (url) => visit(url, true);
 
-    /** Register a guard that can veto a navigation by resolving to false. */
     window.unopim.registerNavigationGuard = (guard) => {
         if (typeof guard === 'function' && ! navigationGuards.includes(guard)) {
             navigationGuards.push(guard);

@@ -571,7 +571,6 @@
             },
         });
 
-        /** Internal-navigation guard, installed once. */
         if (! window.__unsavedNavGuardInstalled) {
             window.__unsavedNavGuardInstalled = true;
 
