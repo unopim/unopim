@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\AttributeGroup;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
@@ -766,6 +767,30 @@ abstract class AbstractType
             ->customAttributesByGroup()
             ->get($group->id, new Collection)
             ->whereNotIn('code', $this->skipAttributes);
+    }
+
+    /**
+     * Retrieve the editable attributes of a single group.
+     *
+     * Kept separate from {@see getEditableAttributes()} because that one reads
+     * the family's memoised full attribute set, which is what makes a large
+     * family unrenderable.
+     *
+     * @return Collection<int, Attribute>
+     */
+    public function getEditableAttributesForGroup(int $groupId, bool $skipSuperAttribute = true): Collection
+    {
+        if ($skipSuperAttribute) {
+            $this->skipAttributes = array_merge(
+                $this->product->super_attributes->pluck('code')->toArray(),
+                $this->skipAttributes
+            );
+        }
+
+        return $this->product->attribute_family
+            ->customAttributesForGroup($groupId)
+            ->whereNotIn('code', $this->skipAttributes)
+            ->values();
     }
 
     /**
