@@ -5,6 +5,7 @@ namespace Webkul\Measurement\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Measurement\Http\Requests\FamilyUnitOptionsForm;
 use Webkul\Measurement\Services\AttributeMeasurementService;
 
 class AttributeController extends Controller
@@ -12,6 +13,20 @@ class AttributeController extends Controller
     public function __construct(
         protected AttributeMeasurementService $attributeMeasurementService
     ) {}
+
+    /**
+     * Unit options of a single measurement family, for the attribute editor's
+     * family select. Kept off {@see getAttributeMeasurement()} so the initial
+     * payload stays independent of how many families the catalogue holds.
+     */
+    public function familyUnits(FamilyUnitOptionsForm $request): JsonResponse
+    {
+        return new JsonResponse([
+            'units' => $this->attributeMeasurementService->unitsForFamily(
+                (string) $request->validated('family')
+            ),
+        ]);
+    }
 
     /**
      * Get measurement configuration for the given attribute.
