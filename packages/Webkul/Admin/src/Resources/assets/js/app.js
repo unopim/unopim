@@ -260,8 +260,6 @@ import initAjaxNavigation from "./plugins/navigation";
 function createAdminApp() {
     const app = createApp(appOptions);
 
-    // Vue caches compiled templates by the `template: '#id'` string, so resolve
-    // the selector to its markup and keep the cache keyed on the template itself.
     const registerComponent = app.component.bind(app);
 
     app.component = (name, definition) => {
