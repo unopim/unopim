@@ -15,11 +15,15 @@ Route::get('/', [Controller::class, 'redirectToLogin']);
 Route::group(['prefix' => config('app.admin_url')], function () {
     /**
      * Public avatar proxy route (no auth middleware).
+     *
+     * A listing renders one avatar per row, so a single page of users spends
+     * one request per row here. 60/min tripped the limiter while simply paging
+     * through the user list at a larger page size.
      */
     Route::get('avatar/u/{hash}', [AvatarController::class, 'gravatar'])
         ->where('hash', '[a-f0-9]{32}')
         ->name('admin.avatar.public')
-        ->middleware('throttle:60,1');
+        ->middleware('throttle:120,1');
 
     /**
      * Redirect route.

@@ -60,7 +60,9 @@ describe('Gravatar avatar fallback when no image is uploaded', function () {
 
         $response->assertStatus(200);
         $response->assertHeader('Content-Type', 'image/png');
-        expect($response->streamedContent() ?: $response->getContent())->toBe('img-bytes');
+        // The proxy returns a buffered response; streamedContent() asserts the
+        // response is streamed and so fails outright rather than falling back.
+        expect($response->getContent())->toBe('img-bytes');
     });
 
     it('returns 404 through the proxy route when the email has no gravatar', function () {
