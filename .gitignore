@@ -1,5 +1,7 @@
 .env
 .env.testing
+.env.hostbak.*
+tests/e2e-pw/dbg.mjs
 .idea
 .php_cs.cache
 .phpunit.result.cache
