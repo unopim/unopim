@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Um :type Produkte auf einmal hinzuzufügen.',
                     'empty-title'       => 'Produkt hinzufügen',
                     'image-placeholder' => 'Produktbild',
+                    'more-types'        => 'Mehr',
                     'no-types-info'     => 'Verwenden Sie „Assoziationstyp hinzufügen“, um dieses Produkt einem Assoziationstyp zuzuordnen.',
                     'no-types-title'    => 'Keine Assoziationen hinzugefügt',
+                    'search-types'      => 'Verknüpfungstypen suchen',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Verbände',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Auswahl hinzufügen',
                     'close'        => 'Schließen',
+                    'clear-search' => 'Suche löschen',
                     'categories'   => [
-                        'subtitle' => 'Weisen Sie dieses Produkt Katalogkategorien zu.',
-                        'search'   => 'Kategorien suchen…',
-                        'selected' => 'ausgewählt',
+                        'subtitle'        => 'Weisen Sie dieses Produkt Katalogkategorien zu.',
+                        'search'          => 'Kategorien suchen…',
+                        'searching'       => 'Suche läuft…',
+                        'no-results'      => 'Keine passenden Kategorien gefunden',
+                        'load-more'       => 'Mehr laden',
+                        'none-selected'   => 'Noch keine Kategorien ausgewählt',
+                        'and-more'        => 'und :count weitere',
+                        'review-selected' => 'Ausgewählte Kategorien anzeigen',
+                        'selected'        => 'ausgewählt',
                     ],
                     'associations' => [
                         'subtitle' => 'Verknüpfen Sie verwandte, Zusatzverkaufs-, Cross-Selling- und benutzerdefinierte Produkte.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Felder',
-                'info'            => 'Fügen Sie benutzerdefinierte Felder hinzu, um zusätzliche Daten für diesen Zuordnungstyp zu erfassen.',
-                'add-field-btn'   => 'Feld hinzufügen',
-                'modal-title'     => 'Feld hinzufügen',
-                'save-field-btn'  => 'Feld speichern',
-                'same-code-error' => 'Der Feldcode muss eindeutig sein.',
-                'add-fields-info' => 'Um benutzerdefinierte Felder für diesen Zuordnungstyp zu erstellen.',
+                'title'                => 'Felder',
+                'info'                 => 'Fügen Sie benutzerdefinierte Felder hinzu, um zusätzliche Daten für diesen Zuordnungstyp zu erfassen.',
+                'add-field-btn'        => 'Feld hinzufügen',
+                'modal-title'          => 'Feld hinzufügen',
+                'edit-modal-title'     => 'Feld bearbeiten',
+                'save-field-btn'       => 'Feld speichern',
+                'same-code-error'      => 'Der Feldcode muss eindeutig sein.',
+                'add-fields-info'      => 'Um benutzerdefinierte Felder für diesen Zuordnungstyp zu erstellen.',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => 'Keine Assoziationstypen gefunden',
                 'search-placeholder' => 'Nach Name oder Code suchen',
                 'title'              => 'Assoziationstyp hinzufügen',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Auswahl hinzufügen',
+                'selected' => ':count Produkte ausgewählt',
+                'title'    => 'Produkte auswählen',
             ],
         ],
         'pagination' => [

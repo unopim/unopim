@@ -541,16 +541,14 @@ class ProductController extends Controller
     }
 
     /**
-     * Builds the payload the product edit "Links" panel needs to render every
-     * active association type dynamically: for each active type, its
-     * (locale-resolved) field definitions and this product's existing links
-     * for that type, with the related product's display data (via the same
+     * Builds the payload the product edit "Links" panel needs: for every type
+     * this product already links to, its (locale-resolved) field definitions
+     * and those links, with the related product's display data (via the same
      * `normalizeWithImage()` used elsewhere) plus the link's `additional_data`.
      *
-     * Eager loading is done up front (`getActiveTypes()` for
-     * types/fields/field-options, `getLinksForProduct()` for links +
-     * associationType + relatedProduct) so building this structure performs a
-     * fixed, small number of queries regardless of how many types/links exist.
+     * Types the product links to nothing under are deliberately absent: they
+     * are attached on demand through the async type picker, so the page payload
+     * stays flat however many types are configured.
      *
      * @return array<int, array{code: string, name: string, fields: array, links: array}>
      */
@@ -560,10 +558,8 @@ class ProductController extends Controller
             ->getLinksForProduct($product->id)
             ->groupBy('association_type_id');
 
-        $linkedTypes = $this->associationTypeRepository
-            ->getActiveTypesByIds($linksByAssociationTypeId->keys()->all());
-
-        return $linkedTypes
+        return $this->associationTypeRepository
+            ->getActiveTypesByIds($linksByAssociationTypeId->keys()->all())
             ->map(function ($associationType) use ($linksByAssociationTypeId) {
                 $links = $linksByAssociationTypeId->get($associationType->id, collect());
 
@@ -1158,10 +1154,16 @@ class ProductController extends Controller
 
     /**
      * Result of search product.
+     *
+     * Accepts `ids` so a caller that already made its selection elsewhere — the
+     * association picker resolves rows chosen in the product grid — can hydrate
+     * them all in one request instead of one lookup per product.
      */
     public function search(): JsonResponse
     {
         $results = [];
+
+        $ids = array_filter((array) request('ids', []), 'is_numeric');
 
         request()->query->add([
             'status'               => null,
@@ -1170,6 +1172,8 @@ class ProductController extends Controller
             'sort'                 => 'created_at',
             'order'                => 'desc',
             'skipSku'              => request('skipSku'),
+            'ids'                  => $ids,
+            'limit'                => $ids === [] ? request('limit') : count($ids),
         ]);
 
         $products = $this->productRepository->searchFromDatabase();

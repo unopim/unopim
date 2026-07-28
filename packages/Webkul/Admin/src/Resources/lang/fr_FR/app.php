@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Ajouter rapidement des produits :type.',
                     'empty-title'       => 'Ajouter un produit',
                     'image-placeholder' => 'Image du produit',
+                    'more-types'        => 'Plus',
                     'no-types-info'     => 'Utilisez « Ajouter un type d\'association » pour lier ce produit à un type d\'association.',
                     'no-types-title'    => 'Aucune association ajoutée',
+                    'search-types'      => 'Rechercher des types d\'association',
                     'sku'               => 'sku - :sku',
                     'title'             => 'Associations',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Ajouter la sélection',
                     'close'        => 'Fermer',
+                    'clear-search' => 'Effacer la recherche',
                     'categories'   => [
-                        'subtitle' => 'Associez ce produit aux catégories du catalogue.',
-                        'search'   => 'Rechercher des catégories…',
-                        'selected' => 'sélectionné(s)',
+                        'subtitle'        => 'Associez ce produit aux catégories du catalogue.',
+                        'search'          => 'Rechercher des catégories…',
+                        'searching'       => 'Recherche en cours…',
+                        'no-results'      => 'Aucune catégorie correspondante trouvée',
+                        'load-more'       => 'Charger plus',
+                        'none-selected'   => 'Aucune catégorie sélectionnée pour le moment',
+                        'and-more'        => 'et :count de plus',
+                        'review-selected' => 'Afficher les catégories sélectionnées',
+                        'selected'        => 'sélectionné(s)',
                     ],
                     'associations' => [
                         'subtitle' => 'Associez des produits similaires, de montée en gamme, complémentaires et personnalisés.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Champs',
-                'info'            => 'Ajoutez des champs personnalisés pour capturer des données supplémentaires pour ce type d\'association.',
-                'add-field-btn'   => 'Ajouter un champ',
-                'modal-title'     => 'Ajouter un champ',
-                'save-field-btn'  => 'Enregistrer le champ',
-                'same-code-error' => 'Le code du champ doit être unique.',
-                'add-fields-info' => 'Pour créer des champs personnalisés pour ce type d\'association.',
+                'title'                => 'Champs',
+                'info'                 => 'Ajoutez des champs personnalisés pour capturer des données supplémentaires pour ce type d\'association.',
+                'add-field-btn'        => 'Ajouter un champ',
+                'modal-title'          => 'Ajouter un champ',
+                'edit-modal-title'     => 'Modifier le champ',
+                'save-field-btn'       => 'Enregistrer le champ',
+                'same-code-error'      => 'Le code du champ doit être unique.',
+                'add-fields-info'      => 'Pour créer des champs personnalisés pour ce type d\'association.',
             ],
         ],
 
@@ -2349,6 +2361,11 @@ return [
                 'empty-title'        => 'Aucun type d\'association trouvé',
                 'search-placeholder' => 'Rechercher par nom ou code',
                 'title'              => 'Ajouter un type d\'association',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Ajouter la sélection',
+                'selected' => ':count produits sélectionnés',
+                'title'    => 'Sélectionner des produits',
             ],
         ],
         'pagination' => [

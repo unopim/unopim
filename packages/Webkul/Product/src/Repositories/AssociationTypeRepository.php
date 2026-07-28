@@ -4,6 +4,7 @@ namespace Webkul\Product\Repositories;
 
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Product\Contracts\AssociationType;
 
@@ -59,25 +60,47 @@ class AssociationTypeRepository extends Repository
 
         unset($data['fields']);
 
-        $associationType = parent::update($data, $id);
+        return DB::transaction(function () use ($data, $id, $fields) {
+            $associationType = parent::update($data, $id);
 
-        foreach ($fields as $fieldId => $fieldData) {
-            if ($fieldData['isNew'] == 'true') {
-                $this->associationTypeFieldRepository->create(array_merge($fieldData, [
-                    'association_type_id' => $associationType->id,
-                ]));
+            /**
+             * The browser keeps a field flagged as new until the page reloads, so a
+             * resubmitted form (a failed first attempt, a double submit) would insert
+             * a code that already exists. Resolving the row by its code instead of
+             * trusting the flag keeps the save idempotent.
+             */
+            $existingIds = $this->associationTypeFieldRepository->getModel()->newQuery()
+                ->where('association_type_id', $associationType->id)
+                ->pluck('id', 'code');
 
-                continue;
+            foreach ($fields as $fieldId => $fieldData) {
+                $isNew = filter_var($fieldData['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+                $resolvedId = $isNew
+                    ? ($existingIds[$fieldData['code'] ?? ''] ?? null)
+                    : $fieldId;
+
+                if (filter_var($fieldData['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                    if ($resolvedId) {
+                        $this->associationTypeFieldRepository->delete($resolvedId);
+                    }
+
+                    continue;
+                }
+
+                if (! $resolvedId) {
+                    $this->associationTypeFieldRepository->create(array_merge($fieldData, [
+                        'association_type_id' => $associationType->id,
+                    ]));
+
+                    continue;
+                }
+
+                $this->associationTypeFieldRepository->update($fieldData, $resolvedId);
             }
 
-            if ($fieldData['isDelete'] == 'true') {
-                $this->associationTypeFieldRepository->delete($fieldId);
-            } else {
-                $this->associationTypeFieldRepository->update($fieldData, $fieldId);
-            }
-        }
-
-        return $associationType;
+            return $associationType;
+        });
     }
 
     /**

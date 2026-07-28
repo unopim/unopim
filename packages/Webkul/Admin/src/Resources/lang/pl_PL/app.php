@@ -288,8 +288,10 @@ return [
                     'empty-info'        => 'Dodaj produkty :type jednocześnie.',
                     'empty-title'       => 'Dodaj produkt',
                     'image-placeholder' => 'Obraz produktu',
+                    'more-types'        => 'Więcej',
                     'no-types-info'     => 'Użyj „Dodaj typ powiązania”, aby powiązać ten produkt z typem powiązania.',
                     'no-types-title'    => 'Nie dodano żadnych powiązań',
+                    'search-types'      => 'Szukaj typów powiązań',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkty',
                 ],
@@ -404,11 +406,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Dodaj wybrane',
                     'close'        => 'Zamknij',
+                    'clear-search' => 'Wyczyść wyszukiwanie',
                     'categories'   => [
-                        'subtitle' => 'Przypisz ten produkt do kategorii katalogu.',
-                        'search'   => 'Szukaj kategorii…',
-                        'selected' => 'wybrano',
+                        'subtitle'        => 'Przypisz ten produkt do kategorii katalogu.',
+                        'search'          => 'Szukaj kategorii…',
+                        'searching'       => 'Wyszukiwanie…',
+                        'no-results'      => 'Nie znaleziono pasujących kategorii',
+                        'load-more'       => 'Załaduj więcej',
+                        'none-selected'   => 'Nie wybrano jeszcze żadnej kategorii',
+                        'and-more'        => 'i :count więcej',
+                        'review-selected' => 'Pokaż wybrane kategorie',
+                        'selected'        => 'wybrano',
                     ],
                     'associations' => [
                         'subtitle' => 'Połącz produkty powiązane, up-sell, cross-sell i niestandardowe.',
@@ -1026,13 +1037,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Pola',
-                'info'            => 'Dodaj niestandardowe pola, aby przechwycić dodatkowe dane dla tego typu powiązania.',
-                'add-field-btn'   => 'Dodaj pole',
-                'modal-title'     => 'Dodaj pole',
-                'save-field-btn'  => 'Zapisz pole',
-                'same-code-error' => 'Kod pola musi być unikalny.',
-                'add-fields-info' => 'Aby utworzyć niestandardowe pola dla tego typu powiązania.',
+                'title'                => 'Pola',
+                'info'                 => 'Dodaj niestandardowe pola, aby przechwycić dodatkowe dane dla tego typu powiązania.',
+                'add-field-btn'        => 'Dodaj pole',
+                'modal-title'          => 'Dodaj pole',
+                'edit-modal-title'     => 'Edytuj pole',
+                'save-field-btn'       => 'Zapisz pole',
+                'same-code-error'      => 'Kod pola musi być unikalny.',
+                'add-fields-info'      => 'Aby utworzyć niestandardowe pola dla tego typu powiązania.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Nie znaleziono typów powiązań',
                 'search-placeholder' => 'Szukaj według nazwy lub kodu',
                 'title'              => 'Dodaj typ powiązania',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Dodaj wybrane',
+                'selected' => 'Wybrano produktów: :count',
+                'title'    => 'Wybierz produkty',
             ],
         ],
         'pagination' => [

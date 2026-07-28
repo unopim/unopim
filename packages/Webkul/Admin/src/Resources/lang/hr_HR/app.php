@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Dodajte :type proizvode u jednom potezu.',
                     'empty-title'       => 'Dodajte proizvod',
                     'image-placeholder' => 'Slika proizvoda',
+                    'more-types'        => 'Više',
                     'no-types-info'     => 'Upotrijebite „Dodaj vrstu povezivanja” za povezivanje ovog proizvoda pod vrstom povezivanja.',
                     'no-types-title'    => 'Nije dodano nijedno povezivanje',
+                    'search-types'      => 'Pretraži vrste povezivanja',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Proizvodi',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Dodaj odabrano',
                     'close'        => 'Zatvori',
+                    'clear-search' => 'Očisti pretragu',
                     'categories'   => [
-                        'subtitle' => 'Dodijelite ovaj proizvod kategorijama kataloga.',
-                        'search'   => 'Pretraži kategorije…',
-                        'selected' => 'odabrano',
+                        'subtitle'        => 'Dodijelite ovaj proizvod kategorijama kataloga.',
+                        'search'          => 'Pretraži kategorije…',
+                        'searching'       => 'Pretraživanje…',
+                        'no-results'      => 'Nije pronađena nijedna odgovarajuća kategorija',
+                        'load-more'       => 'Učitaj više',
+                        'none-selected'   => 'Još nije odabrana nijedna kategorija',
+                        'and-more'        => 'i još :count',
+                        'review-selected' => 'Prikaži odabrane kategorije',
+                        'selected'        => 'odabrano',
                     ],
                     'associations' => [
                         'subtitle' => 'Povežite srodne, dodatne, unakrsne i prilagođene proizvode.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Polja',
-                'info'            => 'Dodajte prilagođena polja za bilježenje dodatnih podataka za ovu vrstu povezivanja.',
-                'add-field-btn'   => 'Dodaj polje',
-                'modal-title'     => 'Dodaj polje',
-                'save-field-btn'  => 'Spremi polje',
-                'same-code-error' => 'Kod polja mora biti jedinstven.',
-                'add-fields-info' => 'Za izradu prilagođenih polja za ovu vrstu povezivanja.',
+                'title'                => 'Polja',
+                'info'                 => 'Dodajte prilagođena polja za bilježenje dodatnih podataka za ovu vrstu povezivanja.',
+                'add-field-btn'        => 'Dodaj polje',
+                'modal-title'          => 'Dodaj polje',
+                'edit-modal-title'     => 'Uredi polje',
+                'save-field-btn'       => 'Spremi polje',
+                'same-code-error'      => 'Kod polja mora biti jedinstven.',
+                'add-fields-info'      => 'Za izradu prilagođenih polja za ovu vrstu povezivanja.',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => 'Nije pronađena nijedna vrsta povezivanja',
                 'search-placeholder' => 'Pretraži po nazivu ili šifri',
                 'title'              => 'Dodaj vrstu povezivanja',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Dodaj odabrano',
+                'selected' => 'Odabrano proizvoda: :count',
+                'title'    => 'Odaberi proizvode',
             ],
         ],
         'pagination' => [

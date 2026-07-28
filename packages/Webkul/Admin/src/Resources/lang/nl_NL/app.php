@@ -288,8 +288,10 @@ return [
                     'empty-info'        => ':type producten toevoegen.',
                     'empty-title'       => 'Product toevoegen',
                     'image-placeholder' => 'Productafbeelding',
+                    'more-types'        => 'Meer',
                     'no-types-info'     => 'Gebruik „Associatietype toevoegen” om dit product onder een associatietype te koppelen.',
                     'no-types-title'    => 'Geen associaties toegevoegd',
+                    'search-types'      => 'Zoek associatietypes',
                     'sku'               => 'SKU: :sku',
                     'title'             => 'Koppelingen',
                 ],
@@ -404,11 +406,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Selectie toevoegen',
                     'close'        => 'Sluiten',
+                    'clear-search' => 'Zoekopdracht wissen',
                     'categories'   => [
-                        'subtitle' => 'Wijs dit product toe aan catalogus­categorieën.',
-                        'search'   => 'Categorieën zoeken…',
-                        'selected' => 'geselecteerd',
+                        'subtitle'        => 'Wijs dit product toe aan catalogus­categorieën.',
+                        'search'          => 'Categorieën zoeken…',
+                        'searching'       => 'Bezig met zoeken…',
+                        'no-results'      => 'Geen overeenkomende categorieën gevonden',
+                        'load-more'       => 'Meer laden',
+                        'none-selected'   => 'Nog geen categorieën geselecteerd',
+                        'and-more'        => 'en nog :count',
+                        'review-selected' => 'Geselecteerde categorieën tonen',
+                        'selected'        => 'geselecteerd',
                     ],
                     'associations' => [
                         'subtitle' => 'Koppel gerelateerde, upsell-, cross-sell- en aangepaste producten.',
@@ -1026,13 +1037,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Velden',
-                'info'            => 'Voeg aangepaste velden toe om extra gegevens voor dit associatietype vast te leggen.',
-                'add-field-btn'   => 'Veld toevoegen',
-                'modal-title'     => 'Veld toevoegen',
-                'save-field-btn'  => 'Veld opslaan',
-                'same-code-error' => 'De veldcode moet uniek zijn.',
-                'add-fields-info' => 'Om aangepaste velden voor dit associatietype te maken.',
+                'title'                => 'Velden',
+                'info'                 => 'Voeg aangepaste velden toe om extra gegevens voor dit associatietype vast te leggen.',
+                'add-field-btn'        => 'Veld toevoegen',
+                'modal-title'          => 'Veld toevoegen',
+                'edit-modal-title'     => 'Veld bewerken',
+                'save-field-btn'       => 'Veld opslaan',
+                'same-code-error'      => 'De veldcode moet uniek zijn.',
+                'add-fields-info'      => 'Om aangepaste velden voor dit associatietype te maken.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Geen associatietypes gevonden',
                 'search-placeholder' => 'Zoek op naam of code',
                 'title'              => 'Associatietype toevoegen',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Selectie toevoegen',
+                'selected' => ':count producten geselecteerd',
+                'title'    => 'Producten selecteren',
             ],
         ],
         'pagination' => [

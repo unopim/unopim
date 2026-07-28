@@ -288,8 +288,10 @@ return [
                     'empty-info'        => 'Legg til :type produkter samtidig.',
                     'empty-title'       => 'Legg til produkt',
                     'image-placeholder' => 'Produktbilde',
+                    'more-types'        => 'Flere',
                     'no-types-info'     => 'Bruk «Legg til assosiasjonstype» for å knytte dette produktet til en assosiasjonstype.',
                     'no-types-title'    => 'Ingen assosiasjoner lagt til',
+                    'search-types'      => 'Søk i tilknytningstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
@@ -404,11 +406,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Legg til valgte',
                     'close'        => 'Lukk',
+                    'clear-search' => 'Tøm søk',
                     'categories'   => [
-                        'subtitle' => 'Tilordne dette produktet til katalogkategorier.',
-                        'search'   => 'Søk i kategorier…',
-                        'selected' => 'valgt',
+                        'subtitle'        => 'Tilordne dette produktet til katalogkategorier.',
+                        'search'          => 'Søk i kategorier…',
+                        'searching'       => 'Søker…',
+                        'no-results'      => 'Ingen samsvarende kategorier funnet',
+                        'load-more'       => 'Last inn flere',
+                        'none-selected'   => 'Ingen kategorier er valgt ennå',
+                        'and-more'        => 'og :count til',
+                        'review-selected' => 'Vis valgte kategorier',
+                        'selected'        => 'valgt',
                     ],
                     'associations' => [
                         'subtitle' => 'Koble relaterte, mersalgs-, kryssalgs- og tilpassede produkter.',
@@ -1026,13 +1037,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Felt',
-                'info'            => 'Legg til egendefinerte felt for å fange opp tilleggsdata for denne assosiasjonstypen.',
-                'add-field-btn'   => 'Legg til felt',
-                'modal-title'     => 'Legg til felt',
-                'save-field-btn'  => 'Lagre felt',
-                'same-code-error' => 'Feltkoden må være unik.',
-                'add-fields-info' => 'For å opprette egendefinerte felt for denne assosiasjonstypen.',
+                'title'                => 'Felt',
+                'info'                 => 'Legg til egendefinerte felt for å fange opp tilleggsdata for denne assosiasjonstypen.',
+                'add-field-btn'        => 'Legg til felt',
+                'modal-title'          => 'Legg til felt',
+                'edit-modal-title'     => 'Rediger felt',
+                'save-field-btn'       => 'Lagre felt',
+                'same-code-error'      => 'Feltkoden må være unik.',
+                'add-fields-info'      => 'For å opprette egendefinerte felt for denne assosiasjonstypen.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Ingen assosiasjonstyper funnet',
                 'search-placeholder' => 'Søk etter navn eller kode',
                 'title'              => 'Legg til assosiasjonstype',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Legg til valgte',
+                'selected' => ':count produkter valgt',
+                'title'    => 'Velg produkter',
             ],
         ],
         'pagination' => [

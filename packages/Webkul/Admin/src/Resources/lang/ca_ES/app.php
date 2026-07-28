@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Afegiu :type productes a l\'instant.',
                     'empty-title'       => 'Afegir Producte',
                     'image-placeholder' => 'Imatge del Producte',
+                    'more-types'        => 'Més',
                     'no-types-info'     => 'Utilitza «Afegir Tipus d\'Associació» per enllaçar aquest producte sota un tipus d\'associació.',
                     'no-types-title'    => 'No s\'ha afegit cap associació',
+                    'search-types'      => 'Cerca tipus d\'associació',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associacions',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Afegeix la selecció',
                     'close'        => 'Tanca',
+                    'clear-search' => 'Esborra la cerca',
                     'categories'   => [
-                        'subtitle' => 'Assigneu aquest producte a categories del catàleg.',
-                        'search'   => 'Cerca categories…',
-                        'selected' => 'seleccionat(s)',
+                        'subtitle'        => 'Assigneu aquest producte a categories del catàleg.',
+                        'search'          => 'Cerca categories…',
+                        'searching'       => 'S\'està cercant…',
+                        'no-results'      => 'No s\'ha trobat cap categoria coincident',
+                        'load-more'       => 'Carrega\'n més',
+                        'none-selected'   => 'Encara no s\'ha seleccionat cap categoria',
+                        'and-more'        => 'i :count més',
+                        'review-selected' => 'Mostra les categories seleccionades',
+                        'selected'        => 'seleccionat(s)',
                     ],
                     'associations' => [
                         'subtitle' => 'Vincula productes relacionats, de venda addicional, de venda creuada i personalitzats.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Camps',
-                'info'            => 'Afegiu camps personalitzats per capturar dades addicionals per a aquest tipus d\'associació.',
-                'add-field-btn'   => 'Afegir camp',
-                'modal-title'     => 'Afegir camp',
-                'save-field-btn'  => 'Desar camp',
-                'same-code-error' => 'El codi del camp ha de ser únic.',
-                'add-fields-info' => 'Per crear camps personalitzats per a aquest tipus d\'associació.',
+                'title'                => 'Camps',
+                'info'                 => 'Afegiu camps personalitzats per capturar dades addicionals per a aquest tipus d\'associació.',
+                'add-field-btn'        => 'Afegir camp',
+                'modal-title'          => 'Afegir camp',
+                'edit-modal-title'     => 'Edita el camp',
+                'save-field-btn'       => 'Desar camp',
+                'same-code-error'      => 'El codi del camp ha de ser únic.',
+                'add-fields-info'      => 'Per crear camps personalitzats per a aquest tipus d\'associació.',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => 'No s\'ha trobat cap tipus d\'associació',
                 'search-placeholder' => 'Cerca per nom o codi',
                 'title'              => 'Afegir Tipus d\'Associació',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Afegeix la selecció',
+                'selected' => ':count productes seleccionats',
+                'title'    => 'Selecciona productes',
             ],
         ],
         'pagination' => [

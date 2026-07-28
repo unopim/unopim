@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Lägg till produkter :type åt gången.',
                     'empty-title'       => 'Lägg till produkt',
                     'image-placeholder' => 'Produktbild',
+                    'more-types'        => 'Fler',
                     'no-types-info'     => 'Använd ”Lägg till associationstyp” för att koppla den här produkten till en associationstyp.',
                     'no-types-title'    => 'Inga associationer tillagda',
+                    'search-types'      => 'Sök associationstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Lägg till valda',
                     'close'        => 'Stäng',
+                    'clear-search' => 'Rensa sökning',
                     'categories'   => [
-                        'subtitle' => 'Tilldela denna produkt till katalogkategorier.',
-                        'search'   => 'Sök kategorier…',
-                        'selected' => 'vald',
+                        'subtitle'        => 'Tilldela denna produkt till katalogkategorier.',
+                        'search'          => 'Sök kategorier…',
+                        'searching'       => 'Söker…',
+                        'no-results'      => 'Inga matchande kategorier hittades',
+                        'load-more'       => 'Ladda fler',
+                        'none-selected'   => 'Inga kategorier har valts ännu',
+                        'and-more'        => 'och :count till',
+                        'review-selected' => 'Visa valda kategorier',
+                        'selected'        => 'vald',
                     ],
                     'associations' => [
                         'subtitle' => 'Länka relaterade, mersälj-, korsförsäljnings- och anpassade produkter.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Fält',
-                'info'            => 'Lägg till anpassade fält för att fånga ytterligare data för denna associationstyp.',
-                'add-field-btn'   => 'Lägg till fält',
-                'modal-title'     => 'Lägg till fält',
-                'save-field-btn'  => 'Spara fält',
-                'same-code-error' => 'Fältkoden måste vara unik.',
-                'add-fields-info' => 'För att skapa anpassade fält för denna associationstyp.',
+                'title'                => 'Fält',
+                'info'                 => 'Lägg till anpassade fält för att fånga ytterligare data för denna associationstyp.',
+                'add-field-btn'        => 'Lägg till fält',
+                'modal-title'          => 'Lägg till fält',
+                'edit-modal-title'     => 'Redigera fält',
+                'save-field-btn'       => 'Spara fält',
+                'same-code-error'      => 'Fältkoden måste vara unik.',
+                'add-fields-info'      => 'För att skapa anpassade fält för denna associationstyp.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Inga associationstyper hittades',
                 'search-placeholder' => 'Sök efter namn eller kod',
                 'title'              => 'Lägg till associationstyp',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Lägg till valda',
+                'selected' => ':count produkter valda',
+                'title'    => 'Välj produkter',
             ],
         ],
         'pagination' => [

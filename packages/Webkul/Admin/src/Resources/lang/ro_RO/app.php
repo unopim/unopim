@@ -288,8 +288,10 @@ return [
                     'empty-info'        => 'Adăugați produse :type deodată.',
                     'empty-title'       => 'Adăugați produs',
                     'image-placeholder' => 'Imagine produs',
+                    'more-types'        => 'Mai multe',
                     'no-types-info'     => 'Utilizează „Adaugă tip de asociere” pentru a lega acest produs la un tip de asociere.',
                     'no-types-title'    => 'Nicio asociere adăugată',
+                    'search-types'      => 'Caută tipuri de asociere',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produse',
                 ],
@@ -404,11 +406,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Adaugă selecția',
                     'close'        => 'Închide',
+                    'clear-search' => 'Șterge căutarea',
                     'categories'   => [
-                        'subtitle' => 'Atribuiți acest produs categoriilor din catalog.',
-                        'search'   => 'Căutare categorii…',
-                        'selected' => 'selectat(e)',
+                        'subtitle'        => 'Atribuiți acest produs categoriilor din catalog.',
+                        'search'          => 'Căutare categorii…',
+                        'searching'       => 'Se caută…',
+                        'no-results'      => 'Nu au fost găsite categorii corespunzătoare',
+                        'load-more'       => 'Încarcă mai multe',
+                        'none-selected'   => 'Nicio categorie selectată încă',
+                        'and-more'        => 'și încă :count',
+                        'review-selected' => 'Afișează categoriile selectate',
+                        'selected'        => 'selectat(e)',
                     ],
                     'associations' => [
                         'subtitle' => 'Conectați produse asociate, up-sell, cross-sell și personalizate.',
@@ -1026,13 +1037,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Câmpuri',
-                'info'            => 'Adăugați câmpuri personalizate pentru a captura date suplimentare pentru acest tip de asociere.',
-                'add-field-btn'   => 'Adăugați câmp',
-                'modal-title'     => 'Adăugați câmp',
-                'save-field-btn'  => 'Salvați câmpul',
-                'same-code-error' => 'Codul câmpului trebuie să fie unic.',
-                'add-fields-info' => 'Pentru a crea câmpuri personalizate pentru acest tip de asociere.',
+                'title'                => 'Câmpuri',
+                'info'                 => 'Adăugați câmpuri personalizate pentru a captura date suplimentare pentru acest tip de asociere.',
+                'add-field-btn'        => 'Adăugați câmp',
+                'modal-title'          => 'Adăugați câmp',
+                'edit-modal-title'     => 'Editează câmpul',
+                'save-field-btn'       => 'Salvați câmpul',
+                'same-code-error'      => 'Codul câmpului trebuie să fie unic.',
+                'add-fields-info'      => 'Pentru a crea câmpuri personalizate pentru acest tip de asociere.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Nu s-a găsit niciun tip de asociere',
                 'search-placeholder' => 'Caută după nume sau cod',
                 'title'              => 'Adaugă tip de asociere',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Adaugă selecția',
+                'selected' => ':count produse selectate',
+                'title'    => 'Selectează produse',
             ],
         ],
         'pagination' => [

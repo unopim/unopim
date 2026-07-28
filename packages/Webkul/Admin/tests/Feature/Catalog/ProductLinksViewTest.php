@@ -218,8 +218,8 @@ it('renders the dynamic association type panel, its field label, and the field-e
     // Vue runtime now: it loops the link's fields and binds each control's
     // name/value off the runtime `field` object (field definitions arrive via
     // the `association-types` prop below, not inlined per field).
-    $response->assertSee('v-for="field in type.fields"', false);
-    $response->assertSee('assocFieldName(type.code, index, field)', false);
+    $response->assertSee('v-for="assocField in (type.fields || [])"', false);
+    $response->assertSee('assocFieldName(type.code, index, assocField)', false);
 
     // The exact `associationTypes` array the controller built (Task 4) --
     // including this existing link's stored `additional_data` (quantity
@@ -364,7 +364,7 @@ it('never emits a bracket-array `name` for a checkbox association field (regress
     // `assocFieldValue()`. Field definitions now come from the `type.fields`
     // Vue loop variable (not inlined per-field JSON), so the call references
     // the runtime `field` object.
-    expect($template)->toContain('assocFieldValue(link, field)');
+    expect($template)->toContain('assocFieldValue(link, assocField)');
 });
 
 it('persists a checkbox association field with multiple selected options as a comma-joined string via the real update route', function () {

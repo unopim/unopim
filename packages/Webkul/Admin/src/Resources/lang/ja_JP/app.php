@@ -287,8 +287,10 @@ return [
                     'empty-info'        => ':type 追加するには、製品を入力します。',
                     'empty-title'       => '製品の追加',
                     'image-placeholder' => '製品画像',
+                    'more-types'        => 'その他',
                     'no-types-info'     => 'この製品を関連タイプに紐付けるには「関連タイプを追加」を使用します。',
                     'no-types-title'    => '関連付けが追加されていません',
+                    'search-types'      => '関連タイプを検索',
                     'sku'               => 'SKU - :sku',
                     'title'             => '関連付け',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => '選択した項目を追加',
                     'close'        => '閉じる',
+                    'clear-search' => '検索をクリア',
                     'categories'   => [
-                        'subtitle' => 'この商品をカタログカテゴリーに割り当てます。',
-                        'search'   => 'カテゴリーを検索…',
-                        'selected' => '選択済み',
+                        'subtitle'        => 'この商品をカタログカテゴリーに割り当てます。',
+                        'search'          => 'カテゴリーを検索…',
+                        'searching'       => '検索しています…',
+                        'no-results'      => '一致するカテゴリーが見つかりません',
+                        'load-more'       => 'さらに読み込む',
+                        'none-selected'   => 'カテゴリーがまだ選択されていません',
+                        'and-more'        => '他 :count 件',
+                        'review-selected' => '選択したカテゴリーを表示',
+                        'selected'        => '選択済み',
                     ],
                     'associations' => [
                         'subtitle' => '関連商品、アップセル、クロスセル、カスタム商品をリンクします。',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'フィールド',
-                'info'            => 'この関連タイプの追加データを取得するためにカスタムフィールドを追加します。',
-                'add-field-btn'   => 'フィールドを追加',
-                'modal-title'     => 'フィールドを追加',
-                'save-field-btn'  => 'フィールドを保存',
-                'same-code-error' => 'フィールドコードは一意である必要があります。',
-                'add-fields-info' => 'この関連タイプのカスタムフィールドを作成するには。',
+                'title'                => 'フィールド',
+                'info'                 => 'この関連タイプの追加データを取得するためにカスタムフィールドを追加します。',
+                'add-field-btn'        => 'フィールドを追加',
+                'modal-title'          => 'フィールドを追加',
+                'edit-modal-title'     => 'フィールドを編集',
+                'save-field-btn'       => 'フィールドを保存',
+                'same-code-error'      => 'フィールドコードは一意である必要があります。',
+                'add-fields-info'      => 'この関連タイプのカスタムフィールドを作成するには。',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => '関連タイプが見つかりません',
                 'search-placeholder' => '名前またはコードで検索',
                 'title'              => '関連タイプを追加',
+            ],
+            'product-picker' => [
+                'add-btn'  => '選択した商品を追加',
+                'selected' => ':count 件の商品を選択中',
+                'title'    => '商品を選択',
             ],
         ],
         'pagination' => [

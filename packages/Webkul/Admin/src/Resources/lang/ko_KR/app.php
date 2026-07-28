@@ -288,8 +288,10 @@ return [
                     'empty-info'        => ':type 제품을 한 번에 추가하십시오.',
                     'empty-title'       => '제품 추가',
                     'image-placeholder' => '제품 이미지',
+                    'more-types'        => '더 보기',
                     'no-types-info'     => '이 제품을 연관 유형에 연결하려면 "연관 유형 추가"를 사용하세요.',
                     'no-types-title'    => '추가된 연관이 없습니다',
+                    'search-types'      => '연관 유형 검색',
                     'sku'               => 'SKU - :sku',
                     'title'             => '제품',
                 ],
@@ -404,11 +406,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => '선택 항목 추가',
                     'close'        => '닫기',
+                    'clear-search' => '검색 지우기',
                     'categories'   => [
-                        'subtitle' => '이 제품을 카탈로그 카테고리에 할당합니다.',
-                        'search'   => '카테고리 검색…',
-                        'selected' => '선택됨',
+                        'subtitle'        => '이 제품을 카탈로그 카테고리에 할당합니다.',
+                        'search'          => '카테고리 검색…',
+                        'searching'       => '검색 중…',
+                        'no-results'      => '일치하는 카테고리가 없습니다',
+                        'load-more'       => '더 불러오기',
+                        'none-selected'   => '아직 선택된 카테고리가 없습니다',
+                        'and-more'        => '외 :count개',
+                        'review-selected' => '선택한 카테고리 보기',
+                        'selected'        => '선택됨',
                     ],
                     'associations' => [
                         'subtitle' => '관련, 상향 판매, 교차 판매 및 맞춤 제품을 연결합니다.',
@@ -1026,13 +1037,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => '필드',
-                'info'            => '이 연관 유형에 대한 추가 데이터를 캡처하기 위해 사용자 지정 필드를 추가하세요.',
-                'add-field-btn'   => '필드 추가',
-                'modal-title'     => '필드 추가',
-                'save-field-btn'  => '필드 저장',
-                'same-code-error' => '필드 코드는 고유해야 합니다.',
-                'add-fields-info' => '이 연관 유형에 대한 사용자 지정 필드를 만들려면.',
+                'title'                => '필드',
+                'info'                 => '이 연관 유형에 대한 추가 데이터를 캡처하기 위해 사용자 지정 필드를 추가하세요.',
+                'add-field-btn'        => '필드 추가',
+                'modal-title'          => '필드 추가',
+                'edit-modal-title'     => '필드 편집',
+                'save-field-btn'       => '필드 저장',
+                'same-code-error'      => '필드 코드는 고유해야 합니다.',
+                'add-fields-info'      => '이 연관 유형에 대한 사용자 지정 필드를 만들려면.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => '연관 유형을 찾을 수 없습니다',
                 'search-placeholder' => '이름 또는 코드로 검색',
                 'title'              => '연관 유형 추가',
+            ],
+            'product-picker' => [
+                'add-btn'  => '선택 항목 추가',
+                'selected' => ':count개 제품 선택됨',
+                'title'    => '제품 선택',
             ],
         ],
         'pagination' => [

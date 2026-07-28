@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Thêm sản phẩm loại :type.',
                     'empty-title'       => 'Thêm sản phẩm',
                     'image-placeholder' => 'Hình ảnh sản phẩm',
+                    'more-types'        => 'Thêm',
                     'no-types-info'     => 'Sử dụng "Thêm Loại Liên Kết" để liên kết sản phẩm này dưới một loại liên kết.',
                     'no-types-title'    => 'Chưa thêm liên kết nào',
+                    'search-types'      => 'Tìm loại liên kết',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Sản phẩm',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Thêm mục đã chọn',
                     'close'        => 'Đóng',
+                    'clear-search' => 'Xoá tìm kiếm',
                     'categories'   => [
-                        'subtitle' => 'Gán sản phẩm này vào danh mục.',
-                        'search'   => 'Tìm kiếm danh mục…',
-                        'selected' => 'đã chọn',
+                        'subtitle'        => 'Gán sản phẩm này vào danh mục.',
+                        'search'          => 'Tìm kiếm danh mục…',
+                        'searching'       => 'Đang tìm kiếm…',
+                        'no-results'      => 'Không tìm thấy danh mục phù hợp',
+                        'load-more'       => 'Tải thêm',
+                        'none-selected'   => 'Chưa chọn danh mục nào',
+                        'and-more'        => 'và :count mục khác',
+                        'review-selected' => 'Hiển thị danh mục đã chọn',
+                        'selected'        => 'đã chọn',
                     ],
                     'associations' => [
                         'subtitle' => 'Liên kết sản phẩm liên quan, bán thêm, bán chéo và tùy chỉnh.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Trường',
-                'info'            => 'Thêm các trường tùy chỉnh để thu thập dữ liệu bổ sung cho loại liên kết này.',
-                'add-field-btn'   => 'Thêm trường',
-                'modal-title'     => 'Thêm trường',
-                'save-field-btn'  => 'Lưu trường',
-                'same-code-error' => 'Mã trường phải là duy nhất.',
-                'add-fields-info' => 'Để tạo các trường tùy chỉnh cho loại liên kết này.',
+                'title'                => 'Trường',
+                'info'                 => 'Thêm các trường tùy chỉnh để thu thập dữ liệu bổ sung cho loại liên kết này.',
+                'add-field-btn'        => 'Thêm trường',
+                'modal-title'          => 'Thêm trường',
+                'edit-modal-title'     => 'Chỉnh sửa trường',
+                'save-field-btn'       => 'Lưu trường',
+                'same-code-error'      => 'Mã trường phải là duy nhất.',
+                'add-fields-info'      => 'Để tạo các trường tùy chỉnh cho loại liên kết này.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Không tìm thấy loại liên kết nào',
                 'search-placeholder' => 'Tìm theo tên hoặc mã',
                 'title'              => 'Thêm Loại Liên Kết',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Thêm mục đã chọn',
+                'selected' => 'Đã chọn :count sản phẩm',
+                'title'    => 'Chọn sản phẩm',
             ],
         ],
         'pagination' => [

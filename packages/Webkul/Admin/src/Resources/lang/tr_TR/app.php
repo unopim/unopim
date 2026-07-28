@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Bir kerede :type ürün ekleyin.',
                     'empty-title'       => 'Ürün ekle',
                     'image-placeholder' => 'Ürün resmi',
+                    'more-types'        => 'Daha fazla',
                     'no-types-info'     => 'Bu ürünü bir ilişki türü altında bağlamak için "İlişki Türü Ekle" seçeneğini kullanın.',
                     'no-types-title'    => 'Hiç ilişki eklenmedi',
+                    'search-types'      => 'İlişki türlerini ara',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Ürünler',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Seçilenleri ekle',
                     'close'        => 'Kapat',
+                    'clear-search' => 'Aramayı temizle',
                     'categories'   => [
-                        'subtitle' => 'Bu ürünü katalog kategorilerine atayın.',
-                        'search'   => 'Kategori ara…',
-                        'selected' => 'seçildi',
+                        'subtitle'        => 'Bu ürünü katalog kategorilerine atayın.',
+                        'search'          => 'Kategori ara…',
+                        'searching'       => 'Aranıyor…',
+                        'no-results'      => 'Eşleşen kategori bulunamadı',
+                        'load-more'       => 'Daha fazla yükle',
+                        'none-selected'   => 'Henüz kategori seçilmedi',
+                        'and-more'        => 've :count tane daha',
+                        'review-selected' => 'Seçili kategorileri göster',
+                        'selected'        => 'seçildi',
                     ],
                     'associations' => [
                         'subtitle' => 'İlgili, ek satış, çapraz satış ve özel ürünleri bağlayın.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Alanlar',
-                'info'            => 'Bu ilişki türü için ek veri toplamak üzere özel alanlar ekleyin.',
-                'add-field-btn'   => 'Alan Ekle',
-                'modal-title'     => 'Alan Ekle',
-                'save-field-btn'  => 'Alanı Kaydet',
-                'same-code-error' => 'Alan kodu benzersiz olmalıdır.',
-                'add-fields-info' => 'Bu ilişki türü için özel alanlar oluşturmak üzere.',
+                'title'                => 'Alanlar',
+                'info'                 => 'Bu ilişki türü için ek veri toplamak üzere özel alanlar ekleyin.',
+                'add-field-btn'        => 'Alan Ekle',
+                'modal-title'          => 'Alan Ekle',
+                'edit-modal-title'     => 'Alanı Düzenle',
+                'save-field-btn'       => 'Alanı Kaydet',
+                'same-code-error'      => 'Alan kodu benzersiz olmalıdır.',
+                'add-fields-info'      => 'Bu ilişki türü için özel alanlar oluşturmak üzere.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'İlişki türü bulunamadı',
                 'search-placeholder' => 'Ada veya koda göre ara',
                 'title'              => 'İlişki Türü Ekle',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Seçilenleri ekle',
+                'selected' => ':count ürün seçildi',
+                'title'    => 'Ürün seç',
             ],
         ],
         'pagination' => [

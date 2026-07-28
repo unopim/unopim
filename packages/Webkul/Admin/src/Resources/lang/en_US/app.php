@@ -317,18 +317,21 @@ return [
 
                     'cross-sells' => [
                         'empty-info' => 'Add cross sell association products.',
-                        'info'       => 'Adjacent to the shopping cart, you\'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'Adjacent to the shopping cart, you\'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Cross-Sell Products',
                     ],
 
                     'add-btn'           => 'Add',
+
                     'add-type-btn'      => 'Add Association Type',
                     'delete'            => 'Delete',
                     'empty-info'        => 'To add :type products on a go.',
                     'empty-title'       => 'Add Product',
                     'image-placeholder' => 'Product Image',
-                    'no-types-info'     => 'Use \"Add Association Type\" to link this product under an association type.',
+                    'more-types'        => 'More',
+                    'no-types-info'     => 'Use "Add Association Type" to link this product under an association type.',
                     'no-types-title'    => 'No Associations Added',
+                    'search-types'      => 'Search association types',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associations',
                 ],
@@ -451,11 +454,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Add Selected',
                     'close'        => 'Close',
+                    'clear-search' => 'Clear search',
                     'categories'   => [
-                        'subtitle' => 'Assign this product to catalog categories.',
-                        'search'   => 'Search categories…',
-                        'selected' => 'selected',
+                        'subtitle'        => 'Assign this product to catalog categories.',
+                        'search'          => 'Search categories…',
+                        'searching'       => 'Searching…',
+                        'no-results'      => 'No matching categories found',
+                        'load-more'       => 'Load more',
+                        'none-selected'   => 'No categories selected yet',
+                        'and-more'        => 'and :count more',
+                        'review-selected' => 'Show selected categories',
+                        'selected'        => 'selected',
                     ],
                     'associations' => [
                         'subtitle' => 'Link related, up-sell, cross-sell and custom products.',
@@ -1091,13 +1103,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Fields',
-                'info'            => 'Add custom fields to capture additional data for this association type.',
-                'add-field-btn'   => 'Add Field',
-                'modal-title'     => 'Add Field',
-                'save-field-btn'  => 'Save Field',
-                'same-code-error' => 'The field code must be unique.',
-                'add-fields-info' => 'To create custom fields for this association type.',
+                'title'                => 'Fields',
+                'info'                 => 'Add custom fields to capture additional data for this association type.',
+                'add-field-btn'        => 'Add Field',
+                'modal-title'          => 'Add Field',
+                'edit-modal-title'     => 'Edit Field',
+                'save-field-btn'       => 'Save Field',
+                'same-code-error'      => 'The field code must be unique.',
+                'add-fields-info'      => 'To create custom fields for this association type.',
             ],
         ],
 
@@ -2508,6 +2521,11 @@ return [
                 'search-placeholder' => 'Search by name or code',
                 'title'              => 'Add Association Type',
             ],
+            'product-picker' => [
+                'add-btn'  => 'Add Selected',
+                'selected' => ':count products selected',
+                'title'    => 'Select Products',
+            ],
         ],
         'flash-group' => [
             'close' => 'Close',
@@ -2729,7 +2747,6 @@ return [
                 'message'      => 'Are you sure you want to perform this action?',
                 'title'        => 'Are you sure?',
             ],
-
             'delete' => [
                 'agree-btn'    => 'Delete',
                 'disagree-btn' => 'Cancel',

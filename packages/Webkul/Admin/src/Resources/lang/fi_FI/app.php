@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Lisää :type tuotteet yhdellä kertaa.',
                     'empty-title'       => 'Lisää tuote',
                     'image-placeholder' => 'Tuotekuva',
+                    'more-types'        => 'Lisää',
                     'no-types-info'     => 'Käytä ”Lisää assosiaatiotyyppi” liittääksesi tämän tuotteen assosiaatiotyypin alle.',
                     'no-types-title'    => 'Ei lisättyjä assosiaatioita',
+                    'search-types'      => 'Hae liitostyyppejä',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Liitännäiset tuotteet',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Lisää valitut',
                     'close'        => 'Sulje',
+                    'clear-search' => 'Tyhjennä haku',
                     'categories'   => [
-                        'subtitle' => 'Liitä tämä tuote luettelon kategorioihin.',
-                        'search'   => 'Hae kategorioita…',
-                        'selected' => 'valittu',
+                        'subtitle'        => 'Liitä tämä tuote luettelon kategorioihin.',
+                        'search'          => 'Hae kategorioita…',
+                        'searching'       => 'Haetaan…',
+                        'no-results'      => 'Vastaavia kategorioita ei löytynyt',
+                        'load-more'       => 'Lataa lisää',
+                        'none-selected'   => 'Kategorioita ei ole vielä valittu',
+                        'and-more'        => 'ja :count muuta',
+                        'review-selected' => 'Näytä valitut kategoriat',
+                        'selected'        => 'valittu',
                     ],
                     'associations' => [
                         'subtitle' => 'Linkitä liittyviä, lisämyynti-, ristiinmyynti- ja mukautettuja tuotteita.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Kentät',
-                'info'            => 'Lisää mukautettuja kenttiä tallentaaksesi lisätietoja tälle assosiaatiotyypille.',
-                'add-field-btn'   => 'Lisää kenttä',
-                'modal-title'     => 'Lisää kenttä',
-                'save-field-btn'  => 'Tallenna kenttä',
-                'same-code-error' => 'Kentän koodin on oltava yksilöllinen.',
-                'add-fields-info' => 'Luodaksesi mukautettuja kenttiä tälle assosiaatiotyypille.',
+                'title'                => 'Kentät',
+                'info'                 => 'Lisää mukautettuja kenttiä tallentaaksesi lisätietoja tälle assosiaatiotyypille.',
+                'add-field-btn'        => 'Lisää kenttä',
+                'modal-title'          => 'Lisää kenttä',
+                'edit-modal-title'     => 'Muokkaa kenttää',
+                'save-field-btn'       => 'Tallenna kenttä',
+                'same-code-error'      => 'Kentän koodin on oltava yksilöllinen.',
+                'add-fields-info'      => 'Luodaksesi mukautettuja kenttiä tälle assosiaatiotyypille.',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => 'Assosiaatiotyyppejä ei löytynyt',
                 'search-placeholder' => 'Hae nimellä tai koodilla',
                 'title'              => 'Lisää assosiaatiotyyppi',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Lisää valitut',
+                'selected' => ':count tuotetta valittu',
+                'title'    => 'Valitse tuotteet',
             ],
         ],
         'pagination' => [

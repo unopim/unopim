@@ -288,8 +288,10 @@ return [
                     'empty-info'        => 'Adicione produtos :type de uma vez.',
                     'empty-title'       => 'Adicionar produto',
                     'image-placeholder' => 'Imagem do produto',
+                    'more-types'        => 'Mais',
                     'no-types-info'     => 'Use “Adicionar tipo de associação” para vincular este produto a um tipo de associação.',
                     'no-types-title'    => 'Nenhuma associação adicionada',
+                    'search-types'      => 'Pesquisar tipos de associação',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produtos',
                 ],
@@ -404,11 +406,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Adicionar selecionados',
                     'close'        => 'Fechar',
+                    'clear-search' => 'Limpar pesquisa',
                     'categories'   => [
-                        'subtitle' => 'Atribua este produto a categorias do catálogo.',
-                        'search'   => 'Pesquisar categorias…',
-                        'selected' => 'selecionado(s)',
+                        'subtitle'        => 'Atribua este produto a categorias do catálogo.',
+                        'search'          => 'Pesquisar categorias…',
+                        'searching'       => 'Pesquisando…',
+                        'no-results'      => 'Nenhuma categoria correspondente encontrada',
+                        'load-more'       => 'Carregar mais',
+                        'none-selected'   => 'Nenhuma categoria selecionada ainda',
+                        'and-more'        => 'e mais :count',
+                        'review-selected' => 'Mostrar categorias selecionadas',
+                        'selected'        => 'selecionado(s)',
                     ],
                     'associations' => [
                         'subtitle' => 'Vincule produtos relacionados, de upsell, cross-sell e personalizados.',
@@ -1026,13 +1037,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Campos',
-                'info'            => 'Adicione campos personalizados para capturar dados adicionais para este tipo de associação.',
-                'add-field-btn'   => 'Adicionar campo',
-                'modal-title'     => 'Adicionar campo',
-                'save-field-btn'  => 'Salvar campo',
-                'same-code-error' => 'O código do campo deve ser único.',
-                'add-fields-info' => 'Para criar campos personalizados para este tipo de associação.',
+                'title'                => 'Campos',
+                'info'                 => 'Adicione campos personalizados para capturar dados adicionais para este tipo de associação.',
+                'add-field-btn'        => 'Adicionar campo',
+                'modal-title'          => 'Adicionar campo',
+                'edit-modal-title'     => 'Editar campo',
+                'save-field-btn'       => 'Salvar campo',
+                'same-code-error'      => 'O código do campo deve ser único.',
+                'add-fields-info'      => 'Para criar campos personalizados para este tipo de associação.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Nenhum tipo de associação encontrado',
                 'search-placeholder' => 'Pesquisar por nome ou código',
                 'title'              => 'Adicionar tipo de associação',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Adicionar selecionados',
+                'selected' => ':count produtos selecionados',
+                'title'    => 'Selecionar produtos',
             ],
         ],
         'pagination' => [

@@ -278,7 +278,7 @@ return [
                     ],
                     'cross-sells' => [
                         'empty-info' => 'Agregar productos de asociación de venta cruzada.',
-                        'info'       => 'Adyacente al carrito de compras, usted \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'Adyacente al carrito de compras, usted \'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Productos de venta cruzada',
                     ],
                     'add-btn'           => 'Agregar',
@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Para agregar :type productos sobre una oportunidad.',
                     'empty-title'       => 'Agregar producto',
                     'image-placeholder' => 'Imagen del producto',
+                    'more-types'        => 'Más',
                     'no-types-info'     => 'Usa «Agregar tipo de asociación» para vincular este producto a un tipo de asociación.',
                     'no-types-title'    => 'No se han agregado asociaciones',
+                    'search-types'      => 'Buscar tipos de asociación',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asociaciones',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Añadir selección',
                     'close'        => 'Cerrar',
+                    'clear-search' => 'Borrar búsqueda',
                     'categories'   => [
-                        'subtitle' => 'Asigna este producto a categorías del catálogo.',
-                        'search'   => 'Buscar categorías…',
-                        'selected' => 'seleccionado(s)',
+                        'subtitle'        => 'Asigna este producto a categorías del catálogo.',
+                        'search'          => 'Buscar categorías…',
+                        'searching'       => 'Buscando…',
+                        'no-results'      => 'No se han encontrado categorías coincidentes',
+                        'load-more'       => 'Cargar más',
+                        'none-selected'   => 'Aún no se ha seleccionado ninguna categoría',
+                        'and-more'        => 'y :count más',
+                        'review-selected' => 'Mostrar categorías seleccionadas',
+                        'selected'        => 'seleccionado(s)',
                     ],
                     'associations' => [
                         'subtitle' => 'Vincula productos relacionados, de venta adicional, venta cruzada y personalizados.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Campos',
-                'info'            => 'Agregue campos personalizados para capturar datos adicionales para este tipo de asociación.',
-                'add-field-btn'   => 'Agregar campo',
-                'modal-title'     => 'Agregar campo',
-                'save-field-btn'  => 'Guardar campo',
-                'same-code-error' => 'El código del campo debe ser único.',
-                'add-fields-info' => 'Para crear campos personalizados para este tipo de asociación.',
+                'title'                => 'Campos',
+                'info'                 => 'Agregue campos personalizados para capturar datos adicionales para este tipo de asociación.',
+                'add-field-btn'        => 'Agregar campo',
+                'modal-title'          => 'Agregar campo',
+                'edit-modal-title'     => 'Editar campo',
+                'save-field-btn'       => 'Guardar campo',
+                'same-code-error'      => 'El código del campo debe ser único.',
+                'add-fields-info'      => 'Para crear campos personalizados para este tipo de asociación.',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => 'No se encontraron tipos de asociación',
                 'search-placeholder' => 'Buscar por nombre o código',
                 'title'              => 'Agregar tipo de asociación',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Añadir selección',
+                'selected' => ':count productos seleccionados',
+                'title'    => 'Seleccionar productos',
             ],
         ],
         'pagination' => [

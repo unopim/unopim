@@ -9,6 +9,8 @@
     :title="trans('admin::app.catalog.products.edit.links.title')"
     :subtitle="trans('admin::app.catalog.products.edit.workspace.associations.subtitle')"
     icon="icon-product"
+    form-id="product-edit-form"
+    form-fields='[name^="associations["]'
 >
     <x-slot:toggle>
         <x-admin::product.section-card
@@ -24,6 +26,16 @@
     <x-slot:content>
         <v-product-links :association-types='@json($associationTypes)'></v-product-links>
     </x-slot:content>
+
+    <x-slot:footer>
+        <button
+            type="button"
+            class="primary-button"
+            @click="close"
+        >
+            @lang('admin::app.catalog.products.edit.workspace.add-selected')
+        </button>
+    </x-slot:footer>
 </x-admin::product.section-drawer>
 
 {!! view_render_event('unopim.admin.catalog.product.edit.form.links.after', ['product' => $product]) !!}
@@ -39,11 +51,7 @@
         >
             <!-- Panel -->
             <div class="bg-white grid gap-2.5 p-4 dark:bg-cherry-900 rounded box-shadow">
-                <div class="flex justify-between items-center mb-4">
-                    <p class="text-base text-gray-800 dark:text-white font-semibold">
-                        @lang('admin::app.catalog.products.edit.links.title')
-                    </p>
-
+                <div class="flex justify-end items-center">
                     <!-- Add Association Type -->
                     <button
                         type="button"
@@ -75,11 +83,90 @@
                     </div>
                 </div>
 
-                <!-- Association Types -->
+                <!-- Association Type Switcher -->
                 <div
-                    v-for="(type, typeIndex) in localTypes"
+                    class="flex items-end gap-1 mb-2 border-b border-gray-200 dark:border-cherry-800"
+                    v-else
+                >
+                    <div
+                        class="flex items-end gap-1 overflow-x-auto"
+                        role="tablist"
+                        aria-label="@lang('admin::app.catalog.products.edit.links.title')"
+                    >
+                        <button
+                            type="button"
+                            role="tab"
+                            v-for="type in tabTypes"
+                            :key="'assoc-tab-' + type.code"
+                            :aria-selected="type.code === activeTypeCode"
+                            :class="type.code === activeTypeCode
+                                ? 'border-primary-600 text-primary-600 dark:text-primary-400'
+                                : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'"
+                            class="flex items-center gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-medium border-b-2 transition-all"
+                            @click="selectType(type.code)"
+                        >
+                            <span v-text="type.name"></span>
+
+                            <span
+                                class="px-1.5 rounded-full bg-gray-100 dark:bg-cherry-800 text-xs"
+                                v-if="type.links.length"
+                                v-text="type.links.length"
+                            ></span>
+                        </button>
+                    </div>
+
+                    <!-- Overflow types, kept out of the strip so it stays readable -->
+                    <div
+                        class="relative"
+                        v-if="overflowTypes.length"
+                    >
+                        <button
+                            type="button"
+                            class="whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 border-b-2 border-transparent hover:text-gray-800 dark:hover:text-white"
+                            @click="toggleMoreMenu"
+                        >
+                            @lang('admin::app.catalog.products.edit.links.more-types')
+                        </button>
+
+                        <div
+                            class="absolute z-10 ltr:right-0 rtl:left-0 top-full mt-1 w-64 max-h-72 overflow-auto rounded bg-white dark:bg-cherry-900 box-shadow"
+                            v-if="isMoreMenuOpen"
+                        >
+                            <input
+                                type="text"
+                                class="sticky top-0 w-full px-3 py-2 border-b dark:border-cherry-800 bg-white dark:bg-cherry-900 text-sm text-gray-600 dark:text-gray-300"
+                                :placeholder="@json(trans('admin::app.catalog.products.edit.links.search-types'))"
+                                v-model="typeFilter"
+                            />
+
+                            <button
+                                type="button"
+                                class="flex justify-between w-full gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                v-for="type in filteredOverflowTypes"
+                                :key="'assoc-more-' + type.code"
+                                @click="selectType(type.code)"
+                            >
+                                <span v-text="type.name"></span>
+
+                                <span
+                                    v-if="type.links.length"
+                                    v-text="type.links.length"
+                                ></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                {{--
+                    Every type stays rendered: its hidden inputs (the `__present`
+                    sentinel and each link's values) must reach the request no
+                    matter which tab is showing, or switching away from a type
+                    would silently drop the edits made under it.
+                --}}
+                <div
+                    v-for="type in localTypes"
                     :key="type.code"
-                    :class="typeIndex > 0 ? 'pt-4 border-t border-gray-200 dark:border-cherry-800' : ''"
+                    v-show="type.code === activeTypeCode"
                 >
                     {{--
                         Presence sentinel: emitted once per RENDERED type,
@@ -100,25 +187,15 @@
                         value="1"
                     />
 
-                    <div class="flex gap-5 justify-between items-center">
-                        <div class="flex flex-col gap-2">
-                            <p
-                                class="text-gray-800 text-xs dark:text-white font-medium"
-                                v-text="type.name"
-                            >
-                            </p>
-                        </div>
-
+                    <div class="flex gap-5 justify-end items-center">
                         <!-- Add Product -->
-                        <div class="flex gap-x-1 items-center">
-                            <button
-                                type="button"
-                                class="secondary-button text-xs"
-                                @click="openProductSearch(type.code)"
-                            >
-                                @lang('admin::app.catalog.products.edit.links.add-btn')
-                            </button>
-                        </div>
+                        <button
+                            type="button"
+                            class="secondary-button text-xs"
+                            @click="openProductSearch(type.code)"
+                        >
+                            @lang('admin::app.catalog.products.edit.links.add-btn')
+                        </button>
                     </div>
 
                     <!-- Product Listing -->
@@ -127,7 +204,7 @@
                         v-if="type.links.length"
                     >
                         <div
-                            class="flex flex-col sm:flex-row gap-2.5 sm:justify-between p-4 border-b border-gray-200 dark:border-cherry-800"
+                            class="flex flex-col sm:flex-row sm:items-center gap-2.5 sm:justify-between p-4 border-b border-gray-200 dark:border-cherry-800"
                             v-for="(link, index) in type.links"
                             :key="link.sku"
                         >
@@ -137,8 +214,10 @@
                                 :value="link.sku"
                             />
 
-                            <!-- Information -->
-                            <div class="flex gap-2.5">
+                            <div
+                                class="flex gap-2.5"
+                                style="width: 240px; max-width: 100%; flex-shrink: 0"
+                            >
                                 <!-- Image -->
                                 <div
                                     class="w-full h-[60px] max-w-[60px] max-h-[60px] relative rounded overflow-hidden"
@@ -158,14 +237,15 @@
                                 </div>
 
                                 <!-- Details -->
-                                <div class="grid gap-1.5 place-content-start">
+                                <div class="grid gap-1.5 place-content-start min-w-0">
                                     <p
-                                        class="text-base text-gray-800 dark:text-white font-semibold"
+                                        class="text-base text-gray-800 dark:text-white font-semibold truncate"
+                                        :title="getProductName(link)"
                                         v-text="getProductName(link)"
                                     >
                                     </p>
 
-                                    <p class="text-gray-600 dark:text-gray-300">
+                                    <p class="text-gray-600 dark:text-gray-300 truncate">
                                         @{{ "@lang('admin::app.catalog.products.edit.links.sku')".replace(':sku', link.sku) }}
                                     </p>
                                 </div>
@@ -173,8 +253,8 @@
 
                             <!-- Custom Association Fields -->
                             <div
-                                class="grid gap-2.5 flex-1 sm:max-w-[280px]"
-                                v-if="type.fields.length"
+                                class="flex flex-wrap items-center gap-x-4 gap-y-2 flex-1 min-w-0"
+                                v-if="(type.fields || []).length"
                             >
                                 <x-admin::associations.link-fields />
                             </div>
@@ -217,20 +297,21 @@
                 </div>
             </div>
 
-            <!-- Product Search Drawer -->
-            <x-admin::products.search
-                ref="productSearch"
-                ::added-product-ids="addedProductIds"
-                ::queryParams='queryParams'
-                @onProductAdded="addSelected($event)"
-            />
+            {{-- Teleported out of the drawer (z-index 9999): inside it the picker can never paint above the app header. --}}
+            <teleport to="body">
+                <x-admin::associations.product-picker
+                    ref="productSearch"
+                    ::added-product-ids="addedProductIds"
+                    @onProductAdded="addSelected($event)"
+                />
 
-            <!-- Association Type Search Drawer -->
-            <x-admin::associations.type-search
-                ref="typeSearch"
-                ::added-type-codes="addedTypeCodes"
-                @onTypeAdded="addType($event)"
-            />
+                <x-admin::associations.type-search
+                    ref="typeSearch"
+                    ::added-type-codes="addedTypeCodes"
+                    @onTypeAdded="addType($event)"
+                />
+            </teleport>
+
         </div>
     </script>
 
@@ -251,24 +332,26 @@
 
                     selectedTypeCode: null,
 
+                    activeTypeCode: null,
+
+                    isMoreMenuOpen: false,
+
+                    typeFilter: '',
+
                     /**
                      * Mutable working copy of the `associationTypes` prop. Named
                      * differently from the prop itself: writing to
                      * `this.associationTypes` directly would silently no-op
-                     * (Vue 3 exposes props as a readonly proxy), so add/remove
-                     * mutate `localTypes` instead. Only the types this product
-                     * already links to arrive here; more are appended via the
-                     * async picker (`addType`).
+                     * (Vue 3 exposes props as a readonly proxy), so switching,
+                     * add/remove and link edits mutate `localTypes` instead. Only
+                     * the types this product already links to arrive here; more
+                     * are appended via the async picker (`addType`).
                      */
                     localTypes: JSON.parse(JSON.stringify(this.associationTypes)),
 
                     currentLocaleCode: "{{ core()->getRequestedLocaleCode() }}",
 
                     currentChannelCode: "{{ core()->getRequestedChannelCode() }}",
-
-                    queryParams: {
-                        skipSku: "{{ $product->sku }}"
-                    }
                 }
             },
 
@@ -278,19 +361,58 @@
                 },
 
                 addedProductIds() {
-                    let productIds = (this.selectedType?.links || []).map(link => link.sku);
+                    const productIds = (this.selectedType?.links || []).map(link => link.id);
 
-                    productIds.push(this.currentProduct.sku);
+                    productIds.push(this.currentProduct.id);
 
                     return productIds;
                 },
 
+                /**
+                 * Past this many types a strip stops being scannable, so only the
+                 * ones in use stay as tabs and the remainder move behind a
+                 * searchable menu.
+                 */
+                isOverflowing() {
+                    return this.localTypes.length > 12;
+                },
+
+                tabTypes() {
+                    if (! this.isOverflowing) {
+                        return this.localTypes;
+                    }
+
+                    return this.localTypes.filter(
+                        type => type.links.length || type.code === this.activeTypeCode
+                    );
+                },
+
+                overflowTypes() {
+                    const shown = new Set(this.tabTypes.map(type => type.code));
+
+                    return this.localTypes.filter(type => ! shown.has(type.code));
+                },
+
+                filteredOverflowTypes() {
+                    const term = this.typeFilter.trim().toLowerCase();
+
+                    if (! term) {
+                        return this.overflowTypes;
+                    }
+
+                    return this.overflowTypes.filter(
+                        type => type.name.toLowerCase().includes(term) || type.code.toLowerCase().includes(term)
+                    );
+                },
+
                 addedTypeCodes() {
                     return this.localTypes.map(type => type.code);
-                }
+                },
             },
 
             mounted() {
+                this.activeTypeCode = (this.localTypes.find(type => type.links.length) ?? this.localTypes[0])?.code ?? null;
+
                 this.publishState();
             },
 
@@ -312,13 +434,25 @@
                 openProductSearch(typeCode) {
                     this.selectedTypeCode = typeCode;
 
-                    this.$refs.productSearch.openDrawer();
+                    this.$refs.productSearch.open();
+                },
+
+                selectType(typeCode) {
+                    this.activeTypeCode = typeCode;
+                    this.isMoreMenuOpen = false;
+                    this.typeFilter = '';
+                },
+
+                toggleMoreMenu() {
+                    this.isMoreMenuOpen = ! this.isMoreMenuOpen;
+                    this.typeFilter = '';
                 },
 
                 /**
-                 * Append picker-selected types as fresh, link-less panels
-                 * (deduped by code). No `setDirty` here: an empty type prunes
-                 * nothing on save; the form turns dirty once a link is added.
+                 * Append picker-selected types as fresh, link-less tabs (deduped by
+                 * code) and switch to the first of them. No `setDirty` here: an
+                 * empty type prunes nothing on save; the form turns dirty once a
+                 * link is added.
                  */
                 addType(selectedTypes) {
                     selectedTypes.forEach(type => {
@@ -333,6 +467,12 @@
                             links:  [],
                         });
                     });
+
+                    const added = selectedTypes.find(type => this.localTypes.some(existing => existing.code === type.code));
+
+                    if (added) {
+                        this.activeTypeCode = added.code;
+                    }
 
                     this.$nextTick(() => this.publishState());
                 },
@@ -375,13 +515,24 @@
                         }));
 
                     if (newLinks.length > 0) {
+                        this.touchSection();
+
                         type.links = [...type.links, ...newLinks];
                     }
 
-                    this.$nextTick(() => {
-                        this.publishState();
-                        this.$productWorkspace.setDirty('associations', true);
-                    });
+                    this.$nextTick(() => this.markDirty());
+                },
+
+                touchSection() {
+                    this.$emitter.emit('section-drawer:touch', 'associations');
+                },
+
+                markDirty() {
+                    this.publishState();
+
+                    this.$productWorkspace.setDirty('associations', true);
+
+                    this.touchSection();
                 },
 
                 remove(typeCode, link) {
@@ -389,14 +540,13 @@
                         agree: () => {
                             const type = this.localTypes.find(type => type.code === typeCode);
 
+                            this.touchSection();
+
                             if (type) {
                                 type.links = type.links.filter(item => item.sku !== link.sku);
                             }
 
-                            this.$nextTick(() => {
-                                this.publishState();
-                                this.$productWorkspace.setDirty('associations', true);
-                            });
+                            this.$nextTick(() => this.markDirty());
                         },
                     });
                 },

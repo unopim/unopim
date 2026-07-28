@@ -287,8 +287,10 @@ return [
                     'empty-info'        => '請添加 :type 類型的產品。',
                     'empty-title'       => '添加產品',
                     'image-placeholder' => '產品圖片',
+                    'more-types'        => '更多',
                     'no-types-info'     => '使用「新增關聯類型」將此產品連結至某個關聯類型下。',
                     'no-types-title'    => '尚未新增關聯',
+                    'search-types'      => '搜尋關聯類型',
                     'sku'               => 'SKU - :sku',
                     'title'             => '產品',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => '新增所選',
                     'close'        => '關閉',
+                    'clear-search' => '清除搜尋',
                     'categories'   => [
-                        'subtitle' => '將此產品指派至目錄類別。',
-                        'search'   => '搜尋類別…',
-                        'selected' => '已選取',
+                        'subtitle'        => '將此產品指派至目錄類別。',
+                        'search'          => '搜尋類別…',
+                        'searching'       => '搜尋中…',
+                        'no-results'      => '找不到相符的類別',
+                        'load-more'       => '載入更多',
+                        'none-selected'   => '尚未選擇任何類別',
+                        'and-more'        => '等 :count 項',
+                        'review-selected' => '顯示已選類別',
+                        'selected'        => '已選取',
                     ],
                     'associations' => [
                         'subtitle' => '連結相關、追加銷售、交叉銷售及自訂產品。',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => '欄位',
-                'info'            => '新增自訂欄位以擷取此關聯類型的附加資料。',
-                'add-field-btn'   => '新增欄位',
-                'modal-title'     => '新增欄位',
-                'save-field-btn'  => '儲存欄位',
-                'same-code-error' => '欄位代碼必須是唯一的。',
-                'add-fields-info' => '為此關聯類型建立自訂欄位。',
+                'title'                => '欄位',
+                'info'                 => '新增自訂欄位以擷取此關聯類型的附加資料。',
+                'add-field-btn'        => '新增欄位',
+                'modal-title'          => '新增欄位',
+                'edit-modal-title'     => '編輯欄位',
+                'save-field-btn'       => '儲存欄位',
+                'same-code-error'      => '欄位代碼必須是唯一的。',
+                'add-fields-info'      => '為此關聯類型建立自訂欄位。',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => '找不到關聯類型',
                 'search-placeholder' => '依名稱或代碼搜尋',
                 'title'              => '新增關聯類型',
+            ],
+            'product-picker' => [
+                'add-btn'  => '新增所選',
+                'selected' => '已選擇 :count 個產品',
+                'title'    => '選擇產品',
             ],
         ],
         'pagination' => [

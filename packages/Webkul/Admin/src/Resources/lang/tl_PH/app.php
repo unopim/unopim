@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Magdagdag ng mga produkto :type nang sabay.',
                     'empty-title'       => 'Magdagdag ng produkto',
                     'image-placeholder' => 'Larawan ng produkto',
+                    'more-types'        => 'Higit pa',
                     'no-types-info'     => 'Gamitin ang "Magdagdag ng Uri ng Asosasyon" upang iugnay ang produktong ito sa ilalim ng isang uri ng asosasyon.',
                     'no-types-title'    => 'Walang naidagdag na asosasyon',
+                    'search-types'      => 'Maghanap ng uri ng asosasyon',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Mga Produkto',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Idagdag ang Napili',
                     'close'        => 'Isara',
+                    'clear-search' => 'I-clear ang paghahanap',
                     'categories'   => [
-                        'subtitle' => 'I-assign ang produktong ito sa mga kategorya ng katalogo.',
-                        'search'   => 'Maghanap ng mga kategorya…',
-                        'selected' => 'napili',
+                        'subtitle'        => 'I-assign ang produktong ito sa mga kategorya ng katalogo.',
+                        'search'          => 'Maghanap ng mga kategorya…',
+                        'searching'       => 'Naghahanap…',
+                        'no-results'      => 'Walang natagpuang tugmang kategorya',
+                        'load-more'       => 'Mag-load pa',
+                        'none-selected'   => 'Wala pang napiling kategorya',
+                        'and-more'        => 'at :count pa',
+                        'review-selected' => 'Ipakita ang mga napiling kategorya',
+                        'selected'        => 'napili',
                     ],
                     'associations' => [
                         'subtitle' => 'I-link ang mga kaugnay, up-sell, cross-sell, at custom na produkto.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Mga Field',
-                'info'            => 'Magdagdag ng mga custom na field upang makuha ang karagdagang datos para sa uri ng asosasyong ito.',
-                'add-field-btn'   => 'Magdagdag ng Field',
-                'modal-title'     => 'Magdagdag ng Field',
-                'save-field-btn'  => 'I-save ang Field',
-                'same-code-error' => 'Ang code ng field ay dapat natatangi.',
-                'add-fields-info' => 'Upang lumikha ng mga custom na field para sa uri ng asosasyong ito.',
+                'title'                => 'Mga Field',
+                'info'                 => 'Magdagdag ng mga custom na field upang makuha ang karagdagang datos para sa uri ng asosasyong ito.',
+                'add-field-btn'        => 'Magdagdag ng Field',
+                'modal-title'          => 'Magdagdag ng Field',
+                'edit-modal-title'     => 'I-edit ang Field',
+                'save-field-btn'       => 'I-save ang Field',
+                'same-code-error'      => 'Ang code ng field ay dapat natatangi.',
+                'add-fields-info'      => 'Upang lumikha ng mga custom na field para sa uri ng asosasyong ito.',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => 'Walang nahanap na uri ng asosasyon',
                 'search-placeholder' => 'Maghanap ayon sa pangalan o code',
                 'title'              => 'Magdagdag ng Uri ng Asosasyon',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Idagdag ang Napili',
+                'selected' => ':count na produkto ang napili',
+                'title'    => 'Pumili ng Produkto',
             ],
         ],
         'pagination' => [

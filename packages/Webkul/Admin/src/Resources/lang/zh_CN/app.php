@@ -278,7 +278,7 @@ return [
                     ],
                     'cross-sells' => [
                         'empty-info' => '添加交叉卖协会产品。',
-                        'info'       => '与购物车相邻，您\'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => '与购物车相邻，您\'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => '交叉销售产品',
                     ],
                     'add-btn'           => '添加',
@@ -287,8 +287,10 @@ return [
                     'empty-info'        => '要添加 :type 产品。',
                     'empty-title'       => '添加产品',
                     'image-placeholder' => '产品图像',
+                    'more-types'        => '更多',
                     'no-types-info'     => '使用“添加关联类型”将此产品链接到某个关联类型下。',
                     'no-types-title'    => '尚未添加关联',
+                    'search-types'      => '搜索关联类型',
                     'sku'               => '滑雪 - :sku',
                     'title'             => '协会',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => '添加所选',
                     'close'        => '关闭',
+                    'clear-search' => '清除搜索',
                     'categories'   => [
-                        'subtitle' => '将此产品分配到目录类别。',
-                        'search'   => '搜索类别…',
-                        'selected' => '已选择',
+                        'subtitle'        => '将此产品分配到目录类别。',
+                        'search'          => '搜索类别…',
+                        'searching'       => '正在搜索…',
+                        'no-results'      => '未找到匹配的类别',
+                        'load-more'       => '加载更多',
+                        'none-selected'   => '尚未选择任何类别',
+                        'and-more'        => '等 :count 项',
+                        'review-selected' => '显示已选类别',
+                        'selected'        => '已选择',
                     ],
                     'associations' => [
                         'subtitle' => '关联相关、追加销售、交叉销售和自定义产品。',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => '字段',
-                'info'            => '添加自定义字段以捕获此关联类型的附加数据。',
-                'add-field-btn'   => '添加字段',
-                'modal-title'     => '添加字段',
-                'save-field-btn'  => '保存字段',
-                'same-code-error' => '字段代码必须唯一。',
-                'add-fields-info' => '为此关联类型创建自定义字段。',
+                'title'                => '字段',
+                'info'                 => '添加自定义字段以捕获此关联类型的附加数据。',
+                'add-field-btn'        => '添加字段',
+                'modal-title'          => '添加字段',
+                'edit-modal-title'     => '编辑字段',
+                'save-field-btn'       => '保存字段',
+                'same-code-error'      => '字段代码必须唯一。',
+                'add-fields-info'      => '为此关联类型创建自定义字段。',
             ],
         ],
 
@@ -2353,6 +2365,11 @@ return [
                 'empty-title'        => '未找到关联类型',
                 'search-placeholder' => '按名称或代码搜索',
                 'title'              => '添加关联类型',
+            ],
+            'product-picker' => [
+                'add-btn'  => '添加所选',
+                'selected' => '已选择 :count 个产品',
+                'title'    => '选择产品',
             ],
         ],
         'pagination' => [

@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'For at tilføje :type produkter med det samme.',
                     'empty-title'       => 'Tilføj Produkt',
                     'image-placeholder' => 'Produktbillede',
+                    'more-types'        => 'Flere',
                     'no-types-info'     => 'Brug »Tilføj associationstype« for at knytte dette produkt til en associationstype.',
                     'no-types-title'    => 'Ingen associationer tilføjet',
+                    'search-types'      => 'Søg i tilknytningstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Forbindelser',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Tilføj valgte',
                     'close'        => 'Luk',
+                    'clear-search' => 'Ryd søgning',
                     'categories'   => [
-                        'subtitle' => 'Tildel dette produkt til katalogkategorier.',
-                        'search'   => 'Søg i kategorier…',
-                        'selected' => 'valgt',
+                        'subtitle'        => 'Tildel dette produkt til katalogkategorier.',
+                        'search'          => 'Søg i kategorier…',
+                        'searching'       => 'Søger…',
+                        'no-results'      => 'Ingen matchende kategorier fundet',
+                        'load-more'       => 'Indlæs flere',
+                        'none-selected'   => 'Der er endnu ikke valgt nogen kategorier',
+                        'and-more'        => 'og :count mere',
+                        'review-selected' => 'Vis valgte kategorier',
+                        'selected'        => 'valgt',
                     ],
                     'associations' => [
                         'subtitle' => 'Kobl relaterede, mersalgs-, krydssalgs- og brugerdefinerede produkter.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Felter',
-                'info'            => 'Tilføj brugerdefinerede felter for at fange yderligere data til denne associeringstype.',
-                'add-field-btn'   => 'Tilføj felt',
-                'modal-title'     => 'Tilføj felt',
-                'save-field-btn'  => 'Gem felt',
-                'same-code-error' => 'Feltkoden skal være unik.',
-                'add-fields-info' => 'For at oprette brugerdefinerede felter til denne associeringstype.',
+                'title'                => 'Felter',
+                'info'                 => 'Tilføj brugerdefinerede felter for at fange yderligere data til denne associeringstype.',
+                'add-field-btn'        => 'Tilføj felt',
+                'modal-title'          => 'Tilføj felt',
+                'edit-modal-title'     => 'Rediger felt',
+                'save-field-btn'       => 'Gem felt',
+                'same-code-error'      => 'Feltkoden skal være unik.',
+                'add-fields-info'      => 'For at oprette brugerdefinerede felter til denne associeringstype.',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => 'Ingen associationstyper fundet',
                 'search-placeholder' => 'Søg efter navn eller kode',
                 'title'              => 'Tilføj associationstype',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Tilføj valgte',
+                'selected' => ':count produkter valgt',
+                'title'    => 'Vælg produkter',
             ],
         ],
         'pagination' => [

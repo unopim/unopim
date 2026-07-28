@@ -278,7 +278,7 @@ return [
                     ],
                     'cross-sells' => [
                         'empty-info' => 'Tambahkan produk asosiasi penjualan silang.',
-                        'info'       => 'Berdekatan dengan keranjang belanja, Anda \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'Berdekatan dengan keranjang belanja, Anda \'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Produk Cross-Sell',
                     ],
                     'add-btn'           => 'Menambahkan',
@@ -287,8 +287,10 @@ return [
                     'empty-info'        => 'Untuk menambahkan produk :type saat bepergian.',
                     'empty-title'       => 'Tambahkan produk',
                     'image-placeholder' => 'gambar produk',
+                    'more-types'        => 'Lainnya',
                     'no-types-info'     => 'Gunakan "Tambah Jenis Asosiasi" untuk menautkan produk ini di bawah suatu jenis asosiasi.',
                     'no-types-title'    => 'Belum ada asosiasi ditambahkan',
+                    'search-types'      => 'Cari tipe asosiasi',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asosiasi',
                 ],
@@ -403,11 +405,20 @@ return [
                 ],
 
                 'workspace' => [
+
+                    'add-selected' => 'Tambahkan Pilihan',
                     'close'        => 'Tutup',
+                    'clear-search' => 'Hapus pencarian',
                     'categories'   => [
-                        'subtitle' => 'Tetapkan produk ini ke kategori katalog.',
-                        'search'   => 'Cari kategori…',
-                        'selected' => 'dipilih',
+                        'subtitle'        => 'Tetapkan produk ini ke kategori katalog.',
+                        'search'          => 'Cari kategori…',
+                        'searching'       => 'Mencari…',
+                        'no-results'      => 'Tidak ada kategori yang cocok ditemukan',
+                        'load-more'       => 'Muat lebih banyak',
+                        'none-selected'   => 'Belum ada kategori yang dipilih',
+                        'and-more'        => 'dan :count lainnya',
+                        'review-selected' => 'Tampilkan kategori terpilih',
+                        'selected'        => 'dipilih',
                     ],
                     'associations' => [
                         'subtitle' => 'Tautkan produk terkait, penjualan tambahan, penjualan silang, dan kustom.',
@@ -1025,13 +1036,14 @@ return [
             ],
 
             'fields' => [
-                'title'           => 'Bidang',
-                'info'            => 'Tambahkan bidang khusus untuk menangkap data tambahan untuk jenis asosiasi ini.',
-                'add-field-btn'   => 'Tambah Bidang',
-                'modal-title'     => 'Tambah Bidang',
-                'save-field-btn'  => 'Simpan Bidang',
-                'same-code-error' => 'Kode bidang harus unik.',
-                'add-fields-info' => 'Untuk membuat bidang khusus untuk jenis asosiasi ini.',
+                'title'                => 'Bidang',
+                'info'                 => 'Tambahkan bidang khusus untuk menangkap data tambahan untuk jenis asosiasi ini.',
+                'add-field-btn'        => 'Tambah Bidang',
+                'modal-title'          => 'Tambah Bidang',
+                'edit-modal-title'     => 'Ubah Bidang',
+                'save-field-btn'       => 'Simpan Bidang',
+                'same-code-error'      => 'Kode bidang harus unik.',
+                'add-fields-info'      => 'Untuk membuat bidang khusus untuk jenis asosiasi ini.',
             ],
         ],
 
@@ -2350,6 +2362,11 @@ return [
                 'empty-title'        => 'Tidak ada jenis asosiasi ditemukan',
                 'search-placeholder' => 'Cari berdasarkan nama atau kode',
                 'title'              => 'Tambah Jenis Asosiasi',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Tambahkan Pilihan',
+                'selected' => ':count produk dipilih',
+                'title'    => 'Pilih Produk',
             ],
         ],
         'pagination' => [
