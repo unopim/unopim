@@ -15,6 +15,35 @@ it('renders the panel into the product edit page for an authorised admin', funct
         ->assertSee('id="passport-panel"', false);
 });
 
+it('renders the panel as a drawer card with locales and history tabs', function (): void {
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
+
+    $this->enablePassportPublishing($context->channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code]))
+        ->assertOk()
+        ->assertSee('v-product-section-drawer', false)
+        ->assertSee('value="passport-locales"', false)
+        ->assertSee('value="passport-history"', false);
+});
+
+it('summarises how many locales are published on the drawer card', function (): void {
+    [$product, $channel] = $this->productWithTwoDppLocales();
+
+    $this->enablePassportPublishing($channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code]))
+        ->assertOk()
+        ->assertSee(trans('passport::app.catalog.products.edit.passport.published-summary', [
+            'published' => 0,
+            'total'     => 2,
+        ]));
+});
+
 it('does not render the panel for an admin without view permission', function (): void {
     [$product, $context] = $this->productWithSecretAndDppAttributes();
 

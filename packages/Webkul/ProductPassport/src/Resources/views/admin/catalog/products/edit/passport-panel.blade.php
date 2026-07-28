@@ -1,100 +1,254 @@
 @if ($passportChannel !== null && $passportEnabled)
-<div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow" id="passport-panel" data-product-id="{{ $product->id }}">
-    <div class="flex justify-between items-center mb-2 gap-4">
-        <p class="text-base text-gray-800 dark:text-white font-semibold">
-            {{ trans('passport::app.catalog.products.edit.passport.title') }}
-        </p>
+<x-admin::product.section-drawer
+    id="passport"
+    :title="trans('passport::app.catalog.products.edit.passport.title')"
+    :subtitle="trans('passport::app.catalog.products.edit.passport.subtitle')"
+    icon="icon-file"
+>
+    <x-slot:toggle>
+        <x-admin::product.section-card
+            id="passport"
+            :title="trans('passport::app.catalog.products.edit.passport.title')"
+            icon="icon-file"
+            :summary="trans('passport::app.catalog.products.edit.passport.published-summary', [
+                'published' => $passportPublishedCount,
+                'total'     => $passportRows->count(),
+            ])"
+        />
+    </x-slot:toggle>
 
-        <div class="flex items-center gap-3">
-            @if ($passportHistoryUrl !== null)
-                <a href="{{ $passportHistoryUrl }}"
-                   class="text-violet-700 dark:text-violet-300 font-semibold text-sm">
-                    {{ trans('passport::app.catalog.products.edit.passport.version-history') }}
-                </a>
-            @endif
+    <x-slot:headerActions>
+        <button
+            type="button"
+            class="passport-publish-all-btn primary-button shrink-0"
+            data-locale-ids="{{ json_encode($passportRows->pluck('locale_id')->values()) }}"
+        >
+            {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
+        </button>
+    </x-slot:headerActions>
 
-            <button type="button"
-                    class="passport-publish-all-btn primary-button text-sm"
-                    data-locale-ids="{{ json_encode($passportRows->pluck('locale_id')->values()) }}">
-                {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
-            </button>
+    <x-slot:content>
+        <div
+            id="passport-panel"
+            data-product-id="{{ $product->id }}"
+            data-republish-url="{{ $passportRepublishUrl }}"
+            class="grid gap-2.5"
+        >
+            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex flex-wrap justify-between items-center gap-4">
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    @if ($passportAutoPublish)
+                        {{ trans('passport::app.catalog.products.edit.passport.auto-publish-on') }}
+                    @else
+                        {{ trans('passport::app.catalog.products.edit.passport.auto-publish-off') }}
+                    @endif
+                </p>
+
+                <p
+                    id="passport-total-views"
+                    class="text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap"
+                >
+                    {{ trans('passport::app.catalog.products.edit.passport.total-views', ['count' => $passportViews]) }}
+                </p>
+            </div>
+
+            <div class="bg-white dark:bg-cherry-900 rounded box-shadow">
+                <x-admin::tabs position="left">
+                    <x-admin::tabs.item
+                        :title="trans('passport::app.catalog.products.edit.passport.tabs.locales')"
+                        value="passport-locales"
+                        :is-selected="true"
+                    >
+                        {{-- No scroll wrapper here: the row action dropdown is absolutely positioned and any overflow ancestor clips it. --}}
+                        <div>
+                            <x-admin::table class="min-w-0">
+                                <x-admin::table.thead>
+                                    <x-admin::table.thead.tr>
+                                        <x-admin::table.th>{{ trans('passport::app.catalog.products.edit.passport.locale') }}</x-admin::table.th>
+                                        <x-admin::table.th>{{ trans('passport::app.catalog.products.edit.passport.version') }}</x-admin::table.th>
+                                        <x-admin::table.th>{{ trans('passport::app.catalog.products.edit.passport.published-at') }}</x-admin::table.th>
+                                        <x-admin::table.th>{{ trans('passport::app.catalog.products.edit.passport.missing-fields') }}</x-admin::table.th>
+                                        <x-admin::table.th class="text-right">{{ trans('passport::app.catalog.products.edit.passport.actions') }}</x-admin::table.th>
+                                    </x-admin::table.thead.tr>
+                                </x-admin::table.thead>
+
+                                <x-admin::table.tbody>
+                                    @foreach ($passportRows as $row)
+                                        <x-admin::table.tbody.tr
+                                            data-locale-code="{{ $row['locale_code'] }}"
+                                            class="border-t border-gray-200 dark:border-gray-800"
+                                        >
+                                            <x-admin::table.td>{{ $row['locale_code'] }}</x-admin::table.td>
+
+                                            <x-admin::table.td>{{ $row['version'] ?? trans('passport::app.catalog.products.edit.passport.not-published') }}</x-admin::table.td>
+
+                                            <x-admin::table.td>{{ $row['published_at'] ?? '—' }}</x-admin::table.td>
+
+                                            <x-admin::table.td>{{ $row['missing_count'] ?? trans('passport::app.catalog.products.edit.passport.unscored') }}</x-admin::table.td>
+
+                                            <x-admin::table.td>
+                                                <div class="flex items-center justify-end gap-2.5">
+                                                    @if (! empty($row['preview_url']))
+                                                        <a
+                                                            href="{{ $row['preview_url'] }}"
+                                                            target="_blank"
+                                                            rel="noopener"
+                                                            class="secondary-button"
+                                                        >
+                                                            @lang('passport::app.catalog.products.edit.passport.preview')
+                                                        </a>
+                                                    @endif
+
+                                                    <button
+                                                        type="button"
+                                                        class="passport-publish-btn primary-button"
+                                                        data-locale-id="{{ $row['locale_id'] }}"
+                                                    >
+                                                        {{ $row['version'] === null
+                                                            ? trans('passport::app.catalog.products.edit.passport.publish')
+                                                            : trans('passport::app.catalog.products.edit.passport.republish') }}
+                                                    </button>
+
+                                                    @if (! empty($row['operator_link']) || ! empty($row['authority_link']) || ! empty($row['carrier_link']))
+                                                        <x-admin::dropdown position="bottom-{{ core()->getRequestedLocale()?->direction === 'rtl' ? 'left' : 'right' }}">
+                                                            <x-slot:toggle>
+                                                                <button
+                                                                    type="button"
+                                                                    class="icon-chevron-down cursor-pointer rounded-md text-2xl leading-none text-gray-500 transition-all hover:text-primary-600 dark:text-gray-400 dark:hover:text-white"
+                                                                    aria-label="{{ trans('passport::app.catalog.products.edit.passport.actions') }}"
+                                                                ></button>
+                                                            </x-slot>
+
+                                                            <x-slot:menu>
+                                                                @if (! empty($row['operator_link']))
+                                                                    <x-admin::dropdown.menu.item
+                                                                        class="passport-copy-link-btn"
+                                                                        data-link="{{ $row['operator_link'] }}"
+                                                                        data-label="{{ trans('passport::app.catalog.products.edit.passport.copy-operator-link') }}"
+                                                                    >
+                                                                        @lang('passport::app.catalog.products.edit.passport.copy-operator-link')
+                                                                    </x-admin::dropdown.menu.item>
+                                                                @endif
+
+                                                                @if (! empty($row['authority_link']))
+                                                                    <x-admin::dropdown.menu.item
+                                                                        class="passport-copy-link-btn"
+                                                                        data-link="{{ $row['authority_link'] }}"
+                                                                        data-label="{{ trans('passport::app.catalog.products.edit.passport.copy-authority-link') }}"
+                                                                    >
+                                                                        @lang('passport::app.catalog.products.edit.passport.copy-authority-link')
+                                                                    </x-admin::dropdown.menu.item>
+                                                                @endif
+
+                                                                @if (! empty($row['carrier_link']))
+                                                                    <x-admin::dropdown.menu.item>
+                                                                        <a
+                                                                            href="{{ $row['carrier_link'] }}"
+                                                                            download
+                                                                            class="block"
+                                                                        >
+                                                                            @lang('passport::app.catalog.products.edit.passport.download-qr')
+                                                                        </a>
+                                                                    </x-admin::dropdown.menu.item>
+                                                                @endif
+                                                            </x-slot>
+                                                        </x-admin::dropdown>
+                                                    @endif
+                                                </div>
+                                            </x-admin::table.td>
+                                        </x-admin::table.tbody.tr>
+                                    @endforeach
+                                </x-admin::table.tbody>
+                            </x-admin::table>
+                        </div>
+                    </x-admin::tabs.item>
+
+                    <x-admin::tabs.item
+                        :title="trans('passport::app.catalog.products.edit.passport.tabs.history')"
+                        value="passport-history"
+                    >
+                        @if ($passportVersions->isEmpty())
+                            <p class="py-6 text-sm text-gray-500 dark:text-gray-400 text-center">
+                                @lang('passport::app.publications.versions.no-versions')
+                            </p>
+                        @else
+                            <div class="overflow-x-auto">
+                                <x-admin::table>
+                                    <x-admin::table.thead>
+                                        <x-admin::table.thead.tr>
+                                            <x-admin::table.th>@lang('passport::app.publications.versions.locale')</x-admin::table.th>
+                                            <x-admin::table.th>@lang('passport::app.publications.versions.version')</x-admin::table.th>
+                                            <x-admin::table.th>@lang('passport::app.publications.versions.published-at')</x-admin::table.th>
+                                            <x-admin::table.th>@lang('passport::app.publications.versions.published-by')</x-admin::table.th>
+                                            <x-admin::table.th>@lang('passport::app.publications.versions.status')</x-admin::table.th>
+                                            <x-admin::table.th class="text-right">@lang('passport::app.publications.versions.action')</x-admin::table.th>
+                                        </x-admin::table.thead.tr>
+                                    </x-admin::table.thead>
+
+                                    <x-admin::table.tbody>
+                                        @foreach ($passportVersions as $version)
+                                            <x-admin::table.tbody.tr class="border-t border-gray-200 dark:border-gray-800">
+                                                <x-admin::table.td>{{ $version->locale?->code }}</x-admin::table.td>
+
+                                                <x-admin::table.td>
+                                                    {{ $version->version }}
+
+                                                    @if ($version->is_current)
+                                                        <span class="ltr:ml-2 rtl:mr-2 text-xs font-semibold text-primary-600 dark:text-primary-400">
+                                                            @lang('passport::app.publications.versions.current-badge')
+                                                        </span>
+                                                    @endif
+                                                </x-admin::table.td>
+
+                                                <x-admin::table.td>{{ $version->published_at }}</x-admin::table.td>
+
+                                                <x-admin::table.td>{{ $version->publishedBy?->name ?? trans('passport::app.publications.versions.system') }}</x-admin::table.td>
+
+                                                <x-admin::table.td>
+                                                    @if ($version->redacted_at !== null)
+                                                        @lang('passport::app.publications.versions.redacted')
+                                                    @elseif ($version->is_current)
+                                                        @lang('passport::app.publications.versions.current')
+                                                    @else
+                                                        @lang('passport::app.publications.versions.superseded')
+                                                    @endif
+                                                </x-admin::table.td>
+
+                                                <x-admin::table.td>
+                                                    <div class="flex items-center justify-end">
+                                                        @if (! $version->is_current && $version->redacted_at === null && $passportCanPublish)
+                                                            <button
+                                                                type="button"
+                                                                class="passport-republish-btn secondary-button"
+                                                                data-version-id="{{ $version->id }}"
+                                                            >
+                                                                @lang('passport::app.publications.versions.republish')
+                                                            </button>
+                                                        @endif
+                                                    </div>
+                                                </x-admin::table.td>
+                                            </x-admin::table.tbody.tr>
+                                        @endforeach
+                                    </x-admin::table.tbody>
+                                </x-admin::table>
+                            </div>
+
+                            @if ($passportHistoryUrl !== null && $passportHistoryTotal > $passportVersions->count())
+                                <div class="pt-4 text-right">
+                                    <a
+                                        href="{{ $passportHistoryUrl }}"
+                                        class="text-sm font-medium text-primary-600 dark:text-primary-400"
+                                    >
+                                        {{ trans('passport::app.catalog.products.edit.passport.view-all-versions', ['count' => $passportHistoryTotal]) }}
+                                    </a>
+                                </div>
+                            @endif
+                        @endif
+                    </x-admin::tabs.item>
+                </x-admin::tabs>
+            </div>
         </div>
-    </div>
-
-    <div class="flex justify-between items-center mb-4 gap-4">
-        <p class="text-xs text-gray-500 dark:text-gray-400">
-            @if ($passportAutoPublish)
-                {{ trans('passport::app.catalog.products.edit.passport.auto-publish-on') }}
-            @else
-                {{ trans('passport::app.catalog.products.edit.passport.auto-publish-off') }}
-            @endif
-        </p>
-
-        <p class="text-xs text-gray-600 dark:text-gray-300 whitespace-nowrap" id="passport-total-views">
-            {{ trans('passport::app.catalog.products.edit.passport.total-views', ['count' => $passportViews]) }}
-        </p>
-    </div>
-
-    <table class="w-full text-sm">
-        <thead>
-            <tr class="text-left text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                <th class="py-2 font-medium">{{ trans('passport::app.catalog.products.edit.passport.locale') }}</th>
-                <th class="py-2 font-medium">{{ trans('passport::app.catalog.products.edit.passport.version') }}</th>
-                <th class="py-2 font-medium">{{ trans('passport::app.catalog.products.edit.passport.published-at') }}</th>
-                <th class="py-2 font-medium">{{ trans('passport::app.catalog.products.edit.passport.missing-fields') }}</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($passportRows as $row)
-                <tr data-locale-code="{{ $row['locale_code'] }}" class="border-t border-gray-100 dark:border-cherry-800">
-                    <td class="py-2">{{ $row['locale_code'] }}</td>
-                    <td class="py-2">{{ $row['version'] ?? trans('passport::app.catalog.products.edit.passport.not-published') }}</td>
-                    <td class="py-2">{{ $row['published_at'] ?? '—' }}</td>
-                    <td class="py-2">{{ $row['missing_count'] ?? trans('passport::app.catalog.products.edit.passport.unscored') }}</td>
-                    <td class="py-2 text-right">
-                        @if (! empty($row['operator_link']))
-                            <button type="button" class="passport-copy-link-btn text-violet-700 dark:text-violet-300 font-semibold mr-3"
-                                    data-link="{{ $row['operator_link'] }}"
-                                    data-label="{{ trans('passport::app.catalog.products.edit.passport.copy-operator-link') }}">
-                                {{ trans('passport::app.catalog.products.edit.passport.copy-operator-link') }}
-                            </button>
-                        @endif
-
-                        @if (! empty($row['authority_link']))
-                            <button type="button" class="passport-copy-link-btn text-violet-700 dark:text-violet-300 font-semibold mr-3"
-                                    data-link="{{ $row['authority_link'] }}"
-                                    data-label="{{ trans('passport::app.catalog.products.edit.passport.copy-authority-link') }}">
-                                {{ trans('passport::app.catalog.products.edit.passport.copy-authority-link') }}
-                            </button>
-                        @endif
-
-                        @if (! empty($row['carrier_link']))
-                            <a href="{{ $row['carrier_link'] }}" download
-                               class="text-violet-700 dark:text-violet-300 font-semibold mr-3">
-                                {{ trans('passport::app.catalog.products.edit.passport.download-qr') }}
-                            </a>
-                        @endif
-
-                        @if (! empty($row['preview_url']))
-                            <a href="{{ $row['preview_url'] }}" target="_blank" rel="noopener"
-                               class="text-violet-700 dark:text-violet-300 font-semibold mr-3">
-                                {{ trans('passport::app.catalog.products.edit.passport.preview') }}
-                            </a>
-                        @endif
-
-                        <button type="button" class="passport-publish-btn text-violet-700 dark:text-violet-300 font-semibold"
-                                data-locale-id="{{ $row['locale_id'] }}">
-                            {{ $passportAutoPublish
-                                ? trans('passport::app.catalog.products.edit.passport.republish')
-                                : trans('passport::app.catalog.products.edit.passport.publish') }}
-                        </button>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
-</div>
+    </x-slot:content>
+</x-admin::product.section-drawer>
 
 @pushOnce('scripts')
 <script>
@@ -153,7 +307,47 @@
             flash();
         }
 
+        function republish(button) {
+            var panel = document.getElementById('passport-panel');
+            var url = panel && panel.dataset.republishUrl;
+
+            if (! url) { return; }
+
+            button.disabled = true;
+
+            var original = button.textContent;
+            button.textContent = @json(trans('passport::app.publications.versions.republishing'));
+
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                body: JSON.stringify({ version_id: parseInt(button.dataset.versionId, 10) }),
+            })
+            .then(function (response) { return response.json().then(function (data) { return { ok: response.ok, data: data }; }); })
+            .then(function (result) {
+                button.textContent = result.ok
+                    ? @json(trans('passport::app.catalog.products.edit.passport.queued'))
+                    : (result.data.message || original);
+
+                if (! result.ok) {
+                    button.disabled = false;
+                }
+            })
+            .catch(function () {
+                button.textContent = original;
+                button.disabled = false;
+            });
+        }
+
         document.addEventListener('click', function (event) {
+            var rollback = event.target.closest('.passport-republish-btn');
+
+            if (rollback && ! rollback.disabled) {
+                republish(rollback);
+
+                return;
+            }
+
             var copy = event.target.closest('.passport-copy-link-btn');
 
             if (copy) {
