@@ -72,10 +72,10 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     }
 
     /**
-     * This family's custom attributes keyed by attribute group id, each group in
-     * the order the editor renders them. Memoized per instance because callers
-     * (the product edit form) ask group by group, which otherwise repeats the
-     * same four-table join once per group.
+     * Get this family's custom attributes keyed by attribute group id.
+     *
+     * Memoized because callers ask group by group, which would otherwise repeat
+     * the same join once per group.
      *
      * @return Collection<int, Collection<int, Attribute>>
      */
@@ -88,18 +88,14 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     }
 
     /**
-     * Label-only rows for every attribute assigned to this family, keyed by
-     * attribute group id and ordered by their position within the group.
+     * Get label-only attribute rows keyed by attribute group id.
      *
-     * Deliberately returns plain rows rather than models: the family editor
-     * renders every group with all of its attributes, and a family with
-     * thousands of groups exhausts memory long before Eloquent finishes
-     * hydrating them. Names come from {@see translatedNames()}, which applies
-     * the same locale/fallback resolution as the translatable accessor.
+     * Returns plain rows rather than models because hydrating every attribute
+     * of a large family exhausts memory.
      *
      * @return Collection<int, Collection<int, object>>
      */
-    public function attributeSummariesByGroup(string $localeCode): Collection
+    public function attributeSummariesByGroup(string $localeCode, ?int $groupId = null): Collection
     {
         $names = $this->translatedNames('attribute_translations', 'attribute_id', $localeCode, fn ($query) => $query
             ->join(
@@ -115,6 +111,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
                 'attribute_family_group_mappings.id'
             )
             ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
+            ->when($groupId, fn ($builder) => $builder->where('attribute_family_group_mappings.attribute_group_id', $groupId))
         );
 
         return DB::table('attribute_group_mappings')
@@ -126,6 +123,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
             )
             ->join('attributes', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
             ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
+            ->when($groupId, fn ($builder) => $builder->where('attribute_family_group_mappings.attribute_group_id', $groupId))
             ->orderBy('attribute_group_mappings.position')
             ->select([
                 'attributes.id',
@@ -142,12 +140,114 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     }
 
     /**
-     * Resolve one translated `name` per translatable row, keyed by owner id,
-     * preferring the requested locale over the configured fallback.
+     * Get the number of attributes assigned to each of this family's groups.
      *
-     * Kept as a separate query rather than two aliased self-joins: Laravel
-     * prefixes join aliases along with table names, so an aliased self-join
-     * silently breaks on an installation configured with a table prefix.
+     * @return Collection<int, int>
+     */
+    public function attributeCountsByGroup(): Collection
+    {
+        return DB::table('attribute_group_mappings')
+            ->join(
+                'attribute_family_group_mappings',
+                'attribute_group_mappings.attribute_family_group_id',
+                '=',
+                'attribute_family_group_mappings.id'
+            )
+            ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
+            ->groupBy('attribute_family_group_mappings.attribute_group_id')
+            ->select([
+                'attribute_family_group_mappings.attribute_group_id',
+                DB::raw('count(*) as attributes_count'),
+            ])
+            ->get()
+            ->mapWithKeys(fn ($row): array => [$row->attribute_group_id => (int) $row->attributes_count]);
+    }
+
+    /**
+     * Get how many attributes are assigned to this family.
+     *
+     * Counted in SQL because callers use it to decide whether the family is
+     * small enough to render whole; hydrating it to find out would defeat the
+     * purpose.
+     */
+    public function attributeCount(): int
+    {
+        return DB::table('attribute_group_mappings')
+            ->join(
+                'attribute_family_group_mappings',
+                'attribute_group_mappings.attribute_family_group_id',
+                '=',
+                'attribute_family_group_mappings.id'
+            )
+            ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
+            ->count();
+    }
+
+    /**
+     * Get the hydrated attributes of a single group of this family.
+     *
+     * Unlike {@see customAttributesByGroup()} this never touches the family's
+     * other groups, so its cost is bounded by the group rather than by the
+     * family.
+     *
+     * @return Collection<int, Attribute>
+     */
+    public function customAttributesForGroup(int $groupId): Collection
+    {
+        return $this->customAttributes()
+            ->where('attribute_groups.id', $groupId)
+            ->orderBy('attribute_group_mappings.position')
+            ->get();
+    }
+
+    /**
+     * Get one of this family's groups by code, falling back to the first group
+     * in display order when the code is absent or does not belong to it.
+     */
+    public function groupSummaryByCode(string $localeCode, ?string $code = null): ?object
+    {
+        $base = fn () => DB::table('attribute_family_group_mappings')
+            ->join(
+                'attribute_groups',
+                'attribute_groups.id',
+                '=',
+                'attribute_family_group_mappings.attribute_group_id'
+            )
+            ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
+            ->orderBy('attribute_family_group_mappings.position')
+            ->select([
+                'attribute_groups.id',
+                'attribute_groups.code',
+                'attribute_family_group_mappings.id as group_mapping_id',
+                'attribute_family_group_mappings.position',
+            ]);
+
+        $group = $code ? $base()->where('attribute_groups.code', $code)->first() : null;
+
+        $group ??= $base()->first();
+
+        if (! $group) {
+            return null;
+        }
+
+        $names = $this->translatedNames(
+            'attribute_group_translations',
+            'attribute_group_id',
+            $localeCode,
+            fn ($query) => $query->where('attribute_group_translations.attribute_group_id', $group->id)
+        );
+
+        $group->name = $names[$group->id] ?? null;
+
+        return $group;
+    }
+
+    /**
+     * Get one translated name per row, keyed by owner id, preferring the
+     * requested locale over the fallback.
+     *
+     * Kept as its own query rather than two aliased self-joins, which break
+     * under a configured table prefix: Laravel prefixes join aliases too.
      *
      * @param  callable(Builder): Builder  $scope
      * @return array<int, string>
@@ -173,8 +273,36 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     }
 
     /**
-     * Label-only rows for this family's group mappings, in display order, for
-     * the same reason as {@see attributeSummariesByGroup()}.
+     * Get one page of this family's group mappings, in display order.
+     *
+     * Matching on a search term needs the translated names up front, so they are
+     * resolved before the page is cut rather than per row.
+     *
+     * @return array{groups: Collection<int, object>, total: int, lastPage: int}
+     */
+    public function paginateGroupSummaries(string $localeCode, int $page, int $perPage, string $search = ''): array
+    {
+        $groups = $this->groupSummaries($localeCode);
+
+        if ($search !== '') {
+            $term = mb_strtolower($search);
+
+            $groups = $groups->filter(fn ($group): bool => str_contains(mb_strtolower((string) $group->name), $term)
+                || str_contains(mb_strtolower($group->code), $term)
+            )->values();
+        }
+
+        $total = $groups->count();
+
+        return [
+            'groups'   => $groups->forPage($page, $perPage)->values(),
+            'total'    => $total,
+            'lastPage' => max(1, (int) ceil($total / $perPage)),
+        ];
+    }
+
+    /**
+     * Get label-only rows for this family's group mappings, in display order.
      *
      * @return Collection<int, object>
      */
