@@ -183,10 +183,6 @@
                         }
                     }, 700);
 
-                    // Physically remove the form's own save button (not just hide it) so the
-                    // bar's "Save changes" is the only one. Runs now and once more shortly
-                    // after in case the button is rendered slightly late; the CSS rule stays
-                    // as a backstop for anything rendered even later.
                     if (this.hideSaveWhenTracked) {
                         this.removeInFormSave();
                         setTimeout(() => this.removeInFormSave(), 400);
@@ -218,15 +214,9 @@
                     return [...this.$refs.root.querySelectorAll('input[name], select[name], textarea[name]')]
                         .filter(el => ! ['submit', 'button'].includes(el.type))
                         .filter(el => ! ['_token', '_method'].includes(el.name))
-                        // Read-only / disabled fields can't be edited by the user, so they
-                        // must never count as an unsaved change (e.g. a locked Type select).
                         .filter(el => ! el.disabled && ! el.readOnly);
                 },
 
-                // Serialize the form exactly as the browser would submit it. FormData
-                // collapses same-name groups (a checkbox + its hidden `0` fallback),
-                // omits unchecked boxes, and handles selects/radios/files — so a value
-                // that returns to its original truly reads as unchanged.
                 serializeForm() {
                     const form = this.$refs.root.querySelector('form');
                     const map = {};
@@ -333,9 +323,6 @@
 
                         group.classList.add('unsaved-dirty');
 
-                        // Fields whose label comes from x-admin::form.control-group.label
-                        // already carry a badge (revealed by CSS). Checkboxes/toggles use a
-                        // plain <label>, so inject a badge into the group for those.
                         if (! group.querySelector('.unsaved-badge')) {
                             const badge = document.createElement('span');
 
@@ -370,10 +357,6 @@
                 },
 
                 discard() {
-                    // Ask first — discarding is destructive and one accidental click would
-                    // otherwise wipe every unsaved edit with no undo. Reuse UnoPim's shared
-                    // confirm modal (open-confirm-modal) so it looks/behaves like every other
-                    // confirmation in the app.
                     this.$emitter.emit('open-confirm-modal', {
                         title: "@lang('admin::app.components.form.unsaved-changes.discard-title')",
                         message: "@lang('admin::app.components.form.unsaved-changes.discard-message')",
@@ -407,17 +390,11 @@
                         el.dispatchEvent(new Event('change', { bubbles: true }));
                     });
 
-                    // Native revert above only round-trips fields whose native element is
-                    // the source of truth. Rich fields (select, multiselect, media, file,
-                    // WYSIWYG) keep their value in Vue state and can't be reverted from the
-                    // DOM, so broadcast a reset they each restore their own initial value from.
                     this.$emitter.emit('unsaved-changes:reset');
 
                     this.touched = {};
                     this.recompute();
 
-                    // Rich-field resets settle on Vue's next tick; re-evaluate afterwards so
-                    // the bar clears once their hidden inputs hold the original values again.
                     this.$nextTick(() => this.recompute());
                 },
 
@@ -436,15 +413,12 @@
                         return;
                     }
 
-                    // A slow save keeps the request in flight; ignore extra clicks so
-                    // requestSubmit can't queue a second AJAX before the first settles.
                     if (form.dataset.ajaxSubmitting === "true" || this.saving) {
                         return;
                     }
 
                     this.toggleBeforeUnload(false);
 
-                    // Native submit navigates away; the AJAX watcher would only false-alarm.
                     if (! form.requestSubmit) {
                         form.submit();
 
@@ -518,21 +492,12 @@
                         return;
                     }
 
-                    // Action-only forms (no editable fields — e.g. an "Export Now" / "Import Now"
-                    // PUT trigger) can never turn the bar dirty, so their submit button is the ONLY
-                    // way to act. Never strip it; the bar would leave the user with no button at all.
-                    // A media widget counts as content: it has no named field but marks the form
-                    // dirty via `unsaved-changes:touch`, so a media-only form still uses the bar.
                     if (this.controls().length === 0 && ! form.querySelector('[data-media-control]')) {
                         return;
                     }
 
                     const selector = 'button[type="submit"], button:not([type]), input[type="submit"]';
 
-                    // In-form buttons, plus buttons that live OUTSIDE <form> but are
-                    // associated to it via the `form="<id>"` attribute (e.g. a sticky
-                    // edit-page-header save button). querySelectorAll on the form element
-                    // can't reach the associated ones, so collect them from the document.
                     const buttons = Array.from(form.querySelectorAll(selector));
 
                     if (form.id) {
@@ -546,16 +511,10 @@
                     }
 
                     buttons.forEach(btn => {
-                        // Keep submit buttons that belong to a modal / dialog inside this
-                        // form — they have their own submit and the bar can't handle them.
                         if (btn.closest('[data-unsaved-ignore]')) {
                             return;
                         }
 
-                        // Remove outright: a hidden submit button still acts as the
-                        // form's implicit submit-on-Enter, so it must be gone (not just
-                        // hidden). The SPA re-renders the form on each visit, so it comes
-                        // back cleanly and is re-removed by mount.
                         btn.remove();
                     });
                 },
