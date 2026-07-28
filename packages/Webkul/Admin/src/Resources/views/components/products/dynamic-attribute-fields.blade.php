@@ -414,7 +414,7 @@
                 <x-slot:option>
                     <div class="flex items-center space-x-2">
                         <div
-                            v-if="option.attribute.swatch_type == 'image'"
+                            v-if="option.attribute?.swatch_type == 'image'"
                             class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
                         >
                             <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
@@ -430,7 +430,7 @@
                             </div>
                         </div>
 
-                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                        <div v-if="option.swatch_value && option.attribute?.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
                             class="w-6 h-6 rounded border"></div>
 
@@ -441,7 +441,7 @@
                 <x-slot:singleLabel>
                     <div class="flex items-center space-x-2">
                         <div
-                            v-if="option.swatch_value_url && option.attribute.swatch_type == 'image'"
+                            v-if="option.swatch_value_url && option.attribute?.swatch_type == 'image'"
                             class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
                         >
                             <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
@@ -457,7 +457,7 @@
                             </div>
                         </div>
 
-                        <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                        <div v-if="option.swatch_value && option.attribute?.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
                             class="w-4 h-4 rounded border"></div>
 
@@ -468,7 +468,7 @@
                 <x-slot:tag>
                         <div class="multiselect__tag space-x-2 items-center justify-center" style="display:inline-flex">
                             <div
-                                v-if="option.attribute.swatch_type == 'image'"
+                                v-if="option.attribute?.swatch_type == 'image'"
                                 class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
                             >
                                 <img :src="option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}'"
@@ -484,7 +484,7 @@
                                 </div>
                             </div>
     
-                            <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
+                            <div v-if="option.swatch_value && option.attribute?.swatch_type == 'color'"
                                 :style="{ backgroundColor: option.swatch_value }"
                                 class="w-4 h-4 rounded border"></div>
     

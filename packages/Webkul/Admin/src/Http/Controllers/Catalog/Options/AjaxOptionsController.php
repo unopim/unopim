@@ -89,6 +89,10 @@ class AjaxOptionsController extends Controller
 
         $currentLocaleCode = core()->getRequestedLocaleCode();
 
+        $swatchAttribute = $entityName === self::ENTITY_ATTRIBUTE_OPTION && $attributeId
+            ? $this->attributeRepository->find($attributeId)
+            : null;
+
         $formattedOptions = [];
 
         foreach ($options as $option) {
@@ -96,12 +100,19 @@ class AjaxOptionsController extends Controller
                 ? $option->name
                 : $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
-            $formattedOptions[] = [
+            $formattedOption = [
                 'id'    => $option->id,
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
-                ...$option->makeHidden(['translations', 'label'])->toArray(),
+                ...$option->makeHidden(['translations', 'label', 'attribute'])->toArray(),
             ];
+
+            /** Swatch metadata the option slot reads, resolved once so the shape never varies per row. */
+            if ($swatchAttribute) {
+                $formattedOption['attribute'] = ['swatch_type' => $swatchAttribute->swatch_type];
+            }
+
+            $formattedOptions[] = $formattedOption;
         }
 
         return new JsonResponse([
