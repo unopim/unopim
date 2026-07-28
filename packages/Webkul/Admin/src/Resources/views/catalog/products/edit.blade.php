@@ -237,7 +237,7 @@
 
                 @include('admin::catalog.products.edit.product-info')
 
-                @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->values['categories'] ?? []])
+                @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->resolvedValues()['categories'] ?? []])
 
                 @if ($variantTree ?? null)
                     {{-- The structured UI replaces the flat type view; its render events stay. --}}
