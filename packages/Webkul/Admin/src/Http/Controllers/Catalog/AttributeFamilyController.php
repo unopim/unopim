@@ -44,7 +44,9 @@ class AttributeFamilyController extends Controller
             return app(AttributeFamilyDataGrid::class)->toJson();
         }
 
-        return view('admin::catalog.families.index');
+        return view('admin::catalog.families.index', [
+            'families' => $this->attributeFamilyRepository->getOptions(),
+        ]);
     }
 
     /**
@@ -54,33 +56,25 @@ class AttributeFamilyController extends Controller
      */
     private function normalize($attributeFamily = null)
     {
-        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()->with('attributeGroups')->get()->map(function ($familyGroupMapping) {
-            $attributeGroup = $familyGroupMapping->attributeGroups->first();
+        $localeCode = core()->getRequestedLocaleCode();
 
-            $customAttributes = $attributeGroup->customAttributes($familyGroupMapping->attribute_family_id)->map(function ($attribute) use ($attributeGroup) {
-                $attributeArray = $attribute->toArray();
+        $attributesByGroup = $attributeFamily?->attributeSummariesByGroup($localeCode) ?? collect();
 
-                return [
-                    'id'       => $attributeArray['id'],
-                    'code'     => $attributeArray['code'],
-                    'group_id' => $attributeGroup->id,
-                    'name'     => ! empty($attributeArray['name']) ? $attributeArray['name'] : '['.$attributeArray['code'].']',
-                    'position' => $attributeArray['pivot']['position'] ?? null,
-                    'type'     => $attributeArray['type'],
-                ];
-            })->toArray();
-
-            $attributeGroup = $attributeGroup?->toArray() ?? [];
-
-            return [
-                'id'               => $attributeGroup['id'],
-                'code'             => $attributeGroup['code'],
-                'group_mapping_id' => $familyGroupMapping->id,
-                'name'             => ! empty($attributeGroup['name']) ? $attributeGroup['name'] : '['.$attributeGroup['code'].']',
-                'position'         => $familyGroupMapping->position,
-                'customAttributes' => $customAttributes,
-            ];
-        })->toArray();
+        $familyGroupMappings = $attributeFamily?->groupSummaries($localeCode)->map(fn ($group): array => [
+            'id'               => $group->id,
+            'code'             => $group->code,
+            'group_mapping_id' => $group->group_mapping_id,
+            'name'             => ! empty($group->name) ? $group->name : '['.$group->code.']',
+            'position'         => $group->position,
+            'customAttributes' => $attributesByGroup->get($group->id, collect())->map(fn ($attribute): array => [
+                'id'       => $attribute->id,
+                'code'     => $attribute->code,
+                'group_id' => $group->id,
+                'name'     => ! empty($attribute->name) ? $attribute->name : '['.$attribute->code.']',
+                'position' => $attribute->position,
+                'type'     => $attribute->type,
+            ])->values()->toArray(),
+        ])->values()->toArray();
 
         return [
             'locales'         => $this->localeRepository->getActiveLocales(),
