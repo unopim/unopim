@@ -22,6 +22,7 @@ use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
 use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
 use Webkul\Admin\Traits\AttributeColumnTrait;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeOptionProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
@@ -537,7 +538,81 @@ class ProductController extends Controller
 
         $variantFieldLocks = $this->buildVariantFieldLocks($product);
 
-        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore', 'associationTypes', 'variantTree', 'variantFieldLocks'));
+        $family = $product->attribute_family;
+
+        $lazyGroups = $family->attributeCount() > (int) config('product_editor.lazy_group_threshold');
+
+        $activeGroup = null;
+
+        $groupAttributes = null;
+
+        $groupPage = ['groups' => [], 'total' => 0, 'lastPage' => 1, 'perPage' => (int) config('product_editor.groups_per_page')];
+
+        if ($lazyGroups) {
+            $group = $family->groupSummaryByCode(core()->getRequestedLocaleCode(), request()->query('group'));
+
+            $activeGroup = $group ? [
+                'id'   => (int) $group->id,
+                'code' => $group->code,
+                'name' => ! empty($group->name) ? $group->name : '['.$group->code.']',
+            ] : null;
+
+            $groupAttributes = $activeGroup
+                ? $product->getEditableAttributesForGroup($activeGroup['id'])
+                : collect();
+
+            $groupPage = $this->attributeGroupPage($family, 1, '', $activeGroup['id'] ?? null);
+        }
+
+        return view('admin::catalog.products.edit', compact(
+            'product',
+            'requiredAttributes',
+            'scores',
+            'averageScore',
+            'associationTypes',
+            'variantTree',
+            'variantFieldLocks',
+            'lazyGroups',
+            'activeGroup',
+            'groupAttributes',
+            'groupPage'
+        ));
+    }
+
+    /**
+     * Build one page of a family's attribute groups for the editor sidebar.
+     *
+     * Mirrors {@see AttributeFamilyController::groupPage()} but flags the group
+     * currently being edited, so the sidebar can highlight it without a second
+     * lookup.
+     *
+     * @return array{groups: array, total: int, lastPage: int, perPage: int}
+     */
+    private function attributeGroupPage(
+        AttributeFamily $family,
+        int $page,
+        string $search = '',
+        ?int $activeGroupId = null
+    ): array {
+        $perPage = (int) config('product_editor.groups_per_page');
+
+        $counts = $family->attributeCountsByGroup();
+
+        $result = $family->paginateGroupSummaries(core()->getRequestedLocaleCode(), $page, $perPage, $search);
+
+        return [
+            'groups' => $result['groups']->map(fn ($group): array => [
+                'id'              => (int) $group->id,
+                'code'            => $group->code,
+                'name'            => ! empty($group->name) ? $group->name : '['.$group->code.']',
+                'position'        => (int) $group->position,
+                'attributesCount' => $counts[$group->id] ?? 0,
+                'active'          => $activeGroupId === (int) $group->id,
+            ])->values()->all(),
+            'total'    => $result['total'],
+            'lastPage' => $result['lastPage'],
+            'perPage'  => $perPage,
+        ];
     }
 
     /**
