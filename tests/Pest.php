@@ -53,6 +53,38 @@ uses(ProductPassportTestCase::class)->in('../packages/Webkul/ProductPassport/tes
 
 /*
 |--------------------------------------------------------------------------
+| Test Impact Analysis
+|--------------------------------------------------------------------------
+|
+| Coverage edges only capture executed PHP, so assets that are compiled or read at runtime
+| (Blade views, language files, JS) would otherwise look untouched to TIA. Map each package's
+| non-PHP sources back to its own test directory, and treat schema changes as global.
+|
+*/
+
+$packageTestPaths = array_map(
+    fn (string $path): string => 'packages/Webkul/'.basename(dirname($path)).'/tests',
+    glob(dirname(__DIR__).'/packages/Webkul/*/tests', GLOB_ONLYDIR) ?: [],
+);
+
+foreach ($packageTestPaths as $testPath) {
+    $package = dirname($testPath);
+
+    pest()->tia()->watch([
+        $package.'/src/Resources/views/**'  => $testPath,
+        $package.'/src/Resources/lang/**'   => $testPath,
+        $package.'/src/Resources/assets/**' => $testPath,
+        $package.'/src/Config/**'           => $testPath,
+    ]);
+
+    pest()->tia()->watch([
+        'packages/Webkul/*/src/Database/Migration/**' => $testPath,
+        'database/seeders/**'                         => $testPath,
+    ]);
+}
+
+/*
+|--------------------------------------------------------------------------
 | Expectations
 |--------------------------------------------------------------------------
 |
@@ -92,7 +124,6 @@ function something()
  */
 function seedRequiredProductValues($product)
 {
-    // Every channel, not just the default: the check runs against the channel the request asks for.
     $scoped = Channel::with(['locales', 'currencies'])->get()->mapWithKeys(fn ($channel) => [
         $channel->code => $channel->locales->pluck('code')->mapWithKeys(fn ($locale) => [
             $locale => [

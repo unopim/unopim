@@ -121,7 +121,7 @@ class FindSimilarProducts implements PimTool
 
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap('p.values')), 'af.code as family_code')
                     ->orderByDesc('p.id')
                     ->limit($poolLimit);
 
@@ -236,7 +236,7 @@ class FindSimilarProducts implements PimTool
 
                 $products = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw(DB::getQueryGrammar()->wrap('p.values')), 'af.code as family_code')
                     ->whereIn('p.id', array_keys($scores))
                     ->get()
                     ->keyBy('id');

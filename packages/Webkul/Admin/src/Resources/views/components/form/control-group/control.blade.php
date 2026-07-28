@@ -7,7 +7,7 @@
 @php
     $providedId = $attributes->get('id');
 
-    // Radios share a name, so the value keeps each generated id unique.
+    /** Radios share a name, so the value keeps each generated id unique. */
     $controlId = match (true) {
         (bool) $providedId => unique_form_control_id(form_control_id($providedId), allowSuffix: false),
         'hidden' === $type => '',
@@ -16,7 +16,7 @@
 
     $idAttribute = '' === $controlId ? [] : ['id' => $controlId];
 
-    // Re-emitted from $controlId so the rendered id always matches what labels target.
+    /** Re-emitted from $controlId so the rendered id always matches what labels target. */
     $attributes = $attributes->except(['id']);
 @endphp
 

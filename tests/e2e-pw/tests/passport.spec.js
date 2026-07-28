@@ -129,6 +129,7 @@ test.describe.serial('Digital Product Passport', () => {
 
     const response = await page.goto(`/p/${publicationUuid}/${localeCodes[0]}`, { waitUntil: 'domcontentloaded' });
     expect(response.status()).toBe(200);
-    await expect(page.getByText(/no longer available/i).first()).toBeVisible();
+    await expect(page.locator('.tombstone [role="alert"]').first()).toBeVisible();
+    await expect(page.locator('.card')).toHaveCount(0);
   });
 });

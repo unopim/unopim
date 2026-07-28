@@ -10,9 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  # Pull requests run the impacted subset (pest-impacted); pushes run everything.
   pest:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL)
 
@@ -77,7 +75,6 @@ jobs:
           vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
 
   pest-elasticsearch:
-    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL + Elasticsearch)
 
@@ -164,9 +161,9 @@ jobs:
           vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
           vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
 
-  # Pull-request feedback: Pest's Test Impact Analysis runs only the tests reached
-  # by the changed files. With no cached graph (or a stale one) it falls back to
-  # the whole suite and records a new graph, so a cold cache never under-tests.
+  # Fast pull-request signal alongside the full suites: Pest's Test Impact Analysis
+  # runs only the tests reached by the changed files. With no cached graph (or a
+  # stale one) it falls back to the whole suite and records a new graph.
   pest-impacted:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04

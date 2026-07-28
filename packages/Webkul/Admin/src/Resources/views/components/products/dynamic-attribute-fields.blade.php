@@ -139,7 +139,7 @@
 
     <x-admin::form.control-group>
         <div class="inline-flex justify-between w-full">
-            <x-admin::form.control-group.label :for="$field->code">
+            <x-admin::form.control-group.label :for="form_control_id($fieldName)">
                 {{ $fieldLabel }}
 
                 @if ($field->is_required || $isConfigurableAttribute)

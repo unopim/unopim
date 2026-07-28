@@ -1,6 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 
-// The default family is the one guaranteed to carry configurable attributes on a fresh install.
+/** The default family is the one guaranteed to carry configurable attributes on a fresh install. */
 const FAMILY_ID = 1;
 
 // Editor: common pool on the left, one card per variant level; axes pinned read-only, rest movable.
@@ -24,13 +24,11 @@ async function openFirstStructure(page) {
   // The variants list is a datagrid: its edit action is an icon, not a link.
   const editAction = page.locator('.icon-edit, span[title="Edit"]').first();
 
-  // The list is an async datagrid, so give it a chance to paint before deciding it is empty.
   const listed = await editAction
     .waitFor({ state: 'visible', timeout: 10000 })
     .then(() => true)
     .catch(() => false);
 
-  // Nothing seeds a variant structure, so the suite creates its own on first use.
   if (!listed) {
     await ensureStructure(page);
 
