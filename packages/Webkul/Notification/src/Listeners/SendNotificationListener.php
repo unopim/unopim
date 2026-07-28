@@ -26,11 +26,12 @@ class SendNotificationListener implements ShouldQueue
             return;
         }
 
+        // Username and password are deliberately not required: an internal relay
+        // that accepts unauthenticated mail is a valid configuration, and demanding
+        // credentials silently disabled every notification email on such installs.
         $mailConfigured = Config::get('mail.default') &&
             Config::get('mail.mailers.smtp.host') &&
-            Config::get('mail.mailers.smtp.port') &&
-            Config::get('mail.mailers.smtp.username') &&
-            Config::get('mail.mailers.smtp.password');
+            Config::get('mail.mailers.smtp.port');
 
         $metaData = (object) array_merge(
             ['type' => '', 'code' => ''],

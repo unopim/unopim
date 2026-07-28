@@ -163,11 +163,10 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
             }
         }
 
+        // Credentials are deliberately not required; see SendNotificationListener.
         $mailConfigured = Config::get('mail.default')
             && Config::get('mail.mailers.smtp.host')
-            && Config::get('mail.mailers.smtp.port')
-            && Config::get('mail.mailers.smtp.username')
-            && Config::get('mail.mailers.smtp.password');
+            && Config::get('mail.mailers.smtp.port');
 
         event(new NotificationEvent([
             'type'         => 'completeness',

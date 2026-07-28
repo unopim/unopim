@@ -53,9 +53,13 @@ class CoreConfigRepository extends Repository
                     $value = isset($field['default_value']) && $field['default_value'] !== '' ? $field['default_value'] : '';
                 }
 
-                if (($field['type'] ?? null) === 'password' && preg_match('/^\*+$/', $value)) {
+                // A password field renders as a fixed-length mask, so the mask length
+                // never matches the stored secret. Any all-asterisk value therefore
+                // means "unchanged" and must not overwrite what is already stored.
+                if (($field['type'] ?? null) === 'password' && is_string($value) && preg_match('/^\*+$/', $value)) {
                     $original = core()->getConfigData($fieldName);
-                    if (strlen($value) === strlen((string) $original)) {
+
+                    if (! is_null($original)) {
                         $value = $original;
                     }
                 }

@@ -6,6 +6,7 @@ use Elastic\Elasticsearch\Client as ElasticSearchClient;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -65,6 +66,17 @@ class CoreServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->overrideMailConfiguration();
+
+        // boot() runs once per process, so a long-running queue worker would keep
+        // the mail settings it started with. Re-read them as each job is picked up,
+        // and right after an admin saves the configuration.
+        Event::listen(JobProcessing::class, function (): void {
+            $this->overrideMailConfiguration();
+        });
+
+        Event::listen('core.configuration.save.after', function (): void {
+            $this->overrideMailConfiguration();
+        });
 
         $this->app['router']->pushMiddlewareToGroup('web', EnableDebugForAllowedIps::class);
 
@@ -158,6 +170,10 @@ class CoreServiceProvider extends ServiceProvider
         $encryption = core()->getConfigData($prefix.'mail_encryption');
 
         config([
+            // A host configured in the admin UI is an explicit request to send over
+            // SMTP. Without this the mailer keeps whatever MAIL_MAILER holds, so a
+            // fully configured SMTP mailer is built and then never used.
+            'mail.default'                 => 'smtp',
             'mail.mailers.smtp.host'       => $host,
             'mail.mailers.smtp.port'       => core()->getConfigData($prefix.'mail_port') ?: config('mail.mailers.smtp.port'),
             'mail.mailers.smtp.username'   => core()->getConfigData($prefix.'mail_username') ?: config('mail.mailers.smtp.username'),
