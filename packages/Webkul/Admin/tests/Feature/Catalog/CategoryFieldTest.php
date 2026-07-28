@@ -44,14 +44,14 @@ it('should return the category field datagrid', function () {
     ]);
 });
 
-it('should show validations for code, type and validation fields on creating category field', function () {
+it('should show validations for code and type fields on creating category field', function () {
     $this->loginAsAdmin();
 
     $this->post(route('admin.catalog.category_fields.store'))
         ->assertRedirect()
         ->assertInvalid('code')
         ->assertInvalid('type')
-        ->assertInvalid('validation');
+        ->assertValid('validation');
 });
 
 it('should default status, position and section when they are omitted', function () {
@@ -170,7 +170,7 @@ it('should update the category field successfully', function () {
     ]);
 });
 
-it('should not update the value per locale,type,is_unique and code property in Category Field', function () {
+it('should not update the type and code property in Category Field', function () {
     $this->loginAsAdmin();
 
     $categoryField = CategoryField::factory()->create([
@@ -200,12 +200,11 @@ it('should not update the value per locale,type,is_unique and code property in C
 
     $this->assertDatabaseMissing($this->getFullTableName(CategoryField::class), $updatedData);
 
-    /** It will skip those attributes but update the ones which are not disabled like is_required and labels */
     $this->assertDatabaseHas($this->getFullTableName(CategoryField::class), [
         'code'             => 'test_Category_Field_00_0',
-        'value_per_locale' => 0,
         'type'             => 'text',
-        'is_unique'        => 0,
+        'value_per_locale' => 1,
+        'is_unique'        => 1,
         'is_required'      => 1,
     ]);
 });

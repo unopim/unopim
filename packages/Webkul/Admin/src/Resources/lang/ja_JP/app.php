@@ -76,6 +76,7 @@ return [
             'general'             => '全般',
             'invalid-password'    => '入力した現在のパスワードは正しくありません。',
             'name'                => '名前',
+            'password-whitespace' => 'パスワードはスペースのみで構成することはできません。',
             'password'            => 'パスワード',
             'gravatar-preview'    => 'あなたの Gravatar.com 画像を使用中',
             'profile-image'       => 'プロフィール画像',
@@ -1467,6 +1468,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'インポート処理を開始できませんでした。もう一度お試しください。',
+                'rerun-no-file'     => 'このジョブにはインポートファイルがないため、再実行できません。',
                 'create'            => [
                     'code'                => 'コード',
                     'action'              => 'アクション',
@@ -2152,7 +2154,6 @@ return [
                 'all'            => 'すべて',
                 'back-btn'       => '戻る',
                 'custom'         => 'カスタム',
-                'assign-user'    => 'ユーザーの割り当て',
                 'general'        => '全般',
                 'name'           => '名前',
                 'permissions'    => '権限',
@@ -2164,7 +2165,6 @@ return [
                 'all'                         => 'すべて',
                 'back-btn'                    => '戻る',
                 'custom'                      => 'カスタム',
-                'assign-user'                 => 'ユーザーの割り当て',
                 'general'                     => '全般',
                 'name'                        => '名前',
                 'credentials'                 => '認証情報',

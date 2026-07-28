@@ -76,6 +76,7 @@ return [
             'general'             => 'Tổng quát',
             'invalid-password'    => 'Mật khẩu hiện tại bạn nhập không chính xác.',
             'name'                => 'Tên',
+            'password-whitespace' => 'Mật khẩu không được chỉ chứa khoảng trắng.',
             'password'            => 'Mật khẩu',
             'gravatar-preview'    => 'Đang dùng ảnh Gravatar.com của bạn',
             'profile-image'       => 'Ảnh hồ sơ',
@@ -1467,6 +1468,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Không thể bắt đầu quá trình nhập. Vui lòng thử lại.',
+                'rerun-no-file'     => 'Công việc này không có tệp nhập, vì vậy không thể chạy lại.',
                 'create'            => [
                     'code'                => 'Mã',
                     'action'              => 'Hành động',
@@ -2154,7 +2156,6 @@ return [
                 'all'            => 'Tất cả',
                 'back-btn'       => 'Quay lại',
                 'custom'         => 'Tùy chỉnh',
-                'assign-user'    => 'Gán người dùng',
                 'general'        => 'Chung',
                 'name'           => 'Tên',
                 'permissions'    => 'Quyền hạn',
@@ -2166,7 +2167,6 @@ return [
                 'all'                         => 'Tất cả',
                 'back-btn'                    => 'Quay lại',
                 'custom'                      => 'Tùy chỉnh',
-                'assign-user'                 => 'Gán người dùng',
                 'general'                     => 'Chung',
                 'name'                        => 'Tên',
                 'credentials'                 => 'Chứng chỉ',

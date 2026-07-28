@@ -76,6 +76,7 @@ return [
             'general'             => 'Umum',
             'invalid-password'    => 'Kata sandi saat ini yang Anda masukkan salah.',
             'name'                => 'Nama',
+            'password-whitespace' => 'Kata sandi tidak boleh hanya terdiri dari spasi.',
             'password'            => 'Kata sandi',
             'gravatar-preview'    => 'Menggunakan gambar Gravatar.com Anda',
             'profile-image'       => 'Gambar profil',
@@ -1467,6 +1468,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Gagal memulai proses impor. Silakan coba lagi.',
+                'rerun-no-file'     => 'Pekerjaan ini tidak memiliki file impor, sehingga tidak dapat dijalankan ulang.',
                 'create'            => [
                     'code'                => 'Kode',
                     'action'              => 'Tindakan',
@@ -2152,7 +2154,6 @@ return [
                 'all'            => 'Semua',
                 'back-btn'       => 'Kembali',
                 'custom'         => 'Kebiasaan',
-                'assign-user'    => 'Tetapkan Pengguna',
                 'general'        => 'Umum',
                 'name'           => 'Nama',
                 'permissions'    => 'Izin',
@@ -2164,7 +2165,6 @@ return [
                 'all'                         => 'Semua',
                 'back-btn'                    => 'Kembali',
                 'custom'                      => 'Kebiasaan',
-                'assign-user'                 => 'Tetapkan Pengguna',
                 'general'                     => 'Umum',
                 'name'                        => 'Nama',
                 'credentials'                 => 'Kredensial',

@@ -76,6 +76,7 @@ return [
             'general'             => 'Algemeen',
             'invalid-password'    => 'Het huidige wachtwoord dat je hebt ingevoerd, is onjuist.',
             'name'                => 'Naam',
+            'password-whitespace' => 'Het wachtwoord mag niet alleen uit spaties bestaan.',
             'password'            => 'Wachtwoord',
             'gravatar-preview'    => 'Je Gravatar.com-afbeelding wordt gebruikt',
             'profile-image'       => 'Profielfoto',
@@ -1468,6 +1469,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Het importproces kon niet worden gestart. Probeer het opnieuw.',
+                'rerun-no-file'     => 'Deze taak heeft geen importbestand en kan daarom niet opnieuw worden uitgevoerd.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Actie',
@@ -2154,7 +2156,6 @@ return [
                 'all'            => 'Alle',
                 'back-btn'       => 'Terug',
                 'custom'         => 'Aangepast',
-                'assign-user'    => 'Gebruiker toewijzen',
                 'general'        => 'Algemeen',
                 'name'           => 'Naam',
                 'permissions'    => 'Rechten',
@@ -2166,7 +2167,6 @@ return [
                 'all'                         => 'Alle',
                 'back-btn'                    => 'Terug',
                 'custom'                      => 'Aangepast',
-                'assign-user'                 => 'Gebruiker toewijzen',
                 'general'                     => 'Algemeen',
                 'name'                        => 'Naam',
                 'credentials'                 => 'API-gegevens',

@@ -5,6 +5,7 @@ namespace Webkul\Product\Type;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\AttributeGroup;
 use Webkul\Attribute\Models\Attribute;
@@ -645,6 +646,8 @@ abstract class AbstractType
 
         $copiedProduct->save();
 
+        $this->copyMediaValues($copiedProduct);
+
         if ($copiedProduct->id) {
             $this->syncAssociationLinks($copiedProduct, $values);
         }
@@ -652,6 +655,71 @@ abstract class AbstractType
         $this->copyRelationships($copiedProduct);
 
         return $copiedProduct;
+    }
+
+    protected function copyMediaValues($copiedProduct): void
+    {
+        $mediaCodes = app(AttributeRepository::class)
+            ->whereIn('type', [
+                AttributeTypes::IMAGE_ATTRIBUTE_TYPE,
+                AttributeTypes::FILE_ATTRIBUTE_TYPE,
+                AttributeTypes::GALLERY_ATTRIBUTE_TYPE,
+            ])
+            ->pluck('code')
+            ->all();
+
+        if ($mediaCodes === []) {
+            return;
+        }
+
+        $values = $copiedProduct->values ?? [];
+        $changed = false;
+
+        array_walk_recursive($values, function (&$value, $key) use ($mediaCodes, $copiedProduct, &$changed): void {
+            if (! in_array($key, $mediaCodes, true) || ! is_string($value) || $value === '') {
+                return;
+            }
+
+            $paths = array_filter(array_map(trim(...), explode(',', $value)));
+
+            $copied = [];
+
+            foreach ($paths as $path) {
+                $copied[] = $this->copyMediaFile($path, $copiedProduct->id, $key);
+            }
+
+            $updated = implode(',', $copied);
+
+            if ($updated !== $value) {
+                $value = $updated;
+                $changed = true;
+            }
+        });
+
+        if ($changed) {
+            $copiedProduct->values = $values;
+
+            $copiedProduct->save();
+        }
+    }
+
+    protected function copyMediaFile(string $path, int $productId, string $attributeCode): string
+    {
+        $target = 'product/'.$productId.'/'.$attributeCode.'/'.basename($path);
+
+        if ($path === $target) {
+            return $path;
+        }
+
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($path)) {
+            return $path;
+        }
+
+        $disk->put($target, $disk->get($path));
+
+        return $target;
     }
 
     /**

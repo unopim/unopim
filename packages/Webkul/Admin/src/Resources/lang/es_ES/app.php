@@ -76,6 +76,7 @@ return [
             'general'             => 'General',
             'invalid-password'    => 'La contraseña que acaba de ingresar es incorrecta.',
             'name'                => 'Nombre',
+            'password-whitespace' => 'La contraseña no puede consistir únicamente en espacios.',
             'password'            => 'Contraseña',
             'gravatar-preview'    => 'Usando tu imagen de Gravatar.com',
             'profile-image'       => 'Imagen de perfil',
@@ -1467,6 +1468,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'No se pudo iniciar el proceso de importación. Inténtelo de nuevo.',
+                'rerun-no-file'     => 'Este trabajo no tiene ningún archivo de importación, por lo que no se puede volver a ejecutar.',
                 'create'            => [
                     'code'                => 'Código',
                     'action'              => 'Acción',
@@ -2152,7 +2154,6 @@ return [
                 'all'            => 'Todos',
                 'back-btn'       => 'Atrás',
                 'custom'         => 'Costumbre',
-                'assign-user'    => 'Asignar usuario',
                 'general'        => 'General',
                 'name'           => 'Nombre',
                 'permissions'    => 'Permisos',
@@ -2164,7 +2165,6 @@ return [
                 'all'                         => 'Todos',
                 'back-btn'                    => 'Atrás',
                 'custom'                      => 'Costumbre',
-                'assign-user'                 => 'Asignar usuario',
                 'general'                     => 'General',
                 'name'                        => 'Nombre',
                 'credentials'                 => 'Cartas credenciales',

@@ -1,5 +1,7 @@
 <?php
 
+$cacheBypass = __DIR__.'/../bootstrap/cache/never-cached-in-tests.php';
+
 /**
  * The container exports its own values from .env, and PHPUnit's <env> entries do
  * not win over them once Dotenv has loaded. Booting the suite as "local" makes
@@ -11,6 +13,8 @@
 $overrides = [
     'APP_ENV'           => 'testing',
     'APP_DEBUG'         => 'true',
+    'APP_CONFIG_CACHE'  => $cacheBypass,
+    'APP_ROUTES_CACHE'  => $cacheBypass,
     'BCRYPT_ROUNDS'     => '4',
     'CACHE_STORE'       => 'array',
     'CACHE_DRIVER'      => 'array',

@@ -76,6 +76,7 @@ return [
             'general'             => 'Yleinen',
             'invalid-password'    => 'Nykyinen salasana on virheellinen.',
             'name'                => 'Nimi',
+            'password-whitespace' => 'Salasana ei voi koostua pelkistä välilyönneistä.',
             'password'            => 'Salasana',
             'gravatar-preview'    => 'Käytetään Gravatar.com-kuvaasi',
             'profile-image'       => 'Profiilikuva',
@@ -1467,6 +1468,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Tuontiprosessin käynnistäminen epäonnistui. Yritä uudelleen.',
+                'rerun-no-file'     => 'Tällä työllä ei ole tuontitiedostoa, joten sitä ei voida ajaa uudelleen.',
                 'create'            => [
                     'code'                => 'Koodi',
                     'action'              => 'Toiminto',
@@ -2152,7 +2154,6 @@ return [
                 'all'            => 'Kaikki',
                 'back-btn'       => 'Takaisin',
                 'custom'         => 'Mukautettu',
-                'assign-user'    => 'Määritä käyttäjä',
                 'general'        => 'Yleinen',
                 'name'           => 'Nimi',
                 'permissions'    => 'Oikeudet',
@@ -2164,7 +2165,6 @@ return [
                 'all'                         => 'Kaikki',
                 'back-btn'                    => 'Takaisin',
                 'custom'                      => 'Mukautettu',
-                'assign-user'                 => 'Määritä käyttäjä',
                 'general'                     => 'Yleinen',
                 'name'                        => 'Nimi',
                 'credentials'                 => 'Tunnistetiedot',

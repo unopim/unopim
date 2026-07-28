@@ -4,9 +4,10 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Webkul\Category\Repositories\CategoryFieldRepository;
+use Webkul\Category\Rules\CategoryFieldValidationRules;
 use Webkul\Category\Rules\FieldTypes;
 use Webkul\Category\Rules\NotSupportedFields;
-use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
 class CategoryFieldForm extends FormRequest
@@ -19,20 +20,28 @@ class CategoryFieldForm extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('validation')) {
+            $this->merge(['validation' => CategoryFieldValidationRules::normalize($this->input('validation'))]);
+        }
+    }
+
     /**
      * Get the validation rules that apply to the request.
      *
      * Constrains type/validation/section to their allowed sets so the admin form
      * matches the API's guarantees and cannot persist an unknown field type.
      *
-     * Every column the model declares fillable is covered here, because the
-     * controller persists the raw request rather than the validated subset.
-     *
      * @return array<string, mixed>
      */
     public function rules(): array
     {
         $id = $this->route('id');
+
+        $type = $id
+            ? (app(CategoryFieldRepository::class)->find($id)?->type ?? $this->input('type'))
+            : $this->input('type');
 
         $rules = [
             'code'             => ['required', Rule::unique('category_fields', 'code')->ignore($id), new Code, new NotSupportedFields],
@@ -42,21 +51,10 @@ class CategoryFieldForm extends FormRequest
             'position'         => ['sometimes', 'integer', 'min:0'],
             'enable_wysiwyg'   => ['sometimes', 'boolean'],
             'is_required'      => ['sometimes', 'boolean'],
-            'is_unique'        => ['sometimes', 'boolean'],
+            'is_unique'        => CategoryFieldValidationRules::uniqueFlagRules($type),
             'value_per_locale' => ['sometimes', 'boolean'],
-            'regex_pattern'    => ['sometimes', 'nullable', 'string', 'max:191'],
         ];
 
-        // Create requires a validation choice; update leaves it untouched. In both
-        // cases a concrete rule (other than the 'none' sentinel) is enum-checked.
-        if (! $id) {
-            $rules['validation'] = ['required'];
-        }
-
-        if ($this->filled('validation') && $this->input('validation') !== 'none') {
-            $rules['validation'][] = new ValidationTypes;
-        }
-
-        return $rules;
+        return $rules + CategoryFieldValidationRules::for($type, $this->input('validation'));
     }
 }

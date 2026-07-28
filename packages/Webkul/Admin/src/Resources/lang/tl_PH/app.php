@@ -76,6 +76,7 @@ return [
             'general'             => 'Pangkalahatan',
             'invalid-password'    => 'Ang kasalukuyang password na iyong ipinasok ay mali.',
             'name'                => 'Pangalan',
+            'password-whitespace' => 'Ang password ay hindi maaaring binubuo lamang ng mga espasyo.',
             'password'            => 'Password',
             'gravatar-preview'    => 'Ginagamit ang iyong larawan sa Gravatar.com',
             'profile-image'       => 'Larawan ng Profile',
@@ -1467,6 +1468,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Hindi masimulan ang proseso ng pag-import. Pakisubukan muli.',
+                'rerun-no-file'     => 'Ang trabahong ito ay walang import file, kaya hindi ito maaaring i-rerun.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Aksyon',
@@ -2154,7 +2156,6 @@ return [
                 'all'            => 'Lahat',
                 'back-btn'       => 'Bumalik',
                 'custom'         => 'Pasadya',
-                'assign-user'    => 'Mag-assign ng Tagagamit',
                 'general'        => 'Pangkalahatan',
                 'name'           => 'Pangalan',
                 'permissions'    => 'Mga Pagpapahintulot',
@@ -2166,7 +2167,6 @@ return [
                 'all'                         => 'Lahat',
                 'back-btn'                    => 'Bumalik',
                 'custom'                      => 'Pasadya',
-                'assign-user'                 => 'Mag-assign ng Tagagamit',
                 'general'                     => 'Pangkalahatan',
                 'name'                        => 'Pangalan',
                 'credentials'                 => 'Mga Kredensyal',

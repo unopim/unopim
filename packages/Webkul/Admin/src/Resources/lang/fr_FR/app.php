@@ -76,6 +76,7 @@ return [
             'general'             => 'Général',
             'invalid-password'    => 'Le mot de passe actuel que vous avez saisi est incorrect.',
             'name'                => 'Nom',
+            'password-whitespace' => 'Le mot de passe ne peut pas être composé uniquement d\'espaces.',
             'password'            => 'Mot de passe',
             'gravatar-preview'    => 'Utilisation de votre image Gravatar.com',
             'profile-image'       => 'Image de profil',
@@ -1467,6 +1468,7 @@ return [
             ],
             'imports' => [
                 'import-start-fail' => 'Échec du démarrage du processus d\'importation. Veuillez réessayer.',
+                'rerun-no-file'     => 'Cette tâche n\'a pas de fichier d\'importation, elle ne peut donc pas être relancée.',
                 'create'            => [
                     'code'                => 'Code',
                     'action'              => 'Action',
@@ -2151,7 +2153,6 @@ return [
                 'all'            => 'Tous',
                 'back-btn'       => 'Retour',
                 'custom'         => 'Personnalisé',
-                'assign-user'    => 'Affecter l\'utilisateur',
                 'general'        => 'Général',
                 'name'           => 'Nom',
                 'permissions'    => 'Autorisation',
@@ -2163,7 +2164,6 @@ return [
                 'all'                         => 'Tous',
                 'back-btn'                    => 'Retour',
                 'custom'                      => 'Personnalisé',
-                'assign-user'                 => 'Affecter l\'utilisateur',
                 'general'                     => 'Général',
                 'name'                        => 'Nom',
                 'credentials'                 => 'Informations d\'identification',
