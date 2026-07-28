@@ -37,9 +37,9 @@
         method="{{ $method === 'GET' ? 'GET' : 'POST' }}"
         :initial-errors="{{ json_encode($errors->getMessages()) }}"
         v-slot="{ meta, errors, setValues }"
-        @invalid-submit="onInvalidSubmit"
+        @invalid-submit="$root.onInvalidSubmit"
         @if ($isAjax)
-            @submit="onAjaxSubmit"
+            @submit="$root.onAjaxSubmit"
             data-ajax-form="true"
             data-ajax-error-message="{{ trans('admin::app.components.form.ajax-error') }}"
         @endif
