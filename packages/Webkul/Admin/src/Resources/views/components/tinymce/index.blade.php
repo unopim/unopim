@@ -329,6 +329,8 @@
             },
 
             beforeUnmount() {
+                window.tinymce?.get(this.selector.replace('textarea#', ''))?.destroy();
+
                 if (this.changeThemeHandler) {
                     this.$emitter.off('change-theme', this.changeThemeHandler);
                 }
