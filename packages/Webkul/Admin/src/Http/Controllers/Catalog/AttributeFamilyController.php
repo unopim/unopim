@@ -482,6 +482,15 @@ class AttributeFamilyController extends Controller
             }
         }
 
+        $previousSnapshot = $this->variantStructureSnapshot(
+            empty($structureData['id'])
+                ? null
+                : VariantStructure::query()
+                    ->with(['axes.attribute', 'placements.attribute'])
+                    ->where('attribute_family_id', $attributeFamily->id)
+                    ->find($structureData['id'])
+        );
+
         $structure = DB::transaction(function () use ($attributeFamily, $structureData, $familyAttributes, $levels) {
             $structure = ! empty($structureData['id'])
                 ? VariantStructure::query()
@@ -536,6 +545,14 @@ class AttributeFamilyController extends Controller
             return $structure;
         });
 
+        Event::dispatch('core.model.proxy.sync.VariantStructure', [
+            'old_values' => $previousSnapshot,
+            'new_values' => $this->variantStructureSnapshot(
+                VariantStructure::query()->with(['axes.attribute', 'placements.attribute'])->find($structure->id)
+            ),
+            'model'      => $structure,
+        ]);
+
         return new JsonResponse([
             'message' => trans('admin::app.catalog.families.edit.variant-saved'),
             'data'    => $this->variantStructuresPayload($attributeFamily, $structure->id)[0] ?? null,
@@ -549,14 +566,64 @@ class AttributeFamilyController extends Controller
     {
         $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
 
-        VariantStructure::query()
+        $structure = VariantStructure::query()
+            ->with(['axes.attribute', 'placements.attribute'])
             ->where('attribute_family_id', $attributeFamily->id)
-            ->where('id', $structureId)
-            ->delete();
+            ->find($structureId);
+
+        if ($structure instanceof VariantStructure) {
+            $snapshot = $this->variantStructureSnapshot($structure);
+
+            $structure->delete();
+
+            Event::dispatch('core.model.proxy.sync.VariantStructure', [
+                'old_values' => $snapshot,
+                'new_values' => [],
+                'model'      => $structure,
+            ]);
+        }
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.families.delete-success'),
         ]);
+    }
+
+    /**
+     * Readable snapshot of a variant structure, used for the family history diff.
+     */
+    protected function variantStructureSnapshot(?VariantStructure $structure): array
+    {
+        if (! $structure instanceof VariantStructure) {
+            return [];
+        }
+
+        $snapshot = [
+            'code'   => $structure->code,
+            'name'   => $structure->name,
+            'levels' => (string) $structure->levels,
+        ];
+
+        $grouped = [];
+
+        foreach ($structure->axes as $axis) {
+            if ($axis->attribute?->code) {
+                $grouped['axes_'.$axis->level][] = $axis->attribute->code;
+            }
+        }
+
+        foreach ($structure->placements as $placement) {
+            if ($placement->attribute?->code) {
+                $grouped['attributes_'.$placement->level][] = $placement->attribute->code;
+            }
+        }
+
+        foreach ($grouped as $key => $codes) {
+            sort($codes);
+
+            $snapshot[$key] = implode(', ', $codes);
+        }
+
+        return $snapshot;
     }
 
     /**

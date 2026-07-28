@@ -37,6 +37,7 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
     protected $historyProxyFields = [
         'attribute_family_group_mappings',
         'attribute_group_mappings',
+        'variant_structures',
     ];
 
     protected $auditInclude = [
