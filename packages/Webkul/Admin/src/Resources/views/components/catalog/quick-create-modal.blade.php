@@ -199,7 +199,7 @@
 
                         <label
                             class="text-xs text-gray-600 dark:text-gray-300 font-medium cursor-pointer"
-                            for="{{ $toggle['name'] }}"
+                            for="{{ form_control_id($toggle['name']) }}"
                             @if (! empty($toggle['hint'])) title="{{ $toggle['hint'] }}" @endif
                         >
                             {{ $toggle['label'] }}
