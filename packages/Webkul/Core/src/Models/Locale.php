@@ -33,6 +33,13 @@ class Locale extends Model implements HistoryAuditable, LocaleContract
      */
     protected array $historyTags = ['locale'];
 
+    protected function casts(): array
+    {
+        return [
+            'status' => 'integer',
+        ];
+    }
+
     /**
      * Create a new factory instance for the model.
      */

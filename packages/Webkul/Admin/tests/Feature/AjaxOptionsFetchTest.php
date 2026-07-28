@@ -51,7 +51,12 @@ it('formats an options page without an N+1 translation load', function () {
         return $queries;
     };
 
+    $countFor(5);
+
+    $small = $countFor(5);
+    $large = $countFor(40);
+
     // Eager loading makes the query count independent of page size. Under the old
     // lazy-per-row behaviour a 40-row page would fire ~35 more queries than a 5-row page.
-    expect($countFor(40) - $countFor(5))->toBeLessThanOrEqual(2);
+    expect($large - $small)->toBeLessThanOrEqual(2);
 });

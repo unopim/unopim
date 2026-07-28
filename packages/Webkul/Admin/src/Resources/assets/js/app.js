@@ -260,6 +260,24 @@ import initAjaxNavigation from "./plugins/navigation";
 function createAdminApp() {
     const app = createApp(appOptions);
 
+    const registerComponent = app.component.bind(app);
+
+    app.component = (name, definition) => {
+        if (definition === undefined) {
+            return registerComponent(name);
+        }
+
+        if (typeof definition?.template === "string" && definition.template.startsWith("#")) {
+            const element = document.querySelector(definition.template);
+
+            if (element) {
+                definition = { ...definition, template: element.innerHTML };
+            }
+        }
+
+        return registerComponent(name, definition);
+    };
+
     [
         Admin,
         Axios,

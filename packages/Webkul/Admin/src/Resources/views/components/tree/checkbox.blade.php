@@ -10,6 +10,7 @@
                 :value="value"
                 :id="id"
                 class="hidden peer"
+                data-unsaved-managed
                 :checked="isActive"
                 @change="inputChanged()"
             >

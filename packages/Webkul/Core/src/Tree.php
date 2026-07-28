@@ -20,6 +20,8 @@ class Tree
      */
     public $roles = [];
 
+    public array $alternateRoles = [];
+
     /**
      * Contains current item route
      *
@@ -84,6 +86,10 @@ class Tree
              */
             if (! empty($item['route'])) {
                 $this->roles[$item['route']] = $item['key'];
+            }
+
+            foreach ($item['also_authorizes'] ?? [] as $route) {
+                $this->alternateRoles[$route][] = $item['key'];
             }
         }
 
