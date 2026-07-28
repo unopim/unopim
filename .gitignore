@@ -32,7 +32,6 @@ yarn-error.log
 .playwright-mcp/
 /.state/
 tests/e2e-pw/.state/
-tests/e2e-pw/.route-perf.json
 tests/e2e-pw/playwright-report/
 tests/e2e-pw/test-results/
 test-results
