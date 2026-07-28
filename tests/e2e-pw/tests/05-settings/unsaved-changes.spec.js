@@ -165,7 +165,6 @@ test.describe('Unsaved changes bar', () => {
     const confirm = adminPage.getByText('Leave this page?', { exact: false });
     await expect(confirm).toBeVisible({ timeout: 5000 });
 
-    // The regression: the modal used to flash and vanish while navigation continued.
     await adminPage.waitForTimeout(2000);
     await expect(confirm).toBeVisible();
     expect(adminPage.url()).toBe(urlBefore);
