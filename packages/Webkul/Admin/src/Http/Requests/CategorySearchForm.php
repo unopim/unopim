@@ -24,9 +24,21 @@ class CategorySearchForm extends FormRequest
     public function rules(): array
     {
         return [
-            'query'  => ['nullable', 'string', 'max:255'],
-            'page'   => ['nullable', 'integer', 'min:'.CategoryRepository::DEFAULT_PAGE],
-            'locale' => ['nullable', 'string', Rule::exists('locales', 'code')],
+            'query'   => ['nullable', 'string', 'max:255'],
+            'codes'   => ['nullable', 'array'],
+            'codes.*' => ['string'],
+            'page'    => ['nullable', 'integer', 'min:'.CategoryRepository::DEFAULT_PAGE],
+            'locale'  => ['nullable', 'string', Rule::exists('locales', 'code')],
         ];
+    }
+
+    /**
+     * Codes the result set is restricted to, used to list an existing selection.
+     *
+     * @return string[]
+     */
+    public function codes(): array
+    {
+        return array_values(array_unique(array_filter((array) $this->validated('codes', []), 'is_string')));
     }
 }

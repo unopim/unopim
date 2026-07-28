@@ -341,6 +341,10 @@ class CategoryController extends Controller
 
         $query = $this->categoryRepository->getModel()->newQuery();
 
+        if ($codes = $request->codes()) {
+            $query->whereIn('code', $codes);
+        }
+
         if ($searchQuery !== '') {
             $query->where(function ($builder) use ($searchQuery, $locale) {
                 $builder->where('additional_data->locale_specific->'.$locale.'->name', 'LIKE', '%'.$searchQuery.'%')

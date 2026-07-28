@@ -145,6 +145,38 @@ it('caps the number of children a single request may pull', function () {
     ]))->assertStatus(422);
 });
 
+it('lists an existing selection by code so the picker can show what is assigned', function () {
+    $this->loginAsAdmin();
+
+    [, , $leaves] = makeTreeFixture();
+
+    $codes = $leaves->take(2)->pluck('code')->all();
+
+    $response = $this->json('GET', route('admin.catalog.categories.search', [
+        'codes'  => $codes,
+        'locale' => 'en_US',
+    ]));
+
+    $response->assertStatus(200);
+
+    expect(collect($response->json('data'))->pluck('code')->all())->toEqualCanonicalizing($codes)
+        ->and($response->json('data.0.path'))->toBe('Tree Root / Branch / Leaf 1');
+});
+
+it('searches within the given codes when both a term and codes are sent', function () {
+    $this->loginAsAdmin();
+
+    [, , $leaves] = makeTreeFixture();
+
+    $response = $this->json('GET', route('admin.catalog.categories.search', [
+        'codes'  => $leaves->take(2)->pluck('code')->all(),
+        'query'  => 'Leaf 2',
+        'locale' => 'en_US',
+    ]));
+
+    expect(collect($response->json('data'))->pluck('code')->all())->toBe([$leaves[1]->code]);
+});
+
 it('returns the breadcrumb of every search hit so identical names stay distinguishable', function () {
     $this->loginAsAdmin();
 
