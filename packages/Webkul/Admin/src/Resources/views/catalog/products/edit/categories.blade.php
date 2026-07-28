@@ -17,7 +17,10 @@
     <!-- Panel Content -->
     <div class="mb-5 text-sm text-gray-600 dark:text-gray-300 max-h-[400px] overflow-y-auto">
 
-        <v-product-categories>
+        <v-product-categories
+            :product-categories='@json($productCategories)'
+            locale="{{ $currentLocaleCode }}"
+        >
             <x-admin::shimmer.tree />
         </v-product-categories>
 
@@ -46,7 +49,7 @@
                     id-field="code"
                     value-field="code"
                     ::items="categories"
-                    :value="json_encode($productCategories)"
+                    ::value="productCategories"
                     ::expanded-branch="selectedCategoryTree"
                     :fallback-locale="config('app.fallback_locale')"
                 >
@@ -58,6 +61,18 @@
     <script type="module">
         app.component('v-product-categories', {
             template: '#v-product-categories-template',
+
+            props: {
+                productCategories: {
+                    type: Array,
+                    default: () => ([]),
+                },
+
+                locale: {
+                    type: String,
+                    default: '',
+                },
+            },
 
             data() {
                 return {
@@ -76,8 +91,8 @@
             methods: {
                 get() {
                     this.$axios.post("{{ route('admin.catalog.categories.tree') }}", {
-                        locale: "{{ $currentLocaleCode }}",
-                        selected: @json($productCategories),
+                        locale: this.locale,
+                        selected: this.productCategories,
                     })
                     .then(response => {
                         this.isLoading = false;
