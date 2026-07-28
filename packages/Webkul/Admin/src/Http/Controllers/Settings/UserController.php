@@ -4,6 +4,7 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -41,7 +42,7 @@ class UserController extends Controller
             return app(UserDataGrid::class)->toJson();
         }
 
-        $roles = $this->roleRepository->all();
+        $roles = $this->assignableRoles();
 
         return view('admin::settings.users.index', compact('roles'));
     }
@@ -55,21 +56,50 @@ class UserController extends Controller
      */
     protected function cannotAssignRole(?Role $targetRole): bool
     {
+        return $this->roleAssignmentError($targetRole) !== null;
+    }
+
+    /**
+     * Translation key describing why the acting admin may not assign the given
+     * role, or null when the assignment is allowed. The two refusals have
+     * different causes and must not share one message.
+     */
+    protected function roleAssignmentError(?Role $targetRole): ?string
+    {
         if (! $targetRole) {
-            return false;
+            return null;
         }
 
         $actingRole = auth()->guard('admin')->user()->role;
 
         if ($actingRole->permission_type === 'all') {
-            return false;
+            return null;
         }
 
         if ($targetRole->permission_type === 'all') {
-            return true;
+            return 'admin::app.settings.users.cannot-escalate-role';
         }
 
-        return (bool) array_diff($targetRole->permissions ?? [], $actingRole->permissions ?? []);
+        if (array_diff($targetRole->permissions ?? [], $actingRole->permissions ?? [])) {
+            return 'admin::app.settings.users.cannot-assign-unheld-permissions';
+        }
+
+        return null;
+    }
+
+    /**
+     * Roles the acting admin may actually assign. The store and update paths
+     * refuse anything outside this set, so offering the rest in the UI only
+     * produces a guaranteed failure. Pass a role id to keep an existing
+     * assignment visible even when the acting admin could not have made it.
+     *
+     * @return Collection<int, Role>
+     */
+    protected function assignableRoles(?int $keepRoleId = null)
+    {
+        return $this->roleRepository->all()
+            ->filter(fn ($role): bool => (int) $role->id === $keepRoleId || ! $this->cannotAssignRole($role))
+            ->values();
     }
 
     /**
@@ -90,9 +120,9 @@ class UserController extends Controller
             'timezone',
         ]);
 
-        if ($this->cannotAssignRole($this->roleRepository->find($data['role_id']))) {
+        if ($error = $this->roleAssignmentError($this->roleRepository->find($data['role_id']))) {
             return new JsonResponse([
-                'message' => trans('admin::app.settings.users.cannot-escalate-role'),
+                'message' => trans($error),
             ], JsonResponse::HTTP_FORBIDDEN);
         }
 
@@ -122,10 +152,13 @@ class UserController extends Controller
 
         Event::dispatch('user.admin.create.after', $admin);
 
-        return new JsonResponse([
-            'message'      => trans('admin::app.settings.users.create-success'),
-            'redirect_url' => route('admin.settings.users.edit', $admin->id),
-        ]);
+        $response = ['message' => trans('admin::app.settings.users.create-success')];
+
+        if (bouncer()->hasPermission('settings.users.users.edit')) {
+            $response['redirect_url'] = route('admin.settings.users.edit', $admin->id);
+        }
+
+        return new JsonResponse($response);
     }
 
     /**
@@ -141,7 +174,7 @@ class UserController extends Controller
             abort(404);
         }
 
-        $roles = $this->roleRepository->all();
+        $roles = $this->assignableRoles((int) $user->role_id);
 
         $timezone = ['id' => $user?->timezone, 'label' => $user?->timezone];
 
