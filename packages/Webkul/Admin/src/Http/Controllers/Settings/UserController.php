@@ -358,7 +358,7 @@ class UserController extends Controller
         /**
          * Is user with `permission_type` all changed status.
          */
-        $data['status'] = isset($data['status']);
+        $data['status'] = filter_var($data['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
 
         $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
 
