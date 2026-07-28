@@ -135,6 +135,72 @@ test.describe('Unsaved changes bar', () => {
     expect(nativeDialog).toBe(false);
   });
 
+  /**
+   * Reaching the tracked page through SPA navigation is the case the other specs
+   * miss: they use page.goto, a hard load, where the guard happens to bind before
+   * the SPA navigator. Entering from a page that has no tracked form installs the
+   * guard second, and the confirm used to be destroyed mid-transition while the
+   * unapproved navigation completed anyway.
+   */
+  test('confirm survives when the tracked page was entered via SPA navigation', async ({ adminPage }) => {
+    let nativeDialog = false;
+    adminPage.on('dialog', async (d) => { nativeDialog = true; await d.dismiss().catch(() => {}); });
+
+    await adminPage.goto('/admin/dashboard', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+
+    await adminPage.locator('a[href$="/admin/configuration/system"]').first().click({ timeout: 15000 });
+    await adminPage.locator('a[href$="/admin/configuration/system/system.email"]').first().click({ timeout: 15000 });
+
+    const field = firstField(adminPage);
+    await field.waitFor({ state: 'visible', timeout: 15000 });
+    const original = await field.inputValue();
+
+    await field.fill(original + 'X');
+    await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
+
+    const urlBefore = adminPage.url();
+
+    await adminPage.locator('a[href$="/admin/dashboard"]').first().click({ timeout: 5000 });
+
+    const confirm = adminPage.getByText('Leave this page?', { exact: false });
+    await expect(confirm).toBeVisible({ timeout: 5000 });
+
+    // The regression: the modal used to flash and vanish while navigation continued.
+    await adminPage.waitForTimeout(2000);
+    await expect(confirm).toBeVisible();
+    expect(adminPage.url()).toBe(urlBefore);
+
+    await adminPage.getByRole('button', { name: 'Stay on page' }).click();
+    await expect(confirm).toBeHidden();
+    expect(adminPage.url()).toBe(urlBefore);
+    await expect(field).toHaveValue(original + 'X');
+    expect(nativeDialog).toBe(false);
+
+    await adminPage.getByRole('button', { name: 'Discard' }).click();
+    await adminPage.locator('button.danger-button').first().click().catch(() => {});
+  });
+
+  test('a successful save redirect does not raise a spurious unsaved prompt', async ({ adminPage }) => {
+    await gotoSettings(adminPage);
+
+    const field = firstField(adminPage);
+    await field.waitFor({ state: 'visible', timeout: 15000 });
+    const original = await field.inputValue();
+
+    await field.fill(original + 'Q');
+    await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
+
+    await clickSave(adminPage, 'Save changes');
+    await adminPage.waitForLoadState('networkidle').catch(() => {});
+
+    await expect(adminPage.getByText('Leave this page?', { exact: false })).toBeHidden();
+
+    await gotoSettings(adminPage);
+    await firstField(adminPage).fill(original);
+    await clickSave(adminPage, 'Save changes');
+    await adminPage.waitForLoadState('networkidle').catch(() => {});
+  });
+
   test('navigating away while dirty registers a beforeunload guard', async ({ adminPage }) => {
     await gotoSettings(adminPage);
 

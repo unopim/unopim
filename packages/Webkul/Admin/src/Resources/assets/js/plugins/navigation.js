@@ -7,8 +7,23 @@ export default function initAjaxNavigation() {
 
     window.__ajaxNavInitialised = true;
 
+    const navigationGuards = [];
+
+    let navigating = false;
+
     window.unopim = window.unopim || {};
     window.unopim.visit = (url) => visit(url, true);
+
+    /**
+     * Register a callback that can veto a navigation by resolving to false.
+     * Consulted inside visit(), so link clicks, programmatic $navigate calls and
+     * history changes are all covered regardless of listener registration order.
+     */
+    window.unopim.registerNavigationGuard = (guard) => {
+        if (typeof guard === 'function' && ! navigationGuards.includes(guard)) {
+            navigationGuards.push(guard);
+        }
+    };
 
     document.addEventListener('click', onDocumentClick, true);
 
@@ -74,6 +89,42 @@ export default function initAjaxNavigation() {
     }
 
     async function visit(url, push) {
+        if (navigating) {
+            return;
+        }
+
+        navigating = true;
+
+        try {
+            if (! (await guardsAllow(url))) {
+                return;
+            }
+
+            await performVisit(url, push);
+        } finally {
+            navigating = false;
+        }
+    }
+
+    /**
+     * A guard that throws is treated as "allow": navigation is core to the admin
+     * and must never be bricked by a faulty guard.
+     */
+    async function guardsAllow(url) {
+        for (const guard of navigationGuards) {
+            try {
+                if ((await guard(url)) === false) {
+                    return false;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        return true;
+    }
+
+    async function performVisit(url, push) {
         const before = dispatch(NAV_EVENTS.BEFORE, { url }, true);
 
         if (before.defaultPrevented) {

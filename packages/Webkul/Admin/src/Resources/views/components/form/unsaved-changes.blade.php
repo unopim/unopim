@@ -573,10 +573,9 @@
 
         /*
          * Internal-navigation guard (installed once). While any tracked form is dirty,
-         * clicking an in-app link (sidebar menu, Edit, breadcrumbs) opens a styled
-         * confirm instead of silently reloading. Fail-open: new-tab, download, external,
-         * hash, and non-link clicks navigate normally. Native beforeunload still covers
-         * tab-close / hard reload.
+         * navigating within the admin opens a styled confirm and waits for the answer
+         * before the navigation proceeds. Native beforeunload still covers tab-close
+         * and hard reload.
          */
         if (! window.__unsavedNavGuardInstalled) {
             window.__unsavedNavGuardInstalled = true;
@@ -588,9 +587,7 @@
                 leave:   "@lang('admin::app.components.form.unsaved-changes.leave')",
             };
 
-            const showUnsavedNavModal = (href) => {
-                // Reuse UnoPim's shared confirm modal so the leave-page prompt matches
-                // every other confirmation in the app.
+            const confirmLeave = () => new Promise((resolve) => {
                 window.app.config.globalProperties.$emitter.emit('open-confirm-modal', {
                     title: unsavedNavStrings.title,
                     message: unsavedNavStrings.message,
@@ -601,54 +598,41 @@
                         btnDisagreeClass: 'transparent-button',
                     },
                     agree: () => {
+                        window.__unsavedBarCount = 0;
                         window.__unsavedNavBypass = true;
-                        window.location.href = href;
+
+                        resolve(true);
                     },
+                    disagree: () => resolve(false),
                 });
+            });
+
+            /**
+             * Registered with the SPA navigator rather than bound as a second
+             * document click listener. The navigator awaits this before fetching, so
+             * the prompt can no longer be destroyed mid-transition by the very
+             * navigation it was meant to hold back, and programmatic $navigate calls
+             * are covered too.
+             */
+            const unsavedNavGuard = () => {
+                window.__unsavedNavBypass = false;
+
+                if (! (window.__unsavedBarCount > 0)) {
+                    return true;
+                }
+
+                return confirmLeave();
             };
 
-            document.addEventListener('click', (event) => {
-                if (! (window.__unsavedBarCount > 0)) {
-                    return;
+            const installUnsavedNavGuard = () => {
+                if (window.unopim && typeof window.unopim.registerNavigationGuard === 'function') {
+                    window.unopim.registerNavigationGuard(unsavedNavGuard);
                 }
+            };
 
-                const link = event.target.closest ? event.target.closest('a[href]') : null;
+            installUnsavedNavGuard();
 
-                if (! link) {
-                    return;
-                }
-
-                const raw = link.getAttribute('href') || '';
-
-                if (! raw || raw[0] === '#' || /^(javascript|mailto|tel):/i.test(raw)) {
-                    return;
-                }
-
-                if ((link.target && link.target !== '_self') || link.hasAttribute('download')) {
-                    return;
-                }
-
-                if (link.closest('.unsaved-bar') || link.closest('#unsaved-nav-modal')) {
-                    return;
-                }
-
-                let url;
-
-                try {
-                    url = new URL(link.href, window.location.href);
-                } catch (e) {
-                    return;
-                }
-
-                if (url.origin !== window.location.origin || url.href === window.location.href) {
-                    return;
-                }
-
-                event.preventDefault();
-                event.stopPropagation();
-
-                showUnsavedNavModal(url.href);
-            }, true);
+            window.addEventListener('load', installUnsavedNavGuard, { once: true });
         }
     </script>
 @endPushOnce
