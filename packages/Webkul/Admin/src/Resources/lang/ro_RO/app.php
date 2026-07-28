@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navigare produs',
                 'preview'    => 'Previzualizează',
                 'remove'     => 'Elimină',
                 'save-btn'   => 'Salvează produs',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Categorii',
                     'root-not-allowed' => 'Categoria rădăcină nu poate fi atribuită unui produs.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grup de atribute:',
+                    'title'              => 'Grupuri de atribute',
+                    'search-placeholder' => 'Caută grupuri',
+                    'empty'              => 'Niciun grup de atribute nu corespunde căutării tale.',
+                    'attributes-count'   => ':count atribute',
+                    'loading'            => 'Se încarcă...',
+                    'retry'              => 'Reîncearcă',
+                    'load-more'          => 'Încarcă mai multe',
+                    'unsaved-title'      => 'Modificări nesalvate',
+                    'unsaved-message'    => 'Salvează modificările din :group înainte de a continua sau renunță la ele.',
+                    'save-and-continue'  => 'Salvează și continuă',
+                    'discard-and-leave'  => 'Renunță și continuă',
+                    'cancel'             => 'Anulează',
                 ],
                 'images' => [
                     'info'  => 'Imaginile trebuie să aibă o rezoluție de 560px X 609px',
@@ -1083,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Limbă',
                 'level-parent'                     => 'Produs părinte',
                 'level-sub-parent'                 => 'Sub-părinte',
                 'level-variant'                    => 'Variantă',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Extinde',
+            'collapse' => 'Restrânge',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Adaugă',
+                'already-added'      => 'Adăugat',
                 'empty-info'         => 'Încearcă o altă căutare.',
                 'empty-title'        => 'Nu s-a găsit niciun tip de asociere',
                 'search-placeholder' => 'Caută după nume sau cod',
+                'select-all'         => 'Selectează tot',
                 'title'              => 'Adaugă tip de asociere',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Închide',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled din :total traduse',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Niciun rezultat',
+                'search' => 'Caută',
+            ],
             'ajax-error'      => 'A apărut o eroare la salvare. Vă rugăm să încercați din nou.',
             'file-uploader'   => [
                 'upload-cta'  => 'Faceți clic pentru a încărca',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Restrânge panoul',
+                'expand'   => 'Extinde panoul',
+            ],
             'breadcrumbs' => [
                 'label' => 'Cale de navigare',
             ],

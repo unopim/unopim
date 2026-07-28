@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'تنقل المنتج',
                 'preview'    => 'معاينة',
                 'remove'     => 'يزيل',
                 'save-btn'   => 'حفظ المنتج',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'فئات',
                     'root-not-allowed' => 'لا يمكن تعيين الفئة الجذرية لمنتج.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'مجموعة السمات:',
+                    'title'              => 'مجموعات السمات',
+                    'search-placeholder' => 'ابحث عن المجموعات',
+                    'empty'              => 'لا توجد مجموعات سمات مطابقة لبحثك.',
+                    'attributes-count'   => ':count سمة',
+                    'loading'            => 'جارٍ التحميل...',
+                    'retry'              => 'إعادة المحاولة',
+                    'load-more'          => 'تحميل المزيد',
+                    'unsaved-title'      => 'تغييرات غير محفوظة',
+                    'unsaved-message'    => 'احفظ تغييراتك على :group قبل المتابعة، أو تجاهلها.',
+                    'save-and-continue'  => 'حفظ ومتابعة',
+                    'discard-and-leave'  => 'تجاهل ومتابعة',
+                    'cancel'             => 'إلغاء',
                 ],
                 'images' => [
                     'info'  => 'يجب أن يكون حل الصورة مثل 560px x 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'اللغة',
                 'level-parent'                     => 'المنتج الأصل',
                 'level-sub-parent'                 => 'أصل فرعي',
                 'level-variant'                    => 'متغيّر',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'توسيع',
+            'collapse' => 'طي',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'يضيف',
+                'already-added'      => 'مُضاف',
                 'empty-info'         => 'جرّب بحثًا مختلفًا.',
                 'empty-title'        => 'لم يتم العثور على أنواع ارتباط',
                 'search-placeholder' => 'ابحث بالاسم أو الرمز',
+                'select-all'         => 'تحديد الكل',
                 'title'              => 'إضافة نوع ارتباط',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'إغلاق',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled من :total مترجمة',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'لا توجد نتائج',
+                'search' => 'بحث',
+            ],
             'ajax-error'      => 'حدث خطأ ما أثناء الحفظ. يرجى المحاولة مرة أخرى.',
             'file-uploader'   => [
                 'upload-cta'  => 'انقر للتحميل',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'طي اللوحة',
+                'expand'   => 'توسيع اللوحة',
+            ],
             'breadcrumbs' => [
                 'label' => 'مسار التنقل',
             ],

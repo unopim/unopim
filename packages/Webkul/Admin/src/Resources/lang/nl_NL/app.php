@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Productnavigatie',
                 'preview'    => 'Voorbeeld',
                 'remove'     => 'Verwijderen',
                 'save-btn'   => 'Product opslaan',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Categorieën',
                     'root-not-allowed' => 'De hoofdcategorie kan niet aan een product worden toegewezen.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attribuutgroep:',
+                    'title'              => 'Attribuutgroepen',
+                    'search-placeholder' => 'Groepen zoeken',
+                    'empty'              => 'Geen attribuutgroepen komen overeen met je zoekopdracht.',
+                    'attributes-count'   => ':count attributen',
+                    'loading'            => 'Laden...',
+                    'retry'              => 'Opnieuw proberen',
+                    'load-more'          => 'Meer laden',
+                    'unsaved-title'      => 'Niet-opgeslagen wijzigingen',
+                    'unsaved-message'    => 'Sla je wijzigingen in :group op voordat je verdergaat, of verwerp ze.',
+                    'save-and-continue'  => 'Opslaan en doorgaan',
+                    'discard-and-leave'  => 'Verwerpen en doorgaan',
+                    'cancel'             => 'Annuleren',
                 ],
                 'images' => [
                     'info'  => 'Aanbevolen afbeeldingsformaat: 560 x 609 px',
@@ -1083,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Taal',
                 'level-parent'                     => 'Bovenliggend product',
                 'level-sub-parent'                 => 'Tussenliggend niveau',
                 'level-variant'                    => 'Variant',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Uitklappen',
+            'collapse' => 'Inklappen',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Toevoegen',
+                'already-added'      => 'Toegevoegd',
                 'empty-info'         => 'Probeer een andere zoekopdracht.',
                 'empty-title'        => 'Geen associatietypes gevonden',
                 'search-placeholder' => 'Zoek op naam of code',
+                'select-all'         => 'Alles selecteren',
                 'title'              => 'Associatietype toevoegen',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Sluiten',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled van :total vertaald',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Geen resultaten',
+                'search' => 'Zoeken',
+            ],
             'ajax-error'      => 'Er is iets misgegaan tijdens het opslaan. Probeer het opnieuw.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik om te uploaden',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Paneel inklappen',
+                'expand'   => 'Paneel uitklappen',
+            ],
             'breadcrumbs' => [
                 'label' => 'Kruimelpad',
             ],

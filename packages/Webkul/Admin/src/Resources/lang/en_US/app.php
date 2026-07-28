@@ -260,10 +260,11 @@ return [
             ],
 
             'edit' => [
-                'preview'  => 'Preview',
-                'remove'   => 'Remove',
-                'save-btn' => 'Save Product',
-                'title'    => 'Edit Product',
+                'navigation' => 'Product navigation',
+                'preview'    => 'Preview',
+                'remove'     => 'Remove',
+                'save-btn'   => 'Save Product',
+                'title'      => 'Edit Product',
 
                 'categories' => [
                     'title'            => 'Categories',
@@ -271,11 +272,13 @@ return [
                 ],
 
                 'attribute-groups' => [
+                    'label'              => 'Attribute group:',
                     'title'              => 'Attribute Groups',
                     'search-placeholder' => 'Search groups',
                     'empty'              => 'No attribute groups match your search.',
                     'attributes-count'   => ':count attributes',
                     'loading'            => 'Loading...',
+                    'retry'              => 'Retry',
                     'load-more'          => 'Load more',
                     'unsaved-title'      => 'Unsaved changes',
                     'unsaved-message'    => 'Save your changes to :group before moving on, or discard them.',
@@ -2528,12 +2531,19 @@ return [
     ],
 
     'components' => [
+        'accordion' => [
+            'expand'   => 'Expand',
+            'collapse' => 'Collapse',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Add',
+                'already-added'      => 'Added',
                 'empty-info'         => 'Try a different search.',
                 'empty-title'        => 'No association types found',
                 'search-placeholder' => 'Search by name or code',
+                'select-all'         => 'Select All',
                 'title'              => 'Add Association Type',
             ],
             'product-picker' => [
@@ -2552,10 +2562,12 @@ return [
             'placeholder' => 'Search',
         ],
         'form' => [
-            'locale-switcher' => [
+            'translatable-field' => [
                 'translated-count' => ':filled of :total translated',
-                'empty'            => 'No locales found',
-                'search'           => 'Search locales',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'No results found',
+                'search' => 'Search',
             ],
             'ajax-error'      => 'Something went wrong while saving. Please try again.',
             'file-uploader'   => [
@@ -2582,6 +2594,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Collapse panel',
+                'expand'   => 'Expand panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Breadcrumb',
             ],

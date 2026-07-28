@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Điều hướng sản phẩm',
                 'preview'    => 'Xem trước',
                 'remove'     => 'Xóa',
                 'save-btn'   => 'Lưu sản phẩm',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Danh mục',
                     'root-not-allowed' => 'Danh mục gốc không thể được gán cho sản phẩm.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Nhóm thuộc tính:',
+                    'title'              => 'Nhóm thuộc tính',
+                    'search-placeholder' => 'Tìm kiếm nhóm',
+                    'empty'              => 'Không có nhóm thuộc tính nào khớp với tìm kiếm của bạn.',
+                    'attributes-count'   => ':count thuộc tính',
+                    'loading'            => 'Đang tải...',
+                    'retry'              => 'Thử lại',
+                    'load-more'          => 'Tải thêm',
+                    'unsaved-title'      => 'Thay đổi chưa lưu',
+                    'unsaved-message'    => 'Hãy lưu các thay đổi trong :group trước khi tiếp tục, hoặc hủy bỏ chúng.',
+                    'save-and-continue'  => 'Lưu và tiếp tục',
+                    'discard-and-leave'  => 'Hủy bỏ và tiếp tục',
+                    'cancel'             => 'Hủy',
                 ],
                 'images' => [
                     'info'  => 'Hình ảnh phải có độ phân giải 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Ngôn ngữ',
                 'level-parent'                     => 'Sản phẩm cha',
                 'level-sub-parent'                 => 'Cha phụ',
                 'level-variant'                    => 'Biến thể',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Mở rộng',
+            'collapse' => 'Thu gọn',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Thêm',
+                'already-added'      => 'Đã thêm',
                 'empty-info'         => 'Hãy thử tìm kiếm khác.',
                 'empty-title'        => 'Không tìm thấy loại liên kết nào',
                 'search-placeholder' => 'Tìm theo tên hoặc mã',
+                'select-all'         => 'Chọn tất cả',
                 'title'              => 'Thêm Loại Liên Kết',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Đóng',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => 'Đã dịch :filled trên :total',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Không có kết quả',
+                'search' => 'Tìm kiếm',
+            ],
             'ajax-error'      => 'Đã xảy ra lỗi khi lưu. Vui lòng thử lại.',
             'file-uploader'   => [
                 'upload-cta'  => 'Nhấp để tải lên',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Thu gọn bảng',
+                'expand'   => 'Mở rộng bảng',
+            ],
             'breadcrumbs' => [
                 'label' => 'Đường dẫn điều hướng',
             ],

@@ -27,8 +27,9 @@ return new class extends Migration
 
             // NULL when not current, so only current rows collide on the unique
             // index below: enforces one current version per (publication, locale).
+            // The flag is tested bare — PostgreSQL has no boolean = integer operator.
             $table->unsignedInteger('current_locale_id')
-                ->storedAs('case when is_current = 1 then locale_id else null end');
+                ->storedAs('case when is_current then locale_id else null end');
 
             // dateTime, not timestamp: this data is retained past 2038.
             $table->dateTime('published_at');

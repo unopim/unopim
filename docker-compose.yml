@@ -2,14 +2,15 @@
 # UnoPim Docker Compose — Production-Grade Multi-Container Setup
 # =============================================================================
 #
-# Default: Nginx + PHP-FPM (recommended for production)
+# Defaults: Nginx + PHP-FPM web stack, PostgreSQL 16 database
 #
 # Services:
 #   unopim-nginx        — Nginx reverse proxy (serves static files, proxies PHP)
 #   unopim-fpm          — PHP 8.3 FPM (application server)
 #   unopim-q            — Queue worker (system, completeness, default)
 #   unopim-scheduler    — Laravel scheduler (cron replacement)
-#   unopim-mysql        — MySQL 8.0 (database)
+#   unopim-pgsql        — PostgreSQL 16 (profile: pgsql, default)
+#   unopim-mysql        — MySQL 8.0 (profile: mysql)
 #   unopim-redis        — Redis 7.2 (cache + queue backend)
 #   unopim-elasticsearch — Elasticsearch 8.17 (product search)
 #   unopim-mailpit      — Mailpit (local email testing)
@@ -19,8 +20,21 @@
 #   docker compose up -d
 #   # Wait ~90s for first-time setup, then open http://localhost:8000/admin
 #
-# Apache alternative:
+# ─── Web server: Nginx (default) or Apache ──────────────────────────
 #   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
+#
+# ─── Database: PostgreSQL (default) or MySQL ────────────────────────
+# Selected by COMPOSE_PROFILES in .env — only the chosen engine starts.
+#
+#   PostgreSQL          MySQL
+#   ----------          -----
+#   COMPOSE_PROFILES=pgsql       COMPOSE_PROFILES=mysql
+#   DB_CONNECTION=pgsql          DB_CONNECTION=mysql
+#   DB_HOST=unopim-pgsql         DB_HOST=unopim-mysql
+#   DB_PORT=5432                 DB_PORT=3306
+#
+# Switching engines on an existing install needs a fresh database — the
+# data is not migrated between them.
 #
 # Port conflicts? Override FORWARD_* variables in .env
 #
@@ -29,17 +43,24 @@
 # ─── Shared configuration (reused via YAML anchors) ─────────────────
 x-app-environment: &app-environment
   APP_URL: "${APP_URL:-http://localhost:${APP_PORT:-8000}}"
-  DB_HOST: unopim-mysql
-  DB_PORT: 3306
+  DB_CONNECTION: "${DB_CONNECTION:-pgsql}"
+  DB_HOST: "${DB_HOST:-unopim-pgsql}"
+  DB_PORT: "${DB_PORT:-5432}"
   REDIS_HOST: unopim-redis
   REDIS_PORT: 6379
   ELASTICSEARCH_HOST: unopim-elasticsearch:9200
   MAIL_HOST: unopim-mailpit
   MAIL_PORT: 1025
 
+# required: false keeps the engine that is not in COMPOSE_PROFILES from being
+# pulled in as an implicit dependency — only the selected one is health-gated.
 x-app-depends: &app-depends
+  unopim-pgsql:
+    condition: service_healthy
+    required: false
   unopim-mysql:
     condition: service_healthy
+    required: false
   unopim-redis:
     condition: service_healthy
   unopim-elasticsearch:
@@ -139,10 +160,11 @@ services:
         max-file: "2"
 
   # ---------------------------------------------------------------------------
-  # MySQL 8.0
+  # MySQL 8.0 — starts only with COMPOSE_PROFILES=mysql
   # ---------------------------------------------------------------------------
   unopim-mysql:
     image: mysql:8.0.36-debian
+    profiles: ["mysql"]
     volumes:
       - unopim-mysql-data:/var/lib/mysql
     ports:
@@ -164,6 +186,30 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16 — starts only with COMPOSE_PROFILES=pgsql (default)
+  # ---------------------------------------------------------------------------
+  unopim-pgsql:
+    image: postgres:16-alpine
+    profiles: ["pgsql"]
+    volumes:
+      - unopim-pgsql-data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:${FORWARD_PGSQL_PORT:-5432}:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-unopim}
+      POSTGRES_USER: ${DB_USERNAME:-unopim}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-unopim} -d ${DB_DATABASE:-unopim}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     logging: *default-logging
 
   # ---------------------------------------------------------------------------
@@ -236,6 +282,7 @@ services:
         max-file: "2"
 
 volumes:
+  unopim-pgsql-data:
   unopim-mysql-data:
   unopim-redis-data:
   unopim-elasticsearch-data:

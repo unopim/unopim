@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Навигация по товару',
                 'preview'    => 'Предварительный просмотр',
                 'remove'     => 'Удалять',
                 'save-btn'   => 'Сохранить продукт',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Категории',
                     'root-not-allowed' => 'Корневая категория не может быть назначена продукту.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Группа атрибутов:',
+                    'title'              => 'Группы атрибутов',
+                    'search-placeholder' => 'Поиск групп',
+                    'empty'              => 'Ни одна группа атрибутов не соответствует вашему запросу.',
+                    'attributes-count'   => 'Атрибутов: :count',
+                    'loading'            => 'Загрузка...',
+                    'retry'              => 'Повторить',
+                    'load-more'          => 'Загрузить ещё',
+                    'unsaved-title'      => 'Несохранённые изменения',
+                    'unsaved-message'    => 'Сохраните изменения в группе :group перед переходом или отмените их.',
+                    'save-and-continue'  => 'Сохранить и продолжить',
+                    'discard-and-leave'  => 'Отменить и продолжить',
+                    'cancel'             => 'Отмена',
                 ],
                 'images' => [
                     'info'  => 'Разрешение изображения должно быть как 560px x 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Локаль',
                 'level-parent'                     => 'Родительский продукт',
                 'level-sub-parent'                 => 'Подродительский',
                 'level-variant'                    => 'Вариант',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Развернуть',
+            'collapse' => 'Свернуть',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Добавлять',
+                'already-added'      => 'Добавлено',
                 'empty-info'         => 'Попробуйте другой запрос.',
                 'empty-title'        => 'Типы связей не найдены',
                 'search-placeholder' => 'Поиск по названию или коду',
+                'select-all'         => 'Выбрать все',
                 'title'              => 'Добавить тип связи',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Закрыть',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => 'Переведено :filled из :total',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Ничего не найдено',
+                'search' => 'Поиск',
+            ],
             'ajax-error'      => 'Произошла ошибка при сохранении. Пожалуйста, попробуйте снова.',
             'file-uploader'   => [
                 'upload-cta'  => 'Нажмите для загрузки',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Свернуть панель',
+                'expand'   => 'Развернуть панель',
+            ],
             'breadcrumbs' => [
                 'label' => 'Навигационная цепочка',
             ],

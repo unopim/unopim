@@ -27,7 +27,7 @@ const { navigateTo, searchInDataGrid } = require('../../utils/helpers');
  *
  * Blades: packages/Webkul/Admin/src/Resources/views/catalog/products/edit/links.blade.php
  *         packages/Webkul/Admin/src/Resources/views/components/associations/link-fields.blade.php
- *         packages/Webkul/Admin/src/Resources/views/components/products/search.blade.php
+ *         packages/Webkul/Admin/src/Resources/views/components/associations/product-picker.blade.php
  *         packages/Webkul/Admin/src/Resources/views/catalog/associations/types/{index,create}.blade.php
  *         packages/Webkul/Admin/src/Resources/views/components/associations/field-builder.blade.php
  *
@@ -37,11 +37,9 @@ const { navigateTo, searchInDataGrid } = require('../../utils/helpers');
  *    `links.blade.php` (one per type) — used below to scope the `bundle_kit`
  *    section's own "Add" trigger (the page has one such trigger per type, so
  *    an unscoped `getByText('Add')` would be ambiguous).
- *  - The product-search drawer's result rows are
- *    `<div class="flex gap-2.5 justify-between px-4 py-6 border-b ...">`
- *    (`components/products/search.blade.php`) — distinct from a *link* row's
- *    own `<div class="flex gap-2.5 justify-between p-4 border-b ...">`
- *    (`px-4 py-6` vs `p-4`), so `.px-4.py-6` scopes to the drawer's rows only.
+ *  - The picker wraps the real product DataGrid, so its result rows are the
+ *    grid's own `<div class="row grid ...">` rows
+ *    (`components/associations/product-picker.blade.php`).
  *  - Each per-link custom field's `name` is Vue-bound
  *    (`assocFieldName('bundle_kit', index, field)` in `links.blade.php`) to
  *    `associations[bundle_kit][<index>][additional_data][common][quantity]`
@@ -68,13 +66,25 @@ async function saveViaUnsavedChangesBar(page, toastPattern) {
 	const currentUrl = page.url();
 	const regex = toastPattern instanceof RegExp ? toastPattern : new RegExp(toastPattern, 'i');
 
-	const navPromise = page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 });
-	const toastPromise = page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 });
+	const navPromise = page
+		.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 })
+		.then(() => 'navigation')
+		.catch(() => null);
+
+	const toastPromise = page.locator('#app').getByText(regex).first()
+		.waitFor({ state: 'visible', timeout: 20000 })
+		.then(() => 'toast')
+		.catch(() => null);
 
 	await page.getByRole('button', { name: 'Save changes' }).click();
 
-	// Either the toast appears OR the page redirects — fails only if BOTH time out.
-	await Promise.any([navPromise, toastPromise]);
+	const outcomes = (await Promise.all([navPromise, toastPromise])).filter(Boolean);
+
+	if (! outcomes.length) {
+		const errors = await page.locator('.text-red-600').allTextContents();
+
+		throw new Error(`Save produced neither a toast nor a redirect. Validation errors on page: ${JSON.stringify(errors)}`);
+	}
 }
 
 /**
@@ -82,11 +92,12 @@ async function saveViaUnsavedChangesBar(page, toastPattern) {
  * Verbatim copy of `association-types.spec.js`'s helper of the same name
  * (kept local so this spec file has no cross-file dependency).
  */
-async function addAssociationTypeField(page, { code, type, validation, required, section }) {
-	await page.getByText('Add Field', { exact: true }).first().click();
-
+async function addAssociationTypeField(page, { name, code, type, validation, required }) {
 	const modal = page.locator('form').filter({ has: page.getByRole('button', { name: 'Save Field' }) }).last();
 
+	await page.getByText('Add Field', { exact: true }).first().click();
+
+	await modal.getByRole('textbox', { name: 'Name' }).fill(name);
 	await modal.getByRole('textbox', { name: 'Code' }).fill(code);
 
 	await modal.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
@@ -97,16 +108,16 @@ async function addAssociationTypeField(page, { code, type, validation, required,
 		await page.getByRole('option', { name: validation }).first().click();
 	}
 
-	if (required) {
-		await modal.getByText('Is Required', { exact: true }).click();
-	}
-
-	await modal.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
-	await page.getByRole('option', { name: section }).first().click();
-
 	await modal.getByRole('button', { name: 'Save Field' }).click();
 
 	await expect(page.getByText(code, { exact: true }).first()).toBeVisible();
+
+	if (required) {
+		await page.locator('span.icon-edit').first().click();
+		await modal.getByText('Is Required', { exact: true }).click();
+		await modal.getByRole('button', { name: 'Save Field' }).click();
+		await expect(modal.getByRole('button', { name: 'Save Field' })).toBeHidden();
+	}
 }
 
 /**
@@ -148,10 +159,17 @@ async function ensureBundleKitAssociationTypeExists(page) {
 		return;
 	}
 
-	await page.getByRole('link', { name: 'Create Association Type' }).click();
-	await page.waitForLoadState('load');
+	await page.getByRole('button', { name: 'Create Association Type' }).click();
 
-	await page.getByRole('textbox', { name: 'Code' }).fill(BUNDLE_KIT_CODE);
+	const createModal = page.locator('form')
+		.filter({ has: page.getByRole('button', { name: 'Save Association Type' }) })
+		.last();
+
+	await createModal.getByRole('textbox', { name: 'Enter Name' }).fill(BUNDLE_KIT_NAME);
+	await createModal.getByRole('textbox', { name: 'Enter Code' }).fill(BUNDLE_KIT_CODE);
+	await createModal.getByRole('button', { name: 'Save Association Type' }).click();
+
+	await expect(page).toHaveURL(/\/admin\/catalog\/association-types\/edit\//);
 
 	// Locale name inputs have no accessible label; fill every active locale.
 	const nameInputs = page.locator('input[name$="\\[name\\]"]');
@@ -162,14 +180,14 @@ async function ensureBundleKitAssociationTypeExists(page) {
 	}
 
 	await addAssociationTypeField(page, {
+		name: 'Quantity',
 		code: 'quantity',
 		type: 'Text',
 		validation: 'Number',
 		required: true,
-		section: 'General Section',
 	});
 
-	await saveViaUnsavedChangesBar(page, /Association Type Created Successfully/i);
+	await saveViaUnsavedChangesBar(page, /Association Type Updated Successfully/i);
 }
 
 /**
@@ -273,16 +291,30 @@ async function deleteProductBySku(page, sku) {
 test.describe('Product Edit — rich association Links (bundle_kit custom type)', () => {
 
 	test('adds a bundle_kit link with a quantity custom field, persists it across reload, and preserves it through an unrelated product save', async ({ adminPage, uid }) => {
+		test.setTimeout(300000);
+
 		await ensureBundleKitAssociationTypeExists(adminPage);
 
 		const mainSku = `assoc_link_main_${uid}`;
 		const relatedSku = `assoc_link_related_${uid}`;
 
-		// `.flex.gap-5.justify-between.items-center` is the exact per-type
-		// header wrapper in `links.blade.php` (name + its own "Add" trigger).
-		const bundleKitHeader = adminPage
-			.locator('div.flex.gap-5.justify-between.items-center')
-			.filter({ hasText: BUNDLE_KIT_NAME });
+		const associationsCard = adminPage
+			.locator('div.p-4')
+			.filter({ hasText: 'linked products' })
+			.first();
+
+		const bundleKitTab = adminPage.getByRole('tab', { name: BUNDLE_KIT_NAME });
+
+		const addProductButton = adminPage
+			.locator('button.secondary-button:visible')
+			.filter({ hasText: 'Add' });
+
+		const pickerTitle = adminPage.getByText('Select Products', { exact: true });
+
+		// The drawer footer carries the same label.
+		const pickerConfirm = adminPage
+			.locator('div[class*="z-[10002]"]')
+			.getByRole('button', { name: 'Add Selected' });
 
 		try {
 			await test.step('create the related product and the main product under test', async () => {
@@ -302,50 +334,73 @@ test.describe('Product Edit — rich association Links (bundle_kit custom type)'
 			});
 
 			await test.step('bundle_kit appears as a dynamic association type on the Links panel', async () => {
-				await expect(bundleKitHeader).toBeVisible();
+				// The dev Debugbar swallows real pointer clicks at the page bottom.
+				await associationsCard.evaluate((el) => el.click());
+
+				await expect(bundleKitTab).toBeVisible();
+
+				await bundleKitTab.click();
 			});
 
-			await test.step('add the related product under bundle_kit via the search drawer and fill quantity=2', async () => {
-				await bundleKitHeader.getByText('Add', { exact: true }).click();
+			await test.step('add the related product under bundle_kit via the product picker and fill quantity=2', async () => {
+				await addProductButton.click();
 
-				await expect(adminPage.getByText('Select Products', { exact: true })).toBeVisible();
+				await expect(pickerTitle).toBeVisible();
 
-				await adminPage.getByPlaceholder('Search by sku').fill(relatedSku);
-				// v-debounce dispatches a synthetic 'change' 500ms after 'input'
-				// before the axios search fires; give it headroom.
-				await adminPage.waitForTimeout(700);
+				const pickerSearch = adminPage.locator('input[name="search"]:visible').first();
 
-				// Drawer result rows: `.flex.justify-between.px-4.py-6.border-b`
-				// (distinct from a Links-panel link row's `.p-4`).
+				await pickerSearch.fill(relatedSku);
+				await pickerSearch.press('Enter');
+
 				const resultRow = adminPage
-					.locator('div.flex.justify-between.px-4.py-6.border-b')
-					.filter({ hasText: relatedSku });
+					.locator('div.row.grid')
+					.filter({ hasText: relatedSku })
+					.first();
 
-				await expect(resultRow).toBeVisible({ timeout: 15000 });
-				await resultRow.locator('input[type="checkbox"]').check({ force: true });
+				await expect(resultRow).toBeVisible({ timeout: 20000 });
 
-				await adminPage.getByText('Add Selected Product', { exact: true }).click();
+				// Regression guard: the modal's slot-scoped `toggle` used to shadow
+				// the picker's row handler, closing it instead of selecting.
+				await resultRow.click();
+
+				await expect(adminPage.getByText('1 products selected')).toBeVisible();
+				await expect(pickerTitle).toBeVisible();
+
+				await pickerConfirm.click();
+
+				await expect(pickerTitle).toBeHidden();
 
 				const quantityInput = adminPage.locator(QUANTITY_INPUT_SELECTOR);
 				await expect(quantityInput).toBeVisible();
 				await quantityInput.fill('2');
+
+				// The drawer panel covers the floating save bar.
+				await adminPage.keyboard.press('Escape');
+				await expect(quantityInput).toBeHidden();
 
 				await saveViaUnsavedChangesBar(adminPage, /Product updated successfully/i);
 			});
 
 			await test.step('reload — the bundle_kit link and quantity=2 persist', async () => {
 				await adminPage.reload({ waitUntil: 'load' });
-				await expect(bundleKitHeader).toBeVisible();
-				await expect(adminPage.locator(QUANTITY_INPUT_SELECTOR)).toHaveValue('2');
+				await associationsCard.evaluate((el) => el.click());
+				await expect(bundleKitTab).toBeVisible();
+				await bundleKitTab.click();
+				await expect(adminPage.locator(QUANTITY_INPUT_SELECTOR)).toHaveValue('2', { timeout: 20000 });
 			});
 
 			await test.step('an unrelated save (toggling Status, never touching Links) still preserves quantity=2', async () => {
-				await adminPage.locator('input[name="status"][type="checkbox"]').click({ force: true });
+				await adminPage.keyboard.press('Escape');
+
+				// `sr-only` input; the tracker also ignores untrusted events.
+				await adminPage.locator('label[for="status"]').click();
 				await saveViaUnsavedChangesBar(adminPage, /Product updated successfully/i);
 
 				await adminPage.reload({ waitUntil: 'load' });
-				await expect(bundleKitHeader).toBeVisible();
-				await expect(adminPage.locator(QUANTITY_INPUT_SELECTOR)).toHaveValue('2');
+				await associationsCard.evaluate((el) => el.click());
+				await expect(bundleKitTab).toBeVisible();
+				await bundleKitTab.click();
+				await expect(adminPage.locator(QUANTITY_INPUT_SELECTOR)).toHaveValue('2', { timeout: 20000 });
 			});
 		} finally {
 			await test.step('cleanup: delete both test products', async () => {

@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '產品導覽',
                 'preview'    => '預覽',
                 'remove'     => '刪除',
                 'save-btn'   => '保存產品',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => '分類',
                     'root-not-allowed' => '根類別不能指派給產品。',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '屬性群組：',
+                    'title'              => '屬性群組',
+                    'search-placeholder' => '搜尋群組',
+                    'empty'              => '沒有符合搜尋條件的屬性群組。',
+                    'attributes-count'   => ':count 個屬性',
+                    'loading'            => '載入中...',
+                    'retry'              => '重試',
+                    'load-more'          => '載入更多',
+                    'unsaved-title'      => '未儲存的變更',
+                    'unsaved-message'    => '繼續之前請先儲存 :group 的變更，或捨棄這些變更。',
+                    'save-and-continue'  => '儲存並繼續',
+                    'discard-and-leave'  => '捨棄並繼續',
+                    'cancel'             => '取消',
                 ],
                 'images' => [
                     'info'  => '圖片尺寸應為560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => '語言',
                 'level-parent'                     => '父產品',
                 'level-sub-parent'                 => '子父層',
                 'level-variant'                    => '變體',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '展開',
+            'collapse' => '收合',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => '添加',
+                'already-added'      => '已新增',
                 'empty-info'         => '請嘗試其他搜尋。',
                 'empty-title'        => '找不到關聯類型',
                 'search-placeholder' => '依名稱或代碼搜尋',
+                'select-all'         => '全選',
                 'title'              => '新增關聯類型',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => '關閉',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => '已翻譯 :total 個中的 :filled 個',
+            ],
+            'searchable-menu' => [
+                'empty'  => '找不到結果',
+                'search' => '搜尋',
+            ],
             'ajax-error'      => '儲存時發生問題。請再試一次。',
             'file-uploader'   => [
                 'upload-cta'  => '點擊上傳',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => '收合面板',
+                'expand'   => '展開面板',
+            ],
             'breadcrumbs' => [
                 'label' => '麵包屑導航',
             ],

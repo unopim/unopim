@@ -42,9 +42,10 @@ class AssociationTypeController extends Controller
     }
 
     /**
-     * Paginated, locale-aware search over active association types for the
-     * product-edit "add association" picker. Server-side so the panel never
-     * loads the full type set — the only shape that scales as types grow.
+     * Paginated, locale-aware lookup of active association types with their full
+     * field graph. The product-edit Links switcher ships name-only types and
+     * calls this with `codes` to hydrate a tab's fields the first time it is
+     * opened, so the edit payload stays flat as configured types grow.
      */
     public function search(): JsonResponse
     {
@@ -55,6 +56,12 @@ class AssociationTypeController extends Controller
         $query = $this->associationTypeRepository->getModel()->newQuery()
             ->where('status', 1)
             ->with(['translations', 'fields.translations', 'fields.options.translations']);
+
+        $codes = array_filter((array) request('codes', []), 'is_string');
+
+        if ($codes !== []) {
+            $query->whereIn('code', $codes);
+        }
 
         $search = trim((string) request('query', ''));
 

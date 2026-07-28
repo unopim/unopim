@@ -4,6 +4,7 @@ namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\DataGrid\DataGrid;
 
 class VariantStructureDataGrid extends DataGrid
@@ -23,20 +24,8 @@ class VariantStructureDataGrid extends DataGrid
                 'variant_structures.code',
                 'variant_structures.name',
                 'variant_structures.levels',
-                DB::raw("(
-                    SELECT GROUP_CONCAT(attributes.code ORDER BY variant_structure_axes.position SEPARATOR ', ')
-                    FROM variant_structure_axes
-                    INNER JOIN attributes ON attributes.id = variant_structure_axes.attribute_id
-                    WHERE variant_structure_axes.variant_structure_id = variant_structures.id
-                        AND variant_structure_axes.level = 'level_1'
-                ) as level_1_axes"),
-                DB::raw("(
-                    SELECT GROUP_CONCAT(attributes.code ORDER BY variant_structure_axes.position SEPARATOR ', ')
-                    FROM variant_structure_axes
-                    INNER JOIN attributes ON attributes.id = variant_structure_axes.attribute_id
-                    WHERE variant_structure_axes.variant_structure_id = variant_structures.id
-                        AND variant_structure_axes.level = 'level_2'
-                ) as level_2_axes")
+                DB::raw($this->axisCodesSubQuery('level_1').' as level_1_axes'),
+                DB::raw($this->axisCodesSubQuery('level_2').' as level_2_axes')
             )
             ->where('variant_structures.attribute_family_id', $this->familyId);
 
@@ -46,6 +35,29 @@ class VariantStructureDataGrid extends DataGrid
         $this->addFilter('levels', 'variant_structures.levels');
 
         return $queryBuilder;
+    }
+
+    /**
+     * Correlated sub-query returning the axis attribute codes of one level as a
+     * single ordered, comma-separated string. Prefixes are interpolated because
+     * DB::raw() bypasses them; the aggregate comes from the driver grammar.
+     */
+    protected function axisCodesSubQuery(string $level): string
+    {
+        $prefix = DB::getTablePrefix();
+
+        $aggregate = GrammarQueryManager::getGrammar()->groupConcat(
+            "{$prefix}attributes.code",
+            orderBy: "{$prefix}variant_structure_axes.position",
+        );
+
+        return "(
+            SELECT {$aggregate}
+            FROM {$prefix}variant_structure_axes
+            INNER JOIN {$prefix}attributes ON {$prefix}attributes.id = {$prefix}variant_structure_axes.attribute_id
+            WHERE {$prefix}variant_structure_axes.variant_structure_id = {$prefix}variant_structures.id
+                AND {$prefix}variant_structure_axes.level = '{$level}'
+        )";
     }
 
     /**

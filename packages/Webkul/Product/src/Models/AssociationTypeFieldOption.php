@@ -13,7 +13,7 @@ class AssociationTypeFieldOption extends TranslatableModel implements Associatio
     use HistoryTrait;
 
     /** Tags for History */
-    protected $historyTags = ['association_type_field'];
+    protected $historyTags = ['association_type'];
 
     /**
      * These columns history will not be generated
@@ -48,6 +48,8 @@ class AssociationTypeFieldOption extends TranslatableModel implements Associatio
      */
     public function getPrimaryModelIdForHistory(): int
     {
-        return $this->association_type_field_id;
+        return (int) AssociationTypeFieldProxy::modelClass()::query()
+            ->whereKey($this->association_type_field_id)
+            ->value('association_type_id');
     }
 }

@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Навігація товару',
                 'preview'    => 'Попередній перегляд',
                 'remove'     => 'Видалити',
                 'save-btn'   => 'Зберегти продукт',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Категорії',
                     'root-not-allowed' => 'Коренева категорія не може бути призначена продукту.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Група атрибутів:',
+                    'title'              => 'Групи атрибутів',
+                    'search-placeholder' => 'Пошук груп',
+                    'empty'              => 'Жодна група атрибутів не відповідає вашому запиту.',
+                    'attributes-count'   => 'Атрибутів: :count',
+                    'loading'            => 'Завантаження...',
+                    'retry'              => 'Повторити',
+                    'load-more'          => 'Завантажити ще',
+                    'unsaved-title'      => 'Незбережені зміни',
+                    'unsaved-message'    => 'Збережіть зміни у групі :group перед переходом або скасуйте їх.',
+                    'save-and-continue'  => 'Зберегти та продовжити',
+                    'discard-and-leave'  => 'Відхилити та продовжити',
+                    'cancel'             => 'Скасувати',
                 ],
                 'images' => [
                     'info'  => 'Зображення повинні мати роздільну здатність 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Локаль',
                 'level-parent'                     => 'Батьківський продукт',
                 'level-sub-parent'                 => 'Підбатьківський',
                 'level-variant'                    => 'Варіант',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Розгорнути',
+            'collapse' => 'Згорнути',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Додати',
+                'already-added'      => 'Додано',
                 'empty-info'         => 'Спробуйте інший запит.',
                 'empty-title'        => 'Типів асоціацій не знайдено',
                 'search-placeholder' => 'Пошук за назвою або кодом',
+                'select-all'         => 'Вибрати все',
                 'title'              => 'Додати тип асоціації',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Закрити',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => 'Перекладено :filled з :total',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Нічого не знайдено',
+                'search' => 'Пошук',
+            ],
             'ajax-error'      => 'Під час збереження сталася помилка. Будь ласка, спробуйте ще раз.',
             'file-uploader'   => [
                 'upload-cta'  => 'Натисніть, щоб завантажити',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Згорнути панель',
+                'expand'   => 'Розгорнути панель',
+            ],
             'breadcrumbs' => [
                 'label' => 'Навігаційний ланцюжок',
             ],

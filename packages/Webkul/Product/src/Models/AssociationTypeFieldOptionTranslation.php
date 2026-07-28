@@ -16,7 +16,7 @@ class AssociationTypeFieldOptionTranslation extends Model implements Association
     protected $fillable = ['label'];
 
     /** Tags for History */
-    protected $historyTags = ['association_type_field'];
+    protected $historyTags = ['association_type'];
 
     /**
      * For Multilocale values history to display correctly
@@ -38,6 +38,12 @@ class AssociationTypeFieldOptionTranslation extends Model implements Association
      */
     public function getPrimaryModelIdForHistory(): int
     {
-        return $this->association_type_field_option_id;
+        $fieldId = AssociationTypeFieldOptionProxy::modelClass()::query()
+            ->whereKey($this->association_type_field_option_id)
+            ->value('association_type_field_id');
+
+        return (int) AssociationTypeFieldProxy::modelClass()::query()
+            ->whereKey($fieldId)
+            ->value('association_type_id');
     }
 }

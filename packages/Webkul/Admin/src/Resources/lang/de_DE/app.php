@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigation',
                 'preview'    => 'Vorschau',
                 'remove'     => 'Entfernen',
                 'save-btn'   => 'Produkt speichern',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorien',
                     'root-not-allowed' => 'Die Stammkategorie kann einem Produkt nicht zugewiesen werden.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributgruppe:',
+                    'title'              => 'Attributgruppen',
+                    'search-placeholder' => 'Gruppen suchen',
+                    'empty'              => 'Keine Attributgruppe entspricht Ihrer Suche.',
+                    'attributes-count'   => ':count Attribute',
+                    'loading'            => 'Wird geladen...',
+                    'retry'              => 'Erneut versuchen',
+                    'load-more'          => 'Mehr laden',
+                    'unsaved-title'      => 'Nicht gespeicherte Änderungen',
+                    'unsaved-message'    => 'Speichern Sie Ihre Änderungen an :group, bevor Sie fortfahren, oder verwerfen Sie sie.',
+                    'save-and-continue'  => 'Speichern und fortfahren',
+                    'discard-and-leave'  => 'Verwerfen und fortfahren',
+                    'cancel'             => 'Abbrechen',
                 ],
                 'images' => [
                     'info'  => 'Die Bildauflösung sollte etwa 560 x 609 Pixel betragen.',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Sprache',
                 'level-parent'                     => 'Übergeordnetes Produkt',
                 'level-sub-parent'                 => 'Zwischenebene',
                 'level-variant'                    => 'Variante',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Aufklappen',
+            'collapse' => 'Zuklappen',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Hinzufügen',
+                'already-added'      => 'Hinzugefügt',
                 'empty-info'         => 'Versuchen Sie eine andere Suche.',
                 'empty-title'        => 'Keine Assoziationstypen gefunden',
                 'search-placeholder' => 'Nach Name oder Code suchen',
+                'select-all'         => 'Alle auswählen',
                 'title'              => 'Assoziationstyp hinzufügen',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'Schließen',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled von :total übersetzt',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Keine Ergebnisse',
+                'search' => 'Suchen',
+            ],
             'ajax-error'      => 'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'file-uploader'   => [
                 'upload-cta'  => 'Zum Hochladen klicken',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Bereich einklappen',
+                'expand'   => 'Bereich ausklappen',
+            ],
             'breadcrumbs' => [
                 'label' => 'Navigationspfad',
             ],

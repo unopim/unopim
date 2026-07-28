@@ -132,3 +132,46 @@ it('gets only active types ordered by position with translations and fields eage
         ->and($activeTypes->first()->relationLoaded('translations'))->toBeTrue()
         ->and($activeTypes->first()->relationLoaded('fields'))->toBeTrue();
 });
+
+it('does not duplicate a field when the same still-new payload is submitted twice', function () {
+    $repo = app(AssociationTypeRepository::class);
+
+    $type = $repo->create([
+        'code'            => 'resubmit_type_'.uniqid(),
+        'status'          => 1,
+        'position'        => 1,
+        'is_user_defined' => 1,
+        'en_US'           => ['name' => 'Resubmit'],
+    ]);
+
+    $payload = [
+        'status'   => 1,
+        'position' => 1,
+        'en_US'    => ['name' => 'Resubmit'],
+        'fields'   => [
+            'new_0' => [
+                'isNew'    => 'true',
+                'isDelete' => 'false',
+                'code'     => 'feature',
+                'type'     => 'multiselect',
+                'status'   => 1,
+                'section'  => 'left',
+                'position' => 0,
+                'en_US'    => ['name' => 'Feature'],
+                'options'  => [
+                    'option_0' => ['isNew' => 'true', 'isDelete' => 'false', 'code' => 'gps', 'sort_order' => 0, 'en_US' => ['label' => 'GPS']],
+                ],
+            ],
+        ],
+    ];
+
+    $repo->update($payload, $type->id);
+    $repo->update($payload, $type->id);
+
+    $fields = $type->refresh()->fields;
+
+    expect($fields)->toHaveCount(1)
+        ->and($fields->first()->code)->toBe('feature')
+        ->and($fields->first()->options)->toHaveCount(1)
+        ->and($fields->first()->options->first()->code)->toBe('gps');
+});

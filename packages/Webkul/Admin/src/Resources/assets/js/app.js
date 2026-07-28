@@ -30,6 +30,25 @@ const appOptions = {
     methods: {
         onSubmit() {},
 
+        /**
+         * Bring an invalid field into view. A field inside a collapsed section
+         * cannot be scrolled to or focused while it is hidden, so the section is
+         * asked to open first — the event bubbles up to whichever accordion
+         * wraps the field, if any.
+         */
+        revealInvalidField(element, name = null, groupId = null, message = null) {
+            // The field's section may not be on the page yet: the product editor
+            // loads attribute groups on demand, and the server can reject a
+            // required field the editor never scrolled to.
+            if (! element && name && groupId) {
+                this.$emitter.emit("attribute-group:reveal-field", { name, groupId, message });
+
+                return;
+            }
+
+            window.revealInvalidField(element, message);
+        },
+
         onInvalidSubmit({ values, errors, results, evt }) {
             const errorKeys = Object.entries(errors)
                 .map(([key, value]) => ({ key, value }))
@@ -48,18 +67,7 @@ const appOptions = {
             setTimeout(() => {
                 if (! errorKeys.length) return;
 
-                let firstErrorElement = document.querySelector('[name="' + errorKeys[0]["key"] + '"]');
-
-                if (! firstErrorElement) return;
-
-                firstErrorElement.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-
-                setTimeout(() => {
-                    firstErrorElement.focus();
-                }, 500);
+                this.revealInvalidField(document.querySelector('[name="' + errorKeys[0]["key"] + '"]'));
             }, 100);
         },
 
@@ -175,12 +183,25 @@ const appOptions = {
 
                         const firstField = Object.keys(errors)[0];
 
-                        if (firstField) {
-                            const element = form.querySelector('[name="' + CSS.escape(firstField) + '"]');
+                        // Every rejected field gets its notice; the first one is
+                        // also scrolled to and focused.
+                        Object.entries(errors).forEach(([field, message]) => {
+                            const control = form
+                                .querySelector('[name="' + CSS.escape(field) + '"]')
+                                ?.closest("[data-control-group]");
 
-                            if (element) {
-                                element.scrollIntoView({ behavior: "smooth", block: "center" });
+                            if (control) {
+                                window.markFieldInvalid(control, message);
                             }
+                        });
+
+                        if (firstField) {
+                            this.revealInvalidField(
+                                form.querySelector('[name="' + CSS.escape(firstField) + '"]'),
+                                firstField,
+                                (response.data.errorGroups || {})[firstField] || null,
+                                errors[firstField],
+                            );
                         }
 
                         // A custom 422 may carry `errors` without any `message`.
@@ -286,6 +307,73 @@ function createAdminApp() {
 }
 
 window.createAdminApp = createAdminApp;
+
+/**
+ * Show a server-side error on a control the form's own validator cannot reach:
+ * a wysiwyg hides the field it validates, and a lazily appended attribute group
+ * is mounted by its own app instance, so neither picks up `setErrors`.
+ *
+ * The markup mirrors `x-admin::form.control-group.error`; the notice clears
+ * itself as soon as the editor touches the control again.
+ */
+window.markFieldInvalid = (controlGroup, message) => {
+    let notice = controlGroup.querySelector("[data-server-error]");
+
+    if (! notice) {
+        notice = document.createElement("p");
+        notice.dataset.serverError = "true";
+        notice.className = "mt-1 text-red-600 text-xs italic";
+
+        controlGroup.appendChild(notice);
+    }
+
+    notice.textContent = message;
+
+    const outlined = controlGroup.querySelector(
+        'input:not([type="hidden"]), textarea, select, .tox-tinymce, [contenteditable="true"]'
+    );
+
+    outlined?.classList.add("border", "!border-red-600");
+
+    const clear = () => {
+        notice.remove();
+
+        outlined?.classList.remove("border", "!border-red-600");
+    };
+
+    controlGroup.addEventListener("input", clear, { once: true });
+    controlGroup.addEventListener("change", clear, { once: true });
+};
+
+/**
+ * Bring an invalid field into view.
+ *
+ * A field inside a collapsed section cannot be scrolled to while it is hidden,
+ * so the section is asked to open first — the event bubbles up to whichever
+ * accordion wraps the field. A field a rich editor has taken over (wysiwyg,
+ * file uploader) has no box of its own either, so the surrounding control group
+ * stands in for it. The caret is left where the editor put it.
+ */
+window.revealInvalidField = (element, message = null) => {
+    if (! element) {
+        return;
+    }
+
+    element.dispatchEvent(new CustomEvent("accordion:open", { bubbles: true }));
+
+    const controlGroup = element.closest("[data-control-group]");
+
+    if (message && controlGroup) {
+        window.markFieldInvalid(controlGroup, message);
+    }
+
+    // The section re-renders before the field has a box to scroll to.
+    setTimeout(() => {
+        const anchor = element.offsetParent ? element : (controlGroup || element);
+
+        anchor.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+};
 
 // Ref-counted body scroll lock so a closing overlay doesn't restore page scroll while another is still open.
 window.lockBodyScroll = () => {

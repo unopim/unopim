@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigation',
                 'preview'    => 'Forhåndsvisning',
                 'remove'     => 'Fjern',
                 'save-btn'   => 'Gem Produkt',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorier',
                     'root-not-allowed' => 'Rodkategorien kan ikke tildeles et produkt.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributgruppe:',
+                    'title'              => 'Attributgrupper',
+                    'search-placeholder' => 'Søg efter grupper',
+                    'empty'              => 'Ingen attributgrupper matcher din søgning.',
+                    'attributes-count'   => ':count attributter',
+                    'loading'            => 'Indlæser...',
+                    'retry'              => 'Prøv igen',
+                    'load-more'          => 'Indlæs flere',
+                    'unsaved-title'      => 'Ugemte ændringer',
+                    'unsaved-message'    => 'Gem dine ændringer i :group, før du går videre, eller kassér dem.',
+                    'save-and-continue'  => 'Gem og fortsæt',
+                    'discard-and-leave'  => 'Kassér og fortsæt',
+                    'cancel'             => 'Annuller',
                 ],
                 'images' => [
                     'info'  => 'Billedopløsningen bør være som 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Sprog',
                 'level-parent'                     => 'Overordnet produkt',
                 'level-sub-parent'                 => 'Mellemliggende niveau',
                 'level-variant'                    => 'Variant',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Udvid',
+            'collapse' => 'Skjul',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Tilføj',
+                'already-added'      => 'Tilføjet',
                 'empty-info'         => 'Prøv en anden søgning.',
                 'empty-title'        => 'Ingen associationstyper fundet',
                 'search-placeholder' => 'Søg efter navn eller kode',
+                'select-all'         => 'Vælg alle',
                 'title'              => 'Tilføj associationstype',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'Luk',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled af :total oversat',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Ingen resultater',
+                'search' => 'Søg',
+            ],
             'ajax-error'      => 'Noget gik galt under lagringen. Prøv venligst igen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik for at uploade',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Skjul panel',
+                'expand'   => 'Vis panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Brødkrumme',
             ],

@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigasjon',
                 'preview'    => 'Forhåndsvisning',
                 'remove'     => 'Fjern',
                 'save-btn'   => 'Lagre produkt',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorier',
                     'root-not-allowed' => 'Rotkategorien kan ikke tildeles et produkt.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributtgruppe:',
+                    'title'              => 'Attributtgrupper',
+                    'search-placeholder' => 'Søk i grupper',
+                    'empty'              => 'Ingen attributtgrupper samsvarer med søket ditt.',
+                    'attributes-count'   => ':count attributter',
+                    'loading'            => 'Laster...',
+                    'retry'              => 'Prøv igjen',
+                    'load-more'          => 'Last inn flere',
+                    'unsaved-title'      => 'Ulagrede endringer',
+                    'unsaved-message'    => 'Lagre endringene i :group før du går videre, eller forkast dem.',
+                    'save-and-continue'  => 'Lagre og fortsett',
+                    'discard-and-leave'  => 'Forkast og fortsett',
+                    'cancel'             => 'Avbryt',
                 ],
                 'images' => [
                     'info'  => 'Bilder bør ha oppløsningen 560px X 609px',
@@ -1083,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Språk',
                 'level-parent'                     => 'Overordnet produkt',
                 'level-sub-parent'                 => 'Mellomliggende nivå',
                 'level-variant'                    => 'Variant',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Utvid',
+            'collapse' => 'Skjul',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Legg til',
+                'already-added'      => 'Lagt til',
                 'empty-info'         => 'Prøv et annet søk.',
                 'empty-title'        => 'Ingen assosiasjonstyper funnet',
                 'search-placeholder' => 'Søk etter navn eller kode',
+                'select-all'         => 'Velg alle',
                 'title'              => 'Legg til assosiasjonstype',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Lukk',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled av :total oversatt',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Ingen resultater',
+                'search' => 'Søk',
+            ],
             'ajax-error'      => 'Noe gikk galt under lagringen. Prøv igjen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klikk for å laste opp',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Skjul panel',
+                'expand'   => 'Vis panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Brødsmulesti',
             ],

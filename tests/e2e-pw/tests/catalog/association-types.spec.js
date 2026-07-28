@@ -47,19 +47,16 @@ async function saveViaUnsavedChangesBar(page, toastPattern) {
 	await Promise.any([navPromise, toastPromise]);
 }
 
-/**
- * Opens the field-builder's "Add Field" modal, fills it in, and saves it.
- * Scoped to the modal's own nested `<form>` (identified as the `<form>`
- * containing the "Save Field" button) because the page's own "Code" field
- * and the modal's "Code" field share the same accessible name.
- */
-async function addAssociationTypeField(page, { code, type, validation, required, section }) {
-	// Two "Add Field" triggers exist while the list is empty (the panel
-	// header button and the empty-state button); `.first()` is the header one.
+function fieldModal(page) {
+	return page.locator('form').filter({ has: page.getByRole('button', { name: 'Save Field' }) }).last();
+}
+
+async function addAssociationTypeField(page, { name, code, type, validation }) {
 	await page.getByText('Add Field', { exact: true }).first().click();
 
-	const modal = page.locator('form').filter({ has: page.getByRole('button', { name: 'Save Field' }) }).last();
+	const modal = fieldModal(page);
 
+	await modal.getByRole('textbox', { name: 'Name' }).fill(name);
 	await modal.getByRole('textbox', { name: 'Code' }).fill(code);
 
 	await modal.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
@@ -70,18 +67,27 @@ async function addAssociationTypeField(page, { code, type, validation, required,
 		await page.getByRole('option', { name: validation }).first().click();
 	}
 
+	await modal.getByRole('button', { name: 'Save Field' }).click();
+
+	await expect(page.getByText(code, { exact: true }).first()).toBeVisible();
+}
+
+async function configureAssociationTypeField(page, { required, section }) {
+	await page.locator('span.icon-edit').first().click();
+
+	const modal = fieldModal(page);
+
+	if (section) {
+		await expect(modal.getByText(section, { exact: true })).toBeVisible();
+	}
+
 	if (required) {
 		await modal.getByText('Is Required', { exact: true }).click();
 	}
 
-	// Display Section is required but its pre-filled default doesn't visually
-	// take on first open, so it must always be selected explicitly.
-	await modal.locator('.multiselect__tags').filter({ hasText: 'Select option' }).first().click();
-	await page.getByRole('option', { name: section }).first().click();
-
 	await modal.getByRole('button', { name: 'Save Field' }).click();
 
-	await expect(page.getByText(code, { exact: true }).first()).toBeVisible();
+	await expect(modal.getByRole('button', { name: 'Save Field' })).toBeHidden();
 }
 
 /**
@@ -130,7 +136,8 @@ test.describe('UnoPim Association Type Tests', () => {
 				.filter({ has: adminPage.getByRole('button', { name: 'Save Association Type' }) })
 				.last();
 
-			await createModal.getByRole('textbox', { name: 'Code' }).fill('bundle_kit');
+			await createModal.getByRole('textbox', { name: 'Enter Name' }).fill('Bundle / Kit');
+			await createModal.getByRole('textbox', { name: 'Enter Code' }).fill('bundle_kit');
 			await createModal.getByRole('button', { name: 'Save Association Type' }).click();
 
 			// Saving the code-only modal redirects to the edit page to configure
@@ -152,9 +159,13 @@ test.describe('UnoPim Association Type Tests', () => {
 			}
 
 			await addAssociationTypeField(adminPage, {
+				name: 'Quantity',
 				code: 'quantity',
 				type: 'Text',
 				validation: 'Number',
+			});
+
+			await configureAssociationTypeField(adminPage, {
 				required: true,
 				section: 'General Section',
 			});
@@ -176,6 +187,23 @@ test.describe('UnoPim Association Type Tests', () => {
 			// controller re-hydrates `fields` from `association_type_fields`.
 			await adminPage.reload({ waitUntil: 'load' });
 			await expect(adminPage.getByText('quantity', { exact: true }).first()).toBeVisible();
+
+			await adminPage.locator('span.icon-edit').first().click();
+
+			const modal = fieldModal(adminPage);
+
+			await expect(modal.locator('input[name="is_required"]')).toBeChecked();
+			await expect(modal.getByText('General Section', { exact: true }).first()).toBeVisible();
+		});
+
+		await test.step('the history tab lists the versions of the type and its fields', async () => {
+			const editUrl = adminPage.url().split('?')[0];
+
+			await adminPage.goto(editUrl + '?history=1', { waitUntil: 'load' });
+
+			await expect(adminPage.getByRole('link', { name: /history/i }).first()).toBeVisible();
+			await expect(adminPage.locator('main').getByText('Version', { exact: true }).first()).toBeVisible();
+			await expect(adminPage.locator('main').getByText('1', { exact: true }).first()).toBeVisible();
 		});
 
 		await test.step('delete the custom association type', async () => {

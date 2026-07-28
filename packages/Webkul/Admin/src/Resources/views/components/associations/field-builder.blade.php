@@ -12,6 +12,8 @@
      */
     $activeLocales = app(LocaleRepository::class)->getActiveLocales();
 
+    $currentLocaleCode = core()->getRequestedLocaleCode();
+
     $localesForJs = $activeLocales->map(fn ($locale) => [
         'code' => $locale->code,
         'name' => $locale->name,
@@ -148,6 +150,7 @@
     :field-type-options='@json($fieldTypeOptions)'
     :validation-options='@json($validationOptions)'
     :section-options='@json($sectionOptions)'
+    current-locale-code="{{ $currentLocaleCode }}"
 ></v-association-field-builder>
 
 @pushOnce('scripts')
@@ -347,11 +350,42 @@
                     >
                         <x-slot:header>
                             <p class="text-lg text-gray-800 dark:text-white font-bold">
-                                @lang('admin::app.catalog.association_types.fields.modal-title')
+                                <template v-if="isFieldNew">
+                                    @lang('admin::app.catalog.association_types.fields.modal-title')
+                                </template>
+
+                                <template v-else>
+                                    @lang('admin::app.catalog.association_types.fields.edit-modal-title')
+                                </template>
                             </p>
                         </x-slot>
 
                         <x-slot:content>
+                            <!-- Field Name -->
+                            <x-admin::form.control-group
+                                class="w-full mb-2.5"
+                                v-if="isFieldNew"
+                            >
+                                <x-admin::form.control-group.label
+                                    class="required w-full"
+                                    localizable="true"
+                                    :current-locale-code="$currentLocaleCode"
+                                >
+                                    @lang('admin::app.catalog.category_fields.index.datagrid.name')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="{{ $currentLocaleCode }}"
+                                    rules="required"
+                                    v-code-generator="'code'"
+                                    :label="trans('admin::app.catalog.category_fields.index.datagrid.name')"
+                                    :placeholder="trans('admin::app.catalog.category_fields.index.datagrid.name')"
+                                />
+
+                                <x-admin::form.control-group.error control-name="{{ $currentLocaleCode }}" />
+                            </x-admin::form.control-group>
+
                             <div class="grid grid-cols-2 gap-4">
                                 <!-- Field Code -->
                                 <x-admin::form.control-group class="w-full mb-2.5">
@@ -394,22 +428,24 @@
                             </div>
 
                             <!-- Locales Inputs -->
-                            <p class="mb-2.5 text-sm text-gray-800 dark:text-white font-semibold">
-                                @lang('admin::app.catalog.category_fields.create.label')
-                            </p>
+                            <template v-if="! isFieldNew">
+                                <p class="mb-2.5 text-sm text-gray-800 dark:text-white font-semibold">
+                                    @lang('admin::app.catalog.category_fields.create.label')
+                                </p>
 
-                            <div class="grid grid-cols-2 gap-4 mb-2.5">
-                                <template v-for="locale in locales" :key="'field-modal-locale-' + locale.code">
-                                    <x-admin::form.control-group class="w-full mb-2.5">
-                                        <x-admin::form.control-group.label>@{{ locale.name }}</x-admin::form.control-group.label>
+                                <div class="grid grid-cols-2 gap-4 mb-2.5">
+                                    <template v-for="locale in locales" :key="'field-modal-locale-' + locale.code">
+                                        <x-admin::form.control-group class="w-full mb-2.5">
+                                            <x-admin::form.control-group.label>@{{ locale.name }}</x-admin::form.control-group.label>
 
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            ::name="locale.code"
-                                        />
-                                    </x-admin::form.control-group>
-                                </template>
-                            </div>
+                                            <x-admin::form.control-group.control
+                                                type="text"
+                                                ::name="locale.code"
+                                            />
+                                        </x-admin::form.control-group>
+                                    </template>
+                                </div>
+                            </template>
 
                             <!-- Input Validation -->
                             <x-admin::form.control-group v-if="selectedFieldType == 'text'">
@@ -446,7 +482,10 @@
                                 <x-admin::form.control-group.error control-name="regex_pattern" />
                             </x-admin::form.control-group>
 
-                            <div class="flex flex-wrap gap-x-6 gap-y-2 mb-2.5">
+                            <div
+                                class="flex flex-wrap gap-x-6 gap-y-2 mb-2.5"
+                                v-if="! isFieldNew"
+                            >
                                 <!-- Is Required -->
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-0 select-none">
                                     <x-admin::form.control-group.control
@@ -506,7 +545,10 @@
                             </div>
 
                             <!-- Display Section -->
-                            <x-admin::form.control-group class="w-full mb-2.5">
+                            <x-admin::form.control-group
+                                class="w-full mb-2.5"
+                                v-if="! isFieldNew"
+                            >
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.catalog.category_fields.create.set-section')
                                 </x-admin::form.control-group.label>
@@ -524,7 +566,7 @@
                             </x-admin::form.control-group>
 
                             <!-- Options -->
-                            <div v-if="['select', 'multiselect', 'checkbox'].includes(selectedFieldType)">
+                            <div v-if="! isFieldNew && ['select', 'multiselect', 'checkbox'].includes(selectedFieldType)">
                                 <div class="flex justify-between items-center mb-3">
                                     <p class="text-sm text-gray-800 dark:text-white font-semibold">
                                         @lang('admin::app.catalog.category_fields.create.options')
@@ -645,6 +687,10 @@
                     type: Array,
                     default: () => [],
                 },
+                currentLocaleCode: {
+                    type: String,
+                    default: '',
+                },
             },
 
             data() {
@@ -681,11 +727,11 @@
 
             watch: {
                 fieldType(value) {
-                    this.selectedFieldType = this.parseValue(value)?.id ?? '';
+                    this.selectedFieldType = this.optionId(value);
                 },
 
                 validationType(value) {
-                    this.selectedValidationType = this.parseValue(value)?.id ?? '';
+                    this.selectedValidationType = this.optionId(value);
                 },
 
                 /**
@@ -697,6 +743,7 @@
                  */
                 localFields: {
                     deep: true,
+                    flush: 'post',
                     handler() {
                         this.$el?.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
                             detail: { name: 'fields' },
@@ -735,7 +782,8 @@
                     this.$nextTick(() => {
                         this.$refs.fieldForm.setValues({
                             code: '',
-                            section: JSON.stringify(this.sectionOptions[0] ?? {}),
+                            regex_pattern: '',
+                            [this.currentLocaleCode]: '',
                         });
 
                         this.$refs.fieldModal.toggle();
@@ -746,21 +794,17 @@
                     this.isFieldNew = false;
                     this.editingFieldId = element.id;
 
-                    let typeOption = this.fieldTypeOptions.find(option => option.id === element.type) ?? null;
-                    let validationOption = this.validationOptions.find(option => option.id === element.validation) ?? null;
-                    let sectionOption = this.sectionOptions.find(option => option.id === element.section) ?? null;
-
-                    this.fieldType = typeOption ? JSON.stringify(typeOption) : '';
-                    this.validationType = validationOption ? JSON.stringify(validationOption) : '';
+                    this.fieldType = element.type ?? '';
+                    this.validationType = element.validation ?? '';
                     this.draftOptions = JSON.parse(JSON.stringify(element.options ?? []));
 
                     let values = {
                         code: element.code,
                         regex_pattern: element.regex_pattern,
-                        is_required: element.is_required,
-                        is_unique: element.is_unique,
-                        value_per_locale: element.value_per_locale,
-                        section: sectionOption ? JSON.stringify(sectionOption) : '',
+                        is_required: element.is_required ? '1' : '',
+                        is_unique: element.is_unique ? '1' : '',
+                        value_per_locale: element.value_per_locale ? '1' : '',
+                        section: element.section ?? 'left',
                     };
 
                     this.locales.forEach((locale) => {
@@ -820,7 +864,7 @@
                         locales[locale.code] = params[locale.code] ?? '';
                     });
 
-                    let sectionValue = this.parseValue(params.section)?.id ?? 'left';
+                    let sectionValue = this.optionId(params.section) || 'left';
 
                     if (this.isFieldNew) {
                         this.localFields.push({
@@ -829,15 +873,15 @@
                             isDelete: false,
                             code: params.code,
                             type: this.selectedFieldType,
-                            validation: this.selectedValidationType,
+                            validation: this.selectedFieldType == 'text' ? this.selectedValidationType : '',
                             regex_pattern: params.regex_pattern ?? '',
-                            is_required: !! params.is_required,
-                            is_unique: !! params.is_unique,
-                            value_per_locale: !! params.value_per_locale,
-                            section: sectionValue,
+                            is_required: false,
+                            is_unique: false,
+                            value_per_locale: false,
+                            section: this.sectionOptions[0]?.id ?? 'left',
                             status: true,
                             locales: locales,
-                            options: this.draftOptions,
+                            options: [],
                         });
                     } else {
                         let foundIndex = this.localFields.findIndex(item => item.id === this.editingFieldId);
@@ -845,6 +889,7 @@
                         if (foundIndex !== -1) {
                             this.localFields.splice(foundIndex, 1, {
                                 ...this.localFields[foundIndex],
+                                type: this.selectedFieldType,
                                 validation: this.selectedFieldType == 'text' ? this.selectedValidationType : '',
                                 regex_pattern: params.regex_pattern ?? '',
                                 is_required: !! params.is_required,
@@ -886,6 +931,16 @@
                     } catch (error) {
                         return value;
                     }
+                },
+
+                optionId(value) {
+                    let parsed = this.parseValue(value);
+
+                    if (parsed && 'object' === typeof parsed) {
+                        return parsed.id ?? '';
+                    }
+
+                    return parsed ?? '';
                 },
             },
         });

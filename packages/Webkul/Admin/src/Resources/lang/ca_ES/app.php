@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navegació del producte',
                 'preview'    => 'Vista prèvia',
                 'remove'     => 'Eliminar',
                 'save-btn'   => 'Desar Producte',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Categories',
                     'root-not-allowed' => 'La categoria arrel no es pot assignar a un producte.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grup d\'atributs:',
+                    'title'              => 'Grups d\'atributs',
+                    'search-placeholder' => 'Cerca grups',
+                    'empty'              => 'Cap grup d\'atributs coincideix amb la teva cerca.',
+                    'attributes-count'   => ':count atributs',
+                    'loading'            => 'Carregant...',
+                    'retry'              => 'Torna-ho a provar',
+                    'load-more'          => 'Carrega\'n més',
+                    'unsaved-title'      => 'Canvis sense desar',
+                    'unsaved-message'    => 'Desa els canvis a :group abans de continuar, o descarta’ls.',
+                    'save-and-continue'  => 'Desa i continua',
+                    'discard-and-leave'  => 'Descarta i continua',
+                    'cancel'             => 'Cancel·la',
                 ],
                 'images' => [
                     'info'  => 'La resolució de la imatge hauria de ser com 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Idioma',
                 'level-parent'                     => 'Producte pare',
                 'level-sub-parent'                 => 'Subpare',
                 'level-variant'                    => 'Variant',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Desplega',
+            'collapse' => 'Replega',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Afegir',
+                'already-added'      => 'Afegit',
                 'empty-info'         => 'Prova una cerca diferent.',
                 'empty-title'        => 'No s\'ha trobat cap tipus d\'associació',
                 'search-placeholder' => 'Cerca per nom o codi',
+                'select-all'         => 'Selecciona-ho tot',
                 'title'              => 'Afegir Tipus d\'Associació',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'Tanca',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled de :total traduïts',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Sense resultats',
+                'search' => 'Cerca',
+            ],
             'ajax-error'      => 'Alguna cosa ha anat malament en desar. Torneu-ho a provar.',
             'file-uploader'   => [
                 'upload-cta'  => 'Fes clic per pujar',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Replega el panell',
+                'expand'   => 'Desplega el panell',
+            ],
             'breadcrumbs' => [
                 'label' => 'Ruta de navegació',
             ],

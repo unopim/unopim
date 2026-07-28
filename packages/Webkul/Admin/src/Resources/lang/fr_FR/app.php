@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navigation du produit',
                 'preview'    => 'Aperçu',
                 'remove'     => 'Retirer',
                 'save-btn'   => 'Enregistrer le produit',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Catégories',
                     'root-not-allowed' => 'La catégorie racine ne peut pas être attribuée à un produit.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Groupe d\'attributs :',
+                    'title'              => 'Groupes d\'attributs',
+                    'search-placeholder' => 'Rechercher des groupes',
+                    'empty'              => 'Aucun groupe d\'attributs ne correspond à votre recherche.',
+                    'attributes-count'   => ':count attributs',
+                    'loading'            => 'Chargement...',
+                    'retry'              => 'Réessayer',
+                    'load-more'          => 'Charger plus',
+                    'unsaved-title'      => 'Modifications non enregistrées',
+                    'unsaved-message'    => 'Enregistrez vos modifications de :group avant de continuer, ou abandonnez-les.',
+                    'save-and-continue'  => 'Enregistrer et continuer',
+                    'discard-and-leave'  => 'Abandonner et continuer',
+                    'cancel'             => 'Annuler',
                 ],
                 'images' => [
                     'info'  => 'La résolution d\'image doit être 560px x 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Langue',
                 'no-axis-options'                  => 'Ajoutez au moins un attribut de type liste non contextualisé à cette famille avant de créer des variantes.',
                 'parent-child'                     => 'Parent → Enfant',
                 'parent-sub-parent-child'          => 'Parent → Sous-parent → Enfant',
@@ -2354,12 +2372,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Développer',
+            'collapse' => 'Réduire',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Ajouter',
+                'already-added'      => 'Ajouté',
                 'empty-info'         => 'Essayez une autre recherche.',
                 'empty-title'        => 'Aucun type d\'association trouvé',
                 'search-placeholder' => 'Rechercher par nom ou code',
+                'select-all'         => 'Tout sélectionner',
                 'title'              => 'Ajouter un type d\'association',
             ],
             'product-picker' => [
@@ -2378,6 +2403,13 @@ return [
             'close' => 'Fermer',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled sur :total traduits',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Aucun résultat',
+                'search' => 'Rechercher',
+            ],
             'ajax-error'      => 'Une erreur s\'est produite lors de l\'enregistrement. Veuillez réessayer.',
             'file-uploader'   => [
                 'upload-cta'  => 'Cliquez pour téléverser',
@@ -2403,6 +2435,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Réduire le panneau',
+                'expand'   => 'Développer le panneau',
+            ],
             'breadcrumbs' => [
                 'label' => 'Fil d’Ariane',
             ],

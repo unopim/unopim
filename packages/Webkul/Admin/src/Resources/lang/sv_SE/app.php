@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Produktnavigering',
                 'preview'    => 'Förhandsgranska',
                 'remove'     => 'Ta bort',
                 'save-btn'   => 'Spara produkt',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorier',
                     'root-not-allowed' => 'Rotkategorin kan inte tilldelas en produkt.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attributgrupp:',
+                    'title'              => 'Attributgrupper',
+                    'search-placeholder' => 'Sök grupper',
+                    'empty'              => 'Inga attributgrupper matchar din sökning.',
+                    'attributes-count'   => ':count attribut',
+                    'loading'            => 'Laddar...',
+                    'retry'              => 'Försök igen',
+                    'load-more'          => 'Ladda fler',
+                    'unsaved-title'      => 'Osparade ändringar',
+                    'unsaved-message'    => 'Spara dina ändringar i :group innan du går vidare, eller släng dem.',
+                    'save-and-continue'  => 'Spara och fortsätt',
+                    'discard-and-leave'  => 'Släng och fortsätt',
+                    'cancel'             => 'Avbryt',
                 ],
                 'images' => [
                     'info'  => 'Bilder måste ha upplösningen 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Språk',
                 'level-parent'                     => 'Överordnad produkt',
                 'level-sub-parent'                 => 'Mellanliggande nivå',
                 'level-variant'                    => 'Variant',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Expandera',
+            'collapse' => 'Fäll ihop',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Lägg till',
+                'already-added'      => 'Tillagd',
                 'empty-info'         => 'Prova en annan sökning.',
                 'empty-title'        => 'Inga associationstyper hittades',
                 'search-placeholder' => 'Sök efter namn eller kod',
+                'select-all'         => 'Välj alla',
                 'title'              => 'Lägg till associationstyp',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Stäng',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled av :total översatta',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Inga resultat',
+                'search' => 'Sök',
+            ],
             'ajax-error'      => 'Något gick fel när det skulle sparas. Försök igen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klicka för att ladda upp',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Fäll ihop panelen',
+                'expand'   => 'Expandera panelen',
+            ],
             'breadcrumbs' => [
                 'label' => 'Brödsmulor',
             ],

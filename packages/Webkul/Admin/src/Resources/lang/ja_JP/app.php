@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '製品ナビゲーション',
                 'preview'    => 'プレビュー',
                 'remove'     => '削除',
                 'save-btn'   => '商品を保存',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'カテゴリー',
                     'root-not-allowed' => 'ルートカテゴリを製品に割り当てることはできません。',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '属性グループ:',
+                    'title'              => '属性グループ',
+                    'search-placeholder' => 'グループを検索',
+                    'empty'              => '検索条件に一致する属性グループはありません。',
+                    'attributes-count'   => ':count 件の属性',
+                    'loading'            => '読み込み中...',
+                    'retry'              => '再試行',
+                    'load-more'          => 'さらに読み込む',
+                    'unsaved-title'      => '未保存の変更',
+                    'unsaved-message'    => '続行する前に :group の変更を保存するか、破棄してください。',
+                    'save-and-continue'  => '保存して続行',
+                    'discard-and-leave'  => '破棄して続行',
+                    'cancel'             => 'キャンセル',
                 ],
                 'images' => [
                     'info'  => '画像の解像度は 560 x 609 ピクセル程度にしてください',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'ロケール',
                 'level-parent'                     => '親製品',
                 'level-sub-parent'                 => 'サブ親',
                 'level-variant'                    => 'バリエーション',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '展開',
+            'collapse' => '折りたたむ',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => '追加',
+                'already-added'      => '追加済み',
                 'empty-info'         => '別のキーワードで検索してください。',
                 'empty-title'        => '関連タイプが見つかりません',
                 'search-placeholder' => '名前またはコードで検索',
+                'select-all'         => 'すべて選択',
                 'title'              => '関連タイプを追加',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => '閉じる',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total 件中 :filled 件を翻訳済み',
+            ],
+            'searchable-menu' => [
+                'empty'  => '結果がありません',
+                'search' => '検索',
+            ],
             'ajax-error'      => '保存中に問題が発生しました。もう一度お試しください。',
             'file-uploader'   => [
                 'upload-cta'  => 'クリックしてアップロード',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'パネルを折りたたむ',
+                'expand'   => 'パネルを展開する',
+            ],
             'breadcrumbs' => [
                 'label' => 'パンくずリスト',
             ],

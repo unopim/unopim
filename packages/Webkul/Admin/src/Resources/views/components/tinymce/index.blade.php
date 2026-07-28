@@ -295,7 +295,6 @@
                     showRichPreview: true,
                     showSystemPrompt: false,
                     selectedSystemPrompt: null,
-                    {{-- Filled from the platform-options response, so a page carrying a rich-text editor never inlines the whole prompt library. --}}
                     systemPrompts: [],
                     platforms: [],
                     aiModels: [],

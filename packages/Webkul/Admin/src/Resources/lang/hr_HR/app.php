@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navigacija proizvoda',
                 'preview'    => 'Pregled',
                 'remove'     => 'Ukloni',
                 'save-btn'   => 'Spremi proizvod',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorije',
                     'root-not-allowed' => 'Korijensku kategoriju nije moguće dodijeliti proizvodu.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grupa atributa:',
+                    'title'              => 'Grupe atributa',
+                    'search-placeholder' => 'Pretraži grupe',
+                    'empty'              => 'Nijedna grupa atributa ne odgovara vašoj pretrazi.',
+                    'attributes-count'   => ':count atributa',
+                    'loading'            => 'Učitavanje...',
+                    'retry'              => 'Pokušaj ponovno',
+                    'load-more'          => 'Učitaj više',
+                    'unsaved-title'      => 'Nespremljene promjene',
+                    'unsaved-message'    => 'Spremite promjene u grupi :group prije nastavka ili ih odbacite.',
+                    'save-and-continue'  => 'Spremi i nastavi',
+                    'discard-and-leave'  => 'Odbaci i nastavi',
+                    'cancel'             => 'Odustani',
                 ],
                 'images' => [
                     'info'  => 'Rezolucija slike treba biti 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Jezik',
                 'level-parent'                     => 'Nadređeni proizvod',
                 'level-sub-parent'                 => 'Podnadređeni',
                 'level-variant'                    => 'Varijanta',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Proširi',
+            'collapse' => 'Sažmi',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Dodaj',
+                'already-added'      => 'Dodano',
                 'empty-info'         => 'Pokušajte s drugom pretragom.',
                 'empty-title'        => 'Nije pronađena nijedna vrsta povezivanja',
                 'search-placeholder' => 'Pretraži po nazivu ili šifri',
+                'select-all'         => 'Odaberi sve',
                 'title'              => 'Dodaj vrstu povezivanja',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'Zatvori',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled od :total prevedeno',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Nema rezultata',
+                'search' => 'Pretraži',
+            ],
             'ajax-error'      => 'Nešto je pošlo po zlu prilikom spremanja. Pokušajte ponovno.',
             'file-uploader'   => [
                 'upload-cta'  => 'Kliknite za učitavanje',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Sažmi ploču',
+                'expand'   => 'Proširi ploču',
+            ],
             'breadcrumbs' => [
                 'label' => 'Navigacijski put',
             ],

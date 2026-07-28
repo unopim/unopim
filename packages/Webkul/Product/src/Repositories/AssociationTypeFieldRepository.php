@@ -73,8 +73,26 @@ class AssociationTypeFieldRepository extends Repository
             return $associationTypeField;
         }
 
+        $existingIds = $this->associationTypeFieldOptionRepository->getModel()->newQuery()
+            ->where('association_type_field_id', $associationTypeField->id)
+            ->pluck('id', 'code');
+
         foreach ($data['options'] as $optionId => $option) {
-            if ($option['isNew'] == 'true') {
+            $isNew = filter_var($option['isNew'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+            $resolvedId = $isNew
+                ? ($existingIds[$option['code'] ?? ''] ?? null)
+                : $optionId;
+
+            if (filter_var($option['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
+                if ($resolvedId) {
+                    $this->associationTypeFieldOptionRepository->delete($resolvedId);
+                }
+
+                continue;
+            }
+
+            if (! $resolvedId) {
                 $this->associationTypeFieldOptionRepository->create(array_merge([
                     'association_type_field_id' => $associationTypeField->id,
                 ], $option));
@@ -82,11 +100,7 @@ class AssociationTypeFieldRepository extends Repository
                 continue;
             }
 
-            if ($option['isDelete'] == 'true') {
-                $this->associationTypeFieldOptionRepository->delete($optionId);
-            } else {
-                $this->associationTypeFieldOptionRepository->update($option, $optionId);
-            }
+            $this->associationTypeFieldOptionRepository->update($option, $resolvedId);
         }
 
         return $associationTypeField;

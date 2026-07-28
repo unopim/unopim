@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Nawigacja produktu',
                 'preview'    => 'Podgląd',
                 'remove'     => 'Usuń',
                 'save-btn'   => 'Zapisz produkt',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategorie',
                     'root-not-allowed' => 'Kategorii głównej nie można przypisać do produktu.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grupa atrybutów:',
+                    'title'              => 'Grupy atrybutów',
+                    'search-placeholder' => 'Szukaj grup',
+                    'empty'              => 'Żadna grupa atrybutów nie pasuje do wyszukiwania.',
+                    'attributes-count'   => ':count atrybutów',
+                    'loading'            => 'Ładowanie...',
+                    'retry'              => 'Spróbuj ponownie',
+                    'load-more'          => 'Załaduj więcej',
+                    'unsaved-title'      => 'Niezapisane zmiany',
+                    'unsaved-message'    => 'Zapisz zmiany w grupie :group przed przejściem dalej lub je odrzuć.',
+                    'save-and-continue'  => 'Zapisz i kontynuuj',
+                    'discard-and-leave'  => 'Odrzuć i kontynuuj',
+                    'cancel'             => 'Anuluj',
                 ],
                 'images' => [
                     'info'  => 'Obrazy powinny mieć rozdzielczość 560px X 609px',
@@ -1083,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Język',
                 'level-parent'                     => 'Produkt nadrzędny',
                 'level-sub-parent'                 => 'Podnadrzędny',
                 'level-variant'                    => 'Wariant',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Rozwiń',
+            'collapse' => 'Zwiń',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Dodaj',
+                'already-added'      => 'Dodano',
                 'empty-info'         => 'Spróbuj innego wyszukiwania.',
                 'empty-title'        => 'Nie znaleziono typów powiązań',
                 'search-placeholder' => 'Szukaj według nazwy lub kodu',
+                'select-all'         => 'Zaznacz wszystko',
                 'title'              => 'Dodaj typ powiązania',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Zamknij',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => 'Przetłumaczono :filled z :total',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Brak wyników',
+                'search' => 'Szukaj',
+            ],
             'ajax-error'      => 'Coś poszło nie tak podczas zapisywania. Spróbuj ponownie.',
             'file-uploader'   => [
                 'upload-cta'  => 'Kliknij, aby przesłać',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Zwiń panel',
+                'expand'   => 'Rozwiń panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Ścieżka nawigacji',
             ],

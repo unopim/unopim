@@ -28,7 +28,7 @@ class AssociationTypeFieldResource extends JsonResource
             'validation'       => $this->validation,
             'regex_pattern'    => $this->regex_pattern,
             'section'          => $this->section,
-            'rules'            => $this->getValidationsField(),
+            'rules'            => $this->veeValidateRules(),
             'options'          => $this->options
                 ->map(fn ($option) => [
                     'id'    => $option->id,
@@ -38,5 +38,34 @@ class AssociationTypeFieldResource extends JsonResource
                 ->values()
                 ->all(),
         ];
+    }
+
+    /**
+     * VeeValidate rules as a keyed map.
+     *
+     * `AssociationTypeField::getValidationsField()` renders a JS object *literal*
+     * for Blade to inline into a `::rules="{ ... }"` attribute. The Links panel
+     * instead binds this value at runtime, where that literal would arrive as an
+     * opaque string and every rule on the row would fail to resolve.
+     *
+     * @return array<string, mixed>
+     */
+    private function veeValidateRules(): array
+    {
+        $rules = [];
+
+        if ($this->is_required) {
+            $rules['required'] = true;
+        }
+
+        if (! $this->validation) {
+            return $rules;
+        }
+
+        return match ($this->validation) {
+            'regex'  => $rules + ['regex' => $this->regex_pattern],
+            'number' => $rules + ['numeric' => true],
+            default  => $rules + [$this->validation => true],
+        };
     }
 }

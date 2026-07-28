@@ -48,6 +48,27 @@ it('renders Categories and Associations as contained drawers with intact submiss
     $response->assertSee('v-product-links', false);
 });
 
+it('drives the categories drawer from a searchable header rather than an in-content search box', function () {
+    $response = editProductResponse();
+
+    $response->assertOk();
+
+    $response->assertSee(':searchable="true"', false);
+    $response->assertSee(route('admin.catalog.categories.search'), false);
+
+    // The search box belongs to the drawer's own header now.
+    $response->assertDontSee('__category_search', false);
+});
+
+it('submits categories through hidden inputs so search can swap the tree out', function () {
+    $response = editProductResponse();
+
+    $response->assertOk();
+
+    $response->assertSee('name="categories[]"', false);
+    $response->assertSee('name-field="__categories_tree"', false);
+});
+
 it('never reintroduces a clickable div add-control', function () {
     editProductResponse()
         ->assertOk()

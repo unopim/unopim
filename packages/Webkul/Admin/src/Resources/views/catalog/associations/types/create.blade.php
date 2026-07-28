@@ -54,7 +54,7 @@
 
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label
-                                    class="required w-full"
+                                    class="w-full"
                                     localizable="true"
                                     :current-locale-code="$currentLocaleCode"
                                 >
@@ -64,7 +64,6 @@
                                 <x-admin::form.control-group.control
                                     type="text"
                                     name="{{ $currentLocaleCode }}[name]"
-                                    rules="required"
                                     v-code-generator="'code'"
                                     :label="trans('admin::app.catalog.association_types.create.name')"
                                     :placeholder="trans('admin::app.catalog.association_types.create.enter-name')"

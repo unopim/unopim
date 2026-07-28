@@ -16,11 +16,19 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
     use HistoryTrait;
 
     /** Tags for History */
-    protected $historyTags = ['association_type_field'];
+    protected $historyTags = ['association_type'];
 
     /** Proxy Table Fields for History */
     protected $historyProxyFields = [
         'options',
+    ];
+
+    /**
+     * These columns history will not be generated
+     */
+    protected $auditExclude = [
+        'association_type_id',
+        'id',
     ];
 
     /**
@@ -84,6 +92,17 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
     public function options(): HasMany
     {
         return $this->hasMany(AssociationTypeFieldOptionProxy::modelClass());
+    }
+
+    /**
+     * Fields are only ever edited from their association type's page, so their
+     * history has to be versioned against that parent to be reachable.
+     *
+     * {@inheritdoc}
+     */
+    public function getPrimaryModelIdForHistory(): int
+    {
+        return (int) $this->association_type_id;
     }
 
     /**

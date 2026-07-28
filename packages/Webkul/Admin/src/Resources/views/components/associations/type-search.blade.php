@@ -2,10 +2,15 @@
     Async, server-paginated picker for association types, used by the product
     edit Links panel to attach a type on demand. The panel never loads the full
     type set, so this scales regardless of how many types exist -- every query
-    hits `admin.catalog.association_types.search` (20 per page).
+    hits `admin.catalog.association_types.search` (20 per page, next page
+    fetched when the list is scrolled near its end).
 
-    Emits `onTypeAdded` with the selected type payloads
-    (`{ code, name, fields }`); the parent pushes each as a new panel.
+    Types already added to the product stay in the list, checked and locked,
+    so the picker reflects the full catalogue instead of a shrinking remainder.
+
+    Emits `onTypeAdded` with `{ added, removed }` -- newly ticked type payloads
+    (`{ code, name, fields }`) the parent pushes as panels, and the codes of
+    link-less panels the user unticked, which the parent drops.
 --}}
 <v-association-type-search {{ $attributes }}></v-association-type-search>
 
@@ -16,7 +21,7 @@
     >
         <x-admin::drawer
             ref="searchTypeDrawer"
-            @close="searchTerm = ''; searchedTypes = [];"
+            @close="searchTerm = ''; searchedTypes = []; currentPage = 1; lastPage = 1;"
         >
             <x-slot:header>
                 <div class="grid gap-3">
@@ -47,30 +52,51 @@
                 </div>
             </x-slot>
 
-            <x-slot:content class="!p-0">
+            <x-slot:content class="!p-0" @scroll="onScroll">
                 <div
                     class="grid"
-                    v-if="filteredSearchedTypes.length"
+                    v-if="searchedTypes.length"
                 >
                     <div
-                        class="flex gap-2.5 justify-between px-4 py-6 border-b border-slate-300 dark:border-gray-800"
-                        v-for="type in filteredSearchedTypes"
+                        class="flex gap-2.5 items-center px-4 py-4 bg-gray-50 dark:bg-cherry-800 border-b border-slate-300 dark:border-gray-800 cursor-pointer select-none"
+                        role="checkbox"
+                        tabindex="0"
+                        :aria-checked="allSelected ? 'true' : (someSelected ? 'mixed' : 'false')"
+                        @click="toggleAll"
+                        @keydown.enter.prevent="toggleAll"
+                        @keydown.space.prevent="toggleAll"
+                    >
+                        <span
+                            class="text-2xl"
+                            :class="allSelected ? 'icon-checkbox-check text-primary-700' : (someSelected ? 'icon-checkbox-partial text-primary-700' : 'icon-checkbox-normal')"
+                        ></span>
+
+                        <p class="text-base text-gray-800 dark:text-white font-semibold">
+                            @lang('admin::app.components.associations.type-search.select-all')
+                        </p>
+                    </div>
+
+                    <div
+                        class="flex gap-2.5 justify-between px-4 py-6 border-b border-slate-300 dark:border-gray-800 select-none"
+                        :class="isLocked(type)
+                            ? 'cursor-default opacity-60'
+                            : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-cherry-800'"
+                        v-for="type in searchedTypes"
                         :key="type.code"
+                        role="checkbox"
+                        :tabindex="isLocked(type) ? -1 : 0"
+                        :aria-checked="type.selected ? 'true' : 'false'"
+                        :aria-disabled="isLocked(type) ? 'true' : 'false'"
+                        @click="toggle(type)"
+                        @keydown.enter.prevent="toggle(type)"
+                        @keydown.space.prevent="toggle(type)"
                     >
                         <div class="flex gap-2.5 items-center">
                             <div>
-                                <input
-                                    type="checkbox"
-                                    class="sr-only peer"
-                                    :id="'searched-type-' + type.code"
-                                    v-model="type.selected"
-                                />
-
-                                <label
-                                    class="icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700 cursor-pointer"
-                                    :for="'searched-type-' + type.code"
-                                >
-                                </label>
+                                <span
+                                    class="text-2xl"
+                                    :class="type.selected ? 'icon-checkbox-check text-primary-700' : 'icon-checkbox-normal'"
+                                ></span>
                             </div>
 
                             <div class="grid gap-1.5 place-content-start">
@@ -78,6 +104,20 @@
                                 <p class="text-gray-600 dark:text-gray-300" v-text="type.code"></p>
                             </div>
                         </div>
+
+                        <span
+                            class="label-active h-fit"
+                            v-if="isLocked(type)"
+                        >
+                            @lang('admin::app.components.associations.type-search.already-added')
+                        </span>
+                    </div>
+
+                    <div
+                        class="flex justify-center py-4"
+                        v-if="isLoading"
+                    >
+                        <span class="icon-loader text-2xl animate-spin"></span>
                     </div>
                 </div>
 
@@ -113,6 +153,16 @@
                     type: Array,
                     default: () => [],
                 },
+
+                /**
+                 * Types the product already links products under: they stay ticked
+                 * and untouchable here, since dropping them would silently discard
+                 * their links -- only empty types can be unticked to remove them.
+                 */
+                lockedTypeCodes: {
+                    type: Array,
+                    default: () => [],
+                },
             },
 
             data() {
@@ -120,12 +170,31 @@
                     searchTerm: '',
 
                     searchedTypes: [],
+
+                    currentPage: 1,
+
+                    lastPage: 1,
+
+                    isLoading: false,
                 }
             },
 
             computed: {
-                filteredSearchedTypes() {
-                    return this.searchedTypes.filter(type => ! this.addedTypeCodes.includes(type.code));
+                selectableTypes() {
+                    return this.searchedTypes.filter(type => ! this.isLocked(type));
+                },
+
+                selectedCount() {
+                    return this.selectableTypes.filter(type => type.selected).length;
+                },
+
+                allSelected() {
+                    return this.selectableTypes.length > 0
+                        && this.selectedCount === this.selectableTypes.length;
+                },
+
+                someSelected() {
+                    return this.selectedCount > 0 && ! this.allSelected;
                 },
             },
 
@@ -142,23 +211,78 @@
                 },
 
                 search() {
-                    if (this.searchTerm.length <= 1 && this.searchedTypes.length !== 0) {
+                    this.fetch(1);
+                },
+
+                loadMore() {
+                    if (this.isLoading || this.currentPage >= this.lastPage) {
                         return;
                     }
 
+                    this.fetch(this.currentPage + 1);
+                },
+
+                fetch(page) {
+                    this.isLoading = true;
+
                     this.$axios.get("{{ route('admin.catalog.association_types.search') }}", {
-                            params: { query: this.searchTerm },
+                            params: {
+                                query: this.searchTerm,
+                                page,
+                            },
                         })
                         .then(response => {
-                            this.searchedTypes = response.data.data;
+                            const types = response.data.data.map(type => ({
+                                ...type,
+                                selected: this.addedTypeCodes.includes(type.code),
+                            }));
+
+                            this.searchedTypes = page === 1
+                                ? types
+                                : this.searchedTypes.concat(types);
+
+                            this.currentPage = response.data.meta?.current_page ?? page;
+                            this.lastPage = response.data.meta?.last_page ?? page;
                         })
-                        .catch(() => {});
+                        .catch(() => {})
+                        .finally(() => this.isLoading = false);
+                },
+
+                onScroll(event) {
+                    const target = event.target;
+
+                    if (target.scrollHeight - target.scrollTop - target.clientHeight <= 100) {
+                        this.loadMore();
+                    }
+                },
+
+                isLocked(type) {
+                    return this.lockedTypeCodes.includes(type.code);
+                },
+
+                toggle(type) {
+                    if (this.isLocked(type)) {
+                        return;
+                    }
+
+                    type.selected = ! type.selected;
+                },
+
+                toggleAll() {
+                    const selected = ! this.allSelected;
+
+                    this.selectableTypes.forEach(type => type.selected = selected);
                 },
 
                 addSelected() {
-                    const selected = this.searchedTypes.filter(type => type.selected);
-
-                    this.$emit('onTypeAdded', selected);
+                    this.$emit('onTypeAdded', {
+                        added: this.selectableTypes.filter(
+                            type => type.selected && ! this.addedTypeCodes.includes(type.code)
+                        ),
+                        removed: this.selectableTypes
+                            .filter(type => ! type.selected && this.addedTypeCodes.includes(type.code))
+                            .map(type => type.code),
+                    });
 
                     this.$refs.searchTypeDrawer.close();
                 },

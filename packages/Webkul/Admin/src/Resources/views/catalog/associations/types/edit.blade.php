@@ -1,38 +1,36 @@
-<x-admin::layouts>
+<x-admin::layouts.with-history>
+    <x-slot:entityName>
+        association_type
+    </x-slot>
+
+    <x-slot:historyId>
+        {{ $associationType->id }}
+    </x-slot>
+
     <x-slot:title>
         @lang('admin::app.catalog.association_types.edit.title')
     </x-slot>
 
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.catalog.association_types.edit.title')"
+            :back-url="route('admin.catalog.association_types.index')"
+            :back-label="trans('admin::app.catalog.category_fields.create.back-btn')"
+            :save-label="trans('admin::app.catalog.association_types.edit.save-btn')"
+            form="association-type-edit-form"
+            :sticky="false"
+        />
+    </x-slot>
+
     <x-admin::form
+        id="association-type-edit-form"
         ajax
         :action="route('admin.catalog.association_types.update', $associationType->id)"
         method="PUT"
     >
         {!! view_render_event('unopim.admin.catalog.association_types.edit.form_controls.before', ['associationType' => $associationType]) !!}
 
-        <div class="flex justify-between items-center">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.catalog.association_types.edit.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
-                <a
-                    href="{{ route('admin.catalog.association_types.index') }}"
-                    class="transparent-button"
-                >
-                    @lang('admin::app.catalog.category_fields.create.back-btn')
-                </a>
-
-                <button
-                    type="submit"
-                    class="primary-button"
-                >
-                    @lang('admin::app.catalog.association_types.edit.save-btn')
-                </button>
-            </div>
-        </div>
-
-        <div class="flex gap-2.5 mt-3.5">
+        <div class="flex gap-2.5">
             <!-- Left Container -->
             <div class="flex flex-col gap-2 flex-1 overflow-auto">
                 {!! view_render_event('unopim.admin.catalog.association_types.edit.fields.before', ['associationType' => $associationType]) !!}
@@ -113,25 +111,15 @@
                         @lang('admin::app.catalog.category_fields.create.label')
                     </p>
 
-                    @foreach ($locales as $locale)
-                        <x-admin::form.control-group class="last:!mb-0">
-                            <x-admin::form.control-group.label>
-                                {{ $locale->name }}
-                            </x-admin::form.control-group.label>
-
-                            <x-admin::form.control-group.control
-                                type="text"
-                                :name="$locale->code . '[name]'"
-                                :value="old($locale->code)['name'] ?? ($associationType->translate($locale->code)->name ?? '')"
-                            />
-
-                            <x-admin::form.control-group.error :control-name="$locale->code . '[name]'" />
-                        </x-admin::form.control-group>
-                    @endforeach
+                    <x-admin::form.translatable-field
+                        :locales="$locales"
+                        :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($associationType->translate($locale->code)->name ?? '')])->all()"
+                        :label="trans('admin::app.catalog.category_fields.create.label')"
+                    />
                 </div>
             </div>
         </div>
 
         {!! view_render_event('unopim.admin.catalog.association_types.edit.form_controls.after', ['associationType' => $associationType]) !!}
     </x-admin::form>
-</x-admin::layouts>
+</x-admin::layouts.with-history>

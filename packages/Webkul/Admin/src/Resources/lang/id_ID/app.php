@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navigasi produk',
                 'preview'    => 'Pratinjau',
                 'remove'     => 'Menghapus',
                 'save-btn'   => 'Simpan produk',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategori',
                     'root-not-allowed' => 'Kategori induk tidak dapat ditetapkan ke produk.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grup atribut:',
+                    'title'              => 'Grup Atribut',
+                    'search-placeholder' => 'Cari grup',
+                    'empty'              => 'Tidak ada grup atribut yang cocok dengan pencarian Anda.',
+                    'attributes-count'   => ':count atribut',
+                    'loading'            => 'Memuat...',
+                    'retry'              => 'Coba lagi',
+                    'load-more'          => 'Muat lebih banyak',
+                    'unsaved-title'      => 'Perubahan belum disimpan',
+                    'unsaved-message'    => 'Simpan perubahan Anda pada :group sebelum melanjutkan, atau buang perubahan tersebut.',
+                    'save-and-continue'  => 'Simpan & lanjutkan',
+                    'discard-and-leave'  => 'Buang & lanjutkan',
+                    'cancel'             => 'Batal',
                 ],
                 'images' => [
                     'info'  => 'Resolusi gambar harus seperti 560px x 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Bahasa',
                 'level-parent'                     => 'Produk induk',
                 'level-sub-parent'                 => 'Sub-induk',
                 'level-variant'                    => 'Varian',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Perluas',
+            'collapse' => 'Ciutkan',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Menambahkan',
+                'already-added'      => 'Ditambahkan',
                 'empty-info'         => 'Coba pencarian lain.',
                 'empty-title'        => 'Tidak ada jenis asosiasi ditemukan',
                 'search-placeholder' => 'Cari berdasarkan nama atau kode',
+                'select-all'         => 'Pilih Semua',
                 'title'              => 'Tambah Jenis Asosiasi',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'Tutup',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled dari :total diterjemahkan',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Tidak ada hasil',
+                'search' => 'Cari',
+            ],
             'ajax-error'      => 'Terjadi kesalahan saat menyimpan. Silakan coba lagi.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik untuk mengunggah',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Ciutkan panel',
+                'expand'   => 'Bentangkan panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Jejak navigasi',
             ],

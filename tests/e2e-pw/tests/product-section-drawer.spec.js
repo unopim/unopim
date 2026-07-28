@@ -1,6 +1,7 @@
 const { test, expect } = require('@playwright/test');
 
-const PRODUCT_EDIT = '/admin/catalog/products/edit/3';
+// Product ids differ per seeded workspace, hence the override.
+const PRODUCT_EDIT = `/admin/catalog/products/edit/${process.env.PRODUCT_EDIT_ID || 3}`;
 
 // The drawer panel is teleported to <body> and carries both `.fixed` and
 // data-section-id; the association content wrapper reuses data-section-id
@@ -50,6 +51,48 @@ test.describe('product-edit section drawer', () => {
       }
     });
   }
+
+  test('categories search lives in the drawer header and stays put while the tree scrolls', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(PRODUCT_EDIT);
+
+    await openDrawer(page, /categories/i);
+
+    const panel = page.locator(panelSel('categories'));
+    await expect(panel).toBeVisible();
+
+    const search = panel.locator('input[type="search"]');
+    await expect(search).toBeVisible();
+
+    const before = await search.boundingBox();
+
+    await panel.locator('.overflow-auto').first().evaluate((el) => { el.scrollTop = el.scrollHeight; });
+
+    const after = await search.boundingBox();
+    expect(Math.abs(after.y - before.y)).toBeLessThan(2);
+  });
+
+  test('categories search filters instantly and keeps existing selections', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto(PRODUCT_EDIT);
+
+    await openDrawer(page, /categories/i);
+
+    const panel = page.locator(panelSel('categories'));
+    const selected = () => page.locator('input[type="hidden"][name="categories[]"]').count();
+
+    const before = await selected();
+
+    const response = page.waitForResponse((res) => res.url().includes('/categories/search') && res.ok());
+
+    await panel.locator('input[type="search"]').fill('a');
+    await response;
+
+    // Flat hits replace the tree; every row is a plain checkbox, no folder chevrons.
+    await expect(panel.locator('.v-tree-container')).toHaveCount(0);
+
+    expect(await selected()).toBe(before);
+  });
 
   test('associations drawer opens and closes via Escape', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });

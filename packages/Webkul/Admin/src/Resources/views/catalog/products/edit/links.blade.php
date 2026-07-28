@@ -50,7 +50,7 @@
             data-section-id="associations"
         >
             <!-- Panel -->
-            <div class="bg-white grid gap-2.5 p-4 dark:bg-cherry-900 rounded box-shadow">
+            <div class="bg-white grid gap-2.5 min-w-0 p-4 dark:bg-cherry-900 rounded box-shadow">
                 <div class="flex justify-end items-center">
                     <!-- Add Association Type -->
                     <button
@@ -85,11 +85,13 @@
 
                 <!-- Association Type Switcher -->
                 <div
-                    class="flex items-end gap-1 mb-2 border-b border-gray-200 dark:border-cherry-800"
+                    class="flex items-end gap-1 min-w-0 mb-2 border-b border-gray-200 dark:border-cherry-800"
+                    ref="tabBar"
                     v-else
                 >
                     <div
-                        class="flex items-end gap-1 overflow-x-auto"
+                        class="flex items-end gap-1 min-w-0 overflow-hidden"
+                        ref="tabStrip"
                         role="tablist"
                         aria-label="@lang('admin::app.catalog.products.edit.links.title')"
                     >
@@ -102,7 +104,7 @@
                             :class="type.code === activeTypeCode
                                 ? 'border-primary-600 text-primary-600 dark:text-primary-400'
                                 : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'"
-                            class="flex items-center gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-medium border-b-2 transition-all"
+                            class="flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-medium border-b-2 transition-all"
                             @click="selectType(type.code)"
                         >
                             <span v-text="type.name"></span>
@@ -115,45 +117,27 @@
                         </button>
                     </div>
 
-                    <!-- Overflow types, kept out of the strip so it stays readable -->
                     <div
-                        class="relative"
-                        v-if="overflowTypes.length"
+                        ref="moreTypes"
+                        v-show="overflowTypes.length"
                     >
-                        <button
-                            type="button"
-                            class="whitespace-nowrap px-3 py-2 text-sm font-medium text-gray-600 dark:text-gray-300 border-b-2 border-transparent hover:text-gray-800 dark:hover:text-white"
-                            @click="toggleMoreMenu"
+                        <x-admin::form.searchable-menu
+                            ::items="overflowMenuItems"
+                            search-placeholder="{{ trans('admin::app.catalog.products.edit.links.search-types') }}"
+                            @update:model-value="selectType($event)"
                         >
-                            @lang('admin::app.catalog.products.edit.links.more-types')
-                        </button>
-
-                        <div
-                            class="absolute z-10 ltr:right-0 rtl:left-0 top-full mt-1 w-64 max-h-72 overflow-auto rounded bg-white dark:bg-cherry-900 box-shadow"
-                            v-if="isMoreMenuOpen"
-                        >
-                            <input
-                                type="text"
-                                class="sticky top-0 w-full px-3 py-2 border-b dark:border-cherry-800 bg-white dark:bg-cherry-900 text-sm text-gray-600 dark:text-gray-300"
-                                :placeholder="@json(trans('admin::app.catalog.products.edit.links.search-types'))"
-                                v-model="typeFilter"
-                            />
-
-                            <button
-                                type="button"
-                                class="flex justify-between w-full gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-violet-50 dark:hover:bg-cherry-800"
-                                v-for="type in filteredOverflowTypes"
-                                :key="'assoc-more-' + type.code"
-                                @click="selectType(type.code)"
-                            >
-                                <span v-text="type.name"></span>
-
-                                <span
-                                    v-if="type.links.length"
-                                    v-text="type.links.length"
-                                ></span>
-                            </button>
-                        </div>
+                            <x-slot:toggle>
+                                <button
+                                    type="button"
+                                    class="whitespace-nowrap px-3 py-2 text-sm font-medium border-b-2"
+                                    :class="isOverflowActive
+                                        ? 'border-primary-600 text-primary-600 dark:text-primary-400'
+                                        : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'"
+                                >
+                                    @lang('admin::app.catalog.products.edit.links.more-types')
+                                </button>
+                            </x-slot>
+                        </x-admin::form.searchable-menu>
                     </div>
                 </div>
 
@@ -308,7 +292,8 @@
                 <x-admin::associations.type-search
                     ref="typeSearch"
                     ::added-type-codes="addedTypeCodes"
-                    @onTypeAdded="addType($event)"
+                    ::locked-type-codes="linkedTypeCodes"
+                    @onTypeAdded="syncTypes($event)"
                 />
             </teleport>
 
@@ -334,10 +319,6 @@
 
                     activeTypeCode: null,
 
-                    isMoreMenuOpen: false,
-
-                    typeFilter: '',
-
                     /**
                      * Mutable working copy of the `associationTypes` prop. Named
                      * differently from the prop itself: writing to
@@ -352,6 +333,15 @@
                     currentLocaleCode: "{{ core()->getRequestedLocaleCode() }}",
 
                     currentChannelCode: "{{ core()->getRequestedChannelCode() }}",
+
+                    /**
+                     * How many tabs fit the strip on the current viewport; `null`
+                     * means "not measured yet", which renders every tab so their
+                     * widths can be read off the DOM.
+                     */
+                    visibleTabCount: null,
+
+                    tabGap: 4,
                 }
             },
 
@@ -368,45 +358,47 @@
                     return productIds;
                 },
 
-                /**
-                 * Past this many types a strip stops being scannable, so only the
-                 * ones in use stay as tabs and the remainder move behind a
-                 * searchable menu.
-                 */
-                isOverflowing() {
-                    return this.localTypes.length > 12;
-                },
-
                 tabTypes() {
-                    if (! this.isOverflowing) {
-                        return this.localTypes;
-                    }
-
-                    return this.localTypes.filter(
-                        type => type.links.length || type.code === this.activeTypeCode
-                    );
+                    return this.visibleTabCount === null
+                        ? this.localTypes
+                        : this.localTypes.slice(0, this.visibleTabCount);
                 },
 
                 overflowTypes() {
-                    const shown = new Set(this.tabTypes.map(type => type.code));
-
-                    return this.localTypes.filter(type => ! shown.has(type.code));
+                    return this.visibleTabCount === null
+                        ? []
+                        : this.localTypes.slice(this.visibleTabCount);
                 },
 
-                filteredOverflowTypes() {
-                    const term = this.typeFilter.trim().toLowerCase();
+                /**
+                 * The strip keeps its order when a tab is picked -- so a type chosen
+                 * from the overflow menu stays there, and the toggle carries the
+                 * active styling in its place.
+                 */
+                isOverflowActive() {
+                    return this.overflowTypes.some(type => type.code === this.activeTypeCode);
+                },
 
-                    if (! term) {
-                        return this.overflowTypes;
-                    }
-
-                    return this.overflowTypes.filter(
-                        type => type.name.toLowerCase().includes(term) || type.code.toLowerCase().includes(term)
-                    );
+                overflowMenuItems() {
+                    return this.overflowTypes.map(type => ({
+                        id:    type.code,
+                        label: type.name,
+                        badge: type.links.length || null,
+                    }));
                 },
 
                 addedTypeCodes() {
                     return this.localTypes.map(type => type.code);
+                },
+
+                linkedTypeCodes() {
+                    return this.localTypes.filter(type => type.links.length).map(type => type.code);
+                },
+            },
+
+            watch: {
+                'localTypes.length'() {
+                    this.measureTabs();
                 },
             },
 
@@ -414,9 +406,79 @@
                 this.activeTypeCode = (this.localTypes.find(type => type.links.length) ?? this.localTypes[0])?.code ?? null;
 
                 this.publishState();
+
+                this.$nextTick(() => {
+                    this.measureTabs();
+
+                    if (window.ResizeObserver && this.$refs.tabBar) {
+                        this._tabObserver = new ResizeObserver(() => this.measureTabs());
+                        this._tabObserver.observe(this.$refs.tabBar);
+                    }
+                });
+            },
+
+            beforeUnmount() {
+                this._tabObserver?.disconnect();
             },
 
             methods: {
+                /**
+                 * Fits as many tabs as the strip can hold before handing the rest to
+                 * the "More" menu: every tab is rendered first so its rendered width
+                 * can be read, then the row is cut to what the bar actually fits
+                 * (keeping room for the menu toggle itself).
+                 */
+                async measureTabs() {
+                    this.visibleTabCount = null;
+
+                    await this.$nextTick();
+
+                    const bar = this.$refs.tabBar;
+                    const strip = this.$refs.tabStrip;
+
+                    if (! bar || ! strip) {
+                        return;
+                    }
+
+                    const widths = [...strip.children].map(tab => tab.offsetWidth);
+                    const total = widths.reduce((sum, width) => sum + width + this.tabGap, 0);
+
+                    if (total <= bar.clientWidth) {
+                        this.visibleTabCount = widths.length;
+
+                        return;
+                    }
+
+                    this.visibleTabCount = this.countFittingTabs(widths, bar.clientWidth - (this._moreWidth || 90));
+
+                    await this.$nextTick();
+
+                    const moreWidth = this.$refs.moreTypes?.offsetWidth;
+
+                    if (moreWidth && moreWidth !== this._moreWidth) {
+                        this._moreWidth = moreWidth;
+
+                        this.visibleTabCount = this.countFittingTabs(widths, bar.clientWidth - moreWidth);
+                    }
+                },
+
+                countFittingTabs(widths, available) {
+                    let used = 0;
+                    let fits = 0;
+
+                    for (const width of widths) {
+                        used += width + this.tabGap;
+
+                        if (used > available) {
+                            break;
+                        }
+
+                        fits++;
+                    }
+
+                    return Math.max(1, fits);
+                },
+
                 /**
                  * Linked products are rendered as hidden `associations[<typeCode>][<index>][sku]`
                  * inputs (see the `sku` hidden input above), one per link row across every
@@ -439,23 +501,26 @@
 
                 selectType(typeCode) {
                     this.activeTypeCode = typeCode;
-                    this.isMoreMenuOpen = false;
-                    this.typeFilter = '';
-                },
-
-                toggleMoreMenu() {
-                    this.isMoreMenuOpen = ! this.isMoreMenuOpen;
-                    this.typeFilter = '';
                 },
 
                 /**
-                 * Append picker-selected types as fresh, link-less tabs (deduped by
-                 * code) and switch to the first of them. No `setDirty` here: an
-                 * empty type prunes nothing on save; the form turns dirty once a
-                 * link is added.
+                 * Append picker-ticked types as fresh, link-less tabs (deduped by
+                 * code) and drop the link-less ones the user unticked. No
+                 * `setDirty` here: an empty type prunes nothing on save; the form
+                 * turns dirty once a link is added.
                  */
-                addType(selectedTypes) {
-                    selectedTypes.forEach(type => {
+                syncTypes({ added, removed }) {
+                    removed
+                        .filter(code => ! this.linkedTypeCodes.includes(code))
+                        .forEach(code => {
+                            const index = this.localTypes.findIndex(type => type.code === code);
+
+                            if (index !== -1) {
+                                this.localTypes.splice(index, 1);
+                            }
+                        });
+
+                    added.forEach(type => {
                         if (this.localTypes.some(existing => existing.code === type.code)) {
                             return;
                         }
@@ -468,13 +533,17 @@
                         });
                     });
 
-                    const added = selectedTypes.find(type => this.localTypes.some(existing => existing.code === type.code));
-
-                    if (added) {
-                        this.activeTypeCode = added.code;
+                    if (added.length) {
+                        this.activeTypeCode = added[0].code;
+                    } else if (! this.localTypes.some(type => type.code === this.activeTypeCode)) {
+                        this.activeTypeCode = this.localTypes[0]?.code ?? null;
                     }
 
-                    this.$nextTick(() => this.publishState());
+                    this.$nextTick(() => {
+                        this.publishState();
+
+                        this.measureTabs();
+                    });
                 },
 
                 /**

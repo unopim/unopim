@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Tuotteen navigointi',
                 'preview'    => 'Esikatselu',
                 'remove'     => 'Poista',
                 'save-btn'   => 'Tallenna tuote',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategoriat',
                     'root-not-allowed' => 'Juuriluokkaa ei voi liittää tuotteeseen.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attribuuttiryhmä:',
+                    'title'              => 'Attribuuttiryhmät',
+                    'search-placeholder' => 'Hae ryhmiä',
+                    'empty'              => 'Mikään attribuuttiryhmä ei vastaa hakuasi.',
+                    'attributes-count'   => ':count attribuuttia',
+                    'loading'            => 'Ladataan...',
+                    'retry'              => 'Yritä uudelleen',
+                    'load-more'          => 'Lataa lisää',
+                    'unsaved-title'      => 'Tallentamattomat muutokset',
+                    'unsaved-message'    => 'Tallenna ryhmän :group muutokset ennen jatkamista tai hylkää ne.',
+                    'save-and-continue'  => 'Tallenna ja jatka',
+                    'discard-and-leave'  => 'Hylkää ja jatka',
+                    'cancel'             => 'Peruuta',
                 ],
                 'images' => [
                     'info'  => 'Kuvan tarkkuuden tulisi olla 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Kieli',
                 'level-parent'                     => 'Ylätason tuote',
                 'level-sub-parent'                 => 'Välitaso',
                 'level-variant'                    => 'Variantti',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Laajenna',
+            'collapse' => 'Tiivistä',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Lisää',
+                'already-added'      => 'Lisätty',
                 'empty-info'         => 'Kokeile eri hakua.',
                 'empty-title'        => 'Assosiaatiotyyppejä ei löytynyt',
                 'search-placeholder' => 'Hae nimellä tai koodilla',
+                'select-all'         => 'Valitse kaikki',
                 'title'              => 'Lisää assosiaatiotyyppi',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'Sulje',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled / :total käännetty',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Ei tuloksia',
+                'search' => 'Hae',
+            ],
             'ajax-error'      => 'Tallennuksen aikana tapahtui virhe. Yritä uudelleen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Lataa napsauttamalla',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Kutista paneeli',
+                'expand'   => 'Laajenna paneeli',
+            ],
             'breadcrumbs' => [
                 'label' => 'Navigointipolku',
             ],

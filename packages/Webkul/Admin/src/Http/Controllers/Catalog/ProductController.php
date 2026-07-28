@@ -41,6 +41,7 @@ use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Repositories\VariantStructureRepository;
 use Webkul\Product\Type\AbstractType;
 use Webkul\Product\Validator\ProductValuesValidator;
+use Webkul\Product\Validator\RequiredAttributesValidator;
 
 class ProductController extends Controller
 {
@@ -81,6 +82,7 @@ class ProductController extends Controller
         protected ProductAssociationRepository $productAssociationRepository,
         protected VariantStructureRepository $variantStructureRepository,
         protected VariantStructurePlanner $variantStructurePlanner,
+        protected RequiredAttributesValidator $requiredAttributesValidator,
     ) {}
 
     /**
@@ -558,26 +560,24 @@ class ProductController extends Controller
 
         $lazyGroups = $family->attributeCount() > (int) config('product_editor.lazy_group_threshold');
 
-        $activeGroup = null;
+        $groupAttributes = [];
 
-        $groupAttributes = null;
-
-        $groupPage = ['groups' => [], 'total' => 0, 'lastPage' => 1, 'perPage' => (int) config('product_editor.groups_per_page')];
+        $nextGroupId = null;
 
         if ($lazyGroups) {
-            $group = $family->groupSummaryByCode(core()->getRequestedLocaleCode(), request()->query('group'));
+            $localeCode = core()->getRequestedLocaleCode();
 
-            $activeGroup = $group ? [
-                'id'   => (int) $group->id,
-                'code' => $group->code,
-                'name' => ! empty($group->name) ? $group->name : '['.$group->code.']',
-            ] : null;
+            $first = $family->groupSummaryByCode($localeCode, request()->query('group'));
 
-            $groupAttributes = $activeGroup
-                ? $product->getEditableAttributesForGroup($activeGroup['id'])
-                : collect();
+            $renderGroups = collect($first ? [$first] : []);
 
-            $groupPage = $this->attributeGroupPage($family, 1, '', $activeGroup['id'] ?? null);
+            if ($first) {
+                $groupAttributes[$first->id] = $product->getEditableAttributesForGroup((int) $first->id);
+
+                $nextGroupId = $family->groupSummaryAfter($localeCode, (int) $first->position)?->id;
+            }
+        } else {
+            $renderGroups = $family->familyGroups()->with('translations')->orderBy('position')->get();
         }
 
         return view('admin::catalog.products.edit', compact(
@@ -589,10 +589,55 @@ class ProductController extends Controller
             'variantTree',
             'variantFieldLocks',
             'lazyGroups',
-            'activeGroup',
+            'renderGroups',
             'groupAttributes',
-            'groupPage'
+            'nextGroupId'
         ));
+    }
+
+    /**
+     * Render one attribute group's fields for the product edit page's
+     * scroll loader, together with the id of the group that follows it.
+     */
+    public function attributeGroupFields(int $id, int $groupId): JsonResponse
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        $localeCode = core()->getRequestedLocaleCode();
+
+        $group = $product->attribute_family->groupSummaryById($localeCode, $groupId);
+
+        if (! $group) {
+            abort(404);
+        }
+
+        $variantTree = $this->buildVariantTree($product);
+
+        $variantFieldLocks = $this->buildVariantFieldLocks($product);
+
+        $variantAxisCodes = $variantTree
+            ? collect($variantTree['attributes'])->where('isAxis', true)->pluck('code')->all()
+            : [];
+
+        $html = view('admin::catalog.products.edit.attribute-group-fragment', [
+            'product'            => $product,
+            'group'              => $group,
+            'customAttributes'   => $product->getEditableAttributesForGroup((int) $group->id),
+            'variantHiddenCodes' => array_merge($variantAxisCodes, $variantFieldLocks['hidden'] ?? []),
+            'variantFieldLocks'  => $variantFieldLocks,
+            'currentLocale'      => core()->getRequestedLocale(),
+            'currentChannel'     => core()->getRequestedChannel(),
+            'requiredAttributes' => $product->getCompletenessAttributes(core()->getRequestedChannel()->id, core()->getRequestedLocale()->id)
+                ->keyBy('attribute_id')
+                ->map(fn ($item) => $item->attribute_id)
+                ->toArray(),
+        ])->render();
+
+        return new JsonResponse([
+            'html'        => $html,
+            'groupId'     => (int) $group->id,
+            'nextGroupId' => $product->attribute_family->groupSummaryAfter($localeCode, (int) $group->position)?->id,
+        ]);
     }
 
     /**
@@ -1061,7 +1106,39 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductForm $request, int $id): RedirectResponse
+    /**
+     * Report the required attributes a save left empty.
+     *
+     * The group each field belongs to travels with the error: the editor loads
+     * groups on demand, so the field may not be on the page yet and the client
+     * has to fetch its group before it can show it.
+     *
+     * @param  array<string, array{code: string, name: string, group_id: int}>  $missing
+     */
+    private function missingRequiredResponse(array $missing): RedirectResponse|JsonResponse
+    {
+        $errors = [];
+
+        $groups = [];
+
+        foreach ($missing as $field => $attribute) {
+            $errors[$field] = trans('validation.required', ['attribute' => $attribute['name']]);
+
+            $groups[$field] = $attribute['group_id'];
+        }
+
+        if (request()->expectsJson()) {
+            return new JsonResponse([
+                'message'     => reset($errors),
+                'errors'      => $errors,
+                'errorGroups' => $groups,
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return back()->withInput()->withErrors($errors);
+    }
+
+    public function update(ProductForm $request, int $id): RedirectResponse|JsonResponse
     {
         Event::dispatch('catalog.product.update.before', $id);
 
@@ -1089,6 +1166,17 @@ class ProductController extends Controller
 
                 return back()->withInput();
             }
+        }
+
+        $missingRequired = $this->requiredAttributesValidator->missing(
+            $product,
+            $data[AbstractType::PRODUCT_VALUES_KEY] ?? [],
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
+        if ($missingRequired !== []) {
+            return $this->missingRequiredResponse($missingRequired);
         }
 
         try {

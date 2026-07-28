@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '产品导航',
                 'preview'    => '预览',
                 'remove'     => '消除',
                 'save-btn'   => '保存产品',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => '类别',
                     'root-not-allowed' => '根类别不能分配给产品。',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '属性组：',
+                    'title'              => '属性组',
+                    'search-placeholder' => '搜索属性组',
+                    'empty'              => '没有与搜索匹配的属性组。',
+                    'attributes-count'   => ':count 个属性',
+                    'loading'            => '加载中...',
+                    'retry'              => '重试',
+                    'load-more'          => '加载更多',
+                    'unsaved-title'      => '未保存的更改',
+                    'unsaved-message'    => '继续之前请保存 :group 的更改，或放弃这些更改。',
+                    'save-and-continue'  => '保存并继续',
+                    'discard-and-leave'  => '放弃并继续',
+                    'cancel'             => '取消',
                 ],
                 'images' => [
                     'info'  => '图像分辨率应像560px x 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => '语言',
                 'level-parent'                     => '父产品',
                 'level-sub-parent'                 => '子父级',
                 'level-variant'                    => '变体',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '展开',
+            'collapse' => '收起',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => '添加',
+                'already-added'      => '已添加',
                 'empty-info'         => '尝试其他搜索。',
                 'empty-title'        => '未找到关联类型',
                 'search-placeholder' => '按名称或代码搜索',
+                'select-all'         => '全选',
                 'title'              => '添加关联类型',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => '关闭',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => '已翻译 :total 个中的 :filled 个',
+            ],
+            'searchable-menu' => [
+                'empty'  => '未找到结果',
+                'search' => '搜索',
+            ],
             'ajax-error'      => '保存时出现问题。请重试。',
             'file-uploader'   => [
                 'upload-cta'  => '点击上传',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => '收起面板',
+                'expand'   => '展开面板',
+            ],
             'breadcrumbs' => [
                 'label' => '面包屑导航',
             ],

@@ -190,14 +190,48 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
      * other groups, so its cost is bounded by the group rather than by the
      * family.
      *
+     * An attribute assigned to several of the family's groups belongs to the
+     * first one in display order: every copy renders the same input name, so a
+     * later duplicate would overwrite whatever the editor typed into the first.
+     *
      * @return Collection<int, Attribute>
      */
     public function customAttributesForGroup(int $groupId): Collection
     {
-        return $this->customAttributes()
+        $attributes = $this->customAttributes()
             ->where('attribute_groups.id', $groupId)
             ->orderBy('attribute_group_mappings.position')
             ->get();
+
+        if ($attributes->isEmpty()) {
+            return $attributes;
+        }
+
+        $claimedEarlier = DB::table('attribute_group_mappings')
+            ->join(
+                'attribute_family_group_mappings',
+                'attribute_group_mappings.attribute_family_group_id',
+                '=',
+                'attribute_family_group_mappings.id'
+            )
+            ->where('attribute_family_group_mappings.attribute_family_id', $this->id)
+            ->where('attribute_family_group_mappings.position', '<', $this->groupPosition($groupId))
+            ->whereIn('attribute_group_mappings.attribute_id', $attributes->pluck('id')->all())
+            ->pluck('attribute_group_mappings.attribute_id')
+            ->all();
+
+        return $attributes->whereNotIn('id', $claimedEarlier)->values();
+    }
+
+    /**
+     * Get a group's display position within this family.
+     */
+    protected function groupPosition(int $groupId): int
+    {
+        return (int) DB::table('attribute_family_group_mappings')
+            ->where('attribute_family_id', $this->id)
+            ->where('attribute_group_id', $groupId)
+            ->value('position');
     }
 
     /**
@@ -206,7 +240,44 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
      */
     public function groupSummaryByCode(string $localeCode, ?string $code = null): ?object
     {
-        $base = fn () => DB::table('attribute_family_group_mappings')
+        $group = $code ? $this->groupSummaryQuery()->where('attribute_groups.code', $code)->first() : null;
+
+        $group ??= $this->groupSummaryQuery()->first();
+
+        return $this->withGroupName($group, $localeCode);
+    }
+
+    /**
+     * Get one of this family's groups by id.
+     */
+    public function groupSummaryById(string $localeCode, int $groupId): ?object
+    {
+        return $this->withGroupName(
+            $this->groupSummaryQuery()->where('attribute_groups.id', $groupId)->first(),
+            $localeCode
+        );
+    }
+
+    /**
+     * Get the group that follows the given display position, so the editor can
+     * walk the family one group at a time without holding the whole list.
+     */
+    public function groupSummaryAfter(string $localeCode, int $position): ?object
+    {
+        return $this->withGroupName(
+            $this->groupSummaryQuery()
+                ->where('attribute_family_group_mappings.position', '>', $position)
+                ->first(),
+            $localeCode
+        );
+    }
+
+    /**
+     * Base query for this family's group summaries, in display order.
+     */
+    protected function groupSummaryQuery(): Builder
+    {
+        return DB::table('attribute_family_group_mappings')
             ->join(
                 'attribute_groups',
                 'attribute_groups.id',
@@ -221,11 +292,13 @@ class AttributeFamily extends TranslatableModel implements AttributeFamilyContra
                 'attribute_family_group_mappings.id as group_mapping_id',
                 'attribute_family_group_mappings.position',
             ]);
+    }
 
-        $group = $code ? $base()->where('attribute_groups.code', $code)->first() : null;
-
-        $group ??= $base()->first();
-
+    /**
+     * Resolve a group summary's translated name in the requested locale.
+     */
+    protected function withGroupName(?object $group, string $localeCode): ?object
+    {
         if (! $group) {
             return null;
         }

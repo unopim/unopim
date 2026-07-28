@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Ürün gezinmesi',
                 'preview'    => 'Önizleme',
                 'remove'     => 'Kaldır',
                 'save-btn'   => 'Ürünü kaydet',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategoriler',
                     'root-not-allowed' => 'Kök kategori bir ürüne atanamaz.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Öznitelik grubu:',
+                    'title'              => 'Öznitelik Grupları',
+                    'search-placeholder' => 'Grup ara',
+                    'empty'              => 'Aramanızla eşleşen öznitelik grubu yok.',
+                    'attributes-count'   => ':count öznitelik',
+                    'loading'            => 'Yükleniyor...',
+                    'retry'              => 'Yeniden dene',
+                    'load-more'          => 'Daha fazla yükle',
+                    'unsaved-title'      => 'Kaydedilmemiş değişiklikler',
+                    'unsaved-message'    => 'Devam etmeden önce :group grubundaki değişikliklerinizi kaydedin veya iptal edin.',
+                    'save-and-continue'  => 'Kaydet ve devam et',
+                    'discard-and-leave'  => 'Vazgeç ve devam et',
+                    'cancel'             => 'İptal',
                 ],
                 'images' => [
                     'info'  => 'Resimler 560px X 609px çözünürlüğünde olmalıdır',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Yerel ayar',
                 'level-parent'                     => 'Üst ürün',
                 'level-sub-parent'                 => 'Alt-üst',
                 'level-variant'                    => 'Varyant',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Genişlet',
+            'collapse' => 'Daralt',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Ekle',
+                'already-added'      => 'Eklendi',
                 'empty-info'         => 'Farklı bir arama deneyin.',
                 'empty-title'        => 'İlişki türü bulunamadı',
                 'search-placeholder' => 'Ada veya koda göre ara',
+                'select-all'         => 'Tümünü seç',
                 'title'              => 'İlişki Türü Ekle',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Kapat',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total çeviriden :filled tanesi tamamlandı',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Sonuç bulunamadı',
+                'search' => 'Ara',
+            ],
             'ajax-error'      => 'Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
             'file-uploader'   => [
                 'upload-cta'  => 'Yüklemek için tıklayın',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Paneli daralt',
+                'expand'   => 'Paneli genişlet',
+            ],
             'breadcrumbs' => [
                 'label' => 'Gezinti yolu',
             ],

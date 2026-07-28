@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Бүтээгдэхүүний навигаци',
                 'preview'    => 'Киноны урөдчилсан үзлэг',
                 'remove'     => 'Зөөх',
                 'save-btn'   => 'Бүтээгдэхүүнийг хадгалах',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Ангилал',
                     'root-not-allowed' => 'Үндсэн ангиллыг бүтээгдэхүүнд оноох боломжгүй.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Шинж чанарын бүлэг:',
+                    'title'              => 'Шинж чанарын бүлгүүд',
+                    'search-placeholder' => 'Бүлэг хайх',
+                    'empty'              => 'Таны хайлтад тохирох шинж чанарын бүлэг олдсонгүй.',
+                    'attributes-count'   => ':count шинж чанар',
+                    'loading'            => 'Ачаалж байна...',
+                    'retry'              => 'Дахин оролдох',
+                    'load-more'          => 'Илүү ихийг ачаалах',
+                    'unsaved-title'      => 'Хадгалаагүй өөрчлөлтүүд',
+                    'unsaved-message'    => 'Үргэлжлүүлэхийн өмнө :group дэх өөрчлөлтөө хадгална уу, эсвэл цуцлана уу.',
+                    'save-and-continue'  => 'Хадгалаад үргэлжлүүлэх',
+                    'discard-and-leave'  => 'Цуцлаад үргэлжлүүлэх',
+                    'cancel'             => 'Болих',
                 ],
                 'images' => [
                     'info'  => 'Зургийн нарийвчлал нь 560px x 609px шиг байх ёстой',
@@ -1083,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Хэл',
                 'level-parent'                     => 'Эцэг бүтээгдэхүүн',
                 'level-sub-parent'                 => 'Дэд эцэг',
                 'level-variant'                    => 'Хувилбар',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Дэлгэх',
+            'collapse' => 'Хураах',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Нэмэх',
+                'already-added'      => 'Нэмсэн',
                 'empty-info'         => 'Өөр хайлт хийж үзнэ үү.',
                 'empty-title'        => 'Холбооны төрөл олдсонгүй',
                 'search-placeholder' => 'Нэр эсвэл кодоор хайх',
+                'select-all'         => 'Бүгдийг сонгох',
                 'title'              => 'Холбооны төрөл нэмэх',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Хаах',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total-с :filled орчуулагдсан',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Үр дүн олдсонгүй',
+                'search' => 'Хайх',
+            ],
             'ajax-error'      => 'Хадгалах явцад алдаа гарлаа. Дахин оролдоно уу.',
             'file-uploader'   => [
                 'upload-cta'  => 'Дарж байршуулах',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Самбарыг хумих',
+                'expand'   => 'Самбарыг дэлгэх',
+            ],
             'breadcrumbs' => [
                 'label' => 'Замын мөр',
             ],

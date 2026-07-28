@@ -16,12 +16,20 @@ class AssociationTypeFieldTranslation extends Model implements AssociationTypeFi
     protected $fillable = ['name'];
 
     /** Tags for History */
-    protected $historyTags = ['association_type_field'];
+    protected $historyTags = ['association_type'];
 
     /**
      * For Multilocale values history to display correctly
      */
     protected $historyTranslatableFields = ['name' => 'Name'];
+
+    /**
+     * These columns history will not be generated
+     */
+    protected $auditExclude = [
+        'association_type_field_id',
+        'id',
+    ];
 
     /**
      * Id used for creating version for history
@@ -30,6 +38,8 @@ class AssociationTypeFieldTranslation extends Model implements AssociationTypeFi
      */
     public function getPrimaryModelIdForHistory(): int
     {
-        return $this->association_type_field_id;
+        return (int) AssociationTypeFieldProxy::modelClass()::query()
+            ->whereKey($this->association_type_field_id)
+            ->value('association_type_id');
     }
 }

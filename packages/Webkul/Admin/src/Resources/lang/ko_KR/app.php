@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => '제품 탐색',
                 'preview'    => '미리 보기',
                 'remove'     => '제거',
                 'save-btn'   => '제품 저장',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => '카테고리',
                     'root-not-allowed' => '루트 카테고리는 제품에 할당할 수 없습니다.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => '속성 그룹:',
+                    'title'              => '속성 그룹',
+                    'search-placeholder' => '그룹 검색',
+                    'empty'              => '검색과 일치하는 속성 그룹이 없습니다.',
+                    'attributes-count'   => '속성 :count개',
+                    'loading'            => '불러오는 중...',
+                    'retry'              => '다시 시도',
+                    'load-more'          => '더 불러오기',
+                    'unsaved-title'      => '저장되지 않은 변경사항',
+                    'unsaved-message'    => '계속하기 전에 :group의 변경사항을 저장하거나 취소하세요.',
+                    'save-and-continue'  => '저장하고 계속',
+                    'discard-and-leave'  => '변경사항 버리고 계속',
+                    'cancel'             => '취소',
                 ],
                 'images' => [
                     'info'  => '이미지 해상도는 560px X 609px이어야 합니다',
@@ -1083,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => '로케일',
                 'level-parent'                     => '상위 제품',
                 'level-sub-parent'                 => '하위 상위',
                 'level-variant'                    => '변형',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => '펼치기',
+            'collapse' => '접기',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => '추가',
+                'already-added'      => '추가됨',
                 'empty-info'         => '다른 검색어를 사용해 보세요.',
                 'empty-title'        => '연관 유형을 찾을 수 없습니다',
                 'search-placeholder' => '이름 또는 코드로 검색',
+                'select-all'         => '모두 선택',
                 'title'              => '연관 유형 추가',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => '닫기',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total개 중 :filled개 번역됨',
+            ],
+            'searchable-menu' => [
+                'empty'  => '결과가 없습니다',
+                'search' => '검색',
+            ],
             'ajax-error'      => '저장하는 동안 문제가 발생했습니다. 다시 시도해 주세요.',
             'file-uploader'   => [
                 'upload-cta'  => '클릭하여 업로드',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => '패널 접기',
+                'expand'   => '패널 펼치기',
+            ],
             'breadcrumbs' => [
                 'label' => '탐색 경로',
             ],

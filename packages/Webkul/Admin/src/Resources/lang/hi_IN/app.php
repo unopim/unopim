@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'उत्पाद नेविगेशन',
                 'preview'    => 'पूर्व दर्शन',
                 'remove'     => 'निकालना',
                 'save-btn'   => 'उत्पाद सहेजें',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'श्रेणियाँ',
                     'root-not-allowed' => 'मूल श्रेणी को किसी उत्पाद को नहीं सौंपा जा सकता।',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'विशेषता समूह:',
+                    'title'              => 'विशेषता समूह',
+                    'search-placeholder' => 'समूह खोजें',
+                    'empty'              => 'आपकी खोज से मेल खाता कोई विशेषता समूह नहीं है।',
+                    'attributes-count'   => ':count विशेषताएँ',
+                    'loading'            => 'लोड हो रहा है...',
+                    'retry'              => 'पुनः प्रयास करें',
+                    'load-more'          => 'और लोड करें',
+                    'unsaved-title'      => 'सहेजे न गए परिवर्तन',
+                    'unsaved-message'    => 'आगे बढ़ने से पहले :group में किए गए परिवर्तन सहेजें, या उन्हें छोड़ दें।',
+                    'save-and-continue'  => 'सहेजें और जारी रखें',
+                    'discard-and-leave'  => 'छोड़ें और जारी रखें',
+                    'cancel'             => 'रद्द करें',
                 ],
                 'images' => [
                     'info'  => 'छवि संकल्प 560px x 609px की तरह होना चाहिए',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'भाषा',
                 'level-parent'                     => 'मूल उत्पाद',
                 'level-sub-parent'                 => 'उप-मूल',
                 'level-variant'                    => 'वेरिएंट',
@@ -2355,12 +2373,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'विस्तार करें',
+            'collapse' => 'संक्षिप्त करें',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'जोड़ना',
+                'already-added'      => 'जोड़ा गया',
                 'empty-info'         => 'कोई भिन्न खोज आज़माएँ।',
                 'empty-title'        => 'कोई एसोसिएशन प्रकार नहीं मिला',
                 'search-placeholder' => 'नाम या कोड से खोजें',
+                'select-all'         => 'सभी चुनें',
                 'title'              => 'एसोसिएशन प्रकार जोड़ें',
             ],
             'product-picker' => [
@@ -2379,6 +2404,13 @@ return [
             'close' => 'बंद करें',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':total में से :filled अनुवादित',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'कोई परिणाम नहीं मिला',
+                'search' => 'खोजें',
+            ],
             'ajax-error'      => 'सहेजते समय कुछ गलत हो गया। कृपया पुनः प्रयास करें।',
             'file-uploader'   => [
                 'upload-cta'  => 'अपलोड करने के लिए क्लिक करें',
@@ -2404,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'पैनल छोटा करें',
+                'expand'   => 'पैनल बड़ा करें',
+            ],
             'breadcrumbs' => [
                 'label' => 'नेविगेशन पथ',
             ],

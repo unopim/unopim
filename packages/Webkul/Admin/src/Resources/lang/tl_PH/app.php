@@ -248,6 +248,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Nabigasyon ng produkto',
                 'preview'    => 'Preview',
                 'remove'     => 'Alisin',
                 'save-btn'   => 'I-save ang produkto',
@@ -255,6 +256,22 @@ return [
                 'categories' => [
                     'title'            => 'Mga Kategorya',
                     'root-not-allowed' => 'Ang kategoryang ugat ay hindi maaaring italaga sa isang produkto.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Pangkat ng katangian:',
+                    'title'              => 'Mga Pangkat ng Katangian',
+                    'search-placeholder' => 'Maghanap ng mga pangkat',
+                    'empty'              => 'Walang pangkat ng katangian na tumutugma sa iyong paghahanap.',
+                    'attributes-count'   => ':count na katangian',
+                    'loading'            => 'Naglo-load...',
+                    'retry'              => 'Subukan ulit',
+                    'load-more'          => 'Mag-load pa',
+                    'unsaved-title'      => 'Hindi na-save na mga pagbabago',
+                    'unsaved-message'    => 'I-save ang iyong mga pagbabago sa :group bago magpatuloy, o itapon ang mga ito.',
+                    'save-and-continue'  => 'I-save at magpatuloy',
+                    'discard-and-leave'  => 'Itapon at magpatuloy',
+                    'cancel'             => 'Kanselahin',
                 ],
                 'images' => [
                     'info'  => 'Ang mga larawan ay dapat may resolusyon na 560px X 609px',
@@ -1082,6 +1099,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Wika',
                 'level-parent'                     => 'Magulang na produkto',
                 'level-sub-parent'                 => 'Sub-parent',
                 'level-variant'                    => 'Variant',
@@ -2358,12 +2376,19 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Palawakin',
+            'collapse' => 'Itiklop',
+        ],
+
         'associations' => [
             'type-search' => [
                 'add-btn'            => 'Magdagdag',
+                'already-added'      => 'Naidagdag',
                 'empty-info'         => 'Sumubok ng ibang paghahanap.',
                 'empty-title'        => 'Walang nahanap na uri ng asosasyon',
                 'search-placeholder' => 'Maghanap ayon sa pangalan o code',
+                'select-all'         => 'Piliin lahat',
                 'title'              => 'Magdagdag ng Uri ng Asosasyon',
             ],
             'product-picker' => [
@@ -2382,6 +2407,13 @@ return [
             'close' => 'Isara',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled sa :total ang naisalin',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Walang resulta',
+                'search' => 'Maghanap',
+            ],
             'ajax-error'      => 'May nangyaring mali habang nagse-save. Pakisubukang muli.',
             'file-uploader'   => [
                 'upload-cta'  => 'I-click para mag-upload',
@@ -2407,6 +2439,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Itago ang panel',
+                'expand'   => 'Ipakita ang panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Landas ng nabigasyon',
             ],

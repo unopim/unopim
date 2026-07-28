@@ -66,3 +66,19 @@ it('resolves a group by code and falls back to the first group by position', fun
 it('returns null when the family has no groups', function () {
     expect(AttributeFamily::factory()->create()->groupSummaryByCode('en_US'))->toBeNull();
 });
+
+it('gives an attribute shared by several groups to the first group only', function () {
+    $family = AttributeFamily::factory()->create();
+
+    $shared = Attribute::factory()->create();
+    $ownOnly = Attribute::factory()->create();
+
+    $first = AttributeGroup::factory()->create();
+    $second = AttributeGroup::factory()->create();
+
+    assignFamilyGroup($family, $first, [$shared], 1);
+    assignFamilyGroup($family, $second, [$shared, $ownOnly], 2);
+
+    expect($family->customAttributesForGroup($first->id)->pluck('code')->all())->toBe([$shared->code])
+        ->and($family->customAttributesForGroup($second->id)->pluck('code')->all())->toBe([$ownOnly->code]);
+});

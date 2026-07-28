@@ -17,11 +17,17 @@
     <div class="min-w-0 flex-1">
         <p class="flex items-center gap-1.5 text-base font-semibold text-gray-800 dark:text-white truncate">
             {{ $title }}
+            {{--
+                A dot would read as a completeness marker here, which it is not.
+                `v-if` rather than `v-show`: the shared badge class is `hidden`, so
+                revealing it needs an inline display that `v-show` would then fight.
+            --}}
             <span
-                v-show="$productWorkspace?.isDirty('{{ $id }}')"
-                class="w-2 h-2 rounded-full bg-amber-500 shrink-0"
+                v-if="$productWorkspace?.isDirty('{{ $id }}')"
+                class="unsaved-badge items-center shrink-0"
+                style="display: inline-flex"
                 :title="'{{ trans('admin::app.catalog.products.edit.sections.unsaved') }}'"
-            ></span>
+            >@lang('admin::app.components.form.unsaved-changes.field-badge')</span>
         </p>
         <p class="text-xs text-gray-500 dark:text-gray-400 truncate">
             @if (trim($slot) !== '')

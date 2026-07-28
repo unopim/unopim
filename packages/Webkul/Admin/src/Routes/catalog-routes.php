@@ -199,6 +199,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('edit/{id}/attribute-groups', 'attributeGroups')->name('admin.catalog.products.attribute_groups');
 
+            Route::get('edit/{id}/attribute-groups/{groupId}/fields', 'attributeGroupFields')->name('admin.catalog.products.attribute_group_fields');
+
             Route::get('edit/{id}', 'edit')->name('admin.catalog.products.edit')->middleware(EnsureChannelLocaleIsValid::class);
 
             Route::put('edit/{id}', 'update')->name('admin.catalog.products.update');
