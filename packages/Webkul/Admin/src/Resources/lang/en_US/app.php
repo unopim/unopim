@@ -1333,12 +1333,14 @@ return [
     'settings' => [
         'locales' => [
             'index' => [
-                'not-found'             => 'Locale with code :code not found.',
-                'create-btn'            => 'Create Locale',
-                'locale'                => 'Locale',
-                'title'                 => 'Locales',
-                'can-not-delete-error'  => 'You cannot delete a locale linked to a channel or user',
-                'can-not-disable-error' => 'You cannot disable a locale linked to a channel or user',
+                'not-found'              => 'Locale with code :code not found.',
+                'create-btn'             => 'Create Locale',
+                'locale'                 => 'Locale',
+                'title'                  => 'Locales',
+                'can-not-delete-error'   => 'You cannot delete a locale linked to a channel or user',
+                'can-not-disable-error'  => 'You cannot disable a locale linked to a channel or user',
+                'partial-delete-success' => 'Selected locales were deleted, except :count linked to a channel or user.',
+                'partial-update-success' => 'Selected locales were updated, except :count linked to a channel or user.',
 
                 'datagrid' => [
                     'actions'     => 'Actions',
@@ -2035,19 +2037,20 @@ return [
                 'title'            => 'Edit User',
             ],
 
-            'activate-warning'             => 'Your account is yet to be activated, please contact administrator.',
-            'cannot-change'                => 'User cannot be changed',
-            'cannot-escalate-role'         => 'You do not have permission to assign an all-access role.',
-            'create-success'               => 'User created successfully.',
-            'delete-failed'                => 'User deleted failed.',
-            'delete-success'               => 'User deleted successfully.',
-            'delete-warning'               => 'Are you sure, you want to perform this action?',
-            'incorrect-password'           => 'Incorrect password',
-            'last-delete-error'            => 'Last User delete failed',
-            'login-error'                  => 'Please check your credentials and try again.',
-            'update-success'               => 'User updated successfully.',
-            'current-user-delete-error'    => 'The logged in user can not be deleted.',
-            'last-all-access-delete-error' => 'The last active all-access administrator cannot be deleted.',
+            'activate-warning'                 => 'Your account is yet to be activated, please contact administrator.',
+            'cannot-change'                    => 'User cannot be changed',
+            'cannot-assign-unheld-permissions' => 'You cannot assign a role that holds permissions you do not have.',
+            'cannot-escalate-role'             => 'You do not have permission to assign an all-access role.',
+            'create-success'                   => 'User created successfully.',
+            'delete-failed'                    => 'User deleted failed.',
+            'delete-success'                   => 'User deleted successfully.',
+            'delete-warning'                   => 'Are you sure, you want to perform this action?',
+            'incorrect-password'               => 'Incorrect password',
+            'last-delete-error'                => 'Last User delete failed',
+            'login-error'                      => 'Please check your credentials and try again.',
+            'update-success'                   => 'User updated successfully.',
+            'current-user-delete-error'        => 'The logged in user can not be deleted.',
+            'last-all-access-delete-error'     => 'The last active all-access administrator cannot be deleted.',
         ],
 
         'system-settings' => [
@@ -3112,6 +3115,8 @@ return [
         'exports'                  => 'Exports',
         'mass-update'              => 'Mass Update',
         'mass-delete'              => 'Mass Delete',
+        'bulk-edit'                => 'Bulk Edit',
+        'quick-export'             => 'Quick Export',
         'variant-structures'       => 'Variant Structures',
     ],
 

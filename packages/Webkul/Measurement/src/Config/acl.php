@@ -76,4 +76,11 @@ return [
         'route' => 'admin.measurement.families.units.delete',
         'sort'  => 3,
     ],
+
+    [
+        'key'   => 'configuration.system_settings.measurement',
+        'name'  => 'measurement::app.config.catalog.measurement.title',
+        'route' => null,
+        'sort'  => 7,
+    ],
 ];

@@ -69,6 +69,8 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
 
     const GALLERY_ATTRIBUTE_TYPE = 'gallery';
 
+    const MEASUREMENT_FIELD_TYPE = 'measurement';
+
     public $translatedAttributes = ['name', 'instructions'];
 
     protected $historyTags = ['attribute'];
@@ -537,7 +539,7 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
             self::SELECT_FIELD_TYPE, self::MULTISELECT_FIELD_TYPE, self::CHECKBOX_FIELD_TYPE => 'dropdown',
             self::GALLERY_ATTRIBUTE_TYPE                                                     => 'gallery',
             self::IMAGE_ATTRIBUTE_TYPE                                                       => 'image',
-            self::PRICE_FIELD_TYPE                                                           => 'price',
+            self::PRICE_FIELD_TYPE, self::MEASUREMENT_FIELD_TYPE                             => 'price',
             default                                                                          => 'string',
         };
     }

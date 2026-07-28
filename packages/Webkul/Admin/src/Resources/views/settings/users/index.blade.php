@@ -105,6 +105,10 @@
                                         class="h-9 object-cover"
                                         :src="record.user_img"
                                         :alt="record.user_name"
+                                        width="36"
+                                        height="36"
+                                        loading="lazy"
+                                        decoding="async"
                                         v-on:error="record.user_img = null"
                                     />
                                 </div>
@@ -558,9 +562,16 @@
                                 this.resetForm();
                             })
                             .catch(error => {
-                                if (error.response.status == 422) {
+                                if (error.response?.status == 422) {
                                     setErrors(error.response.data.errors);
+
+                                    return;
                                 }
+
+                                this.$emitter.emit('add-flash', {
+                                    type: 'error',
+                                    message: error.response?.data?.message ?? "@lang('admin::app.common.unauthorized')",
+                                });
                             });
                     },
 

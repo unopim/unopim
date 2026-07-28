@@ -41,7 +41,7 @@ class NotificationListener implements ShouldQueue
                 $event->notificationData['user_emails'],
                 $event->notificationData['subject'] ?? $event->notificationData['title'],
                 $event->notificationData['templateName'],
-                $event->notificationData['templateData']
+                $event->notificationData['templateData'] ?? []
             ));
         }
     }

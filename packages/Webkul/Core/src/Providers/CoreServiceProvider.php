@@ -6,6 +6,7 @@ use Elastic\Elasticsearch\Client as ElasticSearchClient;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -66,6 +67,14 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->overrideMailConfiguration();
 
+        Event::listen(JobProcessing::class, function (): void {
+            $this->overrideMailConfiguration();
+        });
+
+        Event::listen('core.configuration.save.after', function (): void {
+            $this->overrideMailConfiguration();
+        });
+
         $this->app['router']->pushMiddlewareToGroup('web', EnableDebugForAllowedIps::class);
 
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'core');
@@ -122,8 +131,6 @@ class CoreServiceProvider extends ServiceProvider
 
         DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
 
-        // Drop the request-scoped config memo whenever a config row changes, so a
-        // write is reflected by a later read within the same request/job.
         $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
         CoreConfig::saved($forgetConfigMemo);
         CoreConfig::deleted($forgetConfigMemo);
@@ -158,6 +165,7 @@ class CoreServiceProvider extends ServiceProvider
         $encryption = core()->getConfigData($prefix.'mail_encryption');
 
         config([
+            'mail.default'                 => 'smtp',
             'mail.mailers.smtp.host'       => $host,
             'mail.mailers.smtp.port'       => core()->getConfigData($prefix.'mail_port') ?: config('mail.mailers.smtp.port'),
             'mail.mailers.smtp.username'   => core()->getConfigData($prefix.'mail_username') ?: config('mail.mailers.smtp.username'),

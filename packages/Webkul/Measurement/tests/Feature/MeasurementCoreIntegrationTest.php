@@ -3,8 +3,6 @@
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 use Webkul\Attribute\Models\Attribute;
-use Webkul\Measurement\DataGrids\MeasurementProductDataGrid;
-use Webkul\Measurement\Http\Controllers\MeasurementProductController;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Product\Models\Product;
@@ -58,8 +56,6 @@ it('builds a measurement column as a price-type filter with unit options and the
 
     $datagrid = app(ProductDataGrid::class);
 
-    expect($datagrid)->toBeInstanceOf(MeasurementProductDataGrid::class);
-
     $method = new ReflectionMethod($datagrid, 'buildColumnDefinition');
     $method->setAccessible(true);
     $column = $method->invoke($datagrid, $attribute);
@@ -87,8 +83,6 @@ it('emits the same measurement column through the filter-picker controller', fun
     $attribute = measurementAttribute();
 
     $controller = app(ProductController::class);
-
-    expect($controller)->toBeInstanceOf(MeasurementProductController::class);
 
     $method = new ReflectionMethod($controller, 'buildColumnDefinition');
     $method->setAccessible(true);
@@ -132,4 +126,37 @@ it('persists measurement precision saved from the system settings hub', function
         'code'  => 'system.measurement.base',
         'value' => '7',
     ]);
+});
+
+it('keeps the measurement units when another package also decorates the product grid', function () {
+    $attribute = measurementAttribute();
+
+    $datagrid = app(ProductDataGrid::class);
+
+    $method = new ReflectionMethod($datagrid, 'buildColumnDefinition');
+    $method->setAccessible(true);
+    $column = $method->invoke($datagrid, $attribute);
+
+    expect($column['type'])->toBe('price')
+        ->and(collect($column['options'])->pluck('value')->all())->toContain('meter', 'cm');
+
+    $prepare = new ReflectionMethod($datagrid, 'prepareMassActions');
+    $prepare->setAccessible(true);
+    $prepare->invoke($datagrid);
+
+    expect($datagrid->getMassActions())->not->toBeEmpty();
+});
+
+it('leaves a plain price attribute filtering by currency, not units', function () {
+    $price = Attribute::factory()->create(['code' => 'cost_'.uniqid(), 'type' => 'price']);
+
+    $datagrid = app(ProductDataGrid::class);
+
+    $method = new ReflectionMethod($datagrid, 'buildColumnDefinition');
+    $method->setAccessible(true);
+    $column = $method->invoke($datagrid, $price);
+
+    expect($column['type'])->toBe('price')
+        ->and($column['attribute_type'])->toBe('price')
+        ->and(collect($column['options'])->pluck('value')->all())->not->toContain('meter');
 });
