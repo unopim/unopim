@@ -8,7 +8,7 @@ $gridRequest = fn ($test) => $test
     ->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
     ->get(route('admin.settings.users.index', ['pagination' => ['page' => 1, 'per_page' => 50]]));
 
-it('serves a thumbnail rather than the original upload for an avatar', function () use ($gridRequest) {
+it('serves the stored avatar for a user with an upload', function () use ($gridRequest) {
     $this->loginAsAdmin();
 
     $user = Admin::factory()->create(['image' => 'admins/9/avatar.jpg']);
@@ -17,9 +17,17 @@ it('serves a thumbnail rather than the original upload for an avatar', function 
 
     $row = $records->firstWhere('user_id', $user->id);
 
-    expect($row['user_img'])
-        ->toContain('cache/small/admins/9/avatar.jpg')
-        ->not->toContain('/storage/admins/9/avatar.jpg');
+    expect($row['user_img'])->toContain('admins/9/avatar.jpg');
+});
+
+it('does not route avatars through the image cache, which this install cannot serve', function () use ($gridRequest) {
+    $this->loginAsAdmin();
+
+    $user = Admin::factory()->create(['image' => 'admins/9/avatar.jpg']);
+
+    $records = collect($gridRequest($this)->assertOk()->json('records'));
+
+    expect($records->firstWhere('user_id', $user->id)['user_img'])->not->toContain('cache/small');
 });
 
 it('emits no avatar url at all for a user with no upload and no cached gravatar', function () use ($gridRequest) {

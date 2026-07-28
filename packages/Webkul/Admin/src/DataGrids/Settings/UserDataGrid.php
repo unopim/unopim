@@ -4,6 +4,7 @@ namespace Webkul\Admin\DataGrids\Settings;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Webkul\DataGrid\DataGrid;
 use Webkul\User\Models\Admin as AdminUser;
 
@@ -77,7 +78,7 @@ class UserDataGrid extends DataGrid
             'sortable'   => false,
             'closure'    => function ($row) {
                 if ($row->user_image) {
-                    return url('cache/small/'.$row->user_image);
+                    return Storage::url($row->user_image);
                 }
 
                 return AdminUser::gravatarCachedForEmail($row->email)
