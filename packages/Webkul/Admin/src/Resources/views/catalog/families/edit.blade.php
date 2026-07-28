@@ -458,6 +458,8 @@
                             currentPage: 1,
                             totalPages: 2,
                             totalAttributes: 0,
+                            serverTotalAttributes: 0,
+                            pendingAssignedCodes: [],
                             isSearching: false,
                             isSearchingAssigned: false,
                             selectedGroup: {
@@ -579,6 +581,7 @@
                             this.allMatchingAttributes = [];
                             this.bulkGroup = null;
                             this.dirtyTick = 0;
+                            this.pendingAssignedCodes = [];
 
                             this.getAttributes();
                         },
@@ -615,6 +618,63 @@
                             }
 
                             return true;
+                        },
+
+                        /** Assignments made on this page but not saved yet; the unassigned query still counts them. */
+                        markPendingAssignments(codes) {
+                            codes.filter(Boolean).forEach(code => {
+                                if (! this.pendingAssignedCodes.includes(code)) {
+                                    this.pendingAssignedCodes.push(code);
+                                }
+                            });
+
+                            this.totalAttributes = Math.max(0, this.serverTotalAttributes - this.pendingAssignedCodes.length);
+                        },
+
+                        releasePendingAssignment(code) {
+                            this.pendingAssignedCodes = this.pendingAssignedCodes.filter(pending => pending !== code);
+
+                            this.totalAttributes = Math.max(0, this.serverTotalAttributes - this.pendingAssignedCodes.length);
+                        },
+
+                        /** Assigned codes, including drags not saved yet — the query can only exclude saved ones. */
+                        assignedAttributeCodes() {
+                            const codes = new Set();
+
+                            this.familyDefaultGroups.forEach(group => {
+                                (group.customAttributes ?? []).forEach(attribute => {
+                                    const code = this.attributeCode(attribute);
+
+                                    if (code) {
+                                        codes.add(code);
+                                    }
+                                });
+                            });
+
+                            return codes;
+                        },
+
+                        /**
+                         * Dedupes within one group only: an attribute may legitimately
+                         * be assigned to several groups of the same family.
+                         */
+                        dropDuplicateInGroup(group, attribute) {
+                            const code = this.attributeCode(attribute);
+                            let kept = false;
+
+                            group.customAttributes = group.customAttributes.filter(candidate => {
+                                if (this.attributeCode(candidate) !== code) {
+                                    return true;
+                                }
+
+                                if (kept) {
+                                    return false;
+                                }
+
+                                kept = true;
+
+                                return true;
+                            });
                         },
 
                         getGroupAttributes(group) {
@@ -815,7 +875,7 @@
                             const params = Object.assign({}, this.params, {
                                 entityName: 'attributes',
                                 page: 1,
-                                perPage: this.totalAttributes,
+                                perPage: this.serverTotalAttributes,
                                 notInFamily: this.familyId,
                             });
 
@@ -855,6 +915,8 @@
                                 moving.forEach(attribute => group.customAttributes.push(attribute));
 
                                 const movedCodes = moving.map(a => this.attributeCode(a));
+
+                                this.markPendingAssignments(movedCodes);
 
                                 this.customAttributes = this.customAttributes.filter(a => ! movedCodes.includes(this.attributeCode(a)));
 
@@ -964,6 +1026,10 @@
                         onChange(e, group) {
                             if (e.added?.element && group) {
                                 e.added.element.group_id = this.groupFormId(group);
+
+                                this.dropDuplicateInGroup(group, e.added.element);
+
+                                this.markPendingAssignments([this.attributeCode(e.added.element)]);
                             }
 
                             this.$emitter.emit('assigned-attributes-changed', e);
@@ -980,6 +1046,8 @@
                                 this.selectedAttrs = this.selectedAttrs.filter(selectedCode => selectedCode !== code);
 
                                 this.forgetAttrDetail(code);
+
+                                this.releasePendingAssignment(code);
                             }
 
                             this.$emitter.emit('assigned-attributes-changed', e);
@@ -1032,7 +1100,8 @@
                                 .get(this.getAttributeRoute, {params: this.params})
                                 .then(result => {
                                     this.totalPages = result.data.lastPage || 1;
-                                    this.totalAttributes = result.data.total || 0;
+                                    this.serverTotalAttributes = result.data.total || 0;
+                                    this.totalAttributes = Math.max(0, this.serverTotalAttributes - this.pendingAssignedCodes.length);
 
                                     if (! result.data.options.length && this.currentPage > this.totalPages) {
                                         this.currentPage = this.totalPages;
@@ -1041,7 +1110,11 @@
                                         return;
                                     }
 
-                                    this.customAttributes = result.data.options;
+                                    const assigned = this.assignedAttributeCodes();
+
+                                    this.customAttributes = result.data.options.filter(
+                                        option => ! assigned.has(this.attributeCode(option))
+                                    );
 
                                     this.isLoading = false;
                                 });
