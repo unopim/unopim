@@ -1,8 +1,11 @@
 const { test, expect } = require('../../../utils/family-fixtures');
 const { generateUid } = require('../../../utils/helpers');
 const {
-  INDEX_PATH, gotoIndex, createFamily, deleteFamilyByCode, assignGroup, saveFamilyEdit,
+  INDEX_PATH, gotoIndex, createFamily, deleteFamilyByCode, assignGroup, saveFamilyEdit, setFamilyLabel,
 } = require('../../../utils/family-helpers');
+
+// Family create/save round-trips run 20-30s against a full catalogue; the default per-test budget is too tight.
+test.describe.configure({ timeout: 180_000 });
 
 test.describe('Attribute Family — General tab & index', () => {
   test('index: required-field validation, search, filter', async ({ adminPage }) => {
@@ -61,9 +64,7 @@ test.describe('Attribute Family — General tab & index', () => {
     const page = adminPage;
     const { code } = await createFamily(page);
 
-    const nameInput = page.locator('input[name$="[name]"]').first();
-    await nameInput.fill(`Renamed ${code}`);
-    await nameInput.blur();
+    await setFamilyLabel(page, `Renamed ${code}`);
     await saveFamilyEdit(page);
 
     await deleteFamilyByCode(page, code);

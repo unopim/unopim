@@ -23,6 +23,9 @@ async function dragUnassignedIntoGroup(page, attributeRow, groupDropZone) {
   await page.waitForTimeout(1500); // unassigned list refetch
 }
 
+// Family create/save round-trips run 20-30s against a full catalogue; the default per-test budget is too tight.
+test.describe.configure({ timeout: 180_000 });
+
 test.describe('Attribute Family — drag assign', () => {
   test('edit: dragging an attribute into a group moves it instead of copying it', async ({ adminPage }) => {
     test.slow();

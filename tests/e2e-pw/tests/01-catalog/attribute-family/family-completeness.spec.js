@@ -1,12 +1,26 @@
 const { test, expect } = require('../../../utils/family-fixtures');
 const { generateUid } = require('../../../utils/helpers');
-const { createFamily, deleteFamilyByCode, gotoTab, withFamilyPage } = require('../../../utils/family-helpers');
+const { createFamily, deleteFamilyByCode, gotoTab, saveFamilyEdit, assignAttributesToGroup, withFamilyPage } = require('../../../utils/family-helpers');
+
+/**
+ * A family carrying the axis attributes the tab needs. Built by assigning them to
+ * the scaffolded General group: cloning a seeded family copies every mapping it holds.
+ */
+async function createLightFamily(page, code) {
+  const family = await createFamily(page, code);
+  await assignAttributesToGroup(page, ['color', 'size']);
+  await saveFamilyEdit(page);
+  return family;
+}
+
+// Family create/save round-trips run 20-30s against a full catalogue; the default per-test budget is too tight.
+test.describe.configure({ timeout: 300_000 });
 
 test.describe.serial('Attribute Family — Completeness tab', () => {
   let family;
 
   test.beforeAll(async ({ browser }) => {
-    family = await withFamilyPage(browser, (page) => createFamily(page, `famcmp_${generateUid()}`, { basedOn: 'default' }));
+    family = await withFamilyPage(browser, (page) => createLightFamily(page, `famcmp_${generateUid()}`));
   });
 
   test.afterAll(async ({ browser }) => {

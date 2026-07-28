@@ -6,6 +6,9 @@ const { createFamily, deleteFamilyByCode, selectMultiselect } = require('../../.
  * Regression: creating a new group from the "Assign Attribute Group" modal must ADD to the
  * selection, not replace it, and show the typed name (not the "[code]" non-translated fallback).
  */
+// Family create/save round-trips run 20-30s against a full catalogue; the default per-test budget is too tight.
+test.describe.configure({ timeout: 180_000 });
+
 test.describe('Attribute Family — assign-group modal tagging', () => {
   test('creating a new group keeps previously selected groups selected', async ({ adminPage }) => {
     test.slow();

@@ -1,6 +1,9 @@
 const { test, expect } = require('../../../utils/family-fixtures');
 const { generateUid } = require('../../../utils/helpers');
-const { createFamily, deleteFamilyByCode, gotoTab, saveFamilyEdit, withFamilyPage } = require('../../../utils/family-helpers');
+const { createFamily, deleteFamilyByCode, gotoTab, saveFamilyEdit, setFamilyLabel, withFamilyPage } = require('../../../utils/family-helpers');
+
+// Family create/save round-trips run 20-30s against a full catalogue; the default per-test budget is too tight.
+test.describe.configure({ timeout: 180_000 });
 
 test.describe.serial('Attribute Family — History tab', () => {
   let family;
@@ -27,9 +30,7 @@ test.describe.serial('Attribute Family — History tab', () => {
     await page.waitForSelector('.group_node', { timeout: 30000 });
     // Unsaved-changes tracker snapshots field values on mount; editing before that bakes the value into the baseline so it never dirties.
     await page.waitForTimeout(1000);
-    const nameInput = page.locator('input[name="en_US[name]"]').first();
-    await nameInput.fill(`History Edit ${generateUid()}`);
-    await nameInput.blur();
+    await setFamilyLabel(page, `History Edit ${generateUid()}`);
     await expect(page.getByRole('button', { name: 'Save changes' })).toBeVisible({ timeout: 10000 });
     await saveFamilyEdit(page);
 
