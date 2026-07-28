@@ -25,8 +25,8 @@
     <script type="x-template" id="v-category-tree-view-template">
         <div class="v-tree-container v-tree-item-wrapper">
             <v-tree-item
-                v-for="(item, index) in formattedItems"
-                :key="index"
+                v-for="item in formattedItems"
+                :key="item[valueField]"
                 :item="item"
                 :level="1"
                 @change-input="$emit('change-input', $event)"
@@ -101,7 +101,9 @@
                     formattedValues: [],
                     formattedExpandedBranch: [],
                     fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
-                    cache: []
+                    cache: [],
+
+                    labels: {}
                 };
             },
 
@@ -135,6 +137,7 @@
                             if (item[valueField] === sourceBranch[valueField]) {
                                 if (sourceBranch[childrenField]) {
                                     item[childrenField] = sourceBranch[childrenField];
+                                    item.partial = true;
                                 }
                                 return true;
                             }
@@ -159,6 +162,10 @@
 
                     let val = typeof this.value === 'string' ? JSON.parse(this.value) : this.value;
                     return Array.isArray(val) ? val : [];
+                },
+
+                registerLabel(value, label) {
+                    this.labels[value] = label;
                 },
 
                 has(key) {

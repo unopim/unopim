@@ -116,6 +116,16 @@
                 },
             },
 
+            watch: {
+                isDirty: {
+                    immediate: true,
+
+                    handler(dirty) {
+                        this.$emitter.emit('unsaved-changes:state', { dirty });
+                    },
+                },
+            },
+
             mounted() {
                 this.debounced = this.debounce(this.recompute, 80);
 
@@ -164,6 +174,36 @@
                         }
                     });
 
+                    /**
+                     * Controls that join the form after the snapshot — a teleported
+                     * drawer claiming its fields via `form=`, for instance — are in
+                     * neither list above, so the emitter's group would mark nothing.
+                     */
+                    Object.keys(this.serializeForm()).forEach(name => {
+                        if (matches(name)) {
+                            this.touched[name] = true;
+                        }
+                    });
+
+                    this.debounced();
+                };
+
+                /**
+                 * Controls can join the form long after the baseline is taken — a
+                 * teleported drawer claims its fields with `form=` once its content
+                 * loads. Their current values become the baseline (they are, by
+                 * definition, the saved state) without clearing dirt already tracked
+                 * elsewhere on the page.
+                 */
+                this.onCustomSync = () => {
+                    const current = this.serializeForm();
+
+                    Object.keys(current).forEach(name => {
+                        if (! (name in this.initial)) {
+                            this.initial[name] = current[name];
+                        }
+                    });
+
                     this.debounced();
                 };
 
@@ -175,6 +215,7 @@
                     });
 
                     this.$refs.root.addEventListener('unsaved-changes:touch', this.onCustomTouch, true);
+                    this.$refs.root.addEventListener('unsaved-changes:sync', this.onCustomSync, true);
 
                     setTimeout(() => {
                         if (! this.hasTrusted) {
@@ -203,11 +244,12 @@
                     });
 
                     this.$refs.root.removeEventListener('unsaved-changes:touch', this.onCustomTouch, true);
+                    this.$refs.root.removeEventListener('unsaved-changes:sync', this.onCustomSync, true);
                 }
 
                 this.$emitter.off('form-saved', this.onFormSaved);
 
-                clearInterval(this._savingWatch);
+                this.clearSubmitWatch();
 
                 this.toggleBeforeUnload(false);
                 this.setBarOpen(false);
@@ -422,6 +464,7 @@
                 },
 
                 onFormSaved() {
+                    this.saving = false;
                     this.hasTrusted = false;
                     this.touched = {};
 
@@ -444,48 +487,79 @@
 
                     this.toggleBeforeUnload(false);
 
-                    // Native submit navigates away; the AJAX watcher would only false-alarm.
+                    // Native submit navigates away, so there is no outcome to wait for.
                     if (! form.requestSubmit) {
                         form.submit();
 
                         return;
                     }
 
+                    this.saving = true;
+
+                    this.watchSubmitOutcome(form);
+
                     form.requestSubmit();
+                },
 
-                    clearInterval(this._savingWatch);
+                /**
+                 * The submit outcome is reported by the form itself: `form:invalid`
+                 * when validation blocked it (no request left the browser) and
+                 * `form:settled` when an ajax save answered. Waiting for those beats
+                 * polling — validation is async, so a slow-but-valid form used to be
+                 * declared failed while its request was still being prepared.
+                 */
+                watchSubmitOutcome(form) {
+                    this.clearSubmitWatch();
 
-                    let wasBusy = false;
-                    let idleTicks = 0;
+                    const done = () => {
+                        this.clearSubmitWatch();
 
-                    this._savingWatch = setInterval(() => {
-                        const busy = form.dataset.ajaxSubmitting === "true";
+                        this.saving = false;
 
-                        this.saving = busy;
+                        this.toggleBeforeUnload(this.isDirty);
+                    };
 
-                        if (busy) {
-                            wasBusy = true;
+                    // The failing fields already carry their own inline messages, so the
+                    // toast states the outcome instead of repeating the first one.
+                    this._onSubmitInvalid = () => {
+                        done();
 
-                            return;
-                        }
+                        this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: "@lang('admin::app.components.form.unsaved-changes.save-failed')",
+                        });
 
-                        if (wasBusy) {
-                            clearInterval(this._savingWatch);
+                        this.focusFirstInvalid(form);
+                    };
 
-                            return;
-                        }
+                    this._onSubmitSettled = done;
 
-                        if (++idleTicks >= 4) {
-                            clearInterval(this._savingWatch);
+                    form.addEventListener('unopim:form:invalid', this._onSubmitInvalid);
+                    form.addEventListener('unopim:form:settled', this._onSubmitSettled);
 
-                            this.$emitter.emit('add-flash', {
-                                type: 'error',
-                                message: form.dataset.ajaxErrorMessage || "@lang('admin::app.components.form.unsaved-changes.save-failed')",
-                            });
+                    this._watchedForm = form;
 
-                            this.focusFirstInvalid(form);
-                        }
-                    }, 100);
+                    // A non-ajax form navigates away and never settles; a plugin may
+                    // also swallow the submit. Release the button rather than leave it
+                    // spinning forever — silently, since nothing actually failed.
+                    this._savingWatch = setTimeout(() => {
+                        this.clearSubmitWatch();
+
+                        this.saving = false;
+                    }, 30000);
+                },
+
+                clearSubmitWatch() {
+                    clearTimeout(this._savingWatch);
+
+                    if (! this._watchedForm) {
+                        return;
+                    }
+
+                    this._watchedForm.removeEventListener('unopim:form:invalid', this._onSubmitInvalid);
+                    this._watchedForm.removeEventListener('unopim:form:settled', this._onSubmitSettled);
+
+                    this._watchedForm = null;
                 },
 
                 focusFirstInvalid(form) {

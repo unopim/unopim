@@ -23,6 +23,7 @@ class StoreConfigurableProductRequest extends ApiFormRequest
             'values'            => ['required', 'array'],
             'values.common.sku' => ['required'],
             'super_attributes'  => ['required', 'array'],
+            'associations'      => ['nullable', 'array'],
         ];
     }
 }

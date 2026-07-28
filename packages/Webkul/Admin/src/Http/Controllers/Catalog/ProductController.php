@@ -17,23 +17,32 @@ use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\ProductAttributeForm;
+use Webkul\Admin\Http\Requests\ProductAttributeGroupsForm;
 use Webkul\Admin\Http\Requests\ProductForm;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
+use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
 use Webkul\Admin\Traits\AttributeColumnTrait;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeOptionProxy;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
+use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\ProductAssociation as ProductAssociationContract;
 use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\Product\Repositories\AssociationTypeRepository;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Repositories\VariantStructureRepository;
 use Webkul\Product\Type\AbstractType;
 use Webkul\Product\Validator\ProductValuesValidator;
+use Webkul\Product\Validator\RequiredAttributesValidator;
 
 class ProductController extends Controller
 {
@@ -70,8 +79,11 @@ class ProductController extends Controller
         protected ProductValuesValidator $valuesValidator,
         protected ChannelRepository $channelRepository,
         protected AttributeRepository $attributeRepository,
+        protected AssociationTypeRepository $associationTypeRepository,
+        protected ProductAssociationRepository $productAssociationRepository,
         protected VariantStructureRepository $variantStructureRepository,
         protected VariantStructurePlanner $variantStructurePlanner,
+        protected RequiredAttributesValidator $requiredAttributesValidator,
     ) {}
 
     /**
@@ -460,6 +472,21 @@ class ProductController extends Controller
     }
 
     /**
+     * Get one page of the product family's attribute groups for the editor sidebar.
+     */
+    public function attributeGroups(ProductAttributeGroupsForm $request, int $id): JsonResponse
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        return new JsonResponse($this->attributeGroupPage(
+            $product->attribute_family,
+            max(1, (int) $request->input('page', 1)),
+            trim((string) $request->input('query', '')),
+            $request->filled('active') ? (int) $request->input('active') : null
+        ));
+    }
+
+    /**
      * The axis codes a listing's children are fixed on: level 1 for the
      * `variant_group` children of a 2-level configurable, the leaf level
      * (2 when the structure has one, 1 otherwise) for `simple` children.
@@ -524,19 +551,186 @@ class ProductController extends Controller
 
         $averageScore = count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
 
-        $associations = $product->values['associations'] ?? [];
-
-        $linkedProducts = [
-            'up_sells'         => $this->normalizeLinkedProducts($associations['up_sells'] ?? []),
-            'cross_sells'      => $this->normalizeLinkedProducts($associations['cross_sells'] ?? []),
-            'related_products' => $this->normalizeLinkedProducts($associations['related_products'] ?? []),
-        ];
+        $associationTypes = $this->getAssociationTypesForView($product);
 
         $variantTree = $this->buildVariantTree($product);
 
         $variantFieldLocks = $this->buildVariantFieldLocks($product);
 
-        return view('admin::catalog.products.edit', compact('product', 'requiredAttributes', 'scores', 'averageScore', 'linkedProducts', 'variantTree', 'variantFieldLocks'));
+        $family = $product->attribute_family;
+
+        $lazyGroups = $family->attributeCount() > (int) config('product_editor.lazy_group_threshold');
+
+        $groupAttributes = [];
+
+        $nextGroupId = null;
+
+        if ($lazyGroups) {
+            $localeCode = core()->getRequestedLocaleCode();
+
+            $first = $family->groupSummaryByCode($localeCode, request()->query('group'));
+
+            $renderGroups = collect($first ? [$first] : []);
+
+            if ($first) {
+                $groupAttributes[$first->id] = $product->getEditableAttributesForGroup((int) $first->id);
+
+                $nextGroupId = $family->groupSummaryAfter($localeCode, (int) $first->position)?->id;
+            }
+        } else {
+            $renderGroups = $family->familyGroups()->with('translations')->orderBy('position')->get();
+        }
+
+        return view('admin::catalog.products.edit', compact(
+            'product',
+            'requiredAttributes',
+            'scores',
+            'averageScore',
+            'associationTypes',
+            'variantTree',
+            'variantFieldLocks',
+            'lazyGroups',
+            'renderGroups',
+            'groupAttributes',
+            'nextGroupId'
+        ));
+    }
+
+    /**
+     * Render one attribute group's fields for the product edit page's
+     * scroll loader, together with the id of the group that follows it.
+     */
+    public function attributeGroupFields(int $id, int $groupId): JsonResponse
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        $localeCode = core()->getRequestedLocaleCode();
+
+        $group = $product->attribute_family->groupSummaryById($localeCode, $groupId);
+
+        if (! $group) {
+            abort(404);
+        }
+
+        $variantTree = $this->buildVariantTree($product);
+
+        $variantFieldLocks = $this->buildVariantFieldLocks($product);
+
+        $variantAxisCodes = $variantTree
+            ? collect($variantTree['attributes'])->where('isAxis', true)->pluck('code')->all()
+            : [];
+
+        $html = view('admin::catalog.products.edit.attribute-group-fragment', [
+            'product'            => $product,
+            'group'              => $group,
+            'customAttributes'   => $product->getEditableAttributesForGroup((int) $group->id),
+            'variantHiddenCodes' => array_merge($variantAxisCodes, $variantFieldLocks['hidden'] ?? []),
+            'variantFieldLocks'  => $variantFieldLocks,
+            'currentLocale'      => core()->getRequestedLocale(),
+            'currentChannel'     => core()->getRequestedChannel(),
+            'requiredAttributes' => $product->getCompletenessAttributes(core()->getRequestedChannel()->id, core()->getRequestedLocale()->id)
+                ->keyBy('attribute_id')
+                ->map(fn ($item) => $item->attribute_id)
+                ->toArray(),
+        ])->render();
+
+        return new JsonResponse([
+            'html'        => $html,
+            'groupId'     => (int) $group->id,
+            'nextGroupId' => $product->attribute_family->groupSummaryAfter($localeCode, (int) $group->position)?->id,
+        ]);
+    }
+
+    /**
+     * Build one page of a family's attribute groups for the editor sidebar.
+     *
+     * Mirrors {@see AttributeFamilyController::groupPage()} but flags the group
+     * currently being edited, so the sidebar can highlight it without a second
+     * lookup.
+     *
+     * @return array{groups: array, total: int, lastPage: int, perPage: int}
+     */
+    private function attributeGroupPage(
+        AttributeFamily $family,
+        int $page,
+        string $search = '',
+        ?int $activeGroupId = null
+    ): array {
+        $perPage = (int) config('product_editor.groups_per_page');
+
+        $counts = $family->attributeCountsByGroup();
+
+        $result = $family->paginateGroupSummaries(core()->getRequestedLocaleCode(), $page, $perPage, $search);
+
+        return [
+            'groups' => $result['groups']->map(fn ($group): array => [
+                'id'              => (int) $group->id,
+                'code'            => $group->code,
+                'name'            => ! empty($group->name) ? $group->name : '['.$group->code.']',
+                'position'        => (int) $group->position,
+                'attributesCount' => $counts[$group->id] ?? 0,
+                'active'          => $activeGroupId === (int) $group->id,
+            ])->values()->all(),
+            'total'    => $result['total'],
+            'lastPage' => $result['lastPage'],
+            'perPage'  => $perPage,
+        ];
+    }
+
+    /**
+     * Builds the payload the product edit "Links" panel needs: for every type
+     * this product already links to, its (locale-resolved) field definitions
+     * and those links, with the related product's display data (via the same
+     * `normalizeWithImage()` used elsewhere) plus the link's `additional_data`.
+     *
+     * Types the product links to nothing under are deliberately absent: they
+     * are attached on demand through the async type picker, so the page payload
+     * stays flat however many types are configured.
+     *
+     * @return array<int, array{code: string, name: string, fields: array, links: array}>
+     */
+    private function getAssociationTypesForView(ProductContract $product): array
+    {
+        $linksByAssociationTypeId = $this->productAssociationRepository
+            ->getLinksForProduct($product->id)
+            ->groupBy('association_type_id');
+
+        return $this->associationTypeRepository
+            ->getActiveTypesByIds($linksByAssociationTypeId->keys()->all())
+            ->map(function ($associationType) use ($linksByAssociationTypeId) {
+                $links = $linksByAssociationTypeId->get($associationType->id, collect());
+
+                return array_merge(
+                    (new AssociationTypeLinkResource($associationType))->resolve(),
+                    [
+                        'links' => $links
+                            ->map(fn ($link) => $this->getAssociationLinkForView($link))
+                            ->values()
+                            ->all(),
+                    ]
+                );
+            })
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Normalizes a `ProductAssociation` link into the compact shape the Links
+     * panel needs: the related product's display data (resolved via the same
+     * `normalizeWithImage()` the legacy Links view already uses) plus the
+     * link's stored `additional_data`.
+     */
+    private function getAssociationLinkForView(ProductAssociationContract $link): array
+    {
+        $relatedProduct = $link->relatedProduct;
+
+        $normalizedRelatedProduct = $relatedProduct
+            ? $relatedProduct->normalizeWithImage()
+            : ['sku' => null, 'image' => null];
+
+        return array_merge($normalizedRelatedProduct, [
+            'additional_data' => $link->additional_data,
+        ]);
     }
 
     /**
@@ -950,7 +1144,39 @@ class ProductController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(ProductForm $request, int $id): RedirectResponse
+    /**
+     * Report the required attributes a save left empty.
+     *
+     * The group each field belongs to travels with the error: the editor loads
+     * groups on demand, so the field may not be on the page yet and the client
+     * has to fetch its group before it can show it.
+     *
+     * @param  array<string, array{code: string, name: string, group_id: int}>  $missing
+     */
+    private function missingRequiredResponse(array $missing): RedirectResponse|JsonResponse
+    {
+        $errors = [];
+
+        $groups = [];
+
+        foreach ($missing as $field => $attribute) {
+            $errors[$field] = trans('validation.required', ['attribute' => $attribute['name']]);
+
+            $groups[$field] = $attribute['group_id'];
+        }
+
+        if (request()->expectsJson()) {
+            return new JsonResponse([
+                'message'     => reset($errors),
+                'errors'      => $errors,
+                'errorGroups' => $groups,
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return back()->withInput()->withErrors($errors);
+    }
+
+    public function update(ProductForm $request, int $id): RedirectResponse|JsonResponse
     {
         Event::dispatch('catalog.product.update.before', $id);
 
@@ -978,6 +1204,17 @@ class ProductController extends Controller
 
                 return back()->withInput();
             }
+        }
+
+        $missingRequired = $this->requiredAttributesValidator->missing(
+            $product,
+            $data[AbstractType::PRODUCT_VALUES_KEY] ?? [],
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
+        if ($missingRequired !== []) {
+            return $this->missingRequiredResponse($missingRequired);
         }
 
         try {
@@ -1019,11 +1256,12 @@ class ProductController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.products.update-success'));
 
-        return redirect()->route('admin.catalog.products.edit', [
+        return redirect()->route('admin.catalog.products.edit', array_filter([
             'id'      => $id,
             'channel' => core()->getRequestedChannelCode(),
             'locale'  => core()->getRequestedLocaleCode(),
-        ]);
+            'group'   => $request->input('group'),
+        ]));
     }
 
     /**
@@ -1134,10 +1372,16 @@ class ProductController extends Controller
 
     /**
      * Result of search product.
+     *
+     * Accepts `ids` so a caller that already made its selection elsewhere — the
+     * association picker resolves rows chosen in the product grid — can hydrate
+     * them all in one request instead of one lookup per product.
      */
     public function search(): JsonResponse
     {
         $results = [];
+
+        $ids = array_filter((array) request('ids', []), 'is_numeric');
 
         request()->query->add([
             'status'               => null,
@@ -1146,6 +1390,8 @@ class ProductController extends Controller
             'sort'                 => 'created_at',
             'order'                => 'desc',
             'skipSku'              => request('skipSku'),
+            'ids'                  => $ids,
+            'limit'                => $ids === [] ? request('limit') : count($ids),
         ]);
 
         $products = $this->productRepository->searchFromDatabase();
@@ -1251,9 +1497,9 @@ class ProductController extends Controller
         ]);
     }
 
-    public function getAttribute(): JsonResponse
+    public function getAttribute(ProductAttributeForm $request): JsonResponse
     {
-        $product = $this->productRepository->findByField('id', request()->productId)->first();
+        $product = $this->productRepository->findOrFail((int) $request->validated('productId'));
         $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'name', 'type', 'ai_translate');
         $attributeOptions = [];
 

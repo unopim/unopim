@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Product navigation',
                 'preview'    => 'Preview',
                 'remove'     => 'Remove',
                 'save-btn'   => 'Save Product',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Categories',
                     'root-not-allowed' => 'Root category cannot be assigned to a product.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Attribute group:',
+                    'title'              => 'Attribute Groups',
+                    'search-placeholder' => 'Search groups',
+                    'empty'              => 'No attribute groups match your search.',
+                    'attributes-count'   => ':count attributes',
+                    'loading'            => 'Loading...',
+                    'retry'              => 'Retry',
+                    'load-more'          => 'Load more',
+                    'unsaved-title'      => 'Unsaved changes',
+                    'unsaved-message'    => 'Save your changes to :group before moving on, or discard them.',
+                    'save-and-continue'  => 'Save & continue',
+                    'discard-and-leave'  => 'Discard & continue',
+                    'cancel'             => 'Cancel',
                 ],
                 'images' => [
                     'info'  => 'Image resolution should be like 560px X 609px',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'Cross-Sell Products',
                     ],
                     'add-btn'           => 'Add',
+                    'add-type-btn'      => 'Add Association Type',
                     'delete'            => 'Delete',
                     'empty-info'        => 'To add :type products on a go.',
                     'empty-title'       => 'Add Product',
                     'image-placeholder' => 'Product Image',
+                    'more-types'        => 'More',
+                    'no-types-info'     => 'Use "Add Association Type" to link this product under an association type.',
+                    'no-types-title'    => 'No Associations Added',
+                    'search-types'      => 'Search association types',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associations',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Created At',
                     'product-type' => 'Product Type',
                 ],
+                'sections' => [
+                    'view'    => 'View',
+                    'unsaved' => 'Unsaved changes',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Add Selected',
+                    'close'        => 'Close',
+                    'clear-search' => 'Clear search',
+                    'categories'   => [
+                        'subtitle'        => 'Assign this product to catalog categories.',
+                        'search'          => 'Search categories…',
+                        'searching'       => 'Searching…',
+                        'no-results'      => 'No matching categories found',
+                        'load-more'       => 'Load more',
+                        'none-selected'   => 'No categories selected yet',
+                        'and-more'        => 'and :count more',
+                        'review-selected' => 'Show selected categories',
+                        'selected'        => 'selected',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Link related, up-sell, cross-sell and custom products.',
+                        'linked'   => 'linked products',
+                    ],
+                ],
+
                 'more'         => 'More',
                 'more-actions' => 'More Actions',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Category Field with code ":code" not found',
             'immutable-fields'  => 'The following fields cannot be modified: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Association Types',
+                'create-btn' => 'Create Association Type',
+                'add-btn'    => 'Create Association Type',
+
+                'datagrid' => [
+                    'code'                => 'Code',
+                    'name'                => 'Name',
+                    'status'              => 'Status',
+                    'position'            => 'Position',
+                    'edit'                => 'Edit',
+                    'delete'              => 'Delete',
+                    'activated'           => 'Enabled',
+                    'disabled'            => 'Disabled',
+                    'active'              => 'Enable',
+                    'disable'             => 'Disable',
+                    'update-status'       => 'Update Status',
+                    'delete-failed'       => 'This association type can not be deleted.',
+                    'mass-delete-success' => 'Selected Association Types Deleted Successfully',
+                    'mass-delete-failed'  => 'Selected association types can not be deleted.',
+                    'mass-update-success' => 'Updated Successfully',
+                ],
+            ],
+
+            'create-success'    => 'Association Type Created Successfully',
+            'update-success'    => 'Association Type Updated Successfully',
+            'delete-success'    => 'Association Type Deleted Successfully',
+            'delete-failed'     => 'Association Type Deleted Failed',
+            'user-define-error' => 'Can not delete system Association Type',
+            'unknown-fields'    => 'Association Type Field with code ":fields" could not be found',
+
+            'create' => [
+                'title'      => 'Create Association Type',
+                'name'       => 'Name',
+                'enter-name' => 'Enter Name',
+                'code'       => 'Code',
+                'enter-code' => 'Enter Code',
+                'save-btn'   => 'Save Association Type',
+            ],
+
+            'edit' => [
+                'title'    => 'Edit Association Type',
+                'save-btn' => 'Update Association Type',
+            ],
+
+            'fields' => [
+                'title'                => 'Fields',
+                'info'                 => 'Add custom fields to capture additional data for this association type.',
+                'add-field-btn'        => 'Add Field',
+                'modal-title'          => 'Add Field',
+                'edit-modal-title'     => 'Edit Field',
+                'save-field-btn'       => 'Save Field',
+                'same-code-error'      => 'The field code must be unique.',
+                'add-fields-info'      => 'To create custom fields for this association type.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Category Field Option Deleted Successfully',
             'create-success'      => 'Category Field Option Created Successfully',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Locale',
                 'level-parent'                     => 'Parent product',
                 'level-sub-parent'                 => 'Sub-parent',
                 'level-variant'                    => 'Variant',
@@ -2265,6 +2373,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Expand',
+            'collapse' => 'Collapse',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Add',
+                'already-added'      => 'Added',
+                'empty-info'         => 'Try a different search.',
+                'empty-title'        => 'No association types found',
+                'search-placeholder' => 'Search by name or code',
+                'select-all'         => 'Select All',
+                'title'              => 'Add Association Type',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Add Selected',
+                'selected' => ':count products selected',
+                'title'    => 'Select Products',
+            ],
+        ],
         'pagination' => [
             'page' => 'Page',
         ],
@@ -2275,6 +2404,13 @@ return [
             'close' => 'Close',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled of :total translated',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'No results found',
+                'search' => 'Search',
+            ],
             'ajax-error'      => 'Something went wrong while saving. Please try again.',
             'file-uploader'   => [
                 'upload-cta'  => 'Click to upload',
@@ -2300,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Collapse panel',
+                'expand'   => 'Expand panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Breadcrumb',
             ],
@@ -2326,6 +2466,7 @@ return [
                 'catalog'            => 'Catalog',
                 'categories'         => 'Categories',
                 'category_fields'    => 'Category Fields',
+                'association_types'  => 'Association Types',
                 'channels'           => 'Channels',
                 'collapse'           => 'Collapse',
                 'configure'          => 'Configuration',
@@ -2766,6 +2907,7 @@ return [
         'url-rewrites'             => 'URL Rewrites',
         'users'                    => 'Users',
         'category_fields'          => 'Category Fields',
+        'association_types'        => 'Association Types',
         'view'                     => 'View',
         'execute'                  => 'Job Execute',
         'history'                  => 'History',

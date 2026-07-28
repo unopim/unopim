@@ -84,25 +84,12 @@
                             </div>
 
                             <div class="px-4 pb-4">
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label
-                                            class="w-full"
-                                            localizable="true"
-                                            :current-locale-code="$locale->code"
-                                        >
-                                            @lang('admin::app.catalog.attribute-groups.edit.label')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            :name="$locale->code . '[name]'"
-                                            :value="old($locale->code)['name'] ?? ($attributeGroup->translate($locale->code)->name ?? '')"
-                                        />
-
-                                        <x-admin::form.control-group.error :control-name="$locale->code . '[name]'" />
-                                    </x-admin::form.control-group>
-                                @endforeach
+                                <!-- Locales Inputs -->
+                                <x-admin::form.translatable-field
+                                    :locales="$locales"
+                                    :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($attributeGroup->translate($locale->code)->name ?? '')])->all()"
+                                    :label="trans('admin::app.catalog.attribute-groups.edit.label')"
+                                />
                             </div>
                         </div>
                     </div>

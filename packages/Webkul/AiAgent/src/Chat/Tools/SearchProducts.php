@@ -96,7 +96,7 @@ class SearchProducts implements PimTool
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
                     ->select(
                         'p.id', 'p.sku', 'p.type', 'p.status', 'af.code as family_code',
-                        DB::raw("`{$prefix}p`.`values`"),
+                        DB::raw(DB::getQueryGrammar()->wrap("{$prefix}p.values")),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", ...$namePath).' as product_name'),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", 'common', 'url_key').' as url_key'),
                     );

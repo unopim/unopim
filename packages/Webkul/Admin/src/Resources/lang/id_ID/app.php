@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'Navigasi produk',
                 'preview'    => 'Pratinjau',
                 'remove'     => 'Menghapus',
                 'save-btn'   => 'Simpan produk',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'Kategori',
                     'root-not-allowed' => 'Kategori induk tidak dapat ditetapkan ke produk.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'Grup atribut:',
+                    'title'              => 'Grup Atribut',
+                    'search-placeholder' => 'Cari grup',
+                    'empty'              => 'Tidak ada grup atribut yang cocok dengan pencarian Anda.',
+                    'attributes-count'   => ':count atribut',
+                    'loading'            => 'Memuat...',
+                    'retry'              => 'Coba lagi',
+                    'load-more'          => 'Muat lebih banyak',
+                    'unsaved-title'      => 'Perubahan belum disimpan',
+                    'unsaved-message'    => 'Simpan perubahan Anda pada :group sebelum melanjutkan, atau buang perubahan tersebut.',
+                    'save-and-continue'  => 'Simpan & lanjutkan',
+                    'discard-and-leave'  => 'Buang & lanjutkan',
+                    'cancel'             => 'Batal',
                 ],
                 'images' => [
                     'info'  => 'Resolusi gambar harus seperti 560px x 609px',
@@ -279,14 +296,19 @@ return [
                     ],
                     'cross-sells' => [
                         'empty-info' => 'Tambahkan produk asosiasi penjualan silang.',
-                        'info'       => 'Berdekatan dengan keranjang belanja, Anda \'ll find these \"impulse-buy\" products positioned as cross-sells to complement the items already added to your cart.',
+                        'info'       => 'Berdekatan dengan keranjang belanja, Anda \'ll find these "impulse-buy" products positioned as cross-sells to complement the items already added to your cart.',
                         'title'      => 'Produk Cross-Sell',
                     ],
                     'add-btn'           => 'Menambahkan',
+                    'add-type-btn'      => 'Tambah Jenis Asosiasi',
                     'delete'            => 'Menghapus',
                     'empty-info'        => 'Untuk menambahkan produk :type saat bepergian.',
                     'empty-title'       => 'Tambahkan produk',
                     'image-placeholder' => 'gambar produk',
+                    'more-types'        => 'Lainnya',
+                    'no-types-info'     => 'Gunakan "Tambah Jenis Asosiasi" untuk menautkan produk ini di bawah suatu jenis asosiasi.',
+                    'no-types-title'    => 'Belum ada asosiasi ditambahkan',
+                    'search-types'      => 'Cari tipe asosiasi',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asosiasi',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'Tanggal Dibuat',
                     'product-type' => 'Tipe Produk',
                 ],
+                'sections' => [
+                    'view'    => 'Lihat',
+                    'unsaved' => 'Perubahan belum disimpan',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'Tambahkan Pilihan',
+                    'close'        => 'Tutup',
+                    'clear-search' => 'Hapus pencarian',
+                    'categories'   => [
+                        'subtitle'        => 'Tetapkan produk ini ke kategori katalog.',
+                        'search'          => 'Cari kategori…',
+                        'searching'       => 'Mencari…',
+                        'no-results'      => 'Tidak ada kategori yang cocok ditemukan',
+                        'load-more'       => 'Muat lebih banyak',
+                        'none-selected'   => 'Belum ada kategori yang dipilih',
+                        'and-more'        => 'dan :count lainnya',
+                        'review-selected' => 'Tampilkan kategori terpilih',
+                        'selected'        => 'dipilih',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'Tautkan produk terkait, penjualan tambahan, penjualan silang, dan kustom.',
+                        'linked'   => 'produk tertaut',
+                    ],
+                ],
+
                 'more'         => 'Lainnya',
                 'more-actions' => 'Tindakan Lainnya',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'Bidang kategori dengan kode ":code" tidak dapat ditemukan',
             'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'Jenis Asosiasi',
+                'create-btn' => 'Buat Jenis Asosiasi',
+                'add-btn'    => 'Buat Jenis Asosiasi',
+
+                'datagrid' => [
+                    'code'                => 'Kode',
+                    'name'                => 'Nama',
+                    'status'              => 'Status',
+                    'position'            => 'Posisi',
+                    'edit'                => 'Edit',
+                    'delete'              => 'Menghapus',
+                    'activated'           => 'Diaktifkan',
+                    'disabled'            => 'Dengan disabilitas',
+                    'active'              => 'Memungkinkan',
+                    'disable'             => 'Cacat',
+                    'update-status'       => 'Memperbaharui status',
+                    'delete-failed'       => 'Jenis asosiasi ini tidak dapat dihapus.',
+                    'mass-delete-success' => 'Jenis asosiasi yang dipilih berhasil dihapus',
+                    'mass-delete-failed'  => 'Jenis asosiasi yang dipilih tidak dapat dihapus.',
+                    'mass-update-success' => 'Diperbarui dengan sukses',
+                ],
+            ],
+
+            'create-success'    => 'Jenis asosiasi berhasil dibuat',
+            'update-success'    => 'Jenis asosiasi berhasil diperbarui',
+            'delete-success'    => 'Jenis asosiasi berhasil dihapus',
+            'delete-failed'     => 'Jenis Asosiasi Dihapus Gagal',
+            'user-define-error' => 'Tidak dapat menghapus jenis asosiasi sistem',
+            'unknown-fields'    => 'Bidang jenis asosiasi dengan kode ":fields" tidak dapat ditemukan',
+
+            'create' => [
+                'title'      => 'Buat Jenis Asosiasi',
+                'name'       => 'Nama',
+                'enter-name' => 'Masukkan nama',
+                'code'       => 'Kode',
+                'enter-code' => 'Memasukkan kode',
+                'save-btn'   => 'Simpan Jenis Asosiasi',
+            ],
+
+            'edit' => [
+                'title'    => 'Edit Jenis Asosiasi',
+                'save-btn' => 'Perbarui Jenis Asosiasi',
+            ],
+
+            'fields' => [
+                'title'                => 'Bidang',
+                'info'                 => 'Tambahkan bidang khusus untuk menangkap data tambahan untuk jenis asosiasi ini.',
+                'add-field-btn'        => 'Tambah Bidang',
+                'modal-title'          => 'Tambah Bidang',
+                'edit-modal-title'     => 'Ubah Bidang',
+                'save-field-btn'       => 'Simpan Bidang',
+                'same-code-error'      => 'Kode bidang harus unik.',
+                'add-fields-info'      => 'Untuk membuat bidang khusus untuk jenis asosiasi ini.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'Opsi bidang kategori berhasil dihapus',
             'create-success'      => 'Opsi bidang kategori berhasil dibuat',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'Bahasa',
                 'level-parent'                     => 'Produk induk',
                 'level-sub-parent'                 => 'Sub-induk',
                 'level-variant'                    => 'Varian',
@@ -2265,6 +2373,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'Perluas',
+            'collapse' => 'Ciutkan',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'Menambahkan',
+                'already-added'      => 'Ditambahkan',
+                'empty-info'         => 'Coba pencarian lain.',
+                'empty-title'        => 'Tidak ada jenis asosiasi ditemukan',
+                'search-placeholder' => 'Cari berdasarkan nama atau kode',
+                'select-all'         => 'Pilih Semua',
+                'title'              => 'Tambah Jenis Asosiasi',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'Tambahkan Pilihan',
+                'selected' => ':count produk dipilih',
+                'title'    => 'Pilih Produk',
+            ],
+        ],
         'pagination' => [
             'page' => 'Halaman',
         ],
@@ -2275,6 +2404,13 @@ return [
             'close' => 'Tutup',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled dari :total diterjemahkan',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'Tidak ada hasil',
+                'search' => 'Cari',
+            ],
             'ajax-error'      => 'Terjadi kesalahan saat menyimpan. Silakan coba lagi.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik untuk mengunggah',
@@ -2300,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'Ciutkan panel',
+                'expand'   => 'Bentangkan panel',
+            ],
             'breadcrumbs' => [
                 'label' => 'Jejak navigasi',
             ],
@@ -2326,6 +2466,7 @@ return [
                 'catalog'            => 'Katalog',
                 'categories'         => 'Kategori',
                 'category_fields'    => 'Bidang kategori',
+                'association_types'  => 'Jenis Asosiasi',
                 'channels'           => 'Saluran',
                 'collapse'           => 'Runtuh',
                 'configure'          => 'Konfigurasi',
@@ -2766,6 +2907,7 @@ return [
         'url-rewrites'             => 'URL menulis ulang',
         'users'                    => 'Pengguna',
         'category_fields'          => 'Bidang kategori',
+        'association_types'        => 'Jenis Asosiasi',
         'view'                     => 'Melihat',
         'execute'                  => 'Eksekusi Pekerjaan',
         'history'                  => 'Sejarah',

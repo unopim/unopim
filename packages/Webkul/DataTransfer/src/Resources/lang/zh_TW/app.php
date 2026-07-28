@@ -51,6 +51,19 @@ return [
                 ],
             ],
         ],
+        'product-associations' => [
+            'title'      => '產品關聯',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '「%s」欄位為必填項目。',
+                    'self-link-not-allowed'       => '產品「%s」不能與自身建立關聯。',
+                    'sku-not-found'               => '找不到 SKU 為「%s」的產品。',
+                    'related-sku-not-found'       => '找不到 SKU 為「%s」的關聯產品。',
+                    'association-type-not-found'  => '關聯類型「%s」不存在或未啟用。',
+                    'invalid-field-value'         => '關聯欄位提供了無效的值。',
+                ],
+            ],
+        ],
         'attribute-groups' => [
             'title'      => '屬性組',
             'validation' => [
@@ -151,14 +164,16 @@ return [
     'exporters' => [
         'export-too-large' => '此匯出過大，無法執行：預計 :rows 列 × :columns 欄（~:estimated）超出可用空間（~:available）。請選擇較少的渠道/語系（與屬性）以縮小匯出範圍，然後重試。',
         'fields'           => [
-            'file-format'         => '檔案格式',
-            'with-media'          => '包含媒體',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => '檔案格式',
+            'with-media'             => '包含媒體',
+            'with-associations'      => '包含關聯',
+            'with-associations-info' => '在匯出中包含舊版 up_sells、cross_sells、related_products SKU 清單欄位',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -230,6 +245,9 @@ return [
         ],
         'attributes' => [
             'title' => '屬性',
+        ],
+        'product-associations' => [
+            'title' => '產品關聯',
         ],
         'attribute-groups' => [
             'title' => '屬性組',

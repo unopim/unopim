@@ -249,6 +249,7 @@ return [
                 ],
             ],
             'edit' => [
+                'navigation' => 'تنقل المنتج',
                 'preview'    => 'معاينة',
                 'remove'     => 'يزيل',
                 'save-btn'   => 'حفظ المنتج',
@@ -256,6 +257,22 @@ return [
                 'categories' => [
                     'title'            => 'فئات',
                     'root-not-allowed' => 'لا يمكن تعيين الفئة الجذرية لمنتج.',
+                ],
+
+                'attribute-groups' => [
+                    'label'              => 'مجموعة السمات:',
+                    'title'              => 'مجموعات السمات',
+                    'search-placeholder' => 'ابحث عن المجموعات',
+                    'empty'              => 'لا توجد مجموعات سمات مطابقة لبحثك.',
+                    'attributes-count'   => ':count سمة',
+                    'loading'            => 'جارٍ التحميل...',
+                    'retry'              => 'إعادة المحاولة',
+                    'load-more'          => 'تحميل المزيد',
+                    'unsaved-title'      => 'تغييرات غير محفوظة',
+                    'unsaved-message'    => 'احفظ تغييراتك على :group قبل المتابعة، أو تجاهلها.',
+                    'save-and-continue'  => 'حفظ ومتابعة',
+                    'discard-and-leave'  => 'تجاهل ومتابعة',
+                    'cancel'             => 'إلغاء',
                 ],
                 'images' => [
                     'info'  => 'يجب أن يكون حل الصورة مثل 560px x 609px',
@@ -283,10 +300,15 @@ return [
                         'title'      => 'منتجات المبيعات',
                     ],
                     'add-btn'           => 'يضيف',
+                    'add-type-btn'      => 'إضافة نوع ارتباط',
                     'delete'            => 'يمسح',
                     'empty-info'        => 'لإضافة منتجات :type أثناء التنقل.',
                     'empty-title'       => 'أضف منتج',
                     'image-placeholder' => 'صورة المنتج',
+                    'more-types'        => 'المزيد',
+                    'no-types-info'     => 'استخدم «إضافة نوع ارتباط» لربط هذا المنتج ضمن نوع ارتباط.',
+                    'no-types-title'    => 'لم تتم إضافة أي ارتباطات',
+                    'search-types'      => 'البحث في أنواع الارتباط',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'ذات الصلة',
                 ],
@@ -395,6 +417,33 @@ return [
                     'created-at'   => 'تاريخ الإنشاء',
                     'product-type' => 'نوع المنتج',
                 ],
+                'sections' => [
+                    'view'    => 'عرض',
+                    'unsaved' => 'تغييرات غير محفوظة',
+                ],
+
+                'workspace' => [
+
+                    'add-selected' => 'إضافة المحدد',
+                    'close'        => 'إغلاق',
+                    'clear-search' => 'مسح البحث',
+                    'categories'   => [
+                        'subtitle'        => 'قم بتعيين هذا المنتج إلى فئات الكتالوج.',
+                        'search'          => 'البحث في الفئات…',
+                        'searching'       => 'جارٍ البحث…',
+                        'no-results'      => 'لم يتم العثور على فئات مطابقة',
+                        'load-more'       => 'تحميل المزيد',
+                        'none-selected'   => 'لم يتم اختيار أي فئة بعد',
+                        'and-more'        => 'و:count أخرى',
+                        'review-selected' => 'عرض الفئات المختارة',
+                        'selected'        => 'محدد',
+                    ],
+                    'associations' => [
+                        'subtitle' => 'اربط المنتجات ذات الصلة والبيع الإضافي والبيع المتقاطع والمخصصة.',
+                        'linked'   => 'منتجات مرتبطة',
+                    ],
+                ],
+
                 'more'         => 'المزيد',
                 'more-actions' => 'إجراءات إضافية',
                 'variations'   => [
@@ -958,6 +1007,64 @@ return [
             'not-found'         => 'لم يتم العثور على عائلة السمات برمز ":code"',
             'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
         ],
+        'association_types' => [
+            'index' => [
+                'title'      => 'أنواع الارتباط',
+                'create-btn' => 'إنشاء نوع ارتباط',
+                'add-btn'    => 'إنشاء نوع ارتباط',
+
+                'datagrid' => [
+                    'code'                => 'شفرة',
+                    'name'                => 'اسم',
+                    'status'              => 'حالة',
+                    'position'            => 'موضع',
+                    'edit'                => 'يحرر',
+                    'delete'              => 'يمسح',
+                    'activated'           => 'تمكين',
+                    'disabled'            => 'عاجز',
+                    'active'              => 'يُمكَِن',
+                    'disable'             => 'إبطال',
+                    'update-status'       => 'تحديث الحالة',
+                    'delete-failed'       => 'لا يمكن حذف نوع الارتباط هذا.',
+                    'mass-delete-success' => 'تم حذف أنواع الارتباط المحددة بنجاح',
+                    'mass-delete-failed'  => 'لا يمكن حذف أنواع الارتباط المحددة.',
+                    'mass-update-success' => 'تم التحديث بنجاح',
+                ],
+            ],
+
+            'create-success'    => 'تم إنشاء نوع الارتباط بنجاح',
+            'update-success'    => 'تم تحديث نوع الارتباط بنجاح',
+            'delete-success'    => 'تم حذف نوع الارتباط بنجاح',
+            'delete-failed'     => 'فشل حذف نوع الارتباط',
+            'user-define-error' => 'لا يمكن حذف نوع ارتباط النظام',
+            'unknown-fields'    => 'لم يتم العثور على حقل نوع الارتباط برمز ":fields"',
+
+            'create' => [
+                'title'      => 'إنشاء نوع ارتباط',
+                'name'       => 'اسم',
+                'enter-name' => 'أدخل الاسم',
+                'code'       => 'شفرة',
+                'enter-code' => 'ادخل الرمز',
+                'save-btn'   => 'حفظ نوع الارتباط',
+            ],
+
+            'edit' => [
+                'title'    => 'تعديل نوع الارتباط',
+                'save-btn' => 'تحديث نوع الارتباط',
+            ],
+
+            'fields' => [
+                'title'                => 'الحقول',
+                'info'                 => 'أضف حقولاً مخصصة لالتقاط بيانات إضافية لنوع الارتباط هذا.',
+                'add-field-btn'        => 'إضافة حقل',
+                'modal-title'          => 'إضافة حقل',
+                'edit-modal-title'     => 'تعديل الحقل',
+                'save-field-btn'       => 'حفظ الحقل',
+                'same-code-error'      => 'يجب أن يكون رمز الحقل فريدًا.',
+                'add-fields-info'      => 'لإنشاء حقول مخصصة لنوع الارتباط هذا.',
+            ],
+        ],
+
         'category-fields-options' => [
             'delete-success'      => 'تم حذف خيار حقل الفئة بنجاح',
             'create-success'      => 'خيار حقل الفئة تم إنشاؤه بنجاح',
@@ -993,6 +1100,7 @@ return [
                 ],
             ],
             'edit' => [
+                'locale'                           => 'اللغة',
                 'level-parent'                     => 'المنتج الأصل',
                 'level-sub-parent'                 => 'أصل فرعي',
                 'level-variant'                    => 'متغيّر',
@@ -2265,6 +2373,27 @@ return [
         ],
     ],
     'components' => [
+        'accordion' => [
+            'expand'   => 'توسيع',
+            'collapse' => 'طي',
+        ],
+
+        'associations' => [
+            'type-search' => [
+                'add-btn'            => 'يضيف',
+                'already-added'      => 'مُضاف',
+                'empty-info'         => 'جرّب بحثًا مختلفًا.',
+                'empty-title'        => 'لم يتم العثور على أنواع ارتباط',
+                'search-placeholder' => 'ابحث بالاسم أو الرمز',
+                'select-all'         => 'تحديد الكل',
+                'title'              => 'إضافة نوع ارتباط',
+            ],
+            'product-picker' => [
+                'add-btn'  => 'إضافة المحدد',
+                'selected' => 'تم تحديد :count منتج',
+                'title'    => 'اختيار المنتجات',
+            ],
+        ],
         'pagination' => [
             'page' => 'صفحة',
         ],
@@ -2275,6 +2404,13 @@ return [
             'close' => 'إغلاق',
         ],
         'form' => [
+            'translatable-field' => [
+                'translated-count' => ':filled من :total مترجمة',
+            ],
+            'searchable-menu' => [
+                'empty'  => 'لا توجد نتائج',
+                'search' => 'بحث',
+            ],
             'ajax-error'      => 'حدث خطأ ما أثناء الحفظ. يرجى المحاولة مرة أخرى.',
             'file-uploader'   => [
                 'upload-cta'  => 'انقر للتحميل',
@@ -2300,6 +2436,10 @@ return [
             ],
         ],
         'layouts' => [
+            'side-rail' => [
+                'collapse' => 'طي اللوحة',
+                'expand'   => 'توسيع اللوحة',
+            ],
             'breadcrumbs' => [
                 'label' => 'مسار التنقل',
             ],
@@ -2326,6 +2466,7 @@ return [
                 'catalog'            => 'فهرس',
                 'categories'         => 'فئات',
                 'category_fields'    => 'حقول الفئة',
+                'association_types'  => 'أنواع الارتباط',
                 'channels'           => 'القنوات',
                 'collapse'           => 'ينهار',
                 'configure'          => 'إعدادات',
@@ -2765,6 +2906,7 @@ return [
         'url-rewrites'             => 'إعادة كتابة عنوان URL',
         'users'                    => 'المستخدمين',
         'category_fields'          => 'حقول الفئة',
+        'association_types'        => 'أنواع الارتباط',
         'view'                     => 'منظر',
         'execute'                  => 'تنفيذ الوظيفة',
         'history'                  => 'تاريخ',

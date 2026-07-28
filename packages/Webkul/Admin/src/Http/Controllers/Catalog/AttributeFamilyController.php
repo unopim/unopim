@@ -22,6 +22,8 @@ use Webkul\Product\Models\VariantStructureAxis;
 
 class AttributeFamilyController extends Controller
 {
+    const GROUPS_PER_PAGE = 25;
+
     /**
      * Create a new controller instance.
      */
@@ -40,7 +42,49 @@ class AttributeFamilyController extends Controller
             return app(AttributeFamilyDataGrid::class)->toJson();
         }
 
-        return view('admin::catalog.families.index');
+        return view('admin::catalog.families.index', [
+            'families' => $this->attributeFamilyRepository->getOptions(),
+        ]);
+    }
+
+    /**
+     * Get one page of a family's assigned groups.
+     */
+    public function groups(int $id): JsonResponse
+    {
+        $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
+
+        $page = $this->groupPage(
+            $attributeFamily,
+            max(1, (int) request()->input('page', 1)),
+            trim((string) request()->input('query', ''))
+        );
+
+        return new JsonResponse($page);
+    }
+
+    /**
+     * Get the attributes assigned to one of a family's groups.
+     */
+    public function groupAttributes(int $id, int $groupId): JsonResponse
+    {
+        $attributeFamily = $this->attributeFamilyRepository->findOrFail($id);
+
+        $attributes = $attributeFamily
+            ->attributeSummariesByGroup(core()->getRequestedLocaleCode(), $groupId)
+            ->get($groupId, collect())
+            ->map(fn ($attribute): array => [
+                'id'       => $attribute->id,
+                'code'     => $attribute->code,
+                'group_id' => $groupId,
+                'name'     => ! empty($attribute->name) ? $attribute->name : '['.$attribute->code.']',
+                'position' => $attribute->position,
+                'type'     => $attribute->type,
+            ])
+            ->values()
+            ->all();
+
+        return new JsonResponse(['attributes' => $attributes]);
     }
 
     /**
@@ -48,41 +92,51 @@ class AttributeFamilyController extends Controller
      */
     private function normalize($attributeFamily = null)
     {
-        $familyGroupMappings = $attributeFamily?->attributeFamilyGroupMappings()->with('attributeGroups')->get()->map(function ($familyGroupMapping) {
-            $attributeGroup = $familyGroupMapping->attributeGroups->first();
-
-            $customAttributes = $attributeGroup->customAttributes($familyGroupMapping->attribute_family_id)->map(function ($attribute) use ($attributeGroup) {
-                $attributeArray = $attribute->toArray();
-
-                return [
-                    'id'       => $attributeArray['id'],
-                    'code'     => $attributeArray['code'],
-                    'group_id' => $attributeGroup->id,
-                    'name'     => ! empty($attributeArray['name']) ? $attributeArray['name'] : '['.$attributeArray['code'].']',
-                    'position' => $attributeArray['pivot']['position'] ?? null,
-                    'type'     => $attributeArray['type'],
-                ];
-            })->toArray();
-
-            $attributeGroup = $attributeGroup?->toArray() ?? [];
-
-            return [
-                'id'               => $attributeGroup['id'],
-                'code'             => $attributeGroup['code'],
-                'group_mapping_id' => $familyGroupMapping->id,
-                'name'             => ! empty($attributeGroup['name']) ? $attributeGroup['name'] : '['.$attributeGroup['code'].']',
-                'position'         => $familyGroupMapping->position,
-                'customAttributes' => $customAttributes,
-            ];
-        })->toArray();
+        $page = $attributeFamily
+            ? $this->groupPage($attributeFamily, 1)
+            : ['groups' => [], 'total' => 0, 'lastPage' => 1];
 
         return [
             'locales'         => $this->localeRepository->getActiveLocales(),
             'attributeFamily' => [
                 'family'              => $attributeFamily,
-                'familyGroupMappings' => $familyGroupMappings ?? [],
+                'familyGroupMappings' => $page['groups'],
+                'groupsTotal'         => $page['total'],
+                'groupsLastPage'      => $page['lastPage'],
+                'groupsPerPage'       => self::GROUPS_PER_PAGE,
+                'groupMappingIds'     => $attributeFamily?->attributeFamilyGroupMappings()->toBase()->pluck('id')->all() ?? [],
                 'variantStructures'   => $attributeFamily ? $this->variantStructuresPayload($attributeFamily) : [],
             ],
+        ];
+    }
+
+    /**
+     * Build one page of a family's groups for the editor.
+     *
+     * @return array{groups: array<int, array<string, mixed>>, total: int, lastPage: int}
+     */
+    private function groupPage(AttributeFamily $attributeFamily, int $page, string $search = ''): array
+    {
+        $localeCode = core()->getRequestedLocaleCode();
+
+        $attributeCounts = $attributeFamily->attributeCountsByGroup();
+
+        $result = $attributeFamily->paginateGroupSummaries($localeCode, $page, self::GROUPS_PER_PAGE, $search);
+
+        return [
+            'groups' => $result['groups']->map(fn ($group): array => [
+                'id'               => $group->id,
+                'code'             => $group->code,
+                'group_mapping_id' => $group->group_mapping_id,
+                'name'             => ! empty($group->name) ? $group->name : '['.$group->code.']',
+                'position'         => $group->position,
+                'attributesCount'  => $attributeCounts[$group->id] ?? 0,
+                'attributesLoaded' => false,
+                'customAttributes' => [],
+                'hide'             => true,
+            ])->values()->all(),
+            'total'    => $result['total'],
+            'lastPage' => $result['lastPage'],
         ];
     }
 

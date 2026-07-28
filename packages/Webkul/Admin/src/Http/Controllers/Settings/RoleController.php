@@ -90,7 +90,7 @@ class RoleController extends Controller
          */
         $isChangedFromAll = $request->permission_type == 'custom' && $role->permission_type == 'all';
 
-        if ($isChangedFromAll && $role->admins->count() === 1 && $this->adminRepository->countAdminsWithAllAccess() === 1) {
+        if ($isChangedFromAll && $role->admins()->count() === 1 && $this->adminRepository->countAdminsWithAllAccess() === 1) {
             return $this->respondError(
                 trans('admin::app.settings.roles.being-used'),
                 redirectUrl: route('admin.settings.roles.index')
@@ -121,10 +121,10 @@ class RoleController extends Controller
     {
         $role = $this->roleRepository->findOrFail($id);
 
-        if ($role->admins->count() >= 1) {
-            return new JsonResponse(['message' => trans('admin::app.settings.roles.being-used-by', [
-                'name' => $role->admins->first()?->toArray()['name'],
-            ])], JsonResponse::HTTP_BAD_REQUEST);
+        if ($name = $role->admins()->value('name')) {
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.roles.being-used-by', ['name' => $name]),
+            ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
         if ($this->roleRepository->count() == 1) {
