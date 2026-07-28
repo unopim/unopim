@@ -10,6 +10,7 @@ use Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController;
 use Webkul\Admin\Http\Controllers\ManageColumnController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
+use Webkul\Admin\Http\Controllers\User\AclVersionController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
 use Webkul\Admin\Http\Controllers\VueJsSelect\SelectOptionsController;
 use Webkul\HistoryControl\Http\Controllers\HistoryController;
@@ -18,6 +19,12 @@ use Webkul\HistoryControl\Http\Controllers\HistoryController;
  * Extra routes.
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
+    /**
+     * Fingerprint of the current admin's permissions, polled by open tabs so a
+     * revoked permission stops being offered without a manual refresh.
+     */
+    Route::get('acl-version', [AclVersionController::class, 'show'])->name('admin.acl.version');
+
     /**
      * Dashboard routes.
      */
