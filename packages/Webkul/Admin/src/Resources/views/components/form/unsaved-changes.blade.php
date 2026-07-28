@@ -170,7 +170,11 @@
                 this.$nextTick(() => {
                     this.snapshot();
 
-                    ['input', 'change', 'click', 'keyup'].forEach(evt => {
+                    // `mousedown` is in the list because a multiselect removes a tag on
+                    // mousedown and calls preventDefault(), so no click ever follows and
+                    // the field would never be marked touched. Marking on mousedown is
+                    // safe: a field still only turns dirty once its value differs.
+                    ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.addEventListener(evt, this.onFormEvent, true);
                     });
 
@@ -198,7 +202,7 @@
 
             beforeUnmount() {
                 if (this.$refs.root) {
-                    ['input', 'change', 'click', 'keyup'].forEach(evt => {
+                    ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.removeEventListener(evt, this.onFormEvent, true);
                     });
 
