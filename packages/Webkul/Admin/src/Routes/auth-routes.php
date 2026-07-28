@@ -19,7 +19,7 @@ Route::group(['prefix' => config('app.admin_url')], function () {
     Route::get('avatar/u/{hash}', [AvatarController::class, 'gravatar'])
         ->where('hash', '[a-f0-9]{32}')
         ->name('admin.avatar.public')
-        ->middleware('throttle:60,1');
+        ->middleware('throttle:120,1');
 
     /**
      * Redirect route.

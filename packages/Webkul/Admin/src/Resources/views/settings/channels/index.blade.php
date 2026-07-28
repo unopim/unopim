@@ -25,6 +25,7 @@
                     :title="trans('admin::app.settings.channels.create.title')"
                     :name-label="trans('admin::app.settings.channels.create.name')"
                     :name-placeholder="trans('admin::app.settings.channels.create.name')"
+                    :name-required="false"
                     :code-label="trans('admin::app.settings.channels.create.code')"
                     :code-placeholder="trans('admin::app.settings.channels.create.code')"
                     :root-category-label="trans('admin::app.settings.channels.create.root-category')"

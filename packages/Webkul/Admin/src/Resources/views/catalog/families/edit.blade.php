@@ -1,5 +1,5 @@
 @php
-    $activeTab = match (true) {
+    $requestedTab = match (true) {
         request()->has('history')      => 'history',
         request()->has('variants')     => 'variants',
         request()->has('completeness') => 'completeness',
@@ -10,23 +10,34 @@
 
     $familyHistoryUrl = request()->url().'?'.http_build_query($historyQuery + ['history' => 1]);
 
-    $tabItems = [
+    $tabItems = array_values(array_filter([
         [
-            'key'   => 'general',
-            'url'   => '?',
-            'label' => 'admin::app.components.layouts.sidebar.general',
+            'key'        => 'general',
+            'url'        => '?',
+            'label'      => 'admin::app.components.layouts.sidebar.general',
+            'permission' => 'catalog.families.edit',
         ],
         [
-            'key'   => 'variants',
-            'url'   => '?variants',
-            'label' => 'admin::app.catalog.families.edit.variants',
+            'key'        => 'variants',
+            'url'        => '?variants',
+            'label'      => 'admin::app.catalog.families.edit.variants',
+            'permission' => 'catalog.families.variant-structures',
         ],
         [
-            'key'   => 'completeness',
-            'url'   => '?completeness',
-            'label' => 'completeness::app.components.layouts.sidebar.completeness',
+            'key'        => 'completeness',
+            'url'        => '?completeness',
+            'label'      => 'completeness::app.components.layouts.sidebar.completeness',
+            'permission' => 'catalog.families.edit',
         ],
-    ];
+    ], fn ($tab) => bouncer()->hasPermission($tab['permission'])));
+
+    $permittedTabs = array_column($tabItems, 'key');
+
+    abort_if(empty($permittedTabs), 403, 'This action is unauthorized');
+
+    $activeTab = in_array($requestedTab, [...$permittedTabs, 'history'], true)
+        ? $requestedTab
+        : $permittedTabs[0];
 @endphp
 
 <x-admin::layouts.with-history

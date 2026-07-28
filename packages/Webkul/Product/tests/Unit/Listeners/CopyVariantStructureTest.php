@@ -19,7 +19,7 @@ it('clones the variant structure of the source family', function () {
 
     $structure->axes()->create(['attribute_id' => $colour->id, 'position' => 1]);
     $structure->axes()->create(['attribute_id' => $size->id, 'position' => 2]);
-    $structure->placements()->create(['attribute_id' => $size->id, 'level' => 2]);
+    $structure->placements()->create(['attribute_id' => $size->id, 'level' => 'sub_parent']);
 
     $clone = app(AttributeFamilyRepository::class)->createScaffolded('vs_clone', $source->id);
 

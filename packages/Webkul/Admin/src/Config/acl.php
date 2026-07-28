@@ -351,10 +351,11 @@ return [
         'route' => 'admin.catalog.families.delete',
         'sort'  => 3,
     ], [
-        'key'   => 'catalog.families.variant-structures',
-        'name'  => 'admin::app.acl.variant-structures',
-        'route' => 'admin.catalog.families.variant-structures.index',
-        'sort'  => 4,
+        'key'             => 'catalog.families.variant-structures',
+        'name'            => 'admin::app.acl.variant-structures',
+        'route'           => 'admin.catalog.families.variant-structures.index',
+        'sort'            => 4,
+        'also_authorizes' => ['admin.catalog.families.edit'],
     ], [
         'key'   => 'catalog.families.variant-structures.edit',
         'name'  => 'admin::app.acl.edit',
