@@ -23,10 +23,8 @@ class VariantStructure extends Model implements HistoryContract, PresentableHist
 {
     use HistoryTrait;
 
-    /** Tags for History */
     protected $historyTags = ['attributeFamily'];
 
-    /** History is recorded from the family save path, as one entry per structure save. */
     protected $auditEvents = [];
 
     public function attribute_family(): BelongsTo

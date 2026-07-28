@@ -102,7 +102,6 @@ class VariantStructureDataGrid extends DataGrid
             'sortable'   => true,
             'options'    => [
                 'type' => 'basic',
-
                 'params' => [
                     'options' => [
                         [

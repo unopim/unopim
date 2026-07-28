@@ -599,7 +599,7 @@ class AttributeFamilyController extends Controller
             return $structure;
         });
 
-        Event::dispatch('core.model.proxy.sync.VariantStructure', [
+        Event::dispatch('core.model.proxy.sync.variantStructure', [
             'old_values' => $previousSnapshot,
             'new_values' => $this->variantStructureSnapshot(
                 VariantStructure::query()->with(['axes.attribute', 'placements.attribute'])->find($structure->id)
@@ -630,7 +630,7 @@ class AttributeFamilyController extends Controller
 
             $structure->delete();
 
-            Event::dispatch('core.model.proxy.sync.VariantStructure', [
+            Event::dispatch('core.model.proxy.sync.variantStructure', [
                 'old_values' => $snapshot,
                 'new_values' => [],
                 'model'      => $structure,
