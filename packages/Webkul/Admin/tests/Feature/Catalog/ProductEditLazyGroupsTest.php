@@ -138,3 +138,48 @@ it('omits the group from the redirect when none was submitted', function () {
 
     expect($response->headers->get('Location'))->not->toContain('group=');
 });
+
+it('shows the group sidebar and only the active group for a large family', function () {
+    $this->loginAsAdmin();
+
+    config(['product_editor.lazy_group_threshold' => 5]);
+
+    $family = familyWithGroups(4, 3, 'nav');
+
+    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+
+    $codesByGroup = $family->familyGroups()
+        ->orderBy('position')
+        ->get()
+        ->mapWithKeys(fn ($group): array => [
+            $group->code => $family->customAttributesForGroup($group->id)->pluck('code')->all(),
+        ]);
+
+    $response = $this->get(route('admin.catalog.products.edit', $product->id).'?group=nav_2')
+        ->assertOk()
+        ->assertSee('v-product-attribute-groups', false)
+        ->assertSee('name="group" value="nav_2"', false);
+
+    foreach ($codesByGroup['nav_2'] as $code) {
+        $response->assertSee('values[common]['.$code.']', false);
+    }
+
+    foreach ($codesByGroup['nav_4'] as $code) {
+        $response->assertDontSee('values[common]['.$code.']', false);
+    }
+});
+
+it('shows no group sidebar for a small family', function () {
+    $this->loginAsAdmin();
+
+    config(['product_editor.lazy_group_threshold' => 200]);
+
+    $product = Product::factory()->create([
+        'type'                => 'simple',
+        'attribute_family_id' => familyWithGroups(3, 2, 'plain')->id,
+    ]);
+
+    $this->get(route('admin.catalog.products.edit', $product->id))
+        ->assertOk()
+        ->assertDontSee('v-product-attribute-groups', false);
+});

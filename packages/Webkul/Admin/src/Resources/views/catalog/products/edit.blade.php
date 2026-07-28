@@ -25,6 +25,7 @@
     <x-admin::graphs.radial-progress />
 
     <x-admin::form
+        id="product-edit-form"
         method="PUT"
         enctype="multipart/form-data"
         ajax
@@ -174,12 +175,30 @@
             $variantHiddenCodes = array_merge($variantAxisCodes, ($variantFieldLocks['hidden'] ?? []));
         @endphp
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
+            @if ($lazyGroups ?? false)
+                @include('admin::catalog.products.edit.attribute-groups-nav', [
+                    'groupPage'   => $groupPage,
+                    'activeGroup' => $activeGroup,
+                    'productId'   => $product->id,
+                ])
+
+                <input type="hidden" name="group" value="{{ $activeGroup['code'] ?? '' }}">
+            @endif
+
             <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
-                @foreach ($product->attribute_family->familyGroups()->with('translations')->orderBy('position')->get() as $group)
+                @php
+                    $renderGroups = ($lazyGroups ?? false)
+                        ? collect($activeGroup ? [(object) $activeGroup] : [])
+                        : $product->attribute_family->familyGroups()->with('translations')->orderBy('position')->get();
+                @endphp
+
+                @foreach ($renderGroups as $group)
                     {!! view_render_event('unopim.admin.catalog.product.edit.form.column_before', ['product' => $product]) !!}
 
                         @php
-                            $customAttributes = $product->getEditableAttributes($group);
+                            $customAttributes = ($lazyGroups ?? false)
+                                ? $groupAttributes
+                                : $product->getEditableAttributes($group);
 
                             if (! $customAttributes instanceof \Illuminate\Support\Collection) {
                                 $customAttributes = $customAttributes->get();

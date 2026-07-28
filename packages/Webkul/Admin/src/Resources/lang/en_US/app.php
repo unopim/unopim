@@ -270,6 +270,20 @@ return [
                     'root-not-allowed' => 'Root category cannot be assigned to a product.',
                 ],
 
+                'attribute-groups' => [
+                    'title'              => 'Attribute Groups',
+                    'search-placeholder' => 'Search groups',
+                    'empty'              => 'No attribute groups match your search.',
+                    'attributes-count'   => ':count attributes',
+                    'loading'            => 'Loading...',
+                    'load-more'          => 'Load more',
+                    'unsaved-title'      => 'Unsaved changes',
+                    'unsaved-message'    => 'Save your changes to :group before moving on, or discard them.',
+                    'save-and-continue'  => 'Save & continue',
+                    'discard-and-leave'  => 'Discard & continue',
+                    'cancel'             => 'Cancel',
+                ],
+
                 'variations' => [
                     'title'          => 'Variations',
                     'common'         => 'Common',
@@ -1153,6 +1167,7 @@ return [
             ],
 
             'edit' => [
+                'locale'                           => 'Locale',
                 'assign-group-btn'                 => 'Assign Attribute Group',
                 'assign-group-title'               => 'Assign Attribute Group',
                 'back-btn'                         => 'Back',
@@ -2537,6 +2552,11 @@ return [
             'placeholder' => 'Search',
         ],
         'form' => [
+            'locale-switcher' => [
+                'translated-count' => ':filled of :total translated',
+                'empty'            => 'No locales found',
+                'search'           => 'Search locales',
+            ],
             'ajax-error'      => 'Something went wrong while saving. Please try again.',
             'file-uploader'   => [
                 'upload-cta'  => 'Click to upload',
