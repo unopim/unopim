@@ -173,6 +173,12 @@ class MagicAIPlatformController extends Controller
     {
         $platform = $this->platformRepository->findOrFail($id);
 
+        if (! $platform->status) {
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.platform.message.default-requires-enabled'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         DB::transaction(function () use ($id) {
             DB::table('magic_ai_platforms')->where('is_default', true)->update(['is_default' => false]);
             $this->platformRepository->update(['is_default' => true], $id);
