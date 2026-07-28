@@ -1231,6 +1231,9 @@ return [
                 'can-not-delete-error'  => 'You cannot delete a locale linked to a channel or user',
                 'can-not-disable-error' => 'You cannot disable a locale linked to a channel or user',
 
+                'partial-delete-success' => 'Selected locales were deleted, except :count linked to a channel or user.',
+                'partial-update-success' => 'Selected locales were updated, except :count linked to a channel or user.',
+
                 'datagrid' => [
                     'actions'     => 'Actions',
                     'code'        => 'Code',
