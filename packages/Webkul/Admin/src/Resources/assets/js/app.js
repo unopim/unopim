@@ -10,7 +10,7 @@ import { createApp, reactive, ref, computed, watch } from "vue/dist/vue.esm-bund
 
 import DOMPurify from "dompurify";
 
-import { HEADERS, EMITTER_EVENTS } from "./constants";
+import { HEADERS, EMITTER_EVENTS, FORM_EVENTS } from "./constants";
 
 // Expose DOMPurify for inline component scripts (e.g. AI chat widget); no CDN.
 window.DOMPurify = DOMPurify;
@@ -30,12 +30,22 @@ const appOptions = {
     methods: {
         onSubmit() {},
 
-        onInvalidSubmit({ values, errors, results }) {
-            setTimeout(() => {
-                const errorKeys = Object.entries(errors)
-                    .map(([key, value]) => ({ key, value }))
-                    .filter(error => error["value"].length);
+        onInvalidSubmit({ values, errors, results, evt }) {
+            const errorKeys = Object.entries(errors)
+                .map(([key, value]) => ({ key, value }))
+                .filter(error => error["value"].length);
 
+            // The submit never reached the network, so anything watching the form
+            // for a response would otherwise wait forever and then guess wrong.
+            evt?.target?.dispatchEvent(new CustomEvent(FORM_EVENTS.INVALID, {
+                bubbles: true,
+                detail: {
+                    errors,
+                    message: errorKeys.length ? errorKeys[0]["value"] : null,
+                },
+            }));
+
+            setTimeout(() => {
                 if (! errorKeys.length) return;
 
                 let firstErrorElement = document.querySelector('[name="' + errorKeys[0]["key"] + '"]');
@@ -104,6 +114,11 @@ const appOptions = {
                 });
             };
 
+            const settled = (ok) => form.dispatchEvent(new CustomEvent(FORM_EVENTS.SETTLED, {
+                bubbles: true,
+                detail: { ok },
+            }));
+
             setBusy(true);
 
             this.$axios.post(form.getAttribute("action") || form.action, new FormData(form), {
@@ -120,15 +135,21 @@ const appOptions = {
                     this.$emitter.emit(EMITTER_EVENTS.FORM_SAVED, data);
 
                     if (data.redirect_url) {
+                        settled(true);
+
                         this.$navigate(data.redirect_url);
 
                         return;
                     }
 
                     setBusy(false);
+
+                    settled(true);
                 })
                 .catch(error => {
                     setBusy(false);
+
+                    settled(false);
 
                     // No page reload on failure, so clear the password field instead of leaving the secret on screen.
                     form.querySelectorAll('input[autocomplete="current-password"]').forEach(input => {
