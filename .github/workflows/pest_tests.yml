@@ -10,7 +10,9 @@ permissions:
   contents: read
 
 jobs:
+  # Pull requests run the impacted subset (pest-impacted); pushes run everything.
   pest:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL)
 
@@ -75,6 +77,7 @@ jobs:
           vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
 
   pest-elasticsearch:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (MySQL + Elasticsearch)
 
@@ -160,3 +163,80 @@ jobs:
           vendor/bin/pest --testsuite "Admin Feature Test" --colors=always
           vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
           vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
+
+  # Pull-request feedback: Pest's Test Impact Analysis runs only the tests reached
+  # by the changed files. With no cached graph (or a stale one) it falls back to
+  # the whole suite and records a new graph, so a cold cache never under-tests.
+  pest-impacted:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    name: Pest Tests (impacted)
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: unopim
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          # Impact analysis diffs against the merge base, which needs real history.
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.37.1
+        with:
+          php-version: '8.4'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          # The dependency graph is recorded from coverage data.
+          coverage: pcov
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--optimize-autoloader"
+
+      - name: Restore the test impact graph
+        uses: actions/cache@v4
+        with:
+          path: .pest
+          key: pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-
+            pest-tia-${{ runner.os }}-
+
+      - name: Setting Environment
+        run: |
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
+
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+
+      - name: Set Passport OAuth key permissions
+        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
+
+      - name: Running impacted Pest tests
+        # Single process here, unlike the chunked full run: a cold graph means the
+        # whole suite in one process, which needs the memory cap lifted.
+        run: php -d memory_limit=-1 vendor/bin/pest --tia --colors=always

@@ -54,9 +54,9 @@
         "laravel/pint": "^1.29.1",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",
-        "pestphp/pest": "^4.0",
-        "pestphp/pest-plugin-laravel": "^4.0",
-        "phpunit/phpunit": "^12.0",
+        "pestphp/pest": "^5.0",
+        "pestphp/pest-plugin-laravel": "^5.0",
+        "phpunit/phpunit": "^13.2",
         "rector/rector": "^2.5",
         "spatie/laravel-ignition": "^2.0"
     },
@@ -128,12 +128,24 @@
         ],
         "rector-dry": [
             "./vendor/bin/rector process --dry-run"
+        ],
+        "test": [
+            "./vendor/bin/pest"
+        ],
+        "test:tia": [
+            "./vendor/bin/pest --tia"
+        ],
+        "test:tia:parallel": [
+            "./vendor/bin/pest --tia --parallel"
         ]
     },
     "scripts-descriptions": {
         "phpstan": "Run PHPStan static analysis at level 1 against the application.",
         "rector": "Apply Rector automated refactorings to the application.",
-        "rector-dry": "Preview Rector refactorings without modifying files."
+        "rector-dry": "Preview Rector refactorings without modifying files.",
+        "test": "Run the full Pest suite.",
+        "test:tia": "Run only the tests impacted by the current changes (requires pcov or Xdebug).",
+        "test:tia:parallel": "Run impacted tests across parallel workers (requires pcov or Xdebug)."
     },
     "extra": {
         "laravel": {

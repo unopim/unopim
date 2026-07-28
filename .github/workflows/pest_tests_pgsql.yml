@@ -10,7 +10,10 @@ permissions:
   contents: read
 
 jobs:
+  # Postgres parity runs on pushes; pull requests are covered by the impacted job
+  # in the MySQL workflow.
   pest-pgsql:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL)
     continue-on-error: true
@@ -76,6 +79,7 @@ jobs:
           vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
 
   pest-pgsql-elasticsearch:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (PostgreSQL + Elasticsearch)
     continue-on-error: true
