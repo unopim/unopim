@@ -20,7 +20,7 @@ class UserNotify extends Mailable implements ShouldQueue
         protected array $recipients,
         protected string $emailSubject,
         protected string $emailTemplate,
-        protected mixed $templateData
+        protected array $templateData = []
     ) {}
 
     /**
