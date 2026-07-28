@@ -592,19 +592,41 @@ class ProductController extends Controller
 
         $resolvedValues = $product->resolvedValues();
 
+        $axisDepths = [];
+
+        foreach ($structure->axes as $axis) {
+            if ($axisCode = $axis->attribute?->code) {
+                $axisDepths[$axisCode] = $axis->level === 'level_2' ? 2 : 1;
+            }
+        }
+
+        $fixedAxisDepth = match ($currentLevel) {
+            'sub_parent' => 1,
+            'variant'    => (int) $structure->levels,
+            default      => 0,
+        };
+
         foreach ($configurable->attribute_family->customAttributes as $attribute) {
             if ($attribute->code === 'sku') {
                 continue;
             }
 
             if (in_array($attribute->code, $allAxisCodes, true)) {
-                if ($currentLevel !== 'common') {
+                $axisDepth = $axisDepths[$attribute->code] ?? 1;
+
+                if ($axisDepth <= $fixedAxisDepth) {
+                    $axisLevel = (int) $structure->levels === 2
+                        ? ($axisDepth === 1 ? 'sub_parent' : 'variant')
+                        : null;
+
                     $locks[$attribute->code] = [
                         'axis'    => true,
-                        'level'   => null,
-                        'ownerId' => null,
+                        'level'   => $axisLevel,
+                        'ownerId' => $axisLevel === 'sub_parent' ? $groupAncestor?->id : null,
                         'value'   => $attribute->getValueFromProductValues($resolvedValues, $channelCode, $localeCode),
                     ];
+                } else {
+                    $hidden[] = $attribute->code;
                 }
 
                 continue;

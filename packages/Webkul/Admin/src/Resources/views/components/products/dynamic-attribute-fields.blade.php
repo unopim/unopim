@@ -97,9 +97,13 @@
 
         $isAxisLock = $isLocked && ! empty($lockedFields[$field->code]['axis']);
 
+        $lockLevelLabel = $lockLevel
+            ? trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.level-'.$lockLevel)
+            : null;
+
         $lockLabel = $isAxisLock
-            ? trans('admin::app.catalog.families.edit.axis-badge')
-            : ($lockLevel ? trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.level-'.$lockLevel) : null);
+            ? trans('admin::app.catalog.families.edit.axis-badge').($lockLevelLabel ? ' · '.$lockLevelLabel : '')
+            : $lockLevelLabel;
 
         $lockTitle = $isAxisLock
             ? trans('admin::app.catalog.families.edit.axis-locked-info')
