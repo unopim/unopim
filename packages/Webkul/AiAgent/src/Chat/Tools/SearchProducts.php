@@ -68,8 +68,6 @@ class SearchProducts implements PimTool
                 $categoryCode = $request->string('category_code')->toString() ?: null;
                 $limit = $request->integer('limit', 10);
 
-                // Codes participate in SQL (bound) and JSON semantics — reject
-                // anything outside the safe code alphabet up front.
                 foreach (['family_code' => $familyCode, 'category_code' => $categoryCode] as $field => $code) {
                     if ($code !== null && ! preg_match('/^[a-zA-Z0-9_-]+$/', $code)) {
                         return json_encode(['error' => "Invalid {$field}: only letters, numbers, underscores and hyphens are allowed."]);
@@ -79,17 +77,11 @@ class SearchProducts implements PimTool
                 $limit = min(max($limit, 1), 50);
                 $candidateLimit = min(max($limit * 5, $limit), 200);
 
-                // Laravel prefixes the alias (e.g. `p` → `wk_p`), but table
-                // prefixes are not applied inside DB::raw(). Build the raw
-                // alias explicitly so JSON selects resolve to the same alias
-                // Laravel generates for the FROM clause.
                 $prefix = DB::getTablePrefix();
                 $grammar = GrammarQueryManager::getGrammar();
                 $searchable = $this->searchableAttributes();
 
-                $valuesColumn = DB::getDriverName() === 'pgsql'
-                    ? "\"{$prefix}p\".\"values\""
-                    : "`{$prefix}p`.`values`";
+                $valuesColumn = $grammar->wrap("{$prefix}p.values");
 
                 $nameAttribute = $searchable->firstWhere('code', 'name');
                 $namePath = $nameAttribute
@@ -109,9 +101,7 @@ class SearchProducts implements PimTool
                     $escaped = str_replace(['%', '_'], ['\%', '\_'], $query);
                     $term = "%{$escaped}%";
 
-                    $valuesAsText = DB::getDriverName() === 'pgsql'
-                        ? "{$valuesColumn}::text"
-                        : "CAST({$valuesColumn} AS CHAR)";
+                    $valuesAsText = $grammar->castToText($valuesColumn);
 
                     // The raw-text pre-filter compares against the serialized
                     // JSON, so it is only a valid superset when no character

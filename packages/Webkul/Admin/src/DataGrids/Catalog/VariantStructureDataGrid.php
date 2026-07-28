@@ -18,18 +18,31 @@ class VariantStructureDataGrid extends DataGrid
      */
     public function prepareQueryBuilder(): Builder
     {
+        $prefix = DB::getTablePrefix();
+
+        $axes = $prefix.'variant_structure_axes';
+        $attributes = $prefix.'attributes';
+        $structures = $prefix.'variant_structures';
+
         $axesFor = fn (string $level): string => sprintf(
             '(
                 SELECT %s
-                FROM variant_structure_axes
-                INNER JOIN attributes ON attributes.id = variant_structure_axes.attribute_id
-                WHERE variant_structure_axes.variant_structure_id = variant_structures.id
-                    AND variant_structure_axes.level = \'%s\'
+                FROM %s
+                INNER JOIN %s ON %s.id = %s.attribute_id
+                WHERE %s.variant_structure_id = %s.id
+                    AND %s.level = \'%s\'
             ) as %s_axes',
             GrammarQueryManager::getGrammar()->groupConcat(
-                column: 'attributes.code',
-                orderBy: 'variant_structure_axes.position',
+                column: $attributes.'.code',
+                orderBy: $axes.'.position',
             ),
+            $axes,
+            $attributes,
+            $attributes,
+            $axes,
+            $axes,
+            $structures,
+            $axes,
             $level,
             $level
         );
