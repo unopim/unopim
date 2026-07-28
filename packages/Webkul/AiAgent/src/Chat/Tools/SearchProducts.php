@@ -87,6 +87,12 @@ class SearchProducts implements PimTool
                 $grammar = GrammarQueryManager::getGrammar();
                 $searchable = $this->searchableAttributes();
 
+                // Identifier quoting differs per driver — backticks are a MySQL
+                // extension and PostgreSQL rejects them outright.
+                $valuesColumn = DB::getDriverName() === 'pgsql'
+                    ? "\"{$prefix}p\".\"values\""
+                    : "`{$prefix}p`.`values`";
+
                 $nameAttribute = $searchable->firstWhere('code', 'name');
                 $namePath = $nameAttribute
                     ? $this->valuePath($nameAttribute)
@@ -96,7 +102,7 @@ class SearchProducts implements PimTool
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
                     ->select(
                         'p.id', 'p.sku', 'p.type', 'p.status', 'af.code as family_code',
-                        DB::raw("`{$prefix}p`.`values`"),
+                        DB::raw($valuesColumn),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", ...$namePath).' as product_name'),
                         DB::raw($grammar->jsonExtract("{$prefix}p.values", 'common', 'url_key').' as url_key'),
                     );
@@ -106,8 +112,8 @@ class SearchProducts implements PimTool
                     $term = "%{$escaped}%";
 
                     $valuesAsText = DB::getDriverName() === 'pgsql'
-                        ? "\"{$prefix}p\".\"values\"::text"
-                        : "CAST(`{$prefix}p`.`values` AS CHAR)";
+                        ? "{$valuesColumn}::text"
+                        : "CAST({$valuesColumn} AS CHAR)";
 
                     // The raw-text pre-filter compares against the serialized
                     // JSON, so it is only a valid superset when no character

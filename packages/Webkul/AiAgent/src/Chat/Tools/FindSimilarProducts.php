@@ -126,9 +126,15 @@ class FindSimilarProducts implements PimTool
 
                 $prefix = DB::getTablePrefix();
 
+                // Identifier quoting differs per driver — backticks are a MySQL
+                // extension and PostgreSQL rejects them outright.
+                $valuesColumn = DB::getDriverName() === 'pgsql'
+                    ? "\"{$prefix}p\".\"values\""
+                    : "`{$prefix}p`.`values`";
+
                 $qb = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw("`{$prefix}p`.`values`"), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw($valuesColumn), 'af.code as family_code')
                     ->orderByDesc('p.id')
                     ->limit($poolLimit);
 
@@ -241,9 +247,15 @@ class FindSimilarProducts implements PimTool
 
                 $prefix = DB::getTablePrefix();
 
+                // Identifier quoting differs per driver — backticks are a MySQL
+                // extension and PostgreSQL rejects them outright.
+                $valuesColumn = DB::getDriverName() === 'pgsql'
+                    ? "\"{$prefix}p\".\"values\""
+                    : "`{$prefix}p`.`values`";
+
                 $products = DB::table('products as p')
                     ->leftJoin('attribute_families as af', 'af.id', '=', 'p.attribute_family_id')
-                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw("`{$prefix}p`.`values`"), 'af.code as family_code')
+                    ->select('p.id', 'p.sku', 'p.type', 'p.status', DB::raw($valuesColumn), 'af.code as family_code')
                     ->whereIn('p.id', array_keys($scores))
                     ->get()
                     ->keyBy('id');

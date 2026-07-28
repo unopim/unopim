@@ -107,8 +107,10 @@ function makeVariantStructureFor(int $familyId): VariantStructure
     ]);
 
     if ($axis) {
+        // `level` is an enum of level_1/level_2. MySQL silently coerces the
+        // integer 1 to the first member; PostgreSQL rejects it outright.
         $structure->axes()->create([
-            'level'          => 1,
+            'level'          => 'level_1',
             'attribute_id'   => $axis->id,
             'position'       => 1,
         ]);
@@ -579,7 +581,9 @@ it('should render the product edit form with the ajax submit handler enabled', f
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
         ->assertSee('data-ajax-form="true"', false)
-        ->assertSee('submit="onAjaxSubmit"', false);
+        // The form component binds the handler off the root instance:
+        // `@submit="$root.onAjaxSubmit"`.
+        ->assertSee('submit="$root.onAjaxSubmit"', false);
 });
 
 it('should return a json success message without redirect when updating a product via ajax', function () {

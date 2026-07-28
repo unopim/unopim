@@ -19,7 +19,9 @@ it('clones the variant structure of the source family', function () {
 
     $structure->axes()->create(['attribute_id' => $colour->id, 'position' => 1]);
     $structure->axes()->create(['attribute_id' => $size->id, 'position' => 2]);
-    $structure->placements()->create(['attribute_id' => $size->id, 'level' => 2]);
+    // `level` is an enum of common/sub_parent/variant. MySQL coerces the
+    // integer 2 to the second member; PostgreSQL rejects it outright.
+    $structure->placements()->create(['attribute_id' => $size->id, 'level' => 'sub_parent']);
 
     $clone = app(AttributeFamilyRepository::class)->createScaffolded('vs_clone', $source->id);
 

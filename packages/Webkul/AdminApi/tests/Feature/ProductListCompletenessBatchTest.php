@@ -14,11 +14,14 @@ it('batches completeness scores for the product list', function () {
     foreach (['CMP-A', 'CMP-B', 'CMP-C'] as $sku) {
         $product = Product::factory()->simple()->create(['sku' => $sku]);
 
+        // `missing_count` is NOT NULL with no default. MySQL fills in 0 when the
+        // column is omitted; PostgreSQL rejects the insert.
         ProductCompletenessScore::create([
-            'product_id' => $product->id,
-            'channel_id' => 1,
-            'locale_id'  => 1,
-            'score'      => 60,
+            'product_id'    => $product->id,
+            'channel_id'    => 1,
+            'locale_id'     => 1,
+            'score'         => 60,
+            'missing_count' => 2,
         ]);
     }
 

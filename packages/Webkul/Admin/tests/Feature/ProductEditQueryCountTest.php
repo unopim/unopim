@@ -79,6 +79,12 @@ it('renders the product edit page without scaling queries per attribute (F1/F2/F
     $small = makeProductWithAttributeCount(3);
     $large = makeProductWithAttributeCount(18);
 
+    // The first render through the process also pays for one-off work — memoized
+    // config/channel/locale lookups, and on PostgreSQL a `pg_class` table-existence
+    // probe — none of which scales with attribute count. Warm that up first, or
+    // whichever product renders first is charged for it.
+    countEditQueries($small);
+
     $delta = countEditQueries($large) - countEditQueries($small);
 
     expect($delta)->toBeLessThanOrEqual(10);

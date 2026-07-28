@@ -4,6 +4,7 @@ namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\DataGrid\DataGrid;
 
 class VariantStructureDataGrid extends DataGrid
@@ -17,26 +18,32 @@ class VariantStructureDataGrid extends DataGrid
      */
     public function prepareQueryBuilder(): Builder
     {
+        // `GROUP_CONCAT ... SEPARATOR` is MySQL-only; PostgreSQL spells it
+        // `STRING_AGG`. Go through the grammar so this grid works on both.
+        $axesFor = fn (string $level): string => sprintf(
+            '(
+                SELECT %s
+                FROM variant_structure_axes
+                INNER JOIN attributes ON attributes.id = variant_structure_axes.attribute_id
+                WHERE variant_structure_axes.variant_structure_id = variant_structures.id
+                    AND variant_structure_axes.level = \'%s\'
+            ) as %s_axes',
+            GrammarQueryManager::getGrammar()->groupConcat(
+                column: 'attributes.code',
+                orderBy: 'variant_structure_axes.position',
+            ),
+            $level,
+            $level
+        );
+
         $queryBuilder = DB::table('variant_structures')
             ->select(
                 'variant_structures.id',
                 'variant_structures.code',
                 'variant_structures.name',
                 'variant_structures.levels',
-                DB::raw("(
-                    SELECT GROUP_CONCAT(attributes.code ORDER BY variant_structure_axes.position SEPARATOR ', ')
-                    FROM variant_structure_axes
-                    INNER JOIN attributes ON attributes.id = variant_structure_axes.attribute_id
-                    WHERE variant_structure_axes.variant_structure_id = variant_structures.id
-                        AND variant_structure_axes.level = 'level_1'
-                ) as level_1_axes"),
-                DB::raw("(
-                    SELECT GROUP_CONCAT(attributes.code ORDER BY variant_structure_axes.position SEPARATOR ', ')
-                    FROM variant_structure_axes
-                    INNER JOIN attributes ON attributes.id = variant_structure_axes.attribute_id
-                    WHERE variant_structure_axes.variant_structure_id = variant_structures.id
-                        AND variant_structure_axes.level = 'level_2'
-                ) as level_2_axes")
+                DB::raw($axesFor('level_1')),
+                DB::raw($axesFor('level_2'))
             )
             ->where('variant_structures.attribute_family_id', $this->familyId);
 
