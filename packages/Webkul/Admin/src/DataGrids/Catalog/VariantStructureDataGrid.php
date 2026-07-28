@@ -95,10 +95,25 @@ class VariantStructureDataGrid extends DataGrid
         $this->addColumn([
             'index'      => 'levels',
             'label'      => trans('admin::app.catalog.families.edit.structure'),
-            'type'       => 'integer',
+            'type'       => 'dropdown',
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
+            'options'    => [
+                'type' => 'basic',
+
+                'params' => [
+                    'options' => [
+                        [
+                            'label' => trans('admin::app.catalog.families.edit.parent-child'),
+                            'value' => 1,
+                        ], [
+                            'label' => trans('admin::app.catalog.families.edit.parent-sub-parent-child'),
+                            'value' => 2,
+                        ],
+                    ],
+                ],
+            ],
             'closure'    => fn ($row) => (int) $row->levels === 2
                 ? trans('admin::app.catalog.families.edit.parent-sub-parent-child')
                 : trans('admin::app.catalog.families.edit.parent-child'),
