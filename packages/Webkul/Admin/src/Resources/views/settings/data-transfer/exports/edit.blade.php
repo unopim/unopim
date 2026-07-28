@@ -23,7 +23,7 @@
     <v-export-profile-edit></v-export-profile-edit>
 
     @pushOnce('scripts')
-        <script type="text/x-template" id="v-export-profile-edit-template">
+        <script type="text/x-template" id="v-export-profile-edit-template-{{ $export->id }}">
             <x-admin::form
                 id="export-profile-edit-form"
                 ajax
@@ -250,7 +250,7 @@
 
         <script type="module">
             app.component('v-export-profile-edit', {
-                template: '#v-export-profile-edit-template',
+                template: '#v-export-profile-edit-template-{{ $export->id }}',
 
                 data() {
                     return {
@@ -268,6 +268,14 @@
                         if ('file_format' == changed.filterName) {
                             this.selectedFileFormat = changed.value;
                         }
+                    },
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
                     },
                 },
             })

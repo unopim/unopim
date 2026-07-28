@@ -18,7 +18,7 @@
     @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-edit-user-api-integration-template"
+            id="v-edit-user-api-integration-template-{{ $apiKey->id }}"
         >
             <div>
                 <x-admin::form
@@ -261,7 +261,7 @@
 
         <script type="module">
             app.component('v-edit-user-api-integration', {
-                template: '#v-edit-user-api-integration-template',
+                template: '#v-edit-user-api-integration-template-{{ $apiKey->id }}',
 
                 data() {
                     return {
@@ -316,8 +316,6 @@
                     copy(value) {
                         const onCopied = () => this.$emitter.emit('add-flash', { type: 'success', message: "@lang('admin::app.configuration.integrations.edit.copied')" });
 
-                        // navigator.clipboard only exists in a secure context (HTTPS/localhost);
-                        // fall back to execCommand so copy still works over plain HTTP / LAN IP.
                         if (navigator.clipboard && window.isSecureContext) {
                             navigator.clipboard.writeText(value).then(onCopied);
 
@@ -373,8 +371,16 @@
 
                             })
                             .catch(error => {
-                                
+
                             });
+                    },
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
                     },
                 }
             })

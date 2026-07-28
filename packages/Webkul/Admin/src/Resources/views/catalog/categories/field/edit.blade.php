@@ -23,7 +23,7 @@
     @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-edit-category-fields-template"
+            id="v-edit-category-fields-template-{{ $categoryField->id }}"
         >
 
             {!! view_render_event('unopim.admin.catalog.category_fields.edit.before') !!}
@@ -700,7 +700,7 @@
 
         <script type="module">
             app.component('v-edit-category-fields', {
-                template: document.querySelector('#v-edit-category-fields-template').innerHTML,
+                template: '#v-edit-category-fields-template-{{ $categoryField->id }}',
 
                 props: ['locales'],
 
@@ -903,7 +903,6 @@
 
                         dataTransfer.items.add(file);
 
-                        // Use Set timeout because need to wait for render dom before set the src or get the ref value
                         setTimeout(() => {
                             this.$refs['image_' + id].src =  URL.createObjectURL(file);
 

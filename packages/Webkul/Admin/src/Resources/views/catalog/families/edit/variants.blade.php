@@ -344,7 +344,9 @@
                             this.$refs.variantSettingsModal.close();
 
                             if (data.data?.id) {
-                                window.location.href = this.editUrlTemplate.replace('__ID__', data.data.id);
+                                const editUrl = this.editUrlTemplate.replace('__ID__', data.data.id);
+
+                                this.$navigate ? this.$navigate(editUrl) : (window.location.href = editUrl);
                             }
                         })
                         .catch(error => {
