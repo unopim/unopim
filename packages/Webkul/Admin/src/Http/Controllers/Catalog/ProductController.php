@@ -1130,11 +1130,12 @@ class ProductController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.products.update-success'));
 
-        return redirect()->route('admin.catalog.products.edit', [
+        return redirect()->route('admin.catalog.products.edit', array_filter([
             'id'      => $id,
             'channel' => core()->getRequestedChannelCode(),
             'locale'  => core()->getRequestedLocaleCode(),
-        ]);
+            'group'   => $request->input('group'),
+        ]));
     }
 
     /**

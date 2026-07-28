@@ -106,3 +106,35 @@ it('does not hydrate more attributes as the family grows', function () {
 
     expect($largeData['groupAttributes']->count())->toBe($smallData['groupAttributes']->count());
 });
+
+it('returns to the submitted group after saving', function () {
+    $this->loginAsAdmin();
+
+    $family = familyWithGroups(3, 2, 'save');
+
+    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+
+    $this->put(route('admin.catalog.products.update', $product->id), [
+        'sku'    => $product->sku,
+        'status' => 1,
+        'group'  => 'save_2',
+        'values' => ['common' => ['sku' => $product->sku]],
+    ])->assertRedirectContains('group=save_2');
+});
+
+it('omits the group from the redirect when none was submitted', function () {
+    $this->loginAsAdmin();
+
+    $product = Product::factory()->create([
+        'type'                => 'simple',
+        'attribute_family_id' => familyWithGroups(2, 2, 'nogroup')->id,
+    ]);
+
+    $response = $this->put(route('admin.catalog.products.update', $product->id), [
+        'sku'    => $product->sku,
+        'status' => 1,
+        'values' => ['common' => ['sku' => $product->sku]],
+    ]);
+
+    expect($response->headers->get('Location'))->not->toContain('group=');
+});
