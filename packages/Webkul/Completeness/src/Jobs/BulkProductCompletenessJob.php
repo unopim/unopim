@@ -163,7 +163,6 @@ class BulkProductCompletenessJob implements ShouldBeUnique, ShouldQueue
             }
         }
 
-        // Credentials are deliberately not required; see SendNotificationListener.
         $mailConfigured = Config::get('mail.default')
             && Config::get('mail.mailers.smtp.host')
             && Config::get('mail.mailers.smtp.port');

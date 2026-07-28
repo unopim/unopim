@@ -20,14 +20,11 @@ it('registers the email settings section with SMTP fields in the configuration t
 });
 
 it('applies saved SMTP settings to the mailer transport', function () {
-    // The environment already seeds default email settings, so update the existing
-    // rows (matched on code) instead of creating duplicates that would shadow them.
     CoreConfig::updateOrCreate(['code' => 'emails.configure.email_settings.mail_host'], ['value' => 'smtp.example.test']);
     CoreConfig::updateOrCreate(['code' => 'emails.configure.email_settings.mail_port'], ['value' => '2525']);
     CoreConfig::updateOrCreate(['code' => 'emails.configure.email_settings.mail_encryption'], ['value' => 'ssl']);
     CoreConfig::updateOrCreate(['code' => 'emails.configure.email_settings.shop_email_from'], ['value' => 'noreply@example.test']);
 
-    // The core-config repository caches lookups; flush so the just-seeded rows are read.
     Cache::flush();
 
     $provider = new CoreServiceProvider(app());

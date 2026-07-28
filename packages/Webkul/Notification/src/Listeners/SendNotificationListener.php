@@ -26,9 +26,6 @@ class SendNotificationListener implements ShouldQueue
             return;
         }
 
-        // Username and password are deliberately not required: an internal relay
-        // that accepts unauthenticated mail is a valid configuration, and demanding
-        // credentials silently disabled every notification email on such installs.
         $mailConfigured = Config::get('mail.default') &&
             Config::get('mail.mailers.smtp.host') &&
             Config::get('mail.mailers.smtp.port');
@@ -37,7 +34,6 @@ class SendNotificationListener implements ShouldQueue
             ['type' => '', 'code' => ''],
             (array) ($event->meta ?? [])
         );
-        // @TODO: manage user details with relation to the event
         $admin = $this->adminRepository->find($event->user_id);
 
         event(new NotificationEvent([

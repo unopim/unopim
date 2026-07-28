@@ -67,9 +67,6 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->overrideMailConfiguration();
 
-        // boot() runs once per process, so a long-running queue worker would keep
-        // the mail settings it started with. Re-read them as each job is picked up,
-        // and right after an admin saves the configuration.
         Event::listen(JobProcessing::class, function (): void {
             $this->overrideMailConfiguration();
         });
@@ -134,8 +131,6 @@ class CoreServiceProvider extends ServiceProvider
 
         DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
 
-        // Drop the request-scoped config memo whenever a config row changes, so a
-        // write is reflected by a later read within the same request/job.
         $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
         CoreConfig::saved($forgetConfigMemo);
         CoreConfig::deleted($forgetConfigMemo);
@@ -170,9 +165,6 @@ class CoreServiceProvider extends ServiceProvider
         $encryption = core()->getConfigData($prefix.'mail_encryption');
 
         config([
-            // A host configured in the admin UI is an explicit request to send over
-            // SMTP. Without this the mailer keeps whatever MAIL_MAILER holds, so a
-            // fully configured SMTP mailer is built and then never used.
             'mail.default'                 => 'smtp',
             'mail.mailers.smtp.host'       => $host,
             'mail.mailers.smtp.port'       => core()->getConfigData($prefix.'mail_port') ?: config('mail.mailers.smtp.port'),
