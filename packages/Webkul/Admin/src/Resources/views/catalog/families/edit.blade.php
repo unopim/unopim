@@ -460,6 +460,7 @@
                             getAttributeRoute: "{{ route('admin.catalog.options.fetch-all')}}",
                             customAttributes: [],
                             familyDefaultGroups: @json($attributeFamily['familyGroupMappings']),
+                            initialFamilyGroups: @json($attributeFamily['familyGroupMappings']),
                             dropReverted: false,
                             searchTerm: '',
                             assignedSearchTerm: '',
@@ -555,9 +556,27 @@
 
                     mounted() {
                         this.getAttributes();
+
+                        this.$emitter.on('unsaved-changes:reset', this.restoreFamilyGroups);
+                    },
+
+                    beforeUnmount() {
+                        this.$emitter.off('unsaved-changes:reset', this.restoreFamilyGroups);
                     },
 
                     methods: {
+                        restoreFamilyGroups() {
+                            this.familyDefaultGroups = JSON.parse(JSON.stringify(this.initialFamilyGroups));
+
+                            this.selectedAttrs = [];
+                            this.selectAllAcrossPages = false;
+                            this.allMatchingAttributes = [];
+                            this.bulkGroup = null;
+                            this.dirtyTick = 0;
+
+                            this.getAttributes();
+                        },
+
                         onMove: function(e) {
                             if (
                                 e.to.id === 'unassigned-attributes'
