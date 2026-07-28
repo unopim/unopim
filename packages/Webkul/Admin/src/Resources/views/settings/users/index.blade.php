@@ -105,6 +105,10 @@
                                         class="h-9 object-cover"
                                         :src="record.user_img"
                                         :alt="record.user_name"
+                                        width="36"
+                                        height="36"
+                                        loading="lazy"
+                                        decoding="async"
                                         v-on:error="record.user_img = null"
                                     />
                                 </div>

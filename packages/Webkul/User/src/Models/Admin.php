@@ -152,6 +152,31 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
     }
 
     /**
+     * Whether a gravatar is already known to exist for this email, answered purely
+     * from cache and never by contacting gravatar.com.
+     *
+     * A listing renders one avatar per row; resolving each row through the live
+     * lookup would turn a page render into an upstream request per row inside a
+     * single response, so listings consult this instead.
+     */
+    public static function gravatarCachedForEmail(?string $email): bool
+    {
+        if (! $email) {
+            return false;
+        }
+
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return false;
+        }
+
+        $cached = Cache::get('admin.gravatar.'.md5($normalizedEmail));
+
+        return is_array($cached) && ($cached['found'] ?? false);
+    }
+
+    /**
      * Cached upstream gravatar lookup. Misses are cached (shorter TTL) so a listing that renders one
      * avatar per row does not trigger a synchronous gravatar round-trip per request.
      *
@@ -186,7 +211,7 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
             $payload = $miss;
         }
 
-        Cache::put("admin.gravatar.{$hash}", $payload, $payload['found'] ? 86400 : 3600);
+        Cache::put("admin.gravatar.{$hash}", $payload, 86400);
 
         return $payload;
     }
