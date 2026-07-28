@@ -178,6 +178,7 @@
                                     label-by="label"
                                     :placeholder="axisPlaceholder(axis)"
                                     @select-option="onPick($event, axis)"
+                                    @remove-option="onPick(null, axis)"
                                 ></v-async-select-handler>
                             </x-admin::form.control-group>
                         </template>
@@ -416,8 +417,15 @@
                 },
                 onPick(e, axis) {
                     const opt = e && e.target ? e.target.value : e;
-                    if (!opt || !opt.code) { return; }
-                    this.newValues = Object.assign({}, this.newValues, { [axis]: opt.code });
+                    const picked = Object.assign({}, this.newValues);
+
+                    if (opt && opt.code) {
+                        picked[axis] = opt.code;
+                    } else {
+                        delete picked[axis];
+                    }
+
+                    this.newValues = picked;
                     this.suggestSku();
                 },
                 // Keep the suggestion in step with the picks until the user edits it.
