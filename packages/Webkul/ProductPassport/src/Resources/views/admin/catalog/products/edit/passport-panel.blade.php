@@ -58,7 +58,6 @@
                         value="passport-locales"
                         :is-selected="true"
                     >
-                        {{-- No scroll wrapper here: the row action dropdown is absolutely positioned and any overflow ancestor clips it. --}}
                         <div>
                             <x-admin::table class="min-w-0">
                                 <x-admin::table.thead>

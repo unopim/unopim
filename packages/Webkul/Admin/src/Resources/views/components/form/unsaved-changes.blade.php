@@ -467,7 +467,6 @@
                     this.toggleBeforeUnload(false);
 
                     // Native submit navigates away, so there is no outcome to wait for.
-                    // requestSubmit still runs HTML validation; submit() skips it.
                     if (form.dataset.ajaxForm !== "true" || ! form.requestSubmit) {
                         form.requestSubmit ? form.requestSubmit() : form.submit();
 

@@ -1,7 +1,12 @@
 <?php
 
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
-use Webkul\Measurement\DataGrids\MeasurementProductDataGrid;
+use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Attribute\Services\AttributeService;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
+use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Services\AttributeValueNormalizer;
 
 function passportMassActionTitles(): array
 {
@@ -27,7 +32,18 @@ it('omits the mass-publish action for an admin without the publish permission', 
 });
 
 it('decorates the grid rather than rebinding it, so other packages keep their own subclass', function (): void {
+    $this->enablePassportPublishing(core()->getRequestedChannelCode());
+
     $this->loginWithPermissions('all');
 
-    expect(app(ProductDataGrid::class))->toBeInstanceOf(MeasurementProductDataGrid::class);
+    // Stands in for another package's grid subclass; extending must preserve it.
+    $subclass = new class(app(AttributeFamilyRepository::class), app(ProductRepository::class), app(ChannelRepository::class), app(ProductAttributeValuesNormalizer::class), app(AttributeService::class), app(AttributeValueNormalizer::class)) extends ProductDataGrid {};
+
+    app()->bind(ProductDataGrid::class, fn (): ProductDataGrid => clone $subclass);
+
+    $resolved = app(ProductDataGrid::class);
+
+    expect($resolved)->toBeInstanceOf($subclass::class)
+        ->and(collect($resolved->getMassActions())->pluck('title'))
+        ->toContain(trans('passport::app.publications.mass-publish.action'));
 });

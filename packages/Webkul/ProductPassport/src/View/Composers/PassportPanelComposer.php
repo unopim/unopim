@@ -86,7 +86,6 @@ class PassportPanelComposer
             ->where('publication_id', $publication->id)
             ->sum('views');
 
-        // Capped: a long-lived passport accumulates versions without bound, and the drawer is a summary — the full list lives on the versions page.
         $versions = $publication === null ? collect() : PublicationVersionProxy::modelClass()::query()
             ->where('publication_id', $publication->id)
             ->with(['locale', 'publishedBy'])
