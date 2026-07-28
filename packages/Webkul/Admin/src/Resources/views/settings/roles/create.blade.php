@@ -178,13 +178,21 @@
                     },
                 },
                 methods: {
-                    parseValue(value) {  
+                    parseValue(value) {
                         try {
                             return value ? JSON.parse(value) : null;
                         } catch (error) {
                             return value;
                         }
-                    }
+                    },
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
                 }
 
             })

@@ -17,13 +17,12 @@
         />
     </x-slot>
 
-    <!-- Edit Attributes Vue Components -->
     <v-edit-attributes :locales="{{ $locales->toJson() }}"></v-edit-attributes>
 
     @pushOnce('scripts')
         <script
             type="text/x-template"
-            id="v-edit-attributes-template"
+            id="v-edit-attributes-template-{{ $attribute->id }}"
         >
             {!! view_render_event('unopim.admin.catalog.attributes.edit.before') !!}
 
@@ -37,7 +36,6 @@
                 
                 {!! view_render_event('unopim.admin.catalog.attributes.create._form_controls.before') !!}
 
-                <!-- body content -->
                 <div class="flex gap-2.5 mt-3.5">
                     <div class="flex flex-col flex-1 gap-2 overflow-auto">
 
@@ -125,7 +123,6 @@
                                 <x-admin::form.control-group.error control-name="type" />
                             </x-admin::form.control-group>
 
-                            <!-- Textarea Switcher -->
                                 <x-admin::form.control-group v-show="{{ $attribute->type === 'textarea' ? 'true' : 'false' }}">
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.catalog.attributes.edit.enable-wysiwyg')
@@ -253,7 +250,6 @@
                                                 class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-primary-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
                                                 :style="'grid-template-columns: 0.2fr repeat(' + (actions.length ? columns.length + (selectedSwatchType == 'color' || selectedSwatchType == 'image' ? 2 : 1 ) : (columns.length )) + ', 1fr)'"
                                             >
-                                            {{-- Empty div to manage layout --}}
                                             <div>
                                             </div>
                                                  <div v-if="showSwatch && (selectedSwatchType == 'color' || selectedSwatchType == 'image')"
@@ -758,7 +754,7 @@
 
         <script type="module">
             app.component('v-edit-attributes', {
-                template: document.querySelector('#v-edit-attributes-template').innerHTML,
+                template: '#v-edit-attributes-template-{{ $attribute->id }}',
 
                 props: ['locales'],
 
@@ -816,6 +812,14 @@
                 },
 
                 methods: {
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
+
                     storeOption(params, { resetForm, setValues }) {
                         const formData = new FormData();
 
