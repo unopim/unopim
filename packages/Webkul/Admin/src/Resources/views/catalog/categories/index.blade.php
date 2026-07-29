@@ -11,17 +11,23 @@
 
     <x-admin::page-header :title="trans('admin::app.catalog.categories.index.title')">
         <x-slot:actions>
-            <div class="flex p-0.5 bg-gray-100 dark:bg-cherry-800 rounded-md">
+            @php
+                $activeToggle = 'px-3 py-1.5 text-sm rounded-md bg-white dark:bg-cherry-900 shadow-sm text-gray-800 dark:text-white font-semibold';
+
+                $idleToggle = 'px-3 py-1.5 text-sm rounded-md text-gray-500 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white';
+            @endphp
+
+            <div class="flex gap-0.5 p-0.5 bg-gray-100 dark:bg-cherry-800 border border-gray-200 dark:border-cherry-800 rounded-md">
                 <a
                     href="{{ route('admin.catalog.categories.index', ['view' => 'tree']) }}"
-                    class="px-3 py-1 text-sm rounded {{ $isTreeView ? 'bg-white dark:bg-cherry-900 text-gray-800 dark:text-white font-semibold' : 'text-gray-600 dark:text-gray-300' }}"
+                    class="{{ $isTreeView ? $activeToggle : $idleToggle }}"
                 >
                     @lang('admin::app.catalog.categories.browse.tree-view')
                 </a>
 
                 <a
                     href="{{ route('admin.catalog.categories.index', ['view' => 'list']) }}"
-                    class="px-3 py-1 text-sm rounded {{ $isTreeView ? 'text-gray-600 dark:text-gray-300' : 'bg-white dark:bg-cherry-900 text-gray-800 dark:text-white font-semibold' }}"
+                    class="{{ $isTreeView ? $idleToggle : $activeToggle }}"
                 >
                     @lang('admin::app.catalog.categories.browse.list-view')
                 </a>

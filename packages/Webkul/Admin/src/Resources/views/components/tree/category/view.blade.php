@@ -81,11 +81,11 @@
 
             <template v-else>
             <div
-                class="flex items-center justify-end gap-1 pb-1.5 mb-1.5 border-b dark:border-cherry-800"
+                class="flex items-center justify-end gap-1.5 pb-2 mb-1.5 border-b border-gray-200 dark:border-cherry-800"
                 v-if="showToolbar"
             >
                 <span
-                    class="px-1.5 py-0.5 text-xs text-gray-600 dark:text-gray-300 rounded cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                    class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-cherry-800 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
                     title="@lang('admin::app.catalog.categories.browse.expand-all-hint')"
                     @click="expandAll"
                 >
@@ -93,7 +93,7 @@
                 </span>
 
                 <span
-                    class="px-1.5 py-0.5 text-xs text-gray-600 dark:text-gray-300 rounded cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                    class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-cherry-800 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
                     @click="collapseAll"
                 >
                     @lang('admin::app.catalog.categories.browse.collapse-all')

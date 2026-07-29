@@ -1,7 +1,10 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-tree-item-template">
     <div :class="itemClasses">
-        <div class="group flex items-center">
+        <div
+            class="group flex items-center gap-0.5 ltr:pr-1 rtl:pl-1 rounded-md"
+            :class="rowClasses"
+        >
             <i
                 :class="toggleIconClasses"
                 @click="toggleBranch"
@@ -9,8 +12,18 @@
 
             <i :class="folderIconClasses"></i>
 
+            <span
+                class="flex-1 ltr:ml-1 rtl:mr-1 py-1.5 text-sm truncate cursor-pointer"
+                v-if="categorytree.navigateOnSelect"
+                :class="hasSelectedValue ? 'text-primary-700 dark:text-white font-semibold' : 'text-gray-600 dark:text-gray-300'"
+                :title="label"
+                v-text="label"
+                @click="onInputChange"
+            ></span>
+
             <component
                 :is="inputComponent"
+                v-else
                 :id="inputId"
                 :label="label"
                 :name="name"
@@ -19,7 +32,7 @@
             />
 
             <a
-                class="invisible opacity-0 flex shrink-0 items-center justify-center w-6 h-6 ltr:ml-1 rtl:mr-1 text-lg leading-none text-gray-600 dark:text-gray-300 rounded transition-opacity group-hover:visible group-hover:opacity-100 hover:bg-primary-50 dark:hover:bg-cherry-800"
+                class="invisible opacity-0 flex shrink-0 items-center justify-center w-6 h-6 ltr:ml-auto rtl:mr-auto text-lg leading-none text-gray-600 dark:text-gray-300 rounded transition-opacity group-hover:visible group-hover:opacity-100 hover:bg-primary-50 dark:hover:bg-cherry-800"
                 v-if="categorytree.allowCreate"
                 :href="categorytree.subCategoryUrl(id)"
                 title="@lang('admin::app.catalog.categories.browse.add-child')"
@@ -149,6 +162,16 @@
 
             paginateChildren() {
                 return this.pageSize > 0;
+            },
+
+            rowClasses() {
+                if (! this.categorytree.navigateOnSelect) {
+                    return '';
+                }
+
+                return this.hasSelectedValue
+                    ? 'bg-primary-50 dark:bg-cherry-800'
+                    : 'hover:bg-primary-50 dark:hover:bg-cherry-800';
             },
 
             itemClasses() {
