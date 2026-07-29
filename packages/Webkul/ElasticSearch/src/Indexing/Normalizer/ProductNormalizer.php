@@ -91,12 +91,29 @@ class ProductNormalizer
                 continue;
             }
 
-            $attributeValues[$attributeCode.'-'.$attributeType] = $value;
+            $attributeValues[$attributeCode.'-'.$attributeType] = $this->normalizeValueForType($attributeType, $value);
 
             unset($attributeValues[$key]);
         }
 
         return $this->sanitizeArrayKeys($attributeValues);
+    }
+
+    /**
+     * Option based values are always indexed as strings: a numeric looking option
+     * would otherwise map the field as a number and reject every code after it.
+     */
+    private function normalizeValueForType(string $attributeType, mixed $value): mixed
+    {
+        if (! in_array($attributeType, ['select', 'multiselect', 'checkbox'], true)) {
+            return $value;
+        }
+
+        if (is_array($value)) {
+            return array_map(fn ($item) => is_scalar($item) ? (string) $item : $item, $value);
+        }
+
+        return is_scalar($value) ? (string) $value : $value;
     }
 
     /**

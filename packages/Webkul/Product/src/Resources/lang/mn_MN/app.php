@@ -20,5 +20,6 @@ return [
         'configurable'  => 'Тохируулах боломжтой',
         'simple'        => 'Энгийн',
         'variant-group' => 'Хувилбарын бүлэг',
+        'variant_group' => 'Хувилбарын бүлэг',
     ],
 ];

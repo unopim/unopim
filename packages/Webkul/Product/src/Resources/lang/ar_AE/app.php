@@ -20,5 +20,6 @@ return [
         'configurable'  => 'قابلة للتكوين',
         'simple'        => 'بسيطة',
         'variant-group' => 'مجموعة المتغيرات',
+        'variant_group' => 'مجموعة المتغيرات',
     ],
 ];

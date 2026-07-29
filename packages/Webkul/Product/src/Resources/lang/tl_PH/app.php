@@ -18,5 +18,6 @@ return [
         'configurable'  => 'Nakokontrol',
         'simple'        => 'Simple',
         'variant-group' => 'Grupo ng Variant',
+        'variant_group' => 'Grupo ng Variant',
     ],
 ];

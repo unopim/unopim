@@ -20,5 +20,6 @@ return [
         'configurable'  => '設定可能',
         'simple'        => 'シンプル',
         'variant-group' => 'バリアントグループ',
+        'variant_group' => 'バリアントグループ',
     ],
 ];

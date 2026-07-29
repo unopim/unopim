@@ -20,5 +20,6 @@ return [
         'configurable'  => 'Cấu hình',
         'simple'        => 'Đơn giản',
         'variant-group' => 'Nhóm biến thể',
+        'variant_group' => 'Nhóm biến thể',
     ],
 ];

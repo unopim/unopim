@@ -134,7 +134,9 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
         $byLevel = [];
 
         foreach ($structure->axes->sortBy('position') as $axis) {
-            $byLevel[$axis->level][] = $axis->attribute->code;
+            if ($code = $axis->attribute?->code) {
+                $byLevel[$axis->level][] = $code;
+            }
         }
 
         return $byLevel;
@@ -143,7 +145,8 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
     public function allAxisCodes(VariantStructure $structure): array
     {
         return $structure->axes->sortBy([['level', 'asc'], ['position', 'asc']])
-            ->map(fn ($axis) => $axis->attribute->code)
+            ->map(fn ($axis) => $axis->attribute?->code)
+            ->filter()
             ->values()
             ->all();
     }
@@ -151,7 +154,7 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
     public function placementOf(VariantStructure $structure, string $attributeCode): string
     {
         $placement = $structure->placements
-            ->first(fn ($row): bool => $row->attribute->code === $attributeCode);
+            ->first(fn ($row): bool => $row->attribute?->code === $attributeCode);
 
         return $placement->level ?? 'common';
     }
@@ -160,7 +163,8 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
     {
         return $structure->placements
             ->filter(fn ($row): bool => $row->level === $level)
-            ->map(fn ($row) => $row->attribute->code)
+            ->map(fn ($row) => $row->attribute?->code)
+            ->filter()
             ->values()
             ->all();
     }
