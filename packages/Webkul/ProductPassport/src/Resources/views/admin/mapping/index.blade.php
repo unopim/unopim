@@ -5,7 +5,6 @@
 
     <x-admin::page-header
         :title="trans('passport::app.mapping.title')"
-        :subtitle="trans('passport::app.mapping.info')"
         :back="route('admin.catalog.passports.index')"
     />
 
