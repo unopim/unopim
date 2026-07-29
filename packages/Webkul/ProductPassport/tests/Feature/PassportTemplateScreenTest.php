@@ -179,7 +179,7 @@ it('drops rows that the editor removed from the payload', function (): void {
     expect($template->refresh()->fields->pluck('code')->all())->toBe(['carbon']);
 });
 
-it('rejects an attribute-sourced field with no attribute', function (): void {
+it('keeps an unsourced field as a draft the readiness count reports', function (): void {
     $this->loginWithPermissions('all');
 
     $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
@@ -191,12 +191,17 @@ it('rejects an attribute-sourced field with no attribute', function (): void {
                 'code'        => 'carbon',
                 'source_type' => 'attribute',
                 'tier'        => 'consumer',
+                'is_required' => 1,
                 'en_US'       => ['label' => 'Carbon Footprint'],
             ],
         ],
-    ])->assertSessionHasErrors('fields.0.attribute_id');
+    ])->assertOk();
 
-    expect($template->refresh()->fields)->toHaveCount(0);
+    $field = $template->refresh()->fields->firstWhere('code', 'carbon');
+
+    expect($field)->not->toBeNull()
+        ->and($field->attribute_id)->toBeNull()
+        ->and($field->is_required)->toBeTrue();
 });
 
 it('rejects two fields claiming the same identifier role', function (): void {

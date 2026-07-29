@@ -329,7 +329,6 @@ return [
         'errors' => [
             'duplicate-code'     => 'This code is already used by another row in this template.',
             'duplicate-role'     => 'This identifier role is already taken by another field in this template.',
-            'attribute-required' => 'Choose a source attribute, or switch this field to a fixed value.',
             'unknown-section'    => 'The selected section does not exist in this template.',
             'family-claimed'     => 'The family :family already belongs to the template :template.',
         ],

@@ -90,8 +90,6 @@ class PassportTemplateRequest extends FormRequest
         $validator->after(function (Validator $validator): void {
             $this->rejectDuplicates($validator);
 
-            $this->rejectMissingAttributeSource($validator);
-
             $this->rejectUnknownSection($validator);
 
             $this->rejectForeignFamilies($validator);
@@ -139,23 +137,6 @@ class PassportTemplateRequest extends FormRequest
             }
 
             $seenSections[$code] = true;
-        }
-    }
-
-    /**
-     * An attribute-sourced field without an attribute would publish nothing, so
-     * it is rejected at save time instead of silently disappearing.
-     */
-    private function rejectMissingAttributeSource(Validator $validator): void
-    {
-        foreach ((array) $this->input('fields', []) as $index => $field) {
-            if (($field['source_type'] ?? '') !== PassportFieldSource::Attribute->value) {
-                continue;
-            }
-
-            if (empty($field['attribute_id'])) {
-                $validator->errors()->add('fields.'.$index.'.attribute_id', trans('passport::app.templates.errors.attribute-required'));
-            }
         }
     }
 
