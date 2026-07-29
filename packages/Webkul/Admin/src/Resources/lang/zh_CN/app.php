@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => '动作',
                 'no-records-available' => '没有可用的记录。',
+                'no-records-filtered' => '没有符合所选筛选条件的记录。',
                 'thumbnail'            => '缩略图',
             ],
             'manage-columns' => [

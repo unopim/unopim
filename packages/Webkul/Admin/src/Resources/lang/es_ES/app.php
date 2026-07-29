@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'Comportamiento',
                 'no-records-available' => 'No hay registros disponibles.',
+                'no-records-filtered' => 'Ningún registro coincide con los filtros aplicados.',
                 'thumbnail'            => 'Miniatura',
             ],
             'manage-columns' => [

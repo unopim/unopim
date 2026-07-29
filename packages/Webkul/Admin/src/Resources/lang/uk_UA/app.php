@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Дії',
                 'no-records-available' => 'Записів немає.',
+                'no-records-filtered' => 'Немає записів, що відповідають застосованим фільтрам.',
                 'thumbnail'            => 'Мініатюра',
             ],
             'manage-columns' => [

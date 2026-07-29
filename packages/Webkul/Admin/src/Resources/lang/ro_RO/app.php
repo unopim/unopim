@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Acțiuni',
                 'no-records-available' => 'Nu există înregistrări disponibile.',
+                'no-records-filtered' => 'Niciun rezultat nu corespunde filtrelor aplicate.',
                 'thumbnail'            => 'Miniatură',
             ],
             'manage-columns' => [

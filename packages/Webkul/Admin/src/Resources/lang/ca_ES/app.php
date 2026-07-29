@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'Acciones',
                 'no-records-available' => 'No hay registros disponibles.',
+                'no-records-filtered' => 'Cap registre coincideix amb els filtres aplicats.',
                 'thumbnail'            => 'Miniatura',
             ],
             'manage-columns' => [

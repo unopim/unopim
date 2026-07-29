@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Åtgärder',
                 'no-records-available' => 'Inga poster tillgängliga.',
+                'no-records-filtered' => 'Inga poster matchar de filter du har använt.',
                 'thumbnail'            => 'Miniatyr',
             ],
             'manage-columns' => [

@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'Azioni',
                 'no-records-available' => 'Nessun record disponibile.',
+                'no-records-filtered' => 'Nessun record corrisponde ai filtri applicati.',
                 'thumbnail'            => 'Miniatura',
             ],
             'manage-columns' => [

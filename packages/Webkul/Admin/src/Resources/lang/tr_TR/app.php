@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Eylemler',
                 'no-records-available' => 'Kayıt Bulunamadı.',
+                'no-records-filtered' => 'Uygulanan filtrelerle eşleşen kayıt yok.',
                 'thumbnail'            => 'Küçük resim',
             ],
             'manage-columns' => [

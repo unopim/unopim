@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => '작업',
                 'no-records-available' => '사용 가능한 기록이 없습니다.',
+                'no-records-filtered' => '적용한 필터와 일치하는 레코드가 없습니다.',
                 'thumbnail'            => '썸네일',
             ],
             'manage-columns' => [

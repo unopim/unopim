@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'Toiminnot',
                 'no-records-available' => 'Ei tallenteita saatavilla.',
+                'no-records-filtered' => 'Mikään tietue ei vastaa käytettyjä suodattimia.',
                 'thumbnail'            => 'Pikkukuva',
             ],
             'manage-columns' => [

@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'أجراءات',
                 'no-records-available' => 'لا توجد سجلات متاحة.',
+                'no-records-filtered' => 'لا توجد سجلات تطابق عوامل التصفية المطبَّقة.',
                 'thumbnail'            => 'صورة مصغرة',
             ],
             'manage-columns' => [

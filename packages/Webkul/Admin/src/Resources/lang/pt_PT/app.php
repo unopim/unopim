@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Ações',
                 'no-records-available' => 'Nenhum Registro Disponível.',
+                'no-records-filtered' => 'Nenhum registo corresponde aos filtros aplicados.',
                 'thumbnail'            => 'Miniatura',
             ],
             'manage-columns' => [

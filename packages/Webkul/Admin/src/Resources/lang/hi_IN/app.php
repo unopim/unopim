@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'कार्रवाई',
                 'no-records-available' => 'कोई रिकॉर्ड उपलब्ध नहीं है।',
+                'no-records-filtered' => 'लागू किए गए फ़िल्टर से कोई रिकॉर्ड मेल नहीं खाता।',
                 'thumbnail'            => 'थंबनेल',
             ],
             'manage-columns' => [

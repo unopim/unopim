@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Mga Aksyon',
                 'no-records-available' => 'Walang Magagamit na Tala.',
+                'no-records-filtered' => 'Walang tumutugmang record sa mga filter na inilapat.',
                 'thumbnail'            => 'Thumbnail',
             ],
             'manage-columns' => [

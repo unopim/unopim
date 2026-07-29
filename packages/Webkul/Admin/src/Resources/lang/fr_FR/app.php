@@ -2605,6 +2605,7 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'Aucun enregistrement disponible.',
+                'no-records-filtered' => 'Aucun enregistrement ne correspond aux filtres appliqués.',
                 'thumbnail'            => 'Miniature',
             ],
             'manage-columns' => [

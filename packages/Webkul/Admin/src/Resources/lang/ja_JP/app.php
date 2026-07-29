@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'アクション',
                 'no-records-available' => '利用可能なレコードはありません。',
+                'no-records-filtered' => '適用したフィルターに一致するレコードはありません。',
                 'thumbnail'            => 'サムネイル',
             ],
             'manage-columns' => [

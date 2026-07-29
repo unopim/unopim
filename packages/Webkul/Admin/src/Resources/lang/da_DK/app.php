@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'Handlinger',
                 'no-records-available' => 'Ingen poster tilgængelige.',
+                'no-records-filtered' => 'Ingen poster matcher de anvendte filtre.',
                 'thumbnail'            => 'Miniature',
             ],
             'manage-columns' => [

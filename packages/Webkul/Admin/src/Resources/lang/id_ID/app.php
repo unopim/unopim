@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'Tindakan',
                 'no-records-available' => 'Tidak ada catatan yang tersedia.',
+                'no-records-filtered' => 'Tidak ada data yang cocok dengan filter yang diterapkan.',
                 'thumbnail'            => 'Gambar kecil',
             ],
             'manage-columns' => [

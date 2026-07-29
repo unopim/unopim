@@ -2606,6 +2606,7 @@ return [
             'table' => [
                 'actions'              => 'Akcije',
                 'no-records-available' => 'Nema dostupnih zapisa.',
+                'no-records-filtered' => 'Nijedan zapis ne odgovara primijenjenim filtrima.',
                 'thumbnail'            => 'Minijatura',
             ],
             'manage-columns' => [

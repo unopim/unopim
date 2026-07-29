@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Các hành động',
                 'no-records-available' => 'Không có bản ghi nào.',
+                'no-records-filtered' => 'Không có bản ghi nào khớp với bộ lọc đã áp dụng.',
                 'thumbnail'            => 'Hình thu nhỏ',
             ],
             'manage-columns' => [

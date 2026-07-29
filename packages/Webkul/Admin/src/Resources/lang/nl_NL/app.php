@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Acties',
                 'no-records-available' => 'Geen records beschikbaar.',
+                'no-records-filtered' => 'Geen records komen overeen met de toegepaste filters.',
                 'thumbnail'            => 'Miniatuur',
             ],
             'manage-columns' => [

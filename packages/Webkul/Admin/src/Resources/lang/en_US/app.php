@@ -2777,6 +2777,7 @@ return [
             'table' => [
                 'actions'              => 'Actions',
                 'no-records-available' => 'No Records Available.',
+                'no-records-filtered' => 'No records match the filters you applied.',
                 'thumbnail'            => 'Thumbnail',
             ],
 

@@ -1341,10 +1341,14 @@
                     return this.hasAppliedFilters();
                 },
 
-                hasAppliedFilters() {
-                    return this.applied.filters.columns.some(
+                appliedFilterCount() {
+                    return this.applied.filters.columns.filter(
                         column => column.index !== 'all' && (column.value?.length ?? 0) > 0
-                    );
+                    ).length;
+                },
+
+                hasAppliedFilters() {
+                    return this.appliedFilterCount() > 0;
                 },
 
                 clearAllFilters() {

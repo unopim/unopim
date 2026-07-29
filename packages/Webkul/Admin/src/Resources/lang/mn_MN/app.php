@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Үйлдэл',
                 'no-records-available' => 'Бичлэг байхгүй байна.',
+                'no-records-filtered' => 'Хэрэглэсэн шүүлтүүрт тохирох бичлэг олдсонгүй.',
                 'thumbnail'            => 'Жижиг зураг',
             ],
             'manage-columns' => [

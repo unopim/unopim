@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Handlinger',
                 'no-records-available' => 'Ingen oppføringer tilgjengelig.',
+                'no-records-filtered' => 'Ingen poster samsvarer med filtrene du har brukt.',
                 'thumbnail'            => 'Miniatyr',
             ],
             'manage-columns' => [

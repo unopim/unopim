@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Akcje',
                 'no-records-available' => 'Brak dostępnych rekordów.',
+                'no-records-filtered' => 'Żaden rekord nie pasuje do zastosowanych filtrów.',
                 'thumbnail'            => 'Miniatura',
             ],
             'manage-columns' => [

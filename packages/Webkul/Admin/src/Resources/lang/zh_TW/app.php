@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => '操作',
                 'no-records-available' => '無可用記錄。',
+                'no-records-filtered' => '沒有符合所選篩選條件的記錄。',
                 'thumbnail'            => '縮圖',
             ],
             'manage-columns' => [

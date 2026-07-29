@@ -2609,6 +2609,7 @@ return [
             'table' => [
                 'actions'              => 'Действия',
                 'no-records-available' => 'Нет записей.',
+                'no-records-filtered' => 'Нет записей, соответствующих применённым фильтрам.',
                 'thumbnail'            => 'Миниатюра',
             ],
             'manage-columns' => [
