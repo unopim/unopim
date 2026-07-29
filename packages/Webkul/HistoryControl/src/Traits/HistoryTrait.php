@@ -78,11 +78,17 @@ trait HistoryTrait
             return false;
         }
 
-        if (
-            $this->auditEvent === 'updated'
-            && ! array_diff(array_keys($this->getDirty() ?: $this->getChanges()), $this->getAuditExclude())
-        ) {
-            return false;
+        if ($this->auditEvent === 'updated') {
+            $this->resolveAuditExclusions();
+
+            $auditable = array_filter(
+                array_keys($this->getDirty()),
+                fn (string $attribute): bool => $this->isAttributeAuditable($attribute)
+            );
+
+            if (! $auditable) {
+                return false;
+            }
         }
 
         if (isset($this->historyTranslatableFields)) {

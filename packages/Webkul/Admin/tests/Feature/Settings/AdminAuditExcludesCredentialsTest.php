@@ -36,6 +36,8 @@ it('writes no audit at all when only the password changes', function () {
         ->where('auditable_id', $admin->id)
         ->count();
 
+    $this->travel(2)->seconds();
+
     $admin->update(['password' => Hash::make('another-password')]);
 
     expect(
@@ -49,6 +51,8 @@ it('writes no audit at all when only the password changes', function () {
 it('still audits a change that touches an auditable column', function () {
     $admin = Admin::factory()->create(['name' => 'Before']);
 
+    $this->travel(2)->seconds();
+
     $admin->update(['name' => 'After', 'password' => Hash::make('another-password')]);
 
     $values = DB::table('audits')
@@ -60,4 +64,27 @@ it('still audits a change that touches an auditable column', function () {
     expect(json_decode((string) $values, true))
         ->toHaveKey('name')
         ->not->toHaveKey('password');
+});
+
+it('is not ready for auditing when the touched columns are excluded or timestamps', function () {
+    $admin = Admin::factory()->create();
+
+    $admin->password = Hash::make('another-password');
+    $admin->updated_at = now()->addMinute();
+
+    $admin->setAuditEvent('updated');
+
+    expect($admin->readyForAuditing())->toBeFalse();
+});
+
+it('is ready for auditing when an auditable column is touched alongside them', function () {
+    $admin = Admin::factory()->create();
+
+    $admin->name = 'After';
+    $admin->password = Hash::make('another-password');
+    $admin->updated_at = now()->addMinute();
+
+    $admin->setAuditEvent('updated');
+
+    expect($admin->readyForAuditing())->toBeTrue();
 });
