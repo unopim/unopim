@@ -12,15 +12,15 @@ return [
         'route' => 'admin.api.measurement.show',
         'sort'  => 1,
     ], [
-        'key'   => 'api.catalog.measurements',
-        'name'  => 'measurement::app.acl.measurements',
+        'key'   => 'api.catalog.measurements.units',
+        'name'  => 'measurement::app.acl.units',
         'route' => 'admin.api.measurement-units.index',
-        'sort'  => 1,
+        'sort'  => 2,
     ], [
-        'key'   => 'api.catalog.measurements',
-        'name'  => 'measurement::app.acl.measurements',
+        'key'   => 'api.catalog.measurements.units',
+        'name'  => 'measurement::app.acl.units',
         'route' => 'admin.api.measurement-units.show',
-        'sort'  => 1,
+        'sort'  => 2,
     ], [
         'key'   => 'api.catalog.measurements',
         'name'  => 'measurement::app.acl.measurements',
@@ -49,17 +49,17 @@ return [
     ],
 
     [
-        'key'   => 'api.catalog.measurements.create',
+        'key'   => 'api.catalog.measurements.units.create',
         'name'  => 'admin::app.acl.create',
         'route' => 'admin.api.measurement-units.store',
         'sort'  => 1,
     ], [
-        'key'   => 'api.catalog.measurements.edit',
+        'key'   => 'api.catalog.measurements.units.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.measurement-units.update',
         'sort'  => 2,
     ], [
-        'key'   => 'api.catalog.measurements.delete',
+        'key'   => 'api.catalog.measurements.units.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.api.measurement-units.delete',
         'sort'  => 3,
