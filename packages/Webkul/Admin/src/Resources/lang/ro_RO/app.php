@@ -797,6 +797,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count categorii',
+                'trees'               => 'Arbori',
+                'channel-root'        => 'Rădăcină de canal',
+                'subcategories-count' => ':count subcategorii',
                 'tree-view'          => 'Arbore',
                 'list-view'          => 'Listă',
                 'add-root'           => 'Adaugă categorie rădăcină',

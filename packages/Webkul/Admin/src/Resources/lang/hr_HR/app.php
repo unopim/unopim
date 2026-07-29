@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count kategorija',
+                'trees'               => 'Stabla',
+                'channel-root'        => 'Korijen kanala',
+                'subcategories-count' => ':count potkategorija',
                 'tree-view'          => 'Stablo',
                 'list-view'          => 'Popis',
                 'add-root'           => 'Dodaj korijensku kategoriju',

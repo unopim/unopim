@@ -73,19 +73,7 @@
                 @if ($panelMode)
                     @include('admin::catalog.categories.partials.panel')
                 @else
-                    <div class="flex flex-col gap-4 items-center justify-center p-8 h-[calc(100vh-170px)] bg-white dark:bg-cherry-900 rounded box-shadow">
-                        <p class="text-base text-gray-600 dark:text-gray-300">
-                            @lang('admin::app.catalog.categories.browse.empty')
-                        </p>
-
-                        @if ($canCreate)
-                            <a href="{{ route('admin.catalog.categories.index', ['panel' => 'create']) }}">
-                                <div class="secondary-button">
-                                    @lang('admin::app.catalog.categories.browse.add-root')
-                                </div>
-                            </a>
-                        @endif
-                    </div>
+                    @include('admin::catalog.categories.partials.overview')
                 @endif
             </div>
         </div>

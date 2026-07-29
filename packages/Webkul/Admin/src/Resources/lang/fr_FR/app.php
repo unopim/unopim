@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count catégories',
+                'trees'               => 'Arborescences',
+                'channel-root'        => 'Racine de canal',
+                'subcategories-count' => ':count sous-catégories',
                 'tree-view'          => 'Arborescence',
                 'list-view'          => 'Liste',
                 'add-root'           => 'Ajouter une catégorie racine',

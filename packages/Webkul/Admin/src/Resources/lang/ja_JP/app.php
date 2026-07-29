@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count 件のカテゴリ',
+                'trees'               => 'ツリー',
+                'channel-root'        => 'チャネルのルート',
+                'subcategories-count' => ':count 件のサブカテゴリ',
                 'tree-view'          => 'ツリー',
                 'list-view'          => 'リスト',
                 'add-root'           => 'ルートカテゴリを追加',

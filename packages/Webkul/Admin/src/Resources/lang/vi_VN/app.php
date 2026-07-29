@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count danh mục',
+                'trees'               => 'Cây',
+                'channel-root'        => 'Gốc kênh',
+                'subcategories-count' => ':count danh mục con',
                 'tree-view'          => 'Cây',
                 'list-view'          => 'Danh sách',
                 'add-root'           => 'Thêm danh mục gốc',

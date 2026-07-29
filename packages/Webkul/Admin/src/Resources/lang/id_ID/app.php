@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count kategori',
+                'trees'               => 'Pohon',
+                'channel-root'        => 'Akar saluran',
+                'subcategories-count' => ':count subkategori',
                 'tree-view'          => 'Pohon',
                 'list-view'          => 'Daftar',
                 'add-root'           => 'Tambah Kategori Induk',

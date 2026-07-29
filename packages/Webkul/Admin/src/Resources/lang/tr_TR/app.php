@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count kategori',
+                'trees'               => 'Ağaçlar',
+                'channel-root'        => 'Kanal kökü',
+                'subcategories-count' => ':count alt kategori',
                 'tree-view'          => 'Ağaç',
                 'list-view'          => 'Liste',
                 'add-root'           => 'Kök kategori ekle',

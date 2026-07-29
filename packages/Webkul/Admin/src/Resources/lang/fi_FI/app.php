@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count kategoriaa',
+                'trees'               => 'Puut',
+                'channel-root'        => 'Kanavan juuri',
+                'subcategories-count' => ':count alakategoriaa',
                 'tree-view'          => 'Puu',
                 'list-view'          => 'Luettelo',
                 'add-root'           => 'Lisää juurikategoria',

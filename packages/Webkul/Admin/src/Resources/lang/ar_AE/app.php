@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count فئة',
+                'trees'               => 'الأشجار',
+                'channel-root'        => 'جذر قناة',
+                'subcategories-count' => ':count فئة فرعية',
                 'tree-view'          => 'شجرة',
                 'list-view'          => 'قائمة',
                 'add-root'           => 'إضافة فئة جذرية',

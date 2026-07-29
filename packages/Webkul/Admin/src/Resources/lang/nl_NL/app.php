@@ -797,6 +797,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count categorieën',
+                'trees'               => 'Bomen',
+                'channel-root'        => 'Kanaalhoofdcategorie',
+                'subcategories-count' => ':count subcategorieën',
                 'tree-view'          => 'Boom',
                 'list-view'          => 'Lijst',
                 'add-root'           => 'Hoofdcategorie toevoegen',

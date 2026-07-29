@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count kategorier',
+                'trees'               => 'Træer',
+                'channel-root'        => 'Kanalrod',
+                'subcategories-count' => ':count underkategorier',
                 'tree-view'          => 'Træ',
                 'list-view'          => 'Liste',
                 'add-root'           => 'Tilføj rodkategori',

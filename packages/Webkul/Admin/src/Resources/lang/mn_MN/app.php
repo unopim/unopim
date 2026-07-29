@@ -797,6 +797,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count ангилал',
+                'trees'               => 'Модууд',
+                'channel-root'        => 'Сувгийн үндэс',
+                'subcategories-count' => ':count дэд ангилал',
                 'tree-view'          => 'Мод',
                 'list-view'          => 'Жагсаалт',
                 'add-root'           => 'Үндсэн ангилал нэмэх',

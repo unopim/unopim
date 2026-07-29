@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count na kategorya',
+                'trees'               => 'Mga puno',
+                'channel-root'        => 'Ugat ng channel',
+                'subcategories-count' => ':count na subkategorya',
                 'tree-view'          => 'Puno',
                 'list-view'          => 'Listahan',
                 'add-root'           => 'Magdagdag ng pangunahing kategorya',

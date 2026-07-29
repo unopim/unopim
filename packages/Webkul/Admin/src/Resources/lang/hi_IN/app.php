@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count श्रेणियाँ',
+                'trees'               => 'ट्री',
+                'channel-root'        => 'चैनल मूल',
+                'subcategories-count' => ':count उपश्रेणियाँ',
                 'tree-view'          => 'ट्री',
                 'list-view'          => 'सूची',
                 'add-root'           => 'मूल श्रेणी जोड़ें',

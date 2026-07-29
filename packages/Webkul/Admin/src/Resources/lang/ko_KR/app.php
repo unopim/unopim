@@ -797,6 +797,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => '카테고리 :count개',
+                'trees'               => '트리',
+                'channel-root'        => '채널 루트',
+                'subcategories-count' => '하위 카테고리 :count개',
                 'tree-view'          => '트리',
                 'list-view'          => '목록',
                 'add-root'           => '루트 카테고리 추가',

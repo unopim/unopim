@@ -104,6 +104,7 @@ class CategoryController extends Controller
             'selectedId'          => null,
             'panelMode'           => null,
             'showHistory'         => false,
+            'overview'            => null,
             'category'            => null,
             'parentCategory'      => null,
             'breadcrumb'          => '',
@@ -131,12 +132,12 @@ class CategoryController extends Controller
                 $data['parentCategory'] = $this->categoryRepository->find($parentId);
                 $data['selectedId'] = $data['parentCategory']?->id;
             }
-        } elseif ($first = $roots->first()) {
-            // Landing without a selection opens the first tree, the way a file browser
-            // opens on a folder, rather than showing a panel with nothing in it.
-            $data['category'] = $first;
-            $data['panelMode'] = 'edit';
-            $data['selectedId'] = $first->id;
+        } else {
+            $data['overview'] = [
+                'total'          => $this->categoryRepository->getModel()->count(),
+                'roots'          => $roots,
+                'channelRootIds' => $this->channelRepository->pluck('root_category_id')->filter()->map(intval(...))->all(),
+            ];
         }
 
         $revealed = $data['category'] ?? $data['parentCategory'];

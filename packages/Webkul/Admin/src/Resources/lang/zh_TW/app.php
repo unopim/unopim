@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count 個類別',
+                'trees'               => '類別樹',
+                'channel-root'        => '通路根類別',
+                'subcategories-count' => ':count 個子類別',
                 'tree-view'          => '樹狀',
                 'list-view'          => '清單',
                 'add-root'           => '新增根類別',

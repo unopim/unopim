@@ -796,6 +796,10 @@ return [
                 ],
             ],
             'browse' => [
+                'categories-count'    => ':count категорій',
+                'trees'               => 'Дерева',
+                'channel-root'        => 'Корінь каналу',
+                'subcategories-count' => ':count підкатегорій',
                 'tree-view'          => 'Дерево',
                 'list-view'          => 'Список',
                 'add-root'           => 'Додати кореневу категорію',

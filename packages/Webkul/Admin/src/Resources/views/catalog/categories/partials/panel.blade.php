@@ -21,6 +21,7 @@
         :back-label="trans('admin::app.catalog.categories.edit.back-btn')"
         form="category-panel-form"
         :sticky="false"
+        :breadcrumb="false"
     />
 
     @if ($canSeeHistory)

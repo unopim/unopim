@@ -852,6 +852,10 @@ return [
             ],
 
             'browse' => [
+                'categories-count'    => ':count categories',
+                'trees'               => 'Trees',
+                'channel-root'        => 'Channel root',
+                'subcategories-count' => ':count subcategories',
                 'tree-view'          => 'Tree',
                 'list-view'          => 'List',
                 'add-root'           => 'Add Root Category',
