@@ -329,17 +329,17 @@ test.describe.serial('DPP industry use cases', () => {
     // The re-keyed hub renders a top-level "Digital Product Passport" section with both rows reachable.
     await page.goto('/admin/configuration/system-settings/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
-    await expect(page.getByRole('textbox', { name: /Completeness Threshold/i }).first()).toBeVisible();
+    await expect(page.getByRole('textbox', { name: /Operator Name/i }).first()).toBeVisible();
 
     await page.goto('/admin/configuration/system-settings/digital_product_passport.publication', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
     await expect(page.getByRole('textbox', { name: /Base URL/i }).first()).toBeVisible();
 
-    // The Passports surface carries two in-page tabs (Passports grid + Field Mapping) that navigate.
+    // The Passports surface carries two in-page tabs (Passports grid + Templates) that navigate.
     await page.goto('/admin/catalog/passports', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
-    await page.getByRole('link', { name: /Field Mapping/i }).click();
-    await expect(page).toHaveURL(/passports\/mapping/, { timeout: 15000 });
+    await page.getByRole('link', { name: /Templates/i }).click();
+    await expect(page).toHaveURL(/passports\/templates/, { timeout: 15000 });
     await page.getByRole('link', { name: /Passports/i }).first().click();
     await expect(page).toHaveURL(/catalog\/passports$/, { timeout: 15000 });
   });

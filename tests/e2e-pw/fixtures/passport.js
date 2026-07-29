@@ -2,7 +2,7 @@
 // domcontentloaded + explicit waits (no networkidle — admin polls /admin/get-notifications).
 //
 // PREREQ (once per env): seed the canonical `dpp_e2e` family + config the specs assume:
-//   docker exec unopim-unopim-fpm-1 php artisan unopim:passport:install-attributes
+//   docker exec unopim-unopim-fpm-1 php artisan unopim:passport:install-preset
 //   docker exec unopim-unopim-fpm-1 php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
 const base = require('@playwright/test');
 const { generateUid } = require('../utils/helpers');
