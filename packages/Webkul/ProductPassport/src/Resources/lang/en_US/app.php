@@ -300,8 +300,15 @@ return [
 
         'builder' => [
             'families-heading'      => 'Applies To',
+            'families'              => 'Attribute families',
             'families-info'         => 'Products in these attribute families publish this passport. A family belongs to one template only.',
             'select-families'       => 'Select attribute families',
+            'edit'                  => 'Edit',
+            'optional'              => 'Optional',
+            'done'                  => 'Done',
+            'section-modal-title'   => 'Passport Section',
+            'field-modal-title'     => 'Passport Field',
+            'role-info'             => 'An identifier field feeds the passport identifier and its data carrier instead of publishing a row.',
             'sections-heading'      => 'Sections',
             'sections-info'         => 'Sections group the fields on the published passport page.',
             'sections-empty'        => 'No sections yet. Fields without a section publish under the default one.',

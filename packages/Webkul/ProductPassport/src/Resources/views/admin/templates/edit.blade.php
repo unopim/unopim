@@ -37,12 +37,9 @@
             </div>
 
             <div class="flex flex-col gap-2 w-[360px] max-w-full select-none">
-                <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                    <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
-                        @lang('passport::app.templates.edit.general')
-                    </p>
-
-                    <x-admin::form.control-group>
+                <x-admin::accordion :title="trans('passport::app.templates.edit.general')">
+                    <x-slot:content>
+                        <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
                             @lang('passport::app.templates.edit.code')
                         </x-admin::form.control-group.label>
@@ -69,7 +66,11 @@
                             @lang('passport::app.templates.edit.enabled')
                         </x-admin::form.control-group.label>
 
-                        <input type="hidden" name="is_enabled" value="0" />
+                        <x-admin::form.control-group.control
+                            type="hidden"
+                            name="is_enabled"
+                            value="0"
+                        />
 
                         <x-admin::form.control-group.control
                             type="switch"
@@ -78,19 +79,18 @@
                             :checked="(bool) (old('is_enabled') ?? $template->is_enabled)"
                         />
                     </x-admin::form.control-group>
-                </div>
+                    </x-slot>
+                </x-admin::accordion>
 
-                <div class="relative p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                    <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
-                        @lang('passport::app.templates.edit.label')
-                    </p>
-
-                    <x-admin::form.translatable-field
-                        :locales="$locales"
-                        :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($template->translate($locale->code)->name ?? '')])->all()"
-                        :label="trans('passport::app.templates.edit.label')"
-                    />
-                </div>
+                <x-admin::accordion :title="trans('passport::app.templates.edit.label')">
+                    <x-slot:content>
+                        <x-admin::form.translatable-field
+                            :locales="$locales"
+                            :values="collect($locales)->mapWithKeys(fn ($locale) => [$locale->code => old($locale->code)['name'] ?? ($template->translate($locale->code)->name ?? '')])->all()"
+                            :label="trans('passport::app.templates.edit.label')"
+                        />
+                    </x-slot>
+                </x-admin::accordion>
             </div>
         </div>
     </x-admin::form>

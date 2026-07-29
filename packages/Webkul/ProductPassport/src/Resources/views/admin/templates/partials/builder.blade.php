@@ -28,7 +28,7 @@
     $sectionsForJs = $template->sections->map(fn ($section): array => [
         'code'    => $section->code,
         'locales' => collect($locales)->mapWithKeys(fn ($locale): array => [
-            $locale->code => $section->translate($locale->code)->name ?? '',
+            $locale->code => ['name' => $section->translate($locale->code)->name ?? ''],
         ])->all(),
     ])->values();
 
@@ -51,10 +51,8 @@
         ])->all(),
     ])->values();
 
-    $familiesForJs = $template->families->map(fn ($family): array => [
-        'id'    => (string) $family->id,
-        'label' => $family->getTranslatedValueWithFallback('name') ?: $family->code,
-    ])->values();
+    /** The async multiselect hydrates a bare, comma separated list of ids through its own lookup. */
+    $familyValue = $template->families->pluck('id')->implode(',');
 @endphp
 
 <v-passport-template-builder
@@ -64,329 +62,561 @@
     :role-options='@json($roleOptions)'
     :initial-sections='@json($sectionsForJs)'
     :initial-fields='@json($fieldsForJs)'
-    :initial-families='@json($familiesForJs)'
     current-locale="{{ $currentLocaleCode }}"
 ></v-passport-template-builder>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-passport-template-builder-template">
         <div class="flex flex-col gap-2">
-            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                <p class="text-base text-gray-800 dark:text-white font-semibold">
-                    @lang('passport::app.templates.builder.families-heading')
-                </p>
+            <x-admin::accordion :title="trans('passport::app.templates.builder.families-heading')">
+                <x-slot:content>
+                    <x-admin::form.control-group>
+                        <x-admin::form.control-group.label>
+                            @lang('passport::app.templates.builder.families')
+                        </x-admin::form.control-group.label>
 
-                <p class="mt-1 mb-4 text-xs text-gray-500 dark:text-gray-300">
-                    @lang('passport::app.templates.builder.families-info')
-                </p>
+                        <x-admin::form.control-group.control
+                            type="multiselect"
+                            async="true"
+                            entity-name="attribute_family"
+                            track-by="id"
+                            label-by="label"
+                            name="families"
+                            :value="$familyValue"
+                            :label="trans('passport::app.templates.builder.families')"
+                            :placeholder="trans('passport::app.templates.builder.select-families')"
+                            @input="onFamiliesChange($event)"
+                        />
 
-                <v-multiselect
-                    :options="familyOptions"
-                    track-by="id"
-                    label="label"
-                    :multiple="true"
-                    :searchable="true"
-                    :internal-search="false"
-                    :loading="loadingFamilies"
-                    :close-on-select="false"
-                    :hide-selected="true"
-                    :placeholder="lang.selectFamilies"
-                    v-model="families"
-                    @search-change="searchFamilies"
-                >
-                </v-multiselect>
-
-                <input
-                    v-for="family in families"
-                    :key="'family-' + family.id"
-                    type="hidden"
-                    name="families[]"
-                    :value="family.id"
-                />
-            </div>
-
-            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                <div class="flex justify-between items-center gap-2.5">
-                    <div>
-                        <p class="text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('passport::app.templates.builder.sections-heading')
-                        </p>
+                        <x-admin::form.control-group.error control-name="families" />
 
                         <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">
+                            @lang('passport::app.templates.builder.families-info')
+                        </p>
+                    </x-admin::form.control-group>
+                </x-slot>
+            </x-admin::accordion>
+
+            <x-admin::accordion :title="trans('passport::app.templates.builder.sections-heading')">
+                <x-slot:content>
+                    <div class="flex justify-between items-center gap-2.5">
+                        <p class="text-xs text-gray-500 dark:text-gray-300">
                             @lang('passport::app.templates.builder.sections-info')
                         </p>
-                    </div>
 
-                    <button type="button" class="secondary-button text-sm shrink-0" @click="addSection">
-                        @lang('passport::app.templates.builder.add-section')
-                    </button>
-                </div>
-
-                <p v-if="! sections.length" class="mt-4 text-sm text-gray-400 dark:text-gray-300 italic">
-                    @lang('passport::app.templates.builder.sections-empty')
-                </p>
-
-                <draggable
-                    v-else
-                    class="mt-4 grid gap-2.5"
-                    ghost-class="draggable-ghost"
-                    handle=".icon-drag"
-                    v-bind="{animation: 200}"
-                    :list="sections"
-                    item-key="uid"
-                >
-                    <template #item="{ element, index }">
-                        <div class="flex items-center gap-2.5">
-                            <i class="icon-drag text-2xl text-gray-500 cursor-grab"></i>
-
-                            <input
-                                type="text"
-                                v-model="element.locales[currentLocale].name"
-                                :placeholder="lang.sectionName"
-                                :aria-label="lang.sectionName"
-                                class="flex-1 min-w-0 py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                @input="syncSectionCode(element)"
-                            />
-
-                            <input
-                                type="text"
-                                v-model="element.code"
-                                :readonly="! element.isNew"
-                                :placeholder="lang.code"
-                                :aria-label="lang.code"
-                                class="w-[200px] py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                :class="{'cursor-not-allowed bg-gray-100 dark:bg-cherry-800': ! element.isNew}"
-                            />
-
-                            <button
-                                type="button"
-                                class="icon-delete shrink-0 text-2xl text-gray-400 hover:text-red-500 cursor-pointer"
-                                :title="lang.remove"
-                                :aria-label="lang.remove"
-                                @click="sections.splice(index, 1)"
-                            ></button>
-
-                            <input type="hidden" :name="'sections[' + index + '][code]'" :value="element.code" />
-
-                            <template v-for="locale in locales" :key="'section-' + element.uid + '-' + locale.code">
-                                <input
-                                    type="hidden"
-                                    :name="'sections[' + index + '][' + locale.code + '][name]'"
-                                    :value="element.locales[locale.code].name"
-                                />
-                            </template>
-                        </div>
-                    </template>
-                </draggable>
-            </div>
-
-            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                <div class="flex justify-between items-center gap-2.5">
-                    <div>
-                        <p class="text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('passport::app.templates.builder.fields-heading')
-                        </p>
-
-                        <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">
-                            @lang('passport::app.templates.builder.fields-info')
-                        </p>
-                    </div>
-
-                    <div class="flex items-center gap-2.5 shrink-0">
-                        <span class="text-sm text-gray-600 dark:text-gray-300" v-text="readiness"></span>
-
-                        <button type="button" class="secondary-button text-sm" @click="addField">
-                            @lang('passport::app.templates.builder.add-field')
+                        <button type="button" class="secondary-button text-sm shrink-0" @click="openSection(null)">
+                            @lang('passport::app.templates.builder.add-section')
                         </button>
                     </div>
-                </div>
 
-                <p v-if="! fields.length" class="mt-4 text-sm text-gray-400 dark:text-gray-300 italic">
-                    @lang('passport::app.templates.builder.fields-empty')
-                </p>
+                    <p v-if="! sections.length" class="mt-4 text-sm text-gray-400 dark:text-gray-300 italic">
+                        @lang('passport::app.templates.builder.sections-empty')
+                    </p>
 
-                <draggable
-                    v-else
-                    class="mt-4 grid gap-4"
-                    ghost-class="draggable-ghost"
-                    handle=".icon-drag"
-                    v-bind="{animation: 200}"
-                    :list="fields"
-                    item-key="uid"
-                >
-                    <template #item="{ element, index }">
-                        <div class="p-3 border rounded-md dark:border-gray-700">
-                            <div class="flex items-start gap-2.5">
-                                <i class="icon-drag mt-2.5 text-2xl text-gray-500 cursor-grab"></i>
+                    <div v-else class="mt-4 overflow-x-auto">
+                        <x-admin::table>
+                            <x-admin::table.thead class="text-sm font-medium dark:bg-gray-800">
+                                <x-admin::table.thead.tr>
+                                    <x-admin::table.th class="!p-0" />
 
-                                <div class="grid grid-cols-3 max-md:grid-cols-1 gap-2.5 flex-1 min-w-0">
-                                    <div>
-                                        <label class="block mb-1 text-xs text-gray-500 dark:text-gray-300" v-text="lang.fieldLabel"></label>
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.section-name')
+                                    </x-admin::table.th>
 
-                                        <input
-                                            type="text"
-                                            v-model="element.locales[currentLocale].label"
-                                            :placeholder="lang.fieldLabel"
-                                            :aria-label="lang.fieldLabel"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                            @input="syncFieldCode(element)"
-                                        />
-                                    </div>
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.code')
+                                    </x-admin::table.th>
 
-                                    <div>
-                                        <label class="block mb-1 text-xs text-gray-500 dark:text-gray-300" v-text="lang.code"></label>
+                                    <x-admin::table.th />
+                                </x-admin::table.thead.tr>
+                            </x-admin::table.thead>
 
-                                        <input
-                                            type="text"
-                                            v-model="element.code"
-                                            :readonly="! element.isNew"
-                                            :placeholder="lang.code"
-                                            :aria-label="lang.code"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                            :class="{'cursor-not-allowed bg-gray-100 dark:bg-cherry-800': ! element.isNew}"
-                                        />
-                                    </div>
+                            <draggable
+                                tag="tbody"
+                                ghost-class="draggable-ghost"
+                                handle=".icon-drag"
+                                v-bind="{animation: 200}"
+                                :list="sections"
+                                item-key="uid"
+                            >
+                                <template #item="{ element, index }">
+                                    <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
+                                        <x-admin::table.td class="!px-0 text-center">
+                                            <i class="icon-drag text-2xl cursor-grab"></i>
+                                        </x-admin::table.td>
 
-                                    <div>
-                                        <label class="block mb-1 text-xs text-gray-500 dark:text-gray-300" v-text="lang.section"></label>
+                                        <x-admin::table.td>
+                                            <p class="dark:text-white" v-text="element.locales[currentLocale].name || element.code"></p>
+                                        </x-admin::table.td>
 
-                                        <select
-                                            v-model="element.section"
-                                            :aria-label="lang.section"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                        >
-                                            <option value="" v-text="lang.noSection"></option>
-                                            <option
-                                                v-for="section in sections"
-                                                :key="'opt-section-' + section.uid"
-                                                :value="section.code"
-                                                v-text="section.locales[currentLocale].name || section.code"
-                                            ></option>
-                                        </select>
-                                    </div>
+                                        <x-admin::table.td>
+                                            <p class="dark:text-white" v-text="element.code"></p>
+                                        </x-admin::table.td>
 
-                                    <div>
-                                        <label class="block mb-1 text-xs text-gray-500 dark:text-gray-300" v-text="lang.source"></label>
+                                        <x-admin::table.td class="!px-0">
+                                            <span
+                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                :title="lang.edit"
+                                                @click="openSection(element)"
+                                            ></span>
 
-                                        <select
-                                            v-model="element.source_type"
-                                            :aria-label="lang.source"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                        >
-                                            <option
-                                                v-for="option in sourceOptions"
-                                                :key="'opt-source-' + option.id"
-                                                :value="option.id"
-                                                v-text="option.label"
-                                            ></option>
-                                        </select>
-                                    </div>
+                                            <span
+                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                :title="lang.remove"
+                                                @click="sections.splice(index, 1)"
+                                            ></span>
+                                        </x-admin::table.td>
 
-                                    <div class="col-span-2 max-md:col-span-1">
-                                        <label class="block mb-1 text-xs text-gray-500 dark:text-gray-300" v-text="element.source_type === 'fixed' ? lang.fixedValue : lang.attribute"></label>
+                                        <input type="hidden" :name="'sections[' + index + '][code]'" :value="element.code" />
 
-                                        <input
-                                            v-if="element.source_type === 'fixed'"
-                                            type="text"
-                                            v-model="element.locales[currentLocale].fixed_value"
-                                            :placeholder="lang.fixedValue"
-                                            :aria-label="lang.fixedValue"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                        />
+                                        <template v-for="locale in locales" :key="'section-' + element.uid + '-' + locale.code">
+                                            <input
+                                                type="hidden"
+                                                :name="'sections[' + index + '][' + locale.code + '][name]'"
+                                                :value="element.locales[locale.code].name"
+                                            />
+                                        </template>
+                                    </x-admin::table.tbody.tr>
+                                </template>
+                            </draggable>
+                        </x-admin::table>
+                    </div>
+                </x-slot>
+            </x-admin::accordion>
 
-                                        <v-multiselect
-                                            v-else
-                                            :options="attributeOptions"
-                                            track-by="id"
-                                            label="label"
-                                            :searchable="true"
-                                            :internal-search="false"
-                                            :loading="loadingAttributes"
-                                            :close-on-select="true"
-                                            :placeholder="familyIds.length ? lang.selectAttribute : lang.selectFamiliesFirst"
-                                            :disabled="! familyIds.length"
-                                            :model-value="selectedAttribute(element)"
-                                            @update:model-value="option => setAttribute(element, option)"
-                                            @search-change="searchAttributes"
-                                        >
-                                        </v-multiselect>
-                                    </div>
+            <x-admin::accordion :title="trans('passport::app.templates.builder.fields-heading')">
+                <x-slot:content>
+                    <div class="flex justify-between items-center gap-2.5">
+                        <p class="text-xs text-gray-500 dark:text-gray-300">
+                            @lang('passport::app.templates.builder.fields-info')
+                        </p>
 
-                                    <div>
-                                        <label class="block mb-1 text-xs text-gray-500 dark:text-gray-300" v-text="lang.tier"></label>
+                        <div class="flex items-center gap-2.5 shrink-0">
+                            <span class="text-sm text-gray-600 dark:text-gray-300" v-text="readiness"></span>
 
-                                        <select
-                                            v-model="element.tier"
-                                            :aria-label="lang.tier"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                        >
-                                            <option
-                                                v-for="option in tierOptions"
-                                                :key="'opt-tier-' + option.id"
-                                                :value="option.id"
-                                                v-text="option.label"
-                                            ></option>
-                                        </select>
-                                    </div>
-
-                                    <div>
-                                        <label class="block mb-1 text-xs text-gray-500 dark:text-gray-300" v-text="lang.role"></label>
-
-                                        <select
-                                            v-model="element.role"
-                                            :aria-label="lang.role"
-                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900 dark:border-gray-600"
-                                        >
-                                            <option value="" v-text="lang.noRole"></option>
-                                            <option
-                                                v-for="option in roleOptions"
-                                                :key="'opt-role-' + option.id"
-                                                :value="option.id"
-                                                v-text="option.label"
-                                            ></option>
-                                        </select>
-                                    </div>
-
-                                    <label class="flex items-center gap-2 self-end pb-2.5 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
-                                        <input type="checkbox" v-model="element.is_required" class="cursor-pointer" />
-                                        <span v-text="lang.required"></span>
-                                    </label>
-                                </div>
-
-                                <button
-                                    type="button"
-                                    class="icon-delete mt-2 shrink-0 text-2xl text-gray-400 hover:text-red-500 cursor-pointer"
-                                    :title="lang.remove"
-                                    :aria-label="lang.remove"
-                                    @click="fields.splice(index, 1)"
-                                ></button>
-                            </div>
-
-                            <input type="hidden" :name="'fields[' + index + '][code]'" :value="element.code" />
-                            <input type="hidden" :name="'fields[' + index + '][section]'" :value="element.section" />
-                            <input type="hidden" :name="'fields[' + index + '][source_type]'" :value="element.source_type" />
-                            <input type="hidden" :name="'fields[' + index + '][attribute_id]'" :value="element.source_type === 'fixed' ? '' : element.attribute_id" />
-                            <input type="hidden" :name="'fields[' + index + '][tier]'" :value="element.tier" />
-                            <input type="hidden" :name="'fields[' + index + '][role]'" :value="element.role" />
-                            <input type="hidden" :name="'fields[' + index + '][is_required]'" :value="element.is_required ? 1 : 0" />
-
-                            <template v-for="locale in locales" :key="'field-' + element.uid + '-' + locale.code">
-                                <input
-                                    type="hidden"
-                                    :name="'fields[' + index + '][' + locale.code + '][label]'"
-                                    :value="element.locales[locale.code].label"
-                                />
-
-                                <input
-                                    type="hidden"
-                                    :name="'fields[' + index + '][' + locale.code + '][fixed_value]'"
-                                    :value="element.locales[locale.code].fixed_value"
-                                />
-                            </template>
+                            <button type="button" class="secondary-button text-sm" @click="openField(null)">
+                                @lang('passport::app.templates.builder.add-field')
+                            </button>
                         </div>
+                    </div>
+
+                    <p v-if="! fields.length" class="mt-4 text-sm text-gray-400 dark:text-gray-300 italic">
+                        @lang('passport::app.templates.builder.fields-empty')
+                    </p>
+
+                    <div v-else class="mt-4 overflow-x-auto">
+                        <x-admin::table>
+                            <x-admin::table.thead class="text-sm font-medium dark:bg-gray-800">
+                                <x-admin::table.thead.tr>
+                                    <x-admin::table.th class="!p-0" />
+
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.field-label')
+                                    </x-admin::table.th>
+
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.code')
+                                    </x-admin::table.th>
+
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.section')
+                                    </x-admin::table.th>
+
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.source')
+                                    </x-admin::table.th>
+
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.tier')
+                                    </x-admin::table.th>
+
+                                    <x-admin::table.th>
+                                        @lang('passport::app.templates.builder.required')
+                                    </x-admin::table.th>
+
+                                    <x-admin::table.th />
+                                </x-admin::table.thead.tr>
+                            </x-admin::table.thead>
+
+                            <draggable
+                                tag="tbody"
+                                ghost-class="draggable-ghost"
+                                handle=".icon-drag"
+                                v-bind="{animation: 200}"
+                                :list="fields"
+                                item-key="uid"
+                            >
+                                <template #item="{ element, index }">
+                                    <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
+                                        <x-admin::table.td class="!px-0 text-center">
+                                            <i class="icon-drag text-2xl cursor-grab"></i>
+                                        </x-admin::table.td>
+
+                                        <x-admin::table.td>
+                                            <p class="dark:text-white" v-text="element.locales[currentLocale].label || element.code"></p>
+
+                                            <p
+                                                v-if="element.role"
+                                                class="text-xs text-gray-500 dark:text-gray-300"
+                                                v-text="optionLabel(roleOptions, element.role)"
+                                            ></p>
+                                        </x-admin::table.td>
+
+                                        <x-admin::table.td>
+                                            <p class="dark:text-white" v-text="element.code"></p>
+                                        </x-admin::table.td>
+
+                                        <x-admin::table.td>
+                                            <p class="dark:text-white" v-text="sectionLabel(element.section)"></p>
+                                        </x-admin::table.td>
+
+                                        <x-admin::table.td>
+                                            <p class="dark:text-white" v-text="sourceSummary(element)"></p>
+                                        </x-admin::table.td>
+
+                                        <x-admin::table.td>
+                                            <p class="dark:text-white" v-text="optionLabel(tierOptions, element.tier)"></p>
+                                        </x-admin::table.td>
+
+                                        <x-admin::table.td>
+                                            <span v-if="element.is_required" class="label-pending" v-text="lang.required"></span>
+                                            <span v-else class="label-info" v-text="lang.optional"></span>
+                                        </x-admin::table.td>
+
+                                        <x-admin::table.td class="!px-0">
+                                            <span
+                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                :title="lang.edit"
+                                                @click="openField(element)"
+                                            ></span>
+
+                                            <span
+                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                :title="lang.remove"
+                                                @click="fields.splice(index, 1)"
+                                            ></span>
+                                        </x-admin::table.td>
+
+                                        <input type="hidden" :name="'fields[' + index + '][code]'" :value="element.code" />
+                                        <input type="hidden" :name="'fields[' + index + '][section]'" :value="element.section" />
+                                        <input type="hidden" :name="'fields[' + index + '][source_type]'" :value="element.source_type" />
+                                        <input type="hidden" :name="'fields[' + index + '][attribute_id]'" :value="element.source_type === 'fixed' ? '' : element.attribute_id" />
+                                        <input type="hidden" :name="'fields[' + index + '][tier]'" :value="element.tier" />
+                                        <input type="hidden" :name="'fields[' + index + '][role]'" :value="element.role" />
+                                        <input type="hidden" :name="'fields[' + index + '][is_required]'" :value="element.is_required ? 1 : 0" />
+
+                                        <template v-for="locale in locales" :key="'field-' + element.uid + '-' + locale.code">
+                                            <input
+                                                type="hidden"
+                                                :name="'fields[' + index + '][' + locale.code + '][label]'"
+                                                :value="element.locales[locale.code].label"
+                                            />
+
+                                            <input
+                                                type="hidden"
+                                                :name="'fields[' + index + '][' + locale.code + '][fixed_value]'"
+                                                :value="element.locales[locale.code].fixed_value"
+                                            />
+                                        </template>
+                                    </x-admin::table.tbody.tr>
+                                </template>
+                            </draggable>
+                        </x-admin::table>
+                    </div>
+                </x-slot>
+            </x-admin::accordion>
+
+            {{-- Rows are edited in a modal so every control is a real admin form
+                 component: a Blade component cannot be rendered per row inside a
+                 `v-for`, but one modal bound to the row being edited can. The
+                 translatable field runs in draft mode, so its locale switcher
+                 edits the row instead of posting names of its own. --}}
+            <x-admin::modal ref="sectionModal">
+                <x-slot:header>
+                    <p class="text-lg font-bold text-gray-800 dark:text-white">
+                        @lang('passport::app.templates.builder.section-modal-title')
+                    </p>
+                </x-slot>
+
+                <x-slot:content>
+                    {{-- Creating asks for the catalog-locale name only and derives the
+                         code from it; the other locales are translated later, when the
+                         row is edited. --}}
+                    <template v-if="draftSection?.isNew">
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label
+                                class="w-full"
+                                localizable="true"
+                                :current-locale-code="$currentLocaleCode"
+                            >
+                                @lang('passport::app.templates.builder.section-name')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="text"
+                                name="draft_section_name"
+                                ::key="'section-new-' + draftSection.uid"
+                                :label="trans('passport::app.templates.builder.section-name')"
+                                :placeholder="trans('passport::app.templates.builder.section-name')"
+                                @input="onSectionNameInput($event.target.value)"
+                            />
+                        </x-admin::form.control-group>
                     </template>
-                </draggable>
-            </div>
+
+                    <template v-else-if="draftSection">
+                        <x-admin::form.translatable-field
+                            :locales="$locales"
+                            :submit="false"
+                            field="name"
+                            :label="trans('passport::app.templates.builder.section-name')"
+                            :placeholder="trans('passport::app.templates.builder.section-name')"
+                            ::key="'section-name-' + draftSection.uid"
+                            ::values="sectionNameValues"
+                            @update:values="onSectionNameChange($event)"
+                        />
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('passport::app.templates.builder.code')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="text"
+                                class="cursor-not-allowed"
+                                name="draft_section_code"
+                                readonly
+                                ::key="'section-code-' + draftSection.uid"
+                                ::value="draftSection.code"
+                                :label="trans('passport::app.templates.builder.code')"
+                            />
+                        </x-admin::form.control-group>
+                    </template>
+                </x-slot>
+
+                <x-slot:footer>
+                    <button type="button" class="primary-button" @click="commitSection">
+                        @lang('passport::app.templates.builder.done')
+                    </button>
+                </x-slot>
+            </x-admin::modal>
+
+            <x-admin::modal ref="fieldModal">
+                <x-slot:header>
+                    <p class="text-lg font-bold text-gray-800 dark:text-white">
+                        @lang('passport::app.templates.builder.field-modal-title')
+                    </p>
+                </x-slot>
+
+                <x-slot:content>
+                    <template v-if="draftField">
+                        <template v-if="draftField.isNew">
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label
+                                    class="w-full"
+                                    localizable="true"
+                                    :current-locale-code="$currentLocaleCode"
+                                >
+                                    @lang('passport::app.templates.builder.field-label')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="draft_field_name"
+                                    ::key="'field-new-' + draftField.uid"
+                                    :label="trans('passport::app.templates.builder.field-label')"
+                                    :placeholder="trans('passport::app.templates.builder.field-label')"
+                                    @input="onFieldLabelInput($event.target.value)"
+                                />
+                            </x-admin::form.control-group>
+                        </template>
+
+                        <template v-else>
+                            <x-admin::form.translatable-field
+                                :locales="$locales"
+                                :submit="false"
+                                field="label"
+                                :label="trans('passport::app.templates.builder.field-label')"
+                                :placeholder="trans('passport::app.templates.builder.field-label')"
+                                ::key="'field-label-' + draftField.uid"
+                                ::values="fieldLabelValues"
+                                @update:values="onFieldLabelChange($event)"
+                            />
+
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label>
+                                    @lang('passport::app.templates.builder.code')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    class="cursor-not-allowed"
+                                    name="draft_field_code"
+                                    readonly
+                                    ::key="'field-code-' + draftField.uid"
+                                    ::value="draftField.code"
+                                    :label="trans('passport::app.templates.builder.code')"
+                                />
+                            </x-admin::form.control-group>
+                        </template>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('passport::app.templates.builder.section')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="select"
+                                name="draft_field_section"
+                                track-by="id"
+                                label-by="label"
+                                ::options="sectionSelectOptions"
+                                ::value="draftField.section"
+                                :label="trans('passport::app.templates.builder.section')"
+                                :placeholder="trans('passport::app.templates.builder.no-section')"
+                                @input="draftField.section = optionId($event)"
+                            />
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label class="required">
+                                @lang('passport::app.templates.builder.source')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="select"
+                                name="draft_field_source"
+                                track-by="id"
+                                label-by="label"
+                                ::options="sourceOptions"
+                                ::value="draftField.source_type"
+                                :label="trans('passport::app.templates.builder.source')"
+                                :placeholder="trans('passport::app.templates.builder.source')"
+                                @input="draftField.source_type = optionId($event)"
+                            />
+                        </x-admin::form.control-group>
+
+                        <div v-if="draftField.source_type === 'attribute'">
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('passport::app.templates.builder.attribute')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    async="true"
+                                    entity-name="attributes"
+                                    track-by="id"
+                                    label-by="label"
+                                    name="draft_field_attribute"
+                                    ::key="attributeSelectKey"
+                                    ::query-params="attributeQueryParams"
+                                    ::value="draftField.attribute_id"
+                                    :label="trans('passport::app.templates.builder.attribute')"
+                                    :placeholder="trans('passport::app.templates.builder.select-attribute')"
+                                    @input="onAttributeSelected($event)"
+                                />
+
+                                <p v-if="! familyIds.length" class="mt-1 text-xs text-orange-500">
+                                    @lang('passport::app.templates.builder.select-families-first')
+                                </p>
+                            </x-admin::form.control-group>
+                        </div>
+
+                        <template v-else>
+                            <x-admin::form.control-group v-if="draftField.isNew">
+                                <x-admin::form.control-group.label
+                                    class="w-full"
+                                    localizable="true"
+                                    :current-locale-code="$currentLocaleCode"
+                                >
+                                    @lang('passport::app.templates.builder.fixed-value')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="draft_field_fixed"
+                                    ::key="'field-fixed-new-' + draftField.uid"
+                                    :label="trans('passport::app.templates.builder.fixed-value')"
+                                    :placeholder="trans('passport::app.templates.builder.fixed-value')"
+                                    @input="draftField.locales['{{ $currentLocaleCode }}'].fixed_value = $event.target.value"
+                                />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.translatable-field
+                                v-else
+                                :locales="$locales"
+                                :submit="false"
+                                field="fixed_value"
+                                :label="trans('passport::app.templates.builder.fixed-value')"
+                                :placeholder="trans('passport::app.templates.builder.fixed-value')"
+                                ::key="'field-fixed-' + draftField.uid"
+                                ::values="fieldFixedValues"
+                                @update:values="onFieldFixedChange($event)"
+                            />
+                        </template>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label class="required">
+                                @lang('passport::app.templates.builder.tier')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="select"
+                                name="draft_field_tier"
+                                track-by="id"
+                                label-by="label"
+                                ::options="tierOptions"
+                                ::value="draftField.tier"
+                                :label="trans('passport::app.templates.builder.tier')"
+                                :placeholder="trans('passport::app.templates.builder.tier')"
+                                @input="draftField.tier = optionId($event)"
+                            />
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('passport::app.templates.builder.role')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="select"
+                                name="draft_field_role"
+                                track-by="id"
+                                label-by="label"
+                                ::options="roleOptions"
+                                ::value="draftField.role"
+                                :label="trans('passport::app.templates.builder.role')"
+                                :placeholder="trans('passport::app.templates.builder.no-role')"
+                                @input="draftField.role = optionId($event)"
+                            />
+
+                            <p class="mt-1 text-xs text-gray-500 dark:text-gray-300">
+                                @lang('passport::app.templates.builder.role-info')
+                            </p>
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group class="flex items-center gap-2.5">
+                            <x-admin::form.control-group.label class="!mb-0">
+                                @lang('passport::app.templates.builder.required')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="switch"
+                                name="draft_field_required"
+                                value="1"
+                                ::checked="draftField.is_required"
+                                @change="draftField.is_required = $event.target.checked"
+                            />
+                        </x-admin::form.control-group>
+                    </template>
+                </x-slot>
+
+                <x-slot:footer>
+                    <button type="button" class="primary-button" @click="commitField">
+                        @lang('passport::app.templates.builder.done')
+                    </button>
+                </x-slot>
+            </x-admin::modal>
         </div>
     </script>
 
@@ -401,7 +631,6 @@
                 roleOptions: { type: Array, default: () => [] },
                 initialSections: { type: Array, default: () => [] },
                 initialFields: { type: Array, default: () => [] },
-                initialFamilies: { type: Array, default: () => [] },
                 currentLocale: { type: String, required: true },
             },
 
@@ -409,38 +638,55 @@
                 return {
                     sections: [],
                     fields: [],
-                    families: [],
-                    familyOptions: [],
-                    attributeOptions: [],
-                    loadingFamilies: false,
-                    loadingAttributes: false,
-                    familyTimer: null,
-                    attributeTimer: null,
+                    familyIds: @json($template->families->pluck('id')->map(fn ($id): string => (string) $id)->values()),
+                    draftSection: null,
+                    draftField: null,
+                    editingSection: null,
+                    editingField: null,
                     sequence: 0,
                     lang: {
-                        code: @json(trans('passport::app.templates.builder.code')),
+                        edit: @json(trans('passport::app.templates.builder.edit')),
                         remove: @json(trans('passport::app.templates.builder.remove')),
-                        sectionName: @json(trans('passport::app.templates.builder.section-name')),
-                        fieldLabel: @json(trans('passport::app.templates.builder.field-label')),
-                        section: @json(trans('passport::app.templates.builder.section')),
-                        noSection: @json(trans('passport::app.templates.builder.no-section')),
-                        source: @json(trans('passport::app.templates.builder.source')),
-                        attribute: @json(trans('passport::app.templates.builder.attribute')),
-                        fixedValue: @json(trans('passport::app.templates.builder.fixed-value')),
-                        tier: @json(trans('passport::app.templates.builder.tier')),
-                        role: @json(trans('passport::app.templates.builder.role')),
-                        noRole: @json(trans('passport::app.templates.builder.no-role')),
                         required: @json(trans('passport::app.templates.builder.required')),
-                        selectFamilies: @json(trans('passport::app.templates.builder.select-families')),
-                        selectFamiliesFirst: @json(trans('passport::app.templates.builder.select-families-first')),
-                        selectAttribute: @json(trans('passport::app.templates.builder.select-attribute')),
+                        optional: @json(trans('passport::app.templates.builder.optional')),
+                        noSection: @json(trans('passport::app.templates.builder.no-section')),
+                        fixedValue: @json(trans('passport::app.templates.builder.fixed-value')),
+                        noAttribute: @json(trans('passport::app.templates.builder.select-attribute')),
                     },
                 };
             },
 
             computed: {
-                familyIds() {
-                    return this.families.map((family) => family.id);
+                sectionNameValues() {
+                    return this.flatten(this.draftSection?.locales, 'name');
+                },
+
+                fieldLabelValues() {
+                    return this.flatten(this.draftField?.locales, 'label');
+                },
+
+                fieldFixedValues() {
+                    return this.flatten(this.draftField?.locales, 'fixed_value');
+                },
+
+                sectionSelectOptions() {
+                    return this.sections.map((section) => ({
+                        id:    section.code,
+                        label: section.locales[this.currentLocale].name || section.code,
+                    }));
+                },
+
+                /**
+                 * Sources are searched server-side and scoped to the bound families,
+                 * so the page never embeds the attribute table.
+                 */
+                attributeQueryParams() {
+                    return { inFamilies: this.familyIds };
+                },
+
+                /** The async select builds its params once, so it remounts when the families change. */
+                attributeSelectKey() {
+                    return 'attribute-select-' + this.familyIds.join('-');
                 },
 
                 readiness() {
@@ -455,8 +701,6 @@
             },
 
             mounted() {
-                this.families = this.initialFamilies.map((family) => ({ ...family }));
-
                 this.sections = this.initialSections.map((section) => ({
                     uid: `section-${this.sequence++}`,
                     isNew: false,
@@ -477,10 +721,6 @@
                     is_required: field.is_required,
                     locales: this.localeMap(field.locales, { label: '', fixed_value: '' }),
                 }));
-
-                this.fetchFamilies('');
-
-                this.fetchAttributes('');
             },
 
             methods: {
@@ -492,41 +732,194 @@
                     }, {});
                 },
 
-                addSection() {
-                    this.sections.push({
-                        uid: `section-${this.sequence++}`,
-                        isNew: true,
-                        code: '',
-                        locales: this.localeMap({}, { name: '' }),
-                    });
+                optionLabel(options, id) {
+                    return options.find((option) => option.id === id)?.label ?? '';
                 },
 
-                addField() {
-                    this.fields.push({
-                        uid: `field-${this.sequence++}`,
-                        isNew: true,
-                        code: '',
-                        section: '',
-                        source_type: 'attribute',
-                        attribute_id: '',
-                        attribute_label: '',
-                        tier: 'consumer',
-                        role: '',
-                        is_required: false,
-                        locales: this.localeMap({}, { label: '', fixed_value: '' }),
-                    });
+                sectionLabel(code) {
+                    return this.sectionSelectOptions.find((option) => option.id === code)?.label ?? this.lang.noSection;
                 },
 
-                /** A saved row keeps its code: the code identifies the field in published payloads. */
-                syncSectionCode(section) {
-                    if (section.isNew) {
-                        section.code = this.slugify(section.locales[this.currentLocale].name);
+                sourceSummary(field) {
+                    if (field.source_type === 'fixed') {
+                        return this.lang.fixedValue;
+                    }
+
+                    return field.attribute_label || this.lang.noAttribute;
+                },
+
+                /** Admin selects emit the chosen option as JSON; only its id is persisted. */
+                optionId(event) {
+                    if (! event) {
+                        return '';
+                    }
+
+                    try {
+                        const parsed = typeof event === 'string' ? JSON.parse(event) : event;
+
+                        return parsed?.id ?? '';
+                    } catch (exception) {
+                        return '';
                     }
                 },
 
-                syncFieldCode(field) {
-                    if (field.isNew) {
-                        field.code = this.slugify(field.locales[this.currentLocale].label);
+                onFamiliesChange(event) {
+                    const parse = (value) => {
+                        try {
+                            return typeof value === 'string' ? JSON.parse(value) : value;
+                        } catch (exception) {
+                            return [];
+                        }
+                    };
+
+                    const selected = parse(event) ?? [];
+
+                    this.familyIds = (Array.isArray(selected) ? selected : [selected])
+                        .filter(Boolean)
+                        .map((option) => String(option.id ?? option));
+                },
+
+                onAttributeSelected(event) {
+                    const parse = () => {
+                        try {
+                            return typeof event === 'string' ? JSON.parse(event) : event;
+                        } catch (exception) {
+                            return null;
+                        }
+                    };
+
+                    const option = parse();
+
+                    this.draftField.attribute_id = option?.id ? String(option.id) : '';
+                    this.draftField.attribute_label = option?.label ?? '';
+                },
+
+                openSection(section) {
+                    this.editingSection = section;
+
+                    this.draftSection = section
+                        ? JSON.parse(JSON.stringify(section))
+                        : {
+                            uid: `section-${this.sequence++}`,
+                            isNew: true,
+                            code: '',
+                            locales: this.localeMap({}, { name: '' }),
+                        };
+
+                    this.$refs.sectionModal.toggle();
+                },
+
+                commitSection() {
+                    this.draftSection.code = this.draftSection.code || this.generatedCode('section', this.sections);
+
+                    if (this.editingSection) {
+                        Object.assign(this.editingSection, this.draftSection);
+                    } else {
+                        this.sections.push(this.draftSection);
+                    }
+
+                    this.draftSection = null;
+                    this.editingSection = null;
+
+                    this.$refs.sectionModal.toggle();
+                },
+
+                openField(field) {
+                    this.editingField = field;
+
+                    this.draftField = field
+                        ? JSON.parse(JSON.stringify(field))
+                        : {
+                            uid: `field-${this.sequence++}`,
+                            isNew: true,
+                            code: '',
+                            section: '',
+                            source_type: 'attribute',
+                            attribute_id: '',
+                            attribute_label: '',
+                            tier: 'consumer',
+                            role: '',
+                            is_required: false,
+                            locales: this.localeMap({}, { label: '', fixed_value: '' }),
+                        };
+
+                    this.$refs.fieldModal.toggle();
+                },
+
+                commitField() {
+                    this.draftField.code = this.draftField.code || this.generatedCode('field', this.fields);
+
+                    if (this.editingField) {
+                        Object.assign(this.editingField, this.draftField);
+                    } else {
+                        this.fields.push(this.draftField);
+                    }
+
+                    this.draftField = null;
+                    this.editingField = null;
+
+                    this.$refs.fieldModal.toggle();
+                },
+
+                flatten(locales, key) {
+                    return Object.entries(locales ?? {}).reduce((carry, [code, values]) => {
+                        carry[code] = values[key] ?? '';
+
+                        return carry;
+                    }, {});
+                },
+
+                onSectionNameInput(name) {
+                    this.draftSection.locales[this.currentLocale].name = name;
+
+                    this.suggestCode(this.draftSection, name);
+                },
+
+                onFieldLabelInput(label) {
+                    this.draftField.locales[this.currentLocale].label = label;
+
+                    this.suggestCode(this.draftField, label);
+                },
+
+                onSectionNameChange(values) {
+                    Object.entries(values).forEach(([code, name]) => {
+                        this.draftSection.locales[code].name = name;
+                    });
+
+                    this.suggestCode(this.draftSection, values[this.currentLocale]);
+                },
+
+                onFieldLabelChange(values) {
+                    Object.entries(values).forEach(([code, label]) => {
+                        this.draftField.locales[code].label = label;
+                    });
+
+                    this.suggestCode(this.draftField, values[this.currentLocale]);
+                },
+
+                onFieldFixedChange(values) {
+                    Object.entries(values).forEach(([code, value]) => {
+                        this.draftField.locales[code].fixed_value = value;
+                    });
+                },
+
+                /** A label is optional, so an unnamed row still needs a unique code. */
+                generatedCode(prefix, rows) {
+                    const taken = rows.map((row) => row.code);
+
+                    let index = rows.length + 1;
+
+                    while (taken.includes(`${prefix}_${index}`)) {
+                        index++;
+                    }
+
+                    return `${prefix}_${index}`;
+                },
+
+                /** A saved row keeps its code: the code identifies the row in published payloads. */
+                suggestCode(draft, label) {
+                    if (draft.isNew) {
+                        draft.code = this.slugify(label);
                     }
                 },
 
@@ -537,72 +930,6 @@
                         .toLowerCase()
                         .replace(/[^a-z0-9]+/g, '_')
                         .replace(/^_+|_+$/g, '');
-                },
-
-                selectedAttribute(field) {
-                    return field.attribute_id
-                        ? { id: field.attribute_id, label: field.attribute_label || field.attribute_id }
-                        : null;
-                },
-
-                setAttribute(field, option) {
-                    field.attribute_id = option?.id ?? '';
-                    field.attribute_label = option?.label ?? '';
-                },
-
-                searchFamilies(query) {
-                    clearTimeout(this.familyTimer);
-
-                    this.familyTimer = setTimeout(() => this.fetchFamilies(query), 500);
-                },
-
-                searchAttributes(query) {
-                    clearTimeout(this.attributeTimer);
-
-                    this.attributeTimer = setTimeout(() => this.fetchAttributes(query), 500);
-                },
-
-                fetchFamilies(query) {
-                    this.loadingFamilies = true;
-
-                    this.fetch({ entityName: 'attribute_family', query })
-                        .then((options) => this.familyOptions = options)
-                        .finally(() => this.loadingFamilies = false);
-                },
-
-                /**
-                 * Sources are searched server-side and scoped to the bound families,
-                 * so the page never embeds the attribute table.
-                 */
-                fetchAttributes(query) {
-                    if (! this.familyIds.length) {
-                        this.attributeOptions = [];
-
-                        return;
-                    }
-
-                    this.loadingAttributes = true;
-
-                    this.fetch({ entityName: 'attributes', query, inFamilies: this.familyIds })
-                        .then((options) => this.attributeOptions = options)
-                        .finally(() => this.loadingAttributes = false);
-                },
-
-                fetch(params) {
-                    return this.$axios.get("{{ route('admin.catalog.options.fetch-all') }}", {
-                        params: { locale: "{{ core()->getRequestedLocaleCode() }}", ...params },
-                    })
-                        .then(({ data }) => data.options.map((option) => ({
-                            id: String(option.id),
-                            label: option.label,
-                        })))
-                        .catch(() => []);
-                },
-            },
-
-            watch: {
-                familyIds() {
-                    this.fetchAttributes('');
                 },
             },
         });

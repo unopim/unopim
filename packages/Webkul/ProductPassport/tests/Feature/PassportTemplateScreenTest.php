@@ -69,6 +69,25 @@ it('renders the editor with the saved sections and fields', function (): void {
         ->assertSee('Circularity', false);
 });
 
+it('renders every translatable field with a single values binding', function (): void {
+    $this->loginWithPermissions('all');
+
+    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+
+    $html = $this->get(route('admin.catalog.passports.templates.edit', $template->id))
+        ->assertOk()
+        ->getContent();
+
+    preg_match_all('/<v-translatable-field[^>]*>/s', $html, $matches);
+
+    expect($matches[0])->not->toBeEmpty();
+
+    foreach ($matches[0] as $tag) {
+        // A duplicate attribute is a fatal Vue template compile error, not a warning.
+        expect(preg_match_all('/\s:values=/', $tag))->toBe(1);
+    }
+});
+
 it('saves families, sections and fields as one payload', function (): void {
     $this->loginWithPermissions('all');
 
