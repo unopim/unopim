@@ -80,6 +80,7 @@ return [
             'password'            => 'Hasło',
             'gravatar-preview'    => 'Używane jest Twoje zdjęcie z Gravatar.com',
             'use-gravatar'        => 'Użyj obrazu Gravatar',
+            'use-gravatar-info'        => 'Wyświetlany, gdy nie przesłano zdjęcia profilowego. Utwórz je lub zmień na :link.',
             'profile-image'       => 'Obraz profilowy',
             'save-btn'            => 'Zapisz konto',
             'title'               => 'Moje konto',

@@ -80,6 +80,7 @@ return [
             'password'            => 'Wachtwoord',
             'gravatar-preview'    => 'Je Gravatar.com-afbeelding wordt gebruikt',
             'use-gravatar'        => 'Gravatar-afbeelding gebruiken',
+            'use-gravatar-info'        => 'Wordt getoond wanneer er geen profielafbeelding is geüpload. Maak of wijzig deze op :link.',
             'profile-image'       => 'Profielfoto',
             'save-btn'            => 'Account opslaan',
             'title'               => 'Mijn account',

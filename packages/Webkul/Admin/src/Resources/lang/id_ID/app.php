@@ -80,6 +80,7 @@ return [
             'password'            => 'Kata sandi',
             'gravatar-preview'    => 'Menggunakan gambar Gravatar.com Anda',
             'use-gravatar'        => 'Gunakan gambar Gravatar',
+            'use-gravatar-info'        => 'Ditampilkan saat tidak ada gambar profil yang diunggah. Buat atau ubah di :link.',
             'profile-image'       => 'Gambar profil',
             'save-btn'            => 'Simpan akun',
             'title'               => 'Akun saya',

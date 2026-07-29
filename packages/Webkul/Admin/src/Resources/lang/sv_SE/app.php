@@ -80,6 +80,7 @@ return [
             'password'            => 'Lösenord',
             'gravatar-preview'    => 'Använder din Gravatar.com-bild',
             'use-gravatar'        => 'Använd Gravatar-bild',
+            'use-gravatar-info'        => 'Visas när ingen profilbild har laddats upp. Skapa eller ändra den på :link.',
             'profile-image'       => 'Profilbild',
             'save-btn'            => 'Spara konto',
             'title'               => 'Mitt konto',

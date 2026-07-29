@@ -79,6 +79,12 @@
                             </label>
                         </div>
 
+                        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
+                            {!! trans('admin::app.account.edit.use-gravatar-info', [
+                                'link' => '<a href="https://gravatar.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">gravatar.com</a>',
+                            ]) !!}
+                        </p>
+
                         <x-admin::form.control-group.error control-name="image" />
                     </x-admin::form.control-group>
 

@@ -80,6 +80,7 @@ return [
             'password'            => 'Passwort',
             'gravatar-preview'    => 'Ihr Gravatar.com-Bild wird verwendet',
             'use-gravatar'        => 'Gravatar-Bild verwenden',
+            'use-gravatar-info'        => 'Wird angezeigt, wenn kein Profilbild hochgeladen wurde. Erstellen oder ändern Sie es unter :link.',
             'profile-image'       => 'Profilbild',
             'save-btn'            => 'Konto speichern',
             'title'               => 'Mein Konto',

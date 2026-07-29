@@ -80,6 +80,7 @@ return [
             'password'            => 'Parolă',
             'gravatar-preview'    => 'Se folosește imaginea ta de pe Gravatar.com',
             'use-gravatar'        => 'Folosește imaginea Gravatar',
+            'use-gravatar-info'        => 'Se afișează când nu este încărcată nicio imagine de profil. Creează-o sau modifică-o la :link.',
             'profile-image'       => 'Imagine de profil',
             'save-btn'            => 'Salvați contul',
             'title'               => 'Contul meu',

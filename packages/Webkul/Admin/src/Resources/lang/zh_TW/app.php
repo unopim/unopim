@@ -80,6 +80,7 @@ return [
             'password'            => '密碼',
             'gravatar-preview'    => '正在使用您的 Gravatar.com 圖片',
             'use-gravatar'        => '使用 Gravatar 圖片',
+            'use-gravatar-info'        => '未上傳大頭貼時顯示。可在 :link 建立或修改。',
             'profile-image'       => '個人資料圖片',
             'save-btn'            => '保存賬戶',
             'title'               => '我的賬戶',

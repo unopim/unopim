@@ -80,6 +80,7 @@ return [
             'password'            => 'كلمة المرور',
             'gravatar-preview'    => 'استخدام صورة Gravatar.com الخاصة بك',
             'use-gravatar'        => 'استخدام صورة Gravatar',
+            'use-gravatar-info'        => 'تُعرض عند عدم رفع صورة للملف الشخصي. أنشئها أو غيّرها من :link.',
             'profile-image'       => 'صورة الملف الشخصي',
             'save-btn'            => 'حفظ الحساب',
             'title'               => 'حسابي',

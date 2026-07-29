@@ -80,6 +80,7 @@ return [
             'password'            => 'Contrasenya',
             'gravatar-preview'    => 'Utilitzant la teva imatge de Gravatar.com',
             'use-gravatar'        => 'Utilitza la imatge de Gravatar',
+            'use-gravatar-info'        => 'Es mostra quan no s\'ha pujat cap imatge de perfil. Crea-la o canvia-la a :link.',
             'profile-image'       => 'Imatge del perfil',
             'save-btn'            => 'Desar compte',
             'title'               => 'El meu compte',

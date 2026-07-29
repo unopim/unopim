@@ -80,6 +80,7 @@ return [
             'password'            => 'पासवर्ड',
             'gravatar-preview'    => 'आपकी Gravatar.com छवि का उपयोग किया जा रहा है',
             'use-gravatar'        => 'Gravatar छवि का उपयोग करें',
+            'use-gravatar-info'        => 'जब कोई प्रोफ़ाइल छवि अपलोड न हो तो यह दिखाई जाती है। इसे :link पर बनाएँ या बदलें।',
             'profile-image'       => 'प्रोफ़ाइल छवि',
             'save-btn'            => 'खाता सहेजें',
             'title'               => 'मेरा खाता',

@@ -80,6 +80,7 @@ return [
             'password'            => 'パスワード',
             'gravatar-preview'    => 'あなたの Gravatar.com 画像を使用中',
             'use-gravatar'        => 'Gravatar画像を使用',
+            'use-gravatar-info'        => 'プロフィール画像がアップロードされていない場合に表示されます。:link で作成または変更できます。',
             'profile-image'       => 'プロフィール画像',
             'save-btn'            => 'アカウントを保存',
             'title'               => 'マイアカウント',

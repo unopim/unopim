@@ -80,6 +80,7 @@ return [
             'password'            => '비밀번호',
             'gravatar-preview'    => 'Gravatar.com 이미지 사용 중',
             'use-gravatar'        => 'Gravatar 이미지 사용',
+            'use-gravatar-info'        => '프로필 이미지를 업로드하지 않은 경우에 표시됩니다. :link 에서 만들거나 변경하세요.',
             'profile-image'       => '프로필 이미지',
             'save-btn'            => '계정 저장',
             'title'               => '내 계정',

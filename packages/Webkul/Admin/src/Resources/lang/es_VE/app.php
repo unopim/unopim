@@ -80,6 +80,7 @@ return [
             'password'            => 'Contraseña',
             'gravatar-preview'    => 'Usando tu imagen de Gravatar.com',
             'use-gravatar'        => 'Usar imagen de Gravatar',
+            'use-gravatar-info'        => 'Se muestra cuando no se ha subido ninguna imagen de perfil. Créala o cámbiala en :link.',
             'profile-image'       => 'Imagen de perfil',
             'save-btn'            => 'Guardar cuenta',
             'title'               => 'Mi cuenta',

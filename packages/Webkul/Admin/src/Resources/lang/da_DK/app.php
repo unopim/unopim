@@ -80,6 +80,7 @@ return [
             'password'            => 'Adgangskode',
             'gravatar-preview'    => 'Bruger dit Gravatar.com-billede',
             'use-gravatar'        => 'Brug Gravatar-billede',
+            'use-gravatar-info'        => 'Vises, når der ikke er uploadet et profilbillede. Opret eller skift det på :link.',
             'profile-image'       => 'Profilbillede',
             'save-btn'            => 'Gem konto',
             'title'               => 'Min konto',

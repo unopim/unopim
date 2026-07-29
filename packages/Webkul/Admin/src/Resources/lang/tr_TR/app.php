@@ -80,6 +80,7 @@ return [
             'password'            => 'Şifre',
             'gravatar-preview'    => 'Gravatar.com resminiz kullanılıyor',
             'use-gravatar'        => 'Gravatar resmini kullan',
+            'use-gravatar-info'        => 'Profil resmi yüklenmediğinde gösterilir. :link adresinden oluşturun veya değiştirin.',
             'profile-image'       => 'Profil Resmi',
             'save-btn'            => 'Hesabı Kaydet',
             'title'               => 'Hesabım',

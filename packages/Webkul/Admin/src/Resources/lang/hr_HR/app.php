@@ -80,6 +80,7 @@ return [
             'password'            => 'Lozinka',
             'gravatar-preview'    => 'Koristi se vaša Gravatar.com slika',
             'use-gravatar'        => 'Koristi Gravatar sliku',
+            'use-gravatar-info'        => 'Prikazuje se kada nije učitana slika profila. Izradite je ili promijenite na :link.',
             'profile-image'       => 'Profilna slika',
             'save-btn'            => 'Spremite račun',
             'title'               => 'Moj račun',

@@ -80,6 +80,7 @@ return [
             'password'            => 'Password',
             'gravatar-preview'    => 'Ginagamit ang iyong larawan sa Gravatar.com',
             'use-gravatar'        => 'Gamitin ang larawan sa Gravatar',
+            'use-gravatar-info'        => 'Ipinapakita kapag walang na-upload na larawan sa profile. Gumawa o baguhin ito sa :link.',
             'profile-image'       => 'Larawan ng Profile',
             'save-btn'            => 'I-save ang Account',
             'title'               => 'Aking Account',

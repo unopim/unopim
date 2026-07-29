@@ -80,6 +80,7 @@ return [
             'password'            => 'Passord',
             'gravatar-preview'    => 'Bruker Gravatar.com-bildet ditt',
             'use-gravatar'        => 'Bruk Gravatar-bilde',
+            'use-gravatar-info'        => 'Vises når det ikke er lastet opp et profilbilde. Opprett eller endre det på :link.',
             'profile-image'       => 'Profilbilde',
             'save-btn'            => 'Lagre konto',
             'title'               => 'Min konto',

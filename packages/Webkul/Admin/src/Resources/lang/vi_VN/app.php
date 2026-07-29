@@ -80,6 +80,7 @@ return [
             'password'            => 'Mật khẩu',
             'gravatar-preview'    => 'Đang dùng ảnh Gravatar.com của bạn',
             'use-gravatar'        => 'Dùng ảnh Gravatar',
+            'use-gravatar-info'        => 'Hiển thị khi chưa tải lên ảnh đại diện. Tạo hoặc thay đổi tại :link.',
             'profile-image'       => 'Ảnh hồ sơ',
             'save-btn'            => 'Lưu tài khoản',
             'title'               => 'Tài khoản của tôi',

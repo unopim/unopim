@@ -80,6 +80,7 @@ return [
             'password'            => 'Password',
             'gravatar-preview'    => 'Using your Gravatar.com image',
             'use-gravatar'        => 'Use Gravatar image',
+            'use-gravatar-info'        => 'Shown when no profile image is uploaded. Create or change it at :link.',
             'profile-image'       => 'Profile Image',
             'save-btn'            => 'Save Account',
             'title'               => 'My Account',

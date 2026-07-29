@@ -80,6 +80,7 @@ return [
             'password'            => 'Salasana',
             'gravatar-preview'    => 'Käytetään Gravatar.com-kuvaasi',
             'use-gravatar'        => 'Käytä Gravatar-kuvaa',
+            'use-gravatar-info'        => 'Näytetään, kun profiilikuvaa ei ole ladattu. Luo tai vaihda se osoitteessa :link.',
             'profile-image'       => 'Profiilikuva',
             'save-btn'            => 'Tallenna tili',
             'title'               => 'Oma tili',

@@ -80,6 +80,7 @@ return [
             'password'            => 'Нууц үг',
             'gravatar-preview'    => 'Таны Gravatar.com зургийг ашиглаж байна',
             'use-gravatar'        => 'Gravatar зураг ашиглах',
+            'use-gravatar-info'        => 'Профайлын зураг байхгүй үед харагдана. :link дээр үүсгэх эсвэл өөрчилнө үү.',
             'profile-image'       => 'Хувийн мэдээллийг',
             'save-btn'            => 'Данс хадгалах',
             'title'               => 'Миний данс',
