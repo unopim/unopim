@@ -17,7 +17,7 @@
     ];
 @endphp
 
-<x-admin::form.control-group class="!mb-0">
+<x-admin::form.control-group class="last:!mb-0">
     <x-admin::form.control-group.label>
         @lang($field['title'])
     </x-admin::form.control-group.label>
