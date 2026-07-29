@@ -29,15 +29,38 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
         };
     }
 
+    /** @var array<int, VariantStructure|null> */
+    protected array $structureMemo = [];
+
+    /** @var array<int, array<string, string>> */
+    protected array $levelMaps = [];
+
     /** Structure governing a product, from its configurable ancestor. */
     public function structureFor(Product $product): ?VariantStructure
+    {
+        if ($product->id && array_key_exists($product->id, $this->structureMemo)) {
+            return $this->structureMemo[$product->id];
+        }
+
+        $structure = $this->resolveStructure($product);
+
+        if ($product->id) {
+            $this->structureMemo[$product->id] = $structure;
+        }
+
+        return $structure;
+    }
+
+    protected function resolveStructure(Product $product): ?VariantStructure
     {
         $node = $product;
         $guard = 0;
 
         while ($node && $guard++ < 10) {
             if ($node->variant_structure_id) {
-                return $node->variantStructure;
+                return $node->variantStructure()
+                    ->with(['axes.attribute', 'placements.attribute'])
+                    ->first();
             }
 
             $node = $node->parent;
@@ -61,11 +84,33 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
             return true;
         }
 
-        $placement = in_array($attributeCode, $this->allAxisCodes($structure), true)
-            ? $this->axisLevelOf($structure, $attributeCode)
-            : $this->placementOf($structure, $attributeCode);
+        $placement = $this->levelMap($structure)[$attributeCode] ?? 'common';
 
         return (self::LEVEL_ORDER[$placement] ?? 0) <= (self::LEVEL_ORDER[$level] ?? 0);
+    }
+
+    /** Attribute code to structure level, axes included. */
+    protected function levelMap(VariantStructure $structure): array
+    {
+        if (isset($this->levelMaps[$structure->id])) {
+            return $this->levelMaps[$structure->id];
+        }
+
+        $map = [];
+
+        foreach ($structure->placements as $row) {
+            if ($code = $row->attribute?->code) {
+                $map[$code] = $row->level;
+            }
+        }
+
+        foreach ($structure->axes as $axis) {
+            if ($code = $axis->attribute?->code) {
+                $map[$code] = $this->axisLevelOf($structure, $code);
+            }
+        }
+
+        return $this->levelMaps[$structure->id] = $map;
     }
 
     /** Structure level an axis is fixed at. */
