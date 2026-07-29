@@ -7,7 +7,6 @@
     'formFields'        => '',
     'searchable'        => false,
     'searchPlaceholder' => '',
-    'depth'             => 9999,
     'fullHeight'        => false,
     'offsetEnd'         => 0,
     'dockTo'            => '',
@@ -22,7 +21,6 @@
     form-fields="{{ $formFields }}"
     :searchable="{{ $searchable ? 'true' : 'false' }}"
     search-placeholder="{{ $searchPlaceholder }}"
-    :depth="{{ (int) $depth }}"
     :full-height="{{ $fullHeight ? 'true' : 'false' }}"
     :offset-end="{{ (int) $offsetEnd }}"
     dock-to="{{ $dockTo }}"
@@ -195,10 +193,6 @@
                     type: String,
                     default: '',
                 },
-                depth: {
-                    type: Number,
-                    default: 9999,
-                },
                 fullHeight: {
                     type: Boolean,
                     default: false,
@@ -364,23 +358,26 @@
                  * stops at their border rather than a fixed guess -- a second docked
                  * panel opening after this one would otherwise be overlapped.
                  */
-                dockOffset(viewport) {
+                dockEdge() {
                     if (! this.dockTo) {
-                        return this.offsetEnd;
+                        return null;
                     }
 
                     const rtl = document.dir === 'rtl';
 
                     const edges = [...document.querySelectorAll(this.dockTo)]
-                        .filter(el => el.offsetParent !== null || el.getClientRects().length)
+                        .filter(el => el.getClientRects().length)
                         .map(el => {
                             const box = el.getBoundingClientRect();
 
-                            return rtl ? box.right : Math.round(viewport - box.left);
-                        })
-                        .filter(offset => offset > 0 && offset < viewport);
+                            return rtl ? box.right : box.left;
+                        });
 
-                    return edges.length ? Math.max(...edges) : this.offsetEnd;
+                    if (! edges.length) {
+                        return null;
+                    }
+
+                    return rtl ? Math.max(...edges) : Math.min(...edges);
                 },
 
                 reposition() {
@@ -398,38 +395,40 @@
                     // scrollbar too and would leave the panel short of the dock edge.
                     const viewport = document.documentElement.clientWidth;
 
-                    const end = this.dockOffset(viewport);
+                    const edge = this.dockEdge();
 
-                    const width = end
-                        ? Math.max(320, Math.round(viewport - end - rect.left))
-                        : Math.round(rect.width * this.ratio());
+                    const width = edge === null
+                        ? Math.round(rect.width * this.ratio())
+                        : Math.max(320, Math.round(rtl ? rect.right - edge : edge - rect.left));
 
                     const top = this.fullHeight ? '0px' : Math.round(rect.top) + 'px';
                     const bottom = this.fullHeight ? '0px' : Math.round(window.innerHeight - rect.bottom) + 'px';
 
                     // z-index set inline (not via Tailwind's z-[..] classes, which
-                    // aren't compiled from this x-template's markup). The default
-                    // clears page content -- incl. the rich-text toolbars -- while
-                    // staying under the app's drawers/modals (z-index 10001); a
-                    // caller opening this from inside one of those raises `depth`.
+                    // aren't compiled from this x-template's markup) so the panel
+                    // sits above page content -- incl. the rich-text toolbars -- yet
+                    // below the app's own drawers/modals (z-index 10001), which is
+                    // what lets a docked panel slide out from beneath one.
                     this.overlayStyle = {
                         top,
                         bottom,
-                        left: end ? '0px' : Math.round(rect.left) + 'px',
-                        width: end
-                            ? Math.round(viewport - end) + 'px'
-                            : Math.round(rect.width) + 'px',
-                        zIndex: this.depth - 1,
+                        left: edge === null ? Math.round(rect.left) + 'px' : '0px',
+                        width: edge === null
+                            ? Math.round(rect.width) + 'px'
+                            : Math.round(rtl ? viewport - edge : edge) + 'px',
+                        zIndex: 9998,
                     };
 
                     this.panelStyle = {
                         top,
                         bottom,
                         width: width + 'px',
-                        zIndex: this.depth,
-                        ...(rtl
-                            ? { left: (end ? end : Math.round(rect.left)) + 'px' }
-                            : { right: (end ? end : Math.round(viewport - rect.right)) + 'px' }),
+                        zIndex: 9999,
+                        ...(edge === null
+                            ? (rtl
+                                ? { left: Math.round(rect.left) + 'px' }
+                                : { right: Math.round(viewport - rect.right) + 'px' })
+                            : { left: Math.round(rtl ? edge : rect.left) + 'px' }),
                     };
                 },
 
@@ -444,6 +443,13 @@
                     this.$nextTick(() => {
                         this.claimFormFields();
                         this.watchPanelFields();
+
+                        /**
+                         * Opening locks page scroll, and losing the scrollbar moves
+                         * every edge this panel docks against, so the geometry taken
+                         * a frame ago is a scrollbar out.
+                         */
+                        requestAnimationFrame(() => this.reposition());
                     });
                 },
 

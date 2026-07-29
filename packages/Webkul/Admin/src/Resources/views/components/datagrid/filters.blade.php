@@ -144,7 +144,6 @@
                             id="datagrid-filter-categories"
                             :title="trans('admin::app.catalog.products.edit.categories.title')"
                             icon="icon-folder"
-                            :depth="10010"
                             :full-height="true"
                             dock-to="[data-drawer-panel], .ap-panel"
                         >
