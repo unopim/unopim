@@ -2,12 +2,6 @@
 
 use Webkul\DataTransfer\Models\JobInstances;
 
-/*
- * The export/import profile pages always rendered their "Edit" button, even for
- * an admin whose role withholds the edit permission. The button led straight to
- * a 403, so the action had to be hidden the same way the execute button is.
- */
-
 it('hides the edit button on the export profile page when the role withholds edit', function () {
     $export = JobInstances::factory()->exportJob()->entityProduct()->create();
 

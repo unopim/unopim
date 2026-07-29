@@ -1,13 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave } = require('../../utils/helpers');
 
-/**
- * Global unsaved-changes system — verified on the system-settings page, whose
- * SMTP/Debug config forms are plain POST forms with text fields.
- *
- * Field selection is scoped to `.unsaved-root` (the tracker wrapper) so the
- * global header search box is never picked up.
- */
 test.describe('Unsaved changes bar', () => {
   const URL = '/admin/configuration/system/system.email';
 
@@ -204,11 +197,6 @@ test.describe('Unsaved changes bar', () => {
     await adminPage.locator('button.danger-button').first().click().catch(() => {});
   });
 
-  /**
-   * The reported case: on Edit User the confirm was seen to flash and vanish
-   * without the user answering it. A save rejected by validation leaves the
-   * form dirty, which is the state the prompt has to survive in.
-   */
   test('confirm stays open on the user edit page after a save fails validation', async ({ adminPage }) => {
     await adminPage.goto('/admin/settings/users/edit/1', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
 
@@ -216,26 +204,21 @@ test.describe('Unsaved changes bar', () => {
     await email.waitFor({ state: 'visible', timeout: 15000 });
     const originalEmail = await email.inputValue();
 
-    // An email already taken by another account is refused by the unique rule,
-    // so the save comes back with errors and the form stays dirty.
     await email.fill('not-an-email');
     await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
 
     await clickSave(adminPage, 'Save changes');
 
-    // The save was refused — the bar is still up because nothing was persisted.
     await expect(bar(adminPage)).toBeVisible({ timeout: 15000 });
     await expect(adminPage).toHaveURL(/\/settings\/users\/edit\/1/);
 
     const urlBefore = adminPage.url();
 
-    // The collapsed sidebar keeps a hidden copy of every menu link, so target the visible one.
     await adminPage.locator('a[href$="/admin/settings/users"]:visible').first().click({ timeout: 10000 });
 
     const confirm = adminPage.getByText('Leave this page?', { exact: false });
     await expect(confirm).toBeVisible({ timeout: 10000 });
 
-    // It must wait for an answer rather than dismissing itself.
     await adminPage.waitForTimeout(3000);
     await expect(confirm).toBeVisible();
     expect(adminPage.url()).toBe(urlBefore);

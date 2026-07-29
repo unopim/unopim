@@ -3,19 +3,6 @@ const { clickSaveAndExpect } = require('../../utils/helpers');
 const fs = require('fs');
 const path = require('path');
 
-/**
- * Appearance settings — favicon upload.
- *
- * Regression guard: a JPEG dropped on the favicon tile was accepted by the
- * browser (the control advertised no extension list, so it fell back to any
- * image/*), then rejected server-side under the `favicon.0` error key, which
- * the page never renders. The upload therefore failed with no warning and the
- * favicon silently stayed on its previous value.
- *
- * The favicon now accepts JPEG alongside ico/png/webp, and the control
- * advertises exactly the extensions the server enforces so anything else is
- * refused up front with a visible warning.
- */
 test.describe('Appearance — favicon', () => {
   const SETTINGS_URL = '/admin/settings/appearance';
   const JPEG_B64 = fs.readFileSync(path.resolve(__dirname, '../../assets/check.jpeg')).toString('base64');
@@ -23,15 +10,11 @@ test.describe('Appearance — favicon', () => {
   const gotoSettings = (page) =>
     page.goto(SETTINGS_URL, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
 
-  /** The favicon control is the second media widget on the page. */
   const faviconControl = (page) => page.locator('[data-media-control]').nth(1);
 
   const faviconImage = (page) => faviconControl(page).locator('img[src*="/storage/configuration/"]').first();
 
-  /**
-   * Drop a file on the favicon control — either its "Add Image" tile when empty
-   * or the existing preview tile when one is already uploaded.
-   */
+
   async function dropFavicon(page, fileName, mimeType) {
     await page.evaluate(
       ({ b64, fileName, mimeType }) => {
@@ -53,7 +36,6 @@ test.describe('Appearance — favicon', () => {
     );
   }
 
-  /** Remove the uploaded favicon via the tile's hover delete control, then save. */
   async function deleteFaviconIfPresent(page) {
     const tile = faviconImage(page);
     if ((await tile.count()) === 0) {
@@ -88,10 +70,8 @@ test.describe('Appearance — favicon', () => {
 
     await dropFavicon(adminPage, 'watch.jpeg', 'image/jpeg');
 
-    // Preview tile (data URL) confirms the dropped file was accepted client-side.
     await expect(faviconControl(adminPage).locator('img[src^="data:"]').first()).toBeVisible({ timeout: 10000 });
 
-    // Wait for the File to be copied into the hidden multipart input before submitting.
     await expect
       .poll(async () =>
         adminPage.evaluate(() => {
@@ -104,7 +84,6 @@ test.describe('Appearance — favicon', () => {
 
     await clickSaveAndExpect(adminPage, 'Save changes', /Appearance updated successfully/i, /system-settings/);
 
-    // Fresh navigation — the stored favicon must render, proving the save was accepted.
     await gotoSettings(adminPage);
 
     const favicon = faviconImage(adminPage);

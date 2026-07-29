@@ -2,16 +2,6 @@ const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 const path = require('path');
 
-/**
- * Magic AI prompts — delete with view + delete permission only.
- *
- * The grid builds its actions conditionally on permissions and the view looked
- * them up by their positional fallback index. With edit withheld, the delete
- * action slid into the slot the view treats as edit, so the row and the first
- * icon navigated to the delete URL with GET and the route answered 405. The
- * actions are now addressed by name, so only the delete icon renders and it
- * issues a real DELETE.
- */
 test.describe('Magic AI prompt — delete without edit permission', () => {
   test.setTimeout(180000);
 
@@ -109,11 +99,6 @@ test.describe('Magic AI prompt — delete without edit permission', () => {
     expect(status, 'the restricted user must be created').toBeLessThan(400);
   }
 
-  /**
-   * Create the prompt the restricted user will delete. Submitted directly so
-   * the fixture does not depend on the create modal's field layout — the modal
-   * is not what this test is exercising.
-   */
   async function createPrompt(adminPage, title) {
     await adminPage.goto(`${BASE_URL}/admin/magic-ai/prompts`, { waitUntil: 'domcontentloaded' });
 
@@ -196,11 +181,9 @@ test.describe('Magic AI prompt — delete without edit permission', () => {
     const row = userPage.locator('div.row.grid').filter({ hasText: promptTitle }).first();
     await expect(row).toBeVisible({ timeout: 20000 });
 
-    // No edit permission — only the delete icon is offered.
     await expect(row.locator('span.icon-edit')).toHaveCount(0);
     await expect(row.locator('span.icon-delete')).toHaveCount(1);
 
-    // Record every response so a 405 cannot slip past unnoticed.
     const statuses = [];
     userPage.on('response', (response) => {
       if (/\/magic-ai\/delete\//.test(response.url())) {
@@ -210,8 +193,6 @@ test.describe('Magic AI prompt — delete without edit permission', () => {
 
     await row.locator('span.icon-delete').first().click();
 
-    // Confirm via the modal's agree button by class — the restricted user's UI
-    // locale is whatever the install defaults to, so its label is not stable.
     await userPage.locator('button.danger-button:visible').first().click();
 
     await expect.poll(() => statuses.length, { timeout: 20000 }).toBeGreaterThan(0);
@@ -219,7 +200,6 @@ test.describe('Magic AI prompt — delete without edit permission', () => {
     expect(statuses.every((entry) => entry.status !== 405)).toBe(true);
     expect(statuses.some((entry) => entry.method === 'DELETE' && entry.status < 400)).toBe(true);
 
-    // The prompt is gone from the grid.
     await expect(userPage.locator('div.row.grid').filter({ hasText: promptTitle })).toHaveCount(0, { timeout: 20000 });
 
     await userContext.close();

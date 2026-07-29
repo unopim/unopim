@@ -3,15 +3,6 @@
 use Webkul\MagicAI\Models\MagicAISystemPrompt;
 use Webkul\MagicAI\Models\MagicPrompt;
 
-/*
- * The prompt grids build their actions conditionally on permissions, so the
- * positional fallback index shifted whenever one was withheld: for a role with
- * view + delete only, the delete action became "action_1" — the slot the view
- * treats as edit. Clicking it navigated to the delete URL with GET and the
- * route, which only accepts DELETE, answered 405. Each action now carries a
- * stable index of its own.
- */
-
 /**
  * @param  array<int, string>  $permissions
  */

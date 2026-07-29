@@ -2,15 +2,7 @@ const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 const path = require('path');
 
-/**
- * Magic AI settings — saving with Magic AI permission only.
- *
- * The settings page sits under the Magic AI section and is gated by the Magic
- * AI permission, but its form posted to the shared configuration store, which
- * belongs to the Configuration section. A role granted full Magic AI access
- * could open the page and then hit a 403 on Save Changes. The save now has its
- * own route carrying the Magic AI permission.
- */
+
 test.describe('Magic AI settings — save with Magic AI permission only', () => {
   test.setTimeout(180000);
 
@@ -155,13 +147,9 @@ test.describe('Magic AI settings — save with Magic AI permission only', () => 
 
     await userPage.goto(`${BASE_URL}/admin/magic-ai/settings`, { waitUntil: 'domcontentloaded' });
 
-    // The Agentic PIM enable switch — matched by name so the assertion does not
-    // depend on the restricted user's UI locale.
     const toggle = userPage.locator('input[name="general[magic_ai][agentic_pim][enabled]"]').last();
     await expect(toggle).toBeAttached({ timeout: 20000 });
 
-    // Click the switch's label — the input itself is visually replaced, and a
-    // real click is what the dirty-state tracker listens for.
     await toggle.locator('..').click();
 
     const statuses = [];
@@ -171,8 +159,6 @@ test.describe('Magic AI settings — save with Magic AI permission only', () => 
       }
     });
 
-    // The tracked form hides the header save button until it is dirty and shows
-    // the unsaved-changes bar instead, so wait for whichever one is offered.
     const save = userPage.locator('[data-unsaved-save]:visible, button[form="configuration-edit-form"]:visible').first();
     await expect(save).toBeVisible({ timeout: 20000 });
     await save.click();

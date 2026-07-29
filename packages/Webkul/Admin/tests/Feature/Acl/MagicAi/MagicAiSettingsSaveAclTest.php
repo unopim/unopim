@@ -1,14 +1,5 @@
 <?php
 
-/*
- * Magic AI settings live under the Magic AI section and its page is gated by
- * `ai-agent.general`, but the form posted to the shared configuration store,
- * which is gated by the unrelated `configuration` permission. A role holding
- * full Magic AI access could therefore open the page and then get a 403 the
- * moment it saved. The save now has its own route carrying the Magic AI
- * permission, with the slugs fixed so it still cannot reach another section.
- */
-
 /**
  * Build the shared configuration form payload for one `general.magic_ai` section.
  *

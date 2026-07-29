@@ -2,22 +2,12 @@ const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 const path = require('path');
 
-/**
- * Export/import profile pages — "Edit" button visibility.
- *
- * The profile pages rendered their Edit button unconditionally, so an admin
- * whose role withholds the edit permission still saw it and was sent to a 403.
- * The button now follows the same permission gate the Export Now button uses.
- */
 test.describe('Data transfer profile — edit button ACL', () => {
   test.setTimeout(180000);
 
   const ADMIN_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
   const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
-  // These contexts are built by hand rather than via the adminPage fixture, so
-  // they need the same overlay suppression: on a dev server the Debugbar sits
-  // over the unsaved-changes bar and swallows clicks on its Save button.
   const HIDE_OVERLAYS = `
     (function() {
       var s = document.createElement('style');
@@ -27,7 +17,6 @@ test.describe('Data transfer profile — edit button ACL', () => {
     })();
   `;
 
-  /** Create a custom role through the UI, seeded with Dashboard so it validates. */
   async function createRole(adminPage, roleName) {
     await navigateTo(adminPage, 'roles');
     await adminPage
@@ -47,11 +36,6 @@ test.describe('Data transfer profile — edit button ACL', () => {
     await clickSaveAndExpect(adminPage, 'Save changes', /Roles Created Successfully/i);
   }
 
-  /**
-   * Set the role's permission list exactly. The permission tree is nested and
-   * awkward to drive click-by-click, so the values are submitted directly the
-   * way the role form would post them.
-   */
   async function setRolePermissions(adminPage, roleName, permissions) {
     await navigateTo(adminPage, 'roles');
     await searchInDataGrid(adminPage, roleName);
@@ -85,11 +69,6 @@ test.describe('Data transfer profile — edit button ACL', () => {
     return roleId;
   }
 
-  /**
-   * Create a user bound to the given role. Submitted directly for the same
-   * reason as the permission list — the create form is a modal of dependent
-   * multiselects, and none of that is what this test is exercising.
-   */
   async function createUserWithRole(adminPage, { name, email, password, roleId }) {
     await navigateTo(adminPage, 'users');
 
@@ -156,7 +135,6 @@ test.describe('Data transfer profile — edit button ACL', () => {
       roleId,
     });
 
-    // Act — sign in as the restricted user and open the export profile page.
     const userContext = await browser.newContext({ storageState: { cookies: [], origins: [] } });
     await userContext.addInitScript(HIDE_OVERLAYS);
     const userPage = await userContext.newPage();
@@ -167,22 +145,16 @@ test.describe('Data transfer profile — edit button ACL', () => {
     await userPage.locator('button[aria-label="Sign In"]').click();
     await userPage.waitForURL((url) => !url.pathname.endsWith('/admin/login'), { timeout: 30000 });
 
-    // The execute permission keeps the grid's Export action, which opens the profile page.
-    // Selectors stay locale-independent: the user's UI locale is whatever the
-    // install defaults to, so icons and hrefs are matched instead of labels.
     await userPage.goto(`${BASE_URL}/admin/data-transfer/exports`, { waitUntil: 'domcontentloaded' });
     await userPage.locator('span.icon-export').first().click();
     await userPage.waitForURL(/\/data-transfer\/exports\/export\/\d+/, { timeout: 20000 });
 
-    // The profile page renders (view permission granted) — its Back link proves it.
     await expect(userPage.locator('a[href$="/data-transfer/exports"]').first()).toBeVisible({ timeout: 15000 });
 
-    // ...but the Edit button is gone.
     await expect(userPage.locator('a[href*="/data-transfer/exports/edit/"]')).toHaveCount(0);
 
     await userContext.close();
 
-    // Cleanup — remove the user first so the role is no longer referenced.
     await removeRecord(adminPage, 'users', userEmail);
     await removeRecord(adminPage, 'roles', roleName);
     await adminContext.close();
