@@ -89,15 +89,18 @@
                 :value="$currentLocale->code"
             />
 
-            <x-admin::form.control-group.control
-                type="hidden"
-                name="parent_id"
-                :value="$isEdit ? $category->parent_id : $parentCategory?->id"
-            />
+            @unless ($breadcrumb)
+                <x-admin::form.control-group.control
+                    type="hidden"
+                    name="parent_id"
+                    :value="$isEdit ? $category->parent_id : $parentCategory?->id"
+                />
+            @endunless
 
             @include('admin::catalog.categories.partials.form', [
-                'showParent'  => false,
-                'parentLabel' => $breadcrumb,
+                'showParent'   => false,
+                'parentLabel'  => $breadcrumb,
+                'parentPicker' => true,
             ])
         </x-admin::form>
 

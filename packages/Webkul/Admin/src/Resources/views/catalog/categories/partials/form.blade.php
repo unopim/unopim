@@ -41,13 +41,51 @@
                         @lang('admin::app.catalog.categories.edit.select-parent-category')
                     </x-admin::form.control-group.label>
 
-                    <x-admin::form.control-group.control
-                        type="text"
-                        class="cursor-not-allowed"
-                        name="parent_label"
-                        disabled
-                        :value="$parentLabel"
-                    />
+                    @if ($parentPicker ?? false)
+                        <x-admin::drawer width="480px">
+                            <x-slot:toggle>
+                                <div class="flex gap-2.5 items-center justify-between w-full px-3 py-2 border dark:border-cherry-800 rounded-md cursor-pointer hover:border-gray-400">
+                                    <span class="text-sm text-gray-600 dark:text-gray-300 truncate" title="{{ $parentLabel }}">
+                                        {{ $parentLabel }}
+                                    </span>
+
+                                    <span class="icon-chevron-right shrink-0 text-2xl text-gray-400 dark:text-gray-300"></span>
+                                </div>
+                            </x-slot>
+
+                            <x-slot:header>
+                                <p class="text-lg text-gray-800 dark:text-white font-bold">
+                                    @lang('admin::app.catalog.categories.edit.select-parent-category')
+                                </p>
+                            </x-slot>
+
+                            <x-slot:content>
+                                <x-admin::tree.category.view
+                                    input-type="radio"
+                                    name-field="parent_id"
+                                    label-field="name"
+                                    value-field="id"
+                                    id-field="id"
+                                    children-page-size="100"
+                                    ::show-search="true"
+                                    ::show-toolbar="true"
+                                    :current-category="$category?->id"
+                                    :expanded-branch="json_encode($branchToParent)"
+                                    :items="json_encode($treeItems)"
+                                    :value="old('parent_id') ?? json_encode($category?->parent_id ?? $parentCategory?->id)"
+                                    :fallback-locale="config('app.fallback_locale')"
+                                />
+                            </x-slot>
+                        </x-admin::drawer>
+                    @else
+                        <x-admin::form.control-group.control
+                            type="text"
+                            class="cursor-not-allowed"
+                            name="parent_label"
+                            disabled
+                            :value="$parentLabel"
+                        />
+                    @endif
                 </x-admin::form.control-group>
             @endif
         </div>
