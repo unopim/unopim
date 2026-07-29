@@ -371,6 +371,7 @@ class Exporter extends AbstractExporter
                 'super_attributes:id,code',
                 'parent:id,sku',
                 'attribute_family:id,code',
+                'variantStructure:id,code',
             ])
             ->whereIn('id', $ids)
             ->get();
@@ -409,8 +410,9 @@ class Exporter extends AbstractExporter
             ];
 
             $family = $product->attribute_family?->code;
-            $parentSku = $product->type === 'simple'
-                ? $product->parent?->sku
+            $parentSku = $product->parent?->sku;
+            $variantStructure = $product->type === 'configurable'
+                ? $product->variantStructure?->code
                 : null;
 
             $sku = $product->sku;
@@ -451,6 +453,7 @@ class Exporter extends AbstractExporter
                         'type'                    => $type,
                         'parent'                  => $parentSku,
                         'attribute_family'        => $family,
+                        'variant_structure'       => $variantStructure,
                         'configurable_attributes' => $configurableAttributes,
                         'categories'              => $categories,
                     ], $associationFields, $values);

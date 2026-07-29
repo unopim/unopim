@@ -80,7 +80,7 @@ class AutoEnrichProductJob implements ShouldQueue
         }
 
         // Resolve AI platform
-        $platform = $platformRepository->getDefault() ?? $platformRepository->getActiveList()->first();
+        $platform = $platformRepository->getActiveDefault();
 
         if (! $platform) {
             Log::warning('AutoEnrichProductJob: No AI platform configured', ['sku' => $product->sku]);

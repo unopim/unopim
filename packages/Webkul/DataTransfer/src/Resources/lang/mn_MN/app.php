@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code утга нь өвөрмөц байх ёстой.',
                     'incorrect-family-for-variant'             => 'Гэр бүл нь эцэг эхтэй ижил байх ёстой',
                     'parent-not-exist'                         => 'Эцэг эх нь байхгүй.',
+                    'variant-structure-not-found'              => 'Энэ шинж чанарын бүлэгт :code хувилбарын бүтэц байхгүй байна.',
                 ],
             ],
         ],

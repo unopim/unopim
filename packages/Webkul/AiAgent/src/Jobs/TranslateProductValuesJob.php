@@ -84,7 +84,7 @@ class TranslateProductValuesJob implements ShouldQueue
             return;
         }
 
-        $platform = $platformRepository->getDefault() ?? $platformRepository->getActiveList()->first();
+        $platform = $platformRepository->getActiveDefault();
 
         if (! $platform) {
             Log::warning("TranslateProductValuesJob: No AI platform for product {$product->sku}");

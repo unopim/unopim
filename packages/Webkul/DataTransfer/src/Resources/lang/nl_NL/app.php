@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'De waarde van :code moet uniek zijn.',
                     'incorrect-family-for-variant'             => 'De attribuutset moet gelijk zijn aan die van het hoofdproduct.',
                     'parent-not-exist'                         => 'Het hoofdproduct bestaat niet.',
+                    'variant-structure-not-found'              => 'De variantstructuur :code bestaat niet voor deze attributenfamilie.',
                 ],
             ],
         ],

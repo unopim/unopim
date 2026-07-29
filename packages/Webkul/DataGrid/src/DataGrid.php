@@ -268,7 +268,7 @@ abstract class DataGrid
                     foreach ($requestedValues as $value) {
                         collect($this->columns)
                             ->filter(fn ($column): bool => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
-                            ->each(fn ($column) => $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%'));
+                            ->each(fn ($column) => $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false));
                     }
                 });
             } else {
@@ -277,7 +277,7 @@ abstract class DataGrid
                 match ($column->type) {
                     ColumnTypeEnum::STRING->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
                         foreach ($requestedValues as $value) {
-                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
+                            $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false);
                         }
                     }),
                     ColumnTypeEnum::INTEGER->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
@@ -310,7 +310,7 @@ abstract class DataGrid
                     }),
                     default => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
                         foreach ($requestedValues as $value) {
-                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
+                            $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false);
                         }
                     }),
                 };

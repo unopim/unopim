@@ -7,35 +7,34 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Type\AbstractType;
 
-/**
- * Checks a product against every required attribute of its family, not only the
- * ones the request carried.
- *
- * The edit page loads attribute groups on demand, so a save legitimately submits
- * a subset of the family; without this the required attributes of a group the
- * editor never scrolled to would go unchecked.
- */
+/** Checks a product against every required attribute of its family. */
 class RequiredAttributesValidator
 {
-    /**
-     * Get the required attributes this product is still missing in the given
-     * scope, keyed by the form field name that holds them.
-     *
-     * @return array<string, array{code: string, name: string, group_id: int}>
-     */
+    public function __construct(
+        protected VariantStructurePlanner $variantStructurePlanner
+    ) {}
+
+    /** @return array<string, array{code: string, name: string, group_id: int}> */
     public function missing(Product $product, array $submitted, string $channelCode, string $localeCode): array
     {
         if (! $product->attribute_family_id) {
             return [];
         }
 
-        $values = $this->merge($product->values ?? [], $submitted);
+        $stored = $product->parent_id ? $product->resolvedValues() : ($product->values ?? []);
+
+        $values = $this->merge($stored, $submitted);
 
         $missing = [];
 
         foreach ($this->requiredAttributes($product->attribute_family_id) as $attribute) {
+            if (! $this->variantStructurePlanner->ownsAttribute($product, $attribute->code)) {
+                continue;
+            }
+
             $value = $attribute->getValueFromProductValues($values, $channelCode, $localeCode);
 
             if (! $this->isEmpty($value)) {
@@ -54,12 +53,7 @@ class RequiredAttributesValidator
         return $missing;
     }
 
-    /**
-     * Get the family's required attributes, each tagged with the group that
-     * renders it — the first one in display order, as the edit page shows it.
-     *
-     * @return Collection<int, Attribute>
-     */
+    /** @return Collection<int, Attribute> */
     protected function requiredAttributes(int $familyId): Collection
     {
         $groupByAttribute = DB::table('attribute_group_mappings')
@@ -97,10 +91,7 @@ class RequiredAttributesValidator
             ));
     }
 
-    /**
-     * Overlay the submitted values on the stored ones, the same way the product
-     * update merges them, so an attribute saved earlier still counts as filled.
-     */
+    /** Overlay the submitted values on the stored ones. */
     protected function merge(array $stored, array $submitted): array
     {
         foreach ($submitted as $section => $sectionValues) {

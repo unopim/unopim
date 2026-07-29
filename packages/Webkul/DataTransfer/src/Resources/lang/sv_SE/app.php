@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Värdet :code måste vara unikt.',
                     'incorrect-family-for-variant'             => 'Familjen måste vara samma som huvudfamiljen',
                     'parent-not-exist'                         => 'Föräldern finns inte.',
+                    'variant-structure-not-found'              => 'Variantstrukturen :code finns inte för denna attributfamilj.',
                 ],
             ],
         ],

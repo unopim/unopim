@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Wartość :code musi być unikalna.',
                     'incorrect-family-for-variant'             => 'Rodzina musi być taka sama jak rodzina główna',
                     'parent-not-exist'                         => 'Rodzic nie istnieje.',
+                    'variant-structure-not-found'              => 'Struktura wariantów :code nie istnieje dla tej rodziny atrybutów.',
                 ],
             ],
         ],

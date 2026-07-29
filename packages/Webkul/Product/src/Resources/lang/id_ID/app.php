@@ -20,5 +20,6 @@ return [
         'configurable'  => 'Dapat dikonfigurasi',
         'simple'        => 'Sederhana',
         'variant-group' => 'Grup Varian',
+        'variant_group' => 'Grup Varian',
     ],
 ];

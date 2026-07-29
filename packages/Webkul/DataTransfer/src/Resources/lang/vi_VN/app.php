@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Giá trị :code phải duy nhất.',
                     'incorrect-family-for-variant'             => 'Gia đình phải giống như gia đình chính',
                     'parent-not-exist'                         => 'Cha mẹ không tồn tại.',
+                    'variant-structure-not-found'              => 'Cấu trúc biến thể :code không tồn tại cho họ thuộc tính này.',
                 ],
             ],
         ],

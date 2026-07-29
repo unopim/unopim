@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Vrijednost :code mora biti jedinstvena.',
                     'incorrect-family-for-variant'             => 'Obitelj mora biti ista kao obitelj roditelja',
                     'parent-not-exist'                         => 'Roditelj ne postoji.',
+                    'variant-structure-not-found'              => 'Struktura varijanti :code ne postoji za ovu obitelj atributa.',
                 ],
             ],
         ],

@@ -1,6 +1,3 @@
-{{-- Variant axis nav (sidebar). Each axis is a dropdown listing ONLY created variants
-     (fetched async from variant-children: search + infinite scroll → scales to 10k+).
-     "Add" uses the standard async option select (all options) + SKU to create a new one. --}}
 @php
     $variationTrans = trans('admin::app.catalog.products.edit.variations');
 
@@ -29,7 +26,6 @@
                 <span v-else-if="totalVariants !== null" class="text-xs text-gray-400">{{ t(totalVariants === 1 ? 'variant-count' : 'variants-count', { count: totalVariants }) }}</span>
             </div>
 
-            <!-- COMMON -->
             <button type="button"
                 class="w-full flex items-center gap-2 h-11 px-3 rounded-md text-sm font-semibold uppercase border mb-3"
                 :class="selected === rootId ? 'bg-primary-100 dark:bg-cherry-800 text-primary-600 border-primary-300 dark:border-cherry-700' : 'text-gray-700 dark:text-gray-300 bg-white dark:bg-cherry-900 border-gray-200 dark:border-cherry-800 hover:bg-gray-100 dark:hover:bg-cherry-800'"
@@ -38,7 +34,6 @@
                 <span v-if="pendingId === configurableId" class="ltr:ml-auto rtl:mr-auto w-3.5 h-3.5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></span>
             </button>
 
-            <!-- Parent axis dropdown (level 1 — indented under COMMON) -->
             <div class="relative mb-3 ltr:ml-2 rtl:mr-2">
                 <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">{{ label(parentAxes) }}</p>
                 <div class="relative" ref="pWrap">
@@ -58,7 +53,7 @@
                         </span>
                     </button>
 
-                    <div v-show="p.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg" style="z-index: 60">
+                    <div v-show="p.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg z-10">
                         <div class="p-2 border-b border-gray-100 dark:border-cherry-800">
                             <div class="flex items-center w-full border rounded-md px-2.5 py-1.5 dark:border-gray-600">
                                 <span class="icon-search text-gray-400"></span>
@@ -89,12 +84,9 @@
                 </div>
             </div>
 
-            <!-- Child axis dropdown (level 2 — indented deeper: parent → leaf) -->
             <div v-if="levels === 2" class="relative mb-1 ltr:ml-6 rtl:mr-6">
                 <p class="text-[10px] font-semibold uppercase tracking-wide text-gray-400 mb-1">{{ label(childAxes) }}</p>
                 <div class="relative" ref="cWrap">
-                    <!-- Children can only be listed under a picked parent, so the axis stays
-                         visible but inert until one is selected. -->
                     <button type="button"
                         class="w-full flex items-center justify-between gap-2 h-11 px-3 rounded-md text-sm border"
                         :class="[
@@ -114,7 +106,7 @@
                         </span>
                     </button>
 
-                    <div v-show="c.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg" style="z-index: 60">
+                    <div v-show="c.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg z-10">
                         <div class="p-2 border-b border-gray-100 dark:border-cherry-800">
                             <div class="flex items-center w-full border rounded-md px-2.5 py-1.5 dark:border-gray-600">
                                 <span class="icon-search text-gray-400"></span>
@@ -144,12 +136,8 @@
                 </div>
             </div>
 
-            <!-- Add-new modal. Teleported so its inputs sit outside the product <form> DOM
-                 (nothing here may ride along on a product save). -->
             <teleport to="body">
             @endverbatim
-                {{-- Plain input, not x-admin::form.control-group.control: a v-field here would
-                     register with the product form's VeeValidate provider and block its save. --}}
                 <x-admin::modal ref="addModal" prevent-submit @close="cancelAdd">
                     <x-slot:header>
                         <div>
@@ -259,9 +247,6 @@
             },
             mounted() {
                 this._away = (e) => {
-                    // Use composedPath (captured at dispatch) rather than contains(e.target):
-                    // clicking "Add New" swaps the button for the add-form in the same click,
-                    // detaching the original target so contains() would wrongly report "outside".
                     const path = (e.composedPath && e.composedPath()) || [];
                     const inside = (ref) => ref && (path.includes(ref) || ref.contains(e.target));
                     if (this.p.open && !inside(this.$refs.pWrap)) { this.p.open = false; }
@@ -436,7 +421,6 @@
                 },
                 cancelAdd() {
                     this.addFor = null; this.newValues = {}; this.newSku = ''; this.skuEdited = false;
-                    // close() flips isOpen before it emits, so this re-entry from @close stops here.
                     if (this.$refs.addModal && this.$refs.addModal.isOpen) { this.$refs.addModal.close(); }
                 },
                 onPick(e, axis) {
@@ -452,10 +436,16 @@
                     this.newValues = picked;
                     this.suggestSku();
                 },
-                // Keep the suggestion in step with the picks until the user edits it.
+                skuBase() {
+                    const from = this.addFor === 'c' && this.currentGroupId ? this.currentGroupId : this.rootId;
+
+                    return (this.nodes[from] && this.nodes[from].sku)
+                        || (this.nodes[this.rootId] && this.nodes[this.rootId].sku)
+                        || 'sku';
+                },
                 suggestSku() {
                     if (this.skuEdited) { return; }
-                    const base = this.nodes[this.rootId] && this.nodes[this.rootId].sku ? this.nodes[this.rootId].sku : 'sku';
+                    const base = this.skuBase();
                     const picked = this.addAxes.map(code => this.newValues[code]).filter(Boolean);
                     this.newSku = picked.length ? base + '-' + picked.join('-').toLowerCase() : '';
                 },

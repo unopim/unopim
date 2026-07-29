@@ -35,6 +35,8 @@
 >
     <x-admin::shimmer.media />
 </v-media-gallery>
+
+    <x-admin::media.image-viewer v-if="false" />
 </x-admin::media.field>
 
 @pushOnce('scripts')
@@ -459,15 +461,21 @@
                 </x-slot>
                 <x-slot:content>
                     <div>
-                        <img
-                            v-if="image.type?.startsWith('image/')"
-                            :src="image.url"
-                            class="w-full h-full object-cover object-top"
-                        />
-                        <video v-else-if="image.type?.startsWith('video/')" class="w-full h-full" controls autoplay>
+                        <video v-if="image.type?.startsWith('video/')" class="w-full h-full" controls autoplay>
                             <source :src="image.url" type="video/mp4">
                         </video>
                     </div>
+                </x-slot>
+            </x-admin::modal>
+
+            <x-admin::modal ref="mediaPreviewModalFull" no-class="true">
+                <x-slot:content>
+                    <v-image-viewer
+                        v-if="isImageMedia"
+                        :src="image.url"
+                        :file-name="getDisplayFileName(image.name)"
+                        @close="closeFullPreview"
+                    ></v-image-viewer>
                 </x-slot>
             </x-admin::modal>
         </div>
@@ -946,6 +954,14 @@
                         .map(value => value.toLowerCase().replace(/^\./, ''))
                         .includes(extension);
                 },
+
+                isImageMedia() {
+                    if (this.image?.type) {
+                        return this.image.type.startsWith('image/');
+                    }
+
+                    return /\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i.test(this.image?.name || '');
+                },
             },
 
             mounted() {
@@ -1000,11 +1016,21 @@
                 },
 
                 previewMedia() {
+                    if (this.isImageMedia) {
+                        this.$refs.mediaPreviewModalFull.toggle();
+
+                        return;
+                    }
+
                     this.$refs.mediaPreviewModal.toggle();
                 },
 
                 closeImageModal() {
                     this.$refs.mediaPreviewModal.close();
+                },
+
+                closeFullPreview() {
+                    this.$refs.mediaPreviewModalFull.close();
                 },
 
                 setFile(file) {

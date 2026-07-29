@@ -12,7 +12,7 @@ class AIModel
      */
     public static function getModels(): array
     {
-        $platform = resolve(MagicAIPlatformRepository::class)->getDefault();
+        $platform = resolve(MagicAIPlatformRepository::class)->getActiveDefault();
 
         if (! $platform) {
             return [];
@@ -55,7 +55,7 @@ class AIModel
     public static function filterImageModels(array $models, ?int $platformId = null): array
     {
         $repo = resolve(MagicAIPlatformRepository::class);
-        $platform = $platformId ? $repo->find($platformId) : $repo->getDefault();
+        $platform = $platformId ? $repo->find($platformId) : $repo->getActiveDefault();
 
         if (! $platform) {
             return $models;

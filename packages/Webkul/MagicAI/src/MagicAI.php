@@ -80,7 +80,7 @@ class MagicAI
      */
     public function useDefault(): self
     {
-        $this->platformRecord = resolve(MagicAIPlatformRepository::class)->getDefault();
+        $this->platformRecord = resolve(MagicAIPlatformRepository::class)->getActiveDefault();
 
         return $this;
     }
@@ -171,7 +171,7 @@ class MagicAI
     public function getModelInstance(): LLMModelInterface
     {
         $platform = $this->platformRecord
-            ?? resolve(MagicAIPlatformRepository::class)->getDefault();
+            ?? resolve(MagicAIPlatformRepository::class)->getActiveDefault();
 
         if (! $platform) {
             throw new \RuntimeException(
@@ -200,7 +200,7 @@ class MagicAI
     public function getModelList(): array
     {
         $platform = $this->platformRecord
-            ?? resolve(MagicAIPlatformRepository::class)->getDefault();
+            ?? resolve(MagicAIPlatformRepository::class)->getActiveDefault();
 
         if (! $platform) {
             return [];

@@ -24,6 +24,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Database\Factories\ProductFactory;
@@ -200,9 +201,15 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             return [];
         }
 
+        $planner = resolve(VariantStructurePlanner::class);
+
         return CompletenessSetting::where('family_id', $this->attribute_family_id)
             ->where('channel_id', $channelId)
-            ->get();
+            ->with('attribute:id,code')
+            ->get()
+            ->filter(fn ($setting): bool => ! $setting->attribute
+                || $planner->ownsAttribute($this, $setting->attribute->code))
+            ->values();
     }
 
     /**

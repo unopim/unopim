@@ -18,5 +18,6 @@ return [
         'configurable'  => 'Configurat',
         'simple'        => 'Simple',
         'variant-group' => 'Grup de variants',
+        'variant_group' => 'Grup de variants',
     ],
 ];

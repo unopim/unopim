@@ -10,6 +10,8 @@ use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
+use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
 class ProductCompletenessJob implements ShouldQueue
@@ -27,6 +29,8 @@ class ProductCompletenessJob implements ShouldQueue
     protected CompletenessSettingsRepository $completenessSettingsRepository;
 
     protected ProductCompletenessScoreRepository $completenessResultsRepository;
+
+    protected VariantStructurePlanner $variantStructurePlanner;
 
     protected array $channels = [];
 
@@ -46,10 +50,11 @@ class ProductCompletenessJob implements ShouldQueue
         $this->resolveDependencies();
         $this->loadStaticData();
 
-        // Batch load all products in one query instead of find() per product
         $products = $this->productRepository
             ->findWhereIn('id', $this->productIds)
             ->keyBy('id');
+
+        $products->loadMissing('parent.parent');
 
         if (app()->environment('testing')) {
             \Log::debug('CompletenessJob', [
@@ -73,21 +78,17 @@ class ProductCompletenessJob implements ShouldQueue
 
             $productArray = $product->toArray();
 
-            // A variant's completeness is measured against its resolved values, so
-            // attributes inherited from an ancestor count as filled (read-time
-            // variant inheritance). Only variants pay the ancestor walk.
             if (! empty($product->parent_id)) {
                 $productArray['values'] = $product->resolvedValues();
             }
 
-            [$rows, $avg, $deletes] = $this->computeProductCompleteness($productArray);
+            [$rows, $avg, $deletes] = $this->computeProductCompleteness($productArray, $product);
 
             $scoreRows = array_merge($scoreRows, $rows);
             $avgScores[$id] = $avg;
             $deleteQueue = array_merge($deleteQueue, $deletes);
         }
 
-        // Bulk delete orphan channel completeness rows
         foreach ($deleteQueue as [$productId, $channelId]) {
             DB::table('product_completeness')
                 ->where('product_id', $productId)
@@ -95,7 +96,6 @@ class ProductCompletenessJob implements ShouldQueue
                 ->delete();
         }
 
-        // Bulk upsert all completeness scores in one query
         if ($scoreRows !== []) {
             DB::table('product_completeness')->upsert(
                 $scoreRows,
@@ -104,7 +104,6 @@ class ProductCompletenessJob implements ShouldQueue
             );
         }
 
-        // Bulk update avg_completeness_score with a single CASE statement
         if ($avgScores !== []) {
             $cases = '';
             $idList = implode(',', array_map(intval(...), array_keys($avgScores)));
@@ -127,6 +126,7 @@ class ProductCompletenessJob implements ShouldQueue
         $this->attributeRepository = resolve(AttributeRepository::class);
         $this->completenessSettingsRepository = resolve(CompletenessSettingsRepository::class);
         $this->completenessResultsRepository = resolve(ProductCompletenessScoreRepository::class);
+        $this->variantStructurePlanner = resolve(VariantStructurePlanner::class);
     }
 
     protected function loadStaticData(): void
@@ -150,15 +150,8 @@ class ProductCompletenessJob implements ShouldQueue
             ->toArray();
     }
 
-    /**
-     * Compute completeness data for a product without writing to the DB.
-     *
-     * Returns [$scoreRows, $avgScore, $deleteQueue]:
-     *   - $scoreRows:   rows ready for bulk upsert into product_completeness
-     *   - $avgScore:    value to write to products.avg_completeness_score
-     *   - $deleteQueue: [[productId, channelId], ...] orphan rows to delete
-     */
-    protected function computeProductCompleteness(array $product): array
+    /** @return array{0: array, 1: int|null, 2: array} rows to upsert, avg score, orphan rows to delete */
+    protected function computeProductCompleteness(array $product, ?Product $model = null): array
     {
         $familyId = $product['attribute_family_id'] ?? null;
         $productValues = $product['values'] ?? [];
@@ -195,7 +188,6 @@ class ProductCompletenessJob implements ShouldQueue
 
             $attributeIds = collect($settingsByChannel[$channelId])->pluck('attribute_id')->all();
 
-            // Cache attribute lookups to avoid repeated queries for the same attribute set
             $cacheKey = implode(',', $attributeIds);
 
             if (! isset($this->attributeCache[$cacheKey])) {
@@ -204,7 +196,7 @@ class ProductCompletenessJob implements ShouldQueue
                     ->keyBy('id');
             }
 
-            $attributes = $this->attributeCache[$cacheKey];
+            $attributes = $this->ownedAttributes($this->attributeCache[$cacheKey], $model);
 
             [$channelScore, $channelRows] = $this->collectScoresForChannel(
                 $product,
@@ -224,11 +216,19 @@ class ProductCompletenessJob implements ShouldQueue
         return [$scoreRows, $avgScore, $deleteQueue];
     }
 
-    /**
-     * Collect completeness score rows for a channel without writing to the DB.
-     *
-     * Returns [$channelScore, $rows] where $rows are ready for bulk upsert.
-     */
+    /** Drop attributes a variant structure maintains below the product's own level. */
+    protected function ownedAttributes($attributes, ?Product $model)
+    {
+        if (! $model instanceof Product) {
+            return $attributes;
+        }
+
+        return $attributes->filter(
+            fn ($attribute): bool => $this->variantStructurePlanner->ownsAttribute($model, $attribute->code)
+        );
+    }
+
+    /** @return array{0: int, 1: array} channel score and rows to upsert */
     protected function collectScoresForChannel(
         array $product,
         array $productValues,
@@ -293,7 +293,7 @@ class ProductCompletenessJob implements ShouldQueue
             $total += $nonLocalizableTotal;
             $filled += $nonLocalizableFilled;
 
-            $score = $total > 0 ? round(($filled / $total) * 100) : 0;
+            $score = $total > 0 ? round(($filled / $total) * 100) : 100;
 
             $rows[] = [
                 'product_id'    => $product['id'],

@@ -616,6 +616,25 @@ class ProductController extends Controller
         ));
     }
 
+    /** Current completeness of a product for the requested channel and locale. */
+    public function completeness(int $id): JsonResponse
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        $scores = $product->getCompletenessScore(core()->getRequestedChannel()->id);
+
+        $current = $scores[core()->getRequestedLocale()->id] ?? null;
+
+        return new JsonResponse([
+            'state' => [
+                'score'        => $current['score'] ?? null,
+                'missingCount' => $current['missing_count'] ?? 0,
+                'average'      => count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null,
+                'localeScores' => collect($scores)->map(fn ($row) => $row['score'])->all(),
+            ],
+        ]);
+    }
+
     /**
      * Render one attribute group's fields for the product edit page's
      * scroll loader, together with the id of the group that follows it.

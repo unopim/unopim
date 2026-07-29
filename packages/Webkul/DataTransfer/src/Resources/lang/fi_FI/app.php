@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code-arvon on oltava ainutlaatuinen.',
                     'incorrect-family-for-variant'             => 'Perheen on oltava sama kuin vanhemman perhe',
                     'parent-not-exist'                         => 'Vanhempaa ei ole olemassa.',
+                    'variant-structure-not-found'              => 'Varianttirakennetta :code ei ole tälle attribuuttiperheelle.',
                 ],
             ],
         ],

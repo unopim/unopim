@@ -55,6 +55,8 @@
                 return {
                     localeOption: null,
                     selectedTargets: this.targetLocales,
+                    savedChannel: this.targetChannel,
+                    savedTargets: this.targetLocales,
                     localeSource: this.sourceLocale,
                     sourceChannel: this.channel,
                     channelTarget: this.targetChannel,
@@ -79,21 +81,21 @@
                 this.$emitter.on('source-locale-changed', (data) => {
                     if (data) {
                         this.localeSource = JSON.parse(data).id;
-                        this.fetchlocales();
+                        this.fetchlocales(true);
                     }
                 });
                 this.$emitter.on('config-target-channel-changed', (data) => {
                     if (data) {
                         const parsedData = JSON.parse(data).id;
                         this.channelTarget = parsedData;
-                        this.fetchlocales();
+                        this.fetchlocales(true);
                     }
                 });
 
             },
 
             methods: {
-                fetchlocales() {
+                fetchlocales(resetSelection = false) {
                     if (! this.channelTarget) {
                         this.localeOption = '[]';
 
@@ -101,6 +103,10 @@
                     }
 
                     const channelId = this.channelTarget;
+
+                    const currentCodes = (this.$refs['localeRef']?.selectedValue ?? [])
+                        .map(option => (option && option.id) ? option.id : option)
+                        .filter(Boolean);
 
                     this.$axios.get("{{ route('admin.catalog.product.get_locale') }}", {
                             params: {
@@ -115,16 +121,32 @@
                                 options = response.data?.locales;
                             }
 
+                            const savedCodes = this.channelTarget === this.savedChannel
+                                ? (Array.isArray(this.savedTargets) ? this.savedTargets : String(this.savedTargets ?? '').split(','))
+                                : [];
+
+                            let selected = options.filter(option => currentCodes.includes(option.id));
+
+                            if (! selected.length) {
+                                selected = options.filter(option => savedCodes.includes(option.id));
+                            }
+
+                            if (! selected.length && options.length == 1) {
+                                selected = options;
+                            }
+
+                            this.selectedTargets = selected.length
+                                ? JSON.stringify(selected.map(option => option.id))
+                                : '';
+
                             this.localeOption = JSON.stringify(options);
-                            if (this.$refs['localeRef']) {
+
+                            if (resetSelection && this.$refs['localeRef']) {
                                 this.$refs['localeRef'].selectedValue = null;
                             }
 
-                            if (options.length == 1) {
-                                this.selectedTargets = options[0].id;
-                                if (this.$refs['localeRef']) {
-                                    this.$refs['localeRef'].selectedValue = options;
-                                }
+                            if (selected.length && this.$refs['localeRef']) {
+                                this.$refs['localeRef'].selectedValue = selected;
                             }
                         })
                         .catch((error) => {

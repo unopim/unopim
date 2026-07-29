@@ -20,6 +20,8 @@
 @include('admin::components.bulkedit.type.boolean')
 @includeIf('measurement::components.bulkedit.type.measurement')
 
+<x-admin::media.image-viewer v-if="false" />
+
 
 @php
     $channelLocales = [];
@@ -260,31 +262,31 @@
             </table>
         </div>
 
-        <!-- Image Preview Overlay -->
-        <div
-            v-if="previewImage"
-            class="fixed inset-0 z-[999] flex items-center justify-center bg-gray-900/60"
-            v-on:click.self="previewImage = null"
-        >
-            <div class="bg-white dark:bg-cherry-900 rounded-lg shadow-2xl max-w-2xl w-full mx-4 overflow-hidden">
-                <div class="flex items-center justify-between p-4 border-b dark:border-cherry-700">
-                    <p class="text-lg text-gray-800 dark:text-white font-bold">
-                        @lang('admin::app.catalog.products.bulk-edit.img-preview')
-                    </p>
-                    <span
-                        class="icon-cancel text-2xl cursor-pointer text-gray-600 dark:text-gray-300 hover:text-gray-800"
-                        v-on:click="previewImage = null"
-                    ></span>
-                </div>
-                <div class="p-6 flex items-center justify-center bg-gray-50 dark:bg-cherry-800 min-h-[300px]">
-                    <img
-                        :src="previewImage"
-                        class="max-w-full max-h-[500px] object-contain rounded"
-                        v-on:error="previewImage = null"
-                    />
-                </div>
-            </div>
-        </div>
+        <x-admin::modal ref="imagePreviewModal" no-class="true">
+            <x-slot:content>
+                <v-image-viewer
+                    v-if="previewMedia && previewMedia.isImage"
+                    :src="previewMedia.url"
+                    :file-name="previewMedia.fileName"
+                    @close="closePreview"
+                ></v-image-viewer>
+            </x-slot>
+        </x-admin::modal>
+
+        <x-admin::modal ref="filePreviewModal" type="large">
+            <x-slot:header>
+                <p class="text-lg font-bold text-gray-800 dark:text-white" v-text="previewMedia ? previewMedia.fileName : ''"></p>
+            </x-slot>
+
+            <x-slot:content>
+                <iframe
+                    v-if="previewMedia && ! previewMedia.isImage"
+                    :src="previewMedia.url"
+                    class="w-full rounded"
+                    style="height: 70vh;"
+                ></iframe>
+            </x-slot>
+        </x-admin::modal>
     </script>
 
     <script type="module">
@@ -335,7 +337,7 @@
                     currentPage: 1,
                     isLoading: false,
                     updatedEntityData: {},
-                    previewImage: null,
+                    previewMedia: null,
                 };
             },
 
@@ -349,9 +351,40 @@
                         this.updateEntityData(data);
                     });
 
-                    this.$emitter.on('preview-image', (url) => {
-                        this.previewImage = url;
+                    this.$emitter.on('preview-image', (payload) => {
+                        this.openPreview(payload);
                     });
+                },
+
+                openPreview(payload) {
+                    const url = typeof payload === 'string' ? payload : payload?.url;
+
+                    if (! url) {
+                        return;
+                    }
+
+                    const fileName = (typeof payload === 'object' && payload?.fileName)
+                        ? payload.fileName
+                        : decodeURIComponent(url.split('/').pop());
+
+                    this.previewMedia = {
+                        url,
+                        fileName,
+                        isImage: /\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i.test(fileName),
+                    };
+
+                    this.$nextTick(() => {
+                        const modal = this.previewMedia.isImage ? this.$refs.imagePreviewModal : this.$refs.filePreviewModal;
+
+                        modal?.open();
+                    });
+                },
+
+                closePreview() {
+                    this.$refs.imagePreviewModal?.close();
+                    this.$refs.filePreviewModal?.close();
+
+                    this.previewMedia = null;
                 },
 
                 updateEntityData({ value, entityId, column }) {
@@ -400,15 +433,23 @@
                     })
                     .then(response => {
                         this.updatedEntityData = {};
-                        this.$emitter.emit('add-flash', {
-                            type: 'success',
-                            message: response.data.message ||  @json(trans('admin::app.catalog.products.bulk-edit.success')),
-                        });
 
-                        setTimeout(() => window.location.href= "{{ route('admin.catalog.products.index') }}", 1000);
+                        const message = response.data.message || @json(trans('admin::app.catalog.products.bulk-edit.success'));
+
+                        document.addEventListener('unopim:navigate:success', () => {
+                            window.app?.config?.globalProperties?.$emitter?.emit('add-flash', {
+                                type: 'success',
+                                message,
+                            });
+                        }, { once: true });
+
+                        this.$navigate(response.data.redirect_url || "{{ route('admin.catalog.products.index') }}");
                     })
                     .catch(error => {
-                        console.error(error);
+                        this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: error.response?.data?.message || @json(trans('admin::app.catalog.products.bulk-edit.validation.failed')),
+                        });
                     })
                     .finally(() => {
                         this.isLoading = false;

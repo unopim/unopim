@@ -75,6 +75,11 @@ class MagicPromptGrid extends DataGrid
                     ],
                 ],
             ],
+            'closure' => fn ($row) => match ($row->type) {
+                'product'  => trans('admin::app.configuration.prompt.datagrid.product'),
+                'category' => trans('admin::app.configuration.prompt.datagrid.category'),
+                default    => $row->type,
+            },
         ]);
 
         $this->addColumn([

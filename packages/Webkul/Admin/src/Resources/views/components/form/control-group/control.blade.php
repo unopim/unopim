@@ -402,7 +402,6 @@
                     return;
                 }
 
-                {{-- TODO: mutates injected `field` prop; kept because it is the VeeValidate v-slot field API. --}}
                 this.field.checked = true;
 
                 this.field.onChange();
@@ -724,7 +723,6 @@
         });
     </script>
 
-
     <script type="text/x-template" id="v-tagging-handler-template">
         <div>
             <v-multiselect
@@ -891,7 +889,6 @@
             }
         });
     </script>
-
 
     <script type="text/x-template" id="v-taggingselect-handler-template">
         <div>
@@ -1659,7 +1656,6 @@
 
             data() {
                 return {
-                    {{-- TODO: `fieldData` aliases the injected `field` prop; writes mutate it by design so the VeeValidate field value drives the multipart submit. --}}
                     fieldData: this.field,
                     isDragging: false,
                     initialValue: this.field.value,
@@ -1707,15 +1703,15 @@
 
                     this.fieldData.value = file;
 
-                    // Dropping onto the <label> does NOT auto-attach the
-                    // file to the associated <input type="file">, so the
-                    // traditional multipart/form-data submit would ship an
-                    // empty file input. Populate the real input via the
-                    // DataTransfer API so form submission picks it up.
                     if (this.$refs.fileInput) {
                         const dt = new DataTransfer();
                         dt.items.add(file);
                         this.$refs.fileInput.files = dt.files;
+
+                        this.$refs.fileInput.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                            bubbles: true,
+                            detail: { name: this.name },
+                        }));
                     }
 
                     this.$nextTick(() => {
@@ -1731,7 +1727,6 @@
                     }
 
                     this.$nextTick(() => {
-                        // Force update to refresh any related UI without reopening the upload dialog
                         this.$forceUpdate();
                     });
                     event.preventDefault();

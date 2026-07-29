@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code の値は一意である必要があります。',
                     'incorrect-family-for-variant'             => 'ファミリーは親ファミリーと同じでなければなりません',
                     'parent-not-exist'                         => '親が存在しません。',
+                    'variant-structure-not-found'              => 'バリアント構造 :code はこの属性ファミリーに存在しません。',
                 ],
             ],
         ],

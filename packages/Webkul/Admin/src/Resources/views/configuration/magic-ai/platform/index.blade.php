@@ -33,8 +33,10 @@
             </x-admin::page-header>
 
             <!-- Setup Guide Banner (no platforms configured) -->
-            @if($platformCount === 0)
-                <div class="mt-4 p-6 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-cherry-900 dark:to-cherry-800 rounded-lg border border-primary-200 dark:border-cherry-700">
+                <div
+                    v-if="platformCount === 0"
+                    class="mt-4 p-6 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-cherry-900 dark:to-cherry-800 rounded-lg border border-primary-200 dark:border-cherry-700"
+                >
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0 w-12 h-12 bg-primary-100 dark:bg-primary-900 rounded-lg flex items-center justify-center">
                             <span class="text-2xl" role="img" aria-label="@lang('admin::app.configuration.platform.setup.lightning-icon')" title="@lang('admin::app.configuration.platform.setup.lightning-icon')">&#9889;</span>
@@ -70,17 +72,17 @@
                         </div>
                     </div>
                 </div>
-            @endif
 
             <!-- Warning: No default platform -->
-            @if($platformCount > 0 && !$hasDefault)
-                <div class="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700 flex items-center gap-3">
+                <div
+                    v-if="platformCount > 0 && ! hasOtherDefault"
+                    class="mt-4 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700 flex items-center gap-3"
+                >
                     <span class="text-xl" role="img" aria-label="@lang('admin::app.configuration.platform.setup.warning-icon')" title="@lang('admin::app.configuration.platform.setup.warning-icon')">&#9888;</span>
                     <p class="text-sm text-amber-800 dark:text-amber-200">
                         @lang('admin::app.configuration.platform.setup.no-default-warning')
                     </p>
                 </div>
-            @endif
 
             <!-- DataGrid -->
             <x-admin::datagrid src="{{ route('admin.magic_ai.platform.index') }}" ref="datagrid">
@@ -333,6 +335,7 @@
                         selectedModels: [],
                         fetchedModels: [],
                         hasOtherDefault: {{ $hasDefault ? 'true' : 'false' }},
+                        platformCount: {{ $platformCount }},
                         form: {
                             id: null,
                             label: '',
@@ -568,13 +571,29 @@
                                 this.$refs.platformModal.close();
                                 this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
                                 this.$refs.datagrid.get();
-                                this.hasOtherDefault = true;
+
+                                if (! this.isEditing) {
+                                    this.platformCount++;
+                                }
+
+                                if (this.form.is_default) {
+                                    this.hasOtherDefault = true;
+                                }
+
                                 resetForm();
                             })
                             .catch(error => {
                                 this.saving = false;
                                 if (error.response?.status == 422) {
-                                    setErrors(error.response.data.errors);
+                                    const errors = error.response.data.errors ?? {};
+
+                                    setErrors(errors);
+
+                                    const firstError = Object.values(errors).flat()[0];
+
+                                    if (firstError) {
+                                        this.$emitter.emit('add-flash', { type: 'error', message: firstError });
+                                    }
                                 } else {
                                     this.$emitter.emit('add-flash', {
                                         type: 'error',
@@ -612,6 +631,7 @@
                             .then((response) => {
                                 this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
                                 this.$refs.datagrid.get();
+                                this.hasOtherDefault = true;
                             })
                             .catch(error => {
                                 this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.configuration.platform.errors.generic')" });
