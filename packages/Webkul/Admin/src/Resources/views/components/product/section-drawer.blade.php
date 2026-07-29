@@ -363,8 +363,13 @@
                     const rect = main.getBoundingClientRect();
                     const rtl = document.dir === 'rtl';
 
+                    // getBoundingClientRect and a docked panel's `right: 0` are both
+                    // measured against the client area; window.innerWidth counts the
+                    // scrollbar too and would leave the panel short of the dock edge.
+                    const viewport = document.documentElement.clientWidth;
+
                     const width = this.offsetEnd
-                        ? Math.max(320, Math.round(window.innerWidth - this.offsetEnd - rect.left))
+                        ? Math.max(320, Math.round(viewport - this.offsetEnd - rect.left))
                         : Math.round(rect.width * this.ratio());
 
                     const top = this.fullHeight ? '0px' : Math.round(rect.top) + 'px';
@@ -380,7 +385,7 @@
                         bottom,
                         left: this.offsetEnd ? '0px' : Math.round(rect.left) + 'px',
                         width: this.offsetEnd
-                            ? Math.round(window.innerWidth - this.offsetEnd) + 'px'
+                            ? Math.round(viewport - this.offsetEnd) + 'px'
                             : Math.round(rect.width) + 'px',
                         zIndex: this.depth - 1,
                     };
@@ -392,7 +397,7 @@
                         zIndex: this.depth,
                         ...(rtl
                             ? { left: (this.offsetEnd ? this.offsetEnd : Math.round(rect.left)) + 'px' }
-                            : { right: (this.offsetEnd ? this.offsetEnd : Math.round(window.innerWidth - rect.right)) + 'px' }),
+                            : { right: (this.offsetEnd ? this.offsetEnd : Math.round(viewport - rect.right)) + 'px' }),
                     };
                 },
 
