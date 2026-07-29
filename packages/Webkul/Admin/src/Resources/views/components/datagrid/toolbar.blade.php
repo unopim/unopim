@@ -364,23 +364,23 @@
                 </x-slot>
 
                 <x-slot:footer class="mt-auto border-t border-gray-100 bg-white p-5 dark:border-cherry-800 dark:bg-cherry-800">
-                    <div class="flex items-stretch gap-x-2.5">
+                    <div class="flex flex-col gap-y-1">
                         <button
                             type="button"
-                            class="secondary-button flex-1 justify-center text-center disabled:cursor-not-allowed disabled:opacity-50"
+                            class="primary-button w-full justify-center text-center"
+                            @click="runFilters()"
+                        >
+                            @lang('admin::app.components.datagrid.filters.save')
+                        </button>
+
+                        <button
+                            type="button"
+                            class="transparent-button justify-center self-center text-sm disabled:cursor-not-allowed disabled:opacity-50"
                             data-clear-all-filters
                             :disabled="! hasAppliedFilters()"
                             @click="clearAllFilters()"
                         >
                             @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
-                        </button>
-
-                        <button
-                            type="button"
-                            class="primary-button flex-1 justify-center text-center"
-                            @click="runFilters()"
-                        >
-                            @lang('admin::app.components.datagrid.filters.save')
                         </button>
                     </div>
                 </x-slot>
