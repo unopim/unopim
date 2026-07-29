@@ -54,11 +54,6 @@ return [
     ], [
         'key'   => 'catalog.passport.template.create',
         'name'  => 'passport::app.acl.templates.create',
-        'route' => 'admin.catalog.passports.templates.create',
-        'sort'  => 6,
-    ], [
-        'key'   => 'catalog.passport.template.create',
-        'name'  => 'passport::app.acl.templates.create',
         'route' => 'admin.catalog.passports.templates.store',
         'sort'  => 6,
     ], [

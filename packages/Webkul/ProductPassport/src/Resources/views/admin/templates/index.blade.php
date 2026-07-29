@@ -5,14 +5,7 @@
 
     <x-admin::page-header :title="trans('passport::app.templates.index.title')">
         <x-slot:actions>
-            @if (bouncer()->hasPermission('catalog.passport.template.create'))
-                <a
-                    href="{{ route('admin.catalog.passports.templates.create') }}"
-                    class="primary-button"
-                >
-                    @lang('passport::app.templates.index.create-btn')
-                </a>
-            @endif
+            @include('passport::admin.templates.create')
         </x-slot>
     </x-admin::page-header>
 

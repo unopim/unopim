@@ -32,17 +32,6 @@ class PassportTemplateController extends Controller
         return view('passport::admin.templates.index');
     }
 
-    public function create(): View
-    {
-        abort_unless(bouncer()->hasPermission('catalog.passport.template.create'), 403);
-
-        abort_unless(PublicationController::featureEnabled(), 404);
-
-        return view('passport::admin.templates.create', [
-            'locales' => $this->localeRepository->getActiveLocales(),
-        ]);
-    }
-
     public function store(PassportTemplateRequest $request): RedirectResponse
     {
         abort_unless(PublicationController::featureEnabled(), 404);

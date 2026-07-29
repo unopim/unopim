@@ -20,7 +20,15 @@ it('forbids the template screen without the permission', function (): void {
     $this->get(route('admin.catalog.passports.templates.index'))->assertForbidden();
 });
 
-it('creates a template from the create screen', function (): void {
+it('renders the create modal on the listing', function (): void {
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.passports.templates.index'))
+        ->assertOk()
+        ->assertSee('v-passport-template-create', false);
+});
+
+it('creates a template from the create modal', function (): void {
     $this->loginWithPermissions('all');
 
     $this->post(route('admin.catalog.passports.templates.store'), [

@@ -24,7 +24,6 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
     Route::controller(PassportTemplateController::class)->prefix('catalog/passports/templates')->group(function (): void {
         Route::get('', 'index')->name('admin.catalog.passports.templates.index');
-        Route::get('create', 'create')->name('admin.catalog.passports.templates.create');
         Route::post('', 'store')->name('admin.catalog.passports.templates.store');
         Route::get('{id}/edit', 'edit')->whereNumber('id')->name('admin.catalog.passports.templates.edit');
         Route::put('{id}', 'update')->whereNumber('id')->name('admin.catalog.passports.templates.update');
