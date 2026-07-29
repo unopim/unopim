@@ -146,7 +146,7 @@
                             icon="icon-folder"
                             :depth="10010"
                             :full-height="true"
-                            :offset-end="350"
+                            dock-to="[data-drawer-panel], .ap-panel"
                         >
                             <x-slot:toggle>
                                 <button

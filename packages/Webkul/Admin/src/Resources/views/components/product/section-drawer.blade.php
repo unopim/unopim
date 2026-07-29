@@ -10,6 +10,7 @@
     'depth'             => 9999,
     'fullHeight'        => false,
     'offsetEnd'         => 0,
+    'dockTo'            => '',
 ])
 
 <v-product-section-drawer
@@ -24,6 +25,7 @@
     :depth="{{ (int) $depth }}"
     :full-height="{{ $fullHeight ? 'true' : 'false' }}"
     :offset-end="{{ (int) $offsetEnd }}"
+    dock-to="{{ $dockTo }}"
 >
     <template #toggle>
         {{ $toggle }}
@@ -205,6 +207,10 @@
                     type: Number,
                     default: 0,
                 },
+                dockTo: {
+                    type: String,
+                    default: '',
+                },
             },
 
             data: () => ({
@@ -353,6 +359,30 @@
                  * left sidebar and app header without covering them and stays in the
                  * viewport regardless of page scroll.
                  */
+                /**
+                 * Width of whatever is docked against the same edge, so the panel
+                 * stops at their border rather than a fixed guess -- a second docked
+                 * panel opening after this one would otherwise be overlapped.
+                 */
+                dockOffset(viewport) {
+                    if (! this.dockTo) {
+                        return this.offsetEnd;
+                    }
+
+                    const rtl = document.dir === 'rtl';
+
+                    const edges = [...document.querySelectorAll(this.dockTo)]
+                        .filter(el => el.offsetParent !== null || el.getClientRects().length)
+                        .map(el => {
+                            const box = el.getBoundingClientRect();
+
+                            return rtl ? box.right : Math.round(viewport - box.left);
+                        })
+                        .filter(offset => offset > 0 && offset < viewport);
+
+                    return edges.length ? Math.max(...edges) : this.offsetEnd;
+                },
+
                 reposition() {
                     const main = this.main();
 
@@ -368,8 +398,10 @@
                     // scrollbar too and would leave the panel short of the dock edge.
                     const viewport = document.documentElement.clientWidth;
 
-                    const width = this.offsetEnd
-                        ? Math.max(320, Math.round(viewport - this.offsetEnd - rect.left))
+                    const end = this.dockOffset(viewport);
+
+                    const width = end
+                        ? Math.max(320, Math.round(viewport - end - rect.left))
                         : Math.round(rect.width * this.ratio());
 
                     const top = this.fullHeight ? '0px' : Math.round(rect.top) + 'px';
@@ -383,9 +415,9 @@
                     this.overlayStyle = {
                         top,
                         bottom,
-                        left: this.offsetEnd ? '0px' : Math.round(rect.left) + 'px',
-                        width: this.offsetEnd
-                            ? Math.round(viewport - this.offsetEnd) + 'px'
+                        left: end ? '0px' : Math.round(rect.left) + 'px',
+                        width: end
+                            ? Math.round(viewport - end) + 'px'
                             : Math.round(rect.width) + 'px',
                         zIndex: this.depth - 1,
                     };
@@ -396,8 +428,8 @@
                         width: width + 'px',
                         zIndex: this.depth,
                         ...(rtl
-                            ? { left: (this.offsetEnd ? this.offsetEnd : Math.round(rect.left)) + 'px' }
-                            : { right: (this.offsetEnd ? this.offsetEnd : Math.round(viewport - rect.right)) + 'px' }),
+                            ? { left: (end ? end : Math.round(rect.left)) + 'px' }
+                            : { right: (end ? end : Math.round(viewport - rect.right)) + 'px' }),
                     };
                 },
 
