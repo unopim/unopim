@@ -57,6 +57,8 @@ abstract class AbstractOAuthProvider implements SsoProvider
         if (
             ! is_array($handshake)
             || ! is_string($handshake['state'] ?? null)
+            || ! is_string($handshake['verifier'] ?? null)
+            || ! is_string($handshake['nonce'] ?? null)
             || ! is_string($state)
             || ! is_string($authorizationCode)
             || ! hash_equals($handshake['state'], $state)

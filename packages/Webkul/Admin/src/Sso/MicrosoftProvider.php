@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Sso;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class MicrosoftProvider extends AbstractOAuthProvider
@@ -145,7 +146,7 @@ class MicrosoftProvider extends AbstractOAuthProvider
     }
 
     /**
-     * A pinned tenant id is enforced by Microsoft itself; the shared authorities are
+     * A pinned tenant is enforced by Microsoft itself; the shared authorities are
      * not, so those require an explicit allow list and fail closed without one.
      */
     protected function isTenantAllowed(mixed $tenantId): bool
@@ -154,18 +155,60 @@ class MicrosoftProvider extends AbstractOAuthProvider
             return false;
         }
 
-        $configured = $this->config()['tenant'];
+        $configured = mb_strtolower($this->config()['tenant']);
 
-        if (! in_array(strtolower($configured), self::MULTI_TENANT_AUTHORITIES, true)) {
-            return hash_equals(strtolower($configured), strtolower($tenantId));
+        $tenantId = mb_strtolower($tenantId);
+
+        if (in_array($configured, self::MULTI_TENANT_AUTHORITIES, true)) {
+            $allowed = array_filter(array_map(
+                'trim',
+                explode(',', (string) config('services.microsoft_sso.allowed_tenants', ''))
+            ));
+
+            return in_array($tenantId, array_map('mb_strtolower', $allowed), true);
         }
 
-        $allowed = array_filter(array_map(
-            'trim',
-            explode(',', (string) config('services.microsoft_sso.allowed_tenants', ''))
-        ));
+        if (! $this->looksLikeTenantId($configured)) {
+            $configured = $this->resolveTenantId($configured) ?? $configured;
+        }
 
-        return in_array(strtolower($tenantId), array_map('strtolower', $allowed), true);
+        return hash_equals($configured, $tenantId);
+    }
+
+    protected function looksLikeTenantId(string $tenant): bool
+    {
+        return (bool) preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $tenant);
+    }
+
+    /**
+     * Entra accepts a verified domain wherever a tenant id is accepted, but the token
+     * always carries the id, so the domain has to be translated before comparing.
+     */
+    protected function resolveTenantId(string $domain): ?string
+    {
+        return Cache::remember(
+            'unopim.sso.microsoft.tenant_id.'.mb_strtolower($domain),
+            now()->addDay(),
+            function () use ($domain): ?string {
+                $response = Http::timeout(10)->get(
+                    "https://login.microsoftonline.com/{$domain}/v2.0/.well-known/openid-configuration"
+                );
+
+                if (! $response->successful()) {
+                    return null;
+                }
+
+                $issuer = $response->json('issuer');
+
+                if (! is_string($issuer)) {
+                    return null;
+                }
+
+                preg_match('#/([0-9a-f-]{36})/#i', $issuer, $matches);
+
+                return isset($matches[1]) ? mb_strtolower($matches[1]) : null;
+            }
+        );
     }
 
     /**
