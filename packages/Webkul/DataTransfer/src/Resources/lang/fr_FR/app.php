@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Der :code-Wert muss eindeutig sein.',
                     'incorrect-family-for-variant'             => 'Die Familie muss mit der Elternfamilie identisch sein',
                     'parent-not-exist'                         => 'Das übergeordnete Element existiert nicht.',
+                    'variant-structure-not-found'              => 'La structure de variantes :code n\'existe pas pour cette famille d\'attributs.',
                 ],
             ],
         ],

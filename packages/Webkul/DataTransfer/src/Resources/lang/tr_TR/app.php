@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Değer :code benzersiz olmalıdır.',
                     'incorrect-family-for-variant'             => 'Aile ana aile ile aynı olmalıdır',
                     'parent-not-exist'                         => 'Baba yok.',
+                    'variant-structure-not-found'              => 'Bu öznitelik ailesi için :code varyant yapısı mevcut değil.',
                 ],
             ],
         ],

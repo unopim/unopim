@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'يجب أن تكون قيمة :code فريدة.',
                     'incorrect-family-for-variant'             => 'يجب أن تكون العائلة هي نفس عائلة الوالدين',
                     'parent-not-exist'                         => 'الوالد غير موجود.',
+                    'variant-structure-not-found'              => 'بنية المتغيرات :code غير موجودة لعائلة السمات هذه.',
                 ],
             ],
         ],

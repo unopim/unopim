@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code 값은 고유해야 함.',
                     'incorrect-family-for-variant'             => '가족은 부모 가족과 동일해야 함',
                     'parent-not-exist'                         => '부모가 존재하지 않음.',
+                    'variant-structure-not-found'              => '이 속성 패밀리에는 변형 구조 :code 가 존재하지 않습니다.',
                 ],
             ],
         ],
