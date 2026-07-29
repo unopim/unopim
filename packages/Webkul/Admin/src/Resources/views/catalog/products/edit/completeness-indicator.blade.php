@@ -99,6 +99,7 @@
             data() {
                 return {
                     state: { ...this.initial },
+                    timer: null,
                 };
             },
 
@@ -110,14 +111,24 @@
 
             beforeUnmount() {
                 this.$emitter.off('form-saved', this.refresh);
+
+                clearTimeout(this.timer);
             },
 
             methods: {
-                fetch() {
+                fetch(attempt = 0) {
+                    const before = JSON.stringify(this.state);
+
                     this.$axios.get(this.url)
                         .then(({ data }) => {
-                            if (data && data.state) {
-                                this.state = data.state;
+                            if (! data || ! data.state) {
+                                return;
+                            }
+
+                            this.state = data.state;
+
+                            if (JSON.stringify(data.state) === before && attempt < 3) {
+                                this.timer = setTimeout(() => this.fetch(attempt + 1), 1500 * (attempt + 1));
                             }
                         })
                         .catch(() => {});
