@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Không tìm thấy tiền tệ có mã :code.',
-                'create-btn'            => 'Tạo Tiền Tệ',
-                'currency'              => 'Tiền Tệ',
-                'title'                 => 'Các Tiền Tệ',
-                'can-not-delete-error'  => 'Bạn không thể xóa một tiền tệ liên kết với một kênh',
-                'can-not-disable-error' => 'Bạn không thể tắt một tiền tệ liên kết với một kênh',
-                'datagrid'              => [
+                'not-found'              => 'Không tìm thấy tiền tệ có mã :code.',
+                'create-btn'             => 'Tạo Tiền Tệ',
+                'currency'               => 'Tiền Tệ',
+                'title'                  => 'Các Tiền Tệ',
+                'can-not-delete-error'   => 'Bạn không thể xóa một tiền tệ liên kết với một kênh',
+                'can-not-disable-error'  => 'Bạn không thể tắt một tiền tệ liên kết với một kênh',
+                'partial-update-success' => 'Các loại tiền tệ đã chọn đã được cập nhật, ngoại trừ :count liên kết với kênh.',
+                'datagrid'               => [
                     'actions'        => 'Hành động',
                     'code'           => 'Mã',
                     'delete'         => 'Xóa',

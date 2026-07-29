@@ -66,7 +66,7 @@ it('H1: blocks deleting a unit referenced by an attribute through the API', func
     ]);
 
     $this->withHeaders($this->headers)
-        ->json('DELETE', route('admin.api.measurement-units.delete', ['familyCode' => $family->id, 'code' => 'cm']))
+        ->json('DELETE', route('admin.api.measurement-units.delete', ['familyCode' => $family->code, 'code' => 'cm']))
         ->assertStatus(422);
 
     expect(collect($family->fresh()->units)->contains('code', 'cm'))->toBeTrue();
@@ -84,7 +84,7 @@ it('H1: does not change a unit conversion through the API when the family is in 
     ]);
 
     $this->withHeaders($this->headers)
-        ->json('PUT', route('admin.api.measurement-units.update', ['familyCode' => $family->id, 'code' => 'cm']), [
+        ->json('PUT', route('admin.api.measurement-units.update', ['familyCode' => $family->code, 'code' => 'cm']), [
             'labels'                => ['en_US' => 'Centimeter'],
             'symbol'                => 'cm',
             'convert_from_standard' => ['mul'],

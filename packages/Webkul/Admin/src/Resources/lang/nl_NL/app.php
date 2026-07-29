@@ -1312,13 +1312,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Valuta met code :code niet gevonden.',
-                'create-btn'            => 'Valuta aanmaken',
-                'currency'              => 'Munteenheid',
-                'title'                 => 'Valuta',
-                'can-not-delete-error'  => 'Je kunt een valuta niet verwijderen die aan een kanaal is gekoppeld.',
-                'can-not-disable-error' => 'Je kunt een valuta niet uitschakelen die aan een kanaal is gekoppeld.',
-                'datagrid'              => [
+                'not-found'              => 'Valuta met code :code niet gevonden.',
+                'create-btn'             => 'Valuta aanmaken',
+                'currency'               => 'Munteenheid',
+                'title'                  => 'Valuta',
+                'can-not-delete-error'   => 'Je kunt een valuta niet verwijderen die aan een kanaal is gekoppeld.',
+                'can-not-disable-error'  => 'Je kunt een valuta niet uitschakelen die aan een kanaal is gekoppeld.',
+                'partial-update-success' => 'Geselecteerde valuta\'s zijn bijgewerkt, behalve :count die gekoppeld zijn aan een kanaal.',
+                'datagrid'               => [
                     'actions'        => 'Acties',
                     'code'           => 'Code',
                     'delete'         => 'Verwijderen',

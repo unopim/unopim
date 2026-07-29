@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => '未找到代码为 :code 的货币。',
-                'create-btn'            => '创建货币',
-                'currency'              => '货币',
-                'title'                 => '货币',
-                'can-not-delete-error'  => '您无法删除链接到频道的货币',
-                'can-not-disable-error' => '您不能禁用链接到渠道的货币',
-                'datagrid'              => [
+                'not-found'              => '未找到代码为 :code 的货币。',
+                'create-btn'             => '创建货币',
+                'currency'               => '货币',
+                'title'                  => '货币',
+                'can-not-delete-error'   => '您无法删除链接到频道的货币',
+                'can-not-disable-error'  => '您不能禁用链接到渠道的货币',
+                'partial-update-success' => '已更新所选货币，但链接到频道的 :count 个除外。',
+                'datagrid'               => [
                     'actions'        => '动作',
                     'code'           => '代码',
                     'delete'         => '删除',

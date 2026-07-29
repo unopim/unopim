@@ -93,13 +93,27 @@ class ProductController extends Controller
      *
      * @return View
      */
-    public function index(): View|JsonResponse|BinaryFileResponse
+    public function index(): View|JsonResponse|RedirectResponse
     {
-        if (request()->ajax()) {
-            return app(ProductDataGrid::class)->toJson();
+        if (! request()->ajax()) {
+            return view('admin::catalog.products.index');
         }
 
-        return view('admin::catalog.products.index');
+        if (request()->boolean('export')) {
+            return redirect()->route('admin.catalog.products.quick-export', request()->query());
+        }
+
+        return app(ProductDataGrid::class)->toJson();
+    }
+
+    /**
+     * Quick export of the product grid.
+     */
+    public function quickExport(): BinaryFileResponse
+    {
+        abort_unless(request()->boolean('export'), 404);
+
+        return app(ProductDataGrid::class)->toJson();
     }
 
     /**

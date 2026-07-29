@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Currency with code :code not found.',
-                'create-btn'            => 'Create Currency',
-                'currency'              => 'Currency',
-                'title'                 => 'Currencies',
-                'can-not-delete-error'  => 'You cannot delete a currency linked to a channel',
-                'can-not-disable-error' => 'You cannot disable a currency linked to a channel',
-                'datagrid'              => [
+                'not-found'              => 'Currency with code :code not found.',
+                'create-btn'             => 'Create Currency',
+                'currency'               => 'Currency',
+                'title'                  => 'Currencies',
+                'can-not-delete-error'   => 'You cannot delete a currency linked to a channel',
+                'can-not-disable-error'  => 'You cannot disable a currency linked to a channel',
+                'partial-update-success' => 'Selected currencies were updated, except :count linked to a channel.',
+                'datagrid'               => [
                     'actions'        => 'Actions',
                     'code'           => 'Code',
                     'delete'         => 'Delete',

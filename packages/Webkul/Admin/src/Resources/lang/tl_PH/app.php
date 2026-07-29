@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Hindi natagpuan ang pera na may code na :code.',
-                'create-btn'            => 'Lumikha ng Pera',
-                'currency'              => 'Pera',
-                'title'                 => 'Mga Pera',
-                'can-not-delete-error'  => 'Hindi mo maaaring tanggalin ang isang pera na nakakabit sa isang channel',
-                'can-not-disable-error' => 'Hindi mo maaaring i-disable ang isang pera na nakakabit sa isang channel',
-                'datagrid'              => [
+                'not-found'              => 'Hindi natagpuan ang pera na may code na :code.',
+                'create-btn'             => 'Lumikha ng Pera',
+                'currency'               => 'Pera',
+                'title'                  => 'Mga Pera',
+                'can-not-delete-error'   => 'Hindi mo maaaring tanggalin ang isang pera na nakakabit sa isang channel',
+                'can-not-disable-error'  => 'Hindi mo maaaring i-disable ang isang pera na nakakabit sa isang channel',
+                'partial-update-success' => 'Ang mga napiling pera ay na-update, maliban sa :count na nakakabit sa isang channel.',
+                'datagrid'               => [
                     'actions'        => 'Mga Aksyon',
                     'code'           => 'Code',
                     'delete'         => 'Tanggalin',

@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\CurrencyDataGrid;
+use Webkul\Admin\Helpers\MassActionCounter;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CurrencyForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
@@ -182,7 +183,9 @@ class CurrencyController extends Controller
     {
         $currencyIds = $massUpdateRequest->input('indices');
 
-        $value = $massUpdateRequest->input('value');
+        $value = (int) $massUpdateRequest->input('value');
+
+        $counter = new MassActionCounter;
 
         foreach ($currencyIds as $currencyId) {
             $currency = $this->currencyRepository->find($currencyId);
@@ -192,6 +195,8 @@ class CurrencyController extends Controller
             }
 
             if ($currency->isCurrencyBeingUsed() && $value === 0) {
+                $counter->skipped();
+
                 continue;
             }
 
@@ -199,6 +204,8 @@ class CurrencyController extends Controller
                 $currency->status = $value;
 
                 $currency->save();
+
+                $counter->succeeded();
             } catch (\Exception $e) {
                 report($e);
 
@@ -208,8 +215,11 @@ class CurrencyController extends Controller
             }
         }
 
-        return new JsonResponse([
-            'message' => trans('admin::app.settings.currencies.index.update-success'),
-        ]);
+        return $this->respondMassAction(
+            $counter,
+            'admin::app.settings.currencies.index.can-not-disable-error',
+            'admin::app.settings.currencies.index.partial-update-success',
+            'admin::app.settings.currencies.index.update-success',
+        );
     }
 }

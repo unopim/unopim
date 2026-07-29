@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Valuta con codice :code non trovata.',
-                'create-btn'            => 'Crea Valuta',
-                'currency'              => 'Valuta',
-                'title'                 => 'Valute',
-                'can-not-delete-error'  => 'Non è possibile eliminare una valuta collegata a un canale',
-                'can-not-disable-error' => 'Non è possibile disabilitare una valuta collegata a un canale',
-                'datagrid'              => [
+                'not-found'              => 'Valuta con codice :code non trovata.',
+                'create-btn'             => 'Crea Valuta',
+                'currency'               => 'Valuta',
+                'title'                  => 'Valute',
+                'can-not-delete-error'   => 'Non è possibile eliminare una valuta collegata a un canale',
+                'can-not-disable-error'  => 'Non è possibile disabilitare una valuta collegata a un canale',
+                'partial-update-success' => 'Le valute selezionate sono state aggiornate, tranne :count collegate a un canale.',
+                'datagrid'               => [
                     'actions'        => 'Azioni',
                     'code'           => 'Codice',
                     'delete'         => 'Elimina',

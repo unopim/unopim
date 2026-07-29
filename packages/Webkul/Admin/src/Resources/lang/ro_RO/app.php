@@ -1312,13 +1312,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Nu s-a găsit nicio monedă cu codul :code.',
-                'create-btn'            => 'Creare Monedă',
-                'currency'              => 'Monedă',
-                'title'                 => 'Monede',
-                'can-not-delete-error'  => 'Nu puteți șterge o monedă legată de un canal',
-                'can-not-disable-error' => 'Nu puteți dezactiva o monedă legată de un canal',
-                'datagrid'              => [
+                'not-found'              => 'Nu s-a găsit nicio monedă cu codul :code.',
+                'create-btn'             => 'Creare Monedă',
+                'currency'               => 'Monedă',
+                'title'                  => 'Monede',
+                'can-not-delete-error'   => 'Nu puteți șterge o monedă legată de un canal',
+                'can-not-disable-error'  => 'Nu puteți dezactiva o monedă legată de un canal',
+                'partial-update-success' => 'Monedele selectate au fost actualizate, cu excepția a :count legate de un canal.',
+                'datagrid'               => [
                     'actions'        => 'Acțiuni',
                     'code'           => 'Cod',
                     'delete'         => 'Șterge',

@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'unauthorized' => 'Du har ikke tilladelse til at udføre denne handling.',
-        'measurements' => 'Målinger',
+        'measurements' => 'Måling',
         'families'     => 'Målefamilier',
         'units'        => 'Måleenheder',
     ],

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\ConfigurationController;
+use Webkul\Admin\Http\Controllers\Settings\AppearanceController;
 use Webkul\Admin\Http\Controllers\SystemController;
 use Webkul\Admin\Http\Controllers\SystemSettingsController;
 
@@ -15,7 +16,16 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
     Route::get('configuration/system-settings', [SystemSettingsController::class, 'index'])->name('admin.settings.system.index');
 
-    Route::get('configuration/system-settings/{key}', [SystemSettingsController::class, 'edit'])->name('admin.settings.system.edit');
+    /**
+     * Appearance routes. Declared before the `{key}` wildcard so the literal wins.
+     */
+    Route::controller(AppearanceController::class)->prefix('configuration/system/system.appearance')->group(function () {
+        Route::get('', 'index')->name('admin.settings.appearance.index');
+
+        Route::put('', 'update')->name('admin.settings.appearance.update');
+    });
+
+    Route::get('configuration/system/{key}', [SystemSettingsController::class, 'edit'])->name('admin.settings.system.edit');
 
     Route::put('configuration/system-settings/{key}', [SystemSettingsController::class, 'update'])->name('admin.settings.system.update');
 

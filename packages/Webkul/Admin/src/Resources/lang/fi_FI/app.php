@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Valuuttaa koodilla :code ei löytynyt.',
-                'create-btn'            => 'Luo valuutta',
-                'currency'              => 'Valuutta',
-                'title'                 => 'Valuutat',
-                'can-not-delete-error'  => 'Et voi poistaa valuuttaa, joka on liitetty kanavaan',
-                'can-not-disable-error' => 'Et voi poistaa käytöstä valuuttaa, joka on liitetty kanavaan',
-                'datagrid'              => [
+                'not-found'              => 'Valuuttaa koodilla :code ei löytynyt.',
+                'create-btn'             => 'Luo valuutta',
+                'currency'               => 'Valuutta',
+                'title'                  => 'Valuutat',
+                'can-not-delete-error'   => 'Et voi poistaa valuuttaa, joka on liitetty kanavaan',
+                'can-not-disable-error'  => 'Et voi poistaa käytöstä valuuttaa, joka on liitetty kanavaan',
+                'partial-update-success' => 'Valitut valuutat päivitettiin, paitsi :count, jotka on liitetty kanavaan.',
+                'datagrid'               => [
                     'actions'        => 'Toiminnot',
                     'code'           => 'Koodi',
                     'delete'         => 'Poista',

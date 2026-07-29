@@ -41,7 +41,7 @@ it('blocks changing the standard unit once the family is used by an attribute', 
     attachAttributeTo($family);
 
     $this->withHeaders($this->headers)
-        ->putJson(route('admin.api.measurement.update', $family->id), [
+        ->putJson(route('admin.api.measurement.update', $family->code), [
             'standard_unit' => 'cm',
         ])
         ->assertStatus(422)
@@ -55,7 +55,7 @@ it('blocks changing conversion operations once the family is used by an attribut
     attachAttributeTo($family);
 
     $this->withHeaders($this->headers)
-        ->putJson(route('admin.api.measurement.update', $family->id), [
+        ->putJson(route('admin.api.measurement.update', $family->code), [
             'units' => [
                 ['code' => 'meter', 'labels' => ['en_US' => 'Meter'], 'convert_from_standard' => [['operator' => 'mul', 'value' => '1']]],
                 ['code' => 'cm', 'labels' => ['en_US' => 'Centimeter'], 'convert_from_standard' => [['operator' => 'mul', 'value' => '999']]],
@@ -73,7 +73,7 @@ it('still allows label changes on a family that is in use', function () {
     attachAttributeTo($family);
 
     $this->withHeaders($this->headers)
-        ->putJson(route('admin.api.measurement.update', $family->id), [
+        ->putJson(route('admin.api.measurement.update', $family->code), [
             'labels' => ['en_US' => 'Renamed Length'],
         ])
         ->assertOk()
@@ -86,7 +86,7 @@ it('still allows changing the standard unit when the family is not in use', func
     $family = lockableFamily();
 
     $this->withHeaders($this->headers)
-        ->putJson(route('admin.api.measurement.update', $family->id), [
+        ->putJson(route('admin.api.measurement.update', $family->code), [
             'standard_unit' => 'cm',
         ])
         ->assertOk()
