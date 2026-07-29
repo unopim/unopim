@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Thêm trường hộ chiếu',
         'regulatory-heading'      => 'Trường quy định',
+        'regulatory-empty'        => 'Chưa có trường hộ chiếu nào. Thêm nhóm thuộc tính DPP vào một họ thuộc tính để ánh xạ các trường của nó.',
         'custom-heading'          => 'Trường tùy chỉnh',
         'custom-info'             => 'Xuất bản một thuộc tính bạn đã quản lý dưới nhãn bạn chọn.',
         'custom-name-placeholder' => 'Tên trường',

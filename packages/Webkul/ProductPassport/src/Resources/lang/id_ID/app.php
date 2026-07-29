@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Tambah bidang paspor',
         'regulatory-heading'      => 'Bidang Regulasi',
+        'regulatory-empty'        => 'Belum ada bidang paspor. Tambahkan grup atribut DPP ke famili atribut untuk memetakan bidangnya.',
         'custom-heading'          => 'Bidang Khusus',
         'custom-info'             => 'Terbitkan atribut yang sudah Anda kelola dengan label pilihan Anda.',
         'custom-name-placeholder' => 'Nama bidang',

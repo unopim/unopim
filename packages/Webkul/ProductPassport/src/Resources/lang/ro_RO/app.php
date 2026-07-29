@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Adaugă câmp de pașaport',
         'regulatory-heading'      => 'Câmpuri de reglementare',
+        'regulatory-empty'        => 'Încă nu există câmpuri de pașaport. Adăugați grupul de atribute DPP la o familie de atribute pentru a-i mapa câmpurile.',
         'custom-heading'          => 'Câmpuri personalizate',
         'custom-info'             => 'Publicați un atribut pe care îl gestionați deja sub o etichetă la alegere.',
         'custom-name-placeholder' => 'Nume câmp',

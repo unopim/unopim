@@ -195,11 +195,79 @@ class AjaxOptionsController extends Controller
             }
         }
 
+        if ($entityName === self::ENTITY_ATTRIBUTE) {
+            $repository = $this->applyAttributeFilters($repository, $queryParams ?? []);
+        }
+
         if ($isCategory) {
             return $repository->defaultOrder()->paginate($perPage, ['*'], 'paginate', $page);
         }
 
         return $repository->orderBy($this->getSortColumn($entityName))->paginate($perPage, ['*'], 'paginate', $page);
+    }
+
+    /**
+     * Attribute-only narrowing used by pickers that may only offer a class of
+     * attribute: `types`/`notTypes` filter on the attribute type, `notInGroup`
+     * drops every attribute assigned to that attribute group in any family.
+     * `notInGroup` exists because listing the excluded codes in `exclude` does
+     * not scale — the caller would resend them on every page request.
+     *
+     * @param  array<string, mixed>  $queryParams
+     */
+    protected function applyAttributeFilters(mixed $repository, array $queryParams): mixed
+    {
+        if ($types = $this->listParam($queryParams['types'] ?? null)) {
+            $repository = $repository->whereIn('type', $types);
+        }
+
+        if ($notTypes = $this->listParam($queryParams['notTypes'] ?? null)) {
+            $repository = $repository->whereNotIn('type', $notTypes);
+        }
+
+        $groupCode = trim((string) ($queryParams['notInGroup'] ?? ''));
+
+        if ($groupCode === '') {
+            return $repository;
+        }
+
+        return $repository->whereNotExists(function ($builder) use ($groupCode) {
+            $builder->select(DB::raw(1))
+                ->from('attribute_group_mappings')
+                ->join(
+                    'attribute_family_group_mappings',
+                    'attribute_group_mappings.attribute_family_group_id',
+                    '=',
+                    'attribute_family_group_mappings.id'
+                )
+                ->join(
+                    'attribute_groups',
+                    'attribute_groups.id',
+                    '=',
+                    'attribute_family_group_mappings.attribute_group_id'
+                )
+                ->whereColumn('attribute_group_mappings.attribute_id', 'attributes.id')
+                ->where('attribute_groups.code', $groupCode);
+        });
+    }
+
+    /**
+     * Accepts a repeated query param (`types[]=file`) or a comma separated one.
+     *
+     * @return list<string>
+     */
+    protected function listParam(mixed $value): array
+    {
+        $values = match (true) {
+            is_array($value)                   => $value,
+            is_string($value) && $value !== '' => explode(',', $value),
+            default                            => [],
+        };
+
+        return array_values(array_filter(array_map(
+            fn ($item): string => trim((string) $item),
+            $values,
+        ), fn (string $item): bool => $item !== ''));
     }
 
     /**

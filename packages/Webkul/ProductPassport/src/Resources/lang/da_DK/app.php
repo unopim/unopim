@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Tilføj pasfelt',
         'regulatory-heading'      => 'Lovpligtige felter',
+        'regulatory-empty'        => 'Ingen pasfelter endnu. Føj DPP-attributgruppen til en attributfamilie for at tilknytte dens felter.',
         'custom-heading'          => 'Brugerdefinerede felter',
         'custom-info'             => 'Udgiv en attribut, du allerede vedligeholder, under en etiket, du vælger.',
         'custom-name-placeholder' => 'Feltnavn',

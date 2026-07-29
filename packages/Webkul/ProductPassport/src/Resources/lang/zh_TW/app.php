@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => '新增護照欄位',
         'regulatory-heading'      => '法規欄位',
+        'regulatory-empty'        => '尚無護照欄位。請將 DPP 屬性群組加入屬性族，以對應其欄位。',
         'custom-heading'          => '自訂欄位',
         'custom-info'             => '以您選擇的標籤發佈您已維護的屬性。',
         'custom-name-placeholder' => '欄位名稱',

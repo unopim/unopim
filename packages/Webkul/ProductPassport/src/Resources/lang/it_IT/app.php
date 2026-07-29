@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Aggiungi campo passaporto',
         'regulatory-heading'      => 'Campi normativi',
+        'regulatory-empty'        => 'Nessun campo del passaporto. Aggiungi il gruppo di attributi DPP a una famiglia di attributi per mapparne i campi.',
         'custom-heading'          => 'Campi personalizzati',
         'custom-info'             => 'Pubblica un attributo che già gestisci con un\'etichetta a tua scelta.',
         'custom-name-placeholder' => 'Nome del campo',

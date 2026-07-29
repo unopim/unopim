@@ -51,24 +51,18 @@ class PassportMappingController extends Controller
 
         abort_unless(PublicationController::featureEnabled(), 404);
 
-        $dppAttributeIds = $this->dppGroupAttributeIds();
+        $passportFields = $this->passportFields($this->dppGroupAttributeIds());
 
-        $passportFields = $this->passportFields($dppAttributeIds);
-
-        $sourceAttributes = $this->sourceAttributes($dppAttributeIds);
-
-        $mapping = $this->mappingFor($passportFields);
-
-        $sourceOptions = $passportFields->mapWithKeys(fn ($attribute): array => [
-            $attribute->code => $this->compatibleSourceOptions($attribute, $sourceAttributes),
+        $sourceParams = $passportFields->mapWithKeys(fn ($attribute): array => [
+            $attribute->code => $this->sourceQueryParams(in_array($attribute->type, self::DOCUMENT_TYPES, true)),
         ])->all();
 
         return view('passport::admin.mapping.index', [
-            'passportFields'      => $passportFields,
-            'sourceOptions'       => $sourceOptions,
-            'mapping'             => $mapping,
-            'customSourceOptions' => $this->customSourceOptions($sourceAttributes),
-            'customFields'        => $this->customFieldsData(),
+            'passportFields'     => $passportFields,
+            'sourceParams'       => $sourceParams,
+            'mapping'            => $this->mappingFor($passportFields),
+            'customSourceParams' => $this->sourceQueryParams(false),
+            'customFields'       => $this->customFieldRows(),
         ]);
     }
 
@@ -168,24 +162,48 @@ class PassportMappingController extends Controller
     }
 
     /**
-     * Value (non-document) attributes offered as sources for a custom field.
-     * A custom field always publishes a value into the consumer section, so
-     * document attributes are excluded. Derived from the already-loaded source
-     * collection, so no extra query.
+     * Query params the async attribute picker sends on every search, so the
+     * source list is filtered and paginated in SQL. Loading the whole attribute
+     * table into the page does not scale — a large catalog holds tens of
+     * thousands of attributes. A `dpp` field is never its own source, and a
+     * document field only accepts a document source (and vice versa).
      *
-     * @param  Collection<int, Attribute>  $sourceAttributes
-     * @return list<array{id: string, label: string}>
+     * @return array<string, string|list<string>>
      */
-    private function customSourceOptions(Collection $sourceAttributes): array
+    private function sourceQueryParams(bool $documents): array
     {
-        return $sourceAttributes
-            ->reject(fn ($attribute): bool => in_array($attribute->type, self::DOCUMENT_TYPES, true))
-            ->map(fn ($attribute): array => [
-                'id'    => $attribute->code,
-                'label' => $attribute->getTranslatedValueWithFallback('name') ?: $attribute->code,
-            ])
-            ->values()
-            ->all();
+        return [
+            'notInGroup'                      => self::GROUP_CODE,
+            $documents ? 'types' : 'notTypes' => self::DOCUMENT_TYPES,
+        ];
+    }
+
+    /**
+     * Saved custom fields plus the label of each source attribute, so the screen
+     * can show the current selection without fetching the whole attribute list.
+     *
+     * @return list<array{name: string, attribute: string, label: string}>
+     */
+    private function customFieldRows(): array
+    {
+        $rows = $this->customFieldsData();
+
+        if ($rows === []) {
+            return [];
+        }
+
+        $labels = AttributeProxy::modelClass()::query()
+            ->whereIn('code', array_column($rows, 'attribute'))
+            ->with('translations')
+            ->get()
+            ->mapWithKeys(fn ($attribute): array => [
+                $attribute->code => $attribute->getTranslatedValueWithFallback('name') ?: $attribute->code,
+            ]);
+
+        return array_map(fn (array $row): array => [
+            ...$row,
+            'label' => $labels[$row['attribute']] ?? $row['attribute'],
+        ], $rows);
     }
 
     /**
@@ -245,44 +263,5 @@ class PassportMappingController extends Controller
             ->with('translations')
             ->orderBy('code')
             ->get();
-    }
-
-    /**
-     * Every attribute that is NOT itself a `dpp` field is an eligible source.
-     * `whereNotIn('id', [])` intentionally matches all rows, so on an install
-     * with no family using the group yet, every attribute stays selectable.
-     *
-     * @param  list<int>  $dppAttributeIds
-     * @return Collection<int, Attribute>
-     */
-    private function sourceAttributes(array $dppAttributeIds): Collection
-    {
-        return AttributeProxy::modelClass()::query()
-            ->whereNotIn('id', $dppAttributeIds)
-            ->with('translations')
-            ->orderBy('code')
-            ->get();
-    }
-
-    /**
-     * Sources whose document/value class matches the field's, shaped for the
-     * component select: `id` is the attribute code (what persists and what the
-     * builder resolves), `label` the translated attribute name.
-     *
-     * @param  Collection<int, Attribute>  $sourceAttributes
-     * @return list<array{id: string, label: string}>
-     */
-    private function compatibleSourceOptions(Attribute $field, Collection $sourceAttributes): array
-    {
-        $fieldIsDocument = in_array($field->type, self::DOCUMENT_TYPES, true);
-
-        return $sourceAttributes
-            ->filter(fn ($attribute): bool => in_array($attribute->type, self::DOCUMENT_TYPES, true) === $fieldIsDocument)
-            ->map(fn ($attribute): array => [
-                'id'    => $attribute->code,
-                'label' => $attribute->getTranslatedValueWithFallback('name') ?: $attribute->code,
-            ])
-            ->values()
-            ->all();
     }
 }

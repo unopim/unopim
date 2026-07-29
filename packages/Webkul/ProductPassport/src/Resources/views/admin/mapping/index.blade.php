@@ -15,12 +15,6 @@
         method="PUT"
         :ajax="true"
     >
-        <div class="flex justify-end">
-            <button type="submit" class="primary-button">
-                @lang('passport::app.mapping.save-btn')
-            </button>
-        </div>
-
         {{-- Section A — fixed regulatory DPP fields (members of the `dpp` group),
              each sourced from an existing attribute. Persisted per field at
              `catalog.product_passport.mapping.<dpp_code>`. --}}
@@ -30,6 +24,12 @@
             </p>
 
             <div class="mt-4 grid gap-4">
+                @if ($passportFields->isEmpty())
+                    <p class="text-sm text-gray-400 dark:text-gray-300 italic">
+                        @lang('passport::app.mapping.regulatory-empty')
+                    </p>
+                @endif
+
                 @foreach ($passportFields as $field)
                     {{-- 2-column row: field name on the left, source select on the right;
                          stacks vertically on small screens (desktop-first max-sm idiom). --}}
@@ -43,13 +43,15 @@
                         <div>
                             <x-admin::form.control-group.control
                                 type="select"
+                                async="true"
+                                entity-name="attributes"
+                                track-by="code"
+                                label-by="label"
                                 :name="'mapping[' . $field->code . ']'"
                                 :value="$mapping[$field->code] ?? ''"
                                 :label="$field->getTranslatedValueWithFallback('name') ?: $field->code"
                                 :placeholder="trans('passport::app.mapping.select-source')"
-                                :options="json_encode($sourceOptions[$field->code] ?? [])"
-                                track-by="id"
-                                label-by="label"
+                                :query-params="json_encode($sourceParams[$field->code] ?? [])"
                             />
 
                             <x-admin::form.control-group.error :control-name="'mapping[' . $field->code . ']'" />
@@ -75,12 +77,32 @@
             <v-passport-custom-fields
                 class="mt-4 block"
                 :initial='@json($customFields)'
-                :options='@json($customSourceOptions)'
+                :source-params='@json($customSourceParams)'
             ></v-passport-custom-fields>
         </div>
     </x-admin::form>
 
     @pushOnce('scripts')
+        <script type="text/x-template" id="v-passport-source-select-template">
+            <v-multiselect
+                :options="options"
+                track-by="code"
+                label="label"
+                :searchable="true"
+                :internal-search="false"
+                :loading="isLoading"
+                :preserve-search="false"
+                :close-on-select="true"
+                :clear-on-select="true"
+                :show-no-results="true"
+                :hide-selected="false"
+                :placeholder="placeholder"
+                v-model="selected"
+                @search-change="search"
+            >
+            </v-multiselect>
+        </script>
+
         <script type="text/x-template" id="v-passport-custom-fields-template">
             <div class="grid gap-4">
                 <div
@@ -99,15 +121,14 @@
 
                     <div class="flex items-center gap-2.5">
                         <div class="flex-1 min-w-0">
-                            <v-select-handler
-                                :options="optionsJson"
-                                track-by="id"
-                                label-by="label"
+                            <v-passport-source-select
                                 :value="row.attribute"
+                                :initial-label="row.label"
                                 :placeholder="sourcePlaceholder"
+                                :query-params="sourceParamsObject"
                                 @input="setAttribute(index, $event)"
                             >
-                            </v-select-handler>
+                            </v-passport-source-select>
                         </div>
 
                         <input type="hidden" :name="'custom_fields[' + index + '][attribute]'" :value="row.attribute" />
@@ -141,12 +162,76 @@
         </script>
 
         <script type="module">
+            app.component('v-passport-source-select', {
+                template: '#v-passport-source-select-template',
+
+                props: {
+                    value: { type: String, default: '' },
+                    initialLabel: { type: String, default: '' },
+                    placeholder: { type: String, default: '' },
+                    queryParams: { type: Object, default: () => ({}) },
+                },
+
+                emits: ['input'],
+
+                data() {
+                    return {
+                        options: [],
+                        isLoading: false,
+                        timer: null,
+                        selected: this.value
+                            ? { code: this.value, label: this.initialLabel || this.value }
+                            : null,
+                    };
+                },
+
+                watch: {
+                    selected(option) {
+                        this.$emit('input', option?.code ?? '');
+                    },
+                },
+
+                mounted() {
+                    this.fetch('');
+                },
+
+                methods: {
+                    {{-- Searching server-side keeps the page independent of catalog size:
+                         a large catalog holds tens of thousands of attributes. --}}
+                    search(query) {
+                        clearTimeout(this.timer);
+
+                        this.timer = setTimeout(() => this.fetch(query), 500);
+                    },
+
+                    fetch(query) {
+                        this.isLoading = true;
+
+                        this.$axios.get("{{ route('admin.catalog.options.fetch-all') }}", {
+                            params: {
+                                entityName: 'attributes',
+                                locale: "{{ core()->getRequestedLocaleCode() }}",
+                                query,
+                                ...this.queryParams,
+                            },
+                        })
+                            .then(({ data }) => {
+                                this.options = data.options.map((option) => ({
+                                    code: option.code,
+                                    label: option.label,
+                                }));
+                            })
+                            .finally(() => this.isLoading = false);
+                    },
+                },
+            });
+
             app.component('v-passport-custom-fields', {
                 template: '#v-passport-custom-fields-template',
 
                 props: {
                     initial: { type: [String, Array], default: () => [] },
-                    options: { type: [String, Array], default: () => [] },
+                    sourceParams: { type: [String, Object], default: () => ({}) },
                 },
 
                 data() {
@@ -160,8 +245,8 @@
                 },
 
                 computed: {
-                    optionsJson() {
-                        return typeof this.options === 'string' ? this.options : JSON.stringify(this.options);
+                    sourceParamsObject() {
+                        return this.decode(this.sourceParams, {});
                     },
                 },
 
@@ -173,6 +258,7 @@
                             uid: index,
                             name: row.name ?? '',
                             attribute: row.attribute ?? '',
+                            label: row.label ?? '',
                         }))
                         : [];
                 },
@@ -197,17 +283,15 @@
                     },
 
                     addRow() {
-                        this.rows.push({ uid: `new-${this.sequence++}`, name: '', attribute: '' });
+                        this.rows.push({ uid: `new-${this.sequence++}`, name: '', attribute: '', label: '' });
                     },
 
                     removeRow(index) {
                         this.rows.splice(index, 1);
                     },
 
-                    setAttribute(index, event) {
-                        const option = this.decode(event, null);
-
-                        this.rows[index].attribute = option?.id ?? '';
+                    setAttribute(index, code) {
+                        this.rows[index].attribute = code ?? '';
                     },
                 },
             });

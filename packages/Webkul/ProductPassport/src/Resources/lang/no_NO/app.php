@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Legg til passfelt',
         'regulatory-heading'      => 'Regulatoriske felt',
+        'regulatory-empty'        => 'Ingen passfelt ennå. Legg DPP-attributtgruppen til en attributtfamilie for å tilordne feltene.',
         'custom-heading'          => 'Egendefinerte felt',
         'custom-info'             => 'Publiser et attributt du allerede vedlikeholder under en etikett du velger.',
         'custom-name-placeholder' => 'Feltnavn',

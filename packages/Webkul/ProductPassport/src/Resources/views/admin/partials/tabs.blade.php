@@ -27,7 +27,7 @@
             <a
                 href="{{ $tab['url'] }}"
                 @class([
-                    'pb-3.5 px-2.5 text-base font-medium cursor-pointer transition-all border-b-2',
+                    'pb-3.5 px-2.5 ltr:first:pl-0 rtl:first:pr-0 text-base font-medium cursor-pointer transition-all border-b-2',
                     'border-primary-700 text-primary-700 dark:text-primary-400' => $active === $key,
                     'border-transparent text-gray-600 dark:text-gray-300 hover:text-primary-700' => $active !== $key,
                 ])

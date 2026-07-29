@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Dodaj polje putovnice',
         'regulatory-heading'      => 'Regulatorna polja',
+        'regulatory-empty'        => 'Još nema polja putovnice. Dodajte grupu atributa DPP u obitelj atributa kako biste mapirali njezina polja.',
         'custom-heading'          => 'Prilagođena polja',
         'custom-info'             => 'Objavite atribut koji već održavate pod oznakom po vašem izboru.',
         'custom-name-placeholder' => 'Naziv polja',

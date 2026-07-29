@@ -166,13 +166,48 @@ it('excludes file and image attributes from the custom-field source options', fu
 
     $this->get(route('admin.catalog.passports.mapping.edit'))
         ->assertOk()
-        ->assertViewHas('customSourceOptions', function (array $options): bool {
-            $codes = array_column($options, 'id');
+        ->assertViewHas('customSourceParams', [
+            'notInGroup' => 'dpp',
+            'notTypes'   => ['file', 'image'],
+        ]);
 
-            return in_array('country', $codes, true)
-                && ! in_array('spec_sheet', $codes, true)
-                && ! in_array('hero_image', $codes, true);
-        });
+    $codes = array_column(
+        $this->getJson(route('admin.catalog.options.fetch-all', [
+            'entityName' => 'attributes',
+            'notInGroup' => 'dpp',
+            'notTypes'   => ['file', 'image'],
+            'query'      => 'country',
+        ]))->assertOk()->json('options'),
+        'code'
+    );
+
+    expect($codes)->toContain('country')
+        ->and($codes)->not->toContain('spec_sheet')
+        ->and($codes)->not->toContain('hero_image');
+});
+
+it('offers only document attributes as the source of a document passport field', function (): void {
+    resolve(DppAttributeSeeder::class)->run();
+
+    AttributeProxy::factory()->create(['code' => 'spec_sheet', 'type' => 'file']);
+    AttributeProxy::factory()->create(['code' => 'country', 'type' => 'text']);
+
+    $this->setPassportConfig(['enabled' => '1']);
+
+    $this->loginWithPermissions('all');
+
+    $codes = array_column(
+        $this->getJson(route('admin.catalog.options.fetch-all', [
+            'entityName' => 'attributes',
+            'notInGroup' => 'dpp',
+            'types'      => ['file', 'image'],
+            'query'      => 'spec_sheet',
+        ]))->assertOk()->json('options'),
+        'code'
+    );
+
+    expect($codes)->toContain('spec_sheet')
+        ->and($codes)->not->toContain('country');
 });
 
 it('rejects a custom field pointing at a file attribute', function (): void {

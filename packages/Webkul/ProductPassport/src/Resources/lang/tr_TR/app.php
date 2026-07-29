@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Pasaport alanı ekle',
         'regulatory-heading'      => 'Düzenleyici Alanlar',
+        'regulatory-empty'        => 'Henüz pasaport alanı yok. Alanlarını eşlemek için DPP öznitelik grubunu bir öznitelik ailesine ekleyin.',
         'custom-heading'          => 'Özel Alanlar',
         'custom-info'             => 'Zaten yönettiğiniz bir özniteliği seçtiğiniz bir etiketle yayımlayın.',
         'custom-name-placeholder' => 'Alan adı',
