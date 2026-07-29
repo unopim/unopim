@@ -361,13 +361,25 @@
                         </div>
                     </div>
 
-                    <button
-                        type="button"
-                        class="primary-button block w-full text-center"
-                        @click="runFilters()"
-                    >
-                        @lang('admin::app.components.datagrid.filters.save')
-                    </button>
+                    <div class="sticky bottom-0 flex items-stretch gap-x-2.5 border-t border-gray-100 bg-white pt-3 ltr:-ml-3 ltr:-mr-3 ltr:pl-3 ltr:pr-3 rtl:-ml-3 rtl:-mr-3 rtl:pl-3 rtl:pr-3 dark:border-cherry-800 dark:bg-cherry-800">
+                        <button
+                            type="button"
+                            class="secondary-button flex-1 justify-center text-center disabled:cursor-not-allowed disabled:opacity-50"
+                            data-clear-all-filters
+                            :disabled="! hasAppliedFilters()"
+                            @click="clearAllFilters()"
+                        >
+                            @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
+                        </button>
+
+                        <button
+                            type="button"
+                            class="primary-button flex-1 justify-center text-center"
+                            @click="runFilters()"
+                        >
+                            @lang('admin::app.components.datagrid.filters.save')
+                        </button>
+                    </div>
                 </x-slot>
             </x-admin::drawer>
 
