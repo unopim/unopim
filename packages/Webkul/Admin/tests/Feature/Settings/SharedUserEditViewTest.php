@@ -4,11 +4,6 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
-/**
- * The profile page and the user edit page render one Blade. These pin the flags
- * that decide what each caller exposes, so a future edit cannot leak the role or
- * status controls onto the self-service page.
- */
 it('renders the profile page from the shared user edit view', function () {
     $this->loginAsAdmin();
 

@@ -5,11 +5,6 @@ use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
-    /**
-     * Audits written before Admin declared $auditExclude captured the password
-     * hash, api token and remember token in old_values/new_values. Excluding
-     * them going forward does not remove what is already stored.
-     */
     private const SENSITIVE = ['password', 'api_token', 'remember_token', 'sso_identifier'];
 
     public function up(): void

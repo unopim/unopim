@@ -15,9 +15,6 @@ use Webkul\Core\Rules\FileMimeExtensionMatch;
 class UserForm extends FormRequest
 {
     /**
-     * Advertised by the upload control and enforced here, so the tooltip cannot
-     * promise a format the request then rejects.
-     *
      * @var array<int, string>
      */
     public const PROFILE_IMAGE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp', 'gif', 'bmp'];

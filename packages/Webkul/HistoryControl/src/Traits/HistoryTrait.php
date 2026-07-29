@@ -78,6 +78,13 @@ trait HistoryTrait
             return false;
         }
 
+        if (
+            $this->auditEvent === 'updated'
+            && ! array_diff(array_keys($this->getDirty() ?: $this->getChanges()), $this->getAuditExclude())
+        ) {
+            return false;
+        }
+
         if (isset($this->historyTranslatableFields)) {
             return array_any(array_keys($this->historyTranslatableFields), fn (int|string $field): bool => filled($this->{$field}));
         }

@@ -59,10 +59,6 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
     protected array $historyTags = ['admin'];
 
     /**
-     * Credentials must never reach the audit trail: the history preview renders
-     * old and new values verbatim, which published password hashes to anyone
-     * holding the history permission.
-     *
      * @var array<int, string>
      */
     protected $auditExclude = [

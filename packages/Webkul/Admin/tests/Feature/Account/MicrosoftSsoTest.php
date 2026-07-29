@@ -225,6 +225,87 @@ it('accepts an allow listed tenant on a shared authority', function () {
     $this->assertAuthenticatedAs($admin, 'admin');
 });
 
+it('accepts a tenant configured as a verified domain', function () {
+    $admin = Admin::factory()->create([
+        'email'    => 'domain-tenant@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    microsoftSsoConfig('contoso.onmicrosoft.com');
+
+    Http::fake([
+        'https://login.microsoftonline.com/*/v2.0/.well-known/openid-configuration' => Http::response([
+            'issuer' => 'https://login.microsoftonline.com/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/v2.0',
+        ], 200),
+        'https://login.microsoftonline.com/*/oauth2/v2.0/token' => Http::response([
+            'access_token' => 'access-token',
+            'id_token'     => ssoJwt([
+                'nonce' => 'valid-nonce',
+                'tid'   => 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+            ]),
+        ], 200),
+        'https://graph.microsoft.com/v1.0/me*' => Http::response([
+            'id'                => 'object-id-domain',
+            'mail'              => 'domain-tenant@example.com',
+            'userPrincipalName' => 'domain-tenant@example.com',
+        ], 200),
+    ]);
+
+    callbackWith(ssoHandshake());
+
+    $this->assertAuthenticatedAs($admin, 'admin');
+});
+
+it('refuses a foreign tenant when configured with a verified domain', function () {
+    Admin::factory()->create([
+        'email'    => 'domain-foreign@example.com',
+        'password' => Hash::make('password'),
+        'status'   => 1,
+    ]);
+
+    microsoftSsoConfig('contoso.onmicrosoft.com');
+
+    Http::fake([
+        'https://login.microsoftonline.com/*/v2.0/.well-known/openid-configuration' => Http::response([
+            'issuer' => 'https://login.microsoftonline.com/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee/v2.0',
+        ], 200),
+        'https://login.microsoftonline.com/*/oauth2/v2.0/token' => Http::response([
+            'access_token' => 'access-token',
+            'id_token'     => ssoJwt([
+                'nonce' => 'valid-nonce',
+                'tid'   => '99999999-9999-9999-9999-999999999999',
+            ]),
+        ], 200),
+        'https://graph.microsoft.com/v1.0/me*' => Http::response([
+            'id'                => 'object-id-domain-foreign',
+            'mail'              => 'domain-foreign@example.com',
+            'userPrincipalName' => 'domain-foreign@example.com',
+        ], 200),
+    ]);
+
+    $response = callbackWith(ssoHandshake());
+
+    $response->assertRedirect(route('admin.session.create'));
+    $this->assertGuest('admin');
+});
+
+it('refuses a callback whose stored handshake is malformed', function () {
+    microsoftSsoConfig();
+
+    fakeMicrosoftEndpoints([
+        'id'                => 'object-id-malformed',
+        'mail'              => 'malformed@example.com',
+        'userPrincipalName' => 'malformed@example.com',
+    ]);
+
+    $response = callbackWith(['microsoft' => ['state' => 'valid-state']]);
+
+    $response->assertRedirect(route('admin.session.create'));
+    $response->assertSessionHas('error');
+    $this->assertGuest('admin');
+});
+
 it('sends a pkce challenge and stores the verifier', function () {
     microsoftSsoConfig();
 

@@ -268,6 +268,7 @@ test.describe('User Management', () => {
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('label[for="status"]').click();
+    await adminPage.locator('input[name="current_password"]').fill(process.env.ADMIN_PASSWORD || 'admin123');
     await clickSaveAndExpect(adminPage, 'Save User', /User updated successfully/i);
 
     // Cleanup
