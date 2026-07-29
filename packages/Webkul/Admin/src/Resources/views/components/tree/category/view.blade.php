@@ -24,6 +24,52 @@
 @pushOnce('scripts')
     <script type="x-template" id="v-category-tree-view-template">
         <div class="v-tree-container v-tree-item-wrapper">
+            <x-admin::search
+                class="mb-2"
+                name="category_tree_search"
+                :placeholder="trans('admin::app.catalog.categories.browse.search-placeholder')"
+                v-if="showSearch"
+                v-model="searchTerm"
+                @input="onSearchInput"
+                @keydown.esc="clearSearch"
+            />
+
+            <template v-if="isSearching">
+                <p
+                    class="py-6 text-center text-sm text-gray-400 dark:text-gray-300"
+                    v-if="searchLoading && ! searchResults.length"
+                >
+                    @lang('admin::app.catalog.categories.browse.searching')
+                </p>
+
+                <p
+                    class="py-6 text-center text-sm text-gray-400 dark:text-gray-300"
+                    v-else-if="! searchResults.length"
+                >
+                    @lang('admin::app.catalog.categories.browse.no-results')
+                </p>
+
+                <div
+                    class="flex flex-col gap-0.5 px-2 py-1.5 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                    v-for="result in searchResults"
+                    :key="result.id"
+                    @click="chooseResult(result)"
+                >
+                    <span class="text-sm text-gray-800 dark:text-white truncate" v-text="result.label"></span>
+
+                    <span class="text-xs text-gray-400 dark:text-gray-300 truncate" v-text="result.path" v-if="result.path"></span>
+                </div>
+
+                <p
+                    class="py-2 text-center text-xs text-primary-600 cursor-pointer"
+                    v-if="searchPage < searchLastPage"
+                    @click="runSearch(searchPage + 1)"
+                >
+                    @lang('admin::app.catalog.categories.browse.load-more')
+                </p>
+            </template>
+
+            <template v-else>
             <div
                 class="flex items-center justify-end gap-1 pb-1.5 mb-1.5 border-b dark:border-cherry-800"
                 v-if="showToolbar"
@@ -51,6 +97,7 @@
                 :level="1"
                 @change-input="$emit('change-input', $event)"
             />
+            </template>
         </div>
     </script>
 
@@ -120,6 +167,14 @@
                 allowCreate: {
                     type: Boolean,
                     default: false
+                },
+                showSearch: {
+                    type: Boolean,
+                    default: false
+                },
+                navigateOnSelect: {
+                    type: Boolean,
+                    default: false
                 }
             },
 
@@ -130,8 +185,15 @@
                     formattedExpandedBranch: [],
                     fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
                     createUrl: "{{ route('admin.catalog.categories.index') }}",
+                    searchUrl: "{{ route('admin.catalog.categories.search') }}",
                     cache: [],
                     nodes: [],
+                    searchTerm: '',
+                    searchResults: [],
+                    searchPage: 1,
+                    searchLastPage: 1,
+                    searchLoading: false,
+                    searchTimer: null,
 
                     labels: {}
                 };
@@ -151,7 +213,83 @@
             },
 
 
+            computed: {
+                isSearching() {
+                    return this.searchTerm.trim().length > 0;
+                },
+            },
+
             methods: {
+                navigateTo(categoryId) {
+                    const url = new URL(this.createUrl, window.location.origin);
+
+                    url.searchParams.set('category', categoryId);
+
+                    window.location.href = url.toString();
+                },
+
+                onSearchInput() {
+                    clearTimeout(this.searchTimer);
+
+                    if (! this.isSearching) {
+                        this.searchResults = [];
+
+                        return;
+                    }
+
+                    this.searchTimer = setTimeout(() => this.runSearch(1), 300);
+                },
+
+                clearSearch() {
+                    clearTimeout(this.searchTimer);
+
+                    this.searchTerm = '';
+                    this.searchResults = [];
+                },
+
+                runSearch(page) {
+                    const term = this.searchTerm.trim();
+
+                    if (! term) {
+                        return;
+                    }
+
+                    this.searchLoading = true;
+
+                    const url = new URL(this.searchUrl, window.location.origin);
+
+                    url.searchParams.set('query', term);
+                    url.searchParams.set('page', page);
+
+                    this.$axios.get(url.toString())
+                        .then(({ data }) => {
+                            this.searchResults = page === 1 ? data.data : this.searchResults.concat(data.data);
+                            this.searchPage = data.page;
+                            this.searchLastPage = data.lastPage;
+                        })
+                        .finally(() => this.searchLoading = false);
+                },
+
+                /**
+                 * A hit is flat, so it carries no branch to expand into. Browsing jumps
+                 * straight to the category; picking records the value and lets the tree
+                 * reveal it on the next render.
+                 */
+                chooseResult(result) {
+                    if (this.navigateOnSelect) {
+                        this.navigateTo(result.id);
+
+                        return;
+                    }
+
+                    this.formattedValues = [result.id.toString()];
+                    this.registerLabel(result.id.toString(), result.label);
+
+                    this.clearSearch();
+
+                    this.$emit('change-input', this.formattedValues);
+                },
+
                 registerNode(node) {
                     this.nodes.push(node);
                 },

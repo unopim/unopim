@@ -66,6 +66,12 @@
             :value="$currentLocale->code"
         />
 
+        <x-admin::form.control-group.control
+            type="hidden"
+            name="parent_id"
+            :value="$isEdit ? $category->parent_id : $parentCategory?->id"
+        />
+
         <div class="flex flex-col gap-4 pt-4">
             <x-admin::form.control-group>
                 <x-admin::form.control-group.label class="required">
@@ -105,36 +111,6 @@
                             :fields="$rightCategoryFields"
                             :fieldValues="$isEdit ? $category->additional_data : []"
                         />
-                    </x-slot>
-                </x-admin::accordion>
-            @endif
-
-            @if (count($treeItems))
-                <x-admin::accordion>
-                    <x-slot:header>
-                        <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('admin::app.catalog.categories.edit.select-parent-category')
-                        </p>
-                    </x-slot>
-
-                    <x-slot:content>
-                        <div class="flex flex-col gap-3 max-h-[420px] overflow-y-auto">
-                            <x-admin::tree.category.view
-                                input-type="radio"
-                                name-field="parent_id"
-                                label-field="name"
-                                value-field="id"
-                                id-field="id"
-                                children-page-size="100"
-                                ::show-toolbar="true"
-                                ::allow-create="{{ bouncer()->hasPermission('catalog.categories.create') ? 'true' : 'false' }}"
-                                :current-category="$isEdit ? $category->id : null"
-                                :expanded-branch="json_encode($branchToParent)"
-                                :items="json_encode($treeItems)"
-                                :value="old('parent_id') ?? json_encode($isEdit ? $category->parent_id : $parentCategory?->id)"
-                                :fallback-locale="config('app.fallback_locale')"
-                            />
-                        </div>
                     </x-slot>
                 </x-admin::accordion>
             @endif

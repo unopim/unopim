@@ -13,7 +13,7 @@
         <x-slot:actions>
             <div class="flex p-0.5 bg-gray-100 dark:bg-cherry-800 rounded-md">
                 <a
-                    href="{{ route('admin.catalog.categories.index') }}"
+                    href="{{ route('admin.catalog.categories.index', ['view' => 'tree']) }}"
                     class="px-3 py-1 text-sm rounded {{ $isTreeView ? 'bg-white dark:bg-cherry-900 text-gray-800 dark:text-white font-semibold' : 'text-gray-600 dark:text-gray-300' }}"
                 >
                     @lang('admin::app.catalog.categories.browse.tree-view')
@@ -48,15 +48,24 @@
 
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="flex flex-col w-[340px] max-w-full max-xl:w-full p-4 h-[calc(100vh-190px)] max-xl:h-[420px] bg-white dark:bg-cherry-900 rounded box-shadow">
-                <x-admin::tree.category.browser
-                    :items="json_encode($treeItems)"
-                    :expanded-branch="json_encode($branchToParent)"
-                    :locked-ids="json_encode($channelRootIds)"
-                    :selected="$selectedId"
-                    :locale="core()->getRequestedLocaleCode()"
-                    :can-create="$canCreate"
-                    :can-delete="bouncer()->hasPermission('catalog.categories.delete')"
-                />
+                <div class="flex flex-col gap-3 h-full overflow-y-auto">
+                    <x-admin::tree.category.view
+                        input-type="radio"
+                        name-field="browse_category"
+                        label-field="name"
+                        value-field="id"
+                        id-field="id"
+                        children-page-size="100"
+                        ::show-toolbar="true"
+                        ::show-search="true"
+                        ::navigate-on-select="true"
+                        ::allow-create="{{ $canCreate ? 'true' : 'false' }}"
+                        :expanded-branch="json_encode($branchToParent)"
+                        :items="json_encode($treeItems)"
+                        :value="json_encode($selectedId)"
+                        :fallback-locale="config('app.fallback_locale')"
+                    />
+                </div>
             </div>
 
             <div class="flex-1 max-xl:flex-auto">

@@ -31,6 +31,8 @@ class CategoryController extends Controller
 
     const SEARCH_PER_PAGE = 50;
 
+    const VIEW_MODE_SESSION_KEY = 'catalog.categories.view_mode';
+
     /**
      * Create a new controller instance.
      *
@@ -93,13 +95,12 @@ class CategoryController extends Controller
             return app(CategoryDataGrid::class)->toJson();
         }
 
-        $viewMode = $request->isListView() ? 'list' : 'tree';
+        $viewMode = $this->resolveViewMode($request);
 
         $data = [
             'viewMode'            => $viewMode,
             'treeItems'           => [],
             'branchToParent'      => [],
-            'channelRootIds'      => [],
             'selectedId'          => null,
             'panelMode'           => null,
             'category'            => null,
@@ -114,8 +115,6 @@ class CategoryController extends Controller
         }
 
         $data['treeItems'] = CategoryTreeResource::collection($this->categoryRepository->getRootCategories())->toArray($request);
-
-        $data['channelRootIds'] = $this->channelRepository->pluck('root_category_id')->filter()->map(intval(...))->values()->all();
 
         if ($categoryId = $request->selectedCategoryId()) {
             $data['category'] = $this->categoryRepository->findOrFail($categoryId);
@@ -145,6 +144,28 @@ class CategoryController extends Controller
         }
 
         return view('admin::catalog.categories.index', $data);
+    }
+
+    /**
+     * The chosen view sticks for the rest of the session, so returning to the
+     * listing lands where it was left. A deep link to a category outranks it —
+     * the properties panel only exists in the tree.
+     */
+    private function resolveViewMode(CategoryBrowseRequest $request): string
+    {
+        if ($requested = $request->requestedView()) {
+            session()->put(self::VIEW_MODE_SESSION_KEY, $requested);
+
+            return $requested;
+        }
+
+        if ($request->selectedCategoryId() || $request->wantsCreatePanel()) {
+            return 'tree';
+        }
+
+        $stored = session(self::VIEW_MODE_SESSION_KEY);
+
+        return in_array($stored, ['tree', 'list'], true) ? $stored : 'tree';
     }
 
     /**

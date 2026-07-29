@@ -378,6 +378,12 @@
             },
 
             onInputChange() {
+                if (this.categorytree.navigateOnSelect) {
+                    this.categorytree.navigateTo(this.id);
+
+                    return;
+                }
+
                 if (this.categorytree.inputType === 'checkbox') {
                     this.categorytree.handleCheckbox(this.item);
                 }

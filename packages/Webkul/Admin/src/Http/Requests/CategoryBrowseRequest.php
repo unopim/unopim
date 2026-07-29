@@ -31,9 +31,9 @@ class CategoryBrowseRequest extends FormRequest
         ];
     }
 
-    public function isListView(): bool
+    public function requestedView(): ?string
     {
-        return $this->validated('view') === 'list';
+        return $this->validated('view');
     }
 
     public function selectedCategoryId(): ?int
