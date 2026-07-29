@@ -1,5 +1,26 @@
 <?php
 
+$ipV4Octet = '(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)';
+$ipV4 = "(?:{$ipV4Octet}(?:\.{$ipV4Octet}){3})";
+$ipV6Group = '[0-9A-Fa-f]{1,4}';
+$ipV6Tail = "(?:{$ipV6Group}:{$ipV6Group}|{$ipV4})";
+
+$ipV6 = '(?:'
+    ."(?:{$ipV6Group}:){6}{$ipV6Tail}"
+    ."|::(?:{$ipV6Group}:){5}{$ipV6Tail}"
+    ."|(?:{$ipV6Group})?::(?:{$ipV6Group}:){4}{$ipV6Tail}"
+    ."|(?:(?:{$ipV6Group}:){0,1}{$ipV6Group})?::(?:{$ipV6Group}:){3}{$ipV6Tail}"
+    ."|(?:(?:{$ipV6Group}:){0,2}{$ipV6Group})?::(?:{$ipV6Group}:){2}{$ipV6Tail}"
+    ."|(?:(?:{$ipV6Group}:){0,3}{$ipV6Group})?::{$ipV6Group}:{$ipV6Tail}"
+    ."|(?:(?:{$ipV6Group}:){0,4}{$ipV6Group})?::{$ipV6Tail}"
+    ."|(?:(?:{$ipV6Group}:){0,5}{$ipV6Group})?::{$ipV6Group}"
+    ."|(?:(?:{$ipV6Group}:){0,6}{$ipV6Group})?::"
+    .')';
+
+$ipAddress = "(?:{$ipV4}|{$ipV6})";
+
+$ipAddressList = "/^\s*{$ipAddress}(?:\s*,\s*{$ipAddress})*\s*$/";
+
 return [
     /**
      * General.
@@ -208,10 +229,7 @@ return [
                 'name'       => 'allowed_ips',
                 'title'      => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
                 'type'       => 'text',
-                'validation' => [
-                    'nullable',
-                    'regex:/^\s*(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|[A-Fa-f0-9]{0,4}(?::[A-Fa-f0-9]{0,4}){2,7})(?:\s*,\s*(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|[A-Fa-f0-9]{0,4}(?::[A-Fa-f0-9]{0,4}){2,7}))*\s*$/',
-                ],
+                'validation' => ['nullable', 'regex:'.$ipAddressList],
             ],
         ],
     ], [
