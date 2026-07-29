@@ -103,60 +103,7 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                @if (isset($score['score']))
-                    <x-admin::dropdown>
-                        <x-slot:toggle>
-                            <button
-                                type="button"
-                                class="flex gap-x-2 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer appearance-none transition-all hover:bg-primary-50 dark:hover:bg-cherry-900 text-gray-600 dark:text-slate-50"
-                            >
-                                <span class="icon-activity text-2xl"></span>
-
-                                <div class="font-semibold text-gray-600 dark:text-white">
-                                    <span class="text-xl">% </span> @lang('completeness::app.catalog.products.edit.completeness.title')
-                                </div>
-
-                                <span class="inline-flex items-center px-2 py-1 rounded-md text-sm font-semibold bg-primary-700 text-white">
-                                    {{ $score['score'].'%' }}
-                                </span>
-                            </button>
-                        </x-slot>
-
-                        <x-slot:content class="!p-0">
-                            <div class="p-2">
-                                <div class="p-2 font-semibold border-b dark:border-cherry-800">
-                                    <v-radial-progress
-                                        :score="{{ $averageScore }}"
-                                        label="{{ trans('completeness::app.catalog.products.edit.completeness.title') }}"
-                                        sub-title="{{ trans('completeness::app.catalog.products.edit.completeness.subtitle') }}"
-                                        :radius="16"
-                                    />
-                                </div>
-
-                                @foreach ($currentChannel->locales->sortBy('name') as $locale)
-                                    @php
-                                        $localeScore = $scores[$locale->id] ?? null;
-                                    @endphp
-
-                                    <div class="p-2 text-sm dark:border-cherry-800">
-                                        @if (! is_null($localeScore))
-                                            <v-radial-progress :score="{{ $localeScore['score'] }}" :label="'{{ $locale->name }}'" :radius="14" />
-                                        @else
-                                            <div class="text-sm text-gray-400 italic">{{ $locale->name }}: N/A</div>
-                                        @endif
-                                    </div>
-                                @endforeach
-                            </div>
-                        </x-slot>
-                    </x-admin::dropdown>
-                @endif
-
-                @if ($score['missing_count'] ?? false)
-                    <div class="text-gray-600 dark:text-white ltr:ml-2.5">
-                        <span class="inline-block w-3 h-3 rounded-full bg-yellow-500"></span>
-                        {{ $score['missing_count'] }} @lang('completeness::app.catalog.products.edit.required-attributes')
-                    </div>
-                @endif
+                @include('admin::catalog.products.edit.completeness-indicator')
             </div>
 
             @include('admin::catalog.products.edit.more-actions.index')
@@ -223,11 +170,9 @@
                         <v-variant-axis-nav></v-variant-axis-nav>
                     @endif
 
-
                     @include('admin::catalog.products.edit.categories', ['currentLocaleCode' => $currentLocale?->code, 'productCategories' => $product->resolvedValues()['categories'] ?? []])
 
                     @if ($variantTree ?? null)
-                        {{-- The structured UI replaces the flat type view; its render events stay. --}}
                         {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.before', ['product' => $product]) !!}
 
                         {!! view_render_event('unopim.admin.catalog.product.edit.form.types.' . $product->type . '.after', ['product' => $product]) !!}
@@ -235,7 +180,6 @@
                         @includeIf('admin::catalog.products.edit.types.' . $product->type)
                     @endif
 
-                    <!-- Related, Cross Sells, Up Sells View Blade File -->
                     @include('admin::catalog.products.edit.links', [
                         'associationTypes'      => $associationTypes,
                         'upSellAssociations'    => $product->values['associations']['up_sells'] ?? [],
@@ -264,12 +208,8 @@
     {!! view_render_event('unopim.admin.catalog.product.edit.after', ['product' => $product]) !!}
 
     @pushOnce('scripts')
-        {{-- Give the sticky edit header a solid white background once the page is scrolled
-             (Vue has no `.window` event modifier, so this is done with a plain listener). --}}
         <script>
             (function () {
-                // Query the header on each call — it's rendered by Vue (inside <v-form>),
-                // so it may not exist yet when this script first runs.
                 const update = () => {
                     const header = document.querySelector('.js-sticky-header');
 
@@ -283,9 +223,6 @@
                     header.classList.toggle('shadow-md', scrolled);
                 };
 
-                // The SPA re-runs pushed scripts on every ajax visit, so drop any
-                // previous listener before adding a new one and clean up on navigate —
-                // otherwise scroll handlers accumulate across visits.
                 if (window.__stickyProductHeader) {
                     window.removeEventListener('scroll', window.__stickyProductHeader);
                 }

@@ -167,6 +167,8 @@ class ProductController extends Controller
 
         Event::dispatch('catalog.product.create.after', $product);
 
+        ProductCompletenessJob::dispatchSync([$product->id]);
+
         session()->flash('success', trans('admin::app.catalog.products.create-success'));
 
         return new JsonResponse([
@@ -237,6 +239,8 @@ class ProductController extends Controller
         if ($role !== 'variant_group') {
             Event::dispatch('catalog.product.create.after', $node);
         }
+
+        ProductCompletenessJob::dispatchSync([$node->id]);
 
         return new JsonResponse([
             'data' => [
@@ -551,7 +555,7 @@ class ProductController extends Controller
             ->map(fn ($item) => $item->attribute_id)
             ->toArray();
 
-        $scores = $product->getCompletenessScore($requestedChannelId);
+        $scores = $this->completenessScores($product, $requestedChannelId);
 
         $averageScore = count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null;
 
@@ -598,6 +602,39 @@ class ProductController extends Controller
             'groupAttributes',
             'nextGroupId'
         ));
+    }
+
+    /** Stored completeness of a product, scored on the spot when it has never been scored. */
+    protected function completenessScores(Product $product, int $channelId): array
+    {
+        $scores = $product->getCompletenessScore($channelId);
+
+        if ($scores !== [] || $product->getCompletenessAttributes($channelId)->isEmpty()) {
+            return $scores;
+        }
+
+        ProductCompletenessJob::dispatchSync([$product->id]);
+
+        return $product->getCompletenessScore($channelId);
+    }
+
+    /** Current completeness of a product for the requested channel and locale. */
+    public function completeness(int $id): JsonResponse
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        $scores = $this->completenessScores($product, core()->getRequestedChannel()->id);
+
+        $current = $scores[core()->getRequestedLocale()->id] ?? null;
+
+        return new JsonResponse([
+            'state' => [
+                'score'        => $current['score'] ?? null,
+                'missingCount' => $current['missing_count'] ?? 0,
+                'average'      => count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null,
+                'localeScores' => collect($scores)->map(fn ($row) => $row['score'])->all(),
+            ],
+        ]);
     }
 
     /**
@@ -1256,7 +1293,7 @@ class ProductController extends Controller
 
         Event::dispatch('catalog.product.update.after', $product);
 
-        ProductCompletenessJob::dispatch([$id]);
+        ProductCompletenessJob::dispatchSync([$id]);
 
         session()->flash('success', trans('admin::app.catalog.products.update-success'));
 
