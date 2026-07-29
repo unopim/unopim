@@ -1664,7 +1664,11 @@
                             this.loadFilterAttributes(true);
                         }
 
-                        this.$nextTick(() => this.$refs.filterPickerSearchInput?.focus());
+                        this.$nextTick(() => {
+                            this.$refs.filterPicker?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+                            this.$refs.filterPickerSearchInput?.focus({ preventScroll: true });
+                        });
                     }
                 },
 

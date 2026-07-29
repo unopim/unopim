@@ -319,6 +319,7 @@
 
                         <div
                             v-if="showFilterPicker"
+                            ref="filterPicker"
                             class="mt-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 overflow-hidden"
                         >
                             <div class="sticky top-0 p-2 bg-white dark:bg-cherry-800 border-b dark:border-cherry-900">
