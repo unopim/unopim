@@ -67,25 +67,34 @@ class AssociationTypeRequest extends FormRequest
                 new AssociationNotSupportedFields,
                 Rule::unique('association_types', 'code')->ignore($this->route('id')),
             ];
-
-            /**
-             * The create modal collects the code only. Labels are per-locale and
-             * are configured on the edit page, so they stay optional on create
-             * (the controller seeds the requested-locale label to the code).
-             */
-            foreach ($this->localeRepository->getActiveLocales() as $locale) {
-                $rules[$locale->code.'.name'] = ['sometimes', 'nullable', 'string'];
-            }
         } else {
             $rules['fields.*.code'] = ['sometimes', 'required', new AssociationNotSupportedFields];
             $rules['fields.*.type'] = ['sometimes', 'required', new AssociationFieldTypes];
+        }
 
-            foreach ($this->localeRepository->getActiveLocales() as $locale) {
-                $rules[$locale->code.'.name'] = ['required', 'string'];
-            }
+        /**
+         * The label is optional in every locale: the create modal collects the code
+         * only (the controller seeds the requested-locale label from it), and the
+         * edit form submits a hidden input for each active locale, so requiring them
+         * would raise one error per untranslated locale on an otherwise valid save.
+         */
+        foreach ($this->localeRepository->getActiveLocales() as $locale) {
+            $rules[$locale->code.'.name'] = ['sometimes', 'nullable', 'string'];
         }
 
         return $rules;
+    }
+
+    /**
+     * Per-locale label keys would otherwise surface as "af z a.name" in messages.
+     */
+    public function attributes(): array
+    {
+        $label = trans('admin::app.catalog.category_fields.create.label');
+
+        return $this->localeRepository->getActiveLocales()
+            ->mapWithKeys(fn ($locale) => [$locale->code.'.name' => $label.' ('.$locale->code.')'])
+            ->all();
     }
 
     /**

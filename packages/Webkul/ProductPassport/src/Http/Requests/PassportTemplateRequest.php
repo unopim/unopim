@@ -190,13 +190,13 @@ class PassportTemplateRequest extends FormRequest
         $claimed = PassportTemplateFamilyProxy::modelClass()::query()
             ->whereIn('attribute_family_id', $families)
             ->when($this->templateId() !== null, fn ($query) => $query->where('passport_template_id', '!=', $this->templateId()))
-            ->with(['family', 'template.translations'])
+            ->with(['family.translations', 'template.translations'])
             ->get();
 
         foreach ($claimed as $row) {
             $validator->errors()->add('families', trans('passport::app.templates.errors.family-claimed', [
-                'family'   => $row->family?->code ?? $row->attribute_family_id,
-                'template' => $row->template?->name ?? $row->template?->code ?? '',
+                'family'   => $row->family?->getTranslatedValueWithFallback('name') ?: ($row->family?->code ?? (string) $row->attribute_family_id),
+                'template' => $row->template?->name ?: ($row->template?->code ?? ''),
             ]));
         }
     }

@@ -32,14 +32,14 @@ it('creates a template from the create modal', function (): void {
     $this->loginWithPermissions('all');
 
     $this->post(route('admin.catalog.passports.templates.store'), [
-        'code'    => 'espr_general',
-        'en_US'   => ['name' => 'EU ESPR (general)'],
+        'code'    => 'tpl_under_test',
+        'en_US'   => ['name' => 'Template under test'],
     ])->assertRedirect();
 
-    $template = PassportTemplate::query()->where('code', 'espr_general')->first();
+    $template = PassportTemplate::query()->where('code', 'tpl_under_test')->first();
 
     expect($template)->not->toBeNull()
-        ->and($template->translate('en_US')->name)->toBe('EU ESPR (general)');
+        ->and($template->translate('en_US')->name)->toBe('Template under test');
 });
 
 it('renders the editor with the saved sections and fields', function (): void {
@@ -47,7 +47,7 @@ it('renders the editor with the saved sections and fields', function (): void {
 
     $attribute = AttributeProxy::factory()->create(['code' => 'carbon_footprint', 'type' => 'text']);
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $section = $template->sections()->create(['code' => 'circularity', 'position' => 0, 'en_US' => ['name' => 'Circularity']]);
 
@@ -64,7 +64,7 @@ it('renders the editor with the saved sections and fields', function (): void {
 
     $this->get(route('admin.catalog.passports.templates.edit', $template->id))
         ->assertOk()
-        ->assertSee('espr_general')
+        ->assertSee('tpl_under_test')
         ->assertSee('Carbon Footprint', false)
         ->assertSee('Circularity', false);
 });
@@ -72,7 +72,7 @@ it('renders the editor with the saved sections and fields', function (): void {
 it('renders every translatable field with a single values binding', function (): void {
     $this->loginWithPermissions('all');
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $html = $this->get(route('admin.catalog.passports.templates.edit', $template->id))
         ->assertOk()
@@ -94,12 +94,12 @@ it('saves families, sections and fields as one payload', function (): void {
 
     $attribute = AttributeProxy::factory()->create(['code' => 'carbon_footprint', 'type' => 'text']);
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $this->put(route('admin.catalog.passports.templates.update', $template->id), [
-        'code'       => 'espr_general',
+        'code'       => 'tpl_under_test',
         'is_enabled' => 1,
-        'en_US'      => ['name' => 'EU ESPR (general)'],
+        'en_US'      => ['name' => 'Template under test'],
         'families'   => [$family->id],
         'sections'   => [
             ['code' => 'circularity', 'en_US' => ['name' => 'Circularity']],
@@ -151,11 +151,11 @@ it('drops rows that the editor removed from the payload', function (): void {
 
     $attribute = AttributeProxy::factory()->create(['code' => 'carbon_footprint', 'type' => 'text']);
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $payload = fn (array $fields): array => [
-        'code'   => 'espr_general',
-        'en_US'  => ['name' => 'EU ESPR (general)'],
+        'code'   => 'tpl_under_test',
+        'en_US'  => ['name' => 'Template under test'],
         'fields' => $fields,
     ];
 
@@ -182,10 +182,10 @@ it('drops rows that the editor removed from the payload', function (): void {
 it('rejects an attribute-sourced field with no attribute', function (): void {
     $this->loginWithPermissions('all');
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $this->put(route('admin.catalog.passports.templates.update', $template->id), [
-        'code'   => 'espr_general',
+        'code'   => 'tpl_under_test',
         'fields' => [
             [
                 'code'        => 'carbon',
@@ -204,10 +204,10 @@ it('rejects two fields claiming the same identifier role', function (): void {
 
     $attribute = AttributeProxy::factory()->create(['code' => 'ean', 'type' => 'text']);
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $this->put(route('admin.catalog.passports.templates.update', $template->id), [
-        'code'   => 'espr_general',
+        'code'   => 'tpl_under_test',
         'fields' => [
             [
                 'code'         => 'ean',
@@ -236,10 +236,10 @@ it('rejects a family already claimed by another template', function (): void {
     $owner = PassportTemplate::create(['code' => 'battery', 'is_enabled' => true]);
     $owner->families()->attach($family->id);
 
-    $other = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $other = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $this->put(route('admin.catalog.passports.templates.update', $other->id), [
-        'code'     => 'espr_general',
+        'code'     => 'tpl_under_test',
         'families' => [$family->id],
     ])->assertSessionHasErrors('families');
 
@@ -249,20 +249,20 @@ it('rejects a family already claimed by another template', function (): void {
 it('keeps the code immutable on update', function (): void {
     $this->loginWithPermissions('all');
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $this->put(route('admin.catalog.passports.templates.update', $template->id), [
         'code'  => 'renamed_code',
-        'en_US' => ['name' => 'EU ESPR (general)'],
+        'en_US' => ['name' => 'Template under test'],
     ])->assertOk();
 
-    expect($template->refresh()->code)->toBe('espr_general');
+    expect($template->refresh()->code)->toBe('tpl_under_test');
 });
 
 it('deletes a template with the delete permission', function (): void {
     $this->loginWithPermissions('all');
 
-    $template = PassportTemplate::create(['code' => 'espr_general', 'is_enabled' => true]);
+    $template = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);
 
     $this->delete(route('admin.catalog.passports.templates.delete', $template->id))->assertOk();
 

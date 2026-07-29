@@ -178,14 +178,12 @@ const appOptions = {
 
                         const firstField = Object.keys(errors)[0];
 
-                        // Every rejected field gets its notice; the first one is
-                        // also scrolled into view.
                         Object.entries(errors).forEach(([field, message]) => {
                             const control = form
                                 .querySelector('[name="' + CSS.escape(field) + '"]')
                                 ?.closest("[data-control-group]");
 
-                            if (control) {
+                            if (control && ! control.querySelector('[data-error-slot="' + CSS.escape(field) + '"]')) {
                                 window.markFieldInvalid(control, message);
                             }
                         });

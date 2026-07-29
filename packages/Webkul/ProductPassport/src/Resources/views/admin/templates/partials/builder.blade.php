@@ -52,6 +52,10 @@
     ])->values();
 
     $familyValue = $template->families->pluck('id')->implode(',');
+
+    $familyParams = $claimedFamilies === []
+        ? []
+        : ['exclude' => ['columnName' => 'id', 'values' => $claimedFamilies]];
 @endphp
 
 <v-passport-template-builder
@@ -84,6 +88,7 @@
                             :value="$familyValue"
                             :label="trans('passport::app.templates.builder.families')"
                             :placeholder="trans('passport::app.templates.builder.select-families')"
+                            :query-params="json_encode($familyParams)"
                             @input="onFamiliesChange($event)"
                         />
 

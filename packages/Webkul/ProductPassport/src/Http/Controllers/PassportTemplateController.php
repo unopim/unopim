@@ -10,6 +10,7 @@ use Illuminate\View\View;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\ProductPassport\DataGrids\Catalog\PassportTemplateDataGrid;
 use Webkul\ProductPassport\Http\Requests\PassportTemplateRequest;
+use Webkul\ProductPassport\Models\PassportTemplateFamilyProxy;
 use Webkul\ProductPassport\Repositories\PassportTemplateRepository;
 
 class PassportTemplateController extends Controller
@@ -65,8 +66,9 @@ class PassportTemplateController extends Controller
             ->findOrFail($id);
 
         return view('passport::admin.templates.edit', [
-            'template' => $template,
-            'locales'  => $this->localeRepository->getActiveLocales(),
+            'template'        => $template,
+            'locales'         => $this->localeRepository->getActiveLocales(),
+            'claimedFamilies' => $this->claimedFamilies($template->id),
         ]);
     }
 
@@ -101,6 +103,22 @@ class PassportTemplateController extends Controller
         Event::dispatch('catalog.passport_template.delete.after', $id);
 
         return new JsonResponse(['message' => trans('passport::app.templates.delete-success')]);
+    }
+
+    /**
+     * Families another template already owns. The picker excludes them, so the
+     * one-template-per-family rule is visible while choosing rather than only
+     * after a refused save.
+     *
+     * @return list<int>
+     */
+    private function claimedFamilies(int $templateId): array
+    {
+        return PassportTemplateFamilyProxy::modelClass()::query()
+            ->where('passport_template_id', '!=', $templateId)
+            ->pluck('attribute_family_id')
+            ->map(fn ($id): int => (int) $id)
+            ->all();
     }
 
     /**
