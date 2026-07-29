@@ -59,6 +59,20 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
     protected array $historyTags = ['admin'];
 
     /**
+     * Credentials must never reach the audit trail: the history preview renders
+     * old and new values verbatim, which published password hashes to anyone
+     * holding the history permission.
+     *
+     * @var array<int, string>
+     */
+    protected $auditExclude = [
+        'password',
+        'api_token',
+        'remember_token',
+        'sso_identifier',
+    ];
+
+    /**
      * Mirrors the DB column default so a freshly instantiated model reflects
      * 'user' before an insert round-trip populates it from the schema default.
      *
