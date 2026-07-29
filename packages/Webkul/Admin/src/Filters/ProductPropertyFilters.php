@@ -2,6 +2,8 @@
 
 namespace Webkul\Admin\Filters;
 
+use Illuminate\Support\Str;
+
 /**
  * Product properties that are filterable but not part of the grid's default filter set.
  *
@@ -90,10 +92,14 @@ class ProductPropertyFilters
             return $columns;
         }
 
+        $singular = Str::singular($search);
+
         return array_values(array_filter(
             $columns,
             fn (array $column): bool => str_contains(mb_strtolower((string) $column['label']), $search)
                 || str_contains($column['index'], $search)
+                || str_contains(Str::singular(mb_strtolower((string) $column['label'])), $singular)
+                || str_contains(Str::singular($column['index']), $singular)
         ));
     }
 

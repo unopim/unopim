@@ -1426,9 +1426,13 @@ class ProductController extends Controller
         $search = trim((string) request('query', ''));
 
         if ($search !== '') {
-            $query->where(function ($builder) use ($search) {
-                $builder->whereTranslationLike('name', '%'.$search.'%')
-                    ->orWhere('code', 'LIKE', '%'.$search.'%');
+            $terms = array_unique([$search, Str::singular($search), Str::plural($search)]);
+
+            $query->where(function ($builder) use ($terms) {
+                foreach ($terms as $term) {
+                    $builder->orWhereTranslationLike('name', '%'.$term.'%')
+                        ->orWhere('code', 'LIKE', '%'.$term.'%');
+                }
             });
         }
 
