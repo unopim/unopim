@@ -681,12 +681,12 @@ class AttributeFamilyController extends Controller
     }
 
     /**
-     * Force unique attributes onto the variant level, keeping sku common.
+     * Force unique attributes onto the variant level.
      */
     protected function forceUniqueAttributesToVariant(array $placements, $familyAttributes): array
     {
         $uniqueCodes = $familyAttributes
-            ->filter(fn ($attribute): bool => (bool) $attribute->is_unique && $attribute->code !== 'sku')
+            ->filter(fn ($attribute): bool => (bool) $attribute->is_unique)
             ->keys()
             ->all();
 

@@ -852,7 +852,7 @@
 
                 uniqueCodes() {
                     return (this.allAttributes || [])
-                        .filter(attribute => attribute.is_unique && attribute.code !== 'sku')
+                        .filter(attribute => attribute.is_unique)
                         .map(attribute => attribute.code);
                 },
 
