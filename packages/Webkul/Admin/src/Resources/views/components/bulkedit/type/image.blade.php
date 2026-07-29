@@ -40,16 +40,15 @@
         type="file"
         ref="fileInput"
         class="hidden"
-        accept="image/*"
+        :accept="acceptedTypes"
         @change="onFileChange"
       />
 
-      <!-- Preview handled by editor-level overlay via emitter -->
     </div>
   </script>
 
   <script type="module">
-    app.component('v-spreadsheet-image', {
+    const mediaCell = {
       template: '#v-spreadsheet-image-template',
 
       props: {
@@ -70,6 +69,18 @@
       computed: {
         imageUrl() {
           return this.modelValue ? this.baseUrl + this.modelValue : '';
+        },
+
+        acceptedTypes() {
+          const extensions = this.attribute?.allowed_extensions;
+
+          if (extensions) {
+            return extensions.split(',')
+              .map(extension => '.' + extension.trim().replace(/^\./, ''))
+              .join(',');
+          }
+
+          return this.column?.type === 'image' ? 'image/*' : '';
         },
       },
 
@@ -138,7 +149,10 @@
 
         preview() {
           if (this.imageUrl) {
-            this.$emitter.emit('preview-image', this.imageUrl);
+            this.$emitter.emit('preview-image', {
+              url: this.imageUrl,
+              fileName: this.getFileName(this.modelValue),
+            });
           }
         },
 
@@ -156,6 +170,9 @@
           this.emitUpdate(val);
         },
       },
-    });
+    };
+
+    app.component('v-spreadsheet-image', mediaCell);
+    app.component('v-spreadsheet-file', mediaCell);
   </script>
 @endPushOnce
