@@ -807,7 +807,6 @@ return [
                 'load-more'          => 'Wczytaj więcej',
                 'loading'            => 'Wczytywanie...',
                 'empty'              => 'Nie ma jeszcze kategorii.',
-                'empty-panel'        => 'Wybierz kategorię, aby zobaczyć jej właściwości.',
                 'new-category'       => 'Nowa kategoria',
                 'root-level'         => 'Poziom główny',
                 'roots-count'        => ':count drzew',

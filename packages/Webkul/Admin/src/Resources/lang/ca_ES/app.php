@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Carrega\'n més',
                 'loading'            => 'Carregant...',
                 'empty'              => 'Encara no hi ha categories.',
-                'empty-panel'        => 'Selecciona una categoria per veure\'n les propietats.',
                 'new-category'       => 'Categoria nova',
                 'root-level'         => 'Nivell arrel',
                 'roots-count'        => ':count arbres',

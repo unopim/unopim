@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Daha fazla yükle',
                 'loading'            => 'Yükleniyor...',
                 'empty'              => 'Henüz kategori yok.',
-                'empty-panel'        => 'Özelliklerini görmek için bir kategori seçin.',
                 'new-category'       => 'Yeni Kategori',
                 'root-level'         => 'Kök seviye',
                 'roots-count'        => ':count ağaç',

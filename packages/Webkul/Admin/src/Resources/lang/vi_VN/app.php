@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Tải thêm',
                 'loading'            => 'Đang tải...',
                 'empty'              => 'Chưa có danh mục nào.',
-                'empty-panel'        => 'Chọn một danh mục để xem thuộc tính của nó.',
                 'new-category'       => 'Danh mục mới',
                 'root-level'         => 'Cấp gốc',
                 'roots-count'        => ':count cây',

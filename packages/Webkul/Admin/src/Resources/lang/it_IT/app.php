@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Carica altro',
                 'loading'            => 'Caricamento...',
                 'empty'              => 'Nessuna categoria presente.',
-                'empty-panel'        => 'Seleziona una categoria per vederne le proprietà.',
                 'new-category'       => 'Nuova categoria',
                 'root-level'         => 'Livello radice',
                 'roots-count'        => ':count alberi',

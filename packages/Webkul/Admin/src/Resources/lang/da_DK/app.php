@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Indlæs flere',
                 'loading'            => 'Indlæser...',
                 'empty'              => 'Ingen kategorier endnu.',
-                'empty-panel'        => 'Vælg en kategori for at se dens egenskaber.',
                 'new-category'       => 'Ny kategori',
                 'root-level'         => 'Rodniveau',
                 'roots-count'        => ':count træer',

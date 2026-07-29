@@ -807,7 +807,6 @@ return [
                 'load-more'          => 'Încarcă mai multe',
                 'loading'            => 'Se încarcă...',
                 'empty'              => 'Încă nu există categorii.',
-                'empty-panel'        => 'Selectează o categorie pentru a-i vedea proprietățile.',
                 'new-category'       => 'Categorie nouă',
                 'root-level'         => 'Nivel rădăcină',
                 'roots-count'        => ':count arbori',

@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'تحميل المزيد',
                 'loading'            => 'جارٍ التحميل...',
                 'empty'              => 'لا توجد فئات بعد.',
-                'empty-panel'        => 'اختر فئة لعرض خصائصها.',
                 'new-category'       => 'فئة جديدة',
                 'root-level'         => 'المستوى الجذري',
                 'roots-count'        => ':count أشجار',

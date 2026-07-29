@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Muat lainnya',
                 'loading'            => 'Memuat...',
                 'empty'              => 'Belum ada kategori.',
-                'empty-panel'        => 'Pilih kategori untuk melihat propertinya.',
                 'new-category'       => 'Kategori Baru',
                 'root-level'         => 'Tingkat akar',
                 'roots-count'        => ':count pohon',

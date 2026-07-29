@@ -807,7 +807,6 @@ return [
                 'load-more'          => 'Last inn flere',
                 'loading'            => 'Laster...',
                 'empty'              => 'Ingen kategorier ennå.',
-                'empty-panel'        => 'Velg en kategori for å se egenskapene.',
                 'new-category'       => 'Ny kategori',
                 'root-level'         => 'Rotnivå',
                 'roots-count'        => ':count trær',

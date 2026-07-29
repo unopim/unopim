@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'さらに読み込む',
                 'loading'            => '読み込み中...',
                 'empty'              => 'カテゴリがまだありません。',
-                'empty-panel'        => 'プロパティを表示するカテゴリを選択してください。',
                 'new-category'       => '新しいカテゴリ',
                 'root-level'         => 'ルート階層',
                 'roots-count'        => ':count 件のツリー',

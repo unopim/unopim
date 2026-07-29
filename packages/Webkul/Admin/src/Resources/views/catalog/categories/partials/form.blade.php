@@ -35,7 +35,9 @@
                 <x-admin::form.control-group.error control-name="code" />
             </x-admin::form.control-group>
 
-            @if ($parentLabel ?? null)
+            @if (($parentPicker ?? false) || ($parentLabel ?? null))
+                @php $parentText = $parentLabel ?: trans('admin::app.catalog.categories.browse.root-level'); @endphp
+
                 <x-admin::form.control-group>
                     <x-admin::form.control-group.label>
                         @lang('admin::app.catalog.categories.edit.select-parent-category')
@@ -48,9 +50,9 @@
                                     <span
                                         class="text-sm text-gray-600 dark:text-gray-300 truncate"
                                         ref="parentPathLabel"
-                                        title="{{ $parentLabel }}"
+                                        title="{{ $parentText }}"
                                     >
-                                        {{ $parentLabel }}
+                                        {{ $parentText }}
                                     </span>
 
                                     <span class="icon-chevron-right shrink-0 text-2xl text-gray-400 dark:text-gray-300"></span>
@@ -64,6 +66,27 @@
                             </x-slot>
 
                             <x-slot:content>
+                                <label class="flex gap-2 items-center p-1.5 mb-1.5 border-b dark:border-cherry-800 cursor-pointer select-none">
+                                    <input
+                                        type="radio"
+                                        name="parent_id"
+                                        value=""
+                                        class="hidden peer"
+                                        @checked(! $parentLabel)
+                                        @change="
+                                            $refs.parentPathLabel.textContent = $refs.rootLevelLabel.textContent.trim();
+                                            $refs.parentPathLabel.title = $refs.rootLevelLabel.textContent.trim();
+                                            $refs.parentDrawer.close();
+                                        "
+                                    >
+
+                                    <span class="icon-radio-normal text-2xl rounded-md peer-checked:icon-radio-selected peer-checked:text-primary-700"></span>
+
+                                    <span class="text-sm text-gray-600 dark:text-gray-300" ref="rootLevelLabel">
+                                        @lang('admin::app.catalog.categories.browse.root-level')
+                                    </span>
+                                </label>
+
                                 <x-admin::tree.category.view
                                     input-type="radio"
                                     name-field="parent_id"
@@ -92,7 +115,7 @@
                             class="cursor-not-allowed"
                             name="parent_label"
                             disabled
-                            :value="$parentLabel"
+                            :value="$parentText"
                         />
                     @endif
                 </x-admin::form.control-group>

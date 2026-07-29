@@ -82,36 +82,22 @@ class AssociationTypeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * Created from the code-only create modal on the index page: the type is
-     * persisted with just its code, then the user is redirected to the edit
-     * page to configure labels, per-link fields and everything else. The
-     * `<x-admin::form ajax>` submit turns this redirect into a JSON
-     * `redirect_url` automatically.
+     * The create modal collects only a code, so the redirect hands the user to
+     * the edit page to configure labels and per-link fields. Only the seeder may
+     * mark a type as a default, and the code stands in as the label until one is
+     * set.
      */
     public function store(AssociationTypeRequest $associationTypeRequest): RedirectResponse|JsonResponse
     {
         $requestData = $associationTypeRequest->all();
 
-        /**
-         * An association type created from the admin is always user-defined; only the
-         * seeder is allowed to mark a type as a default (is_user_defined = 0). New
-         * types are active immediately so they surface on product edit right away.
-         */
         $requestData['is_user_defined'] = 1;
         $requestData['status'] = $requestData['status'] ?? 1;
 
-        /**
-         * Position is auto-assigned to sort after every existing type when the
-         * request omits it (the modal does not ask for one).
-         */
         if (! isset($requestData['position']) || $requestData['position'] === '' || $requestData['position'] === null) {
             $requestData['position'] = ((int) $this->associationTypeRepository->max('position')) + 1;
         }
 
-        /**
-         * The modal collects no label. Seed the requested-locale name to the code
-         * so the grid label is never blank; the user edits it on the edit page.
-         */
         $localeCode = core()->getRequestedLocaleCode();
 
         if (empty($requestData[$localeCode]['name'] ?? null)) {
@@ -144,13 +130,11 @@ class AssociationTypeController extends Controller
 
     /**
      * Update the specified resource in storage.
+     *
+     * `code` and `is_user_defined` are immutable once the type exists.
      */
     public function update(AssociationTypeRequest $associationTypeRequest, int $id): RedirectResponse|JsonResponse
     {
-        /**
-         * `code` and `is_user_defined` are immutable once an association type is
-         * created, so they are always stripped out before the update is applied.
-         */
         $requestData = $associationTypeRequest->except(['code', 'is_user_defined']);
 
         Event::dispatch('catalog.association_type.update.before', $id);

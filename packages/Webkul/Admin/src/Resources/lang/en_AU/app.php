@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Load more',
                 'loading'            => 'Loading...',
                 'empty'              => 'No categories yet.',
-                'empty-panel'        => 'Select a category to view its properties.',
                 'new-category'       => 'New Category',
                 'root-level'         => 'Root level',
                 'roots-count'        => ':count trees',

@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Charger plus',
                 'loading'            => 'Chargement...',
                 'empty'              => 'Aucune catégorie pour le moment.',
-                'empty-panel'        => 'Sélectionnez une catégorie pour afficher ses propriétés.',
                 'new-category'       => 'Nouvelle catégorie',
                 'root-level'         => 'Niveau racine',
                 'roots-count'        => ':count arborescences',

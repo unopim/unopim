@@ -807,7 +807,6 @@ return [
                 'load-more'          => 'Meer laden',
                 'loading'            => 'Bezig met laden...',
                 'empty'              => 'Nog geen categorieën.',
-                'empty-panel'        => 'Selecteer een categorie om de eigenschappen te bekijken.',
                 'new-category'       => 'Nieuwe categorie',
                 'root-level'         => 'Hoofdniveau',
                 'roots-count'        => ':count bomen',

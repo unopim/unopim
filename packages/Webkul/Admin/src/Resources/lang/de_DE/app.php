@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Mehr laden',
                 'loading'            => 'Wird geladen...',
                 'empty'              => 'Noch keine Kategorien vorhanden.',
-                'empty-panel'        => 'Wählen Sie eine Kategorie, um ihre Eigenschaften zu sehen.',
                 'new-category'       => 'Neue Kategorie',
                 'root-level'         => 'Stammebene',
                 'roots-count'        => ':count Bäume',

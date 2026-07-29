@@ -806,7 +806,6 @@ return [
                 'load-more'          => '載入更多',
                 'loading'            => '載入中...',
                 'empty'              => '尚無類別。',
-                'empty-panel'        => '選取一個類別以檢視其屬性。',
                 'new-category'       => '新增類別',
                 'root-level'         => '根層級',
                 'roots-count'        => ':count 棵樹',

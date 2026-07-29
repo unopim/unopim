@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Ladda fler',
                 'loading'            => 'Laddar...',
                 'empty'              => 'Inga kategorier ännu.',
-                'empty-panel'        => 'Välj en kategori för att se dess egenskaper.',
                 'new-category'       => 'Ny kategori',
                 'root-level'         => 'Rotnivå',
                 'roots-count'        => ':count träd',

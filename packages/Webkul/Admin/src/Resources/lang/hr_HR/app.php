@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Učitaj još',
                 'loading'            => 'Učitavanje...',
                 'empty'              => 'Još nema kategorija.',
-                'empty-panel'        => 'Odaberite kategoriju da vidite njezina svojstva.',
                 'new-category'       => 'Nova kategorija',
                 'root-level'         => 'Korijenska razina',
                 'roots-count'        => ':count stabala',

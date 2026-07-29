@@ -806,7 +806,6 @@ return [
                 'load-more'          => '加载更多',
                 'loading'            => '加载中...',
                 'empty'              => '暂无类目。',
-                'empty-panel'        => '选择一个类目以查看其属性。',
                 'new-category'       => '新建类目',
                 'root-level'         => '根级',
                 'roots-count'        => ':count 棵树',

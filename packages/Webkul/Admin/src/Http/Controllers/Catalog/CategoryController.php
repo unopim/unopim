@@ -115,7 +115,9 @@ class CategoryController extends Controller
             return view('admin::catalog.categories.index', $data);
         }
 
-        $data['treeItems'] = CategoryTreeResource::collection($this->categoryRepository->getRootCategories())->toArray($request);
+        $roots = $this->categoryRepository->getRootCategories();
+
+        $data['treeItems'] = CategoryTreeResource::collection($roots)->toArray($request);
 
         if ($categoryId = $request->selectedCategoryId()) {
             $data['category'] = $this->categoryRepository->find($categoryId);
@@ -129,6 +131,12 @@ class CategoryController extends Controller
                 $data['parentCategory'] = $this->categoryRepository->find($parentId);
                 $data['selectedId'] = $data['parentCategory']?->id;
             }
+        } elseif ($first = $roots->first()) {
+            // Landing without a selection opens the first tree, the way a file browser
+            // opens on a folder, rather than showing a panel with nothing in it.
+            $data['category'] = $first;
+            $data['panelMode'] = 'edit';
+            $data['selectedId'] = $first->id;
         }
 
         $revealed = $data['category'] ?? $data['parentCategory'];

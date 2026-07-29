@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'और लोड करें',
                 'loading'            => 'लोड हो रहा है...',
                 'empty'              => 'अभी तक कोई श्रेणी नहीं है।',
-                'empty-panel'        => 'गुण देखने के लिए कोई श्रेणी चुनें।',
                 'new-category'       => 'नई श्रेणी',
                 'root-level'         => 'मूल स्तर',
                 'roots-count'        => ':count ट्री',

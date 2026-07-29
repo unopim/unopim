@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Lataa lisää',
                 'loading'            => 'Ladataan...',
                 'empty'              => 'Ei vielä kategorioita.',
-                'empty-panel'        => 'Valitse kategoria nähdäksesi sen ominaisuudet.',
                 'new-category'       => 'Uusi kategoria',
                 'root-level'         => 'Juuritaso',
                 'roots-count'        => ':count puuta',

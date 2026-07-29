@@ -807,7 +807,6 @@ return [
                 'load-more'          => '더 불러오기',
                 'loading'            => '불러오는 중...',
                 'empty'              => '아직 카테고리가 없습니다.',
-                'empty-panel'        => '속성을 보려면 카테고리를 선택하세요.',
                 'new-category'       => '새 카테고리',
                 'root-level'         => '루트 수준',
                 'roots-count'        => ':count개 트리',

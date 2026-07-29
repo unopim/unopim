@@ -806,7 +806,6 @@ return [
                 'load-more'          => 'Mag-load pa',
                 'loading'            => 'Naglo-load...',
                 'empty'              => 'Wala pang mga kategorya.',
-                'empty-panel'        => 'Pumili ng kategorya upang makita ang mga katangian nito.',
                 'new-category'       => 'Bagong Kategorya',
                 'root-level'         => 'Antas na ugat',
                 'roots-count'        => ':count na puno',

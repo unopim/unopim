@@ -74,10 +74,8 @@
                     @include('admin::catalog.categories.partials.panel')
                 @else
                     <div class="flex flex-col gap-4 items-center justify-center p-8 h-[calc(100vh-170px)] bg-white dark:bg-cherry-900 rounded box-shadow">
-                        <span class="icon-folder text-8xl text-gray-300 dark:text-gray-500"></span>
-
                         <p class="text-base text-gray-600 dark:text-gray-300">
-                            @lang('admin::app.catalog.categories.browse.empty-panel')
+                            @lang('admin::app.catalog.categories.browse.empty')
                         </p>
 
                         @if ($canCreate)
