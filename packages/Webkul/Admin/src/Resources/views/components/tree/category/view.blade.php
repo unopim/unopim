@@ -23,92 +23,99 @@
 
 @pushOnce('scripts')
     <script type="x-template" id="v-category-tree-view-template">
-        <div class="v-tree-container v-tree-item-wrapper">
-            <a
-                class="flex items-center gap-1 mb-2 text-sm text-primary-600 cursor-pointer"
-                v-if="allowRootCreate"
-                :href="createCategoryUrl()"
-            >
-                <span class="text-base leading-none">+</span>
-
-                @lang('admin::app.catalog.categories.browse.add-root')
-            </a>
-
-            <div class="mb-2" v-if="showSearch">
-                <x-admin::search
-                    name="category_tree_search"
-                    :placeholder="trans('admin::app.catalog.categories.browse.search-placeholder')"
-                    v-model="searchTerm"
-                    @input="onSearchInput"
-                    @keydown.esc="clearSearch"
-                />
-            </div>
-
-            <template v-if="isSearching">
-                <p
-                    class="py-6 text-center text-sm text-gray-400 dark:text-gray-300"
-                    v-if="searchLoading && ! searchResults.length"
+        <div
+            class="v-tree-container v-tree-item-wrapper"
+            :class="fillHeight ? 'flex flex-col h-full min-h-0' : ''"
+        >
+            <div :class="fillHeight ? 'shrink-0' : ''">
+                <a
+                    class="flex items-center gap-1 mb-2 text-sm text-primary-600 cursor-pointer"
+                    v-if="allowRootCreate"
+                    :href="createCategoryUrl()"
                 >
-                    @lang('admin::app.catalog.categories.browse.searching')
-                </p>
+                    <span class="text-base leading-none">+</span>
 
-                <p
-                    class="py-6 text-center text-sm text-gray-400 dark:text-gray-300"
-                    v-else-if="! searchResults.length"
-                >
-                    @lang('admin::app.catalog.categories.browse.no-results')
-                </p>
+                    @lang('admin::app.catalog.categories.browse.add-root')
+                </a>
 
-                <div
-                    class="flex flex-col gap-0.5 px-2 py-1.5 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
-                    v-for="result in searchResults"
-                    :key="result.id"
-                    @click="chooseResult(result)"
-                >
-                    <span class="text-sm text-gray-800 dark:text-white truncate" v-text="result.label"></span>
-
-                    <span class="text-xs text-gray-400 dark:text-gray-300 truncate" v-text="result.path" v-if="result.path"></span>
+                <div class="mb-2" v-if="showSearch">
+                    <x-admin::search
+                        name="category_tree_search"
+                        :placeholder="trans('admin::app.catalog.categories.browse.search-placeholder')"
+                        v-model="searchTerm"
+                        @input="onSearchInput"
+                        @keydown.esc="clearSearch"
+                    />
                 </div>
 
-                <p
-                    class="py-2 text-center text-xs text-primary-600 cursor-pointer"
-                    v-if="searchPage < searchLastPage"
-                    @click="runSearch(searchPage + 1)"
+                <div
+                    class="flex items-center justify-end gap-1.5 pb-2 mb-1.5 border-b border-gray-200 dark:border-cherry-800"
+                    v-if="showToolbar && ! isSearching"
                 >
-                    @lang('admin::app.catalog.categories.browse.load-more')
-                </p>
-            </template>
+                    <span
+                        class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-cherry-800 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                        title="@lang('admin::app.catalog.categories.browse.expand-all-hint')"
+                        @click="expandAll"
+                    >
+                        @lang('admin::app.catalog.categories.browse.expand-all')
+                    </span>
 
-            <template v-else>
-            <div
-                class="flex items-center justify-end gap-1.5 pb-2 mb-1.5 border-b border-gray-200 dark:border-cherry-800"
-                v-if="showToolbar"
-            >
-                <span
-                    class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-cherry-800 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
-                    title="@lang('admin::app.catalog.categories.browse.expand-all-hint')"
-                    @click="expandAll"
-                >
-                    @lang('admin::app.catalog.categories.browse.expand-all')
-                </span>
-
-                <span
-                    class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-cherry-800 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
-                    @click="collapseAll"
-                >
-                    @lang('admin::app.catalog.categories.browse.collapse-all')
-                </span>
+                    <span
+                        class="px-2 py-1 text-xs text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-cherry-800 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                        @click="collapseAll"
+                    >
+                        @lang('admin::app.catalog.categories.browse.collapse-all')
+                    </span>
+                </div>
             </div>
 
-            <v-tree-item
-                v-for="item in formattedItems"
-                :key="item[valueField]"
-                :item="item"
-                :level="1"
-                @change-input="$emit('change-input', $event)"
-                @select-node="$emit('select-node', $event)"
-            />
-            </template>
+            <div :class="fillHeight ? 'flex-1 min-h-0 overflow-y-auto' : ''">
+                <template v-if="isSearching">
+                    <p
+                        class="py-6 text-center text-sm text-gray-400 dark:text-gray-300"
+                        v-if="searchLoading && ! searchResults.length"
+                    >
+                        @lang('admin::app.catalog.categories.browse.searching')
+                    </p>
+
+                    <p
+                        class="py-6 text-center text-sm text-gray-400 dark:text-gray-300"
+                        v-else-if="! searchResults.length"
+                    >
+                        @lang('admin::app.catalog.categories.browse.no-results')
+                    </p>
+
+                    <div
+                        class="flex flex-col gap-0.5 px-2 py-1.5 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                        v-for="result in searchResults"
+                        :key="result.id"
+                        @click="chooseResult(result)"
+                    >
+                        <span class="text-sm text-gray-800 dark:text-white truncate" v-text="result.label"></span>
+
+                        <span class="text-xs text-gray-400 dark:text-gray-300 truncate" v-text="result.path" v-if="result.path"></span>
+                    </div>
+
+                    <p
+                        class="py-2 text-center text-xs text-primary-600 cursor-pointer"
+                        v-if="searchPage < searchLastPage"
+                        @click="runSearch(searchPage + 1)"
+                    >
+                        @lang('admin::app.catalog.categories.browse.load-more')
+                    </p>
+                </template>
+
+                <template v-else>
+                    <v-tree-item
+                        v-for="item in formattedItems"
+                        :key="item[valueField]"
+                        :item="item"
+                        :level="1"
+                        @change-input="$emit('change-input', $event)"
+                        @select-node="$emit('select-node', $event)"
+                    />
+                </template>
+            </div>
         </div>
     </script>
 
@@ -194,6 +201,10 @@
                     default: false
                 },
                 allowRootCreate: {
+                    type: Boolean,
+                    default: false
+                },
+                fillHeight: {
                     type: Boolean,
                     default: false
                 }

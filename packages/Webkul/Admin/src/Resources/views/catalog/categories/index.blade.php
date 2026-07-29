@@ -54,10 +54,11 @@
 
         <div class="flex gap-2.5 mt-3.5 flex-wrap">
             <div class="flex flex-col shrink-0 w-[360px] max-w-full p-4 h-[calc(100vh-170px)] bg-white dark:bg-cherry-900 rounded box-shadow">
-                <div class="flex flex-col gap-3 h-full overflow-y-auto">
+                <div class="flex flex-col h-full min-h-0">
                     <x-admin::tree.category.view
                         input-type="radio"
                         name-field="browse_category"
+                        ::fill-height="true"
                         label-field="name"
                         value-field="id"
                         id-field="id"
