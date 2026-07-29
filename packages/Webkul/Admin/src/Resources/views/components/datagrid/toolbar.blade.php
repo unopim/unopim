@@ -361,7 +361,10 @@
                         </div>
                     </div>
 
-                    <div class="sticky bottom-0 flex items-stretch gap-x-2.5 border-t border-gray-100 bg-white pt-3 ltr:-ml-3 ltr:-mr-3 ltr:pl-3 ltr:pr-3 rtl:-ml-3 rtl:-mr-3 rtl:pl-3 rtl:pr-3 dark:border-cherry-800 dark:bg-cherry-800">
+                </x-slot>
+
+                <x-slot:footer class="mt-auto border-t border-gray-100 bg-white p-5 dark:border-cherry-800 dark:bg-cherry-800">
+                    <div class="flex items-stretch gap-x-2.5">
                         <button
                             type="button"
                             class="secondary-button flex-1 justify-center text-center disabled:cursor-not-allowed disabled:opacity-50"
