@@ -26,6 +26,7 @@ use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Notification\Models\UserNotification;
 use Webkul\User\Contracts\Admin as AdminContract;
 use Webkul\User\Database\Factories\AdminFactory;
+use Webkul\User\Jobs\RefreshGravatarPayload;
 
 #[Fillable([
     'name',
@@ -52,6 +53,20 @@ use Webkul\User\Database\Factories\AdminFactory;
 class Admin extends Authenticatable implements AdminContract, HistoryAuditable, OAuthenticatable
 {
     use HasApiTokens, HasFactory, HistoryTrait, Notifiable;
+
+    /**
+     * Mirrors the `max-age=300` gravatar.com serves for avatar images, so an avatar replaced
+     * upstream surfaces here within minutes instead of being pinned for the whole cache TTL.
+     */
+    public const GRAVATAR_FRESH_SECONDS = 300;
+
+    public const GRAVATAR_HIT_TTL = 86400;
+
+    public const GRAVATAR_MISS_TTL = 600;
+
+    private const GRAVATAR_CACHE_PREFIX = 'admin.gravatar.';
+
+    private const GRAVATAR_REFRESH_LOCK_PREFIX = 'admin.gravatar.refreshing.';
 
     /**
      * @var array<int, string>
@@ -160,6 +175,18 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
         ];
     }
 
+    protected static function booted(): void
+    {
+        static::saved(function (self $admin): void {
+            if (! $admin->wasChanged(['email', 'use_gravatar'])) {
+                return;
+            }
+
+            self::forgetGravatarCacheForEmail($admin->getOriginal('email'));
+            self::forgetGravatarCacheForEmail($admin->email);
+        });
+    }
+
     public static function gravatarExistsForEmail(?string $email): bool
     {
         if (! $email) {
@@ -188,47 +215,160 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
             return false;
         }
 
-        $cached = Cache::get('admin.gravatar.'.md5($normalizedEmail));
+        $cached = Cache::get(self::GRAVATAR_CACHE_PREFIX.md5($normalizedEmail));
 
         return is_array($cached) && ($cached['found'] ?? false);
+    }
+
+    public static function forgetGravatarCacheForEmail(?string $email): void
+    {
+        if (! $email) {
+            return;
+        }
+
+        $normalizedEmail = mb_strtolower(trim($email));
+
+        if ($normalizedEmail === '') {
+            return;
+        }
+
+        Cache::forget(self::GRAVATAR_CACHE_PREFIX.md5($normalizedEmail));
+        Cache::forget(self::GRAVATAR_REFRESH_LOCK_PREFIX.md5($normalizedEmail));
     }
 
     /**
      * Cached upstream gravatar lookup. Misses are cached (shorter TTL) so a listing that renders one
      * avatar per row does not trigger a synchronous gravatar round-trip per request.
      *
-     * @return array{found: bool, body: string, content_type: string}
+     * A cached payload older than the freshness window is still served immediately and refreshed
+     * out of band, so an avatar changed on gravatar.com surfaces without ever adding latency here.
+     *
+     * @return array{found: bool, body: string, content_type: string, last_modified?: ?string, fetched_at?: int}
      */
     public static function gravatarPayload(string $hash): array
     {
-        $miss = ['found' => false, 'body' => '', 'content_type' => 'image/png'];
-
-        if (! preg_match('/^[a-f0-9]{32}$/', $hash)) {
-            return $miss;
+        if (! self::isGravatarHash($hash)) {
+            return self::gravatarMiss();
         }
 
-        $cached = Cache::get("admin.gravatar.{$hash}");
+        $cached = Cache::get(self::GRAVATAR_CACHE_PREFIX.$hash);
 
-        if (is_array($cached)) {
-            return $cached;
+        if (! is_array($cached)) {
+            return self::refreshGravatarPayload($hash);
         }
+
+        if (self::isGravatarPayloadStale($cached)) {
+            self::queueGravatarRefresh($hash);
+        }
+
+        return $cached;
+    }
+
+    /**
+     * Refresh only when the cached payload has actually aged out, so a queue backlog holding several
+     * refreshes for the same hash costs one upstream request rather than one per job.
+     */
+    public static function refreshStaleGravatarPayload(string $hash): void
+    {
+        $cached = Cache::get(self::GRAVATAR_CACHE_PREFIX.$hash);
+
+        if (
+            is_array($cached)
+            && ! self::isGravatarPayloadStale($cached)
+        ) {
+            return;
+        }
+
+        self::refreshGravatarPayload($hash);
+    }
+
+    /**
+     * Re-fetch the upstream gravatar, revalidating against the cached copy so an unchanged avatar
+     * costs a bodyless 304 rather than a full image transfer.
+     *
+     * @return array{found: bool, body: string, content_type: string, last_modified?: ?string, fetched_at?: int}
+     */
+    public static function refreshGravatarPayload(string $hash): array
+    {
+        if (! self::isGravatarHash($hash)) {
+            return self::gravatarMiss();
+        }
+
+        $cached = Cache::get(self::GRAVATAR_CACHE_PREFIX.$hash);
+        $cached = is_array($cached) ? $cached : null;
 
         try {
             $response = Http::timeout(4)
-                ->withHeaders([
-                    'User-Agent' => 'UnoPim Avatar Proxy',
-                    'Accept'     => 'image/*',
-                ])
+                ->withHeaders(array_filter([
+                    'User-Agent'        => 'UnoPim Avatar Proxy',
+                    'Accept'            => 'image/*',
+                    'If-Modified-Since' => ($cached['found'] ?? false) ? ($cached['last_modified'] ?? null) : null,
+                ]))
                 ->get("https://gravatar.com/avatar/{$hash}?s=200&d=404");
-
-            $payload = $response->successful()
-                ? ['found' => true, 'body' => $response->body(), 'content_type' => $response->header('Content-Type') ?: 'image/png']
-                : $miss;
         } catch (ConnectionException) {
-            $payload = $miss;
+            return self::putGravatarPayload($hash, $cached ?? self::gravatarMiss());
         }
 
-        Cache::put("admin.gravatar.{$hash}", $payload, 86400);
+        if (
+            $response->status() === 304
+            && $cached !== null
+        ) {
+            return self::putGravatarPayload($hash, $cached);
+        }
+
+        return self::putGravatarPayload($hash, $response->successful()
+            ? [
+                'found'         => true,
+                'body'          => $response->body(),
+                'content_type'  => $response->header('Content-Type') ?: 'image/png',
+                'last_modified' => $response->header('Last-Modified') ?: null,
+            ]
+            : self::gravatarMiss());
+    }
+
+    /**
+     * @return array{found: bool, body: string, content_type: string, last_modified: null}
+     */
+    private static function gravatarMiss(): array
+    {
+        return ['found' => false, 'body' => '', 'content_type' => 'image/png', 'last_modified' => null];
+    }
+
+    private static function isGravatarHash(string $hash): bool
+    {
+        return (bool) preg_match('/^[a-f0-9]{32}$/', $hash);
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     */
+    private static function isGravatarPayloadStale(array $payload): bool
+    {
+        return now()->getTimestamp() - (int) ($payload['fetched_at'] ?? 0) >= self::GRAVATAR_FRESH_SECONDS;
+    }
+
+    private static function queueGravatarRefresh(string $hash): void
+    {
+        if (! Cache::add(self::GRAVATAR_REFRESH_LOCK_PREFIX.$hash, true, self::GRAVATAR_FRESH_SECONDS)) {
+            return;
+        }
+
+        RefreshGravatarPayload::dispatch($hash)->afterResponse();
+    }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array{found: bool, body: string, content_type: string, last_modified?: ?string, fetched_at?: int}
+     */
+    private static function putGravatarPayload(string $hash, array $payload): array
+    {
+        $payload['fetched_at'] = now()->getTimestamp();
+
+        Cache::put(
+            self::GRAVATAR_CACHE_PREFIX.$hash,
+            $payload,
+            ($payload['found'] ?? false) ? self::GRAVATAR_HIT_TTL : self::GRAVATAR_MISS_TTL,
+        );
 
         return $payload;
     }
