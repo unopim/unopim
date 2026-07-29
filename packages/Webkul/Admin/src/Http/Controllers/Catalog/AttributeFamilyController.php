@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeFamilyDataGrid;
 use Webkul\Admin\DataGrids\Catalog\VariantStructureDataGrid;
@@ -265,7 +266,17 @@ class AttributeFamilyController extends Controller
 
         Event::dispatch('catalog.attribute_family.update.before', $id);
 
-        $attributeFamily = $this->attributeFamilyRepository->update($requestData, $id);
+        try {
+            $attributeFamily = DB::transaction(function () use ($requestData, $id) {
+                $family = $this->attributeFamilyRepository->update($requestData, $id);
+
+                $this->guardVariantStructureAxes($family);
+
+                return $family;
+            });
+        } catch (ValidationException $e) {
+            return redirect()->route('admin.catalog.families.edit', $id)->withErrors($e->errors());
+        }
 
         Event::dispatch('catalog.attribute_family.update.after', $attributeFamily);
 
@@ -749,6 +760,36 @@ class AttributeFamilyController extends Controller
             ])
             ->values()
             ->toArray();
+    }
+
+    /**
+     * Reject a save that drops an attribute one of the family's variant structures
+     * still uses as an axis, which would leave the structure selectable on the
+     * configurable product form with an axis the family no longer has.
+     */
+    protected function guardVariantStructureAxes(AttributeFamily $attributeFamily): void
+    {
+        $familyAttributeIds = $attributeFamily->customAttributes()->pluck('attributes.id')->all();
+
+        $missing = VariantStructureAxis::query()
+            ->with('attribute')
+            ->whereIn(
+                'variant_structure_id',
+                VariantStructure::query()->where('attribute_family_id', $attributeFamily->id)->select('id')
+            )
+            ->whereNotIn('attribute_id', $familyAttributeIds)
+            ->get()
+            ->map(fn (VariantStructureAxis $axis): ?string => $axis->attribute?->code)
+            ->filter()
+            ->unique();
+
+        if ($missing->isEmpty()) {
+            return;
+        }
+
+        throw ValidationException::withMessages([
+            'code' => trans('validation.exists', ['attribute' => $missing->implode(', ')]),
+        ]);
     }
 
     /**
