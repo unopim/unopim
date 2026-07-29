@@ -57,7 +57,7 @@
                         <x-admin::media.image
                             name="image"
                             :show-suggestions="false"
-                            :accepted-extensions="\Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS"
+                            :accepted-extensions="\Webkul\Admin\Http\Requests\UserForm::PROFILE_IMAGE_EXTENSIONS"
                             :uploaded-images="$profileImages"
                             :instructions="trans('admin::app.settings.users.index.create.upload-image-info')"
                         />

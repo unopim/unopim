@@ -322,10 +322,6 @@ class AdminServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($key);
         });
 
-        /**
-         * Re-authentication guards the user edit form, so the password field on it
-         * is as guessable as the login form without its own limiter.
-         */
         RateLimiter::for('admin-sudo', function (Request $request) {
             $key = (string) optional($request->user('admin'))->id.'|'.$request->ip();
 

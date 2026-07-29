@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\UserForm;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
 
@@ -55,7 +56,7 @@ class AccountController extends Controller
         $imageRules = [
             'nullable',
             'image',
-            'mimes:bmp,jpeg,jpg,png,webp',
+            'mimes:'.implode(',', UserForm::PROFILE_IMAGE_EXTENSIONS),
             'max:2048',
             new FileMimeExtensionMatch,
         ];

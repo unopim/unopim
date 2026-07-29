@@ -69,7 +69,7 @@
                         :style="{ ...tileStyle, order: 9999 }"
                         title="@lang('admin::app.components.media.images.add-image-btn')"
                         :hint="showUploadHint ? @js(trans('admin::app.components.media.images.drag-drop-hint')) : ''"
-                        allowed-types="@lang('admin::app.components.media.images.allowed-types')"
+                        :allowed-types="allowedTypesLabel"
                         @trigger="resetAIModal(); $refs.choiceImageModal.open()"
                         @drop="onDrop"
                     ></v-media-add-tile>
@@ -80,7 +80,7 @@
                         :style="{ ...tileStyle, order: 9999 }"
                         title="@lang('admin::app.components.media.images.add-image-btn')"
                         :hint="showUploadHint ? @js(trans('admin::app.components.media.images.drag-drop-hint')) : ''"
-                        allowed-types="@lang('admin::app.components.media.images.allowed-types')"
+                        :allowed-types="allowedTypesLabel"
                         :accept="acceptAttribute"
                         :input-id="$.uid + '_imageInput'"
                         @change="add"
@@ -601,6 +601,16 @@
                     }
 
                     return this.acceptedExtensions.map(extension => `.${extension.replace(/^\./, '')}`).join(',');
+                },
+
+                allowedTypesLabel() {
+                    if (! this.acceptedExtensions || ! this.acceptedExtensions.length) {
+                        return @json(trans('admin::app.components.media.images.allowed-types'));
+                    }
+
+                    return this.acceptedExtensions
+                        .map(extension => extension.replace(/^\./, ''))
+                        .join(', ');
                 },
 
                 isCompactTile() {
