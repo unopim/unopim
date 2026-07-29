@@ -24,6 +24,26 @@
 @pushOnce('scripts')
     <script type="x-template" id="v-category-tree-view-template">
         <div class="v-tree-container v-tree-item-wrapper">
+            <div
+                class="flex items-center justify-end gap-1 pb-1.5 mb-1.5 border-b dark:border-cherry-800"
+                v-if="showToolbar"
+            >
+                <span
+                    class="px-1.5 py-0.5 text-xs text-gray-600 dark:text-gray-300 rounded cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                    title="@lang('admin::app.catalog.categories.browse.expand-all-hint')"
+                    @click="expandAll"
+                >
+                    @lang('admin::app.catalog.categories.browse.expand-all')
+                </span>
+
+                <span
+                    class="px-1.5 py-0.5 text-xs text-gray-600 dark:text-gray-300 rounded cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                    @click="collapseAll"
+                >
+                    @lang('admin::app.catalog.categories.browse.collapse-all')
+                </span>
+            </div>
+
             <v-tree-item
                 v-for="item in formattedItems"
                 :key="item[valueField]"
@@ -92,6 +112,14 @@
                 childrenPageSize: {
                     type: [Number, String],
                     default: 0
+                },
+                showToolbar: {
+                    type: Boolean,
+                    default: false
+                },
+                allowCreate: {
+                    type: Boolean,
+                    default: false
                 }
             },
 
@@ -101,7 +129,9 @@
                     formattedValues: [],
                     formattedExpandedBranch: [],
                     fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
+                    createUrl: "{{ route('admin.catalog.categories.index') }}",
                     cache: [],
+                    nodes: [],
 
                     labels: {}
                 };
@@ -122,6 +152,40 @@
 
 
             methods: {
+                registerNode(node) {
+                    this.nodes.push(node);
+                },
+
+                unregisterNode(node) {
+                    this.nodes = this.nodes.filter(registered => registered !== node);
+                },
+
+                /**
+                 * Bounded on purpose: only branches already fetched are opened. Walking the
+                 * whole tree would fire a request per node, and catalogues here run to tens
+                 * of thousands of them.
+                 */
+                expandAll() {
+                    this.nodes.forEach(node => {
+                        if (node.hasFetchedChildren || node.children.length) {
+                            node.showChildren = true;
+                        }
+                    });
+                },
+
+                collapseAll() {
+                    this.nodes.forEach(node => node.showChildren = false);
+                },
+
+                subCategoryUrl(parentId) {
+                    const url = new URL(this.createUrl, window.location.origin);
+
+                    url.searchParams.set('panel', 'create');
+                    url.searchParams.set('parent_id', parentId);
+
+                    return url.toString();
+                },
+
                 parseInput(data) {
                     const parsed = typeof data === 'string' ? JSON.parse(data) : (data || []);
 

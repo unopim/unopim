@@ -152,7 +152,7 @@
                                 v-text="treeSelectionLabel(column)"
                             ></span>
 
-                            <span class="icon-right-arrow shrink-0 text-lg text-gray-400" aria-hidden="true"></span>
+                            <span class="icon-chevron-right shrink-0 text-xl text-gray-400" aria-hidden="true"></span>
                         </button>
                     </div>
                 </template>

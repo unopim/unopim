@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\CategoryBrowseRequest;
 use Webkul\Admin\Http\Requests\CategoryChildrenForm;
 use Webkul\Admin\Http\Requests\CategoryRequest;
 use Webkul\Admin\Http\Requests\CategorySearchForm;
@@ -84,17 +85,66 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return View
+     * Tree workspace, or the flat listing when `view=list` is asked for.
      */
-    public function index(): View|JsonResponse
+    public function index(CategoryBrowseRequest $request): View|JsonResponse
     {
-        if (request()->ajax()) {
+        if ($request->ajax()) {
             return app(CategoryDataGrid::class)->toJson();
         }
 
-        return view('admin::catalog.categories.index');
+        $viewMode = $request->isListView() ? 'list' : 'tree';
+
+        $data = [
+            'viewMode'            => $viewMode,
+            'treeItems'           => [],
+            'branchToParent'      => [],
+            'channelRootIds'      => [],
+            'selectedId'          => null,
+            'panelMode'           => null,
+            'category'            => null,
+            'parentCategory'      => null,
+            'breadcrumb'          => '',
+            'leftCategoryFields'  => $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left'),
+            'rightCategoryFields' => $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right'),
+        ];
+
+        if ($viewMode === 'list') {
+            return view('admin::catalog.categories.index', $data);
+        }
+
+        $data['treeItems'] = CategoryTreeResource::collection($this->categoryRepository->getRootCategories())->toArray($request);
+
+        $data['channelRootIds'] = $this->channelRepository->pluck('root_category_id')->filter()->map(intval(...))->values()->all();
+
+        if ($categoryId = $request->selectedCategoryId()) {
+            $data['category'] = $this->categoryRepository->findOrFail($categoryId);
+            $data['panelMode'] = 'edit';
+            $data['selectedId'] = $categoryId;
+        } elseif ($request->wantsCreatePanel()) {
+            $data['panelMode'] = 'create';
+
+            if ($parentId = $request->parentCategoryId()) {
+                $data['parentCategory'] = $this->categoryRepository->findOrFail($parentId);
+                $data['selectedId'] = $parentId;
+            }
+        }
+
+        $revealed = $data['category'] ?? $data['parentCategory'];
+
+        if ($revealed) {
+            $data['branchToParent'] = CategoryTreeResource::collection(
+                $this->categoryRepository->getPathNodes([$revealed->code])->toTree()
+            )->toArray($request);
+
+            $breadcrumbId = $data['panelMode'] === 'create' ? $revealed->id : $revealed->parent_id;
+
+            $data['breadcrumb'] = $breadcrumbId
+                ? ($this->categoryRepository->getBreadcrumbsForIds([$breadcrumbId])[$breadcrumbId] ?? '')
+                : '';
+        }
+
+        return view('admin::catalog.categories.index', $data);
     }
 
     /**

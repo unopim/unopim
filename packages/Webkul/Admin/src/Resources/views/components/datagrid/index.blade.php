@@ -641,6 +641,8 @@
                 runFilters() {
                     this.applied.pagination.page = 1;
 
+                    this.filterTreePanel = null;
+
                     this.get();
                 },
 
@@ -1362,6 +1364,8 @@
                 },
 
                 clearAllFilters() {
+                    this.filterTreePanel = null;
+
                     if (! this.hasAppliedFilters() && ! this.appliedViewId) {
                         this.closeSavedFilters();
 

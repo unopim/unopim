@@ -1,7 +1,7 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-tree-item-template">
     <div :class="itemClasses">
-        <div class="flex items-center">
+        <div class="group flex items-center">
             <i
                 :class="toggleIconClasses"
                 @click="toggleBranch"
@@ -17,6 +17,13 @@
                 :value="value"
                 @change="onInputChange(item.value)"
             />
+
+            <a
+                class="invisible opacity-0 flex shrink-0 items-center justify-center w-6 h-6 ltr:ml-1 rtl:mr-1 text-lg leading-none text-gray-600 dark:text-gray-300 rounded transition-opacity group-hover:visible group-hover:opacity-100 hover:bg-primary-50 dark:hover:bg-cherry-800"
+                v-if="categorytree.allowCreate"
+                :href="categorytree.subCategoryUrl(id)"
+                title="@lang('admin::app.catalog.categories.browse.add-child')"
+            >+</a>
         </div>
 
         <template v-if="showChildren">
@@ -77,6 +84,8 @@
         mounted() {
             this.categorytree.registerLabel?.(this.value, this.label);
 
+            this.categorytree.registerNode?.(this);
+
             if (this.children.length > 0) {
                 this.showChildren = true;
 
@@ -94,6 +103,8 @@
 
         beforeUnmount() {
             this.teardownChildrenObserver();
+
+            this.categorytree.unregisterNode?.(this);
         },
 
         computed: {
