@@ -40,7 +40,7 @@ class MagicAIPlatformController extends Controller
             return app(MagicAIPlatformDataGrid::class)->toJson();
         }
 
-        $platformCount = $this->platformRepository->findWhere(['status' => true])->count();
+        $platformCount = $this->platformRepository->count();
         $hasDefault = $this->platformRepository->getDefault() !== null;
 
         return view('admin::configuration.magic-ai.platform.index', [
@@ -64,8 +64,6 @@ class MagicAIPlatformController extends Controller
         if (! isset($data['is_default'])) {
             $data['is_default'] = false;
         }
-
-        $this->ensureDefaultPlatformIsEnabled($data);
 
         $extras = request()->input('extras');
         if ($extras) {
@@ -125,8 +123,6 @@ class MagicAIPlatformController extends Controller
             $data['is_default'] = false;
         }
 
-        $this->ensureDefaultPlatformIsEnabled($data);
-
         $apiKey = request()->input('api_key');
         if ($apiKey && ! preg_match('/^\*+$/', $apiKey)) {
             $data['api_key'] = $apiKey;
@@ -172,12 +168,6 @@ class MagicAIPlatformController extends Controller
     public function setDefault(int $id): JsonResponse
     {
         $platform = $this->platformRepository->findOrFail($id);
-
-        if (! $platform->status) {
-            return new JsonResponse([
-                'message' => trans('admin::app.configuration.platform.message.default-requires-enabled'),
-            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
-        }
 
         DB::transaction(function () use ($id) {
             DB::table('magic_ai_platforms')->where('is_default', true)->update(['is_default' => false]);
@@ -372,20 +362,6 @@ class MagicAIPlatformController extends Controller
                 'models' => trans('admin::app.configuration.platform.message.invalid-model-names', [
                     'names' => implode(', ', $invalid),
                 ]),
-            ]);
-        }
-    }
-
-    /**
-     * A platform cannot be marked default unless it is also enabled.
-     *
-     * @throws ValidationException
-     */
-    protected function ensureDefaultPlatformIsEnabled(array $data): void
-    {
-        if (! empty($data['is_default']) && empty($data['status'])) {
-            throw ValidationException::withMessages([
-                'is_default' => trans('admin::app.configuration.platform.message.default-requires-enabled'),
             ]);
         }
     }
