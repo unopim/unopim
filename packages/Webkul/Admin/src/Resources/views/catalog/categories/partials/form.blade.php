@@ -169,7 +169,7 @@
 
                 <x-admin::accordion>
                     <x-slot:header>
-                        <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
+                        <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
                             @lang('admin::app.catalog.categories.edit.right-section')
                         </p>
                     </x-slot>
