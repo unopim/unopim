@@ -1390,13 +1390,19 @@ class Importer extends AbstractImporter
 
         $ids = [];
 
+        $updatedIds = [];
+
+        $createdIds = [];
+
         if (! empty($products['update'])) {
-            $this->bulkUpdateProducts($products['update'], $ids);
+            $this->bulkUpdateProducts($products['update'], $updatedIds);
         }
 
         if (! empty($products['insert'])) {
-            $this->bulkInsertProducts($products['insert'], $ids);
+            $this->bulkInsertProducts($products['insert'], $createdIds);
         }
+
+        $ids = array_merge($updatedIds, $createdIds);
 
         /**
          * Mirror the legacy association sections (related_products/up_sells/cross_sells)
@@ -1409,7 +1415,11 @@ class Importer extends AbstractImporter
          */
         $this->syncProductAssociationLinks($products);
 
-        Event::dispatch('data_transfer.imports.batch.product.save.after', ['product_id' => $ids]);
+        Event::dispatch('data_transfer.imports.batch.product.save.after', [
+            'product_id'  => $ids,
+            'created_ids' => $createdIds,
+            'updated_ids' => $updatedIds,
+        ]);
     }
 
     /**
