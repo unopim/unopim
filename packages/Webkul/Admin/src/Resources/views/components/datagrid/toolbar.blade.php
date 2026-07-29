@@ -285,7 +285,7 @@
                             </span>
 
                             <span
-                                class="ltr:ml-0.5 rtl:mr-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-600 px-1.5 text-xs font-semibold text-white"
+                                class="ltr:ml-0.5 rtl:mr-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-100 px-1.5 text-xs font-medium text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                                 data-applied-filter-count
                                 v-if="hasAppliedFilters()"
                                 v-text="appliedFilterCount()"
