@@ -59,6 +59,7 @@ class AccountController extends Controller
             'ui_locale_id'       => 'required',
             'catalog_locale_id'  => 'nullable|integer|exists:locales,id,status,1',
             'default_channel_id' => 'nullable|integer|exists:channels,id',
+            'use_gravatar'       => 'boolean',
         ]);
 
         if (($submittedPassword = (string) request('password')) !== '' && trim($submittedPassword) === '') {
@@ -79,6 +80,8 @@ class AccountController extends Controller
             'catalog_locale_id',
             'default_channel_id',
         ]);
+
+        $data['use_gravatar'] = request()->boolean('use_gravatar');
 
         if (! Hash::check($data['current_password'] ?? '', $user->password)) {
             session()->flash('warning', trans('admin::app.account.edit.invalid-password'));

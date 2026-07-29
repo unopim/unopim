@@ -67,8 +67,7 @@ class AttributeOptionRepository extends Repository
 
         $totalSortedOptions = count($optionIds) - 1;
 
-        // Only reorder options that belong to this attribute, so a crafted request
-        // cannot rewrite sort_order on options of other attributes.
+        // Restrict reorder to this attribute's own options so a crafted request can't touch other attributes' sort_order.
         $allowedIds = $this->model->newQuery()
             ->whereIn('id', $optionIds)
             ->where('attribute_id', $attributeId)

@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Type;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -12,6 +13,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Core\Traits\HtmlPurifier;
 use Webkul\Product\Contracts\Product;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 use Webkul\Product\Repositories\ProductAssociationRepository;
@@ -20,6 +22,8 @@ use Webkul\Product\Validator\AssociationValidator;
 
 abstract class AbstractType
 {
+    use HtmlPurifier;
+
     const PRODUCT_VALUES_KEY = 'values';
 
     const LOCALE_VALUES_KEY = 'locale_specific';
@@ -190,7 +194,9 @@ abstract class AbstractType
 
         $product->fill($data);
 
-        if ($product->isDirty()) {
+        $product->wasDirtyOnUpdate = $product->isDirty();
+
+        if ($product->wasDirtyOnUpdate) {
             $product->save();
         }
 
@@ -557,8 +563,18 @@ abstract class AbstractType
         $attributes = $this->attributeRepository->findWhereIn('code', array_keys($values))->keyBy('code');
 
         foreach ($values as $field => $fieldValue) {
+            $attribute = $attributes->get($field);
+
+            if (
+                is_string($fieldValue)
+                && $fieldValue !== ''
+                && $attribute?->type === 'textarea'
+                && $attribute->enable_wysiwyg
+            ) {
+                $values[$field] = $fieldValue = $this->purifyText($fieldValue);
+            }
+
             if (is_array($fieldValue)) {
-                $attribute = $attributes->get($field);
                 $type = $attribute?->type;
 
                 if (in_array($type, ['image', 'gallery', 'file'], true)) {
@@ -816,7 +832,7 @@ abstract class AbstractType
 
         return $this->product->attribute_family
             ->customAttributesByGroup()
-            ->get($group->id, new Collection)
+            ->get($group->id, new EloquentCollection)
             ->whereNotIn('code', $this->skipAttributes);
     }
 
@@ -957,7 +973,9 @@ abstract class AbstractType
 
         $product->fill($data);
 
-        if ($product->isDirty()) {
+        $product->wasDirtyOnUpdate = $product->isDirty();
+
+        if ($product->wasDirtyOnUpdate) {
             $product->save();
         }
 

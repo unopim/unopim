@@ -129,9 +129,7 @@ class ConfigurableProductController extends ProductController
 
             Event::dispatch('catalog.product.update.before', $id);
 
-            $product = $this->updateProduct($data, $product);
-
-            Event::dispatch('catalog.product.update.after', $product);
+            $this->updateProduct($data, $product);
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),
@@ -163,9 +161,7 @@ class ConfigurableProductController extends ProductController
 
             Event::dispatch('catalog.product.update.before', $product->id);
 
-            $product = $this->patchProduct($product, $data);
-
-            Event::dispatch('catalog.product.update.after', $product);
+            $this->patchProduct($product, $data);
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),

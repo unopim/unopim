@@ -100,6 +100,7 @@ services:
       args:
         HOST_UID: "${HOST_UID:-33}"
         HOST_GID: "${HOST_GID:-33}"
+        INSTALL_COVERAGE_EXTENSION: "${INSTALL_COVERAGE_EXTENSION:-true}"
     volumes:
       - .:/var/www/html
       - ./dockerfiles/php-dev.ini:/usr/local/etc/php/conf.d/zz-unopim-dev.ini:ro

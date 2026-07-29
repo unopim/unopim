@@ -54,7 +54,7 @@ class DateTimeFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::RANGE:
@@ -68,11 +68,11 @@ class DateTimeFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::LESS_THAN:
-                $this->queryBuilder::where([
+                $this->queryBuilder->where([
                     'range' => [
                         $property => [
                             $operator->value => $this->getFormattedDateTime($property, $this->scalarValue($value).' 00:00:01'),
@@ -82,7 +82,7 @@ class DateTimeFilter extends AbstractPropertyFilter
                 break;
 
             case FilterOperators::GREATER_THAN:
-                $this->queryBuilder::where([
+                $this->queryBuilder->where([
                     'range' => [
                         $property => [
                             $operator->value => $this->getFormattedDateTime($property, $this->scalarValue($value).' 23:59:59'),

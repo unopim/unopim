@@ -60,11 +60,11 @@ it('lists families (GET /measurement)', function () {
         ->assertJson(['success' => true]);
 });
 
-it('shows a single family (GET /measurement/{id})', function () {
+it('shows a single family by code (GET /measurement/{code})', function () {
     $family = MeasurementFamily::factory()->create();
 
     $this->withHeaders($this->headers)
-        ->getJson(route('admin.api.measurement.show', $family->id))
+        ->getJson(route('admin.api.measurement.show', $family->code))
         ->assertOk()
         ->assertJsonPath('data.code', $family->code);
 });
@@ -76,11 +76,11 @@ it('returns 404 for a missing family on show', function () {
         ->assertJson(['success' => false]);
 });
 
-it('updates a family (PUT /measurement/{id})', function () {
+it('updates a family by code (PUT /measurement/{code})', function () {
     $family = MeasurementFamily::factory()->create();
 
     $this->withHeaders($this->headers)
-        ->putJson(route('admin.api.measurement.update', $family->id), ['name' => 'Renamed'])
+        ->putJson(route('admin.api.measurement.update', $family->code), ['name' => 'Renamed'])
         ->assertOk()
         ->assertJson(['success' => true]);
 });
@@ -95,7 +95,7 @@ it('deletes a family and 404s on a missing one', function () {
     $family = MeasurementFamily::factory()->create();
 
     $this->withHeaders($this->headers)
-        ->deleteJson(route('admin.api.measurement.delete', $family->id))
+        ->deleteJson(route('admin.api.measurement.delete', $family->code))
         ->assertOk()
         ->assertJson(['success' => true]);
 
@@ -113,7 +113,7 @@ it('adds, shows, updates and deletes a unit', function () {
     ]);
 
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.measurement-units.store', $family->id), [
+        ->postJson(route('admin.api.measurement-units.store', $family->code), [
             'code'                  => 'km',
             'labels'                => ['en_US' => 'Kilometer'],
             'symbol'                => 'km',
@@ -123,38 +123,38 @@ it('adds, shows, updates and deletes a unit', function () {
         ->assertStatus(201);
 
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.measurement-units.store', $family->id), [
+        ->postJson(route('admin.api.measurement-units.store', $family->code), [
             'code'   => 'km',
             'labels' => ['en_US' => 'Kilometer'],
         ])
         ->assertStatus(422);
 
     $this->withHeaders($this->headers)
-        ->getJson(route('admin.api.measurement-units.show', [$family->id, 'km']))
+        ->getJson(route('admin.api.measurement-units.show', [$family->code, 'km']))
         ->assertOk()
         ->assertJsonPath('data.code', 'km');
 
     $this->withHeaders($this->headers)
-        ->getJson(route('admin.api.measurement-units.show', [$family->id, 'nope']))
+        ->getJson(route('admin.api.measurement-units.show', [$family->code, 'nope']))
         ->assertStatus(404);
 
     $this->withHeaders($this->headers)
-        ->putJson(route('admin.api.measurement-units.update', [$family->id, 'km']), [
+        ->putJson(route('admin.api.measurement-units.update', [$family->code, 'km']), [
             'symbol' => 'KM',
             'labels' => ['en_US' => 'Kilometre'],
         ])
         ->assertOk();
 
     $this->withHeaders($this->headers)
-        ->deleteJson(route('admin.api.measurement-units.delete', [$family->id, 'meter']))
+        ->deleteJson(route('admin.api.measurement-units.delete', [$family->code, 'meter']))
         ->assertStatus(422);
 
     $this->withHeaders($this->headers)
-        ->deleteJson(route('admin.api.measurement-units.delete', [$family->id, 'km']))
+        ->deleteJson(route('admin.api.measurement-units.delete', [$family->code, 'km']))
         ->assertOk();
 
     $this->withHeaders($this->headers)
-        ->deleteJson(route('admin.api.measurement-units.delete', [$family->id, 'ghost']))
+        ->deleteJson(route('admin.api.measurement-units.delete', [$family->code, 'ghost']))
         ->assertStatus(404);
 });
 
@@ -183,14 +183,14 @@ it('rejects attribute config for a missing family (404) and a foreign unit (422)
     $attribute = Attribute::factory()->create(['type' => 'measurement']);
 
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.attribute-measurement.store', $attribute->id), [
+        ->postJson(route('admin.api.attribute-measurement.store', $attribute->code), [
             'family_code' => 'does_not_exist',
             'unit_code'   => 'meter',
         ])
         ->assertStatus(404);
 
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.attribute-measurement.store', $attribute->id), [
+        ->postJson(route('admin.api.attribute-measurement.store', $attribute->code), [
             'family_code' => $family->code,
             'unit_code'   => 'lightyear',
         ])

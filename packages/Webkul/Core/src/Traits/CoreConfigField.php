@@ -40,6 +40,13 @@ trait CoreConfigField
     {
         $field['validation'] ??= '';
 
+        if (is_array($field['validation'])) {
+            $field['validation'] = implode('|', array_filter(
+                $field['validation'],
+                fn ($rule): bool => is_string($rule) && ! class_exists($rule)
+            ));
+        }
+
         foreach ($this->veeValidateMappings as $laravelRule => $veeValidateRule) {
             $field['validation'] = str_replace($laravelRule, $veeValidateRule, $field['validation']);
         }

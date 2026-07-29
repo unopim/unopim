@@ -249,7 +249,7 @@ it('fires catalog.product.update.after when a simple product is updated via REST
         ->json('PUT', route('admin.api.products.update', ['code' => $product->sku]), $payload)
         ->assertOk();
 
-    Event::assertDispatched('catalog.product.update.after');
+    Event::assertDispatchedTimes('catalog.product.update.after', 1);
 });
 
 it('should delete the product', function () {

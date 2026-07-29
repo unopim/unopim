@@ -54,6 +54,11 @@ class WebhookService
         return $this->deliverChunked('id', $ids);
     }
 
+    public function sendBatchCreatedByIds(array $ids): ?Response
+    {
+        return $this->deliverChunked('id', $ids, requireChanges: false, event: self::EVENT_PRODUCT_CREATED);
+    }
+
     /**
      * Send a batch of products to every subscribed webhook without requiring
      * change detection. Used for bulk-edit where no per-product diff exists.
@@ -77,7 +82,7 @@ class WebhookService
      *
      * @param  array<int, int|string>  $values
      */
-    protected function deliverChunked(string $field, array $values, bool $requireChanges = true): ?Response
+    protected function deliverChunked(string $field, array $values, bool $requireChanges = true, string $event = self::EVENT_PRODUCT_UPDATED): ?Response
     {
         $lastResponse = null;
 
@@ -85,6 +90,7 @@ class WebhookService
             $lastResponse = $this->sendBatch(
                 $this->productRepository->findWhereIn($field, $chunk),
                 $requireChanges,
+                $event,
             );
         }
 
@@ -135,9 +141,9 @@ class WebhookService
      * @param  bool  $requireChanges  When false, every product is included
      *                                regardless of whether an audit diff exists.
      */
-    protected function sendBatch($products, bool $requireChanges = true): ?Response
+    protected function sendBatch($products, bool $requireChanges = true, string $event = self::EVENT_PRODUCT_UPDATED): ?Response
     {
-        $webhooks = $this->webhookRepository->getActiveForEvent(self::EVENT_PRODUCT_UPDATED);
+        $webhooks = $this->webhookRepository->getActiveForEvent($event);
 
         if ($webhooks->isEmpty()) {
             return null;
@@ -162,7 +168,7 @@ class WebhookService
         }
 
         $payload = [
-            'event'     => self::EVENT_PRODUCT_UPDATED,
+            'event'     => $event,
             'timestamp' => now()->toDateTimeString(),
             'data'      => $normalized,
         ];
@@ -170,7 +176,7 @@ class WebhookService
         $lastResponse = null;
 
         foreach ($webhooks as $webhook) {
-            $lastResponse = $this->deliver($webhook, $payload, null, self::EVENT_PRODUCT_UPDATED, $products);
+            $lastResponse = $this->deliver($webhook, $payload, null, $event, $products);
         }
 
         return $lastResponse;
@@ -289,8 +295,7 @@ class WebhookService
     {
         $adminName = $this->actingName();
 
-        // Store only this product's slice per row. Persisting the whole batch
-        // payload on every row was O(N²) storage for an N-product bulk edit.
+        // Store only this product's slice per row; persisting the whole batch payload per row was O(N²) storage.
         $dataBySku = collect($payload['data'] ?? [])->keyBy(fn ($entry): ?string => $entry['sku'] ?? null);
 
         $envelope = array_diff_key($payload, ['data' => true]);

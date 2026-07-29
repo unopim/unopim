@@ -70,8 +70,14 @@ it('should fetch attributes for bulk edit modal', function () {
     $this->assertTrue($options->where('code', 'sku')->isEmpty(), 'SKU should be excluded from bulk edit attributes');
 });
 
-it('fires catalog.product.update.after for every product saved by bulk edit', function () {
-    $products = Product::factory()->count(2)->create();
+it('fires catalog.product.update.after for every product changed by bulk edit', function () {
+    $family = AttributeFamily::find(1)
+        ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create();
+
+    $products = Product::factory()->withInitialValues()->count(2)->create(['attribute_family_id' => $family->id]);
+
+    $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
+    $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
     Event::fake(['catalog.product.update.after', 'catalog.product.bulk.edit.after']);
 
@@ -80,7 +86,7 @@ it('fires catalog.product.update.after for every product saved by bulk edit', fu
     // spreadsheet posts: { product_id: { attribute_code: value } }.
     $payload = [];
     foreach ($products as $product) {
-        $payload[$product->id] = ['sku' => $product->sku];
+        $payload[$product->id] = [$attribute->code => 'bulk-changed-'.$product->id];
     }
 
     $this->postJson(route('admin.catalog.products.bulk-edit.save'), ['data' => $payload])
@@ -95,6 +101,23 @@ it('fires catalog.product.update.after for every product saved by bulk edit', fu
 
         return count(array_intersect($products->pluck('id')->toArray(), $ids)) === $products->count();
     });
+});
+
+it('does not fire catalog.product.update.after for a no-op bulk edit save', function () {
+    $products = Product::factory()->count(2)->create();
+
+    Event::fake(['catalog.product.update.after']);
+
+    // Re-posting each product's own SKU changes nothing, so no update event should fire.
+    $payload = [];
+    foreach ($products as $product) {
+        $payload[$product->id] = ['sku' => $product->sku];
+    }
+
+    $this->postJson(route('admin.catalog.products.bulk-edit.save'), ['data' => $payload])
+        ->assertOk();
+
+    Event::assertNotDispatched('catalog.product.update.after');
 });
 
 it('should fetch only attributes belonging to the selected products families', function () {

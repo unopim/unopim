@@ -233,10 +233,10 @@ describe('Product export attribute condition operators', function () {
         Attribute::factory()->create(['code' => 'maker', 'type' => 'select']);
 
         $this->p1 = makeProduct('OPS-1', $this->family->id, ['common' => [
-            'sku' => 'OPS-1', 'unit_price' => '10', 'release_on' => '2024-01-10', 'maker' => 'nike', 'tagline' => 'Air Max runner',
+            'sku' => 'OPS-1', 'unit_price' => ['USD' => '10'], 'release_on' => '2024-01-10', 'maker' => 'nike', 'tagline' => 'Air Max runner',
         ]]);
         $this->p2 = makeProduct('OPS-2', $this->family->id, ['common' => [
-            'sku' => 'OPS-2', 'unit_price' => '50', 'release_on' => '2024-06-20', 'maker' => 'adidas', 'tagline' => 'Boost trainer',
+            'sku' => 'OPS-2', 'unit_price' => ['USD' => '50'], 'release_on' => '2024-06-20', 'maker' => 'adidas', 'tagline' => 'Boost trainer',
         ]]);
         $this->p3 = makeProduct('OPS-3', $this->family->id, ['common' => ['sku' => 'OPS-3']]);
 

@@ -27,7 +27,7 @@ it('should store the channel and locale wise attribute value in product correctl
 
     $attributeCode = $attribute->code;
 
-    $product = Product::Factory()->simple()->create([
+    $product = seedRequiredProductValues(Product::Factory()->simple()->create([
         'values' => [
             'channel_locale_specific' => [
                 'default' => [
@@ -37,7 +37,7 @@ it('should store the channel and locale wise attribute value in product correctl
                 ],
             ],
         ],
-    ]);
+    ]));
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -84,7 +84,7 @@ it('should store the channel wise attribute value in product correctly', functio
 
     $attributeCode = $attribute->code;
 
-    $product = Product::Factory()->simple()->create([
+    $product = seedRequiredProductValues(Product::Factory()->simple()->create([
         'values' => [
             'channel_specific' => [
                 'default' => [
@@ -92,7 +92,7 @@ it('should store the channel wise attribute value in product correctly', functio
                 ],
             ],
         ],
-    ]);
+    ]));
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -135,7 +135,7 @@ it('should store the locale wise attribute value in product correctly', function
 
     $attributeCode = $attribute->code;
 
-    $product = Product::Factory()->simple()->create([
+    $product = seedRequiredProductValues(Product::Factory()->simple()->create([
         'values' => [
             'locale_specific' => [
                 $firstLocale => [
@@ -143,7 +143,7 @@ it('should store the locale wise attribute value in product correctly', function
                 ],
             ],
         ],
-    ]);
+    ]));
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -182,7 +182,7 @@ it('should return validation error for unique common attribute value when updati
 
     Product::factory()->create(['values' => ['common' => [$attributeCode => $value]]]);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -230,7 +230,7 @@ it('should return validation error for unique channel and locale wise attribute 
         ],
     ]);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -278,7 +278,7 @@ it('should return validation error for unique channel wise attribute value when 
         ],
     ]);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -326,7 +326,7 @@ it('should return validation error for unique locale wise attribute value when u
         ],
     ]);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -359,7 +359,7 @@ it('should store the price attribute value when updating simple product', functi
 
     $attribute = Attribute::factory()->create(['type' => 'price']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -393,7 +393,7 @@ it('should store the boolean attribute value when updating simple product', func
 
     $attribute = Attribute::factory()->create(['type' => 'boolean']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -423,7 +423,7 @@ it('should store the select attribute value when updating simple product', funct
 
     $attribute = Attribute::factory()->create(['type' => 'select']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -453,7 +453,7 @@ it('should store the multi select attribute value when updating simple product',
 
     $attribute = Attribute::factory()->create(['type' => 'multiselect']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -483,7 +483,7 @@ it('should store the date time attribute value when updating simple product', fu
 
     $attribute = Attribute::factory()->create(['type' => 'datetime']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -513,7 +513,7 @@ it('should store the checkbox attribute value when updating simple product', fun
 
     $attribute = Attribute::factory()->create(['type' => 'checkbox']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -543,7 +543,7 @@ it('should store the image attribute value when updating simple product', functi
 
     $attribute = Attribute::factory()->create(['type' => 'image']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -575,7 +575,7 @@ it('should store the gallery attribute value when updating simple product', func
 
     $attribute = Attribute::factory()->create(['type' => 'gallery']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -613,7 +613,7 @@ it('should store the file attribute value when updating simple product', functio
 
     $attribute = Attribute::factory()->create(['type' => 'file']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -646,7 +646,7 @@ it('should store the categories value when updating simple product', function ()
     $category = Category::factory()->create();
     $category2 = Category::factory()->create();
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $value = [$category->code, $category2->code];
 
@@ -670,7 +670,7 @@ it('should store the associations value when updating simple product', function 
 
     $products = Product::factory()->simple()->createMany(2);
 
-    $product = $products->first();
+    $product = seedRequiredProductValues($products->first());
 
     $value = [$products->last()->sku];
 
@@ -702,7 +702,7 @@ it('should not allow upload for invalid files in image attribute for product', f
 
     $attribute = Attribute::factory()->create(['type' => 'image']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -736,7 +736,7 @@ it('should not allow upload for invalid files in gallery attribute for product',
 
     $attribute = Attribute::factory()->create(['type' => 'gallery']);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -777,7 +777,7 @@ it('should store the price attribute value when updating configurable product', 
 
     $attribute = Attribute::factory()->create(['type' => 'price']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -811,7 +811,7 @@ it('should store the boolean attribute value when updating configurable product'
 
     $attribute = Attribute::factory()->create(['type' => 'boolean']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -841,7 +841,7 @@ it('should store the select attribute value when updating configurable product',
 
     $attribute = Attribute::factory()->create(['type' => 'select']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -871,7 +871,7 @@ it('should store the multi select attribute value when updating configurable pro
 
     $attribute = Attribute::factory()->create(['type' => 'multiselect']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -901,7 +901,7 @@ it('should store the date time attribute value when updating configurable produc
 
     $attribute = Attribute::factory()->create(['type' => 'datetime']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -931,7 +931,7 @@ it('should store the checkbox attribute value when updating configurable product
 
     $attribute = Attribute::factory()->create(['type' => 'checkbox']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -961,7 +961,7 @@ it('should store the image attribute value when updating configurable product', 
 
     $attribute = Attribute::factory()->create(['type' => 'image']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -993,7 +993,7 @@ it('should store the gallery attribute value when updating configurable product'
 
     $attribute = Attribute::factory()->create(['type' => 'gallery']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -1031,7 +1031,7 @@ it('should store the file attribute value when updating configurable product', f
 
     $attribute = Attribute::factory()->create(['type' => 'file']);
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
@@ -1064,7 +1064,7 @@ it('should store the categories value when updating configurable product', funct
     $category = Category::factory()->create();
     $category2 = Category::factory()->create();
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $value = [$category->code, $category2->code];
 
@@ -1088,7 +1088,7 @@ it('should store the associations value when updating configurable product', fun
 
     $products = Product::factory()->configurable()->createMany(2);
 
-    $product = $products->first();
+    $product = seedRequiredProductValues($products->first());
 
     $value = [$products->last()->sku];
 
@@ -1124,7 +1124,7 @@ it('should allow empty value for optional attribute with numeric validation', fu
         'type'        => 'text',
     ]);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
     $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
     $attributeCode = $attribute->code;
@@ -1150,7 +1150,7 @@ it('should reject root category when assigning categories to a product', functio
 
     $rootCategory = Category::factory()->create(['parent_id' => null]);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $data = [
         'sku'    => $product->sku,
@@ -1169,7 +1169,7 @@ it('should allow only non-root categories when assigning categories to a product
     $rootCategory = Category::factory()->create(['parent_id' => null]);
     $childCategory = Category::factory()->create(['parent_id' => $rootCategory->id]);
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $data = [
         'sku'    => $product->sku,

@@ -164,7 +164,6 @@
                         data-attribute-groups-dirty
                     />
 
-                    <!-- Panel Header -->
                     <div class="flex flex-wrap gap-2.5 justify-between mb-2.5 p-4">
                         <div class="flex flex-col gap-2">
                             <p class="text-base font-semibold text-gray-800 dark:text-white">
@@ -177,7 +176,6 @@
                         </div>
                         
                         <div class="flex gap-x-1 items-center">
-                            <!-- Add Group Button -->
                             <div
                                 class="secondary-button"
                                 @click="$refs.assignGroupModal.open()"
@@ -188,7 +186,6 @@
                     </div>
                     <div class="grid grid-cols-2 gap-4 mb-2.5 p-4">
                         <div class="">
-                            <!-- Unassigned Attribute Groups Header -->
                             <x-admin::list.panel-header
                                 :title="trans('admin::app.catalog.families.edit.main-column')"
                                 :description="trans('admin::app.catalog.families.edit.main-column-info')"
@@ -207,7 +204,6 @@
                                 />
                             </x-admin::list.panel-header>
 
-                            <!-- Draggable Unassigned Attribute Group  -->
                             <div
                                 v-if="! defaultFamilyGroups.length"
                                 class="h-[calc(100vh-285px)] overflow-auto pb-4 ltr:border-r ltr:pr-4 rtl:border-l rtl:pl-4 border-gray-200"
@@ -234,12 +230,10 @@
                             >
                                 <template #item="{ element, index }">
                                     <div class="ltr:pr-3 rtl:pl-3">
-                                        <!-- Group Container -->
                                             <x-admin::catalog.families.group-row
                                                 :remove-title="trans('admin::app.catalog.families.edit.remove-group-btn')"
                                             />
 
-                                        <!-- Group Attributes -->
                                         <div
                                             class="relative ltr:ml-[70px] rtl:mr-[70px]"
                                             v-show="! element.hide"
@@ -283,7 +277,6 @@
                         </div>
 
                         <div>
-                            <!-- Unassigned Attributes Header -->
                             <x-admin::list.panel-header
                                 :title="trans('admin::app.catalog.families.edit.unassigned-attributes')"
                                 :description="trans('admin::app.catalog.families.edit.unassigned-attributes-info')"
@@ -344,7 +337,6 @@
                                     </button>
                                 </div>
 
-                                <!-- Select-all-across-pages banner -->
                                 <div
                                     v-if="canSelectAllMatching || selectAllAcrossPages"
                                     class="flex items-center justify-center gap-1.5 mb-2 rounded-md bg-unopim-primary-soft/50 dark:bg-cherry-900 px-3 py-1.5 text-xs text-gray-600 dark:text-gray-300"
@@ -366,7 +358,6 @@
                                     :select-group-placeholder="trans('admin::app.catalog.families.edit.select-destination-group')"
                                 />
 
-                                <!-- Draggable Unassigned Attributes -->
                                 <draggable
                                     id="unassigned-attributes"
                                     class="h-[calc(100vh-285px)] pb-4 overflow-auto"
@@ -393,7 +384,6 @@
                                     </template>
                                 </draggable>
 
-                                <!-- Pagination -->
                                 <x-admin::pagination.compact
                                     class="mt-3"
                                     current-page="currentPage"
@@ -468,6 +458,8 @@
                             currentPage: 1,
                             totalPages: 2,
                             totalAttributes: 0,
+                            serverTotalAttributes: 0,
+                            pendingAssignedCodes: [],
                             isSearching: false,
                             isSearchingAssigned: false,
                             selectedGroup: {
@@ -589,6 +581,7 @@
                             this.allMatchingAttributes = [];
                             this.bulkGroup = null;
                             this.dirtyTick = 0;
+                            this.pendingAssignedCodes = [];
 
                             this.getAttributes();
                         },
@@ -625,6 +618,63 @@
                             }
 
                             return true;
+                        },
+
+                        /** Assignments made on this page but not saved yet; the unassigned query still counts them. */
+                        markPendingAssignments(codes) {
+                            codes.filter(Boolean).forEach(code => {
+                                if (! this.pendingAssignedCodes.includes(code)) {
+                                    this.pendingAssignedCodes.push(code);
+                                }
+                            });
+
+                            this.totalAttributes = Math.max(0, this.serverTotalAttributes - this.pendingAssignedCodes.length);
+                        },
+
+                        releasePendingAssignment(code) {
+                            this.pendingAssignedCodes = this.pendingAssignedCodes.filter(pending => pending !== code);
+
+                            this.totalAttributes = Math.max(0, this.serverTotalAttributes - this.pendingAssignedCodes.length);
+                        },
+
+                        /** Assigned codes, including drags not saved yet — the query can only exclude saved ones. */
+                        assignedAttributeCodes() {
+                            const codes = new Set();
+
+                            this.familyDefaultGroups.forEach(group => {
+                                (group.customAttributes ?? []).forEach(attribute => {
+                                    const code = this.attributeCode(attribute);
+
+                                    if (code) {
+                                        codes.add(code);
+                                    }
+                                });
+                            });
+
+                            return codes;
+                        },
+
+                        /**
+                         * Dedupes within one group only: an attribute may legitimately
+                         * be assigned to several groups of the same family.
+                         */
+                        dropDuplicateInGroup(group, attribute) {
+                            const code = this.attributeCode(attribute);
+                            let kept = false;
+
+                            group.customAttributes = group.customAttributes.filter(candidate => {
+                                if (this.attributeCode(candidate) !== code) {
+                                    return true;
+                                }
+
+                                if (kept) {
+                                    return false;
+                                }
+
+                                kept = true;
+
+                                return true;
+                            });
                         },
 
                         getGroupAttributes(group) {
@@ -825,7 +875,7 @@
                             const params = Object.assign({}, this.params, {
                                 entityName: 'attributes',
                                 page: 1,
-                                perPage: this.totalAttributes,
+                                perPage: this.serverTotalAttributes,
                                 notInFamily: this.familyId,
                             });
 
@@ -865,6 +915,8 @@
                                 moving.forEach(attribute => group.customAttributes.push(attribute));
 
                                 const movedCodes = moving.map(a => this.attributeCode(a));
+
+                                this.markPendingAssignments(movedCodes);
 
                                 this.customAttributes = this.customAttributes.filter(a => ! movedCodes.includes(this.attributeCode(a)));
 
@@ -974,6 +1026,10 @@
                         onChange(e, group) {
                             if (e.added?.element && group) {
                                 e.added.element.group_id = this.groupFormId(group);
+
+                                this.dropDuplicateInGroup(group, e.added.element);
+
+                                this.markPendingAssignments([this.attributeCode(e.added.element)]);
                             }
 
                             this.$emitter.emit('assigned-attributes-changed', e);
@@ -990,6 +1046,8 @@
                                 this.selectedAttrs = this.selectedAttrs.filter(selectedCode => selectedCode !== code);
 
                                 this.forgetAttrDetail(code);
+
+                                this.releasePendingAssignment(code);
                             }
 
                             this.$emitter.emit('assigned-attributes-changed', e);
@@ -1001,8 +1059,7 @@
                         },
 
                         signalUnsaved() {
-                            // Drag-assigning attributes/groups mutates hidden inputs without a
-                            // native input/change event, so tell the unsaved-changes tracker.
+                            // Drag-assign mutates hidden inputs without a native event, so notify the unsaved-changes tracker.
                             this.dirtyTick++;
 
                             this.$nextTick(() => {
@@ -1043,7 +1100,8 @@
                                 .get(this.getAttributeRoute, {params: this.params})
                                 .then(result => {
                                     this.totalPages = result.data.lastPage || 1;
-                                    this.totalAttributes = result.data.total || 0;
+                                    this.serverTotalAttributes = result.data.total || 0;
+                                    this.totalAttributes = Math.max(0, this.serverTotalAttributes - this.pendingAssignedCodes.length);
 
                                     if (! result.data.options.length && this.currentPage > this.totalPages) {
                                         this.currentPage = this.totalPages;
@@ -1052,7 +1110,11 @@
                                         return;
                                     }
 
-                                    this.customAttributes = result.data.options;
+                                    const assigned = this.assignedAttributeCodes();
+
+                                    this.customAttributes = result.data.options.filter(
+                                        option => ! assigned.has(this.attributeCode(option))
+                                    );
 
                                     this.isLoading = false;
                                 });

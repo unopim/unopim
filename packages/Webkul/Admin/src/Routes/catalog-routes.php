@@ -185,6 +185,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::controller(ProductController::class)->prefix('products')->group(function () {
             Route::get('', 'index')->name('admin.catalog.products.index');
 
+            Route::get('quick-export', 'quickExport')->name('admin.catalog.products.quick-export');
+
             Route::post('create', 'store')->name('admin.catalog.products.store');
 
             Route::post('copy/{id}', 'copy')->name('admin.catalog.products.copy');

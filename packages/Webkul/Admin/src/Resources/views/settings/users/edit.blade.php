@@ -59,11 +59,23 @@
                             name="image"
                             :show-suggestions="false"
                             :uploaded-images="$profileImages"
+                            :instructions="trans('admin::app.settings.users.index.create.upload-image-info')"
                         />
 
-                        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-                            @lang('admin::app.settings.users.index.create.upload-image-info')
-                        </p>
+                        <div class="flex gap-2 items-center mt-3">
+                            <input type="hidden" name="use_gravatar" value="0" />
+
+                            <x-admin::form.control-group.control
+                                type="switch"
+                                name="use_gravatar"
+                                value="1"
+                                :checked="(bool) old('use_gravatar', $user->use_gravatar)"
+                            />
+
+                            <label class="text-sm text-gray-600 dark:text-gray-300">
+                                @lang('admin::app.account.edit.use-gravatar')
+                            </label>
+                        </div>
 
                         <x-admin::form.control-group.error control-name="image" />
                     </x-admin::form.control-group>

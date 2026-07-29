@@ -1,14 +1,27 @@
 const { test, expect } = require('../../../utils/family-fixtures');
 const { generateUid } = require('../../../utils/helpers');
-const { createFamily, deleteFamilyByCode, gotoTab, withFamilyPage } = require('../../../utils/family-helpers');
+const { createFamily, deleteFamilyByCode, gotoTab, saveFamilyEdit, assignAttributesToGroup, withFamilyPage } = require('../../../utils/family-helpers');
 
 // Variant structures require configurable (non-scoped select) axis attributes.
-// The seeded 'default' family (id 1) has color/size/brand, so we clone from it.
+/**
+ * A family carrying the axis attributes the tab needs. Built by assigning them to
+ * the scaffolded General group: cloning a seeded family copies every mapping it holds.
+ */
+async function createLightFamily(page, code) {
+  const family = await createFamily(page, code);
+  await assignAttributesToGroup(page, ['color', 'size']);
+  await saveFamilyEdit(page);
+  return family;
+}
+
+// Family create/save round-trips run 20-30s against a full catalogue; the default per-test budget is too tight.
+test.describe.configure({ timeout: 300_000 });
+
 test.describe.serial('Attribute Family — Variants tab', () => {
   let family;
 
   test.beforeAll(async ({ browser }) => {
-    family = await withFamilyPage(browser, (page) => createFamily(page, `famvar_${generateUid()}`, { basedOn: 'default' }));
+    family = await withFamilyPage(browser, (page) => createLightFamily(page, `famvar_${generateUid()}`));
   });
 
   test.afterAll(async ({ browser }) => {
@@ -28,7 +41,9 @@ test.describe.serial('Attribute Family — Variants tab', () => {
     await page.getByText('Add Variant', { exact: true }).first().click();
     await page.getByPlaceholder('Example: Color + Size').fill(name);
     await page.getByPlaceholder('color_size').fill(`s${generateUid()}`);
-    // level_1 axis is prefilled from the first axis option; save.
+    const axis = page.locator('input[name="draft_axis_leaf"]').first()
+      .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
+    await expect(axis).not.toContainText('Select option');
     await Promise.all([
       page.waitForURL(/\/variant-structures\/\d+\/edit/, { timeout: 25000 }),
       page.getByRole('button', { name: 'Save Variant' }).click(),

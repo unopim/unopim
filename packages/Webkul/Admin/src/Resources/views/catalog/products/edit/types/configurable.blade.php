@@ -911,12 +911,6 @@
                 'errors',
             ],
 
-            data() {
-                return {
-                    inventorySources: [],
-                }
-            },
-
             computed: {
                 isDefault() {
                     return this.variant.id == this.defaultId;

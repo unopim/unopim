@@ -1684,15 +1684,21 @@ class Importer extends AbstractImporter
 
         $ids = [];
 
+        $updatedIds = [];
+
+        $createdIds = [];
+
         if (! empty($products['update'])) {
-            $this->bulkUpdateProducts($products['update'], $ids);
+            $this->bulkUpdateProducts($products['update'], $updatedIds);
         }
 
         if (! empty($products['insert'])) {
             foreach ($this->groupInsertsByHierarchy($products['insert']) as $tier) {
-                $this->bulkInsertProducts($this->resolveParentIds($tier), $ids);
+                $this->bulkInsertProducts($this->resolveParentIds($tier), $createdIds);
             }
         }
+
+        $ids = array_merge($updatedIds, $createdIds);
 
         /**
          * Mirror the legacy association sections (related_products/up_sells/cross_sells)
@@ -1707,7 +1713,11 @@ class Importer extends AbstractImporter
 
         $this->syncSuperAttributes($products);
 
-        Event::dispatch('data_transfer.imports.batch.product.save.after', ['product_id' => $ids]);
+        Event::dispatch('data_transfer.imports.batch.product.save.after', [
+            'product_id'  => $ids,
+            'created_ids' => $createdIds,
+            'updated_ids' => $updatedIds,
+        ]);
     }
 
     /**

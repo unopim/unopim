@@ -8,14 +8,7 @@ return [
         'sort'  => 11,
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Settings
-    |--------------------------------------------------------------------------
-    |
-    | All ACLs related to settings will be placed here.
-    |
-    */
+    // Settings
     [
         'key'   => 'api.settings',
         'name'  => 'admin::app.acl.settings',
@@ -83,15 +76,7 @@ return [
         'sort'  => 3,
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Catalog
-    |--------------------------------------------------------------------------
-    |
-    | All ACLs related to catalog will be placed here.
-    |
-    */
-
+    // Catalog
     [
         'key'   => 'api.catalog',
         'name'  => 'admin::app.acl.catalog',

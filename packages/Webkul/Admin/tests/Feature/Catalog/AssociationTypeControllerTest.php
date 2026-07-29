@@ -1,9 +1,23 @@
 <?php
 
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Models\AssociationType;
 use Webkul\Product\Models\AssociationTypeField;
 use Webkul\Product\Repositories\AssociationTypeRepository;
+
+/**
+ * An update requires a name for every active locale, and the label a request reads back is the
+ * one for the requested locale — which is whatever the install enabled, not necessarily en_US.
+ *
+ * @return array<string, array{name: string}>
+ */
+function associationTypeNames(string $name): array
+{
+    return app(LocaleRepository::class)->getActiveLocales()
+        ->mapWithKeys(fn ($locale) => [$locale->code => ['name' => $name]])
+        ->all();
+}
 
 function createAssociationType(array $overrides = []): AssociationType
 {
@@ -233,8 +247,7 @@ it('should update the association type successfully', function () {
     $updatedData = [
         'status'   => 0,
         'position' => 5,
-        'en_US'    => ['name' => 'Updated Name'],
-    ];
+    ] + associationTypeNames('Updated Name');
 
     $this->put(route('admin.catalog.association_types.update', $associationType->id), $updatedData)
         ->assertRedirect(route('admin.catalog.association_types.edit', $associationType->id));
@@ -257,8 +270,8 @@ it('should not change the code or is_user_defined of a default association type 
         'code'            => 'hijacked_code',
         'is_user_defined' => 1,
         'status'          => 1,
-        'en_US'           => ['name' => 'Related Products Updated'],
-    ])->assertRedirect(route('admin.catalog.association_types.edit', $default->id));
+    ] + associationTypeNames('Related Products Updated'))
+        ->assertRedirect(route('admin.catalog.association_types.edit', $default->id));
 
     $this->assertDatabaseHas($this->getFullTableName(AssociationType::class), [
         'id'              => $default->id,
@@ -464,11 +477,10 @@ it('returns association types with their active field definitions in the picker 
 
     $this->post(route('admin.catalog.association_types.store'), [
         'code'   => $code,
-        'en_US'  => ['name' => 'With Fields'],
         'fields' => [
-            ['code' => 'note', 'type' => 'text', 'status' => 1, 'section' => 'left', 'en_US' => ['name' => 'Note']],
+            ['code' => 'note', 'type' => 'text', 'status' => 1, 'section' => 'left'] + associationTypeNames('Note'),
         ],
-    ])->assertRedirect();
+    ] + associationTypeNames('With Fields'))->assertRedirect();
 
     $response = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'With Fields']))->assertOk();
 

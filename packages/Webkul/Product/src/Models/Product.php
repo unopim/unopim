@@ -54,6 +54,13 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     protected $typeInstance;
 
     /**
+     * Whether the last update actually mutated the product. Transient (not persisted,
+     * not serialized) so update pipelines can gate `catalog.product.update.after` and
+     * completeness recomputation on a real change instead of a no-op save.
+     */
+    public bool $wasDirtyOnUpdate = false;
+
+    /**
      * Get the product that owns the product.
      *
      * @return BelongsTo<Product, $this>

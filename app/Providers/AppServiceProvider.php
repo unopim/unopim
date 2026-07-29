@@ -37,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
     }
 
     /**
-     * Seed the per-worker database when the suite runs with `--parallel`.
+     * Seed the per-worker database Laravel creates when the suite runs with `--parallel`.
      */
     protected function configureParallelTesting(): void
     {

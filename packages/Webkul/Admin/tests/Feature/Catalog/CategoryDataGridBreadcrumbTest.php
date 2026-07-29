@@ -19,6 +19,10 @@ it('paginates categories without a full-tree recursive CTE in the base query', f
 });
 
 it('resolves the full breadcrumb path only for the visible page', function () {
+    // The grid reads from the index when Elasticsearch is on, and these rows are
+    // only in the database; this covers the SQL path either way.
+    config(['elasticsearch.enabled' => false]);
+
     $this->loginAsAdmin();
 
     $root = Category::factory()->create([

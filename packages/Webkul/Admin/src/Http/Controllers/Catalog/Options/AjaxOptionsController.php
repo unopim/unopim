@@ -141,8 +141,7 @@ class AjaxOptionsController extends Controller
             : $this->getRepository($entityName);
 
         if (! $isCategory) {
-            // Labels are resolved per row via translate()/toArray(); eager load the
-            // translations up front so formatting the page is a single query, not N+1.
+            // Eager load translations so per-row label resolution is one query, not N+1.
             $repository = $repository->with(['translations']);
         }
 
@@ -151,9 +150,14 @@ class AjaxOptionsController extends Controller
         }
 
         if (! empty($query) && ! $isCategory) {
-            $repository = $repository->where(function ($queryBuilder) use ($query, $entityName) {
-                $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
-                    ->orWhere('code', $query);
+            $search = '%'.mb_strtolower($query).'%';
+
+            $column = $this->getTranslationColumnName($entityName);
+
+            $repository = $repository->where(function ($queryBuilder) use ($search, $column) {
+                $queryBuilder->whereHas('translations', function ($translations) use ($search, $column) {
+                    $translations->whereRaw("LOWER($column) LIKE ?", [$search]);
+                })->orWhereRaw('LOWER(code) LIKE ?', [$search]);
             });
         }
 

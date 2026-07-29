@@ -460,8 +460,8 @@
 
                     this.toggleBeforeUnload(false);
 
-                    if (! form.requestSubmit) {
-                        form.submit();
+                    if (form.dataset.ajaxForm !== "true" || ! form.requestSubmit) {
+                        form.requestSubmit ? form.requestSubmit() : form.submit();
 
                         return;
                     }

@@ -30,11 +30,7 @@ class ImportTrackBatch implements ShouldQueue
      */
     public function handle(): void
     {
-        // Set this batch's owner unconditionally (not only when unauthenticated):
-        // a persistent worker keeps the guard populated between jobs, so a stale
-        // identity would otherwise carry over and attribute the import to the
-        // wrong admin. setUser() avoids touching the session; the guard is cleared
-        // in the finally so nothing leaks into the next job.
+        // Set owner every job — a persistent worker retains a stale guard between jobs; finally clears it to avoid leaks.
         $user = AdminProxy::find($this->importBatch->user_id);
 
         if ($user) {
@@ -63,10 +59,9 @@ class ImportTrackBatch implements ShouldQueue
 
         $logger->info(trans('data_transfer::app.job.started'));
 
-        // Mark as validating and set started_at so the tracker timer begins from validation phase
+        // Set started_at now so the tracker timer begins from the validation phase.
         $importHelper->stateUpdate(ImportHelper::STATE_VALIDATING, ['started_at' => now()]);
 
-        // Validate the import
         $import = $importHelper->validate();
 
         $this->importBatch = $import->getImport();
@@ -76,11 +71,9 @@ class ImportTrackBatch implements ShouldQueue
             $importHelper->started(preserveStartedAt: true);
         }
 
-        // Check for pending batches
         $pendingBatch = $this->importBatch->batches->where('state', ImportHelper::STATE_PENDING)->first();
 
         if ($pendingBatch) {
-            // Start the import process
             try {
                 $importHelper->start(null, $this->queue);
             } catch (\Exception $e) {
@@ -95,20 +88,17 @@ class ImportTrackBatch implements ShouldQueue
                 return;
             }
         } elseif ($importHelper->isLinkingRequired()) {
-            // Handle linking or indexing if required
             $importHelper->linking();
         } else {
             $importHelper->completed();
         }
 
-        // Determine final state based on current state
         $state = match ($this->importBatch->state) {
             ImportHelper::STATE_LINKING  => $importHelper->isIndexingRequired() ? ImportHelper::STATE_INDEXING : ImportHelper::STATE_COMPLETED,
             ImportHelper::STATE_INDEXING => ImportHelper::STATE_COMPLETED,
             default                      => ImportHelper::STATE_COMPLETED,
         };
 
-        // Gather stats
         $importHelper->stats($state);
     }
 

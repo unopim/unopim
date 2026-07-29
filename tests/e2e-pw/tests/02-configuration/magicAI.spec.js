@@ -15,8 +15,7 @@ async function ensureMagicAITextEnabled(adminPage) {
   await adminPage.locator(cbSelector).first().waitFor({ state: 'attached', timeout: 10000 });
 
   const result = await adminPage.evaluate(async () => {
-    // The config page has two forms (logout + config). Pick the one that
-    // owns the Magic AI checkbox.
+    // Page has two forms (logout + config); pick the one owning the Magic AI checkbox.
     const cb = document.querySelector('input[type="checkbox"][name="general[magic_ai][settings][enabled]"]');
     if (!cb) return { ok: false, reason: 'no-cb' };
     const form = cb.closest('form');
@@ -48,17 +47,8 @@ async function ensureMagicAITextEnabled(adminPage) {
   await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
 }
 
-/**
- * Helper: Ensure Magic AI translation is enabled in the global config.
- *
- * The "More Actions" dropdown on the product edit page is gated by
- * general.magic_ai.translation.enabled (its only menu item is Translate).
- * Without this guarantee, the More button is intentionally hidden and the
- * Section 7 translate tests can't find it.
- *
- * Uses the same direct-POST pattern as ensureMagicAITextEnabled to bypass
- * the Vue toggle render race.
- */
+// Enable Magic AI translation config; the product "More Actions" dropdown is gated by it.
+// Direct-POST like ensureMagicAITextEnabled to bypass the Vue toggle render race.
 async function ensureMagicAITranslationEnabled(adminPage) {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
@@ -96,11 +86,7 @@ async function ensureMagicAITranslationEnabled(adminPage) {
   await expect(adminPage.locator(cbSelector).first()).toBeChecked({ timeout: 10000 });
 }
 
-/**
- * Helper: Open the datagrid on Prompt / System Prompt pages.
- * Clicking the "Create" button loads the datagrid AND opens a modal.
- * We close the modal immediately so we can interact with the grid.
- */
+// Open datagrid on Prompt pages: "Create" loads the grid AND a modal, so close the modal to reach the grid.
 async function openDatagrid(adminPage, createBtnName) {
   await adminPage.getByRole('button', { name: createBtnName }).click();
   const cancelIcon = adminPage.locator('.icon-cancel');
@@ -108,15 +94,11 @@ async function openDatagrid(adminPage, createBtnName) {
     await cancelIcon.click();
     await expect(cancelIcon).not.toBeVisible({ timeout: 5000 });
   }
-  // Allow Vue reactivity to settle after modal close so the next edit click
-  // doesn't race with a pending toggle() state flip.
+  // Let Vue settle after modal close so the next edit click doesn't race a pending toggle().
   await adminPage.waitForTimeout(500);
 }
 
-/**
- * Helper: Create an OpenAI platform and return its label.
- * Cleans up after itself if cleanupAfter is called.
- */
+// Create an OpenAI platform and return its label.
 async function createOpenAIPlatform(adminPage, label) {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
@@ -128,17 +110,16 @@ async function createOpenAIPlatform(adminPage, label) {
   await adminPage.locator('input[name="api_key"]').fill(OPENAI_API_KEY);
   await adminPage.locator('input[name="label"]').click();
 
-  // Wait for models to load from the API key test call
+  // Models load from the API-key test call.
   await adminPage.locator('input[type="checkbox"]').first().waitFor({ state: 'visible', timeout: 30000 }).catch(() => {});
 
-  // Explicitly select at least one model — required for save to succeed
+  // Select at least one model — required for save to succeed.
   const gpt4oCheckbox = adminPage.getByRole('checkbox', { name: 'gpt-4o', exact: true });
   if (await gpt4oCheckbox.isVisible().catch(() => false)) {
     if (!(await gpt4oCheckbox.isChecked())) {
       await gpt4oCheckbox.check();
     }
   } else {
-    // Fallback: select the first available model checkbox
     const firstModel = adminPage.locator('.grid.grid-cols-2 label input[type="checkbox"]').first();
     if (await firstModel.isVisible().catch(() => false)) {
       await firstModel.check();
@@ -149,9 +130,7 @@ async function createOpenAIPlatform(adminPage, label) {
   await expect(adminPage.locator('#app').getByText(/saved successfully|created successfully|updated successfully/i)).toBeVisible({ timeout: 30000 });
 }
 
-/**
- * Helper: Delete a platform by label text.
- */
+// Delete a platform by label text.
 async function deletePlatform(adminPage, label) {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
   await adminPage.getByRole('button', { name: 'Add Platform' }).first().click();
@@ -170,9 +149,7 @@ async function deletePlatform(adminPage, label) {
 
 test.describe('UnoPim Magic AI Test Cases', () => {
 
-// ═════════════════════════════════════════════════
 // SECTION 1: Platform Management
-// ═════════════════════════════════════════════════
 
 test('1.1 - Verify AI Platforms page opens with onboarding', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
@@ -249,9 +226,7 @@ test('1.8 - Verify platform datagrid columns', async ({ adminPage }) => {
   await expect(adminPage.locator('#app').getByText('Actions', { exact: true })).toBeVisible();
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 2: Magic AI Configuration Settings
-// ═════════════════════════════════════════════════
 
 test('2.1 - Verify Magic AI is visible in sidebar', async ({ adminPage }) => {
   await navigateTo(adminPage, 'configuration');
@@ -293,7 +268,6 @@ test('2.5 - Verify Translation section fields', async ({ adminPage }) => {
 
 test('2.6 - Verify platform dropdown shows OpenAI platform on config page', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
-  // Check that at least one platform option is visible on the config page
   await expect(adminPage.getByText(/OpenAI/i).first()).toBeVisible();
 });
 
@@ -301,8 +275,7 @@ test('2.7 - Configure Magic AI with OpenAI platform for Text Generation', async 
   test.setTimeout(30000);
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
 
-  // Enable Text Generation toggle (general.magic_ai.settings.enabled)
-  // Magic AI WYSIWYG button is gated by this flag — without it, button never injects.
+  // Enable Text Generation toggle; the Magic AI WYSIWYG button is gated by this flag.
   await adminPage.locator('input[type="checkbox"]').first().click({ force: true });
 
   const platformDropdown = adminPage.locator('.multiselect__placeholder, .multiselect__single').first();
@@ -357,9 +330,7 @@ test('2.9 - Save Configuration without any changes', async ({ adminPage }) => {
   await expect(adminPage.getByRole('heading', { name: 'Magic AI' })).toBeVisible();
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 3: System Prompt Management
-// ═════════════════════════════════════════════════
 
 test('3.1 - Verify System Prompt page opens', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
@@ -440,13 +411,11 @@ test('3.7 - Create and verify a System Prompt with all fields', async ({ adminPa
   await clickSave(adminPage, 'Save');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
-  // Verify it appears in datagrid
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create System Prompt');
   await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
   await expect(adminPage.locator('#app').getByText(title, { exact: true }).first()).toBeVisible({ timeout: 5000 });
 
-  // Cleanup: delete the created system prompt
   const row = adminPage.locator('div').filter({ hasText: title });
   if (await row.first().locator('span[title="delete"]').first().isVisible().catch(() => false)) {
     await row.first().locator('span[title="delete"]').first().click();
@@ -461,8 +430,7 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   await openDatagrid(adminPage, 'Create System Prompt');
 
   await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
-  // Click the anchor wrapping the edit icon — the @click handler is on the <a>,
-  // not the span. Clicking the span directly may not trigger the Vue handler.
+  // Click the <a> wrapping the edit icon; the @click is on the anchor, not the span.
   const editLink = adminPage.locator('a:has(span[title="Edit"])').first();
   await expect(editLink).toBeVisible({ timeout: 5000 });
   await editLink.click();
@@ -472,11 +440,9 @@ test('3.9 - Edit an existing system prompt', async ({ adminPage }) => {
   const currentTitle = await titleInput.inputValue();
   await titleInput.clear();
   await titleInput.fill(currentTitle + ' Pro');
-  // The edit form is dirty-tracked (save via the "Save changes" bar) and redirects to
-  // the index on success, so the toast is caught before navigation, not after.
+  // Dirty-tracked form saves via "Save changes" and redirects; catch the toast before navigation.
   await clickSaveAndExpect(adminPage, 'Save changes', /updated successfully|saved successfully/i, /system-prompts/);
 
-  // Revert the edit
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create System Prompt');
   const editLinkRevert = adminPage.locator('a:has(span[title="Edit"])').first();
@@ -499,9 +465,7 @@ test('3.10 - Search system prompts in datagrid', async ({ adminPage }) => {
   await expect(adminPage.locator('#app').getByText('Technical Expert')).toBeVisible();
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 4: Prompt Management
-// ═════════════════════════════════════════════════
 
 test('4.1 - Verify Prompt page opens', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
@@ -513,10 +477,8 @@ test('4.2 - Verify default prompts are pre-loaded', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create Prompt');
 
-  // Verify the datagrid has results (default prompts are seeded)
   await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 
-  // Search for specific default prompts to verify they exist
   await adminPage.locator('input[type="text"]').first().fill('Product Tagline');
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
@@ -594,7 +556,6 @@ test('4.9 - Create a Product Text Generation prompt and clean up', async ({ admi
   await clickSave(adminPage, 'Save Prompt');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
-  // Cleanup
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create Prompt');
   const row = adminPage.locator('div').filter({ hasText: title });
@@ -620,7 +581,6 @@ test('4.10 - Create a Category prompt and clean up', async ({ adminPage }) => {
   await clickSave(adminPage, 'Save Prompt');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
-  // Cleanup
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create Prompt');
   const row = adminPage.locator('div').filter({ hasText: title });
@@ -648,7 +608,6 @@ test('4.11 - Create an Image Generation prompt and clean up', async ({ adminPage
   await clickSave(adminPage, 'Save Prompt');
   await expect(adminPage.locator('#app').getByText('Prompt saved successfully.')).toBeVisible();
 
-  // Cleanup
   await adminPage.goto(MAGIC_AI_PROMPT_URL, { waitUntil: 'networkidle' });
   await openDatagrid(adminPage, 'Create Prompt');
   const row = adminPage.locator('div').filter({ hasText: title });
@@ -670,20 +629,17 @@ test('4.12 - Search prompts in datagrid', async ({ adminPage }) => {
   await expect(adminPage.locator('#app').getByText('Product Tagline')).toBeVisible();
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 5: Locale Setup for Translation (self-contained)
-// ═════════════════════════════════════════════════
 
 test('5.1 - Enable Hindi locale for translation testing', async ({ adminPage }) => {
   test.setTimeout(30000);
   await navigateTo(adminPage, 'locales');
 
-  // Search for Hindi locale using the search box
   const searchInput = adminPage.getByPlaceholder('Search by code').first();
   await searchInput.fill('hi_IN');
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
-  // Extra wait for datagrid re-render to complete
+  // Extra wait for datagrid re-render.
   await adminPage.waitForTimeout(1000);
 
   const editBtn = adminPage.locator('span[title="Edit"]').first();
@@ -693,8 +649,7 @@ test('5.1 - Enable Hindi locale for translation testing', async ({ adminPage }) 
   await adminPage.waitForLoadState('networkidle');
   await expect(adminPage.locator('label[for="status"]')).toBeVisible();
   await adminPage.locator('label[for="status"]').click();
-  // Locale edit saves via the "Save changes" bar and redirects to the index; catch the
-  // toast before navigation.
+  // Locale edit saves via "Save changes" and redirects; catch the toast before navigation.
   await clickSaveAndExpect(adminPage, 'Save changes', /Locale updated successfully/i, /settings\/locales/);
 });
 
@@ -702,19 +657,12 @@ test('5.2 - Edit the default channel and save via the unsaved-changes bar', asyn
   test.setTimeout(30000);
   await navigateTo(adminPage, 'channels');
 
-  // Target the default channel explicitly — other channels may exist and the
-  // datagrid does not guarantee it renders first.
+  // Target the default channel explicitly; the grid doesn't guarantee it renders first.
   await searchInDataGrid(adminPage, 'default');
   await clickEditOnRow(adminPage, 'default');
 
-  // Edit a tracked field to dirty the form so the redesigned "Save changes" bar
-  // appears, then save. (The locales vue-multiselect dropdown is unreliable in
-  // headless; the name translation is a stable edit that exercises the same
-  // channel edit → global-save-bar → persist flow.)
-  // Wait for the form to hydrate (English name populated) before editing, then
-  // change it so the dirty tracker reliably reveals the save bar. Capture the
-  // original name first so it can be restored — the default channel is shared
-  // state that later tests (e.g. dashboard completeness) assert on by name.
+  // Dirty a tracked field to reveal the "Save changes" bar (locales multiselect is flaky headless).
+  // Wait for hydration, then capture+restore the original name — shared state later tests assert on.
   const nameField = adminPage.locator('input[name="en_US\\[name\\]"]').first();
   await expect(nameField).toHaveValue(/.+/, { timeout: 10000 });
   const originalName = await nameField.inputValue();
@@ -732,9 +680,7 @@ test('5.2 - Edit the default channel and save via the unsaved-changes bar', asyn
   await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 6: Attribute Configuration for Magic AI
-// ═════════════════════════════════════════════════
 
 test('6.1 - Enable AI Translate on description attribute', async ({ adminPage }) => {
   await navigateTo(adminPage, 'attributes');
@@ -766,9 +712,7 @@ test('6.2 - Enable AI Translate on short_description attribute', async ({ adminP
   await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Updated Successfully/i);
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 7: Product - Magic AI Content Generation
-// ═════════════════════════════════════════════════
 
 test('7.1 - Create product, verify Magic AI button, and clean up', async ({ adminPage }) => {
   test.skip(!OPENAI_API_KEY, 'OPENAI_API_KEY not set — Magic AI button requires configured platform');
@@ -777,7 +721,6 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
   const uid = generateUid();
   const sku = `magicai-prod-${uid}`;
 
-  // Create product
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
@@ -791,13 +734,11 @@ test('7.1 - Create product, verify Magic AI button, and clean up', async ({ admi
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
   await adminPage.waitForLoadState('networkidle');
 
-  // Verify Magic AI button in WYSIWYG toolbar
   const magicAIButtons = adminPage.getByRole('button', { name: 'Magic AI' });
   await expect(magicAIButtons.first()).toBeVisible({ timeout: 20000 });
   const count = await magicAIButtons.count();
   expect(count).toBeGreaterThanOrEqual(2);
 
-  // Cleanup: delete the product
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
   const row = adminPage.locator('div', { hasText: sku });
@@ -814,7 +755,6 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   const uid = generateUid();
   const sku = `magicai-modal-${uid}`;
 
-  // Create product
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
@@ -827,22 +767,18 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
   await adminPage.waitForLoadState('networkidle');
 
-  // Click Magic AI on Description WYSIWYG toolbar
   const magicAIBtn = adminPage.getByRole('button', { name: 'Magic AI' }).last();
   await expect(magicAIBtn).toBeVisible({ timeout: 20000 });
   await magicAIBtn.click();
 
-  // Verify AI Assistance modal fields — wait for modal to fully render
   await expect(adminPage.locator('#app').getByText('AI Assistance')).toBeVisible({ timeout: 10000 });
   await expect(adminPage.locator('#app').getByText('Default Prompt')).toBeVisible({ timeout: 10000 });
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible({ timeout: 10000 });
   await expect(adminPage.locator('.multiselect').first()).toBeVisible({ timeout: 10000 });
 
-  // Close modal and wait for it to disappear
   await adminPage.locator('.icon-cancel').click();
   await expect(adminPage.locator('.icon-cancel')).not.toBeVisible({ timeout: 5000 });
 
-  // Cleanup: delete the product
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
   const row = adminPage.locator('div', { hasText: sku });
@@ -857,7 +793,6 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
   const uid = generateUid();
   const sku = `magicai-more-${uid}`;
 
-  // Create product
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
@@ -869,7 +804,6 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
   await clickSave(adminPage, 'Save Product');
   await expect(adminPage.locator('#app').getByText(/Product created successfully/i)).toBeVisible();
 
-  // Verify "More Actions" button exists
   const moreBtn = adminPage.locator('[title="More Actions"]').first();
   await expect(moreBtn).toBeVisible({ timeout: 20000 });
   await moreBtn.click();
@@ -879,7 +813,6 @@ test('7.5 - Verify More Actions menu on product edit page', async ({ adminPage }
     await expect(translateOption).toBeVisible();
   }
 
-  // Cleanup: delete the product
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
   const row = adminPage.locator('div', { hasText: sku });
@@ -919,7 +852,6 @@ test('7.5b - More Actions button is hidden when AI translation is disabled', asy
   const uid = generateUid();
   const sku = `magicai-nomore-${uid}`;
 
-  // Create product
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
@@ -951,7 +883,6 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   const uid = generateUid();
   const sku = `magicai-trans-${uid}`;
 
-  // Create product
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
@@ -961,7 +892,7 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   await adminPage.getByRole('option', { name: 'Default' }).first().click();
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
-  // Wait for redirect to edit page (toast may disappear before we catch it)
+  // Wait for redirect to edit page (toast may vanish before we catch it).
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
 
@@ -969,21 +900,16 @@ test('7.6 - Verify Translate Step 1 fields', async ({ adminPage }) => {
   await expect(moreBtn).toBeVisible({ timeout: 20000 });
   await moreBtn.click();
 
-  // Translation is force-enabled via ensureMagicAITranslationEnabled above,
-  // so the Translate option must be present — wait for it instead of skipping
-  // silently if it isn't (the previous if-guard hid real failures).
+  // Translation is force-enabled above, so Translate must be present — wait, don't skip silently.
   const translateOption = adminPage.locator('span[title="Translate"]').first();
   await expect(translateOption).toBeVisible({ timeout: 10000 });
   await translateOption.click();
 
-  // Redesigned modal renders step-indicator circles (1, 2) with "Select Source"
-  // / "Select Target" labels and a "Source content" card — verify those plus
-  // the Step 1 "Next" button.
+  // Redesigned modal: step circles + "Select Source/Target" labels + "Source content" card.
   await expect(adminPage.locator('#app').getByRole('heading', { name: /Source content/i })).toBeVisible({ timeout: 15000 });
   await expect(adminPage.locator('#app').getByText('Select Source', { exact: true })).toBeVisible();
   await expect(adminPage.getByRole('button', { name: 'Next' })).toBeVisible();
 
-  // Cleanup: delete the product
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
   const row = adminPage.locator('div', { hasText: sku });
@@ -1000,7 +926,6 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   const uid = generateUid();
   const sku = `magicai-hindi-${uid}`;
 
-  // Step 0: Enable hi_IN locale if not already enabled
   await navigateTo(adminPage, 'locales');
   await searchInDataGrid(adminPage, 'hi_IN', 'Search by code');
   const localeRow = adminPage.locator('#app div').filter({ hasText: 'hi_IN' }).first();
@@ -1016,12 +941,10 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     }
   }
 
-  // Step 1: Assign hi_IN to default channel if not assigned
   await navigateTo(adminPage, 'channels');
   await searchInDataGrid(adminPage, 'default');
   await clickEditOnRow(adminPage, 'default');
 
-  // Check if Hindi is already in the locales multiselect
   const hindiTag = adminPage.locator('#locales .multiselect__tag', { hasText: 'Hindi' });
   if (!(await hindiTag.isVisible({ timeout: 3000 }).catch(() => false))) {
     await adminPage.locator('#locales').locator('.multiselect__tags').click();
@@ -1035,7 +958,6 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     }
   }
 
-  // Step 2: Create a product with English content
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await expect(adminPage.locator('input[name="sku"]')).toBeVisible();
@@ -1048,7 +970,6 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { timeout: 20000 });
   await adminPage.waitForLoadState('networkidle');
 
-  // Fill product name in English
   const nameField = adminPage.locator('input[name*="[name]"]').first();
   if (await nameField.isVisible({ timeout: 5000 }).catch(() => false)) {
     await nameField.fill(`Test Product ${uid}`);
@@ -1056,14 +977,13 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     await adminPage.waitForLoadState('networkidle');
   }
 
-  // Step 3: Open Translate modal via More Actions
   const moreBtn = adminPage.locator('[title="More Actions"]').first();
   await expect(moreBtn).toBeVisible({ timeout: 20000 });
   await moreBtn.click();
 
   const translateOption = adminPage.locator('span[title="Translate"]');
   if (!(await translateOption.isVisible({ timeout: 5000 }).catch(() => false))) {
-    // Translate not available — skip rest but still cleanup
+    // Translate unavailable — skip rest but still clean up.
     await navigateTo(adminPage, 'products');
     await searchInDataGrid(adminPage, sku);
     const row = adminPage.locator('div', { hasText: sku });
@@ -1073,14 +993,11 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   }
 
   await translateOption.click();
-  // Modal renders step indicators as circles with "Select Source" / "Select Target"
-  // labels; the literal "Step 1" text was removed in #372.
+  // Step indicators are circles now; literal "Step 1" text removed in #372.
   await expect(adminPage.locator('#app').getByText('Select Source').first()).toBeVisible({ timeout: 10000 });
 
-  // Step 4: Select Hindi as target language and proceed
   const nextBtn = adminPage.getByRole('button', { name: 'Next' });
   if (await nextBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
-    // Select target locale if dropdown available
     const targetLocale = adminPage.locator('.multiselect').filter({ hasText: /Target|Destination/ }).first();
     if (await targetLocale.isVisible({ timeout: 3000 }).catch(() => false)) {
       await targetLocale.locator('.multiselect__tags').click();
@@ -1093,16 +1010,14 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     await nextBtn.click();
     await adminPage.waitForTimeout(1000);
 
-    // Step 5: Click Translate if available
     const translateBtn = adminPage.getByRole('button', { name: /Translate/i }).first();
     if (await translateBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await translateBtn.click();
-      // Wait for translation to complete (API call)
+      // Wait for translation API call to complete.
       await adminPage.waitForTimeout(10000);
     }
   }
 
-  // Cleanup: delete the product
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
   const delRow = adminPage.locator('div', { hasText: sku });
@@ -1114,9 +1029,7 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
   }
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 8: Category - Magic AI Content Generation
-// ═════════════════════════════════════════════════
 
 test('8.1 - Create a category and verify Magic AI button', async ({ adminPage }) => {
   const uid = generateUid();
@@ -1138,7 +1051,6 @@ test('8.2 - Verify Magic AI button on category description WYSIWYG', async ({ ad
 
   await navigateTo(adminPage, 'categories');
 
-  // Try to find and edit any category with a WYSIWYG
   const editLink = adminPage.locator('span[title="Edit"]').first();
   if (await editLink.isVisible().catch(() => false)) {
     await editLink.click();
@@ -1151,9 +1063,7 @@ test('8.2 - Verify Magic AI button on category description WYSIWYG', async ({ ad
   }
 });
 
-// ═════════════════════════════════════════════════
 // SECTION 9: Roles & Permissions for Magic AI
-// ═════════════════════════════════════════════════
 
 test('9.1 - Verify Magic AI permission tree under Configuration in Roles', async ({ adminPage }) => {
   await navigateTo(adminPage, 'roles');
@@ -1185,11 +1095,10 @@ test('9.2 - Create a Role with MagicAI permission and clean up', async ({ adminP
   await adminPage.getByRole('textbox', { name: 'Name' }).fill(roleName);
   await adminPage.getByRole('textbox', { name: 'Description' }).fill('Role with Magic AI permissions only');
   await clickSave(adminPage, 'Save Role');
-  // Wait for redirect to roles list page (toast may disappear before assertion)
+  // Wait for redirect to roles list (toast may vanish before assertion).
   await adminPage.waitForURL(/\/admin\/settings\/roles$/, { timeout: 20000 }).catch(() => {});
   await adminPage.waitForLoadState('networkidle');
 
-  // Cleanup: delete the role
   await navigateTo(adminPage, 'roles');
   await searchInDataGrid(adminPage, roleName);
   const itemRow = adminPage.locator('div', { hasText: roleName });
@@ -1205,7 +1114,6 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   const userName = `MagicAI Tester ${uid}`;
   const email = `magicai-${uid}@example.com`;
 
-  // Create role first
   await navigateTo(adminPage, 'roles');
   await adminPage.getByRole('link', { name: 'Create Role' }).click();
   await adminPage.waitForLoadState('networkidle');
@@ -1219,7 +1127,6 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   await clickSave(adminPage, 'Save Role');
   await expect(adminPage.locator('#app').getByText('Roles Created Successfully')).toBeVisible();
 
-  // Create user
   await navigateTo(adminPage, 'users');
   await adminPage.getByRole('button', { name: 'Create User' }).click();
   await adminPage.getByRole('textbox', { name: 'Name' }).waitFor({ state: 'visible', timeout: 15000 });
@@ -1228,8 +1135,7 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill('Test@1234');
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill('Test@1234');
 
-  // The create modal only collects role + status; UI locale, timezone and catalog
-  // locale are assigned on the edit screen.
+  // Create modal collects only role + status; locale/timezone/catalog are set on edit.
   const roleMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="role_id"]') });
   await roleMultiselect.locator('.multiselect__tags').click();
   await adminPage.getByRole('option', { name: roleName }).first().click();
@@ -1238,7 +1144,6 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   await adminPage.locator('label[for="status"]').click({ force: true });
   await clickSaveAndExpect(adminPage, 'Save User', /User created successfully/i);
 
-  // Cleanup: delete the user
   await navigateTo(adminPage, 'users');
   await searchInDataGrid(adminPage, userName);
   const userRow = adminPage.locator('div', { hasText: userName });
@@ -1247,7 +1152,6 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   await adminPage.getByRole('button', { name: 'Delete' }).click();
   await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible();
 
-  // Cleanup: delete the role
   await navigateTo(adminPage, 'roles');
   await searchInDataGrid(adminPage, roleName);
   const roleRow = adminPage.locator('div', { hasText: roleName });

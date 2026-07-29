@@ -28,14 +28,10 @@ class PublicationAssetController extends Controller
     public function __construct(private readonly PublicationResolver $resolver) {}
 
     /**
-     * Serves a document from the private asset disk, but only a path the
-     * current Published version's payload actually references.
+     * Serves a private-disk document, but only a path the current Published version's payload references.
      *
-     * Reads the `type` route default via the Request rather than as a method
-     * parameter: ControllerDispatcher binds non-class parameters positionally
-     * (see PublicationController::routeType()'s docblock for the mechanics),
-     * and `defaults()` values are appended after real URI captures — a
-     * `string $type` parameter here would silently receive `{uuid}`'s value.
+     * `type` is read via the Request, not a parameter: route defaults are appended after URI captures, so a
+     * `string $type` parameter would receive `{uuid}`'s value.
      */
     public function show(Request $request, string $uuid, string $path): Response
     {
@@ -43,16 +39,10 @@ class PublicationAssetController extends Controller
 
         $publication = $this->resolver->findPublication($uuid, $type);
 
-        // Narrower than the page itself: a withdrawn or redacted passport
-        // still renders a tombstone (PublicationStatus::isPubliclyResolvable()),
-        // but a downloadable certificate/report is not "last published data
-        // kept visible" the same way rendered text is — it stops the instant
-        // the publication is no longer actively Published.
+        // Narrower than the page: withdrawn/redacted still renders a tombstone, but documents stop at not-Published.
         abort_if($publication === null || $publication->status !== PublicationStatus::Published, 404);
 
-        // Same per-channel kill switch the page controller enforces: a disabled
-        // channel must take the publication's documents off the air too, not
-        // just its rendered page.
+        // Same per-channel kill switch the page enforces: a disabled channel takes its documents off the air too.
         abort_unless($this->resolver->isChannelEnabled($publication), 404);
 
         $sanitizedPath = $this->sanitizePath($path);
@@ -83,13 +73,7 @@ class PublicationAssetController extends Controller
     }
 
     /**
-     * Rejects before Storage is ever touched: `..`, a leading slash or
-     * backslash, an embedded backslash anywhere, control characters (which
-     * catch an embedded newline as much as they catch a null byte), and
-     * anything outside a conservative allow-list of characters. Flysystem's
-     * own traversal guard throws rather than returning false, and
-     * `FilesystemAdapter::exists()` has no try/catch around that throw — this
-     * check exists so a malformed path never reaches Flysystem at all.
+     * Rejects traversal, backslashes, control chars, and anything outside the allow-list before Flysystem is touched.
      */
     private function sanitizePath(string $path): ?string
     {
@@ -103,9 +87,7 @@ class PublicationAssetController extends Controller
             return null;
         }
 
-        // Includes `_`: locale codes stamped into a document path by the
-        // payload builder (e.g. `publication/17/en_US/certificate.pdf`) always
-        // contain one.
+        // Allow `_`: locale codes stamped into document paths (e.g. `.../en_US/certificate.pdf`) contain one.
         if (! preg_match('/^[A-Za-z0-9][A-Za-z0-9_.\/-]*$/', $decoded)) {
             return null;
         }
@@ -119,8 +101,7 @@ class PublicationAssetController extends Controller
     }
 
     /**
-     * The one indexed query this proxy runs per request: whether the current
-     * Published version of any locale for this publication references $path.
+     * Whether any current Published version for this publication references $path.
      */
     private function isReferenced(int $publicationId, string $path): bool
     {

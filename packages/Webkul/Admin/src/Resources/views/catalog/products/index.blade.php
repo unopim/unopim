@@ -8,7 +8,7 @@
             <x-slot:actions>
                 <!-- Export Modal -->
                 @if (bouncer()->hasPermission('catalog.products.quick_export'))
-                <x-admin::datagrid.export src="{{ route('admin.catalog.products.index') }}" />
+                <x-admin::datagrid.export src="{{ route('admin.catalog.products.quick-export') }}" />
                 @endif
 
                 {!! view_render_event('unopim.admin.catalog.products.create.before') !!}

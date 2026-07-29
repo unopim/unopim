@@ -1,3 +1,8 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -195,6 +200,13 @@
     html.dark .active [class^="icon-"],
     html.dark .active [class*=" icon-"]{
         @apply text-primary-400;
+    }
+
+    /* The switcher chip keeps its light pill in dark mode, so its icons must stay
+       dark too -- the global rule above would render them white on white. */
+    html.dark .switcher-chip [class^="icon-"],
+    html.dark .switcher-chip [class*=" icon-"]{
+        @apply text-gray-600;
     }
 
     .box-shadow {

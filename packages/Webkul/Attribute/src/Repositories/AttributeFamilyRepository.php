@@ -43,8 +43,7 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
-     * Create a family with a usable starting structure: a clone of $basedOn when given,
-     * otherwise a single "general" group holding the sku attribute.
+     * Create a family with a usable starting structure: a clone of $basedOn, or a "general" group holding sku.
      */
     public function createScaffolded(string $code, ?int $basedOn = null, array $translations = []): AttributeFamily
     {
@@ -54,13 +53,13 @@ class AttributeFamilyRepository extends Repository
             $family = $this->create([
                 'code'             => $code,
                 'status'           => 1,
-                'attribute_groups' => $source
-                    ? $this->buildGroupsFromSource($source)
-                    : $this->buildDefaultGroups(),
+                'attribute_groups' => $source ? [] : $this->buildDefaultGroups(),
                 ...$translations,
             ]);
 
             if ($source) {
+                $this->copyGroupsFromSource($family, $source);
+
                 Event::dispatch('catalog.attribute_family.copied', [
                     'family' => $family,
                     'source' => $source,
@@ -72,27 +71,28 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
-     * Mirror the source family's group/attribute layout as a create() payload. Attribute groups are
-     * global rows shared across families, so the same group ids are re-mapped, never duplicated.
+     * Mirror the source family's group/attribute layout. Attribute groups are global rows shared
+     * across families, so the same group ids are re-mapped, never duplicated. The attribute rows
+     * are copied by the database: a large family holds hundreds of thousands of them, which no
+     * request can afford to hydrate as models.
      */
-    protected function buildGroupsFromSource(AttributeFamily $source): array
+    protected function copyGroupsFromSource(AttributeFamily $family, AttributeFamily $source): void
     {
-        $groups = [];
+        $table = DB::getTablePrefix().'attribute_group_mappings';
 
         foreach ($source->attributeFamilyGroupMappings()->get() as $mapping) {
-            $attributes = $mapping->customAttributes()
-                ->orderBy('attribute_group_mappings.position')
-                ->get();
+            $familyGroupMapping = $this->attributeFamilyGroupMappingRepository->create([
+                'attribute_family_id' => $family->id,
+                'attribute_group_id'  => $mapping->attribute_group_id,
+                'position'            => $mapping->position,
+            ]);
 
-            $groups[$mapping->attribute_group_id] = [
-                'position'          => $mapping->position,
-                'custom_attributes' => $attributes->map(fn ($attribute): array => [
-                    'id' => $attribute->id,
-                ])->values()->all(),
-            ];
+            DB::insert(
+                "insert into {$table} (attribute_family_group_id, attribute_id, position)
+                 select ?, attribute_id, position from {$table} where attribute_family_group_id = ?",
+                [$familyGroupMapping->id, $mapping->id]
+            );
         }
-
-        return $groups;
     }
 
     /**
@@ -147,21 +147,46 @@ class AttributeFamilyRepository extends Repository
 
             $groupPosition++;
 
-            foreach ($customAttributes as $key => $attribute) {
-                if (isset($attribute['id'])) {
-                    $attributeModel = $this->attributeRepository->find($attribute['id']);
-                } else {
-                    $attributeModel = $this->attributeRepository->findOneByField('code', $attribute['code']);
-                }
-
-                $familyGroupMapping->customAttributes()->save(
-                    $attributeModel,
-                    ['position' => $key + 1]
-                );
-            }
+            $familyGroupMapping->customAttributes()->attach(
+                $this->pivotRowsForAttributes($customAttributes)
+            );
         }
 
         return $family;
+    }
+
+    /**
+     * Pivot payload keyed by attribute id, so a group's attributes attach in one
+     * insert instead of a lookup and an insert per attribute.
+     *
+     * @param  array<int, array{id?: int, code?: string}>  $customAttributes
+     * @return array<int, array{position: int}>
+     */
+    protected function pivotRowsForAttributes(array $customAttributes): array
+    {
+        $codes = collect($customAttributes)
+            ->reject(fn (array $attribute): bool => isset($attribute['id']))
+            ->pluck('code')
+            ->filter()
+            ->all();
+
+        $idsByCode = $codes === []
+            ? collect()
+            : $this->attributeRepository->getModel()->newQuery()
+                ->whereIn('code', $codes)
+                ->pluck('id', 'code');
+
+        $rows = [];
+
+        foreach (array_values($customAttributes) as $index => $attribute) {
+            $id = $attribute['id'] ?? $idsByCode->get($attribute['code'] ?? '');
+
+            if ($id) {
+                $rows[(int) $id] = ['position' => $index + 1];
+            }
+        }
+
+        return $rows;
     }
 
     /**
@@ -185,8 +210,7 @@ class AttributeFamilyRepository extends Repository
 
         $groupPosition = 1;
 
-        // Resolve every referenced attribute once, keyed by id, instead of a
-        // find() per attribute per group (G·A point lookups on a large family).
+        // Resolve all referenced attributes once, keyed by id, avoiding a find() per attribute per group.
         $attributeIds = collect($data['attribute_groups'] ?? [])
             ->flatMap(fn ($group): array => collect($group['custom_attributes'] ?? [])->pluck('id')->all())
             ->filter()
@@ -427,8 +451,7 @@ class AttributeFamilyRepository extends Repository
     }
 
     /**
-     * This function returns a query builder instance for the family model.
-     * It eager loads the 'translations' relationship for the family.
+     * Query builder with translations and family group mappings eager-loaded.
      *
      * @return Builder
      */

@@ -10,9 +10,12 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class AttributeRepository extends Repository
 {
+    use HtmlPurifier;
+
     protected $attributes = [];
 
     /**
@@ -113,6 +116,14 @@ class AttributeRepository extends Repository
             if (array_key_exists($boolField, $data)) {
                 $data[$boolField] = (int) (bool) $data[$boolField];
             }
+        }
+
+        if (
+            ($data['type'] ?? null) === 'textarea'
+            && ! empty($data['enable_wysiwyg'])
+            && ! empty($data['default_value'])
+        ) {
+            $data['default_value'] = $this->purifyText($data['default_value']);
         }
 
         return $data;

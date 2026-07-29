@@ -4,6 +4,22 @@
     'info' => '',
 ])
 
+@php
+    $providedId = $attributes->get('id');
+
+    /** Radios share a name, so the value keeps each generated id unique. */
+    $controlId = match (true) {
+        (bool) $providedId => unique_form_control_id(form_control_id($providedId), allowSuffix: false),
+        'hidden' === $type => '',
+        default            => unique_form_control_id(form_control_id($name, 'radio' === $type ? $attributes->get('value') : null)),
+    };
+
+    $idAttribute = '' === $controlId ? [] : ['id' => $controlId];
+
+    /** Re-emitted from $controlId so the rendered id always matches what labels target. */
+    $attributes = $attributes->except(['id']);
+@endphp
+
 @switch($type)
     @case('hidden')
     @case('text')
@@ -20,7 +36,7 @@
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
             />
         </v-field>
 
@@ -50,7 +66,7 @@
                     type="text"
                     name="{{ $name }}"
                     v-bind="field"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'no-focus-ring w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900']) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'no-focus-ring w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900'] + $idAttribute) }}
                 />
             </div>
         </v-field>
@@ -65,6 +81,7 @@
         >
             <v-file-uploader
                 name="{{ $name }}"
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 :field="field"
                 :class="[errors.length ? 'border border-red-500' : '']"
                  {{ $attributes }}
@@ -85,7 +102,7 @@
                 type="{{ $type }}"
                 :class="[errors.length ? 'border border-red-500' : '']"
                 v-bind="field"
-                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:border-gray-600 transition-all hover:border-gray-400 dark:hover:border-gray-400']) }}
+                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:border-gray-600 transition-all hover:border-gray-400 dark:hover:border-gray-400'] + $idAttribute) }}
             >
         </v-field>
         @break
@@ -101,13 +118,13 @@
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
             >
             </textarea>
 
             @if ($attributes->get('tinymce', false) || $attributes->get(':tinymce', false))
-                <x-admin::tinymce 
-                    :selector="'textarea#' . $attributes->get('id')"
+                <x-admin::tinymce
+                    :selector="'textarea#' . $controlId"
                     :prompt="stripcslashes($attributes->get('prompt', ''))"
                     ::field="field"
                     :entity-name="$attributes->get('entity-name', '')"
@@ -129,7 +146,7 @@
                     name="{{ $name }}"
                     v-bind="field"
                     :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
                     autocomplete="off"
                 />
             </x-admin::flat-picker.date>
@@ -148,7 +165,7 @@
                     name="{{ $name }}"
                     v-bind="field"
                     :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
                     autocomplete="off"
                 >
             </x-admin::flat-picker.datetime>
@@ -164,6 +181,7 @@
             @if ('true' == $attributes->get('async'))
                 <v-async-select-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -172,6 +190,7 @@
             @else
                 <v-select-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -192,6 +211,7 @@
             @if ('true' == $attributes->get('async'))
                 <v-async-select-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     multiple="true"
@@ -202,6 +222,7 @@
             @else
                 <v-multiselect-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :onselect="false"
                     :class="[errors.length ? 'border border-red-500' : '']"
@@ -223,6 +244,7 @@
                 <v-tagging-handler
                     :taggable=true
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -243,6 +265,7 @@
         <v-taggingselect-handler
             :taggable=true
             name="{{ $name }}"
+            @if ('' !== $controlId) id="{{ $controlId }}" @endif
             v-bind="field"
             :class="[errors.length ? 'border border-red-500' : '']"
             {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -266,7 +289,7 @@
                 name="{{ $name }}"
                 v-bind="field"
                 class="sr-only peer"
-                {{ $attributes->except(['rules', 'label', ':label']) }}
+                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($idAttribute) }}
             />
 
             <v-checkbox-handler
@@ -277,9 +300,10 @@
         </v-field>
 
         <label
-             {{ 
+            @if ('' !== $controlId) for="{{ $controlId }}" @endif
+            {{
                 $attributes
-                    ->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])
+                    ->except(['id', 'name', 'for', 'type', 'checked', 'disabled', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])
                     ->merge(['class' => 'icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-600 peer-focus-visible:rounded-sm'])
                     ->merge(['class' => $attributes->get('disabled') ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'])
             }}
@@ -301,20 +325,21 @@
                 name="{{ $name }}"
                 v-bind="field"
                 class="sr-only peer"
-                {{ $attributes->except(['rules', 'label', ':label']) }}
+                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($idAttribute) }}
             />
         </v-field>
 
         <label
             class="icon-radio-normal text-2xl peer-checked:icon-radio-selected peer-checked:text-primary-700 cursor-pointer peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-600 peer-focus-visible:rounded-full"
-            {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
+            @if ('' !== $controlId) for="{{ $controlId }}" @endif
+            {{ $attributes->except(['id', 'name', 'for', 'type', 'checked', 'disabled', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
         >
         </label>
 
         @break
 
     @case('switch')
-        <label class="relative inline-flex items-center cursor-pointer">
+        <span class="relative inline-flex items-center cursor-pointer">
             <v-field
                 type="checkbox"
                 class="hidden"
@@ -325,10 +350,9 @@
                 <input
                     type="checkbox"
                     name="{{ $name }}"
-                    id="{{ $name }}"
                     class="sr-only peer"
                     v-bind="field"
-                    {{ $attributes->except(['v-model', 'rules', ':rules', 'label', ':label']) }}
+                    {{ $attributes->except(['for', 'v-model', 'rules', ':rules', 'label', ':label'])->merge($idAttribute) }}
                 />
                 
                 <v-checkbox-handler
@@ -341,15 +365,16 @@
 
             <label
                 class="rounded-full w-9 h-5 bg-gray-200 cursor-pointer peer-focus:ring-primary-300 after:bg-white dark:after:bg-white after:border-gray-300 dark:after:border-white peer-checked:bg-primary-700 dark:peer-checked:bg-primary-700 peer peer-checked:after:border-white peer-checked:after:ltr:translate-x-full peer-checked:after:rtl:-translate-x-full after:content-[''] after:absolute after:top-0.5 after:ltr:left-0.5 after:rtl:right-0.5 peer-focus:outline-none after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-cherry-800"
-                for="{{ $name }}"
+                @if ('' !== $controlId) for="{{ $controlId }}" @endif
             ></label>
-        </label>
+        </span>
 
         @break
 
     @case('image')
         <x-admin::media.image
             name="{{ $name }}"
+            @if ($providedId) id="{{ $providedId }}" @endif
             ::class="[errors && errors['{{ $name }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
             {{ $attributes }}
         />
@@ -388,12 +413,14 @@
     <script type="text/x-template" id="v-select-handler-template">
         <div>
             <v-multiselect
+                :id="id"
                 :track-by="trackBy ?? 'id'"
                 :label="labelBy ?? 'label'"
                 :options="formattedOptions"
                 :preserve-search="false"
                 :searchable="true"
                 :placeholder="placeholder"
+                open-direction="bottom"
                 :close-on-select="true"
                 :clear-on-select="true"
                 :show-no-results="true"
@@ -429,6 +456,7 @@
             template: '#v-select-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -539,6 +567,7 @@
     <script type="text/x-template" id="v-multiselect-handler-template">
         <div>
             <v-multiselect
+                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :options="formattedOptions"
@@ -572,6 +601,7 @@
             template: '#v-multiselect-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -696,6 +726,7 @@
     <script type="text/x-template" id="v-tagging-handler-template">
         <div>
             <v-multiselect
+                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :taggable="true"
@@ -730,6 +761,7 @@
             template: '#v-tagging-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -861,7 +893,7 @@
     <script type="text/x-template" id="v-taggingselect-handler-template">
         <div>
             <v-multiselect
-                id="ajax"
+                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :taggable="true"
@@ -902,6 +934,7 @@
             template: '#v-taggingselect-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -1151,7 +1184,7 @@
     <script type="text/x-template" id="v-async-select-handler-template">
         <div>
             <v-multiselect
-                id="ajax"
+                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :options="formattedOptions"
@@ -1159,6 +1192,7 @@
                 :searchable="true"
                 :placeholder="placeholder"
                 :loading="isLoading ?? false"
+                open-direction="bottom"
                 :max-height="600"
                 :internal-search="false"
                 :close-on-select="onselect"
@@ -1225,6 +1259,7 @@
             template: '#v-async-select-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -1349,8 +1384,18 @@
 
                     this.$emit('input', JSON.stringify(newValue));
                 },
+
+                value(newValue) {
+                    if (newValue !== '' && newValue !== null && newValue !== undefined) {
+                        return;
+                    }
+
+                    if (this.selectedValue !== null) {
+                        this.selectedValue = null;
+                    }
+                },
             },
-            
+
             methods: {
                 parseValue() {
                     try {
@@ -1546,7 +1591,7 @@
     <script type="text/x-template" id="v-file-uploader-template">
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
             <label
-                :for="$.uid + '_dropzone-file'"
+                :for="inputId"
                 class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-primary-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
                 @dragover.prevent="isDragging = true"
                 @dragleave.prevent="isDragging = false"
@@ -1574,7 +1619,7 @@
                 </div>
                             
                 <input
-                    :id="$.uid + '_dropzone-file'"
+                    :id="inputId"
                     type="file"
                     :name="name"
                     class="hidden"
@@ -1593,6 +1638,7 @@
 
             props: {
                 field: Object,
+                id: String,
                 info: String,
                 name: String,
                 value: String,
@@ -1600,6 +1646,12 @@
                     type: Array,
                     default: () => []
                 }
+            },
+
+            computed: {
+                inputId() {
+                    return this.id || this.$.uid + '_dropzone-file';
+                },
             },
 
             data() {

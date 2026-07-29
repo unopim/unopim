@@ -68,6 +68,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+# Coverage driver for Pest's Test Impact Analysis. Off by default so production
+# images stay free of it; enable with --build-arg INSTALL_COVERAGE_EXTENSION=true.
+# Even when installed it stays dormant (pcov.enabled=0) until a test run turns it on.
+ARG INSTALL_COVERAGE_EXTENSION=false
+RUN if [ "$INSTALL_COVERAGE_EXTENSION" = "true" ]; then \
+        pecl install pcov-1.0.12 \
+        && docker-php-ext-enable pcov \
+        && echo 'pcov.enabled=0' >> "$PHP_INI_DIR/conf.d/docker-php-ext-pcov.ini"; \
+    fi
+
 # PHP production configuration
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 COPY dockerfiles/php.ini "$PHP_INI_DIR/conf.d/unopim.ini"
@@ -90,9 +100,15 @@ ARG HOST_GID=33
 RUN groupmod -o -g "${HOST_GID}" www-data \
     && usermod -o -u "${HOST_UID}" -g "${HOST_GID}" www-data
 
-# Set permissions
+# Set permissions. /var/www is www-data's home, so it has to be writable for
+# tooling that caches there (Pest's Test Impact Analysis graph, Composer).
 RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache \
+    && chown www-data:www-data /var/www
+
+# The bind-mounted tree is owned by the host user, which Git refuses to read
+# from another uid. Test Impact Analysis shells out to Git to find changed files.
+RUN git config --system --add safe.directory /var/www/html
 
 EXPOSE 9000
 

@@ -51,13 +51,35 @@ class Product
         dispatch(new SendProductWebhook($product->id, $changes, 'created', auth('admin')?->user()?->id))->onQueue('webhooks');
     }
 
-    public function afterBulkUpdate(array $ids): void
+    public function afterBulkUpdate(array $ids, array $createdIds = [], array $updatedIds = []): void
     {
-        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
+        if ($createdIds === [] && $updatedIds === []) {
+            $updatedIds = $ids;
+        }
+
+        $this->afterBulkCreate($createdIds);
+
+        $this->afterBulkEditFromImport($updatedIds);
+    }
+
+    public function afterBulkCreate(array $ids): void
+    {
+        $this->dispatchBulkWebhook($ids, WebhookService::EVENT_PRODUCT_CREATED);
+    }
+
+    public function afterBulkEditFromImport(array $ids): void
+    {
+        $this->dispatchBulkWebhook($ids, WebhookService::EVENT_PRODUCT_UPDATED);
+    }
+
+    protected function dispatchBulkWebhook(array $ids, string $event): void
+    {
+        if ($ids === [] || ! $this->webhookRepository->hasActiveForEvent($event)) {
             return;
         }
 
-        dispatch(new SendBulkProductWebhook($ids, auth('admin')?->user()?->id));
+        dispatch(new SendBulkProductWebhook($ids, auth('admin')?->user()?->id, $event))
+            ->onQueue('webhooks');
     }
 
     /**

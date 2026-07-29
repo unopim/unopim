@@ -7,6 +7,7 @@ use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -294,7 +295,7 @@ class DefaultUser extends Command
         $userPassword = $this->getUserPassword($isAdmin);
         $timezone = $this->getSelectedTimeZone();
         $defaultLocale = $this->getSelectedUiLocale();
-        $password = password_hash($userPassword, PASSWORD_BCRYPT, ['cost' => 10]);
+        $password = Hash::make($userPassword);
 
         $localeId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
 
@@ -332,12 +333,7 @@ class DefaultUser extends Command
                 ]
             );
 
-            $this->info('-----------------------------');
-            $this->info('Congratulations! The User has been created successfully.');
-            $this->info('Please navigate to: '.config('app.url').'/admin'.' and use the following credentials for authentication:');
-            $this->info('Email: '.$userEmail);
-            $this->info('Password: '.$userPassword);
-            $this->info('Cheers!');
+            $this->info(trans('admin::app.settings.users.create-success'));
             Log::info('Congratulations! The User has been created successfully');
         } catch (\Exception $e) {
             $this->error($e->getMessage());
@@ -462,18 +458,26 @@ class DefaultUser extends Command
      */
     protected function getUserPassword(bool $isAdmin): string
     {
+        $passwordMin = config('admin.auth.password_min');
+        $passwordMin = is_numeric($passwordMin) ? (int) $passwordMin : 8;
+        $minimumLengthMessage = trans('validation.min.string', [
+            'attribute' => trans('installer::app.installer.index.create-administrator.password'),
+            'min'       => $passwordMin,
+        ]);
+
         $userPassword = $this->option('password') ?: password(
             label: 'Input a Secure Password for User',
             required: true,
-            hint: 'Minimum 6 characters',
+            hint: $minimumLengthMessage,
         );
 
-        while (strlen($userPassword) < 6) {
-            $this->generateWarnings('Password must be at least 6 characters.');
+        while (Str::length($userPassword) < $passwordMin) {
+            $this->generateWarnings($minimumLengthMessage);
 
             $userPassword = password(
                 label: 'Input a Secure Password for User',
                 required: true,
+                hint: $minimumLengthMessage,
             );
         }
 

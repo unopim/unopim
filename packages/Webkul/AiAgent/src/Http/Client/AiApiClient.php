@@ -127,9 +127,7 @@ class AiApiClient
      */
     protected function execute(string $method, string $url, ?array $data = null): array
     {
-        // Pin the connection to the validated IP (CURLOPT_RESOLVE) and disable
-        // redirects, so a rebinding host cannot re-resolve to an internal address
-        // between validation and the actual request (SSRF TOCTOU).
+        // Pin the connection to the validated IP and block redirects to prevent SSRF TOCTOU rebinding.
         $safeOptions = SafeWebhookUrl::httpOptions($url);
 
         throw_unless(
@@ -214,8 +212,6 @@ class AiApiClient
 
             if ($system !== '') {
                 // Mark the static system prefix for Anthropic prompt caching (issue #421).
-                // The client sends no tool definitions, so the system block is the
-                // only cacheable static prefix.
                 $body['system'] = [
                     [
                         'type'          => 'text',
@@ -255,8 +251,7 @@ class AiApiClient
     protected function parseChatResponse(array $response): array
     {
         return match ($this->provider) {
-            // Anthropic's input_tokens EXCLUDES cached tokens, which are
-            // reported separately — add them so budgets see real usage.
+            // Anthropic's input_tokens excludes cached tokens (reported separately); add them so budgets see real usage.
             'anthropic' => [
                 'content'      => $response['content'][0]['text'] ?? '',
                 'tokensUsed'   => ($response['usage']['input_tokens'] ?? 0)
@@ -299,10 +294,7 @@ class AiApiClient
     }
 
     /**
-     * Pre-flight token guard (issue #423): estimate the payload before the
-     * HTTP call and trim oldest history / largest context blocks when the
-     * estimate exceeds the model context window. Only numeric counts are
-     * logged — never prompt content or credentials.
+     * Pre-flight token guard (issue #423): trim oldest history / largest blocks when the estimate exceeds the context window.
      *
      * @param  array<int, array{role: string, content: string}>  $messages
      * @return array<int, array{role: string, content: string}>
@@ -395,9 +387,7 @@ class AiApiClient
     }
 
     /**
-     * Drop leading assistant messages so the first non-system message is a
-     * user turn — Anthropic's Messages API rejects assistant-first lists,
-     * which trimming the oldest user turn can otherwise produce.
+     * Drop leading assistant messages so the first non-system message is a user turn (Anthropic rejects assistant-first lists).
      *
      * @param  array<int, array<string, mixed>>  $messages
      * @return array<int, array<string, mixed>>

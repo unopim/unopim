@@ -66,10 +66,7 @@ class PublicationServiceProvider extends ServiceProvider
     }
 
     /**
-     * Public so a consuming provider (or a test that mutates
-     * `publication.types` post-boot) can re-trigger registration. Safe to
-     * call more than once: aliases/rate limiter are simple overwrites, and
-     * an already-registered type contributes no routes to re-add.
+     * Public and idempotent so a consuming provider or a post-boot test can re-trigger registration.
      */
     public function registerPublicRoutes(): void
     {
@@ -86,21 +83,12 @@ class PublicationServiceProvider extends ServiceProvider
             ];
         });
 
-        // Reads config directly rather than resolving the scoped PublicationTypeRegistry:
-        // that registry memoizes all() on first call, so consuming it here at boot would
-        // freeze every request onto the boot-time type list.
+        // Read config directly: the scoped registry memoizes all() and would freeze requests onto the boot-time list.
         foreach (collect(config('publication.types', []))->map(
             fn (array $config, string $code): PublicationType => PublicationType::fromConfig($code, $config)
         ) as $type) {
-            // No ->whereUuid()/->where('locale', ...) constraints on the first and
-            // third routes: a route regex failure throws NotFoundHttpException
-            // outside this group's own middleware, so Laravel's Pipeline renders it
-            // via the global handler (admin::errors.index) instead. Segment count
-            // plus the literal `asset` token disambiguate these three routes; shape
-            // validation is the controller's job, which always returns our own 404.
-            // The asset route's own `where('path', ...)` is a functional necessity,
-            // not just a hardening extra: without it the `{path}` segment cannot
-            // capture the slashes a nested document path contains at all.
+            // Shape validation is the controller's job; a regex miss 404s via the global handler, not ours.
+            // The asset route's where('path') is functional: without it `{path}` can't capture nested slashes.
             Route::middleware(['publication.errors', 'publication.enabled', 'publication.headers', 'publication.ratelimit'])
                 ->prefix($type->routePrefix)
                 ->group(function () use ($type): void {
@@ -113,9 +101,7 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.asset');
 
-                    // Registered before `/{uuid}/{locale}`: `carrier.svg` contains
-                    // a dot and would otherwise be captured as a `{locale}` segment,
-                    // so first-match ordering must resolve it here.
+                    // Registered before `/{uuid}/{locale}` so first-match resolves `carrier.svg` here, not as a locale.
                     Route::get('/{uuid}/carrier.svg', [PublicationCarrierController::class, 'show'])
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.carrier');
@@ -126,11 +112,8 @@ class PublicationServiceProvider extends ServiceProvider
                 });
         }
 
-        // GS1 Digital Link's `/01/{gtin}` grammar is fixed by the standard, not
-        // per-type-prefixed, so it lives in its own global group outside the loop
-        // above while sharing the identical public middleware stack. It resolves
-        // to the `dpp` type; the numeric `{gtin}` regex keeps it from shadowing any
-        // per-type prefix route (all of which begin with an alphabetic segment).
+        // GS1 Digital Link's `/01/{gtin}` grammar is standard-fixed, not per-type-prefixed, so it lives in its own
+        // group; the numeric regex keeps it from shadowing per-type routes (which all start with an alphabetic segment).
         Route::middleware(['publication.errors', 'publication.enabled', 'publication.headers', 'publication.ratelimit'])
             ->group(function (): void {
                 Route::get('/01/{gtin}', [PublicationController::class, 'resolveByGtin'])
@@ -139,10 +122,7 @@ class PublicationServiceProvider extends ServiceProvider
                     ->name('publication.public.gs1');
             });
 
-        // RouteCollection snapshots the route name before ->name() sets it, and the
-        // name-lookup cache is only rebuilt once during normal boot. A late
-        // re-invocation of this method needs its own explicit refresh, or route()
-        // throws RouteNotFoundException despite the route matching requests fine.
+        // A late re-invocation needs an explicit refresh, or route() throws despite the routes matching requests fine.
         $router->getRoutes()->refreshNameLookups();
     }
 }

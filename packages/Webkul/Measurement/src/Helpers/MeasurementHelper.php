@@ -212,15 +212,35 @@ class MeasurementHelper
             $type === 'base' ? 6 : 4
         )));
 
-        $value = (float) $value;
-
         if ($this->getPrecisionConfig('strategy', 'round') === 'trim') {
-            $factor = 10 ** $decimals;
-
-            $value = ($value < 0 ? ceil($value * $factor) : floor($value * $factor)) / $factor;
+            return $this->truncateDecimals($value, $decimals);
         }
 
-        return number_format($value, $decimals, '.', '');
+        return number_format((float) $value, $decimals, '.', '');
+    }
+
+    /**
+     * Discard the extra decimals toward zero on the decimal string rather than in
+     * binary floating point, where 0.29 * 100 is 28.999999999999996 and floor()
+     * would store 0.28 for a value that needed no truncation at all.
+     */
+    protected function truncateDecimals(mixed $value, int $decimals): string
+    {
+        $numeric = sprintf('%.'.($decimals + 6).'F', (float) $value);
+
+        $isNegative = str_starts_with($numeric, '-');
+
+        [$whole, $fraction] = array_pad(explode('.', ltrim($numeric, '-')), 2, '');
+
+        $fraction = substr(str_pad($fraction, $decimals, '0'), 0, $decimals);
+
+        $truncated = $whole.($decimals > 0 ? '.'.$fraction : '');
+
+        if ($isNegative && trim($truncated, '0.') !== '') {
+            return '-'.$truncated;
+        }
+
+        return $truncated;
     }
 
     /**

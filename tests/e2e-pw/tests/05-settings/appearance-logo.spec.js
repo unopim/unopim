@@ -18,7 +18,7 @@ const path = require('path');
  * and it doubles as coverage for the drag-and-drop feature.
  */
 test.describe('Appearance — admin logo', () => {
-  const SETTINGS_URL = '/admin/settings/appearance';
+  const SETTINGS_URL = '/admin/configuration/system/system.appearance';
   const FIXTURE_B64 = fs.readFileSync(path.resolve(__dirname, '../../assets/dotted.png')).toString('base64');
 
   const gotoSettings = (page) =>
@@ -99,6 +99,40 @@ test.describe('Appearance — admin logo', () => {
     await expect
       .poll(async () => logo.evaluate((img) => img.complete && img.naturalWidth), { timeout: 15000 })
       .toBeGreaterThan(0);
+  });
+
+  test('saving does not flash a false "not saved" error before the success redirect', async ({ adminPage }) => {
+    await gotoSettings(adminPage);
+    await deleteLogoIfPresent(adminPage);
+
+    await dropLogo(adminPage);
+
+    await adminPage.route('**/admin/configuration/system/system.appearance', async (route) => {
+      const method = route.request().method();
+
+      if (method !== 'GET' && method !== 'HEAD') {
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }
+
+      await route.continue();
+    });
+
+    const errorToast = adminPage
+      .locator('#app')
+      .getByText(/were not saved|review the highlighted fields/i);
+
+    const saveButton = adminPage.locator('[data-unsaved-save]');
+    await expect(saveButton).toBeVisible({ timeout: 8000 });
+    await saveButton.click();
+
+    const errorSeen = await Promise.race([
+      errorToast.first().waitFor({ state: 'visible', timeout: 6000 }).then(() => true).catch(() => false),
+      adminPage.waitForURL(/configuration\/system/, { timeout: 20000 }).then(() => false),
+    ]);
+
+    expect(errorSeen).toBe(false);
+
+    await adminPage.waitForURL(/configuration\/system/, { timeout: 20000 });
   });
 
   test('deleting the logo falls back to the default and restores the upload tile', async ({ adminPage }) => {

@@ -26,14 +26,7 @@ class PublicationTestCase extends TestCase
     use UserAssertions;
 
     /**
-     * Seeds a channel with two locales, an attribute group carrying one
-     * `value_per_locale` attribute with a matching `CompletenessSetting`, and
-     * a product with a value in one locale (both, when `$completeBoth` is
-     * true). `product_completeness` rows are left to the real completeness
-     * engine (Completeness's Product observer + ProductCompletenessJob) to
-     * compute from the seeded values, rather than hand-inserted — a
-     * hand-inserted row would be silently overwritten the moment any test
-     * calls `$product->save()`.
+     * Completeness rows are left to the real engine, not hand-seeded: any later $product->save() would overwrite them.
      *
      * @return array{0: Product, 1: Channel, 2: Locale, 3: Locale}
      */
@@ -69,15 +62,7 @@ class PublicationTestCase extends TestCase
             ?->customAttributes()
             ->attach($attribute);
 
-        // Registers this (family, channel) pair with the real completeness
-        // engine, not just a hand-seeded score row: Completeness's Product
-        // observer synchronously recomputes `product_completeness` on every
-        // `created`/`updated` event (ProductCompletenessJob, sync queue in
-        // tests), and treats a channel with no CompletenessSetting as
-        // unconfigured — deleting, not preserving, any row for it. Without
-        // this, a test that calls $product->save() after seeding (to version
-        // a new payload) would have its manually seeded score silently wiped
-        // by the very next save.
+        // Without a CompletenessSetting the observer treats the channel as unconfigured and deletes its score on save.
         CompletenessSetting::query()->create([
             'family_id'    => $family->id,
             'attribute_id' => $attribute->id,
@@ -118,13 +103,7 @@ class PublicationTestCase extends TestCase
             'route_prefix'    => 'p',
         ]);
 
-        // PublicationServiceProvider::boot() has already run by the time this
-        // test body executes, against config as it stood before the `dpp`
-        // type above was added — so the `/p/...` routes do not exist yet on
-        // this test's Router instance. Re-trigger registration now that the
-        // type is present; production ordering is a consuming package's own
-        // responsibility (merge its type into config before this provider's
-        // boot() runs, or call this same method itself).
+        // boot() already ran before the `dpp` type was configured, so re-register to create the `/p/...` routes.
         $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
 
         $this->enablePublicTier($channel->code);
@@ -133,8 +112,7 @@ class PublicationTestCase extends TestCase
     }
 
     /**
-     * The public tier is opt-in per channel; the resolver treats an unset flag
-     * as disabled, so a fixture that expects a served passport must enable it.
+     * Public tier is opt-in per channel; an unset flag reads as disabled.
      */
     protected function enablePublicTier(string $channelCode): void
     {
@@ -145,10 +123,7 @@ class PublicationTestCase extends TestCase
     }
 
     /**
-     * Places a real file on the asset disk first, exactly mirroring what
-     * Task 10's real payload builder will do, then publishes through
-     * `DocumentStubPayloadBuilder` so the version's payload already points at
-     * that path when `SyncPublicationVersionDocuments` indexes it.
+     * Places a real file on the asset disk before publishing so the payload path exists when documents are indexed.
      *
      * @return array{0: PublicationVersion, 1: string}
      */
@@ -168,9 +143,7 @@ class PublicationTestCase extends TestCase
             'route_prefix'    => 'p',
         ]);
 
-        // See publishedPassportFixture() above: routes registered at boot time
-        // don't know about the `dpp` type set just now, so this test's Router
-        // instance needs its own explicit re-registration.
+        // See publishedPassportFixture(): re-register so the just-added `dpp` type gets its routes.
         $this->app->getProvider(PublicationServiceProvider::class)->registerPublicRoutes();
 
         $this->enablePublicTier($channel->code);

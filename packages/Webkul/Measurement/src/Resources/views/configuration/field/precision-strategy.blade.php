@@ -17,9 +17,18 @@
     ];
 @endphp
 
-<x-admin::form.control-group class="!mb-0">
+<x-admin::form.control-group class="last:!mb-0">
     <x-admin::form.control-group.label>
         @lang($field['title'])
+
+        @if (! empty($field['info']))
+            <span
+                class="icon tooltip-icon cursor-pointer ltr:ml-1.5 rtl:mr-1.5"
+                title="@lang($field['info'])"
+            >
+                &#9432;
+            </span>
+        @endif
     </x-admin::form.control-group.label>
 
     <x-admin::form.control-group.control

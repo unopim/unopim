@@ -3,11 +3,12 @@
 use Illuminate\Support\Facades\Route;
 
 Route::group([
-    'prefix'     => 'rest',
+    'prefix'     => 'v1/rest',
     'middleware' => [
-        'auth:api',
-        'api.scope',
         'accept.json',
+        'auth:api',
+        'throttle:rest-api',
+        'api.scope',
         'request.locale',
     ],
 ], function (): void {

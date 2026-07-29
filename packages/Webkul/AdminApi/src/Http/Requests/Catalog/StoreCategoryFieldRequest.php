@@ -10,11 +10,6 @@ use Webkul\Core\Rules\Code;
 
 class StoreCategoryFieldRequest extends ApiFormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, array<int, mixed>>
-     */
     protected function prepareForValidation(): void
     {
         if ($this->has('validation')) {

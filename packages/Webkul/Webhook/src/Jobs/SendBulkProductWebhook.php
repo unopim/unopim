@@ -17,16 +17,26 @@ class SendBulkProductWebhook implements ShouldQueue
      *
      * @param  array<int>  $ids
      */
-    public function __construct(protected array $ids, protected $userId) {}
+    public function __construct(
+        protected array $ids,
+        protected $userId,
+        protected string $event = WebhookService::EVENT_PRODUCT_UPDATED
+    ) {}
 
     /**
      * Execute the job.
      */
     public function handle(WebhookService $webhookService): void
     {
-        $user = AdminProxy::find($this->userId);
+        if ($this->userId && ($user = AdminProxy::find($this->userId))) {
+            Auth::login($user);
+        }
 
-        Auth::login($user);
+        if ($this->event === WebhookService::EVENT_PRODUCT_CREATED) {
+            $webhookService->sendBatchCreatedByIds($this->ids);
+
+            return;
+        }
 
         $webhookService->sendBatchByIds($this->ids);
     }

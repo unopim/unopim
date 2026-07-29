@@ -18,6 +18,7 @@ use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\User\Models\AdminProxy;
 
 abstract class AbstractExporter
 {
@@ -227,7 +228,7 @@ abstract class AbstractExporter
 
         return [
             'fieldDelimiter' => $this->export->jobInstance['field_separator'] ?? ',',
-            'filedEnclosure' => '"',
+            'fieldEnclosure' => '"',
             'shouldAddBOM'   => false,
             'type'           => $filters['file_format'] ?? SpoutWriterFactory::CSV,
             'writeHeaders'   => ($filters['header_row'] ?? '1') !== '0',
@@ -332,12 +333,16 @@ abstract class AbstractExporter
             return '';
         }
 
-        $now = Date::now();
+        $filters = $this->getFilters();
+
+        $timezone = AdminProxy::find($this->export->user_id)?->timezone ?? config('app.timezone', 'UTC');
+
+        $now = Date::now()->setTimezone($timezone);
 
         $tokens = [
             'code'        => (string) $this->export->jobInstance->code,
             'entity_type' => (string) $this->export->jobInstance->entity_type,
-            'date'        => $now->format('Y-m-d'),
+            'date'        => str_replace('/', '-', $now->format($filters['date_format'] ?? 'Y-m-d')),
             'time'        => $now->format('His'),
         ];
 

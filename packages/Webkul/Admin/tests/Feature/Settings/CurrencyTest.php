@@ -226,8 +226,8 @@ it('should not disable a currency linked to a channel through mass update', func
         'indices' => [$currencyId],
         'value'   => 0,
     ])
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.settings.currencies.index.update-success')]);
+        ->assertUnprocessable()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.currencies.index.can-not-disable-error')]);
 
     $this->assertDatabaseHas($this->getFullTableName(Currency::class), [
         'id'     => $currencyId,

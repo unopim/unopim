@@ -86,6 +86,7 @@ return [
             'password-whitespace' => 'Password cannot consist only of spaces.',
             'password'            => 'Password',
             'gravatar-preview'    => 'Using your Gravatar.com image',
+            'use-gravatar'        => 'Use Gravatar image',
             'profile-image'       => 'Profile Image',
             'save-btn'            => 'Save Account',
             'title'               => 'My Account',
@@ -240,7 +241,9 @@ return [
                     'id'                     => 'ID',
                     'id-value'               => 'ID - :id',
                     'image'                  => 'Image',
+                    'mass-delete-queued'     => 'Selected Products Are Being Deleted In The Background',
                     'mass-delete-success'    => 'Selected Products Deleted Successfully',
+                    'mass-update-queued'     => 'Selected Products Are Being Updated In The Background',
                     'mass-update-success'    => 'Selected Products Updated Successfully',
                     'name'                   => 'Name',
                     'out-of-stock'           => 'Out of Stock',
@@ -1389,12 +1392,13 @@ return [
 
         'currencies' => [
             'index' => [
-                'not-found'             => 'Currency with code :code not found.',
-                'create-btn'            => 'Create Currency',
-                'currency'              => 'Currency',
-                'title'                 => 'Currencies',
-                'can-not-delete-error'  => 'You cannot delete a currency linked to a channel',
-                'can-not-disable-error' => 'You cannot disable a currency linked to a channel',
+                'not-found'              => 'Currency with code :code not found.',
+                'create-btn'             => 'Create Currency',
+                'currency'               => 'Currency',
+                'title'                  => 'Currencies',
+                'can-not-delete-error'   => 'You cannot delete a currency linked to a channel',
+                'can-not-disable-error'  => 'You cannot disable a currency linked to a channel',
+                'partial-update-success' => 'Selected currencies were updated, except :count linked to a channel.',
 
                 'datagrid' => [
                     'actions'        => 'Actions',
@@ -2080,7 +2084,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logo, favicon and theme.',
+            'info'           => 'Logo and favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

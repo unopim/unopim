@@ -20,7 +20,9 @@
     <x-admin::form
         id="configuration-edit-form"
         ajax
-        :action="route('admin.configuration.store', ['slug' => request()->route('slug'), 'slug2' => request()->route('slug2')])"
+        :action="request()->routeIs('admin.magic_ai.settings.index')
+            ? route('admin.magic_ai.settings.store')
+            : route('admin.configuration.store', ['slug' => request()->route('slug'), 'slug2' => request()->route('slug2')])"
         enctype="multipart/form-data"
     >
         <x-admin::layouts.edit-page-header
@@ -70,12 +72,9 @@
                                 @php ($hint = $field['title'] . '-hint')
 
                                 @if ($hint !== __($hint))
-                                    <label 
-                                        for="@lang($hint)"
-                                        class="block leading-5 text-xs text-gray-600 dark:text-gray-300 font-medium"
-                                    >
+                                    <p class="block leading-5 text-xs text-gray-600 dark:text-gray-300 font-medium">
                                         @lang($hint)
-                                    </label>
+                                    </p>
                                 @endIf
                             @endforeach
                         </div>

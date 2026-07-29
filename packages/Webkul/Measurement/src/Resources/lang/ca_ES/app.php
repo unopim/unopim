@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'unauthorized' => 'No teniu permís per realitzar aquesta acció.',
-        'measurements' => 'Mesures',
+        'measurements' => 'Mesura',
         'families'     => 'Famílies de mesures',
         'units'        => 'Unitats de mesura',
     ],

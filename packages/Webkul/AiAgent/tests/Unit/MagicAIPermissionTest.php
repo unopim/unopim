@@ -39,16 +39,11 @@ describe('Magic AI permission guard (Issue #647)', function () {
         expect($source)->toMatch('/@if\s*\(\s*\$hasTranslateAction\s*\)\s*\R\s*<v-custom-dropdown><\/v-custom-dropdown>\s*\R\s*@endif/');
     });
 
-    it('image generation enabled flag also checks ai-agent permission in file and images components', function () {
-        $fileSource = file_get_contents(
-            base_path('packages/Webkul/Admin/src/Resources/views/components/media/file.blade.php')
-        );
-
+    it('image generation enabled flag checks ai-agent permission in the images component', function () {
         $imagesSource = file_get_contents(
             base_path('packages/Webkul/Admin/src/Resources/views/components/media/image.blade.php')
         );
 
-        expect($fileSource)->toContain("bouncer()->hasPermission('ai-agent')");
         expect($imagesSource)->toContain("bouncer()->hasPermission('ai-agent')");
     });
 

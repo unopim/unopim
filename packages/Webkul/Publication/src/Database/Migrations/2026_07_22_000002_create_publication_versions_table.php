@@ -44,6 +44,7 @@ return new class extends Migration
 
             $table->timestamps();
 
+            // Explicit names: auto names include the prefix and overrun MySQL's 64-char identifier limit on prefixed installs.
             $table->unique(['publication_id', 'locale_id', 'version'], 'pubver_pub_loc_ver_uq');
             $table->unique(['publication_id', 'current_locale_id'], 'pubver_pub_curloc_uq');
             $table->index(['publication_id', 'is_current', 'locale_id'], 'pubver_pub_cur_loc_idx');

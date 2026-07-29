@@ -9,6 +9,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Repositories\CurrencyRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\DataTransfer\Enums\CompletenessCondition;
 use Webkul\DataTransfer\Enums\ProductExportScope;
@@ -25,7 +26,10 @@ class ProductExportFilter
 
     private ?array $activeChannelCodes = null;
 
+    private ?array $activeCurrencyCodes = null;
+
     public function __construct(
+        protected CurrencyRepository $currencyRepository,
         protected ChannelRepository $channelRepository,
         protected LocaleRepository $localeRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
@@ -530,7 +534,19 @@ class ProductExportFilter
             }
         }
 
-        return $paths;
+        if ($attribute?->type !== Attribute::PRICE_FIELD_TYPE) {
+            return $paths;
+        }
+
+        $expanded = [];
+
+        foreach ($paths as $path) {
+            foreach ($this->activeCurrencyCodes() as $currency) {
+                $expanded[] = "{$path}->{$currency}";
+            }
+        }
+
+        return $expanded;
     }
 
     protected function valuePathSegments(string $code, ?Attribute $attribute): array
@@ -567,7 +583,19 @@ class ProductExportFilter
             }
         }
 
-        return $segments;
+        if ($attribute?->type !== Attribute::PRICE_FIELD_TYPE) {
+            return $segments;
+        }
+
+        $expanded = [];
+
+        foreach ($segments as $segment) {
+            foreach ($this->activeCurrencyCodes() as $currency) {
+                $expanded[] = [...$segment, $currency];
+            }
+        }
+
+        return $expanded;
     }
 
     protected function resolveChannelIds(array $filters): array
@@ -600,6 +628,11 @@ class ProductExportFilter
     protected function activeChannelCodes(): array
     {
         return $this->activeChannelCodes ??= $this->channelRepository->all()->pluck('code')->all();
+    }
+
+    protected function activeCurrencyCodes(): array
+    {
+        return $this->activeCurrencyCodes ??= $this->currencyRepository->getActiveCurrencies()->pluck('code')->all();
     }
 
     protected function parseCustomAttributes(mixed $value): array

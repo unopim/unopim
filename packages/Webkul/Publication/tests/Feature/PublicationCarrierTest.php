@@ -11,10 +11,7 @@ it('serves an SVG QR carrier for a published passport', function (): void {
     $response->assertOk();
     $response->assertHeader('Content-Type', 'image/svg+xml');
 
-    // The controller sets `Cache-Control: public, max-age=86400`, but the global
-    // NoCacheMiddleware appended in bootstrap/app.php runs after and Symfony
-    // merges its `no-store` directives over ours — the same union the sibling
-    // page controller is subject to — so the carrier's own value isn't asserted.
+    // Cache-Control isn't asserted: the global NoCacheMiddleware merges no-store over the controller's value.
     expect($response->getContent())->toContain('<svg');
 });
 

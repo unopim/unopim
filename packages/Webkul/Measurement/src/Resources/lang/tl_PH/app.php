@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'unauthorized' => 'Wala kang pahintulot na isagawa ang aksyong ito.',
-        'measurements' => 'Mga Sukat',
+        'measurements' => 'Sukat',
         'families'     => 'Mga Pamilya ng Sukat',
         'units'        => 'Mga Yunit ng Sukat',
     ],

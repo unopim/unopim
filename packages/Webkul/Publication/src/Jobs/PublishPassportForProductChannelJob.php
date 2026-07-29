@@ -14,9 +14,7 @@ use Webkul\Product\Models\ProductProxy;
 use Webkul\Publication\Services\Publisher;
 
 /**
- * One dispatch per (product, channel, type) admin action, looping locales
- * inside `handle()` — not one dispatch per locale, which would re-fetch the
- * same product/family once per locale for no reason.
+ * One dispatch per (product, channel, type), looping locales in handle() to avoid re-fetching the product per locale.
  */
 class PublishPassportForProductChannelJob implements ShouldBeUnique, ShouldQueue
 {
@@ -28,9 +26,7 @@ class PublishPassportForProductChannelJob implements ShouldBeUnique, ShouldQueue
     public int $tries = 3;
 
     /**
-     * Cap the uniqueness lock so a job that never runs (e.g. dispatched to a
-     * queue no worker consumes) cannot block re-publishing the same product
-     * indefinitely — the lock self-expires after an hour.
+     * Caps the uniqueness lock so a job that never runs can't block re-publishing indefinitely.
      */
     public int $uniqueFor = 3600;
 
@@ -73,8 +69,7 @@ class PublishPassportForProductChannelJob implements ShouldBeUnique, ShouldQueue
 
         $locales = LocaleProxy::modelClass()::whereIn('id', $this->localeIds)->get()->keyBy('id');
 
-        // Publisher::publish() already wraps each locale in its own short,
-        // lockForUpdate()-guarded transaction.
+        // Publisher::publish() already wraps each locale in its own lockForUpdate()-guarded transaction.
         foreach ($this->localeIds as $localeId) {
             $locale = $locales->get($localeId);
 

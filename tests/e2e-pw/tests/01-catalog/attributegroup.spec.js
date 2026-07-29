@@ -1,9 +1,7 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
-/**
- * Helper: Create an attribute group via UI and return its code.
- */
+/** Create an attribute group via UI. */
 async function createAttributeGroup(adminPage, code, name) {
   await navigateTo(adminPage, 'attributeGroups');
   await adminPage.getByRole('button', { name: 'Create Attribute Group' }).click();
@@ -13,9 +11,7 @@ async function createAttributeGroup(adminPage, code, name) {
   await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Created Successfully/i);
 }
 
-/**
- * Helper: Delete an attribute group by code (search → delete → confirm).
- */
+/** Delete an attribute group by code (search, delete, confirm). */
 async function deleteAttributeGroup(adminPage, code) {
   await navigateTo(adminPage, 'attributeGroups');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
@@ -47,12 +43,11 @@ test.describe('UnoPim Attribute Group Tests', () => {
 
     await createAttributeGroup(adminPage, code, 'Test Group');
 
-    // Cleanup
     await deleteAttributeGroup(adminPage, code);
   });
 
   test('should allow attribute group search', async ({ adminPage }) => {
-    // Use seeded data — 'general' group always exists
+    // Seeded 'general' group always exists.
     await navigateTo(adminPage, 'attributeGroups');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('general');
     await adminPage.keyboard.press('Enter');
@@ -79,10 +74,8 @@ test.describe('UnoPim Attribute Group Tests', () => {
     const uid = generateUid();
     const code = `grp_${uid}`;
 
-    // Create test data
     await createAttributeGroup(adminPage, code, 'Actions Test');
 
-    // Search and verify Edit action
     await navigateTo(adminPage, 'attributeGroups');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -91,7 +84,6 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await itemRow.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-groups\/edit/);
 
-    // Go back and verify Delete action shows confirmation
     await navigateTo(adminPage, 'attributeGroups');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -100,7 +92,6 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await row.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    // Cleanup — confirm delete
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/Attribute Group Deleted Successfully/i)).toBeVisible();
   });
@@ -109,10 +100,8 @@ test.describe('UnoPim Attribute Group Tests', () => {
     const uid = generateUid();
     const code = `grp_${uid}`;
 
-    // Create test data
     await createAttributeGroup(adminPage, code, 'Before Update');
 
-    // Search and edit
     await navigateTo(adminPage, 'attributeGroups');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -122,7 +111,6 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await adminPage.locator('input[name$="[name]"]').first().fill('After Update');
     await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Updated Successfully/i);
 
-    // Cleanup
     await deleteAttributeGroup(adminPage, code);
   });
 
@@ -130,10 +118,8 @@ test.describe('UnoPim Attribute Group Tests', () => {
     const uid = generateUid();
     const code = `grp_${uid}`;
 
-    // Create test data specifically for deletion
     await createAttributeGroup(adminPage, code, 'To Delete');
 
-    // Search and delete
     await navigateTo(adminPage, 'attributeGroups');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
