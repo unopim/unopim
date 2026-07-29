@@ -11,7 +11,7 @@
 
             <component
                 :is="inputComponent"
-                :id="id"
+                :id="inputId"
                 :label="label"
                 :name="name"
                 :value="value"
@@ -118,6 +118,15 @@
         computed: {
             id() {
                 return this.item['id'];
+            },
+
+            /**
+             * Two trees can sit on one page — the browser beside the panel and the parent
+             * picker inside it — and a label bound to a plain category id would activate
+             * whichever input the document happened to hold first.
+             */
+            inputId() {
+                return `${this.categorytree.treeUid}-${this.id}`;
             },
 
             label() {

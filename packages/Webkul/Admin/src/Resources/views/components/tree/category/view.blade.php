@@ -113,6 +113,8 @@
     </script>
 
     <script type="module">
+        let treeInstances = 0;
+
         app.component('v-category-tree-view', {
             name: 'v-category-tree-view',
             template: '#v-category-tree-view-template',
@@ -199,6 +201,7 @@
 
             data() {
                 return {
+                    treeUid: `tree${++treeInstances}`,
                     formattedItems: [],
                     formattedValues: [],
                     formattedExpandedBranch: [],
