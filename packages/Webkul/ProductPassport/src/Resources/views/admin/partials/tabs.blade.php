@@ -10,13 +10,6 @@
         ];
     }
 
-    if (bouncer()->hasPermission('catalog.passport.mapping')) {
-        $tabs['mapping'] = [
-            'title' => trans('passport::app.mapping.menu'),
-            'url'   => route('admin.catalog.passports.mapping.edit'),
-        ];
-    }
-
     if (bouncer()->hasPermission('catalog.passport.template.view')) {
         $tabs['templates'] = [
             'title' => trans('passport::app.templates.menu'),

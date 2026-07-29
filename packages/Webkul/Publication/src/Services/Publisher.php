@@ -9,6 +9,7 @@ use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\Product;
 use Webkul\Publication\Contracts\PayloadBuilder;
+use Webkul\Publication\Contracts\PublicationGate;
 use Webkul\Publication\DataTransferObjects\PublicationContext;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Enums\PublicationStatus;
@@ -27,7 +28,6 @@ class Publisher
     public function __construct(
         private readonly PublicationTypeRegistry $registry,
         private readonly PublicationRepository $publications,
-        private readonly CompletenessGate $gate,
     ) {}
 
     /**
@@ -42,7 +42,9 @@ class Publisher
     ): ?PublicationVersion {
         $definition = $this->registry->get($type);
 
-        if (! $this->gate->passes($product, $channel, $locale)) {
+        $gate = $this->gateFor($definition);
+
+        if ($gate !== null && ! $gate->passes($product, $channel, $locale)) {
             return null;
         }
 
@@ -231,6 +233,27 @@ class Publisher
 
             DB::afterCommit(fn () => PublicationRedacted::dispatch($publication, $reason));
         });
+    }
+
+    /**
+     * A type without a gate publishes unconditionally; the engine itself has no
+     * notion of what makes a publication complete.
+     */
+    private function gateFor(PublicationType $definition): ?PublicationGate
+    {
+        if ($definition->gate === null) {
+            return null;
+        }
+
+        $gate = resolve($definition->gate);
+
+        if (! $gate instanceof PublicationGate) {
+            throw new InvalidArgumentException(
+                'Publication type ['.$definition->code.'] declares gate ['.$definition->gate.'], which does not implement '.PublicationGate::class.'.'
+            );
+        }
+
+        return $gate;
     }
 
     /**
