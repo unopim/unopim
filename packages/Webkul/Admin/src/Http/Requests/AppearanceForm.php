@@ -9,6 +9,20 @@ use Webkul\Core\Rules\FileMimeExtensionMatch;
 class AppearanceForm extends FormRequest
 {
     /**
+     * Extensions accepted for the admin logo.
+     *
+     * @var array<int, string>
+     */
+    const LOGO_EXTENSIONS = ['bmp', 'jpeg', 'jpg', 'png', 'webp'];
+
+    /**
+     * Extensions accepted for the favicon.
+     *
+     * @var array<int, string>
+     */
+    const FAVICON_EXTENSIONS = ['ico', 'jpeg', 'jpg', 'png', 'webp'];
+
+    /**
      * Determine whether the user is authorized.
      */
     public function authorize(): bool
@@ -21,8 +35,8 @@ class AppearanceForm extends FormRequest
      */
     public function rules(): array
     {
-        $logoImageRules = $this->imageRules(['bmp', 'jpeg', 'jpg', 'png', 'webp'], 2048);
-        $faviconRules = $this->imageRules(['ico', 'png', 'webp'], 1024, false);
+        $logoImageRules = $this->imageRules(self::LOGO_EXTENSIONS, 2048);
+        $faviconRules = $this->imageRules(self::FAVICON_EXTENSIONS, 1024, false);
 
         return [
             'logo_image'   => $this->file('logo_image') instanceof UploadedFile ? $logoImageRules : ['nullable'],
