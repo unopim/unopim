@@ -260,7 +260,6 @@
             </table>
         </div>
 
-        <!-- Image Preview Overlay -->
         <div
             v-if="previewImage"
             class="fixed inset-0 z-[999] flex items-center justify-center bg-gray-900/60"
@@ -400,15 +399,23 @@
                     })
                     .then(response => {
                         this.updatedEntityData = {};
-                        this.$emitter.emit('add-flash', {
-                            type: 'success',
-                            message: response.data.message ||  @json(trans('admin::app.catalog.products.bulk-edit.success')),
-                        });
 
-                        setTimeout(() => window.location.href= "{{ route('admin.catalog.products.index') }}", 1000);
+                        const message = response.data.message || @json(trans('admin::app.catalog.products.bulk-edit.success'));
+
+                        document.addEventListener('unopim:navigate:success', () => {
+                            window.app?.config?.globalProperties?.$emitter?.emit('add-flash', {
+                                type: 'success',
+                                message,
+                            });
+                        }, { once: true });
+
+                        this.$navigate(response.data.redirect_url || "{{ route('admin.catalog.products.index') }}");
                     })
                     .catch(error => {
-                        console.error(error);
+                        this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: error.response?.data?.message || @json(trans('admin::app.catalog.products.bulk-edit.validation.failed')),
+                        });
                     })
                     .finally(() => {
                         this.isLoading = false;
