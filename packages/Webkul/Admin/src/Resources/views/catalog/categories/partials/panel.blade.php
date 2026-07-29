@@ -14,17 +14,18 @@
 
 <div class="flex flex-col gap-2.5">
     <div class="flex gap-4 justify-between items-center max-md:flex-wrap">
-        <div class="flex flex-col gap-0.5 min-w-0">
-            <p class="text-xs text-gray-400 dark:text-gray-300 truncate">
-                {{ $breadcrumb ?: trans('admin::app.catalog.categories.browse.root-level') }}
-            </p>
-
-            <p class="text-base text-gray-800 dark:text-white font-semibold truncate">
-                {{ $isEdit ? $category->name : trans('admin::app.catalog.categories.browse.new-category') }}
-            </p>
-        </div>
+        <p class="text-xl text-gray-800 dark:text-white font-bold truncate">
+            {{ $isEdit ? $category->name : trans('admin::app.catalog.categories.browse.new-category') }}
+        </p>
 
         <div class="flex gap-x-1 items-center shrink-0">
+            <a
+                href="{{ route('admin.catalog.categories.index') }}"
+                class="transparent-button"
+            >
+                @lang('admin::app.catalog.categories.edit.back-btn')
+            </a>
+
             <x-admin::dropdown :class="$allActiveLocales->count() <= 1 ? 'hidden' : ''">
                 <x-slot:toggle>
                     <button
@@ -95,16 +96,12 @@
                 :value="$isEdit ? $category->parent_id : $parentCategory?->id"
             />
 
-            @include('admin::catalog.categories.partials.form', ['showParent' => false])
+            @include('admin::catalog.categories.partials.form', [
+                'showParent'  => false,
+                'parentLabel' => $breadcrumb,
+            ])
 
             <div class="flex justify-end gap-2.5 mt-2.5">
-                <a
-                    href="{{ route('admin.catalog.categories.index') }}"
-                    class="transparent-button"
-                >
-                    @lang('admin::app.catalog.categories.create.back-btn')
-                </a>
-
                 <button type="submit" class="primary-button">
                     {{ $isEdit
                         ? trans('admin::app.catalog.categories.edit.save-btn')

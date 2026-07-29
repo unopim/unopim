@@ -34,6 +34,22 @@
 
                 <x-admin::form.control-group.error control-name="code" />
             </x-admin::form.control-group>
+
+            @if ($parentLabel ?? null)
+                <x-admin::form.control-group>
+                    <x-admin::form.control-group.label>
+                        @lang('admin::app.catalog.categories.edit.select-parent-category')
+                    </x-admin::form.control-group.label>
+
+                    <x-admin::form.control-group.control
+                        type="text"
+                        class="cursor-not-allowed"
+                        name="parent_label"
+                        disabled
+                        :value="$parentLabel"
+                    />
+                </x-admin::form.control-group>
+            @endif
         </div>
 
         {!! view_render_event('unopim.admin.catalog.categories.edit.card.general.after', ['category' => $category]) !!}
