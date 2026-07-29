@@ -1387,8 +1387,23 @@
 
                     this.$emit('input', JSON.stringify(newValue));
                 },
+
+                /**
+                 * The parent owns the value: clearing a datagrid filter empties it
+                 * without touching this control, so drop the selection to match
+                 * instead of leaving the cleared value on screen.
+                 */
+                value(newValue) {
+                    if (newValue !== '' && newValue !== null && newValue !== undefined) {
+                        return;
+                    }
+
+                    if (this.selectedValue !== null) {
+                        this.selectedValue = null;
+                    }
+                },
             },
-            
+
             methods: {
                 parseValue() {
                     try {
