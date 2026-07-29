@@ -1,6 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./src/Resources/**/*.blade.php", "./src/Resources/**/*.css", "./src/Resources/**/*.js", "../AdminApi/src/Resources/**/*.blade.php"],
+    /**
+     * Sibling packages render into this theme, so their views are scanned too:
+     * a utility used only by a package view (a passport tab, an import screen)
+     * is otherwise never generated and the class silently does nothing.
+     */
+    content: [
+        "./src/Resources/**/*.blade.php",
+        "./src/Resources/**/*.css",
+        "./src/Resources/**/*.js",
+        "../*/src/Resources/**/*.blade.php",
+        "../*/src/Resources/**/*.js",
+    ],
 
     theme: {
         container: {
