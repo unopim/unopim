@@ -20,6 +20,7 @@ use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
+use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
@@ -50,6 +51,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     protected $elasticSearchSortColumn = 'updated_at';
 
     protected $attributeColumns = [];
+
+    protected ?array $variantStructureCodes = null;
 
     protected $productQueryBuilder;
 
@@ -875,6 +878,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'products.updated_at',
             'parent_products.sku as parent',
             'products.values',
+            'products.variant_structure_id',
             'af.code as attribute_family',
             'products.avg_completeness_score as completeness'
         );
@@ -1013,11 +1017,30 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $productArray['status'] = $productArray['status'] ? 'true' : 'false';
 
+        $structureId = $productArray['variant_structure_id'] ?? null;
+
+        $productArray['variant_structure'] = $structureId
+            ? ($this->getVariantStructureCodes()[$structureId] ?? null)
+            : null;
+
         unset($productArray['product_id']);
         unset($productArray['created_at']);
         unset($productArray['updated_at']);
+        unset($productArray['variant_structure_id']);
 
         return $productArray;
+    }
+
+    /**
+     * Variant structure codes keyed by id, loaded once per export.
+     *
+     * @return array<int, string>
+     */
+    protected function getVariantStructureCodes(): array
+    {
+        return $this->variantStructureCodes ??= VariantStructure::query()
+            ->pluck('code', 'id')
+            ->all();
     }
 
     /**
