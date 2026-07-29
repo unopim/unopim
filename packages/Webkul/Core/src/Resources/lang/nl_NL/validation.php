@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Het veld :attribute moet een geldige slug zijn.',
     'sku'                          => 'Het veld :attribute moet een geldige SKU zijn (alleen alfanumerieke tekens, koppeltekens en underscores).',
     'comma-separated-integer'      => 'Het veld :attribute moet numeriek zijn en mag komma\'s bevatten.',
+    'ip-address-list'      => 'Het veld :attribute moet geldige IP-adressen bevatten, gescheiden door komma\'s.',
     'type'                         => 'Het veld :attribute moet een geldig type zijn.',
     'validation-type'              => 'Het veld :attribute moet een geldig validatietype zijn.',
     'field-option-not-found'       => 'Het veld :attribute bevat ongeldige optie(s): :invalid_codes.',

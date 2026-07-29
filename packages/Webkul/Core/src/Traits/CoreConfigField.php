@@ -43,7 +43,7 @@ trait CoreConfigField
         if (is_array($field['validation'])) {
             $field['validation'] = implode('|', array_filter(
                 $field['validation'],
-                fn ($rule): bool => is_string($rule) && ! str_starts_with($rule, 'regex:')
+                fn ($rule): bool => is_string($rule) && ! class_exists($rule)
             ));
         }
 

@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Slug :attribute mora biti važeći.',
     'sku'                          => 'SKU :attribute mora biti važeći (dopušteni su samo alfanumerički znakovi, crtice i podvlake).',
     'comma-separated-integer'      => 'Polje :attribute mora biti numeričko i može sadržavati zareze.',
+    'ip-address-list'      => 'Polje :attribute mora sadržavati valjane IP adrese odvojene zarezima.',
     'type'                         => 'Vrsta :attribute mora biti važeća.',
     'validation-type'              => 'Vrsta provjere valjanosti :attribute mora biti važeća.',
     'field-option-not-found'       => 'Polje :attribute sadrži nevažeće opcije: :invalid_codes.',

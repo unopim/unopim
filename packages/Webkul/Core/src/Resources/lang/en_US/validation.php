@@ -9,6 +9,7 @@ return [
     'slug'                         => 'The :attribute must be valid slug.',
     'sku'                          => 'The :attribute must be a valid SKU (alphanumeric characters, hyphens, and underscores only).',
     'comma-separated-integer'      => 'The :attribute field must be numeric and may contain comma.',
+    'ip-address-list'      => 'The :attribute field must contain valid IP addresses separated by commas.',
     'type'                         => 'The :attribute must be valid type.',
     'validation-type'              => 'The :attribute must be valid type.',
     'field-option-not-found'       => 'The :attribute contains invalid option(s) :invalid_codes.',

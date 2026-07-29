@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Slug :attribute geçerli olmalıdır.',
     'sku'                          => 'SKU :attribute geçerli olmalıdır (yalnızca alfasayısal karakterler, tireler ve alt çizgiler).',
     'comma-separated-integer'      => 'Adres :attribute alanı sayısal olmalı ve virgül içerebilir.',
+    'ip-address-list'      => ':attribute alanı virgülle ayrılmış geçerli IP adresleri içermelidir.',
     'type'                         => 'Adres :attribute geçerli bir tür olmalıdır.',
     'validation-type'              => 'Adres :attribute geçerli bir tür olmalıdır.',
     'field-option-not-found'       => 'Adres :attribute geçersiz seçenekler içeriyor: :invalid_codes.',

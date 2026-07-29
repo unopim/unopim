@@ -9,6 +9,7 @@ return [
     'slug'                         => ':attribute on oltava kelvollinen slugi.',
     'sku'                          => ':attribute on oltava kelvollinen SKU (vain aakkosnumeeriset merkit, yhdysviivat ja alaviivat).',
     'comma-separated-integer'      => ':attribute kenttä on oltava numerinen ja voi sisältää pilkkuja.',
+    'ip-address-list'      => 'Kentän :attribute on sisällettävä kelvollisia IP-osoitteita pilkuilla erotettuna.',
     'type'                         => ':attribute on oltava kelvollinen tyyppi.',
     'validation-type'              => ':attribute on oltava kelvollinen tyyppi.',
     'field-option-not-found'       => ':attribute sisältää kelpaamattomia vaihtoehtoja: :invalid_codes.',
