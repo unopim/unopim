@@ -147,9 +147,7 @@ test.describe('Export filter fields — reusable input components', () => {
     await navigateTo(adminPage, 'exports');
     await adminPage.getByText('Filter', { exact: true }).click();
 
-    // The filter panel renders every column filter through the shared field component;
-    // basic column filters sit in a collapsed section, so assert they are rendered with
-    // the right shape rather than expanded into view.
+    // Column filters render via the shared component but sit collapsed; assert shape, not visibility.
     const codeFilter = adminPage.locator('input[name="code"]');
     await expect(codeFilter).toBeAttached();
     await expect(codeFilter).toHaveAttribute('type', 'text');

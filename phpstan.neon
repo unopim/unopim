@@ -1,5 +1,5 @@
 includes:
-    - ./vendor/nunomaduro/larastan/extension.neon
+    - ./vendor/larastan/larastan/extension.neon
 
 parameters:
     paths:
@@ -17,7 +17,6 @@ parameters:
         - packages/*/Config/*
         - packages/*/src/Resources/*
         - packages/Webkul/DebugBar/*
-        - packages/Webkul/FPC/*
 
     ignoreErrors:
         # Eloquent magic (attributes, __call scopes) — removable once models carry @property docblocks

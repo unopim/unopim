@@ -5,42 +5,17 @@ const {
   searchInDataGrid,
 } = require('../../utils/helpers');
 
-// ---------------------------------------------------------------------------
-// Shared helpers
-// ---------------------------------------------------------------------------
-
-/**
- * After clicking Save, wait for either the success toast or a page URL change
- * (redirect to the edit/list page).  This avoids flaky failures when the
- * server is slow and the toast disappears before the assertion fires.
- *
- * @param {import('@playwright/test').Page} page
- * @param {RegExp} toastPattern — regex for the success toast text
- * @param {string} startUrl — the page URL before save was clicked
- */
-/**
- * Click a save button and verify the save succeeded.  Accepts either a
- * visible success toast OR a URL redirect as proof of success.
- *
- * @param {import('@playwright/test').Page} page
- * @param {import('@playwright/test').Locator} saveButton
- * @param {RegExp} toastPattern
- */
-/**
- * Wait for the redesigned ajax form to finish Vue hydration before typing.
- * Until Vue mounts, the `input[name="code"]` still carries the literal
- * `v-code` directive attribute and any value typed into it is overwritten
- * when Vue binds the (empty) model.  Once compiled, the attribute is gone.
- */
+// Until Vue mounts, input[name="code"] keeps its v-code attribute and typed values get
+// overwritten when Vue binds the empty model; wait for the attribute to disappear first.
 async function waitForCodeHydration(page) {
   await page.locator('input[name="code"]').first().waitFor({ state: 'visible', timeout: 15000 });
   await page.locator('input[name="code"]:not([v-code])').first().waitFor({ state: 'attached', timeout: 15000 });
 }
 
+// Accept success toast OR URL redirect; avoids flakes when a slow server drops the toast early.
 async function clickSaveAndExpectSuccess(page, saveButton, toastPattern) {
   const startUrl = page.url();
   await saveButton.click();
-  // Wait for either the success toast or a URL change (redirect after save).
   await Promise.race([
     expect(page.locator('#app').getByText(toastPattern).first())
       .toBeVisible({ timeout: 25000 })
@@ -48,31 +23,23 @@ async function clickSaveAndExpectSuccess(page, saveButton, toastPattern) {
     page.waitForURL((url) => url.toString() !== startUrl, { timeout: 25000 })
       .catch(() => {}),
   ]);
-  // If still on the same URL, the toast must be visible — assert it.
+  // Same URL means no redirect happened, so the toast must be visible.
   if (page.url() === startUrl) {
     await expect(page.locator('#app').getByText(toastPattern).first())
       .toBeVisible({ timeout: 5000 });
   }
 }
 
-/**
- * Fill a 250-char string into a code field, blur, then assert the value was
- * truncated to <= 191 characters by the v-code directive.
- */
+/** Fill a 250-char string, blur, and assert v-code truncated the value to <= 191 chars. */
 async function assertTruncation(page, codeField, blurTarget) {
   const uid = generateUid();
   const prefix = `trunc_${uid}_`;
   const longCode = prefix + 'a'.repeat(250 - prefix.length);
 
-  // fill() triggers an input event; the v-code directive listens for it and
-  // truncates via setTimeout(100).  After truncation we must re-fire input
-  // so Vue/VeeValidate picks up the new DOM value.
   await codeField.fill(longCode);
-  // Wait for the directive's setTimeout(100) to execute
+  // v-code truncates via setTimeout(100); wait it out before re-firing input.
   await page.waitForTimeout(200);
-  // The directive has now set el.value to the truncated string, but Vue
-  // still holds the old value.  Trigger a fresh input event from the
-  // (already-truncated) DOM value so Vue's model updates.
+  // DOM value is now truncated but Vue still holds the old value; re-fire input to sync the model.
   await page.evaluate((el) => {
     const nativeInputValueSetter = Object.getOwnPropertyDescriptor(
       HTMLInputElement.prototype, 'value'
@@ -88,10 +55,7 @@ async function assertTruncation(page, codeField, blurTarget) {
   expect(val.length).toBeLessThanOrEqual(191);
 }
 
-/**
- * Create a Select-type attribute and return its code.
- * Used by the attribute-option tests so each one is independent.
- */
+/** Create a Select-type attribute and return its code (keeps option tests independent). */
 async function createSelectAttribute(adminPage) {
   const uid = generateUid();
   const code = `selopt_${uid}`;
@@ -112,10 +76,7 @@ async function createSelectAttribute(adminPage) {
   return code;
 }
 
-/**
- * Navigate to the edit page of a Select attribute and click "Add Row" to
- * prepare for option creation.  Returns the option code input locator.
- */
+/** Open a Select attribute's edit page, click "Add Row", and return the option code input. */
 async function navigateToOptionForm(adminPage, attrCode) {
   await navigateTo(adminPage, 'attributes');
   await searchInDataGrid(adminPage, attrCode);
@@ -123,13 +84,11 @@ async function navigateToOptionForm(adminPage, attrCode) {
   await editBtn.click();
   await adminPage.waitForLoadState('load');
   await adminPage.getByText('Add Row').click();
-  // The option code field is the last input[name="code"] after "Add Row" click
+  // The new option code field is the last input[name="code"].
   return adminPage.locator('input[name="code"]').last();
 }
 
-/**
- * Delete a select attribute by code (best-effort cleanup).
- */
+/** Delete a select attribute by code (best-effort cleanup). */
 async function deleteAttribute(adminPage, code) {
   await navigateTo(adminPage, 'attributes');
   await searchInDataGrid(adminPage, code);
@@ -141,9 +100,6 @@ async function deleteAttribute(adminPage, code) {
   }
 }
 
-// ---------------------------------------------------------------------------
-// 1. Category code validation
-// ---------------------------------------------------------------------------
 test.describe('Code field validation — Category', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'categories');
@@ -209,9 +165,6 @@ test.describe('Code field validation — Category', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// 2. Category field code validation
-// ---------------------------------------------------------------------------
 test.describe('Code field validation — Category Field', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
@@ -286,9 +239,6 @@ test.describe('Code field validation — Category Field', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// 3. Attribute code validation
-// ---------------------------------------------------------------------------
 test.describe('Code field validation — Attribute', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributes');
@@ -363,10 +313,7 @@ test.describe('Code field validation — Attribute', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// 4. Attribute option code validation
-//    Each test creates its own Select attribute for full independence.
-// ---------------------------------------------------------------------------
+// Each test creates its own Select attribute for full independence.
 test.describe('Code field validation — Attribute Option', () => {
 
   test('less than 191 characters', { timeout: 60000 }, async ({ adminPage }) => {
@@ -444,9 +391,6 @@ test.describe('Code field validation — Attribute Option', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// 5. Attribute group code validation
-// ---------------------------------------------------------------------------
 test.describe('Code field validation — Attribute Group', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeGroups');
@@ -511,9 +455,6 @@ test.describe('Code field validation — Attribute Group', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// 6. Attribute family code validation
-// ---------------------------------------------------------------------------
 test.describe('Code field validation — Attribute Family', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeFamilies');

@@ -66,13 +66,9 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        run: |
-          # Run heavy suites in separate PHP processes so memory is released
-          # between them. The full suite in a single process peaked past the
-          # runner memory limit and was OOM-killed (exit 137).
-          vendor/bin/pest --testsuite "Admin Feature Test" --colors=always
-          vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
-          vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
+        # Each worker owns a database clone, so the suite no longer runs as one
+        # process - which is also what kept it under the runner's memory ceiling.
+        run: vendor/bin/pest --parallel --processes=4 --colors=always
 
   pest-elasticsearch:
     runs-on: ubuntu-24.04
@@ -153,10 +149,86 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
+        # Each worker owns a database clone, so the suite no longer runs as one
+        # process - which is also what kept it under the runner's memory ceiling.
+        run: vendor/bin/pest --parallel --processes=4 --colors=always
+
+  # Fast pull-request signal alongside the full suites: Pest's Test Impact Analysis
+  # runs only the tests reached by the changed files. With no cached graph (or a
+  # stale one) it falls back to the whole suite and records a new graph.
+  pest-impacted:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-24.04
+    name: Pest Tests (impacted)
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: unopim
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          # Impact analysis diffs against the merge base, which needs real history.
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.37.1
+        with:
+          php-version: '8.4'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          # The dependency graph is recorded from coverage data.
+          coverage: pcov
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--optimize-autoloader"
+
+      # Pest keeps the graph under $HOME/.pest/tia/<project-key>, not in the workspace.
+      - name: Resolve the test impact graph path
+        id: tia
+        run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
+
+      - name: Restore the test impact graph
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.tia.outputs.path }}
+          key: pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ github.run_id }}
+          restore-keys: |
+            pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-
+            pest-tia-${{ runner.os }}-
+
+      - name: Setting Environment
         run: |
-          # Run heavy suites in separate PHP processes so memory is released
-          # between them. The full suite in a single process peaked past the
-          # runner memory limit and was OOM-killed (exit 137).
-          vendor/bin/pest --testsuite "Admin Feature Test" --colors=always
-          vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
-          vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
+
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+
+      - name: Set Passport OAuth key permissions
+        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
+
+      - name: Running impacted Pest tests
+        run: vendor/bin/pest --parallel --processes=4 --tia --colors=always

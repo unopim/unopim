@@ -11,7 +11,7 @@ beforeEach(function () {
 it('should dispatch catalog.product.create.after event for each variant created under a configurable product', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $attribute = $configurableProduct->super_attributes->first();
 
@@ -68,7 +68,7 @@ it('should dispatch catalog.product.create.after event for each variant created 
 it('should dispatch catalog.product.create.after event for multiple variants created at once', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withConfigurableAttributes()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withConfigurableAttributes()->withInitialValues()->create());
 
     $attribute = $configurableProduct->super_attributes->first();
     $options = $attribute->options;
@@ -136,7 +136,7 @@ it('should dispatch catalog.product.create.after event for multiple variants cre
 it('should not dispatch catalog.product.create.after event when updating existing variants', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $attribute = $configurableProduct->super_attributes->first();
     $existingVariant = $configurableProduct->variants->first();

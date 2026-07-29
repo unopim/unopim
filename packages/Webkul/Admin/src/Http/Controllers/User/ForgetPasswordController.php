@@ -53,8 +53,7 @@ class ForgetPasswordController extends Controller
         } catch (\Throwable $e) {
             report($e);
 
-            // 200 warning, not a 500: a mail-transport failure is operator config,
-            // kept visible to the admin while the cause is logged.
+            // 200 warning, not a 500: a mail-transport failure is operator config, shown to the admin while logged.
             $warning = trans('admin::app.users.forget-password.create.email-settings-error');
 
             if (request()->wantsJson()) {

@@ -31,7 +31,7 @@ it('supplies active association types with fields and this product\'s existing l
         ],
     ]);
 
-    $product = Product::factory()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
@@ -70,7 +70,7 @@ it('supplies active association types with fields and this product\'s existing l
 it('still renders the product edit page (no broken include) when no custom association type links exist', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
@@ -110,7 +110,7 @@ it('exposes only active (status = 1) association type fields, filtering out disa
         ],
     ]);
 
-    $product = Product::factory()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     // The product must link to the type for it to load on edit (only linked
@@ -151,7 +151,7 @@ it('sends only the types this product links to on edit -- unlinked active types 
         'fields'          => [],
     ]);
 
-    $product = Product::factory()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->withInitialValues()->create());
 
     $response = $this->get(route('admin.catalog.products.edit', $product->id));
 
@@ -193,7 +193,7 @@ it('renders the dynamic association type panel, its field label, and the field-e
         ],
     ]);
 
-    $product = Product::factory()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
@@ -267,7 +267,7 @@ it('persists a new link and its custom field value submitted through the unified
         ],
     ]);
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $data = [
@@ -326,7 +326,7 @@ it('never emits a bracket-array `name` for a checkbox association field (regress
         ],
     ]);
 
-    $product = Product::factory()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
@@ -396,7 +396,7 @@ it('persists a checkbox association field with multiple selected options as a co
         ],
     ]);
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $data = [
@@ -458,7 +458,7 @@ it('rejects and never persists a checkbox association field submitted as a PHP a
         ],
     ]);
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $data = [
@@ -522,7 +522,7 @@ it('persists a select association field as a single option-code string via the r
         ],
     ]);
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $data = [
@@ -581,7 +581,7 @@ it('persists a multiselect association field as a comma-joined string via the re
         ],
     ]);
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $data = [
@@ -636,7 +636,7 @@ it('persists a boolean association field as a "true"/"false" string via the real
         ],
     ]);
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $data = [
@@ -682,7 +682,7 @@ it('emits an `associations[<typeCode>][__present]=1` sentinel input for every RE
         'fields'          => [],
     ]);
 
-    $product = Product::factory()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
@@ -731,7 +731,7 @@ it('prunes all `product_associations` rows for a CUSTOM type via the real update
         'fields'          => [],
     ]);
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [
@@ -767,7 +767,7 @@ it('prunes rows AND clears the legacy JSON list for a LEGACY section (up_sells) 
 
     $upSellsType = $associationTypeRepository->findByCode('up_sells');
 
-    $product = Product::factory()->simple()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $productAssociationRepository->syncTypeWithData($product->id, $upSellsType->id, [
@@ -828,7 +828,7 @@ it('drops the redundant empty-value fallback hidden input for checkbox associati
         ],
     ]);
 
-    $product = Product::factory()->withInitialValues()->create();
+    $product = seedRequiredProductValues(Product::factory()->withInitialValues()->create());
     $relatedProduct = Product::factory()->withInitialValues()->create();
 
     $productAssociationRepository->syncTypeWithData($product->id, $customType->id, [

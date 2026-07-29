@@ -41,7 +41,13 @@
     :accepted-extensions='@json($acceptedExtensions)'
     :errors="errors"
 >
-    <x-admin::shimmer.media />
+    @if ($responsive)
+        <x-admin::shimmer.media />
+    @else
+        <x-admin::shimmer.media
+            style="width: {{ $width }}; min-width: {{ $width }}; height: calc({{ $height }} + 36px); min-height: calc({{ $height }} + 36px);"
+        />
+    @endif
 </v-media-image>
 
     <x-admin::media.image-viewer v-if="false" />

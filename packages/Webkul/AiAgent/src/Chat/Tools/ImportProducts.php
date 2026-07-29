@@ -222,7 +222,7 @@ class ImportProducts implements PimTool
                 $jobInstance = $this->outer->createJobInstance($storedFilePath, $familyCode, $this->context);
                 $jobTrack = $this->outer->createJobTrack($jobInstance);
 
-                dispatch(new ImportTrackBatch($jobTrack));
+                ImportTrackBatch::dispatch($jobTrack);
 
                 return json_encode([
                     'result' => [

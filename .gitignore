@@ -65,3 +65,9 @@ tests/e2e-pw/.secrets.local
 
 .env.live-backup
 .factory
+
+# graphify knowledge-graph output (generated, do not commit)
+/graphify-out/
+
+# Pest Test Impact Analysis cache (fallback when HOME is unavailable)
+.pest/

@@ -52,7 +52,7 @@ class StatusFilter extends AbstractPropertyFilter
                     $property => $values,
                 ],
             ];
-            $this->queryBuilder::where($clause);
+            $this->queryBuilder->where($clause);
         }
 
         return $this;

@@ -48,6 +48,8 @@ class ElasticSearchServiceProvider extends ServiceProvider
 
     public function registerFacades(): void
     {
+        $this->app->bind(ElasticSearchQuery::class);
+
         $this->app->singleton('elastic-search-query', fn ($app): ElasticSearchQuery => new ElasticSearchQuery);
     }
 }

@@ -4,7 +4,6 @@ use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Core\Models\CoreConfig;
-use Webkul\Core\Models\Locale;
 use Webkul\ProductPassport\Database\Seeders\DppAttributeSeeder;
 
 it('persists a core_config row when the mapping is updated', function (): void {
@@ -73,44 +72,127 @@ it('lists a custom attribute added to the dpp group as a mappable field', functi
         ->assertSee('mapping[eco_label]', false);
 });
 
-it('creates a genuine dpp-group attribute that becomes a mappable field', function (): void {
-    resolve(DppAttributeSeeder::class)->run();
-
-    $dppGroup = AttributeGroup::where('code', 'dpp')->firstOrFail();
-
-    $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
-    $family->familyGroups()->attach($dppGroup->id);
+it('persists custom fields as a single json core_config row', function (): void {
+    AttributeProxy::factory()->create(['code' => 'country', 'type' => 'text']);
 
     $this->setPassportConfig(['enabled' => '1']);
 
     $this->loginWithPermissions('all');
 
-    $localeCode = Locale::query()->value('code');
-
-    $this->post(route('admin.catalog.passports.mapping.field.store'), [
-        'code'      => 'dpp_eco_label',
-        'type'      => 'text',
-        $localeCode => ['name' => 'Eco Label'],
+    $this->put(route('admin.catalog.passports.mapping.update'), [
+        'custom_fields' => [
+            ['name' => 'Origin Country', 'attribute' => 'country'],
+        ],
     ])->assertOk();
 
-    expect(AttributeProxy::where('code', 'dpp_eco_label')->exists())->toBeTrue();
+    $stored = CoreConfig::query()
+        ->where('code', 'catalog.product_passport.custom_fields')
+        ->value('value');
 
-    $this->get(route('admin.catalog.passports.mapping.edit'))
-        ->assertOk()
-        ->assertSee('mapping[dpp_eco_label]', false);
+    expect(json_decode((string) $stored, true))
+        ->toBe([['name' => 'Origin Country', 'attribute' => 'country']]);
 });
 
-it('forbids creating a passport field without the mapping permission', function (): void {
+it('drops a fully blank custom row before persisting', function (): void {
+    AttributeProxy::factory()->create(['code' => 'country', 'type' => 'text']);
+
+    $this->setPassportConfig(['enabled' => '1']);
+
+    $this->loginWithPermissions('all');
+
+    $this->put(route('admin.catalog.passports.mapping.update'), [
+        'custom_fields' => [
+            ['name' => 'Origin Country', 'attribute' => 'country'],
+            ['name' => '', 'attribute' => ''],
+        ],
+    ])->assertOk();
+
+    $stored = CoreConfig::query()
+        ->where('code', 'catalog.product_passport.custom_fields')
+        ->value('value');
+
+    expect(json_decode((string) $stored, true))
+        ->toBe([['name' => 'Origin Country', 'attribute' => 'country']]);
+});
+
+it('rejects a custom field pointing at an unknown attribute', function (): void {
+    $this->setPassportConfig(['enabled' => '1']);
+
+    $this->loginWithPermissions('all');
+
+    $this->put(route('admin.catalog.passports.mapping.update'), [
+        'custom_fields' => [
+            ['name' => 'Origin Country', 'attribute' => 'nonexistent_attribute'],
+        ],
+    ])->assertSessionHasErrors('custom_fields.0.attribute');
+
+    expect(
+        CoreConfig::query()
+            ->where('code', 'catalog.product_passport.custom_fields')
+            ->exists()
+    )->toBeFalse();
+});
+
+it('forbids saving custom fields without the mapping permission', function (): void {
+    AttributeProxy::factory()->create(['code' => 'country', 'type' => 'text']);
+
     $this->setPassportConfig(['enabled' => '1']);
 
     $this->loginWithPermissions('custom', ['dashboard']);
 
-    $this->post(route('admin.catalog.passports.mapping.field.store'), [
-        'code' => 'dpp_eco_label',
-        'type' => 'text',
+    $this->put(route('admin.catalog.passports.mapping.update'), [
+        'custom_fields' => [
+            ['name' => 'Origin Country', 'attribute' => 'country'],
+        ],
     ])->assertForbidden();
 
-    expect(AttributeProxy::where('code', 'dpp_eco_label')->exists())->toBeFalse();
+    expect(
+        CoreConfig::query()
+            ->where('code', 'catalog.product_passport.custom_fields')
+            ->exists()
+    )->toBeFalse();
+});
+
+it('excludes file and image attributes from the custom-field source options', function (): void {
+    resolve(DppAttributeSeeder::class)->run();
+
+    AttributeProxy::factory()->create(['code' => 'spec_sheet', 'type' => 'file']);
+    AttributeProxy::factory()->create(['code' => 'hero_image', 'type' => 'image']);
+    AttributeProxy::factory()->create(['code' => 'country', 'type' => 'text']);
+
+    $this->setPassportConfig(['enabled' => '1']);
+
+    $this->loginWithPermissions('all');
+
+    $this->get(route('admin.catalog.passports.mapping.edit'))
+        ->assertOk()
+        ->assertViewHas('customSourceOptions', function (array $options): bool {
+            $codes = array_column($options, 'id');
+
+            return in_array('country', $codes, true)
+                && ! in_array('spec_sheet', $codes, true)
+                && ! in_array('hero_image', $codes, true);
+        });
+});
+
+it('rejects a custom field pointing at a file attribute', function (): void {
+    AttributeProxy::factory()->create(['code' => 'spec_sheet', 'type' => 'file']);
+
+    $this->setPassportConfig(['enabled' => '1']);
+
+    $this->loginWithPermissions('all');
+
+    $this->put(route('admin.catalog.passports.mapping.update'), [
+        'custom_fields' => [
+            ['name' => 'Spec Sheet', 'attribute' => 'spec_sheet'],
+        ],
+    ])->assertSessionHasErrors('custom_fields.0.attribute');
+
+    expect(
+        CoreConfig::query()
+            ->where('code', 'catalog.product_passport.custom_fields')
+            ->exists()
+    )->toBeFalse();
 });
 
 it('accepts a document source for a document passport field', function (): void {

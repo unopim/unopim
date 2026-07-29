@@ -110,6 +110,8 @@ class UserController extends Controller
             'timezone',
         ]);
 
+        $data['use_gravatar'] = $request->boolean('use_gravatar', true);
+
         if ($error = $this->roleAssignmentError($this->roleRepository->find($data['role_id']))) {
             return new JsonResponse([
                 'message' => trans($error),
@@ -371,6 +373,8 @@ class UserController extends Controller
          * Is user with `permission_type` all changed status.
          */
         $data['status'] = filter_var($data['status'] ?? false, FILTER_VALIDATE_BOOLEAN);
+
+        $data['use_gravatar'] = $request->boolean('use_gravatar', true);
 
         $isStatusChangedToInactive = ! $data['status'] && (bool) $user->status;
 

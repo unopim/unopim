@@ -8,11 +8,6 @@ use Webkul\Category\Rules\CategoryFieldValidationRules;
 
 class UpdateCategoryFieldRequest extends ApiFormRequest
 {
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, array<int, mixed>>
-     */
     protected function prepareForValidation(): void
     {
         if ($this->has('validation')) {

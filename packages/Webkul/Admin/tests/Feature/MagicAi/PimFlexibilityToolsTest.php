@@ -289,6 +289,7 @@ function setPimFlexCoreConfig(string $code, string $value): void
         'updated_at' => now(),
     ]);
 
+    // getConfigData memoises per request; drop the stale entry after changing the row within a test.
     app(RequestMemo::class)->forget('core_config.');
 }
 

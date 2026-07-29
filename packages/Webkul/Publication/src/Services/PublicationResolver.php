@@ -14,10 +14,7 @@ class PublicationResolver
     private const LANGUAGE_TAG_PATTERN = '/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/';
 
     /**
-     * The per-channel public-tier kill switch: `general.publication.settings.enabled`.
-     * Distinct from the publish-time-only status gate — shared by every public-facing
-     * controller (page and asset alike) so a disabled channel takes the whole
-     * publication, including its documents, off the air consistently.
+     * The per-channel public-tier kill switch (`general.publication.settings.enabled`), shared by every public controller.
      */
     public function isChannelEnabled(Publication $publication): bool
     {
@@ -40,12 +37,8 @@ class PublicationResolver
     }
 
     /**
-     * Resolves a GTIN to a single canonical publication. A GTIN identifies the
-     * product, not the channel, so it is non-unique across publications: the
-     * designated passport channel (`general.publication.settings.gs1_passport_channel`)
-     * makes the mapping deterministic. When unset, falls back to the lowest
-     * channel_id and logs the ambiguity so a multi-channel GTIN never silently
-     * resolves to an arbitrary passport.
+     * Resolves a GTIN (non-unique across channels) to one publication via the designated passport channel,
+     * falling back to the lowest channel_id with a logged warning when unset.
      */
     public function findByGtin(string $gtin, string $type): ?Publication
     {
@@ -96,8 +89,7 @@ class PublicationResolver
      */
     private function localePreference(Publication $publication, ?string $localeCode, ?string $acceptLanguage): array
     {
-        // An explicit locale in the URL is authoritative: match it exactly or 404,
-        // so a bogus segment can't serve another locale's content under a 200.
+        // An explicit URL locale is authoritative: match exactly or 404, never fall back to another locale.
         if ($localeCode !== null) {
             return [$localeCode];
         }
@@ -109,9 +101,7 @@ class PublicationResolver
     }
 
     /**
-     * Caps the token count, validates each tag against a BCP-47-ish shape,
-     * and honours `q=` weights so a malformed or hostile header can't be
-     * trusted and client ranking isn't silently ignored.
+     * Caps token count, validates each tag against a BCP-47-ish shape, and honours `q=` weights.
      *
      * @return list<string>
      */

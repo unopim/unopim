@@ -1,14 +1,17 @@
 <?php
 
+use Illuminate\Support\Str;
 use Webkul\Admin\Tests\AdminTestCase;
 use Webkul\AdminApi\Tests\ApiTestCase;
 use Webkul\Attribute\Tests\AttributeTestCase;
 use Webkul\Category\Tests\CategoryTestCase;
 use Webkul\Completeness\Tests\CompletenessTestCase;
+use Webkul\Core\Models\Channel;
 use Webkul\Core\Tests\CoreTestCase;
 use Webkul\DataGrid\Tests\DataGridTestCase;
 use Webkul\Installer\Tests\UserCreateCommandTestCase;
 use Webkul\Measurement\Tests\MeasurementTestCase;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Tests\ProductTestCase;
 use Webkul\ProductPassport\Tests\ProductPassportTestCase;
 use Webkul\Publication\Tests\PublicationTestCase;
@@ -50,6 +53,40 @@ uses(ProductPassportTestCase::class)->in('../packages/Webkul/ProductPassport/tes
 
 /*
 |--------------------------------------------------------------------------
+| Test Impact Analysis
+|--------------------------------------------------------------------------
+|
+| Coverage edges only capture executed PHP, so assets that are compiled or read at runtime
+| (Blade views, language files, JS) would otherwise look untouched to TIA. Map each package's
+| non-PHP sources back to its own test directory, and treat schema changes as global.
+|
+*/
+
+$packageTestPaths = array_map(
+    fn (string $path): string => 'packages/Webkul/'.basename(dirname($path)).'/tests',
+    glob(dirname(__DIR__).'/packages/Webkul/*/tests', GLOB_ONLYDIR) ?: [],
+);
+
+foreach ($packageTestPaths as $testPath) {
+    $package = dirname($testPath);
+
+    pest()->tia()->baselined();
+
+    pest()->tia()->watch([
+        $package.'/src/Resources/views/**'  => $testPath,
+        $package.'/src/Resources/lang/**'   => $testPath,
+        $package.'/src/Resources/assets/**' => $testPath,
+        $package.'/src/Config/**'           => $testPath,
+    ]);
+
+    pest()->tia()->watch([
+        'packages/Webkul/*/src/Database/Migration/**' => $testPath,
+        'database/seeders/**'                         => $testPath,
+    ]);
+}
+
+/*
+|--------------------------------------------------------------------------
 | Expectations
 |--------------------------------------------------------------------------
 |
@@ -77,4 +114,41 @@ expect()->extend('toBeOne', function () {
 function something()
 {
     // ..
+}
+
+/**
+ * Seed the family's required attribute values on a factory product.
+ *
+ * A save is checked against every required attribute of the family, not only the ones the request
+ * carried, so a bare factory product cannot be updated with a partial payload until these exist.
+ *
+ * @return Product
+ */
+function seedRequiredProductValues($product)
+{
+    $scoped = Channel::with(['locales', 'currencies'])->get()->mapWithKeys(fn ($channel) => [
+        $channel->code => $channel->locales->pluck('code')->mapWithKeys(fn ($locale) => [
+            $locale => [
+                'name'              => 'Test Product '.$product->sku,
+                'short_description' => 'Short description',
+                'description'       => 'Description',
+                'price'             => $channel->currencies->pluck('code')
+                    ->mapWithKeys(fn ($code) => [$code => '100'])
+                    ->all(),
+            ],
+        ])->all(),
+    ])->all();
+
+    $product->values = array_replace_recursive([
+        'common' => [
+            'sku'     => $product->sku,
+            'url_key' => Str::slug($product->sku),
+            'weight'  => '1',
+        ],
+        'channel_locale_specific' => $scoped,
+    ], $product->values ?? []);
+
+    $product->save();
+
+    return $product;
 }

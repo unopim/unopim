@@ -1,8 +1,10 @@
 <?php
 
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Webkul\AppUrlGuard\Http\Middleware\VerifyAppUrlMatches;
+use Webkul\Core\RequestMemo;
 
 /**
  * Feature cover for the package wiring: the debug-only check endpoint and the
@@ -31,6 +33,15 @@ function loopbackAlias(): string
 beforeEach(function () {
     config()->set('app.debug', true);
     config()->set('app_url_guard.enabled', true);
+
+    /**
+     * EnableDebugForAllowedIps forces app.debug back off mid-request whenever the
+     * IP-debug feature is switched on, which would 404 this debug-only endpoint on
+     * any install that has it enabled. The row is restored by the test transaction.
+     */
+    DB::table('core_config')->where('code', 'general.debug.settings.enabled')->delete();
+
+    app(RequestMemo::class)->forget('core_config.');
 });
 
 describe('check endpoint', function () {

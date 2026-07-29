@@ -32,15 +32,13 @@ it('does not serve JSON-LD content for a withdrawn passport', function (): void 
     $negotiated = $this->withHeaders(['Accept' => 'application/ld+json'])
         ->get('/p/'.$version->publication->uuid.'/'.$version->locale->code);
 
-    // Content negotiation falls through to the HTML tombstone rather than
-    // emitting the frozen payload as a machine-readable schema.org graph.
+    // Withdrawn: negotiation falls through to the HTML tombstone, never the frozen schema.org payload.
     $negotiated->assertOk();
     expect($negotiated->headers->get('Content-Type'))->not->toContain('application/ld+json');
     $negotiated->assertDontSee('"@context":"https://schema.org"', false);
     $negotiated->assertDontSee('"@type":"Product"', false);
 
-    // The HTML page for a withdrawn passport must not embed the JSON-LD block
-    // either — the payload never surfaces as machine-readable content.
+    // The withdrawn HTML page must not embed the JSON-LD block either.
     $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)
         ->assertOk()
         ->assertDontSee('<script type="application/ld+json">', false)

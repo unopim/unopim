@@ -42,11 +42,7 @@ class CoreServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        /*
-         * Pin Laravel's url() / asset() / Vite root + scheme to APP_URL so
-         * frontend asset URLs cannot be redirected to an attacker origin
-         * by a poisoned Host / X-Forwarded-Host header.
-         */
+        // Pin url()/asset()/Vite root + scheme to APP_URL so a poisoned Host header can't redirect asset URLs.
         if ($appUrl = config('app.url')) {
             URL::forceRootUrl($appUrl);
 
@@ -93,13 +89,7 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->bind(ExceptionHandler::class, Handler::class);
 
-        /*
-         * The framework's default redirect target for unauthenticated requests
-         * is the (nonexistent) `login` route, which the Authenticate middleware
-         * resolves eagerly while building the exception — throwing a 500 before
-         * any handler runs. Point web requests at the admin login and let API
-         * requests fall through to the JSON 401 in the exception handler.
-         */
+        // Redirect unauthenticated web requests to admin login (default `login` route 500s); let API fall through to JSON 401.
         Authenticate::redirectUsing(
             fn ($request) => $request->is('api/*') ? null : route('admin.session.create')
         );
@@ -131,6 +121,7 @@ class CoreServiceProvider extends ServiceProvider
 
         DB::macro('rawQueryGrammar', fn (): Grammar => GrammarQueryManager::getGrammar());
 
+        // Drop the request-scoped config memo on any config write so later reads in the same request see it.
         $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
         CoreConfig::saved($forgetConfigMemo);
         CoreConfig::deleted($forgetConfigMemo);
@@ -140,9 +131,7 @@ class CoreServiceProvider extends ServiceProvider
      * Register services.
      */
     /**
-     * Override the mail transport with the values saved in the admin
-     * Configuration (Email settings) when they are present, falling back to the
-     * environment-driven mail config otherwise.
+     * Override the mail transport with admin Configuration (Email settings) values when present.
      */
     protected function overrideMailConfiguration(): void
     {
@@ -215,10 +204,7 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->singleton('core', fn () => app()->make(Core::class));
 
-        /**
-         * The request's catalog scope. Scoped, not a singleton: Octane keeps singletons alive across
-         * requests inside a worker, which would leak one admin's locale into the next admin's page.
-         */
+        // Scoped, not singleton: a singleton would leak one admin's catalog scope into the next request under Octane.
         $this->app->scoped(CatalogScope::class, fn ($app): CatalogScope => new CatalogScope(
             $app->make(LocaleRepository::class),
             $app->make(ChannelRepository::class),
@@ -226,13 +212,7 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->app->scoped(RequestMemo::class);
 
-        /**
-         * Astrotomic registers its own Locales helper as a singleton, but every TranslatableModel
-         * resolves this subclass, which is otherwise rebuilt on each getLocalesHelper() call and
-         * reloads all locales every time. Astrotomic hits that helper several times per translated
-         * attribute, so serializing a page of models turned into thousands of locale reloads. Scope
-         * it so it loads once per request — Octane-safe, since a locale added mid-worker shows next request.
-         */
+        // Scope this Locales subclass so it loads once per request; Astrotomic otherwise rebuilds it per translated attribute.
         $this->app->scoped(LocalesHelper::class);
 
         /**

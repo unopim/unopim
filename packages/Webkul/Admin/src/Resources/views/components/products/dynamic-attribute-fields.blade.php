@@ -24,8 +24,7 @@
 @endphp
 
 @php
-    // Batch the selected-option labels for every select/multiselect field into one query,
-    // instead of one lookup per field. Only the pre-selected codes are loaded, not the full set.
+    // Batch selected-option labels for all select/multiselect fields into one query (only pre-selected codes, not the full set).
     $selectedCodesByAttribute = [];
 
     foreach ($fields as $selectField) {
@@ -140,7 +139,7 @@
 
     <x-admin::form.control-group>
         <div class="inline-flex justify-between w-full">
-            <x-admin::form.control-group.label :for="$fieldName">
+            <x-admin::form.control-group.label :for="form_control_id($fieldName)">
                 {{ $fieldLabel }}
 
                 @if ($field->is_required || $isConfigurableAttribute)

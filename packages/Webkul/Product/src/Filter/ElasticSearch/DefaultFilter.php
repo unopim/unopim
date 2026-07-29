@@ -42,7 +42,7 @@ class DefaultFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
             case FilterOperators::CONTAINS:
                 /**
@@ -70,7 +70,7 @@ class DefaultFilter extends AbstractElasticSearchAttributeFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
         }
 

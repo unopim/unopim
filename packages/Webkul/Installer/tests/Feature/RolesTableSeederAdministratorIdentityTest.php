@@ -4,15 +4,8 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Database\Seeders\User\RolesTableSeeder;
 
 /**
- * Regression: the Administrator role must always own role id 1 — the id the
- * installer and every admin seeder hardcode as the admin's role_id.
- *
- * The AdminApi "API" role migration runs during `migrate:fresh`, before the
- * base seeder. On a fresh install it claimed id 1 as an empty-permission
- * `custom` role, and the old seeder's "skip when id 1 exists" guard then left
- * the Administrator unseeded — so the freshly created admin inherited the empty
- * API role and hit the Bouncer 403 ("You do not have permission to access this
- * page") on login.
+ * Regression: Administrator must own role id 1 (hardcoded as admin's role_id). The API-role migration once squatted
+ * id 1 before this seeder, and the old "skip when id 1 exists" guard left the admin on an empty role → Bouncer 403.
  */
 describe('RolesTableSeeder keeps the Administrator at role id 1', function () {
     it('reasserts the Administrator when another role has claimed id 1', function () {

@@ -50,10 +50,10 @@ class CategoryFilter extends AbstractPropertyFilter
         $terms = ['terms' => [self::FIELD => QueryString::escapeArrayValue(array_values((array) $value))]];
 
         match ($operator) {
-            FilterOperators::IN           => $this->queryBuilder::where($terms),
-            FilterOperators::NOT_IN       => $this->queryBuilder::whereNot($terms),
-            FilterOperators::IS_EMPTY     => $this->queryBuilder::whereNot(['exists' => ['field' => self::FIELD]]),
-            FilterOperators::IS_NOT_EMPTY => $this->queryBuilder::where(['exists' => ['field' => self::FIELD]]),
+            FilterOperators::IN           => $this->queryBuilder->where($terms),
+            FilterOperators::NOT_IN       => $this->queryBuilder->whereNot($terms),
+            FilterOperators::IS_EMPTY     => $this->queryBuilder->whereNot(['exists' => ['field' => self::FIELD]]),
+            FilterOperators::IS_NOT_EMPTY => $this->queryBuilder->where(['exists' => ['field' => self::FIELD]]),
             default                       => $this,
         };
 

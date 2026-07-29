@@ -26,14 +26,43 @@ class UpdatePassportMappingRequest extends FormRequest
      * is rejected so a crafted request can never point a passport field at a
      * non-existent attribute. The keys are the passport field codes.
      *
+     * Custom fields are the merchant's own rows: a user-typed label plus the
+     * source attribute code it publishes from. The label is free-form data
+     * (escaped on output, not localized); the attribute must exist so a crafted
+     * request can never surface a non-existent attribute on the public page.
+     *
      * @return array<string, array<int, string>>
      */
     public function rules(): array
     {
         return [
-            'mapping'   => ['nullable', 'array'],
-            'mapping.*' => ['nullable', 'string', 'exists:attributes,code'],
+            'mapping'                   => ['nullable', 'array'],
+            'mapping.*'                 => ['nullable', 'string', 'exists:attributes,code'],
+            'custom_fields'             => ['nullable', 'array'],
+            'custom_fields.*.name'      => ['required', 'string', 'max:255'],
+            'custom_fields.*.attribute' => ['required', 'string', 'exists:attributes,code'],
         ];
+    }
+
+    /**
+     * Drop rows the merchant added but left entirely blank, so an empty
+     * appended row never fails validation; a half-filled row still errors.
+     */
+    protected function prepareForValidation(): void
+    {
+        $rows = $this->input('custom_fields');
+
+        if (! is_array($rows)) {
+            return;
+        }
+
+        $this->merge([
+            'custom_fields' => array_values(array_filter(
+                $rows,
+                fn ($row): bool => is_array($row)
+                    && (trim((string) ($row['name'] ?? '')) !== '' || trim((string) ($row['attribute'] ?? '')) !== ''),
+            )),
+        ]);
     }
 
     /**
@@ -62,7 +91,48 @@ class UpdatePassportMappingRequest extends FormRequest
                     $validator->errors()->add('mapping.'.$field, trans('passport::app.mapping.type-mismatch'));
                 }
             }
+
+            $this->rejectMediaCustomFieldSources($validator);
         });
+    }
+
+    /**
+     * A custom field always publishes its source's value into the consumer
+     * section as plain text; a file/image source has only a storage path, which
+     * would render as a broken raw path. Regulatory file fields already flow
+     * through the dpp document pipeline, so a media source here is always wrong
+     * and is rejected regardless of what the type-filtered screen offered.
+     */
+    private function rejectMediaCustomFieldSources(Validator $validator): void
+    {
+        $rows = (array) $this->input('custom_fields', []);
+
+        $codes = array_values(array_filter(array_map(
+            fn ($row): string => is_array($row) ? (string) ($row['attribute'] ?? '') : '',
+            $rows,
+        )));
+
+        if ($codes === []) {
+            return;
+        }
+
+        $mediaCodes = AttributeProxy::modelClass()::query()
+            ->whereIn('code', $codes)
+            ->whereIn('type', self::DOCUMENT_TYPES)
+            ->pluck('code')
+            ->all();
+
+        if ($mediaCodes === []) {
+            return;
+        }
+
+        foreach ($rows as $index => $row) {
+            $code = is_array($row) ? (string) ($row['attribute'] ?? '') : '';
+
+            if (in_array($code, $mediaCodes, true)) {
+                $validator->errors()->add('custom_fields.'.$index.'.attribute', trans('passport::app.mapping.custom-media-source'));
+            }
+        }
     }
 
     private function isDocument(Attribute $attribute): bool

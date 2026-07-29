@@ -30,8 +30,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Explicit names: auto names include the table prefix and overrun
-            // MySQL's 64-char identifier limit on prefixed installs.
+            // Explicit names: auto names include the prefix and overrun MySQL's 64-char identifier limit on prefixed installs.
             $table->unique(['product_id', 'channel_id', 'type'], 'pub_prod_channel_type_uq');
             $table->index(['type', 'status'], 'pub_type_status_idx');
         });

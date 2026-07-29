@@ -4,6 +4,7 @@ namespace Webkul\ProductPassport\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Models\AttributeGroupProxy;
 use Webkul\Attribute\Models\AttributeProxy;
@@ -12,15 +13,16 @@ use Webkul\Publication\Contracts\PayloadBuilder;
 use Webkul\Publication\DataTransferObjects\PublicationContext;
 
 /**
- * Builds the public DPP payload from the product's `dpp` attribute group
- * only — the leak control. See `groupAttributesFor()` for why this is the
- * single point every field/document must pass through.
+ * Builds the public DPP payload from the product's `dpp` attribute group only — the leak control.
  */
 class PassportPayloadBuilder implements PayloadBuilder
 {
     private const GROUP_CODE = 'dpp';
 
     private const DOCUMENT_TYPES = ['file', 'image'];
+
+    /** Merchant-defined passport fields; see PassportMappingController. */
+    private const CUSTOM_FIELDS_KEY = 'catalog.product_passport.custom_fields';
 
     /** Rendered in the dedicated identifier block, so kept out of the field list. */
     private const IDENTIFIER_CODES = ['dpp_gtin', 'dpp_model_identifier', 'dpp_batch_identifier'];
@@ -32,25 +34,15 @@ class PassportPayloadBuilder implements PayloadBuilder
 
         $attributes = $this->groupAttributesFor($product);
 
-        // Only pay the ancestor-walk cost when there is an ancestor to walk:
-        // resolvedValues() constructs a fresh VariantValueResolver on every
-        // call (it is container-bound via bind(), not singleton() — the
-        // resolver's own $memo never survives past the single call it's
-        // built for), so it is pure overhead for the overwhelming majority
-        // of products, which are not variants.
+        // resolvedValues() rebuilds a non-memoizing resolver each call; skip the ancestor walk for non-variants.
         $values = empty($product->parent_id) ? ($product->values ?? []) : $product->resolvedValues();
 
-        // Tiers live under `publication.tiers`: the ProductPassport provider
-        // merges this package's config into the `publication` namespace (see
-        // ProductPassportServiceProvider::register), so there is no top-level
-        // `passport` config key.
+        // Tiers live under `publication.*`: this package's config is merged into the `publication` namespace.
         $order = config('publication.tiers.order', ['consumer']);
         $default = config('publication.tiers.default', 'consumer');
         $map = config('publication.tiers.map', []);
 
-        // Clamp any misconfigured tier back to `default` so a typo in the map
-        // can never mint an orphan bucket that array_slice-by-order silently
-        // drops (which would hide a field from every tier including authority).
+        // Clamp an unknown tier back to `default` so a map typo can't mint an orphan bucket that drops the field.
         $tierOf = fn (string $code): string => in_array($map[$code] ?? $default, $order, true) ? ($map[$code] ?? $default) : $default;
 
         $tiers = array_fill_keys($order, ['fields' => [], 'documents' => []]);
@@ -70,10 +62,30 @@ class PassportPayloadBuilder implements PayloadBuilder
             $tier = $tierOf($attribute->code);
 
             if (in_array($attribute->type, self::DOCUMENT_TYPES, true)) {
+                // Preview builds must not write to the asset disk: emit the doc with a
+                // `preview` marker and no servable path so the template shows the label
+                // as "available after publish" instead of a live download link.
+                if ($context->preview) {
+                    $tiers[$tier]['documents'][] = [
+                        'code'    => $attribute->code,
+                        'label'   => $label,
+                        'kind'    => $attribute->type === 'image' ? 'image' : 'document',
+                        'preview' => true,
+                    ];
+
+                    continue;
+                }
+
                 $copiedPath = $this->copyToAssetDisk($context->uuid, $localeCode, $attribute->code, (string) $raw);
 
                 if ($copiedPath !== null) {
-                    $tiers[$tier]['documents'][] = ['code' => $attribute->code, 'label' => $label, 'path' => $copiedPath];
+                    // `kind` lets the public template render an image inline (<img>) while a file stays a download link.
+                    $tiers[$tier]['documents'][] = [
+                        'code'  => $attribute->code,
+                        'label' => $label,
+                        'path'  => $copiedPath,
+                        'kind'  => $attribute->type === 'image' ? 'image' : 'document',
+                    ];
                 }
 
                 continue;
@@ -88,6 +100,9 @@ class PassportPayloadBuilder implements PayloadBuilder
 
         $base = $order[0];
 
+        // Merchant-defined fields ride the base (consumer) tier, never gated to operator/authority.
+        $this->appendCustomFields($tiers[$base]['fields'], $values, $channelCode, $localeCode);
+
         return [
             'identifier' => [
                 'gtin'  => $this->identifierValue($attributes, $values, $channelCode, $localeCode, 'dpp_gtin'),
@@ -99,19 +114,11 @@ class PassportPayloadBuilder implements PayloadBuilder
                 'address'           => (string) (core()->getConfigData('catalog.product_passport.settings.operator_address', $channelCode) ?? ''),
                 'eu_representative' => (string) (core()->getConfigData('catalog.product_passport.settings.operator_eu_rep', $channelCode) ?? ''),
             ],
-            // `sections[0].fields` and `documents` carry the base (consumer)
-            // tier verbatim — the template and JSON-LD resource already read
-            // exactly these, so an empty tiers map keeps today's single-tier
-            // shape byte-for-byte. `tiers` is the full partition the controller
-            // reads to elevate a signed request to operator/authority.
+            // `sections[0]`/`documents` carry the base tier verbatim (single-tier shape); `tiers` is the full partition for signed elevation.
             'sections'  => [['key' => self::GROUP_CODE, 'label' => trans('passport::app.public.sections.passport', [], $localeCode), 'fields' => $tiers[$base]['fields']]],
             'documents' => $tiers[$base]['documents'],
             'tiers'     => $tiers,
-            // Identity/rebuild metadata ONLY — Publisher::publish() excludes
-            // the entire `meta` key from the checksum (Arr::except($payload,
-            // 'meta')), so anything content-bearing placed here is invisible
-            // to dedupe by construction. Never move a field from `sections`
-            // or `documents` into `meta` to "simplify" the payload.
+            // Identity/rebuild metadata ONLY — Publisher excludes `meta` from the checksum, so content placed here never affects dedupe.
             'meta' => [
                 'uuid'     => $context->uuid,
                 'url'      => $context->url,
@@ -123,13 +130,9 @@ class PassportPayloadBuilder implements PayloadBuilder
     }
 
     /**
-     * The leak control: only members of the `dpp` group, scoped to this
-     * product's own attribute family, ever reach a payload.
-     * `AttributeGroup::customAttributes($familyId)` — not the
-     * `custom_attributes` *property*, which silently returns NULL — already
-     * orders by `attribute_group_mappings.position`, so no attribute reorder
-     * in the admin UI can ever mint a spurious new version of byte-identical
-     * content.
+     * The leak control: only `dpp`-group attributes scoped to the product's family reach a payload.
+     *
+     * Uses customAttributes($familyId) (the property returns NULL); its position ordering keeps content byte-stable across UI reorders.
      *
      * @return Collection<int, AttributeContract>
      */
@@ -154,14 +157,10 @@ class PassportPayloadBuilder implements PayloadBuilder
     }
 
     /**
-     * Resolves a passport field's raw value, honouring the admin field-mapping:
-     * when `catalog.product_passport.mapping.<dpp_code>` names an existing
-     * source attribute (per-scope, so `getConfigData` channel-fallback applies)
-     * and that source carries a non-empty value, that value is used; otherwise
-     * the `dpp_*` attribute's own value is the fallback — an unset mapping is
-     * fully backward-compatible. Only the single mapped value is read: the
-     * field's code, label and formatting stay driven by the `dpp_*` attribute,
-     * so a mapping never widens the public surface beyond the `dpp` group.
+     * Resolves a field's raw value, honouring the admin field-mapping.
+     *
+     * A mapped source attribute's non-empty value wins; otherwise the `dpp_*` attribute's own value. Only the value is
+     * borrowed — code/label/formatting stay driven by the `dpp_*` attribute, so a mapping never widens the public surface.
      *
      * @param  Collection<int, AttributeContract>  $attributes
      * @param  array<string, mixed>  $values
@@ -190,11 +189,66 @@ class PassportPayloadBuilder implements PayloadBuilder
     }
 
     /**
-     * Typed formatting, never a bare `(string)` cast: `(string) []` silently
-     * yields the literal string `"Array"` for a multiselect/checkbox value
-     * that resolves to an array, a price value is keyed by currency code
-     * (not a scalar), and a boolean is stored as the string `"1"`/`"0"` or
-     * `"true"`/`"false"` depending on write path.
+     * Append the merchant's custom fields to the consumer field list.
+     *
+     * Each `{name, attribute}` publishes the source attribute's value under the user-typed label; empty values are skipped.
+     *
+     * @param  list<array{code: string, label: string, value: string}>  $fields
+     * @param  array<string, mixed>  $values
+     */
+    private function appendCustomFields(array &$fields, array $values, string $channelCode, string $localeCode): void
+    {
+        $raw = core()->getConfigData(self::CUSTOM_FIELDS_KEY, $channelCode);
+
+        $rows = is_string($raw) ? json_decode($raw, true) : (is_array($raw) ? $raw : []);
+
+        if (! is_array($rows) || $rows === []) {
+            return;
+        }
+
+        $sourceCodes = array_values(array_filter(array_map(
+            fn ($row): string => is_array($row) ? (string) ($row['attribute'] ?? '') : '',
+            $rows,
+        )));
+
+        if ($sourceCodes === []) {
+            return;
+        }
+
+        $sources = AttributeProxy::modelClass()::query()
+            ->whereIn('code', $sourceCodes)
+            ->get()
+            ->keyBy('code');
+
+        foreach ($rows as $row) {
+            if (! is_array($row)) {
+                continue;
+            }
+
+            $name = trim((string) ($row['name'] ?? ''));
+            $sourceCode = (string) ($row['attribute'] ?? '');
+            $source = $sources->get($sourceCode);
+
+            if ($name === '' || ! $source instanceof AttributeContract) {
+                continue;
+            }
+
+            $value = $source->getValueFromProductValues($values, $channelCode, $localeCode);
+
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            $fields[] = [
+                'code'  => 'custom_'.Str::slug($name, '_'),
+                'label' => $name,
+                'value' => $this->formatValue($source, $value, $channelCode),
+            ];
+        }
+    }
+
+    /**
+     * Type-aware formatting; a bare `(string)` cast mangles array (multiselect), currency-keyed (price) and boolean values.
      */
     private function formatValue(AttributeContract $attribute, mixed $value, string $channelCode): string
     {
@@ -230,13 +284,9 @@ class PassportPayloadBuilder implements PayloadBuilder
     }
 
     /**
-     * Copies the referenced file from wherever the catalog attribute stored
-     * it (the shared, public-facing default disk — see Task 6) onto the
-     * dedicated asset disk, stamping the FINAL, already-servable path into
-     * the payload. This must happen here, at build time: `PublicationVersion
-     * ::payload` is immutable the instant the version row is created, so
-     * nothing downstream of this method can ever rewrite a
-     * `documents[].path` value.
+     * Copies the file from the catalog default disk to the asset disk, stamping the final path into the payload.
+     *
+     * Must run at build time: PublicationVersion::payload is immutable once the version row exists, so no path can be rewritten later.
      */
     private function copyToAssetDisk(string $uuid, string $localeCode, string $attributeCode, string $sourcePath): ?string
     {

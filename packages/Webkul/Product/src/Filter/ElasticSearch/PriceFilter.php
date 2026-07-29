@@ -46,12 +46,12 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
 
         switch ($operator) {
             case FilterOperators::IS_EMPTY:
-                $this->queryBuilder::whereNot(['exists' => ['field' => $field]]);
+                $this->queryBuilder->whereNot(['exists' => ['field' => $field]]);
 
                 return $this;
 
             case FilterOperators::IS_NOT_EMPTY:
-                $this->queryBuilder::where(['exists' => ['field' => $field]]);
+                $this->queryBuilder->where(['exists' => ['field' => $field]]);
 
                 return $this;
         }
@@ -61,13 +61,13 @@ class PriceFilter extends AbstractElasticSearchAttributeFilter
         }
 
         match ($operator) {
-            FilterOperators::EQUAL => $this->queryBuilder::where([
+            FilterOperators::EQUAL => $this->queryBuilder->where([
                 'term' => [$field => $value[1]],
             ]),
-            FilterOperators::LESS_THAN, FilterOperators::LESS_THAN_OR_EQUAL, FilterOperators::GREATER_THAN, FilterOperators::GREATER_THAN_OR_EQUAL => $this->queryBuilder::where([
+            FilterOperators::LESS_THAN, FilterOperators::LESS_THAN_OR_EQUAL, FilterOperators::GREATER_THAN, FilterOperators::GREATER_THAN_OR_EQUAL => $this->queryBuilder->where([
                 'range' => [$field => [$operator->value => $value[1]]],
             ]),
-            FilterOperators::RANGE => $this->queryBuilder::where([
+            FilterOperators::RANGE => $this->queryBuilder->where([
                 'range' => [$field => ['gte' => $value[1], 'lte' => $value[2] ?? $value[1]]],
             ]),
             default => $this,

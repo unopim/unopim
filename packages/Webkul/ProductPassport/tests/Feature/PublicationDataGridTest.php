@@ -4,7 +4,29 @@ use Illuminate\Support\Facades\Bus;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
+use Webkul\Publication\Models\Publication;
+
+it('exports gtin, gs1 link and public url columns for the print hand-off', function (): void {
+    $publication = Publication::factory()->create([
+        'gtin'             => '04006381333931',
+        'alias_identifier' => 'https://dpp.example.test/01/04006381333931',
+    ]);
+
+    $grid = resolve(PublicationDataGrid::class);
+    $grid->setQueryBuilder();
+
+    $rows = $grid->getExportableData();
+
+    expect($rows)->toHaveCount(1);
+
+    $row = (array) $rows[0];
+
+    expect($row['gtin'])->toBe('04006381333931')
+        ->and($row['gs1_link'])->toBe('https://dpp.example.test/01/04006381333931')
+        ->and($row['public_url'])->toContain($publication->uuid);
+});
 
 it('lists publications for an authorised admin', function (): void {
     $version = $this->publishedPassportFixture();
@@ -16,11 +38,7 @@ it('lists publications for an authorised admin', function (): void {
     $this->get(route('admin.catalog.passports.index'))
         ->assertOk();
 
-    // `request()->ajax()` (what the controller branches on) checks the
-    // X-Requested-With header specifically — Pest's getJson() sets
-    // Accept/Content-Type but not that header, so it must be added
-    // explicitly to reach the DataGrid::toJson() branch instead of the
-    // full HTML view.
+    // getJson() omits X-Requested-With, which request()->ajax() needs to reach the DataGrid::toJson() branch.
     $this->getJson(route('admin.catalog.passports.index'), ['X-Requested-With' => 'XMLHttpRequest'])
         ->assertOk()
         ->assertSee($version->publication->uuid);

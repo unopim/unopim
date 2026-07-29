@@ -467,8 +467,8 @@
                     this.toggleBeforeUnload(false);
 
                     // Native submit navigates away, so there is no outcome to wait for.
-                    if (! form.requestSubmit) {
-                        form.submit();
+                    if (form.dataset.ajaxForm !== "true" || ! form.requestSubmit) {
+                        form.requestSubmit ? form.requestSubmit() : form.submit();
 
                         return;
                     }

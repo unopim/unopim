@@ -3,15 +3,10 @@ const { test, expect } = require('../../utils/fixtures');
 
 /**
  * Broken-SMTP coverage for the admin forget-password flow.
- *
- * The reset mail is sent synchronously inside the request, so an unreachable
- * mail host makes the transport throw. The endpoint must degrade to a visible
- * WARNING (200 + yellow flash) — never a 500 and never a silent green success
- * that would hide the broken email setup from the operator.
- *
- * SMTP is broken for real by stopping the mailpit container for the duration of
- * this file, then restarting it in afterAll. Requires docker access on the host
- * running Playwright (the same stack that serves BASE_URL).
+ * The reset mail sends synchronously, so an unreachable host makes the transport throw.
+ * The endpoint must degrade to a warning flash (200), never a 500 or silent green success.
+ * SMTP is broken by stopping the mailpit container for this file (restarted in afterAll);
+ * requires docker on the Playwright host.
  */
 const MAILPIT = 'unopim-unopim-mailpit-1';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
@@ -22,8 +17,7 @@ function docker(command) {
 }
 
 async function freshForgetPasswordPage(browser) {
-  // Logged-out context: the project's global storageState is an authenticated
-  // admin, and the controller redirects a logged-in admin away from this page.
+  // Logged-out context: global storageState is an admin, whom the controller redirects away.
   const context = await browser.newContext({ storageState: { cookies: [], origins: [] } });
   const page = await context.newPage();
   await page.goto('/admin/forget-password', { waitUntil: 'networkidle', timeout: 30000 });

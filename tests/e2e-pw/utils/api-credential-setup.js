@@ -1,21 +1,10 @@
 /**
  * First-run bootstrap of UnoPim API integration credentials.
  *
- * Flow:
- *   1. Server-to-server admin login via `request.newContext` (works around
- *      UnoPim 2.x's Vue "Sign In" button which doesn't reliably fire when
- *      clicked in headless chromium).
- *   2. Pin session-cookie expiry so chromium doesn't drop "session" cookies
- *      (expires=-1) as already-expired on reload.
- *   3. Open chromium with that storage state, navigate directly to
- *      `/admin/configuration/integrations/create`, create a new integration.
- *   4. If the admin user already owns an integration (UnoPim enforces
- *      one-integration-per-admin), fall through to reading the existing
- *      integration's credentials at `/admin/configuration/integrations/edit/{id}`
- *      and re-generating its secret if missing.
- *
- * The chromium leg is needed only for the integration form, which posts
- * via Vue/axios; there's no equivalent plain-HTML form endpoint to hit.
+ * Server-to-server admin login (the Vue "Sign In" button is unreliable in headless chromium),
+ * then chromium with that storage state drives the Vue integration form (no plain-HTML endpoint).
+ * If the admin already owns an integration (UnoPim enforces one-per-admin), reuse it and
+ * re-generate its secret. Session-cookie expiry is pinned so chromium keeps the cookies.
  */
 'use strict';
 
@@ -29,10 +18,7 @@ function writeConfig(config) {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
 }
 
-/**
- * Login server-to-server and return a Playwright storage-state object the
- * caller can persist or pass directly to `browser.newContext({ storageState })`.
- */
+// Login server-to-server and return a Playwright storage-state object for the caller to reuse.
 async function adminLoginStorageState({ baseUrl, adminEmail, adminPassword }) {
   const ctx = await request.newContext({ baseURL: baseUrl });
   try {
@@ -66,15 +52,9 @@ async function adminLoginStorageState({ baseUrl, adminEmail, adminPassword }) {
   }
 }
 
-/**
- * Read the credentials displayed on an integration's edit page. If the secret
- * has been hidden / never generated, click "Re-Generate Secret Key" first.
- *
- * @returns {Promise<{ client_id: string, client_secret: string } | null>}
- */
+// Read the credentials on an integration's edit page, generating/rotating the secret if needed.
 async function readCredentialsOnEditPage(page) {
-  // A fresh integration has no OAuth client yet; "Generate" mints the client_id +
-  // secret_key pair. On an existing one, "Re-Generate Secret Key" rotates the secret.
+  // Fresh integration: "Generate" mints client_id + secret_key. Existing: "Re-Generate" rotates the secret.
   const generate = page.getByRole('button', { name: 'Generate', exact: true });
   const regen = page.getByTitle('Re-Generate Secret Key');
 
@@ -102,10 +82,7 @@ async function readCredentialsOnEditPage(page) {
   return null;
 }
 
-/**
- * Open the integrations list and navigate into the first existing integration.
- * Returns its credentials, regenerating the secret if necessary.
- */
+// Open the first existing integration and return its credentials, regenerating the secret if needed.
 async function reuseExistingIntegration(page, baseUrl) {
   await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
   const editIcon = page.locator('[title="Edit"], .icon-edit').first();
@@ -116,11 +93,7 @@ async function reuseExistingIntegration(page, baseUrl) {
   return readCredentialsOnEditPage(page);
 }
 
-/**
- * Try to create a new integration. Returns its credentials on success, or
- * `null` if creation failed (typically because the admin user already owns
- * one — UnoPim enforces unique admin_id on integrations).
- */
+// Create a new integration; returns credentials, or null if it failed (admin already owns one — unique admin_id).
 async function tryCreateNewIntegration(page, baseUrl, integrationName) {
   await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
@@ -165,10 +138,7 @@ async function createApiIntegration({ baseUrl, adminEmail, adminPassword, integr
     const context = await browser.newContext({ storageState: stateFile });
     const page = await context.newPage();
 
-    // Try to create a fresh integration first
     let creds = await tryCreateNewIntegration(page, baseUrl, integrationName);
-
-    // Fall back to reusing the existing one
     if (!creds) {
       creds = await reuseExistingIntegration(page, baseUrl);
     }

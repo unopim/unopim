@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -96,3 +97,27 @@ function familyShape($family): array
             ->all(),
     ])->all();
 }
+
+it('clones a large source family without a query per attribute', function () {
+    $source = app(AttributeFamilyRepository::class)->createScaffolded('scaffold_budget_source');
+
+    $group = AttributeGroup::create(['code' => 'budget_group']);
+    $attributes = Attribute::factory()->count(30)->create();
+
+    $mapping = $source->attributeFamilyGroupMappings()->create([
+        'attribute_group_id' => $group->id,
+        'position'           => 2,
+    ]);
+
+    $attributes->each(fn ($attribute, $index) => $mapping->customAttributes()->save($attribute, ['position' => $index + 1]));
+
+    $queries = 0;
+    DB::listen(function () use (&$queries): void {
+        $queries++;
+    });
+
+    $clone = app(AttributeFamilyRepository::class)->createScaffolded('scaffold_budget_clone', $source->id);
+
+    expect(familyShape($clone->refresh()))->toBe(familyShape($source))
+        ->and($queries)->toBeLessThan($attributes->count());
+});

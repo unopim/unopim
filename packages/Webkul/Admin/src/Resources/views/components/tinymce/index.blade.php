@@ -1,11 +1,7 @@
 <v-tinymce {{ $attributes }}></v-tinymce>
 
 @pushOnce('scripts')
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.6.2/tinymce.min.js"
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-    ></script>
+    <script src="{{ asset('themes/admin/default/build/tinymce/tinymce.min.js') }}"></script>
 
     <script
         type="text/x-template"
@@ -347,6 +343,8 @@
                             let self2 = this;
 
                             let config = {
+                                base_url: '{{ asset('themes/admin/default/build/tinymce') }}',
+                                suffix: '.min',
                                 relative_urls: false,
                                 menubar: false,
                                 remove_script_host: false,

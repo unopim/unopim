@@ -2,15 +2,8 @@ const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, clickEditOnRow } = require('../../utils/helpers');
 
-/**
- * Regression: "Discard Changes" must revert rich attribute types whose value
- * lives in Vue state (not the native DOM element) — WYSIWYG, Select, Multiselect,
- * Image, Gallery, File. Before the fix the discard handler only reset native
- * inputs, so these fields kept their edited value and the bar stayed dirty.
- *
- * Each rich field now listens for the `unsaved-changes:reset` broadcast the bar
- * emits on discard and restores its own initial value.
- */
+// Regression: Discard must revert rich fields (WYSIWYG/Select/Multiselect/Image/Gallery/File)
+// whose value lives in Vue state; each now restores itself on the bar's `unsaved-changes:reset`.
 
 const bar = (page) => page.getByText('You have unsaved changes');
 
@@ -95,13 +88,8 @@ test.describe('Product edit — Discard reverts rich fields', () => {
   });
 });
 
-/**
- * Rich media/WYSIWYG fields covered against a dedicated fixture family+product
- * seeded by database/seeders/DiscardQaFixtureSeeder (attributes e2e_qa_wysiwyg,
- * e2e_qa_image, e2e_qa_gallery, e2e_qa_file on family e2e_media_qa, product
- * E2E-MEDIA-QA-001). Run the seeder before this block:
- *   docker exec unopim-unopim-fpm-1 php artisan db:seed --class=DiscardQaFixtureSeeder
- */
+// Needs the DiscardQaFixtureSeeder fixture (family e2e_media_qa, product E2E-MEDIA-QA-001). Run first:
+//   docker exec unopim-unopim-fpm-1 php artisan db:seed --class=DiscardQaFixtureSeeder
 test.describe('Product edit — Discard reverts WYSIWYG/media/file', () => {
   const SKU = 'E2E-MEDIA-QA-001';
   const asset = (name) => path.resolve(__dirname, '../../assets', name);
@@ -127,9 +115,7 @@ test.describe('Product edit — Discard reverts WYSIWYG/media/file', () => {
     await frame.locator('body[contenteditable="true"]').waitFor({ state: 'visible', timeout: 10000 });
     const original = await adminPage.evaluate((id) => window.tinymce.get(id).getContent(), editorId);
 
-    // Drive TinyMCE through its API rather than keyboard input — typing into the
-    // iframe is timing-sensitive and can silently no-op; setContent + fire('change')
-    // deterministically updates content and triggers the component's dirty tracking.
+    // Drive TinyMCE via its API; typing into the iframe is timing-sensitive and can silently no-op.
     await adminPage.evaluate((id) => {
       const editor = window.tinymce.get(id);
       editor.setContent('<p>Discarded WYSIWYG edit</p>');

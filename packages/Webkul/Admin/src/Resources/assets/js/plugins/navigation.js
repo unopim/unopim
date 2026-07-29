@@ -11,6 +11,8 @@ export default function initAjaxNavigation() {
 
     let navigating = false;
 
+    let navToken = 0;
+
     window.unopim = window.unopim || {};
     window.unopim.visit = (url) => visit(url, true);
 
@@ -235,11 +237,41 @@ export default function initAjaxNavigation() {
     async function injectScripts(scripts) {
         const pending = [];
 
+        const token = 'nav' + (++navToken);
+
+        const idMap = {};
+
+        scripts.forEach((original) => {
+            const type = (original.getAttribute('type') || '').toLowerCase();
+
+            if (! isExecutableType(type) && original.id) {
+                idMap[original.id] = original.id + '-' + token;
+            }
+        });
+
+        const remapReferences = (text) => {
+            return Object.keys(idMap)
+                .sort((a, b) => b.length - a.length)
+                .reduce((out, oldId) => {
+                    const escaped = oldId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+                    return out
+                        .replace(new RegExp('#' + escaped + '(?![\\w-])', 'g'), '#' + idMap[oldId])
+                        .replace(new RegExp('(getElementById\\(\\s*[\'"])' + escaped + '([\'"])', 'g'), '$1' + idMap[oldId] + '$2');
+                }, text);
+        };
+
         scripts.forEach((original) => {
             const type = (original.getAttribute('type') || '').toLowerCase();
 
             if (! isExecutableType(type)) {
-                document.body.appendChild(original.cloneNode(true));
+                const clone = original.cloneNode(true);
+
+                if (clone.id && idMap[clone.id]) {
+                    clone.id = idMap[clone.id];
+                }
+
+                document.body.appendChild(clone);
 
                 return;
             }
@@ -275,7 +307,7 @@ export default function initAjaxNavigation() {
             }
 
             try {
-                new Function(original.textContent)();
+                new Function(remapReferences(original.textContent))();
             } catch (error) {
                 console.error('Ajax navigation: a page script failed to run', error);
             }

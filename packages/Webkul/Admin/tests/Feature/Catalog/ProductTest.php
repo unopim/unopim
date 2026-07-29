@@ -61,7 +61,7 @@ it('should return the product datagrid', function () {
 it('should return unique validation for product sku while creating', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->configurable()->create();
+    $product = seedRequiredProductValues(Product::factory()->configurable()->create());
 
     $data = [
         'sku'                 => $product->sku,
@@ -184,7 +184,7 @@ it('should create a configurable product successfully', function () {
 it('should return the edit page for simple product successfully', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
@@ -210,7 +210,7 @@ it('should return the edit page for configurable product successfully', function
 it('should copy the product successfully', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $productId = $product->id;
 
@@ -321,7 +321,7 @@ it('should search the products with uppercase sku successfully (case-insensitive
 it('should return validation error when setting duplicate variant configurable attribute value', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->create());
 
     $attribute = $configurableProduct->super_attributes->first();
 
@@ -347,7 +347,7 @@ it('should return validation error when setting duplicate variant configurable a
 it('should create a new variant product for a configurable product without removing existing variant', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $variantSku = $configurableProduct->sku.'-variant_1';
 
@@ -403,7 +403,7 @@ it('should create a new variant product for a configurable product without remov
 it('should show a readable message identifying the sku when variant skus are duplicated', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $attribute = $configurableProduct->super_attributes->first();
 
@@ -451,7 +451,7 @@ it('should show a readable message identifying the sku when variant skus are dup
 it('should edit already existing variant product through a configurable product', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $attribute = $configurableProduct->super_attributes->first();
 
@@ -492,7 +492,7 @@ it('should edit already existing variant product through a configurable product'
 it('should remove already existing variant product through a configurable product', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $variant = $configurableProduct->variants()->first();
 
@@ -537,7 +537,7 @@ it('should return a downloadable file response for quick export in xls format', 
 it('should render product edit page header with sticky top offset so save button stays visible while scrolling', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $response = $this->get(route('admin.catalog.products.edit', $product->id));
 
@@ -574,7 +574,7 @@ it('should return 404 when the product edit id is numeric but missing', function
 it('should render the product edit form with the ajax submit handler enabled', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->simple()->create();
+    $product = seedRequiredProductValues(Product::factory()->simple()->create());
 
     $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
@@ -585,7 +585,7 @@ it('should render the product edit form with the ajax submit handler enabled', f
 it('should return a json success message without redirect when updating a product via ajax', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $data = [
         'sku'    => $configurableProduct->sku,
@@ -600,7 +600,7 @@ it('should return a json success message without redirect when updating a produc
 it('should keep the redirect behaviour when updating a product without ajax', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->withInitialValues()->create());
 
     $data = [
         'sku'    => $configurableProduct->sku,
@@ -636,7 +636,7 @@ it('should return json 422 validation errors when updating a product with a dupl
 it('should return a json message instead of redirecting when an ajax update hits the duplicate variant guard', function () {
     $this->loginAsAdmin();
 
-    $configurableProduct = Product::factory()->configurable()->withVariantProduct()->create();
+    $configurableProduct = seedRequiredProductValues(Product::factory()->configurable()->withVariantProduct()->create());
 
     $attribute = $configurableProduct->super_attributes->first();
 

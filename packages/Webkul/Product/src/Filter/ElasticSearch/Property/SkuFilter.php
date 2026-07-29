@@ -46,7 +46,7 @@ class SkuFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::CONTAINS:
@@ -78,7 +78,7 @@ class SkuFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
         }
 

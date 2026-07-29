@@ -32,6 +32,7 @@ use Webkul\User\Database\Factories\AdminFactory;
     'email',
     'password',
     'image',
+    'use_gravatar',
     'api_token',
     'role_id',
     'ui_locale_id',
@@ -64,7 +65,8 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
      * @var array<string, mixed>
      */
     protected $attributes = [
-        'type' => 'user',
+        'type'         => 'user',
+        'use_gravatar' => true,
     ];
 
     /**
@@ -135,7 +137,17 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
      */
     public function hasGravatar(): bool
     {
-        return self::gravatarExistsForEmail($this->email);
+        return (bool) $this->use_gravatar && self::gravatarExistsForEmail($this->email);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'use_gravatar' => 'boolean',
+        ];
     }
 
     public static function gravatarExistsForEmail(?string $email): bool

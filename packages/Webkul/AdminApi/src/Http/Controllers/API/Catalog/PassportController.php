@@ -37,7 +37,7 @@ class PassportController extends ApiController
             })
             ->when(request()->filled('status'), fn ($query) => $query->where('status', request('status')))
             ->orderByDesc('id')
-            ->paginate((int) request()->input('limit', 10));
+            ->paginate(min(100, max(1, (int) request()->input('limit', 10))));
 
         return PublicationResource::collection($publications)->response();
     }
@@ -70,8 +70,11 @@ class PassportController extends ApiController
     {
         abort_unless(PassportFeature::featureEnabled(), 404);
 
+        $mappingController = app(PassportMappingController::class);
+
         return response()->json([
-            'data' => app(PassportMappingController::class)->mappingData(),
+            'data'          => $mappingController->mappingData(),
+            'custom_fields' => $mappingController->customFieldsData(),
         ]);
     }
 
@@ -177,11 +180,12 @@ class PassportController extends ApiController
     {
         abort_unless(PassportFeature::featureEnabled(), 404);
 
-        app(PassportMappingController::class)->persistMapping(
-            $request->validated('mapping') ?? [],
-            $request->filled('channel') ? (string) $request->input('channel') : null,
-            $request->filled('locale') ? (string) $request->input('locale') : null,
-        );
+        $channel = $request->filled('channel') ? (string) $request->input('channel') : null;
+        $locale = $request->filled('locale') ? (string) $request->input('locale') : null;
+
+        $mappingController = app(PassportMappingController::class);
+        $mappingController->persistMapping($request->validated('mapping') ?? [], $channel, $locale);
+        $mappingController->persistCustomFields($request->validated('custom_fields') ?? [], $channel, $locale);
 
         return $this->successResponse(trans('passport::app.mapping.saved'));
     }

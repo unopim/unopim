@@ -71,6 +71,7 @@ class UserForm extends FormRequest
             'timezone'              => 'required',
             'image'                 => $this->file('image') instanceof UploadedFile ? $imageRules : ['nullable'],
             'image.*'               => $imageRules,
+            'use_gravatar'          => 'boolean',
         ];
     }
 
