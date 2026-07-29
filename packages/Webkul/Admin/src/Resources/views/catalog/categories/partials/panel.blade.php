@@ -5,13 +5,15 @@
 
     $allActiveLocales = core()->getAllActiveLocales();
 
-    $localeQuery = $isEdit
+    $panelQuery = $isEdit
         ? ['category' => $category->id]
         : array_filter(['panel' => 'create', 'parent_id' => $parentCategory?->id]);
+
+    $canSeeHistory = $isEdit && bouncer()->hasPermission('history');
 @endphp
 
-<div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-    <div class="flex gap-4 justify-between items-center pb-4 border-b dark:border-cherry-800 max-md:flex-wrap">
+<div class="flex flex-col gap-2.5">
+    <div class="flex gap-4 justify-between items-center max-md:flex-wrap">
         <div class="flex flex-col gap-0.5 min-w-0">
             <p class="text-xs text-gray-400 dark:text-gray-300 truncate">
                 {{ $breadcrumb ?: trans('admin::app.catalog.categories.browse.root-level') }}
@@ -40,7 +42,7 @@
                 <x-slot:content class="!p-0">
                     @foreach ($allActiveLocales as $locale)
                         <a
-                            href="{{ route('admin.catalog.categories.index', $localeQuery + ['locale' => $locale->code]) }}"
+                            href="{{ route('admin.catalog.categories.index', $panelQuery + ['locale' => $locale->code]) }}"
                             class="flex gap-2.5 px-5 py-2 text-base cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 dark:text-white {{ $locale->code == $currentLocale->code ? 'bg-gray-100 dark:bg-cherry-800' : ''}}"
                         >
                             {{ $locale->name }}
@@ -51,71 +53,51 @@
         </div>
     </div>
 
-    {!! view_render_event('unopim.admin.catalog.categories.panel.before', ['category' => $category]) !!}
-
-    <x-admin::form
-        id="category-panel-form"
-        ajax
-        :action="$isEdit ? route('admin.catalog.categories.update', $category->id) : route('admin.catalog.categories.store')"
-        :method="$isEdit ? 'PUT' : 'POST'"
-        enctype="multipart/form-data"
-    >
-        <x-admin::form.control-group.control
-            type="hidden"
-            name="locale"
-            :value="$currentLocale->code"
+    @if ($canSeeHistory)
+        <x-admin::layouts.edit-tabs
+            class="!mt-0"
+            :active="$showHistory ? 'history' : 'general'"
+            :history-url="route('admin.catalog.categories.index', $panelQuery + ['history' => 1])"
+            :show-history="true"
+            :items="[[
+                'key'   => 'general',
+                'url'   => route('admin.catalog.categories.index', $panelQuery),
+                'label' => 'admin::app.components.layouts.sidebar.general',
+            ]]"
         />
+    @endif
 
-        <x-admin::form.control-group.control
-            type="hidden"
-            name="parent_id"
-            :value="$isEdit ? $category->parent_id : $parentCategory?->id"
-        />
+    @if ($canSeeHistory && $showHistory)
+        {!! view_render_event('unopim.admin.layout.history.before') !!}
 
-        <div class="flex flex-col gap-4 pt-4">
-            <x-admin::form.control-group>
-                <x-admin::form.control-group.label class="required">
-                    @lang('admin::app.catalog.categories.create.code')
-                </x-admin::form.control-group.label>
+        <x-admin::history src="{{ route('admin.history.index', ['category', $category->id]) }}" />
 
-                <x-admin::form.control-group.control
-                    type="text"
-                    name="code"
-                    rules="required"
-                    :class="$isEdit ? 'cursor-not-allowed' : ''"
-                    :disabled="$isEdit && (bool) $category->code"
-                    :value="$isEdit ? $category->code : old('code')"
-                    v-code
-                />
+        {!! view_render_event('unopim.admin.layout.history.after') !!}
+    @else
+        {!! view_render_event('unopim.admin.catalog.categories.panel.before', ['category' => $category]) !!}
 
-                <x-admin::form.control-group.error control-name="code" />
-            </x-admin::form.control-group>
+        <x-admin::form
+            id="category-panel-form"
+            ajax
+            :action="$isEdit ? route('admin.catalog.categories.update', $category->id) : route('admin.catalog.categories.store')"
+            :method="$isEdit ? 'PUT' : 'POST'"
+            enctype="multipart/form-data"
+        >
+            <x-admin::form.control-group.control
+                type="hidden"
+                name="locale"
+                :value="$currentLocale->code"
+            />
 
-            @if (! $leftCategoryFields->isEmpty())
-                <x-admin::categories.dynamic-fields
-                    :fields="$leftCategoryFields"
-                    :fieldValues="$isEdit ? $category->additional_data : []"
-                />
-            @endif
+            <x-admin::form.control-group.control
+                type="hidden"
+                name="parent_id"
+                :value="$isEdit ? $category->parent_id : $parentCategory?->id"
+            />
 
-            @if (! $rightCategoryFields?->isEmpty())
-                <x-admin::accordion>
-                    <x-slot:header>
-                        <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('admin::app.catalog.categories.edit.right-section')
-                        </p>
-                    </x-slot>
+            @include('admin::catalog.categories.partials.form', ['showParent' => false])
 
-                    <x-slot:content>
-                        <x-admin::categories.dynamic-fields
-                            :fields="$rightCategoryFields"
-                            :fieldValues="$isEdit ? $category->additional_data : []"
-                        />
-                    </x-slot>
-                </x-admin::accordion>
-            @endif
-
-            <div class="flex justify-end gap-2.5">
+            <div class="flex justify-end gap-2.5 mt-2.5">
                 <a
                     href="{{ route('admin.catalog.categories.index') }}"
                     class="transparent-button"
@@ -129,8 +111,8 @@
                         : trans('admin::app.catalog.categories.index.add-btn') }}
                 </button>
             </div>
-        </div>
-    </x-admin::form>
+        </x-admin::form>
 
-    {!! view_render_event('unopim.admin.catalog.categories.panel.after', ['category' => $category]) !!}
+        {!! view_render_event('unopim.admin.catalog.categories.panel.after', ['category' => $category]) !!}
+    @endif
 </div>

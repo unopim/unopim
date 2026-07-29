@@ -31,6 +31,7 @@ class CategoryBrowseRequest extends FormRequest
             'category'  => ['nullable', 'integer'],
             'parent_id' => ['nullable', 'integer'],
             'locale'    => ['nullable', 'string', Rule::exists('locales', 'code')],
+            'history'   => ['nullable', 'boolean'],
         ];
     }
 
@@ -51,6 +52,11 @@ class CategoryBrowseRequest extends FormRequest
         $id = $this->validated('parent_id');
 
         return $id === null ? null : (int) $id;
+    }
+
+    public function wantsHistory(): bool
+    {
+        return (bool) $this->validated('history');
     }
 
     public function wantsCreatePanel(): bool

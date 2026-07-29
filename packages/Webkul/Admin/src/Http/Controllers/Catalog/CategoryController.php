@@ -103,6 +103,7 @@ class CategoryController extends Controller
             'branchToParent'      => [],
             'selectedId'          => null,
             'panelMode'           => null,
+            'showHistory'         => false,
             'category'            => null,
             'parentCategory'      => null,
             'breadcrumb'          => '',
@@ -120,6 +121,7 @@ class CategoryController extends Controller
             $data['category'] = $this->categoryRepository->find($categoryId);
             $data['panelMode'] = $data['category'] ? 'edit' : null;
             $data['selectedId'] = $data['category']?->id;
+            $data['showHistory'] = $data['category'] && $request->wantsHistory();
         } elseif ($request->wantsCreatePanel()) {
             $data['panelMode'] = 'create';
 
