@@ -205,9 +205,13 @@ return [
                 'title' => 'admin::app.configuration.index.general.debug.settings.enabled',
                 'type'  => 'boolean',
             ], [
-                'name'  => 'allowed_ips',
-                'title' => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
-                'type'  => 'text',
+                'name'       => 'allowed_ips',
+                'title'      => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
+                'type'       => 'text',
+                'validation' => [
+                    'nullable',
+                    'regex:/^\s*(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|[A-Fa-f0-9]{0,4}(?::[A-Fa-f0-9]{0,4}){2,7})(?:\s*,\s*(?:(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)(?:\.(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)){3}|[A-Fa-f0-9]{0,4}(?::[A-Fa-f0-9]{0,4}){2,7}))*\s*$/',
+                ],
             ],
         ],
     ], [
