@@ -1966,7 +1966,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logotipo, favicon e tema.',
+            'info'           => 'Logotipo e favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

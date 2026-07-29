@@ -1966,7 +1966,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => '로고, 파비콘 및 테마.',
+            'info'           => '로고 및 파비콘.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

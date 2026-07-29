@@ -1964,7 +1964,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'الشعار والأيقونة المفضلة والمظهر.',
+            'info'           => 'الشعار والأيقونة المفضلة.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',
