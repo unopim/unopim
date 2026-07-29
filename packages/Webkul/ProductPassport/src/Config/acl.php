@@ -37,15 +37,30 @@ return [
         'route' => 'admin.catalog.passports.withdraw',
         'sort'  => 3,
     ], [
-        'key'   => 'catalog.passport.mapping',
-        'name'  => 'passport::app.mapping.title',
-        'route' => 'admin.catalog.passports.mapping.edit',
-        'sort'  => 4,
+        'key'   => 'catalog.passport.template.view',
+        'name'  => 'passport::app.acl.templates.view',
+        'route' => 'admin.catalog.passports.templates.index',
+        'sort'  => 5,
     ], [
-        'key'   => 'catalog.passport.mapping',
-        'name'  => 'passport::app.mapping.title',
-        'route' => 'admin.catalog.passports.mapping.update',
-        'sort'  => 4,
+        'key'   => 'catalog.passport.template.create',
+        'name'  => 'passport::app.acl.templates.create',
+        'route' => 'admin.catalog.passports.templates.store',
+        'sort'  => 6,
+    ], [
+        'key'   => 'catalog.passport.template.edit',
+        'name'  => 'passport::app.acl.templates.edit',
+        'route' => 'admin.catalog.passports.templates.edit',
+        'sort'  => 7,
+    ], [
+        'key'   => 'catalog.passport.template.edit',
+        'name'  => 'passport::app.acl.templates.edit',
+        'route' => 'admin.catalog.passports.templates.update',
+        'sort'  => 7,
+    ], [
+        'key'   => 'catalog.passport.template.delete',
+        'name'  => 'passport::app.acl.templates.delete',
+        'route' => 'admin.catalog.passports.templates.delete',
+        'sort'  => 8,
     ], [
         /**
          * Routeless: the Product Passport system-settings row shares the generic

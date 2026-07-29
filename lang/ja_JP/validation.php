@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute フィールドは true または false である必要があります。',
+    'current_password'      => 'パスワードが正しくありません。',
     'confirmed'      => ':attribute の確認が一致しません。',
     'date'           => ':attribute は有効な日付ではありません。',
     'date_format'    => ':attribute は形式 :format と一致しません。',

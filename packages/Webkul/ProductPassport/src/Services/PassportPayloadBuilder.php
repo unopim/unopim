@@ -2,37 +2,36 @@
 
 namespace Webkul\ProductPassport\Services;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
-use Webkul\Attribute\Models\AttributeGroupProxy;
-use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Product\Models\Product;
+use Webkul\ProductPassport\Contracts\PassportTemplateField as PassportTemplateFieldContract;
+use Webkul\ProductPassport\Enums\PassportFieldRole;
+use Webkul\ProductPassport\Enums\PassportFieldSource;
 use Webkul\Publication\Contracts\PayloadBuilder;
 use Webkul\Publication\DataTransferObjects\PublicationContext;
 
 /**
- * Builds the public DPP payload from the product's `dpp` attribute group only — the leak control.
+ * Builds the public DPP payload from the passport template bound to the product's
+ * attribute family — the leak control. A product whose family has no enabled
+ * template publishes no fields at all.
  */
 class PassportPayloadBuilder implements PayloadBuilder
 {
-    private const GROUP_CODE = 'dpp';
-
     private const DOCUMENT_TYPES = ['file', 'image'];
 
-    /** Merchant-defined passport fields; see PassportMappingController. */
-    private const CUSTOM_FIELDS_KEY = 'catalog.product_passport.custom_fields';
+    private const DEFAULT_SECTION = 'passport';
 
-    /** Rendered in the dedicated identifier block, so kept out of the field list. */
-    private const IDENTIFIER_CODES = ['dpp_gtin', 'dpp_model_identifier', 'dpp_batch_identifier'];
+    public function __construct(
+        private readonly PassportTemplateResolver $templates,
+    ) {}
 
     public function build(Product $product, PublicationContext $context): array
     {
         $channelCode = $context->channel->code;
         $localeCode = $context->locale->code;
 
-        $attributes = $this->groupAttributesFor($product);
+        $template = $this->templates->forProduct($product);
 
         // resolvedValues() rebuilds a non-memoizing resolver each call; skip the ancestor walk for non-variants.
         $values = empty($product->parent_id) ? ($product->values ?? []) : $product->resolvedValues();
@@ -40,82 +39,63 @@ class PassportPayloadBuilder implements PayloadBuilder
         // Tiers live under `publication.*`: this package's config is merged into the `publication` namespace.
         $order = config('publication.tiers.order', ['consumer']);
         $default = config('publication.tiers.default', 'consumer');
-        $map = config('publication.tiers.map', []);
-
-        // Clamp an unknown tier back to `default` so a map typo can't mint an orphan bucket that drops the field.
-        $tierOf = fn (string $code): string => in_array($map[$code] ?? $default, $order, true) ? ($map[$code] ?? $default) : $default;
 
         $tiers = array_fill_keys($order, ['fields' => [], 'documents' => []]);
 
-        foreach ($attributes as $attribute) {
-            if (in_array($attribute->code, self::IDENTIFIER_CODES, true)) {
+        $identifier = ['gtin' => null, 'model' => null, 'batch' => null];
+
+        $sections = [];
+
+        foreach ($template?->fields ?? [] as $field) {
+            $raw = $this->rawValue($field, $values, $channelCode, $localeCode);
+
+            if ($field->role instanceof PassportFieldRole) {
+                $identifier[$field->role->value] = $raw === null || $raw === '' ? null : (string) $raw;
+
                 continue;
             }
-
-            $raw = $this->mappedRaw($attribute, $attributes, $values, $channelCode, $localeCode);
 
             if ($raw === null || $raw === '') {
                 continue;
             }
 
-            $label = $attribute->getTranslatedValueWithFallback('name', $localeCode) ?: '['.$attribute->code.']';
-            $tier = $tierOf($attribute->code);
+            // Clamp an unknown tier back to `default` so a stale row can't mint an orphan bucket that drops the field.
+            $tier = in_array($field->tier->value, $order, true) ? $field->tier->value : $default;
 
-            if (in_array($attribute->type, self::DOCUMENT_TYPES, true)) {
-                // Preview builds must not write to the asset disk: emit the doc with a
-                // `preview` marker and no servable path so the template shows the label
-                // as "available after publish" instead of a live download link.
-                if ($context->preview) {
-                    $tiers[$tier]['documents'][] = [
-                        'code'    => $attribute->code,
-                        'label'   => $label,
-                        'kind'    => $attribute->type === 'image' ? 'image' : 'document',
-                        'preview' => true,
-                    ];
+            $label = $field->getTranslatedValueWithFallback('label', $localeCode) ?: '['.$field->code.']';
 
-                    continue;
-                }
+            $sectionKey = $field->section->code ?? self::DEFAULT_SECTION;
 
-                $copiedPath = $this->copyToAssetDisk($context->uuid, $localeCode, $attribute->code, (string) $raw);
+            $sections[$sectionKey] ??= [
+                'key'   => $sectionKey,
+                'label' => $this->sectionLabel($field, $localeCode),
+            ];
 
-                if ($copiedPath !== null) {
-                    // `kind` lets the public template render an image inline (<img>) while a file stays a download link.
-                    $tiers[$tier]['documents'][] = [
-                        'code'  => $attribute->code,
-                        'label' => $label,
-                        'path'  => $copiedPath,
-                        'kind'  => $attribute->type === 'image' ? 'image' : 'document',
-                    ];
-                }
+            if ($this->isDocument($field)) {
+                $tiers[$tier]['documents'][] = $this->document($field, $context, $localeCode, $label, (string) $raw);
 
                 continue;
             }
 
             $tiers[$tier]['fields'][] = [
-                'code'  => $attribute->code,
-                'label' => $label,
-                'value' => $this->formatValue($attribute, $raw, $channelCode),
+                'code'    => $field->code,
+                'label'   => $label,
+                'value'   => $this->formatValue($field, $raw, $channelCode),
+                'section' => $sectionKey,
             ];
         }
 
         $base = $order[0];
 
-        // Merchant-defined fields ride the base (consumer) tier, never gated to operator/authority.
-        $this->appendCustomFields($tiers[$base]['fields'], $values, $channelCode, $localeCode);
-
         return [
-            'identifier' => [
-                'gtin'  => $this->identifierValue($attributes, $values, $channelCode, $localeCode, 'dpp_gtin'),
-                'model' => $this->identifierValue($attributes, $values, $channelCode, $localeCode, 'dpp_model_identifier'),
-                'batch' => $this->identifierValue($attributes, $values, $channelCode, $localeCode, 'dpp_batch_identifier'),
-            ],
-            'operator' => [
+            'identifier' => $identifier,
+            'operator'   => [
                 'name'              => (string) (core()->getConfigData('catalog.product_passport.settings.operator_name', $channelCode) ?? ''),
                 'address'           => (string) (core()->getConfigData('catalog.product_passport.settings.operator_address', $channelCode) ?? ''),
                 'eu_representative' => (string) (core()->getConfigData('catalog.product_passport.settings.operator_eu_rep', $channelCode) ?? ''),
             ],
-            // `sections[0]`/`documents` carry the base tier verbatim (single-tier shape); `tiers` is the full partition for signed elevation.
-            'sections'  => [['key' => self::GROUP_CODE, 'label' => trans('passport::app.public.sections.passport', [], $localeCode), 'fields' => $tiers[$base]['fields']]],
+            // `sections`/`documents` carry the base tier (single-tier shape); `tiers` is the full partition for signed elevation.
+            'sections'  => $this->sectionsFor($sections, $tiers[$base]['fields'], $localeCode),
             'documents' => $tiers[$base]['documents'],
             'tiers'     => $tiers,
             // Identity/rebuild metadata ONLY — Publisher excludes `meta` from the checksum, so content placed here never affects dedupe.
@@ -125,133 +105,127 @@ class PassportPayloadBuilder implements PayloadBuilder
                 'locale'   => $localeCode,
                 'channel'  => $channelCode,
                 'built_at' => now()->toIso8601String(),
+                'template' => $template?->code,
             ],
         ];
     }
 
     /**
-     * The leak control: only `dpp`-group attributes scoped to the product's family reach a payload.
+     * A fixed field publishes the same localized text for every product; an
+     * attribute field reads the product's own value for this channel and locale.
      *
-     * Uses customAttributes($familyId) (the property returns NULL); its position ordering keeps content byte-stable across UI reorders.
-     *
-     * @return Collection<int, AttributeContract>
-     */
-    private function groupAttributesFor(Product $product): Collection
-    {
-        $group = AttributeGroupProxy::modelClass()::query()->where('code', self::GROUP_CODE)->first();
-
-        return $group === null ? collect() : $group->customAttributes($product->attribute_family_id);
-    }
-
-    private function identifierValue(Collection $attributes, array $values, string $channelCode, string $localeCode, string $code): ?string
-    {
-        $attribute = $attributes->firstWhere('code', $code);
-
-        if ($attribute === null) {
-            return null;
-        }
-
-        $raw = $this->mappedRaw($attribute, $attributes, $values, $channelCode, $localeCode);
-
-        return $raw === null ? null : (string) $raw;
-    }
-
-    /**
-     * Resolves a field's raw value, honouring the admin field-mapping.
-     *
-     * A mapped source attribute's non-empty value wins; otherwise the `dpp_*` attribute's own value. Only the value is
-     * borrowed — code/label/formatting stay driven by the `dpp_*` attribute, so a mapping never widens the public surface.
-     *
-     * @param  Collection<int, AttributeContract>  $attributes
      * @param  array<string, mixed>  $values
      */
-    private function mappedRaw(
-        AttributeContract $attribute,
-        Collection $attributes,
+    private function rawValue(
+        PassportTemplateFieldContract $field,
         array $values,
         string $channelCode,
         string $localeCode,
     ): mixed {
-        $sourceCode = core()->getConfigData('catalog.product_passport.mapping.'.$attribute->code, $channelCode);
-
-        if (! empty($sourceCode) && $sourceCode !== $attribute->code) {
-            $source = $attributes->firstWhere('code', $sourceCode)
-                ?? AttributeProxy::modelClass()::query()->where('code', $sourceCode)->first();
-
-            $sourceRaw = $source?->getValueFromProductValues($values, $channelCode, $localeCode);
-
-            if ($sourceRaw !== null && $sourceRaw !== '') {
-                return $sourceRaw;
-            }
+        if ($field->source_type === PassportFieldSource::Fixed) {
+            return $field->getTranslatedValueWithFallback('fixed_value', $localeCode);
         }
 
-        return $attribute->getValueFromProductValues($values, $channelCode, $localeCode);
+        return $field->attribute?->getValueFromProductValues($values, $channelCode, $localeCode);
     }
 
     /**
-     * Append the merchant's custom fields to the consumer field list.
+     * Only sections that actually published a field reach the payload, so an empty
+     * group never renders as a heading with nothing under it.
      *
-     * Each `{name, attribute}` publishes the source attribute's value under the user-typed label; empty values are skipped.
-     *
-     * @param  list<array{code: string, label: string, value: string}>  $fields
-     * @param  array<string, mixed>  $values
+     * @param  array<string, array{key: string, label: string}>  $sections
+     * @param  list<array{code: string, label: string, value: string, section: string}>  $fields
+     * @return list<array{key: string, label: string, fields: list<array<string, string>>}>
      */
-    private function appendCustomFields(array &$fields, array $values, string $channelCode, string $localeCode): void
+    private function sectionsFor(array $sections, array $fields, string $localeCode): array
     {
-        $raw = core()->getConfigData(self::CUSTOM_FIELDS_KEY, $channelCode);
+        $grouped = [];
 
-        $rows = is_string($raw) ? json_decode($raw, true) : (is_array($raw) ? $raw : []);
-
-        if (! is_array($rows) || $rows === []) {
-            return;
+        foreach ($fields as $field) {
+            $grouped[$field['section']][] = $field;
         }
 
-        $sourceCodes = array_values(array_filter(array_map(
-            fn ($row): string => is_array($row) ? (string) ($row['attribute'] ?? '') : '',
-            $rows,
-        )));
+        $payload = [];
 
-        if ($sourceCodes === []) {
-            return;
-        }
-
-        $sources = AttributeProxy::modelClass()::query()
-            ->whereIn('code', $sourceCodes)
-            ->get()
-            ->keyBy('code');
-
-        foreach ($rows as $row) {
-            if (! is_array($row)) {
+        foreach ($sections as $key => $section) {
+            if (! isset($grouped[$key])) {
                 continue;
             }
 
-            $name = trim((string) ($row['name'] ?? ''));
-            $sourceCode = (string) ($row['attribute'] ?? '');
-            $source = $sources->get($sourceCode);
-
-            if ($name === '' || ! $source instanceof AttributeContract) {
-                continue;
-            }
-
-            $value = $source->getValueFromProductValues($values, $channelCode, $localeCode);
-
-            if ($value === null || $value === '') {
-                continue;
-            }
-
-            $fields[] = [
-                'code'  => 'custom_'.Str::slug($name, '_'),
-                'label' => $name,
-                'value' => $this->formatValue($source, $value, $channelCode),
+            $payload[] = [
+                'key'    => $key,
+                'label'  => $section['label'] ?: trans('passport::app.public.sections.passport', [], $localeCode),
+                'fields' => $grouped[$key],
             ];
         }
+
+        return $payload;
+    }
+
+    private function sectionLabel(PassportTemplateFieldContract $field, string $localeCode): string
+    {
+        $section = $field->section;
+
+        if ($section === null) {
+            return trans('passport::app.public.sections.passport', [], $localeCode);
+        }
+
+        return $section->getTranslatedValueWithFallback('name', $localeCode) ?: $section->code;
+    }
+
+    private function isDocument(PassportTemplateFieldContract $field): bool
+    {
+        return $field->source_type === PassportFieldSource::Attribute
+            && in_array($field->attribute?->type, self::DOCUMENT_TYPES, true);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function document(
+        PassportTemplateFieldContract $field,
+        PublicationContext $context,
+        string $localeCode,
+        string $label,
+        string $raw,
+    ): array {
+        $kind = $field->attribute?->type === 'image' ? 'image' : 'document';
+
+        /**
+         * A preview must not write to the asset disk: the document is emitted with a
+         * `preview` marker and no servable path, so the template shows the label as
+         * "available after publish" instead of a live download link.
+         */
+        if ($context->preview) {
+            return [
+                'code'    => $field->code,
+                'label'   => $label,
+                'kind'    => $kind,
+                'preview' => true,
+            ];
+        }
+
+        $copiedPath = $this->copyToAssetDisk($context->uuid, $localeCode, $field->code, $raw);
+
+        return array_filter([
+            'code'  => $field->code,
+            'label' => $label,
+            'path'  => $copiedPath,
+            'kind'  => $kind,
+        ], fn ($value): bool => $value !== null);
     }
 
     /**
      * Type-aware formatting; a bare `(string)` cast mangles array (multiselect), currency-keyed (price) and boolean values.
      */
-    private function formatValue(AttributeContract $attribute, mixed $value, string $channelCode): string
+    private function formatValue(PassportTemplateFieldContract $field, mixed $value, string $channelCode): string
     {
+        $attribute = $field->attribute;
+
+        if (! $attribute instanceof AttributeContract) {
+            return (string) $value;
+        }
+
         return match ($attribute->type) {
             'multiselect', 'checkbox' => implode(', ', $this->resolveOptionLabels($attribute, is_array($value) ? $value : explode(',', (string) $value))),
             'select'                  => $this->resolveOptionLabels($attribute, [(string) $value])[0] ?? (string) $value,
@@ -288,7 +262,7 @@ class PassportPayloadBuilder implements PayloadBuilder
      *
      * Must run at build time: PublicationVersion::payload is immutable once the version row exists, so no path can be rewritten later.
      */
-    private function copyToAssetDisk(string $uuid, string $localeCode, string $attributeCode, string $sourcePath): ?string
+    private function copyToAssetDisk(string $uuid, string $localeCode, string $fieldCode, string $sourcePath): ?string
     {
         $source = Storage::disk(config('filesystems.default'));
 
@@ -297,7 +271,7 @@ class PassportPayloadBuilder implements PayloadBuilder
         }
 
         $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-        $targetPath = "publication/{$uuid}/{$localeCode}/{$attributeCode}".($extension !== '' ? ".{$extension}" : '');
+        $targetPath = "publication/{$uuid}/{$localeCode}/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
 
         $target = Storage::disk(config('publication.asset_disk'));
 

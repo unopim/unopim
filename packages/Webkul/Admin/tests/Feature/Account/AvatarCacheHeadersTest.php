@@ -1,6 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+
+beforeEach(function () {
+    Http::fake();
+});
 
 it('serves a found gravatar with a public cache header', function () {
     $hash = md5('cached-avatar@example.com');
@@ -9,6 +14,7 @@ it('serves a found gravatar with a public cache header', function () {
         'found'        => true,
         'body'         => 'binary-image-bytes',
         'content_type' => 'image/png',
+        'fetched_at'   => now()->getTimestamp(),
     ], 600);
 
     $response = $this->get(route('admin.avatar.public', ['hash' => $hash]));
@@ -16,7 +22,7 @@ it('serves a found gravatar with a public cache header', function () {
     $response->assertOk();
 
     expect($response->headers->get('Cache-Control'))->toContain('public');
-    expect($response->headers->get('Cache-Control'))->toContain('max-age=86400');
+    expect($response->headers->get('Cache-Control'))->toContain('max-age=300');
 });
 
 it('serves a missing gravatar as a cacheable 404', function () {
@@ -26,6 +32,7 @@ it('serves a missing gravatar as a cacheable 404', function () {
         'found'        => false,
         'body'         => '',
         'content_type' => 'image/png',
+        'fetched_at'   => now()->getTimestamp(),
     ], 600);
 
     $response = $this->get(route('admin.avatar.public', ['hash' => $hash]));

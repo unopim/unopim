@@ -90,6 +90,7 @@
                 :leave-to-class="enterFromLeaveToClasses"
             >
                 <div
+                    data-drawer-panel
                     class="fixed z-[10001] bg-white dark:bg-cherry-800 max-sm:!w-full"
                     :class="{
                         'inset-x-0 top-0': position == 'top',

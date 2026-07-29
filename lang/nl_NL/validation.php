@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => 'Het veld :attribute moet true of false zijn.',
+    'current_password'      => 'Het wachtwoord is onjuist.',
     'confirmed'      => 'De bevestiging van :attribute komt niet overeen.',
     'date'           => 'Het :attribute is geen geldige datum.',
     'date_format'    => 'Het :attribute komt niet overeen met het formaat :format.',

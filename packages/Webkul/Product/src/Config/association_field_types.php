@@ -1,53 +1,20 @@
 <?php
 
+/**
+ * Field types offered when defining custom fields on an association type.
+ *
+ * Scoped to `text` and `boolean` for now; the storage, validation and rendering
+ * layers already understand the richer types, so re-enabling one is a matter of
+ * merging its entry back into this config from an extending package.
+ */
 return [
     'text' => [
         'key'  => 'text',
         'name' => 'admin::app.catalog.attributes.create.text',
     ],
 
-    'textarea' => [
-        'key'  => 'textarea',
-        'name' => 'admin::app.catalog.attributes.create.textarea',
-    ],
-
     'boolean' => [
         'key'  => 'boolean',
         'name' => 'admin::app.catalog.attributes.create.boolean',
-    ],
-
-    'select' => [
-        'key'  => 'select',
-        'name' => 'admin::app.catalog.attributes.create.select',
-    ],
-
-    'multiselect' => [
-        'key'  => 'multiselect',
-        'name' => 'admin::app.catalog.attributes.create.multiselect',
-    ],
-
-    'datetime' => [
-        'key'  => 'datetime',
-        'name' => 'admin::app.catalog.attributes.create.datetime',
-    ],
-
-    'date' => [
-        'key'  => 'date',
-        'name' => 'admin::app.catalog.attributes.create.date',
-    ],
-
-    'image' => [
-        'key'  => 'image',
-        'name' => 'admin::app.catalog.attributes.create.image',
-    ],
-
-    'file' => [
-        'key'  => 'file',
-        'name' => 'admin::app.catalog.attributes.create.file',
-    ],
-
-    'checkbox' => [
-        'key'  => 'checkbox',
-        'name' => 'admin::app.catalog.attributes.create.checkbox',
     ],
 ];

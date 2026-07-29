@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Add passport field',
         'regulatory-heading'      => 'Regulatory Fields',
+        'regulatory-empty'        => 'No passport fields yet. Add the DPP attribute group to an attribute family to map its fields.',
         'custom-heading'          => 'Custom Fields',
         'custom-info'             => 'Publish an attribute you already maintain under a label you choose.',
         'custom-name-placeholder' => 'Field name',

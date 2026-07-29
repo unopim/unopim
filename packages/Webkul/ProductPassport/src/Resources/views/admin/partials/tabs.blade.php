@@ -10,10 +10,10 @@
         ];
     }
 
-    if (bouncer()->hasPermission('catalog.passport.mapping')) {
-        $tabs['mapping'] = [
-            'title' => trans('passport::app.mapping.menu'),
-            'url'   => route('admin.catalog.passports.mapping.edit'),
+    if (bouncer()->hasPermission('catalog.passport.template.view')) {
+        $tabs['templates'] = [
+            'title' => trans('passport::app.templates.menu'),
+            'url'   => route('admin.catalog.passports.templates.index'),
         ];
     }
 @endphp
@@ -27,7 +27,7 @@
             <a
                 href="{{ $tab['url'] }}"
                 @class([
-                    'pb-3.5 px-2.5 text-base font-medium cursor-pointer transition-all border-b-2',
+                    'pb-3.5 px-2.5 ltr:first:pl-0 rtl:first:pr-0 text-base font-medium cursor-pointer transition-all border-b-2',
                     'border-primary-700 text-primary-700 dark:text-primary-400' => $active === $key,
                     'border-transparent text-gray-600 dark:text-gray-300 hover:text-primary-700' => $active !== $key,
                 ])

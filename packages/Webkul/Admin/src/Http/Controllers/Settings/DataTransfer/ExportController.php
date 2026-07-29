@@ -480,11 +480,18 @@ class ExportController extends Controller
     }
 
     /**
-     * Returns export stats
+     * Returns export stats for a run.
+     *
+     * The helper reads its counters off the job track `exportNow()` creates, so
+     * the id addresses a track rather than the saved export profile.
      */
     public function stats(int $id, string $state = Export::STATE_PROCESSED): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        if (! bouncer()->hasPermission('data_transfer.export')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $export = $this->jobTrackRepository->findOrFail($id);
 
         $stats = $this->jobHelper
             ->setExport($export)

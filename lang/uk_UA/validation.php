@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute має бути або true, або false.',
+    'current_password'      => 'Невірний пароль.',
     'confirmed'      => ':attribute підтвердження не співпадає.',
     'date'           => ':attribute не є дійсною датою.',
     'date_format'    => ':attribute не співпадає з форматом :format.',

@@ -15,6 +15,11 @@ use Webkul\Core\Rules\FileMimeExtensionMatch;
 class UserForm extends FormRequest
 {
     /**
+     * @var array<int, string>
+     */
+    public const PROFILE_IMAGE_EXTENSIONS = ['jpeg', 'jpg', 'png', 'webp', 'gif', 'bmp'];
+
+    /**
      * Create a new instance.
      *
      * @return void
@@ -45,7 +50,7 @@ class UserForm extends FormRequest
         $imageRules = [
             'sometimes',
             'image',
-            'mimes:jpeg,png,jpg,gif,webp',
+            'mimes:'.implode(',', self::PROFILE_IMAGE_EXTENSIONS),
             'max:2048',
             new FileMimeExtensionMatch,
         ];
@@ -62,6 +67,13 @@ class UserForm extends FormRequest
                 Rule::unique('admins', 'email')->ignore($id, 'id'),
             ],
             'password'              => sprintf('%s|min:%s', $id ? 'nullable' : 'required', $passwordMin),
+            'current_password'      => $id
+                ? Rule::when(
+                    $this->filled('password'),
+                    ['required', 'current_password:admin'],
+                    ['nullable'],
+                )
+                : ['nullable'],
             'password_confirmation' => 'nullable|required_with:password|same:password',
             'status'                => 'sometimes',
             'ui_locale_id'          => 'required',

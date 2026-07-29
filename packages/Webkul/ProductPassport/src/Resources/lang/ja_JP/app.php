@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'パスポート項目を追加',
         'regulatory-heading'      => '規制フィールド',
+        'regulatory-empty'        => 'パスポートフィールドがまだありません。フィールドをマッピングするには、DPP 属性グループを属性ファミリーに追加してください。',
         'custom-heading'          => 'カスタムフィールド',
         'custom-info'             => 'すでに管理している属性を、任意のラベルで公開します。',
         'custom-name-placeholder' => 'フィールド名',

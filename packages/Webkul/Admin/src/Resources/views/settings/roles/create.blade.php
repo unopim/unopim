@@ -103,14 +103,7 @@
 
                             {!! view_render_event('unopim.admin.settings.roles.create.card.accordion.general.before') !!}
 
-                            <x-admin::accordion>
-                                <x-slot:header>
-                                    <div class="flex items-center justify-between">
-                                        <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                            @lang('admin::app.settings.roles.create.general')
-                                        </p>
-                                    </div>
-                                </x-slot>
+                            <x-admin::accordion :title="trans('admin::app.settings.roles.create.general')">
 
                                 <x-slot:content>
                                     <x-admin::form.control-group>

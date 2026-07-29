@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Lisää passikenttä',
         'regulatory-heading'      => 'Lakisääteiset kentät',
+        'regulatory-empty'        => 'Passikenttiä ei ole vielä. Lisää DPP-määritysryhmä määritysperheeseen, jotta voit määrittää sen kentät.',
         'custom-heading'          => 'Mukautetut kentät',
         'custom-info'             => 'Julkaise jo ylläpitämäsi attribuutti valitsemallasi nimellä.',
         'custom-name-placeholder' => 'Kentän nimi',

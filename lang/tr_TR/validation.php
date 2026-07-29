@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute doğru veya yanlış olmalıdır.',
+    'current_password'      => 'Parola hatalı.',
     'confirmed'      => ':attribute onayı eşleşmiyor.',
     'date'           => ':attribute geçerli bir tarih değildir.',
     'date_format'    => ':attribute, :format formatı ile eşleşmiyor.',

@@ -37,27 +37,6 @@
                     @lang('admin::app.users.sessions.subtitle')
                 </p>
 
-                @if ($isMicrosoftSsoConfigured ?? false)
-                    {{-- SSO (primary when configured) --}}
-                    <a
-                        href="{{ route('admin.session.microsoft.redirect') }}"
-                        class="flex justify-center items-center gap-2 w-full px-4 py-2.5 mb-4 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-cherry-700 transition-colors"
-                    >
-                        @lang('admin::app.users.sessions.sso-sign-in-with-microsoft')
-                    </a>
-
-                    <div class="relative my-4">
-                        <div class="absolute inset-0 flex items-center">
-                            <span class="w-full border-t border-gray-200 dark:border-gray-700"></span>
-                        </div>
-                        <div class="relative flex justify-center text-xs uppercase">
-                            <span class="px-2 bg-white dark:bg-cherry-800 text-gray-400">
-                                @lang('admin::app.users.sessions.sso-divider')
-                            </span>
-                        </div>
-                    </div>
-                @endif
-
                 <x-admin::form :action="route('admin.session.store')" :track-dirty="false" ajax="true">
                     <x-admin::form.control-group>
                         <x-admin::form.control-group.label class="required">
@@ -143,6 +122,8 @@
                         @lang('admin::app.users.sessions.submit-btn')
                     </button>
                 </x-admin::form>
+
+                <x-admin::sso.buttons :providers="$ssoProviders ?? collect()" />
             </div>
 
             <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">

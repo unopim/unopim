@@ -250,10 +250,25 @@
                         </template>
 
                         <template v-else>
-                            <div class="row grid px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center">
-                                <p>
+                            <div class="row grid gap-2 px-4 py-8 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center">
+                                <p v-if="! $parent.hasAppliedFilters()">
                                     @lang('admin::app.components.datagrid.table.no-records-available')
                                 </p>
+
+                                <template v-else>
+                                    <p>
+                                        @lang('admin::app.components.datagrid.table.no-records-filtered')
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        class="transparent-button justify-center self-center text-sm"
+                                        data-clear-filters-empty-state
+                                        @click="$parent.clearAllFilters()"
+                                    >
+                                        @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
+                                    </button>
+                                </template>
                             </div>
                         </template>
                     </template>

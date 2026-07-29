@@ -1286,7 +1286,7 @@
                     type: String,
                     default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
-                queryParams: [Array, Object],
+                queryParams: [Array, Object, String],
                 taggable: {
                     type: Boolean,
                     default: false
@@ -1317,7 +1317,7 @@
                         attributeId: this.attributeId,
                         page: 1,
                         locale: "{{ core()->getRequestedLocaleCode() }}",
-                        ...this.queryParams
+                        ...this.parsedQueryParams()
                     }
                 }
             },
@@ -1402,6 +1402,19 @@
                         return this.value ? JSON.parse(this.value) : null;
                     } catch (error) {
                         return this.value;
+                    }
+                },
+                {{-- Blade cannot bind a computed object to a Vue prop from a component
+                     attribute, so server-rendered callers pass their filters as JSON. --}}
+                parsedQueryParams() {
+                    if (typeof this.queryParams !== 'string') {
+                        return this.queryParams;
+                    }
+
+                    try {
+                        return JSON.parse(this.queryParams);
+                    } catch (error) {
+                        return {};
                     }
                 },
                 getMultiSelectedOption() {

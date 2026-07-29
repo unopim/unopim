@@ -19,6 +19,13 @@ class ProductIndexer extends Command
 {
     const BATCH_SIZE = 10000;
 
+    /**
+     * Documents per bulk request. A batch sent whole exceeds the coordinating
+     * node's indexing pressure limit and comes back as a 429, which aborts the
+     * run partway through the catalog.
+     */
+    const BULK_DOCUMENTS = 500;
+
     public function __construct(protected ProductNormalizer $productIndexingNormalizer)
     {
         parent::__construct();
@@ -141,7 +148,7 @@ class ProductIndexer extends Command
                     }
 
                     if ($productsToUpdate !== []) {
-                        $response = ElasticSearch::bulk($productsToUpdate);
+                        $response = $this->bulkInChunks($productsToUpdate);
 
                         if (isset($response['errors']) && $response['errors']) {
                             foreach ($response['items'] as $result) {
@@ -240,6 +247,32 @@ class ProductIndexer extends Command
 
             Log::channel('elasticsearch')->warning('ELASTICSEARCH IS DISABLED.');
         }
+    }
+
+    /**
+     * Send a bulk payload as several requests, keeping each action line paired
+     * with the document that follows it.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array{errors: bool, items: array<int, mixed>}
+     */
+    protected function bulkInChunks(array $payload): array
+    {
+        $items = [];
+        $errors = false;
+
+        foreach (array_chunk($payload['body'] ?? [], self::BULK_DOCUMENTS * 2) as $chunk) {
+            $response = ElasticSearch::bulk(['body' => $chunk]);
+
+            $errors = $errors || ($response['errors'] ?? false);
+
+            $items = array_merge($items, $response['items'] ?? []);
+        }
+
+        return [
+            'errors' => $errors,
+            'items'  => $items,
+        ];
     }
 
     /**

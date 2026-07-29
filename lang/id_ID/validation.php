@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'              => 'Kolom :attribute harus benar atau salah.',
+    'current_password'            => 'Kata sandi salah.',
     'confirmed'            => 'Konfirmasi :attribute tidak cocok.',
     'date'                 => ':attribute bukan tanggal yang valid.',
     'date_format'          => ':attribute tidak cocok dengan format :format.',

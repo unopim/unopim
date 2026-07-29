@@ -98,7 +98,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('edit/{id}', 'edit')->name('admin.settings.users.edit');
 
-            Route::put('edit', 'update')->name('admin.settings.users.update');
+            Route::put('edit', 'update')->name('admin.settings.users.update')->middleware('throttle:admin-sudo');
 
             Route::delete('edit/{id}', 'destroy')->name('admin.settings.users.delete');
 

@@ -1,7 +1,10 @@
 @pushOnce('scripts')
 <script type="text/x-template" id="v-tree-item-template">
     <div :class="itemClasses">
-        <div class="flex items-center">
+        <div
+            class="group flex items-center gap-0.5 ltr:pr-1 rtl:pl-1 rounded-md"
+            :class="rowClasses"
+        >
             <i
                 :class="toggleIconClasses"
                 @click="toggleBranch"
@@ -9,14 +12,38 @@
 
             <i :class="folderIconClasses"></i>
 
+            <span
+                class="flex-1 ltr:ml-1 rtl:mr-1 py-1.5 text-sm truncate cursor-pointer"
+                v-if="categorytree.navigateOnSelect"
+                :class="hasSelectedValue ? 'text-primary-700 dark:text-white font-semibold' : 'text-gray-600 dark:text-gray-300'"
+                :title="label"
+                v-text="label"
+                @click="onInputChange"
+            ></span>
+
             <component
                 :is="inputComponent"
-                :id="id"
+                v-else
+                :id="inputId"
                 :label="label"
                 :name="name"
                 :value="value"
                 @change="onInputChange(item.value)"
             />
+
+            <a
+                class="invisible opacity-0 flex shrink-0 items-center justify-center w-6 h-6 ltr:ml-auto rtl:mr-auto text-lg leading-none text-gray-600 dark:text-gray-300 rounded transition-opacity group-hover:visible group-hover:opacity-100 hover:bg-primary-50 dark:hover:bg-cherry-800"
+                v-if="categorytree.allowCreate"
+                :href="categorytree.subCategoryUrl(id)"
+                title="@lang('admin::app.catalog.categories.browse.add-child')"
+            >+</a>
+
+            <span
+                class="icon-delete invisible opacity-0 flex shrink-0 items-center justify-center w-6 h-6 text-xl text-gray-600 dark:text-gray-300 rounded cursor-pointer transition-opacity group-hover:visible group-hover:opacity-100 hover:bg-primary-50 dark:hover:bg-cherry-800"
+                v-if="categorytree.allowDelete"
+                title="@lang('admin::app.catalog.categories.index.datagrid.delete')"
+                @click.stop="categorytree.destroyCategory(item)"
+            ></span>
         </div>
 
         <template v-if="showChildren">
@@ -26,6 +53,7 @@
                 :item="child"
                 :level="level + 1"
                 @change-input="$emit('change-input', $event)"
+                @select-node="$emit('select-node', $event)"
             />
 
             <div
@@ -77,6 +105,8 @@
         mounted() {
             this.categorytree.registerLabel?.(this.value, this.label);
 
+            this.categorytree.registerNode?.(this);
+
             if (this.children.length > 0) {
                 this.showChildren = true;
 
@@ -94,11 +124,22 @@
 
         beforeUnmount() {
             this.teardownChildrenObserver();
+
+            this.categorytree.unregisterNode?.(this);
         },
 
         computed: {
             id() {
                 return this.item['id'];
+            },
+
+            /**
+             * Two trees can sit on one page — the browser beside the panel and the parent
+             * picker inside it — and a label bound to a plain category id would activate
+             * whichever input the document happened to hold first.
+             */
+            inputId() {
+                return `${this.categorytree.treeUid}-${this.id}`;
             },
 
             label() {
@@ -121,6 +162,16 @@
 
             paginateChildren() {
                 return this.pageSize > 0;
+            },
+
+            rowClasses() {
+                if (! this.categorytree.navigateOnSelect) {
+                    return '';
+                }
+
+                return this.hasSelectedValue
+                    ? 'bg-primary-50 dark:bg-cherry-800'
+                    : 'hover:bg-primary-50 dark:hover:bg-cherry-800';
             },
 
             itemClasses() {
@@ -160,6 +211,24 @@
         },
 
         methods: {
+            expandBranch() {
+                if (this.showChildren || ! this.hasChildren) {
+                    return;
+                }
+
+                this.showChildren = true;
+
+                if (this.hasFetchedChildren) {
+                    return;
+                }
+
+                if (this.paginateChildren) {
+                    this.loadMoreChildren();
+                } else {
+                    this.fetchAllChildren();
+                }
+            },
+
             toggleBranch() {
                 this.showChildren = !this.showChildren;
 
@@ -366,10 +435,41 @@
                 return this.categorytree.has(value);
             },
 
+            /**
+             * Ancestor labels come from the component chain rather than a request: a node
+             * is only ever rendered inside the nodes it descends from.
+             */
+            path() {
+                const labels = [this.label];
+
+                for (let parent = this.$parent; parent; parent = parent.$parent) {
+                    if (! parent.item) {
+                        break;
+                    }
+
+                    labels.unshift(parent.label);
+                }
+
+                return labels.join(' / ');
+            },
+
             onInputChange() {
+                if (this.categorytree.navigateOnSelect) {
+                    this.categorytree.navigateTo(this.id);
+
+                    return;
+                }
+
                 if (this.categorytree.inputType === 'checkbox') {
                     this.categorytree.handleCheckbox(this.item);
                 }
+
+                this.$emit('select-node', {
+                    value: this.value,
+                    label: this.label,
+                    path:  this.path(),
+                });
+
                 this.$emit('change-input', this.categorytree.formattedValues);
             },
         }

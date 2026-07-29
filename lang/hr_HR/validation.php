@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute polje mora biti istinito ili netočno.',
+    'current_password'      => 'Lozinka nije točna.',
     'confirmed'      => 'Potvrda za :attribute se ne podudara.',
     'date'           => ':attribute nije važeći datum.',
     'date_format'    => ':attribute ne odgovara formatu :format.',

@@ -2,6 +2,8 @@
 
 namespace Webkul\Admin\Filters;
 
+use Illuminate\Support\Str;
+
 /**
  * Product properties that are filterable but not part of the grid's default filter set.
  *
@@ -53,8 +55,8 @@ class ProductPropertyFilters
                 'index'          => self::CATEGORIES,
                 'label'          => trans('admin::app.catalog.products.index.datagrid.categories'),
                 'type'           => 'dropdown',
-                'attribute_type' => 'multiselect',
-                'operators'      => ProductFilterOperators::optionsForType('multiselect'),
+                'attribute_type' => 'category',
+                'operators'      => ProductFilterOperators::optionsForType('category'),
                 'options'        => [
                     'type'     => 'searchable',
                     'route'    => route('admin.catalog.options.fetch-all'),
@@ -90,10 +92,14 @@ class ProductPropertyFilters
             return $columns;
         }
 
+        $singular = Str::singular($search);
+
         return array_values(array_filter(
             $columns,
             fn (array $column): bool => str_contains(mb_strtolower((string) $column['label']), $search)
                 || str_contains($column['index'], $search)
+                || str_contains(Str::singular(mb_strtolower((string) $column['label'])), $singular)
+                || str_contains(Str::singular($column['index']), $singular)
         ));
     }
 

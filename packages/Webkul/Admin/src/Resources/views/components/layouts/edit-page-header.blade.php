@@ -5,6 +5,7 @@
     'saveLabel' => null,
     'form' => null,
     'sticky' => true,
+    'breadcrumb' => true,
 ])
 
 @php
@@ -22,7 +23,7 @@
 @endphp
 
 <div {{ $headerAttributes->merge(['class' => 'flex min-h-9 items-center justify-between gap-4 max-sm:flex-wrap']) }}>
-    <x-admin::page-title :title="$title">
+    <x-admin::page-title :title="$title" :breadcrumb="$breadcrumb">
         {{ $subtitle ?? '' }}
     </x-admin::page-title>
 

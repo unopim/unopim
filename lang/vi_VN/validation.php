@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute phải là đúng hoặc sai.',
+    'current_password'      => 'Mật khẩu không đúng.',
     'confirmed'      => ':attribute xác nhận không khớp.',
     'date'           => ':attribute không phải là một ngày hợp lệ.',
     'date_format'    => ':attribute không khớp với định dạng :format.',

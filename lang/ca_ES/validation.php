@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => 'El camp :attribute ha de ser cert o fals.',
+    'current_password'      => 'La contrasenya no és correcta.',
     'confirmed'      => 'La confirmació de :attribute no coincideix.',
     'date'           => 'El :attribute no és una data vàlida.',
     'date_format'    => 'El :attribute no coincideix amb el format :format.',

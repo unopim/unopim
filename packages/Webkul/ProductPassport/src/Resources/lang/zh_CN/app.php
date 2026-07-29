@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => '添加护照字段',
         'regulatory-heading'      => '法规字段',
+        'regulatory-empty'        => '尚无护照字段。请将 DPP 属性组添加到属性族，以映射其字段。',
         'custom-heading'          => '自定义字段',
         'custom-info'             => '以您选择的标签发布您已维护的属性。',
         'custom-name-placeholder' => '字段名称',

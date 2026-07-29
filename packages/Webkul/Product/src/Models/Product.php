@@ -91,7 +91,8 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function super_attributes(): BelongsToMany
     {
-        return $this->belongsToMany(AttributeProxy::modelClass(), 'product_super_attributes');
+        return $this->belongsToMany(AttributeProxy::modelClass(), 'product_super_attributes')
+            ->with('translations');
     }
 
     /**

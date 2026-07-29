@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Afegeix un camp de passaport',
         'regulatory-heading'      => 'Camps normatius',
+        'regulatory-empty'        => 'Encara no hi ha camps de passaport. Afegiu el grup d\'atributs DPP a una família d\'atributs per mapar-ne els camps.',
         'custom-heading'          => 'Camps personalitzats',
         'custom-info'             => 'Publica un atribut que ja gestiones amb una etiqueta que triïs.',
         'custom-name-placeholder' => 'Nom del camp',

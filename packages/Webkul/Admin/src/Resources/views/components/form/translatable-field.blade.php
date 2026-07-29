@@ -6,6 +6,7 @@
     'label'         => '',
     'placeholder'   => '',
     'currentLocale' => null,
+    'submit' => true,
 ])
 
 @php
@@ -17,22 +18,29 @@
     $localeValues = collect($locales)->mapWithKeys(fn ($locale) => [
         $locale->code => $values[$locale->code] ?? '',
     ]);
+
+    $valuesExpression = $attributes->get(':values') ?: $localeValues->toJson();
+
+    $attributes = $attributes->except([':values']);
 @endphp
 
 <v-translatable-field
     :locales='@json($localeOptions)'
-    :values='@json($localeValues)'
+    :values='{!! $valuesExpression !!}'
     field="{{ $field }}"
     name-template="{{ $nameTemplate }}"
     label="{{ $label }}"
     placeholder="{{ $placeholder }}"
     current="{{ $currentLocale ?? core()->getRequestedLocaleCode() }}"
+    submit="{{ filter_var($submit, FILTER_VALIDATE_BOOLEAN) ? 'true' : 'false' }}"
     {{ $attributes }}
 ></v-translatable-field>
 
-@foreach ($locales as $locale)
-    <x-admin::form.control-group.error :control-name="str_replace([':locale', ':field'], [$locale->code, $field], $nameTemplate)" />
-@endforeach
+@if (filter_var($submit, FILTER_VALIDATE_BOOLEAN))
+    @foreach ($locales as $locale)
+        <x-admin::form.control-group.error :control-name="str_replace([':locale', ':field'], [$locale->code, $field], $nameTemplate)" />
+    @endforeach
+@endif
 
 @pushOnce('scripts')
     <script
@@ -76,6 +84,7 @@
             />
 
             <input
+                v-if="submits"
                 type="hidden"
                 v-for="locale in locales"
                 :key="'translatable-' + field + '-' + locale.id"
@@ -124,7 +133,14 @@
                     type: String,
                     default: '',
                 },
+
+                submit: {
+                    type: [Boolean, String],
+                    default: true,
+                },
             },
+
+            emits: ['update:values'],
 
             data() {
                 return {
@@ -142,7 +158,20 @@
                 },
             },
 
+            watch: {
+                localValues: {
+                    deep: true,
+                    handler(values) {
+                        this.$emit('update:values', { ...values });
+                    },
+                },
+            },
+
             computed: {
+                submits() {
+                    return this.submit !== false && this.submit !== 'false';
+                },
+
                 translatedLocales() {
                     return this.locales
                         .filter(locale => String(this.localValues[locale.id] ?? '').trim() !== '')

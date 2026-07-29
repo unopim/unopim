@@ -41,7 +41,10 @@ class PassportJsonLdResource extends JsonResource
                     'name'  => $field['label'],
                     'value' => $field['value'],
                 ],
-                $payload['sections'][0]['fields'] ?? [],
+                array_merge(...array_map(
+                    fn (array $section): array => $section['fields'] ?? [],
+                    $payload['sections'] ?? [[]],
+                )),
             ),
         ], fn ($v): bool => $v !== null && $v !== []);
     }

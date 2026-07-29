@@ -219,6 +219,7 @@ return [
     'mapping' => [
         'add-field'               => 'Ajouter un champ de passeport',
         'regulatory-heading'      => 'Champs réglementaires',
+        'regulatory-empty'        => 'Aucun champ de passeport pour le moment. Ajoutez le groupe d\'attributs DPP à une famille d\'attributs pour mapper ses champs.',
         'custom-heading'          => 'Champs personnalisés',
         'custom-info'             => 'Publiez un attribut que vous gérez déjà sous un libellé de votre choix.',
         'custom-name-placeholder' => 'Nom du champ',

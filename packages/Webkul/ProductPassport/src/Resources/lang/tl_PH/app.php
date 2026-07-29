@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Magdagdag ng field ng pasaporte',
         'regulatory-heading'      => 'Mga Regulatoryong Field',
+        'regulatory-empty'        => 'Wala pang mga field ng pasaporte. Idagdag ang DPP attribute group sa isang attribute family upang i-map ang mga field nito.',
         'custom-heading'          => 'Mga Custom na Field',
         'custom-info'             => 'I-publish ang isang attribute na pinapanatili mo na gamit ang label na pipiliin mo.',
         'custom-name-placeholder' => 'Pangalan ng field',

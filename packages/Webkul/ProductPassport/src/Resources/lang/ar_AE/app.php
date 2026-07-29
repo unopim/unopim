@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'إضافة حقل جواز',
         'regulatory-heading'      => 'الحقول التنظيمية',
+        'regulatory-empty'        => 'لا توجد حقول جواز سفر بعد. أضف مجموعة السمات DPP إلى عائلة سمات لتعيين حقولها.',
         'custom-heading'          => 'الحقول المخصصة',
         'custom-info'             => 'انشر سمة تديرها بالفعل تحت تسمية تختارها.',
         'custom-name-placeholder' => 'اسم الحقل',

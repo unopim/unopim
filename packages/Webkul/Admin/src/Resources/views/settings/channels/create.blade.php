@@ -110,12 +110,7 @@
 
                 {!! view_render_event('unopim.admin.settings.channels.create.card.accordion.currencies_and_locales.before') !!}
 
-                <x-admin::accordion>
-                    <x-slot:header>
-                        <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
-                            @lang('admin::app.settings.channels.create.currencies-and-locales')
-                        </p>
-                    </x-slot>
+                <x-admin::accordion :title="trans('admin::app.settings.channels.create.currencies-and-locales')">
             
                     <x-slot:content>
                         <x-admin::form.control-group class="mb-4">

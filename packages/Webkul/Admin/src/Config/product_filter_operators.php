@@ -12,6 +12,17 @@ return [
     ],
 
     'groups' => [
+        'category' => [
+            'types'     => ['category'],
+            'control'   => 'category_tree',
+            'operators' => [
+                ['operator' => FilterOperators::IN->value, 'label' => 'in'],
+                ['operator' => FilterOperators::NOT_IN->value, 'label' => 'not_in'],
+                ['operator' => FilterOperators::IS_EMPTY->value, 'label' => 'empty'],
+                ['operator' => FilterOperators::IS_NOT_EMPTY->value, 'label' => 'not_empty'],
+            ],
+        ],
+
         'option' => [
             'types' => [
                 Attribute::SELECT_FIELD_TYPE,

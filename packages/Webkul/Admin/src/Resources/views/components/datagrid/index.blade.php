@@ -3,7 +3,7 @@
     'compact' => false,
 ])
 
-<x-admin::form.fields.load :types="['text', 'number']" />
+<x-admin::form.fields.load :types="['text', 'number', 'category-tree']" />
 
 <v-datagrid
     compact="{{ $compact ? 'true' : 'false' }}"
@@ -309,6 +309,8 @@
                                 this.activeFilterIndices = currentDatagrid.activeFilterIndices;
                             }
 
+                            this.addedFilterColumns = currentDatagrid.addedFilterColumns ?? {};
+
                             this.appliedViewId = currentDatagrid.appliedViewId ?? null;
                             this.appliedViewLabel = currentDatagrid.appliedViewLabel ?? null;
                             this.viewSnapshot = currentDatagrid.viewSnapshot ?? null;
@@ -415,6 +417,10 @@
                                         this.available.columns.push(col);
                                     }
                                 });
+
+                                this.activeFilterIndices = this.activeFilterIndices.filter(
+                                    index => this.available.columns.some(col => col.index === index)
+                                );
                             }
 
                             this.available.actions = actions;
@@ -1141,6 +1147,7 @@
                                         available: this.available,
                                         applied: appliedForStorage,
                                         activeFilterIndices: this.activeFilterIndices,
+                                        addedFilterColumns: this.addedFilterColumns,
                                         appliedViewId: this.appliedViewId,
                                         appliedViewLabel: this.appliedViewLabel,
                                         viewSnapshot: this.viewSnapshot,
@@ -1177,6 +1184,7 @@
                         available: this.available,
                         applied: appliedForStorage,
                         activeFilterIndices: this.activeFilterIndices,
+                        addedFilterColumns: this.addedFilterColumns,
                         appliedViewId: this.appliedViewId,
                         appliedViewLabel: this.appliedViewLabel,
                         viewSnapshot: this.viewSnapshot,
@@ -1341,10 +1349,14 @@
                     return this.hasAppliedFilters();
                 },
 
-                hasAppliedFilters() {
-                    return this.applied.filters.columns.some(
+                appliedFilterCount() {
+                    return this.applied.filters.columns.filter(
                         column => column.index !== 'all' && (column.value?.length ?? 0) > 0
-                    );
+                    ).length;
+                },
+
+                hasAppliedFilters() {
+                    return this.appliedFilterCount() > 0;
                 },
 
                 clearAllFilters() {
@@ -1615,27 +1627,6 @@
                         .join(', ');
                 },
 
-                clearFilter(column) {
-                    if (this.isAttributeFilter(column)) {
-                        const condition = this.attributeCondition(column.index);
-
-                        condition.value = '';
-                        condition.value2 = '';
-
-                        this.applyAttributeCondition(column);
-
-                        return;
-                    }
-
-                    /**
-                     * State-only reset; the grid refetches on Apply, matching every other
-                     * drawer edit instead of reloading mid-session.
-                     */
-                    this.applied.filters.columns = this.applied.filters.columns.filter(
-                        appliedColumn => appliedColumn.index !== column.index
-                    );
-                },
-
                 getActiveFilterColumns() {
                     return this.activeFilterIndices
                         .map(index => this.available.columns.find(col => col.index === index && col.filterable))
@@ -1685,7 +1676,11 @@
                             this.loadFilterAttributes(true);
                         }
 
-                        this.$nextTick(() => this.$refs.filterPickerSearchInput?.focus());
+                        this.$nextTick(() => {
+                            this.$refs.filterPicker?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+
+                            this.$refs.filterPickerSearchInput?.focus({ preventScroll: true });
+                        });
                     }
                 },
 
@@ -1759,6 +1754,28 @@
 
                 attributeValueOptions(column) {
                     return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
+                },
+
+                treeSelectionCount(column) {
+                    const value = this.attributeCondition(column.index).value;
+
+                    return Array.isArray(value) ? value.length : 0;
+                },
+
+                treeSelectionLabel(column) {
+                    const count = this.treeSelectionCount(column);
+
+                    return count
+                        ? @json(trans('admin::app.components.datagrid.filters.values-selected')).replace(':count', count)
+                        : @json(trans('admin::app.components.datagrid.filters.select'));
+                },
+
+                setAttributeTreeValue(column, codes) {
+                    this.attributeCondition(column.index).value = Array.isArray(codes)
+                        ? codes.filter(Boolean)
+                        : [];
+
+                    this.applyAttributeCondition(column);
                 },
 
                 setAttributeOptionValue(column, event) {

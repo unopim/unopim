@@ -4,13 +4,11 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
-use Webkul\AdminApi\Http\Requests\Catalog\PassportMappingApiRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\PublishPassportApiRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\RedactPassportApiRequest;
 use Webkul\AdminApi\Http\Resources\PublicationResource;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Repositories\ProductRepository;
-use Webkul\ProductPassport\Http\Controllers\PassportMappingController;
 use Webkul\ProductPassport\Http\Controllers\PublicationController as PassportFeature;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
@@ -61,21 +59,6 @@ class PassportController extends ApiController
             ->get();
 
         return PublicationResource::collection($publications)->response();
-    }
-
-    /**
-     * The passport field-to-source attribute mapping configuration.
-     */
-    public function mapping(): JsonResponse
-    {
-        abort_unless(PassportFeature::featureEnabled(), 404);
-
-        $mappingController = app(PassportMappingController::class);
-
-        return response()->json([
-            'data'          => $mappingController->mappingData(),
-            'custom_fields' => $mappingController->customFieldsData(),
-        ]);
     }
 
     /**
@@ -171,22 +154,5 @@ class PassportController extends ApiController
                 trans('passport::app.publications.redact-invalid')
             );
         }
-    }
-
-    /**
-     * Persist the passport field->source attribute mapping configuration.
-     */
-    public function updateMapping(PassportMappingApiRequest $request): JsonResponse
-    {
-        abort_unless(PassportFeature::featureEnabled(), 404);
-
-        $channel = $request->filled('channel') ? (string) $request->input('channel') : null;
-        $locale = $request->filled('locale') ? (string) $request->input('locale') : null;
-
-        $mappingController = app(PassportMappingController::class);
-        $mappingController->persistMapping($request->validated('mapping') ?? [], $channel, $locale);
-        $mappingController->persistCustomFields($request->validated('custom_fields') ?? [], $channel, $locale);
-
-        return $this->successResponse(trans('passport::app.mapping.saved'));
     }
 }

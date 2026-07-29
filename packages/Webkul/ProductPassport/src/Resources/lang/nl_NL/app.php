@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Paspoortveld toevoegen',
         'regulatory-heading'      => 'Wettelijke velden',
+        'regulatory-empty'        => 'Nog geen paspoortvelden. Voeg de DPP-attribuutgroep toe aan een attribuutfamilie om de velden toe te wijzen.',
         'custom-heading'          => 'Aangepaste velden',
         'custom-info'             => 'Publiceer een kenmerk dat u al beheert onder een label naar keuze.',
         'custom-name-placeholder' => 'Veldnaam',

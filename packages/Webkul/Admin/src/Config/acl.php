@@ -803,7 +803,7 @@ return [
         'sort'  => 3,
     ], [
         'key'   => 'settings.users',
-        'name'  => 'admin::app.acl.users',
+        'name'  => 'admin::app.acl.user-management',
         'route' => 'admin.settings.users.index',
         'sort'  => 6,
     ], [

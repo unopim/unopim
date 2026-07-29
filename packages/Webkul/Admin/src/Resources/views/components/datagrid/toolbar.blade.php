@@ -275,7 +275,7 @@
                     <div>
                         <div
                             class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
-                            :class="{'[&>*]:text-primary-700 [&>*]:dark:text-white': applied.filters.columns.length > 1}"
+                            :class="{'[&>*]:text-primary-700 [&>*]:dark:text-white': hasAppliedFilters()}"
                             v-if="available?.columns?.filter(col => col?.filterable == true)?.length"
                         >
                             <span class="icon-filter text-2xl" aria-hidden="true"></span>
@@ -285,8 +285,10 @@
                             </span>
 
                             <span
-                                class="icon-dot absolute top-0.5 right-1 text-2xl font-bold"
-                                v-if="applied.filters.columns.length > 1"
+                                class="ltr:ml-0.5 rtl:mr-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-100 px-1.5 text-xs font-medium text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
+                                data-applied-filter-count
+                                v-if="hasAppliedFilters()"
+                                v-text="appliedFilterCount()"
                             ></span>
                         </div>
 
@@ -319,6 +321,7 @@
 
                         <div
                             v-if="showFilterPicker"
+                            ref="filterPicker"
                             class="mt-2 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-800 overflow-hidden"
                         >
                             <div class="sticky top-0 p-2 bg-white dark:bg-cherry-800 border-b dark:border-cherry-900">
@@ -360,14 +363,28 @@
                             </div>
                         </div>
                     </div>
+                </x-slot>
 
-                    <button
-                        type="button"
-                        class="primary-button block w-full text-center"
-                        @click="runFilters()"
-                    >
-                        @lang('admin::app.components.datagrid.filters.save')
-                    </button>
+                <x-slot:footer class="mt-auto border-t border-gray-100 bg-white p-5 dark:border-cherry-800 dark:bg-cherry-800">
+                    <div class="flex flex-col gap-y-1">
+                        <button
+                            type="button"
+                            class="primary-button w-full justify-center text-center"
+                            @click="runFilters()"
+                        >
+                            @lang('admin::app.components.datagrid.filters.save')
+                        </button>
+
+                        <button
+                            type="button"
+                            class="transparent-button justify-center self-center text-sm disabled:cursor-not-allowed disabled:opacity-50"
+                            data-clear-all-filters
+                            :disabled="! hasAppliedFilters()"
+                            @click="clearAllFilters()"
+                        >
+                            @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
+                        </button>
+                    </div>
                 </x-slot>
             </x-admin::drawer>
 

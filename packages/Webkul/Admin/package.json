@@ -14,14 +14,14 @@
     "vue": "^3.5.13"
   },
   "dependencies": {
-    "@fontsource/inter": "^5.1.0",
+    "@fontsource/inter": "^5.3.0",
     "@vee-validate/i18n": "^4.9.1",
     "@vee-validate/rules": "^4.9.1",
     "@vitejs/plugin-vue": "^5.0.0",
     "dompurify": "^3.4.11",
-    "tinymce": "6.6.2",
     "flatpickr": "^4.6.13",
     "mitt": "^3.0.1",
+    "tinymce": "^6.6.2",
     "tributejs": "^5.1.3",
     "vee-validate": "^4.9.1",
     "vue-flatpickr": "^2.3.0",

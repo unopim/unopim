@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
-use Webkul\ProductPassport\Console\InstallPassportAttributesCommand;
+use Webkul\ProductPassport\Console\InstallPassportPresetCommand;
 use Webkul\ProductPassport\Http\Controllers\PublicationController;
 use Webkul\ProductPassport\Listeners\AutoPublishPassport;
 use Webkul\ProductPassport\Listeners\ValidateProductGtin;
@@ -42,6 +42,7 @@ class ProductPassportServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->mergeConfigFrom(__DIR__.'/../Config/passport.php', 'publication');
+        $this->mergeConfigFrom(__DIR__.'/../Config/passport_presets.php', 'passport_presets');
         $this->mergeConfigFrom(__DIR__.'/../Config/passport_settings.php', 'core');
         $this->mergeConfigFrom(__DIR__.'/../Config/system_settings.php', 'system_settings');
         $this->mergeConfigFrom(__DIR__.'/../Config/acl.php', 'acl');
@@ -50,6 +51,8 @@ class ProductPassportServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'passport');
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'passport');
+
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         Route::middleware('web')->group(__DIR__.'/../Routes/admin.php');
 
@@ -81,7 +84,7 @@ class ProductPassportServiceProvider extends ServiceProvider
         $this->app->register(ModuleServiceProvider::class);
 
         if ($this->app->runningInConsole()) {
-            $this->commands([InstallPassportAttributesCommand::class]);
+            $this->commands([InstallPassportPresetCommand::class]);
         }
     }
 }

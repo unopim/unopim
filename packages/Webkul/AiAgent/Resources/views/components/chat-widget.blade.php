@@ -19,7 +19,7 @@
 <v-agenting-pim></v-agenting-pim>
 
 <script>
-// Apply #app margin before Vue paints to avoid content-jump flash on refresh.
+// Dock the layout before Vue paints to avoid a content-jump flash on refresh.
 (function () {
     var openByDefault = @json($openByDefault);
     var open = openByDefault;
@@ -31,19 +31,19 @@
         }
     } catch (e) {}
     if (!open) return;
-    var apply = function () {
-        var app = document.getElementById('app');
-        if (app) app.style.marginRight = '420px';
-        if (document.body) document.body.style.overflowX = 'hidden';
-    };
-    if (document.getElementById('app')) apply();
-    else document.addEventListener('DOMContentLoaded', apply);
+    document.body.classList.add('ap-panel-open', 'ap-no-anim');
+    requestAnimationFrame(function () {
+        requestAnimationFrame(function () { document.body.classList.remove('ap-no-anim'); });
+    });
 })();
 </script>
 
 @pushOnce('scripts')
 <script type="text/x-template" id="v-agenting-pim-template">
     <div class="ap-shell">
+        {{-- Rendered outside #app: the panel is docked, so it must not sit inside
+             the element the docked layout shrinks (see the layout CSS below). --}}
+        <teleport to="body">
         {{-- ── Backdrop (small screens: covers page behind panel) ── --}}
         <transition name="ap-fade">
             <div
@@ -59,6 +59,7 @@
                 v-if="isOpen"
                 id="agenting-pim-panel"
                 class="ap-panel"
+                @click="handleInternalLink"
                 role="dialog"
                 aria-modal="true"
                 aria-label="@lang('ai-agent::app.widget.panel-title')"
@@ -479,16 +480,44 @@
         >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
         </button>
+        </teleport>
     </div>
 </script>
 
 <style>
-/* Panel base — desktop (>1024px): 420px sidebar */
+:root { --ap-panel-size: 420px; --ap-panel-width: 0px; }
+
+/* Docked width: the panel pushes the app aside instead of covering it. Zero on
+   tablet/mobile, where the panel becomes a full-screen overlay instead. */
+body.ap-panel-open { --ap-panel-width: var(--ap-panel-size); }
+
+#app {
+    margin-right: var(--ap-panel-width);
+    transition: margin-right 0.25s ease;
+}
+
+/* Restoring a docked panel on page load must not animate. */
+body.ap-no-anim #app { transition: none; }
+
+/* `position: fixed` resolves against the viewport, so drawers, modals, flash
+   messages and the save bar would ignore the docked width and paint over the
+   panel. Paint containment makes #app their containing block, so they stay
+   inside the shrunk area. #app never scrolls (body is `overflow-hidden`), so
+   fixed children keep behaving as fixed. */
+body.ap-panel-open #app { contain: paint; }
+
+@media (max-width: 1024px) {
+    body.ap-panel-open { --ap-panel-width: 0px; }
+
+    body.ap-panel-open #app { contain: none; }
+}
+
+/* Panel base — desktop (>1024px): docked sidebar */
 .ap-panel {
     position: fixed; top: 0; right: 0; height: 100vh;
     display: flex; flex-direction: column;
     background: #fff; border-left: 1px solid #e5e7eb;
-    width: 420px; max-width: 100vw; z-index: 10000;
+    width: var(--ap-panel-size); max-width: 100vw; z-index: 10000;
 }
 .dark .ap-panel {
     background: #1f1b2d;
@@ -1096,15 +1125,6 @@ app.component('v-agenting-pim', {
                 requestAnimationFrame(() => requestAnimationFrame(() => { this.noTransition = false; }));
             });
         }
-
-        // Delegate clicks on internal admin links to navigate in the same tab
-        this.$el.addEventListener('click', (e) => {
-            const link = e.target.closest('a[data-internal-link]');
-            if (link) {
-                e.preventDefault();
-                window.location.href = link.getAttribute('href');
-            }
-        });
     },
 
     watch: {
@@ -1141,22 +1161,24 @@ app.component('v-agenting-pim', {
                 });
             }
         },
+
+        handleInternalLink(e) {
+            const link = e.target.closest('a[data-internal-link]');
+            if (! link) return;
+            e.preventDefault();
+            window.location.href = link.getAttribute('href');
+        },
+
         adjustLayout(open, instant = false) {
-            const appEl = document.getElementById('app');
-            if (!appEl) return;
-            if (open) {
-                if (!instant) appEl.style.transition = 'margin-right 0.25s ease';
-                else appEl.style.transition = 'none';
-                appEl.style.marginRight = '420px';
-                document.body.style.overflowX = 'hidden';
-                if (instant) {
-                    // restore transition after two paint frames
-                    requestAnimationFrame(() => requestAnimationFrame(() => { appEl.style.transition = ''; }));
-                }
-            } else {
-                appEl.style.transition = instant ? 'none' : 'margin-right 0.25s ease';
-                appEl.style.marginRight = '';
-                document.body.style.overflowX = '';
+            const body = document.body;
+            if (! body) return;
+
+            if (instant) body.classList.add('ap-no-anim');
+
+            body.classList.toggle('ap-panel-open', open);
+
+            if (instant) {
+                requestAnimationFrame(() => requestAnimationFrame(() => body.classList.remove('ap-no-anim')));
             }
         },
         toggle() { this.isOpen = !this.isOpen; },

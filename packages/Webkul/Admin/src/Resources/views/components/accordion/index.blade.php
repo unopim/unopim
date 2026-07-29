@@ -1,6 +1,12 @@
+{{--
+    A `title` is styled and padded by the component itself, so every accordion
+    reads the same and lines up with the fields in its content. The `header` slot
+    stays for the cases that need more than a title.
+--}}
 @props([
     'isActive'   => true,
     'persistKey' => null,
+    'title'      => null,
 ])
 
 <div data-dirty-section {{ $attributes->merge(['class' => 'bg-white dark:bg-cherry-900 rounded box-shadow']) }}>
@@ -11,10 +17,18 @@
     >
         <x-admin::shimmer.accordion class="w-[360px] h-[271px]" />
 
-        @isset($header)
+        @if (isset($header) || $title)
+            @php
+                $headerClasses = 'flex items-center justify-between p-1.5 px-4 cursor-pointer select-none';
+
+                $headerAttributes = isset($header)
+                    ? $header->attributes->merge(['class' => $headerClasses])
+                    : new \Illuminate\View\ComponentAttributeBag(['class' => $headerClasses]);
+            @endphp
+
             <template v-slot:header="{ toggle, toggleFromHeader, isOpen }">
                 <div
-                    {{ $header->attributes->merge(['class' => 'flex items-center justify-between p-1.5 px-4 cursor-pointer select-none']) }}
+                    {{ $headerAttributes }}
                     role="button"
                     tabindex="0"
                     :aria-expanded="isOpen ? 'true' : 'false'"
@@ -22,7 +36,13 @@
                     @keydown.enter.prevent="toggle"
                     @keydown.space.prevent="toggle"
                 >
-                    {{ $header }}
+                    @isset($header)
+                        {{ $header }}
+                    @else
+                        <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
+                            {{ $title }}
+                        </p>
+                    @endisset
 
                     <span
                         :class="`text-2xl p-1.5 rounded-md cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 ${isOpen ? 'icon-chevron-up' : 'icon-chevron-down'}`"
@@ -33,7 +53,7 @@
                     ></span>
                 </div>
             </template>
-        @endisset
+        @endif
 
         @isset($content)
             <template v-slot:content="{ isOpen }">

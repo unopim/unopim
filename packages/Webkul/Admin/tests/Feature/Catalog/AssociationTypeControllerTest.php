@@ -7,8 +7,8 @@ use Webkul\Product\Models\AssociationTypeField;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 
 /**
- * An update requires a name for every active locale, and the label a request reads back is the
- * one for the requested locale — which is whatever the install enabled, not necessarily en_US.
+ * Labels are optional per locale; the label a request reads back is the one for the requested
+ * locale — which is whatever the install enabled, not necessarily en_US.
  *
  * @return array<string, array{name: string}>
  */
@@ -259,6 +259,25 @@ it('should update the association type successfully', function () {
     ]);
 });
 
+it('should update when only some locales carry a label', function () {
+    $this->loginAsAdmin();
+
+    $associationType = createAssociationType();
+
+    $locales = app(LocaleRepository::class)->getActiveLocales();
+
+    $names = $locales->mapWithKeys(fn ($locale, $index) => [
+        $locale->code => ['name' => $index === 0 ? 'Only First Locale' : ''],
+    ])->all();
+
+    $this->put(route('admin.catalog.association_types.update', $associationType->id), [
+        'status'   => 1,
+        'position' => 1,
+    ] + $names)
+        ->assertRedirect(route('admin.catalog.association_types.edit', $associationType->id))
+        ->assertSessionHasNoErrors();
+});
+
 it('should not change the code or is_user_defined of a default association type on update', function () {
     $this->loginAsAdmin();
 
@@ -507,7 +526,7 @@ it('should render the edit page with the reusable field-builder component', func
     // Every association-field type option (sourced from
     // `config('association_field_types')`) must be present in the type dropdown.
     $response->assertSee(trans('admin::app.catalog.attributes.create.text'), false);
-    $response->assertSee(trans('admin::app.catalog.attributes.create.select'), false);
+    $response->assertSee(trans('admin::app.catalog.attributes.create.boolean'), false);
 
     $response->assertSee(trans('admin::app.catalog.association_types.fields.add-field-btn'), false);
 });

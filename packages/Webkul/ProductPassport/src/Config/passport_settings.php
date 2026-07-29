@@ -27,13 +27,6 @@ return [
                 'type'  => 'boolean',
                 'info'  => 'passport::app.configuration.product_passport.settings.auto-publish-hint',
             ], [
-                'name'        => 'completeness_threshold',
-                'title'       => 'passport::app.configuration.product_passport.settings.completeness-threshold',
-                'type'        => 'text',
-                'validation'  => 'required|integer|min:1|max:100',
-                'placeholder' => 'passport::app.configuration.product_passport.settings.completeness-threshold-placeholder',
-                'info'        => 'passport::app.configuration.product_passport.settings.completeness-threshold-hint',
-            ], [
                 'name'        => 'operator_name',
                 'title'       => 'passport::app.configuration.product_passport.settings.operator-name',
                 'type'        => 'text',
@@ -51,12 +44,6 @@ return [
                 'type'        => 'text',
                 'placeholder' => 'passport::app.configuration.product_passport.settings.operator-eu-rep-placeholder',
                 'info'        => 'passport::app.configuration.product_passport.settings.operator-eu-rep-hint',
-            ], [
-                'name'        => 'support_url',
-                'title'       => 'passport::app.configuration.product_passport.settings.support-url',
-                'type'        => 'text',
-                'placeholder' => 'passport::app.configuration.product_passport.settings.support-url-placeholder',
-                'info'        => 'passport::app.configuration.product_passport.settings.support-url-hint',
             ],
         ],
     ],

@@ -4,8 +4,8 @@ namespace Webkul\ProductPassport\View\Composers;
 
 use Illuminate\Support\Facades\URL;
 use Illuminate\View\View;
-use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\ChannelProxy;
+use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationVersionProxy;
 use Webkul\Publication\Models\PublicationViewStatProxy;
@@ -16,6 +16,10 @@ use Webkul\Publication\Models\PublicationViewStatProxy;
 class PassportPanelComposer
 {
     private const HISTORY_LIMIT = 25;
+
+    public function __construct(
+        private readonly PassportReadinessService $readiness,
+    ) {}
 
     public function compose(View $view): void
     {
@@ -47,28 +51,22 @@ class PassportPanelComposer
             ['uuid' => $publication->uuid, 'locale' => $localeCode, 'tier' => $tier],
         );
 
-        $scores = ProductCompletenessScore::query()
-            ->where('product_id', $product->id)
-            ->where('channel_id', $channel->id)
-            ->whereIn('locale_id', $channel->locales->pluck('id'))
-            ->get()
-            ->keyBy('locale_id');
-
         $carrierLink = $publication === null
             ? null
             : route('publication.public.dpp.carrier', ['uuid' => $publication->uuid]);
 
-        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $scores, $signedLink, $carrierLink): array {
+        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $signedLink, $carrierLink): array {
             $version = $currentByLocale->get($locale->id);
-            $score = $scores->get($locale->id);
+
+            $missing = $this->readiness->missingLabels($product, $channel, $locale);
 
             return [
                 'locale_id'      => $locale->id,
                 'locale_code'    => $locale->code,
                 'version'        => $version?->version,
                 'published_at'   => $version?->published_at,
-                'score'          => $score?->score,
-                'missing_count'  => $score?->missing_count,
+                'missing_count'  => count($missing),
+                'missing_fields' => $missing,
                 // Signed links are the only way to reveal operator/authority tiers; minted server-side, only once a version is live.
                 'operator_link'  => $version !== null ? $signedLink($locale->code, 'operator') : null,
                 'authority_link' => $version !== null ? $signedLink($locale->code, 'authority') : null,

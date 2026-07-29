@@ -1,6 +1,6 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-field-category-tree-template">
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2" :class="fillHeight ? 'h-full' : ''">
             <input
                 v-for="code in selectedCodes"
                 :key="'selected-' + code"
@@ -22,7 +22,7 @@
                 <span class="icon-search text-xl absolute ltr:right-2 rtl:left-2 top-1.5 text-gray-400 pointer-events-none"></span>
             </div>
 
-            <div class="overflow-y-auto border rounded-md dark:border-gray-700 p-2.5" style="max-height: 360px;">
+            <div class="overflow-y-auto border rounded-md dark:border-gray-700 p-2.5" :class="fillHeight ? 'flex-1 min-h-0' : ''" :style="fillHeight ? null : 'max-height: 360px;'">
                 <template v-if="isLoading">
                     <x-admin::shimmer.tree />
                 </template>
@@ -88,6 +88,10 @@
             template: '#v-field-category-tree-template',
 
             mixins: [window.unopim.fieldBase],
+
+            props: {
+                fillHeight: { type: Boolean, default: false },
+            },
 
             data() {
                 return {

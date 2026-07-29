@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute-kentän täytyy olla tosi tai epätosi.',
+    'current_password'      => 'Salasana on virheellinen.',
     'confirmed'      => ':attribute-vahvistus ei täsmää.',
     'date'           => ':attribute ei ole kelvollinen päivämäärä.',
     'date_format'    => ':attribute ei täsmää muotoon :format.',

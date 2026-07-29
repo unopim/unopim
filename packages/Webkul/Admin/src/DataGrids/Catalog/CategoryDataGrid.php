@@ -261,7 +261,7 @@ class CategoryDataGrid extends DataGrid
                 $attribute = 'name';
             }
 
-            $value = (array) $value;
+            $value = $this->unwrapConditionValues((array) $value);
 
             $value = array_filter($value, function ($val) {
                 return $val !== null && $val !== '';
@@ -273,6 +273,22 @@ class CategoryDataGrid extends DataGrid
         }
 
         return $filters;
+    }
+
+    /**
+     * A filter carrying an operator arrives as a {operator, value} payload. This
+     * grid matches on the value alone, so the payload is reduced to it rather
+     * than interpolated into a wildcard as an array.
+     *
+     * @param  array<array-key, mixed>  $values
+     * @return array<array-key, mixed>
+     */
+    protected function unwrapConditionValues(array $values): array
+    {
+        return array_map(
+            fn ($value) => is_array($value) && array_key_exists('operator', $value) ? ($value['value'] ?? '') : $value,
+            $values
+        );
     }
 
     /**

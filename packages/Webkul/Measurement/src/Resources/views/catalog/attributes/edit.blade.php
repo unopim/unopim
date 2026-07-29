@@ -7,6 +7,7 @@
     <v-measurement
         :attribute-id="{{ $attribute->id }}"
         measurement-url="{{ route('measurement.attribute', ['attributeId' => $attribute->id]) }}"
+        family-units-url="{{ route('admin.measurement.family.units') }}"
         :initial-data='@json($measurementData)'
     >
     </v-measurement>
@@ -74,6 +75,7 @@
             props: [
                 'attributeId',
                 'measurementUrl',
+                'familyUnitsUrl',
                 'initialData',
             ],
 
@@ -87,6 +89,7 @@
                     oldUnit: null,
                     isInitialLoad: true,
                     isSavedFamily: false,
+                    unitsCache: {},
                 };
             },
 
@@ -129,7 +132,7 @@
                         if (family) {
                             this.measurementFamily = JSON.stringify(family);
 
-                            this.unitsList = family.units || [];
+                            this.unitsList = data.units || [];
 
                             if (this.oldUnit) {
                                 const oldUnitObj = this.unitsList.find(
@@ -146,6 +149,37 @@
                     }
 
                     this.isInitialLoad = false;
+                },
+
+                /**
+                 * Units belong to one family and are fetched per selection, so the
+                 * page does not carry the units of every family in the catalogue.
+                 */
+                async fetchUnits(familyCode) {
+                    if (! familyCode) {
+                        this.unitsList = [];
+
+                        return;
+                    }
+
+                    if (this.unitsCache[familyCode]) {
+                        this.unitsList = this.unitsCache[familyCode];
+
+                        return;
+                    }
+
+                    try {
+                        const response = await this.$axios.get(this.familyUnitsUrl, {
+                            params: { family: familyCode },
+                        });
+
+                        this.unitsCache[familyCode] = response.data.units || [];
+                        this.unitsList = this.unitsCache[familyCode];
+                    } catch (error) {
+                        console.error('Error loading measurement units:', error);
+
+                        this.unitsList = [];
+                    }
                 },
             },
 
@@ -169,13 +203,13 @@
                         selectedFamily = newValue;
                     }
 
-                    this.unitsList = selectedFamily
-                        ? (selectedFamily.units || [])
-                        : [];
-
-                    if (! this.isInitialLoad) {
-                        this.measurementUnit = null;
+                    if (this.isInitialLoad) {
+                        return;
                     }
+
+                    this.measurementUnit = null;
+
+                    this.fetchUnits(selectedFamily ? selectedFamily.id : null);
                 },
             },
         });

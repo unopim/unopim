@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Dodaj pole paszportu',
         'regulatory-heading'      => 'Pola regulacyjne',
+        'regulatory-empty'        => 'Brak pól paszportu. Dodaj grupę atrybutów DPP do rodziny atrybutów, aby zmapować jej pola.',
         'custom-heading'          => 'Pola niestandardowe',
         'custom-info'             => 'Opublikuj atrybut, którym już zarządzasz, pod wybraną przez siebie etykietą.',
         'custom-name-placeholder' => 'Nazwa pola',

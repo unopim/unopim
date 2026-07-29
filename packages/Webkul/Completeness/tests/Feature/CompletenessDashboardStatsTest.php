@@ -65,6 +65,11 @@ it('matches the per-row averages it replaces', function () {
     }
 });
 
+/**
+ * One grouped count and two grouped averages answer the whole panel; the
+ * previous shape asked for each figure per channel and per channel-locale pair,
+ * so the count tracked the size of the channel matrix.
+ */
 it('reads the score table a fixed number of times whatever the channel spread', function () {
     seedCompletenessScores();
 
@@ -80,11 +85,6 @@ it('reads the score table a fixed number of times whatever the channel spread', 
         ->assertOk()
         ->assertJsonPath('success', true);
 
-    /**
-     * One grouped count and two grouped averages answer the whole panel; the
-     * previous shape asked for each figure per channel and per channel-locale
-     * pair, so this count tracked the size of the channel matrix.
-     */
     expect($scoreQueries)->toBe(3);
 });
 

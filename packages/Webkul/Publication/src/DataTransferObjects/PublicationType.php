@@ -9,13 +9,13 @@ readonly class PublicationType
         public string $label,
         public string $payloadBuilder,
         public string $template,
-        public string $requiredGroup,
         public string $routePrefix,
         public ?string $jsonld = null,
+        public ?string $gate = null,
     ) {}
 
     /**
-     * @param  array{label: string, payload_builder: string, template: string, required_group: string, route_prefix: string, jsonld?: string|null}  $config
+     * @param  array{label: string, payload_builder: string, template: string, route_prefix: string, jsonld?: string|null, gate?: string|null}  $config
      */
     public static function fromConfig(string $code, array $config): self
     {
@@ -24,9 +24,9 @@ readonly class PublicationType
             label: $config['label'],
             payloadBuilder: $config['payload_builder'],
             template: $config['template'],
-            requiredGroup: $config['required_group'],
             routePrefix: $config['route_prefix'],
             jsonld: $config['jsonld'] ?? null,
+            gate: $config['gate'] ?? null,
         );
     }
 }

@@ -22,6 +22,7 @@ function userStatusPayload(Admin $target, string $status): array
         'password'              => '',
         'password_confirmation' => '',
         'status'                => $status,
+        'current_password'      => 'password',
     ];
 }
 

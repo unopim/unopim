@@ -48,17 +48,6 @@
     </div>
 
     <div class="pb-3" v-show="isFilterExpanded(column.index)">
-        <div v-if="filterHasValue(column)" class="mb-2 flex justify-end">
-            <button
-                type="button"
-                class="text-xs font-medium text-primary-700 transition-all hover:underline dark:text-primary-400"
-                data-clear-filter
-                @click="clearFilter(column)"
-            >
-                @lang('admin::app.components.datagrid.filters.custom-filters.clear')
-            </button>
-        </div>
-
         <div v-if="isAttributeFilter(column)">
             <div class="grid grid-cols-2 gap-2">
                 <x-admin::dropdown v-if="column.type === 'price'">
@@ -147,6 +136,59 @@
                             </x-admin::dropdown.menu.item>
                         </x-slot>
                     </x-admin::dropdown>
+                </template>
+
+                <template v-else-if="attributeValueControl(column) === 'category_tree'">
+                    <div class="col-span-2 min-w-0">
+                        <x-admin::product.section-drawer
+                            id="datagrid-filter-categories"
+                            :title="trans('admin::app.catalog.products.edit.categories.title')"
+                            icon="icon-folder"
+                            :full-height="true"
+                            dock-to="[data-drawer-panel], .ap-panel"
+                        >
+                            <x-slot:toggle>
+                                <button
+                                    type="button"
+                                    class="flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2.5 text-sm transition-all hover:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:hover:border-gray-400"
+                                    data-open-tree-panel
+                                >
+                                    <span
+                                        class="truncate"
+                                        :class="treeSelectionCount(column) ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'"
+                                        v-text="treeSelectionLabel(column)"
+                                    ></span>
+
+                                    <span class="icon-chevron-right shrink-0 text-xl text-gray-400" aria-hidden="true"></span>
+                                </button>
+                            </x-slot>
+
+                            <x-slot:content>
+                                <div class="flex h-full flex-col">
+                                    <v-field-category-tree
+                                        :field="{ name: 'condition_' + column.index, label: filterLabel(column) }"
+                                        :name="'condition_' + column.index"
+                                        :model-value="attributeCondition(column.index).value"
+                                        context="filter"
+                                        :fill-height="true"
+                                        @update:modelValue="setAttributeTreeValue(column, $event)"
+                                    >
+                                    </v-field-category-tree>
+                                </div>
+                            </x-slot>
+
+                            <x-slot:footer>
+                                <button
+                                    type="button"
+                                    class="primary-button justify-center text-center"
+                                    data-filter-panel-done
+                                    @click="close"
+                                >
+                                    @lang('admin::app.components.datagrid.filters.done')
+                                </button>
+                            </x-slot>
+                        </x-admin::product.section-drawer>
+                    </div>
                 </template>
 
                 <template v-else-if="attributeValueControl(column) === 'options'">

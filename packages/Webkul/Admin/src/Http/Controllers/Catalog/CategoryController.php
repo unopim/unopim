@@ -10,6 +10,7 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\CategoryBrowseRequest;
 use Webkul\Admin\Http\Requests\CategoryChildrenForm;
 use Webkul\Admin\Http\Requests\CategoryRequest;
 use Webkul\Admin\Http\Requests\CategorySearchForm;
@@ -29,6 +30,8 @@ class CategoryController extends Controller
     const DEFAULT_PAGE = 1;
 
     const SEARCH_PER_PAGE = 50;
+
+    const VIEW_MODE_SESSION_KEY = 'catalog.categories.view_mode';
 
     /**
      * Create a new controller instance.
@@ -84,17 +87,128 @@ class CategoryController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return View
+     * Tree workspace, or the flat listing when `view=list` is asked for.
      */
-    public function index(): View|JsonResponse
+    public function index(CategoryBrowseRequest $request): View|JsonResponse
     {
-        if (request()->ajax()) {
+        if ($request->ajax()) {
             return app(CategoryDataGrid::class)->toJson();
         }
 
-        return view('admin::catalog.categories.index');
+        $viewMode = $this->resolveViewMode($request);
+
+        $data = [
+            'viewMode'            => $viewMode,
+            'treeItems'           => [],
+            'branchToParent'      => [],
+            'selectedId'          => null,
+            'panelMode'           => null,
+            'showHistory'         => false,
+            'overview'            => null,
+            'category'            => null,
+            'parentCategory'      => null,
+            'breadcrumb'          => '',
+            'leftCategoryFields'  => $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left'),
+            'rightCategoryFields' => $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right'),
+        ];
+
+        if ($viewMode === 'list') {
+            return view('admin::catalog.categories.index', $data);
+        }
+
+        $roots = $this->categoryRepository->getRootCategories();
+
+        $data['treeItems'] = CategoryTreeResource::collection($roots)->toArray($request);
+
+        if ($categoryId = $request->selectedCategoryId()) {
+            $data['category'] = $this->categoryRepository->find($categoryId);
+            $data['panelMode'] = $data['category'] ? 'edit' : null;
+            $data['selectedId'] = $data['category']?->id;
+            $data['showHistory'] = $data['category'] && $request->wantsHistory();
+        } elseif ($request->wantsCreatePanel()) {
+            $data['panelMode'] = 'create';
+
+            if ($parentId = $request->parentCategoryId()) {
+                $data['parentCategory'] = $this->categoryRepository->find($parentId);
+                $data['selectedId'] = $data['parentCategory']?->id;
+            }
+        } else {
+            $data['overview'] = [
+                'total'          => $this->categoryRepository->getModel()->count(),
+                'roots'          => $roots,
+                'channelRootIds' => $this->channelRepository->pluck('root_category_id')->filter()->map(intval(...))->all(),
+            ];
+        }
+
+        $revealed = $data['category'] ?? $data['parentCategory'];
+
+        if ($revealed) {
+            $pathNodes = $this->categoryRepository->getPathNodes([$revealed->code]);
+
+            $branch = $pathNodes->toTree();
+
+            $this->revealChildrenOf($pathNodes, $revealed->id);
+
+            $data['branchToParent'] = CategoryTreeResource::collection($branch)->toArray($request);
+
+            $breadcrumbId = $data['panelMode'] === 'create' ? $revealed->id : $revealed->parent_id;
+
+            $data['breadcrumb'] = $breadcrumbId
+                ? ($this->categoryRepository->getBreadcrumbsForIds([$breadcrumbId])[$breadcrumbId] ?? '')
+                : '';
+        }
+
+        return view('admin::catalog.categories.index', $data);
+    }
+
+    /**
+     * Hang the first page of a category's children off the revealed path, so opening
+     * a category shows what is under it rather than just where it sits. The nodes are
+     * marked partial by the resource, so expanding the branch still refetches the
+     * level in full instead of trusting this page of it.
+     */
+    private function revealChildrenOf(Collection $pathNodes, int $categoryId): void
+    {
+        $node = $pathNodes->firstWhere('id', $categoryId);
+
+        if (! $node) {
+            return;
+        }
+
+        $children = $this->categoryRepository->getChildCategoriesPaginated(
+            $categoryId,
+            0,
+            CategoryRepository::DEFAULT_PAGE,
+            CategoryRepository::DEFAULT_PER_PAGE
+        );
+
+        if ($children['data']->isEmpty()) {
+            return;
+        }
+
+        $node->setRelation('children', $children['data']);
+    }
+
+    /**
+     * The chosen view sticks for the rest of the session, so returning to the
+     * listing lands where it was left. A deep link to a category outranks it —
+     * the properties panel only exists in the tree.
+     */
+    private function resolveViewMode(CategoryBrowseRequest $request): string
+    {
+        if ($requested = $request->requestedView()) {
+            session()->put(self::VIEW_MODE_SESSION_KEY, $requested);
+
+            return $requested;
+        }
+
+        if ($request->selectedCategoryId() || $request->wantsCreatePanel()) {
+            return 'tree';
+        }
+
+        $stored = session(self::VIEW_MODE_SESSION_KEY);
+
+        return in_array($stored, ['tree', 'list'], true) ? $stored : 'tree';
     }
 
     /**

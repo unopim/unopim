@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute trebuie să fie adevărat sau fals.',
+    'current_password'      => 'Parola este incorectă.',
     'confirmed'      => 'Confirmarea pentru :attribute nu se potrivește.',
     'date'           => ':attribute nu este o dată validă.',
     'date_format'    => ':attribute nu se potrivește cu formatul :format.',

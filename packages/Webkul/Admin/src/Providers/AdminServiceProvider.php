@@ -15,6 +15,7 @@ use Webkul\Admin\Fields\FieldConfig;
 use Webkul\Admin\Observers\CategoryObserver;
 use Webkul\Admin\Observers\ConfigurationObserver;
 use Webkul\Admin\Observers\ProductObserver;
+use Webkul\Admin\Sso\SsoManager;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
 use Webkul\Attribute\Models\AttributeProxy;
@@ -86,6 +87,8 @@ class AdminServiceProvider extends ServiceProvider
 
         $this->app->singleton(FieldConfig::class);
 
+        $this->app->scoped(SsoManager::class, fn ($app): SsoManager => new SsoManager($app));
+
         $this->app->scoped('unopim.admin.menu', fn (): array => $this->buildAdminMenu());
     }
 
@@ -127,6 +130,11 @@ class AdminServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/auth.php',
             'admin.auth'
+        );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/sso.php',
+            'sso'
         );
     }
 
@@ -312,6 +320,12 @@ class AdminServiceProvider extends ServiceProvider
             $key = strtolower(trim((string) $request->input('email', ''))).'|'.$request->ip();
 
             return Limit::perMinute(5)->by($key);
+        });
+
+        RateLimiter::for('admin-sudo', function (Request $request) {
+            $key = (string) optional($request->user('admin'))->id.'|'.$request->ip();
+
+            return Limit::perMinute(10)->by($key);
         });
 
         RateLimiter::for('admin-sso', function (Request $request) {

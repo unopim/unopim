@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => 'Passfeld hinzufügen',
         'regulatory-heading'      => 'Regulatorische Felder',
+        'regulatory-empty'        => 'Noch keine Passfelder. Fügen Sie die DPP-Attributgruppe einer Attributfamilie hinzu, um deren Felder zuzuordnen.',
         'custom-heading'          => 'Benutzerdefinierte Felder',
         'custom-info'             => 'Veröffentlichen Sie ein bereits gepflegtes Attribut unter einer selbst gewählten Bezeichnung.',
         'custom-name-placeholder' => 'Feldname',

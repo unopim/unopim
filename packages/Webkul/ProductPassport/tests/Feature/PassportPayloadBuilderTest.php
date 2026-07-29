@@ -50,5 +50,5 @@ it('excludes the whole meta key from being treated as content by never placing c
 
     $payload = resolve(PassportPayloadBuilder::class)->build($product, $context);
 
-    expect(array_keys($payload['meta']))->toEqualCanonicalizing(['uuid', 'url', 'locale', 'channel', 'built_at']);
+    expect(array_keys($payload['meta']))->toEqualCanonicalizing(['uuid', 'url', 'locale', 'channel', 'built_at', 'template']);
 });

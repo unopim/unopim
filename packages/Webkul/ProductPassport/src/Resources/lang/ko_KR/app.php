@@ -224,6 +224,7 @@ return [
     'mapping' => [
         'add-field'               => '여권 필드 추가',
         'regulatory-heading'      => '규제 필드',
+        'regulatory-empty'        => '여권 필드가 아직 없습니다. 필드를 매핑하려면 DPP 속성 그룹을 속성 패밀리에 추가하세요.',
         'custom-heading'          => '사용자 지정 필드',
         'custom-info'             => '이미 관리 중인 속성을 원하는 라벨로 게시합니다.',
         'custom-name-placeholder' => '필드 이름',

@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute फ़ील्ड सही या गलत होनी चाहिए।',
+    'current_password'      => 'पासवर्ड गलत है।',
     'confirmed'      => ':attribute पुष्टि मेल नहीं खाती।',
     'date'           => ':attribute एक वैध दिनांक नहीं है।',
     'date_format'    => ':attribute फ़ॉर्मेट :format से मेल नहीं खाता।',

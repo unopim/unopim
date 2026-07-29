@@ -5,7 +5,7 @@ use Webkul\User\Models\Admin;
 
 use function Pest\Laravel\actingAs;
 
-it('renders a submit save button on the account edit page', function () {
+it('offers the tracked save bar on the account edit page', function () {
     $admin = Admin::factory()->create([
         'password' => Hash::make('admin123'),
         'status'   => 1,
@@ -14,10 +14,7 @@ it('renders a submit save button on the account edit page', function () {
     $response = actingAs($admin, 'admin')->get(route('admin.account.edit'));
 
     $response->assertOk();
-
-    $saveLabel = trans('admin::app.account.edit.save-btn');
-
-    $response->assertSee($saveLabel);
-    $response->assertSee('type="submit"', false);
-    $response->assertSee('form="account-edit-form"', false);
+    $response->assertSee('v-unsaved-changes', false);
+    $response->assertSee('data-unsaved-save', false);
+    $response->assertDontSee('form="account-edit-form"', false);
 });
