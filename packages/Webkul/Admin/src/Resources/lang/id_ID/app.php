@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Mata uang dengan kode :code tidak ditemukan.',
-                'create-btn'            => 'Buat mata uang',
-                'currency'              => 'Mata uang',
-                'title'                 => 'Mata uang',
-                'can-not-delete-error'  => 'Anda tidak dapat menghapus mata uang yang terhubung ke saluran',
-                'can-not-disable-error' => 'Anda tidak dapat menonaktifkan mata uang yang ditautkan ke saluran',
-                'datagrid'              => [
+                'not-found'              => 'Mata uang dengan kode :code tidak ditemukan.',
+                'create-btn'             => 'Buat mata uang',
+                'currency'               => 'Mata uang',
+                'title'                  => 'Mata uang',
+                'can-not-delete-error'   => 'Anda tidak dapat menghapus mata uang yang terhubung ke saluran',
+                'can-not-disable-error'  => 'Anda tidak dapat menonaktifkan mata uang yang ditautkan ke saluran',
+                'partial-update-success' => 'Mata uang yang dipilih telah diperbarui, kecuali :count yang terhubung ke saluran.',
+                'datagrid'               => [
                     'actions'        => 'Tindakan',
                     'code'           => 'Kode',
                     'delete'         => 'Menghapus',

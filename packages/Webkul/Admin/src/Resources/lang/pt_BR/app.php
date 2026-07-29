@@ -1312,13 +1312,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Moeda com o código :code não encontrada.',
-                'create-btn'            => 'Criar Moeda',
-                'currency'              => 'Moeda',
-                'title'                 => 'Moedas',
-                'can-not-delete-error'  => 'Você não pode excluir uma moeda vinculada a um canal',
-                'can-not-disable-error' => 'Você não pode desativar uma moeda vinculada a um canal',
-                'datagrid'              => [
+                'not-found'              => 'Moeda com o código :code não encontrada.',
+                'create-btn'             => 'Criar Moeda',
+                'currency'               => 'Moeda',
+                'title'                  => 'Moedas',
+                'can-not-delete-error'   => 'Você não pode excluir uma moeda vinculada a um canal',
+                'can-not-disable-error'  => 'Você não pode desativar uma moeda vinculada a um canal',
+                'partial-update-success' => 'As moedas selecionadas foram atualizadas, exceto :count vinculadas a um canal.',
+                'datagrid'               => [
                     'actions'        => 'Ações',
                     'code'           => 'Código',
                     'delete'         => 'Excluir',

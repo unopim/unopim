@@ -1312,13 +1312,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Nie znaleziono waluty o kodzie :code.',
-                'create-btn'            => 'Utwórz Walutę',
-                'currency'              => 'Waluta',
-                'title'                 => 'Waluty',
-                'can-not-delete-error'  => 'Nie można usunąć waluty powiązanej z kanałem',
-                'can-not-disable-error' => 'Nie można wyłączyć waluty powiązanej z kanałem',
-                'datagrid'              => [
+                'not-found'              => 'Nie znaleziono waluty o kodzie :code.',
+                'create-btn'             => 'Utwórz Walutę',
+                'currency'               => 'Waluta',
+                'title'                  => 'Waluty',
+                'can-not-delete-error'   => 'Nie można usunąć waluty powiązanej z kanałem',
+                'can-not-disable-error'  => 'Nie można wyłączyć waluty powiązanej z kanałem',
+                'partial-update-success' => 'Wybrane waluty zostały zaktualizowane, z wyjątkiem :count powiązanych z kanałem.',
+                'datagrid'               => [
                     'actions'        => 'Akcje',
                     'code'           => 'Kod',
                     'delete'         => 'Usuń',

@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Valuta s kodom :code nije pronađena.',
-                'create-btn'            => 'Kreiraj valutu',
-                'currency'              => 'Valuta',
-                'title'                 => 'Valute',
-                'can-not-delete-error'  => 'Ne možete izbrisati valutu povezanu s kanalom',
-                'can-not-disable-error' => 'Ne možete onemogućiti valutu povezanu s kanalom',
-                'datagrid'              => [
+                'not-found'              => 'Valuta s kodom :code nije pronađena.',
+                'create-btn'             => 'Kreiraj valutu',
+                'currency'               => 'Valuta',
+                'title'                  => 'Valute',
+                'can-not-delete-error'   => 'Ne možete izbrisati valutu povezanu s kanalom',
+                'can-not-disable-error'  => 'Ne možete onemogućiti valutu povezanu s kanalom',
+                'partial-update-success' => 'Odabrane valute su ažurirane, osim :count povezanih s kanalom.',
+                'datagrid'               => [
                     'actions'        => 'Radnje',
                     'code'           => 'Kod',
                     'delete'         => 'Izbriši',
