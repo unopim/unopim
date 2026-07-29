@@ -174,11 +174,6 @@
                         }
                     });
 
-                    /**
-                     * Controls that join the form after the snapshot — a teleported
-                     * drawer claiming its fields via `form=`, for instance — are in
-                     * neither list above, so the emitter's group would mark nothing.
-                     */
                     Object.keys(this.serializeForm()).forEach(name => {
                         if (matches(name)) {
                             this.touched[name] = true;
@@ -188,13 +183,6 @@
                     this.debounced();
                 };
 
-                /**
-                 * Controls can join the form long after the baseline is taken — a
-                 * teleported drawer claims its fields with `form=` once its content
-                 * loads. Their current values become the baseline (they are, by
-                 * definition, the saved state) without clearing dirt already tracked
-                 * elsewhere on the page.
-                 */
                 this.onCustomSync = () => {
                     const current = this.serializeForm();
 
@@ -231,9 +219,15 @@
                 });
 
                 this.$emitter.on('form-saved', this.onFormSaved);
+
+                window.unopimDiscardUnsaved = () => this.performDiscard();
             },
 
             beforeUnmount() {
+                if (window.unopimDiscardUnsaved) {
+                    delete window.unopimDiscardUnsaved;
+                }
+
                 if (this.$refs.root) {
                     ['input', 'change', 'click', 'keyup', 'mousedown'].forEach(evt => {
                         this.$refs.root.removeEventListener(evt, this.onFormEvent, true);
@@ -466,7 +460,6 @@
 
                     this.toggleBeforeUnload(false);
 
-                    // Native submit navigates away, so there is no outcome to wait for.
                     if (! form.requestSubmit) {
                         form.submit();
 
@@ -480,13 +473,6 @@
                     form.requestSubmit();
                 },
 
-                /**
-                 * The submit outcome is reported by the form itself: `form:invalid`
-                 * when validation blocked it (no request left the browser) and
-                 * `form:settled` when an ajax save answered. Waiting for those beats
-                 * polling — validation is async, so a slow-but-valid form used to be
-                 * declared failed while its request was still being prepared.
-                 */
                 watchSubmitOutcome(form) {
                     this.clearSubmitWatch();
 
@@ -498,8 +484,6 @@
                         this.toggleBeforeUnload(this.isDirty);
                     };
 
-                    // The failing fields already carry their own inline messages, so the
-                    // toast states the outcome instead of repeating the first one.
                     this._onSubmitInvalid = () => {
                         done();
 
@@ -518,9 +502,6 @@
 
                     this._watchedForm = form;
 
-                    // A non-ajax form navigates away and never settles; a plugin may
-                    // also swallow the submit. Release the button rather than leave it
-                    // spinning forever — silently, since nothing actually failed.
                     this._savingWatch = setTimeout(() => {
                         this.clearSubmitWatch();
 
@@ -666,6 +647,11 @@
                         btnDisagreeClass: 'transparent-button',
                     },
                     agree: () => {
+                        if (typeof window.unopimDiscardUnsaved === 'function') {
+                            window.unopimDiscardUnsaved();
+                        }
+
+                        window.__unsavedBarCount = 0;
                         window.__unsavedNavBypass = true;
 
                         proceed();
