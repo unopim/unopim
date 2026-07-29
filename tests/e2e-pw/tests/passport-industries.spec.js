@@ -327,11 +327,11 @@ test.describe.serial('DPP industry use cases', () => {
     const page = adminPage;
 
     // The re-keyed hub renders a top-level "Digital Product Passport" section with both rows reachable.
-    await page.goto('/admin/configuration/system/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/configuration/system-settings/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
     await expect(page.getByRole('textbox', { name: /Completeness Threshold/i }).first()).toBeVisible();
 
-    await page.goto('/admin/configuration/system/digital_product_passport.publication', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/configuration/system-settings/digital_product_passport.publication', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
     await expect(page.getByRole('textbox', { name: /Base URL/i }).first()).toBeVisible();
 

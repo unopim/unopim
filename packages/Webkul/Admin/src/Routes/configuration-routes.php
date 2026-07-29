@@ -13,11 +13,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
     Route::get('configuration/system-information', [SystemController::class, 'information'])->name('admin.configuration.system.information');
 
-    Route::get('configuration/system', [SystemSettingsController::class, 'index'])->name('admin.settings.system.index');
+    Route::get('configuration/system-settings', [SystemSettingsController::class, 'index'])->name('admin.settings.system.index');
 
-    Route::get('configuration/system/{key}', [SystemSettingsController::class, 'edit'])->name('admin.settings.system.edit');
+    Route::get('configuration/system-settings/{key}', [SystemSettingsController::class, 'edit'])->name('admin.settings.system.edit');
 
-    Route::put('configuration/system/{key}', [SystemSettingsController::class, 'update'])->name('admin.settings.system.update');
+    Route::put('configuration/system-settings/{key}', [SystemSettingsController::class, 'update'])->name('admin.settings.system.update');
 
     Route::get('magic-ai/settings', [ConfigurationController::class, 'index'])
         ->defaults('slug', 'general')
