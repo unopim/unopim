@@ -507,7 +507,7 @@ it('should render the edit page with the reusable field-builder component', func
     // Every association-field type option (sourced from
     // `config('association_field_types')`) must be present in the type dropdown.
     $response->assertSee(trans('admin::app.catalog.attributes.create.text'), false);
-    $response->assertSee(trans('admin::app.catalog.attributes.create.select'), false);
+    $response->assertSee(trans('admin::app.catalog.attributes.create.boolean'), false);
 
     $response->assertSee(trans('admin::app.catalog.association_types.fields.add-field-btn'), false);
 });
