@@ -5,14 +5,14 @@ namespace Webkul\Core\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 
-class IpAddressList implements ValidationRule
+class IpPatternRule implements ValidationRule
 {
     /**
      * Run the validation rule.
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (! $this->isIpAddressList($value)) {
+        if (! $this->isIpPattern($value)) {
             $fail('core::validation.ip-address-list')->translate();
         }
     }
@@ -22,7 +22,7 @@ class IpAddressList implements ValidationRule
      *
      * @param  mixed  $value
      */
-    public function isIpAddressList($value): bool
+    public function isIpPattern($value): bool
     {
         $addresses = array_map(trim(...), explode(',', (string) $value));
 

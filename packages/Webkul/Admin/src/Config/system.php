@@ -1,6 +1,6 @@
 <?php
 
-use Webkul\Core\Rules\IpAddressList;
+use Webkul\Core\Rules\IpPatternRule;
 
 return [
     /**
@@ -210,7 +210,7 @@ return [
                 'name'       => 'allowed_ips',
                 'title'      => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
                 'type'       => 'text',
-                'validation' => ['nullable', IpAddressList::class],
+                'validation' => ['nullable', IpPatternRule::class],
             ],
         ],
     ], [
