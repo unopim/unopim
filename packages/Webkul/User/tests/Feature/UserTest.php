@@ -282,7 +282,6 @@ it('should give validation errors when updating the user', function () {
     $response->assertStatus(302);
     $response->assertSessionHasErrors([
         'name',
-        'current_password',
         'timezone',
         'ui_locale_id',
     ]);
@@ -326,17 +325,18 @@ it('should not update the user without name', function () {
     ]);
 });
 
-it('should not update the user without current password', function () {
+it('should not change the password without the current password', function () {
     $this->loginAsAdmin();
 
     $response = $this->put(route('admin.account.update'), [
-        'name'             => 'John',
-        'email'            => 'update@example.com',
-        'current_password' => '',
-        'password'         => '',
-        'image'            => '',
-        'timezone'         => 'Asia/Kolkata',
-        'ui_locale_id'     => 2,
+        'name'                  => 'John',
+        'email'                 => 'update@example.com',
+        'current_password'      => '',
+        'password'              => 'password2',
+        'password_confirmation' => 'password2',
+        'image'                 => '',
+        'timezone'              => 'Asia/Kolkata',
+        'ui_locale_id'          => 2,
     ]);
 
     $response->assertStatus(302);

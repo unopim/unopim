@@ -2,18 +2,14 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
-use Hash;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Admin\Http\Requests\UserForm;
+use Webkul\Admin\Http\Requests\AccountForm;
 use Webkul\Core\Filesystem\FileStorer;
-use Webkul\Core\Rules\FileMimeExtensionMatch;
 
 class AccountController extends Controller
 {
@@ -49,58 +45,13 @@ class AccountController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(): RedirectResponse
+    public function update(AccountForm $request): RedirectResponse
     {
         $user = auth()->guard('admin')->user();
 
-        $imageRules = [
-            'nullable',
-            'image',
-            'mimes:'.implode(',', UserForm::PROFILE_IMAGE_EXTENSIONS),
-            'max:2048',
-            new FileMimeExtensionMatch,
-        ];
+        $data = $request->safe()->except(['current_password', 'password_confirmation']);
 
-        $this->validate(request(), [
-            'name'               => 'required',
-            'email'              => 'email|unique:admins,email,'.$user->id,
-            'password'           => 'nullable|confirmed|min:'.config('admin.auth.password_min'),
-            'current_password'   => 'required',
-            'image'              => request()->file('image') instanceof UploadedFile ? $imageRules : ['nullable'],
-            'image.*'            => $imageRules,
-            'timezone'           => 'required',
-            'ui_locale_id'       => 'required',
-            'catalog_locale_id'  => 'nullable|integer|exists:locales,id,status,1',
-            'default_channel_id' => 'nullable|integer|exists:channels,id',
-            'use_gravatar'       => 'boolean',
-        ]);
-
-        if (($submittedPassword = (string) request('password')) !== '' && trim($submittedPassword) === '') {
-            throw ValidationException::withMessages([
-                'password' => [trans('admin::app.account.edit.password-whitespace')],
-            ]);
-        }
-
-        $data = request()->only([
-            'name',
-            'email',
-            'password',
-            'password_confirmation',
-            'current_password',
-            'image',
-            'timezone',
-            'ui_locale_id',
-            'catalog_locale_id',
-            'default_channel_id',
-        ]);
-
-        $data['use_gravatar'] = request()->boolean('use_gravatar');
-
-        if (! Hash::check($data['current_password'] ?? '', $user->password)) {
-            session()->flash('warning', trans('admin::app.account.edit.invalid-password'));
-
-            return redirect()->back();
-        }
+        $data['use_gravatar'] = $request->boolean('use_gravatar');
 
         $isPasswordChanged = false;
 
@@ -112,8 +63,8 @@ class AccountController extends Controller
             $data['password'] = bcrypt($data['password']);
         }
 
-        if (request()->hasFile('image')) {
-            $image = request()->file('image');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
             $image = is_array($image) ? current($image) : $image;
             $extension = $image->guessExtension() ?: strtolower($image->getClientOriginalExtension());
 
