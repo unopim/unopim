@@ -296,11 +296,21 @@
                 },
 
                 setValue(field, value) {
+                    const previous = this.values[field.name];
+
                     this.values[field.name] = value;
 
-                    this.fieldList
-                        .filter(candidate => candidate.depends_on?.field === field.name)
-                        .forEach(candidate => { this.values[candidate.name] = null; });
+                    /**
+                     * A dependent field only goes stale once its parent really changes.
+                     * The async controls re-emit their stored value while rehydrating the
+                     * edit page, and clearing the children there drops filters the profile
+                     * was saved with.
+                     */
+                    if (this.toCodes(previous).join(',') !== this.toCodes(value).join(',')) {
+                        this.fieldList
+                            .filter(candidate => candidate.depends_on?.field === field.name)
+                            .forEach(candidate => { this.values[candidate.name] = null; });
+                    }
 
                     this.$emit('change', { name: field.name, value });
 
