@@ -632,7 +632,7 @@ class ProductExportFilter
 
     protected function activeCurrencyCodes(): array
     {
-        return $this->activeCurrencyCodes ??= $this->currencyRepository->all()->pluck('code')->all();
+        return $this->activeCurrencyCodes ??= $this->currencyRepository->getActiveCurrencies()->pluck('code')->all();
     }
 
     protected function parseCustomAttributes(mixed $value): array
