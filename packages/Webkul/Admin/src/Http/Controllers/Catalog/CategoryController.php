@@ -143,9 +143,13 @@ class CategoryController extends Controller
         $revealed = $data['category'] ?? $data['parentCategory'];
 
         if ($revealed) {
-            $data['branchToParent'] = CategoryTreeResource::collection(
-                $this->categoryRepository->getPathNodes([$revealed->code])->toTree()
-            )->toArray($request);
+            $pathNodes = $this->categoryRepository->getPathNodes([$revealed->code]);
+
+            $branch = $pathNodes->toTree();
+
+            $this->revealChildrenOf($pathNodes, $revealed->id);
+
+            $data['branchToParent'] = CategoryTreeResource::collection($branch)->toArray($request);
 
             $breadcrumbId = $data['panelMode'] === 'create' ? $revealed->id : $revealed->parent_id;
 
@@ -155,6 +159,34 @@ class CategoryController extends Controller
         }
 
         return view('admin::catalog.categories.index', $data);
+    }
+
+    /**
+     * Hang the first page of a category's children off the revealed path, so opening
+     * a category shows what is under it rather than just where it sits. The nodes are
+     * marked partial by the resource, so expanding the branch still refetches the
+     * level in full instead of trusting this page of it.
+     */
+    private function revealChildrenOf(Collection $pathNodes, int $categoryId): void
+    {
+        $node = $pathNodes->firstWhere('id', $categoryId);
+
+        if (! $node) {
+            return;
+        }
+
+        $children = $this->categoryRepository->getChildCategoriesPaginated(
+            $categoryId,
+            0,
+            CategoryRepository::DEFAULT_PAGE,
+            CategoryRepository::DEFAULT_PER_PAGE
+        );
+
+        if ($children['data']->isEmpty()) {
+            return;
+        }
+
+        $node->setRelation('children', $children['data']);
     }
 
     /**
