@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'لم يتم العثور على عملة بالرمز :code.',
-                'create-btn'            => 'إنشاء العملة',
-                'currency'              => 'عملة',
-                'title'                 => 'العملات',
-                'can-not-delete-error'  => 'لا يمكنك حذف عملة مرتبطة بقناة',
-                'can-not-disable-error' => 'لا يمكنك تعطيل عملة مرتبطة بقناة',
-                'datagrid'              => [
+                'not-found'              => 'لم يتم العثور على عملة بالرمز :code.',
+                'create-btn'             => 'إنشاء العملة',
+                'currency'               => 'عملة',
+                'title'                  => 'العملات',
+                'can-not-delete-error'   => 'لا يمكنك حذف عملة مرتبطة بقناة',
+                'can-not-disable-error'  => 'لا يمكنك تعطيل عملة مرتبطة بقناة',
+                'partial-update-success' => 'تم تحديث العملات المحددة، باستثناء :count المرتبطة بقناة.',
+                'datagrid'               => [
                     'actions'        => 'أجراءات',
                     'code'           => 'شفرة',
                     'delete'         => 'يمسح',

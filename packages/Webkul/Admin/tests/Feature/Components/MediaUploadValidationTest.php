@@ -11,7 +11,7 @@ use Webkul\Core\Repositories\LocaleRepository;
 function appearanceUploadRequest(UploadedFile $file): AppearanceForm
 {
     $request = AppearanceForm::create(
-        uri: '/admin/settings/appearance',
+        uri: '/admin/configuration/system/system.appearance',
         method: 'PUT',
         files: ['logo_image' => $file],
     );

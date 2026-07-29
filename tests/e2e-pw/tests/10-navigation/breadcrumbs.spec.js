@@ -26,7 +26,7 @@ test.describe('admin breadcrumbs', () => {
         await expect(crumb(page).first()).toHaveText(/Configuration\s*\/\s*System Settings\s*\/\s*Email/);
 
         // Off-menu hub page resolved to its sidebar parent.
-        await page.goto('/admin/settings/appearance');
+        await page.goto('/admin/configuration/system/system.appearance');
         await expect(crumb(page).first()).toHaveText(/Configuration\s*\/\s*System Settings\s*\/\s*Appearance/);
 
         // In-menu top-level page (Integrations) still shows the trail.

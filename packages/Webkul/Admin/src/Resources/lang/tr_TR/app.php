@@ -1311,13 +1311,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => ':code kodlu para birimi bulunamadı.',
-                'create-btn'            => 'Lumikha ng Pera',
-                'currency'              => 'Pera',
-                'title'                 => 'Mga Pera',
-                'can-not-delete-error'  => 'Hindi mo maaaring tanggalin ang isang pera na nakakabit sa isang channel',
-                'can-not-disable-error' => 'Hindi mo maaaring i-disable ang isang pera na nakakabit sa isang channel',
-                'datagrid'              => [
+                'not-found'              => ':code kodlu para birimi bulunamadı.',
+                'create-btn'             => 'Lumikha ng Pera',
+                'currency'               => 'Pera',
+                'title'                  => 'Mga Pera',
+                'can-not-delete-error'   => 'Hindi mo maaaring tanggalin ang isang pera na nakakabit sa isang channel',
+                'can-not-disable-error'  => 'Hindi mo maaaring i-disable ang isang pera na nakakabit sa isang channel',
+                'partial-update-success' => 'Seçili para birimleri güncellendi, bir kanala bağlı olan :count hariç.',
+                'datagrid'               => [
                     'actions'        => 'Mga Aksyon',
                     'code'           => 'Kod',
                     'delete'         => 'Tanggalin',

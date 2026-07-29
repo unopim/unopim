@@ -93,7 +93,7 @@ return [
     ], [
         'key'   => 'catalog.products.quick_export',
         'name'  => 'admin::app.acl.quick-export',
-        'route' => null,
+        'route' => 'admin.catalog.products.quick-export',
         'sort'  => 8,
     ], [
         'key'   => 'catalog.products.bulk_edit',

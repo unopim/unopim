@@ -1312,13 +1312,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => '코드가 :code인 통화를 찾을 수 없습니다.',
-                'create-btn'            => '통화 생성',
-                'currency'              => '통화',
-                'title'                 => '통화',
-                'can-not-delete-error'  => '채널과 연결된 통화는 삭제할 수 없습니다',
-                'can-not-disable-error' => '채널과 연결된 통화는 비활성화할 수 없습니다',
-                'datagrid'              => [
+                'not-found'              => '코드가 :code인 통화를 찾을 수 없습니다.',
+                'create-btn'             => '통화 생성',
+                'currency'               => '통화',
+                'title'                  => '통화',
+                'can-not-delete-error'   => '채널과 연결된 통화는 삭제할 수 없습니다',
+                'can-not-disable-error'  => '채널과 연결된 통화는 비활성화할 수 없습니다',
+                'partial-update-success' => '선택한 통화가 업데이트되었습니다. 단, 채널과 연결된 :count개는 제외됩니다.',
+                'datagrid'               => [
                     'actions'        => '작업',
                     'code'           => '코드',
                     'delete'         => '삭제',

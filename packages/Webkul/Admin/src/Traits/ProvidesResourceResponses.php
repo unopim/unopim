@@ -4,6 +4,7 @@ namespace Webkul\Admin\Traits;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Webkul\Admin\Helpers\MassActionCounter;
 
 /**
  * Shared response contract for admin resource controllers. A store/update/destroy
@@ -59,5 +60,28 @@ trait ProvidesResourceResponses
     protected function respondDeleted(string $message): JsonResponse
     {
         return new JsonResponse(['message' => $message]);
+    }
+
+    /**
+     * Outcome of a datagrid mass action that may skip rows a system constraint protects.
+     */
+    protected function respondMassAction(
+        MassActionCounter $counter,
+        string $blockedKey,
+        string $partialKey,
+        string $successKey,
+        int $blockedStatus = JsonResponse::HTTP_UNPROCESSABLE_ENTITY
+    ): JsonResponse {
+        if ($counter->changedNothing()) {
+            return new JsonResponse(['message' => trans($blockedKey)], $blockedStatus);
+        }
+
+        if ($counter->isPartial()) {
+            return new JsonResponse([
+                'message' => trans($partialKey, ['count' => $counter->skippedCount()]),
+            ]);
+        }
+
+        return new JsonResponse(['message' => trans($successKey)]);
     }
 }
