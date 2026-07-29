@@ -140,20 +140,39 @@
 
                 <template v-else-if="attributeValueControl(column) === 'category_tree'">
                     <div class="col-span-2 min-w-0">
-                        <button
-                            type="button"
-                            class="flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2.5 text-sm transition-all hover:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:hover:border-gray-400"
-                            data-open-tree-panel
-                            @click="openFilterTreePanel(column)"
+                        <x-admin::product.section-drawer
+                            id="datagrid-filter-categories"
+                            :title="trans('admin::app.catalog.products.edit.categories.title')"
+                            icon="icon-folder"
                         >
-                            <span
-                                class="truncate"
-                                :class="treeSelectionCount(column) ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'"
-                                v-text="treeSelectionLabel(column)"
-                            ></span>
+                            <x-slot:toggle>
+                                <button
+                                    type="button"
+                                    class="flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2.5 text-sm transition-all hover:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:hover:border-gray-400"
+                                    data-open-tree-panel
+                                >
+                                    <span
+                                        class="truncate"
+                                        :class="treeSelectionCount(column) ? 'text-gray-600 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'"
+                                        v-text="treeSelectionLabel(column)"
+                                    ></span>
 
-                            <span class="icon-chevron-right shrink-0 text-xl text-gray-400" aria-hidden="true"></span>
-                        </button>
+                                    <span class="icon-chevron-right shrink-0 text-xl text-gray-400" aria-hidden="true"></span>
+                                </button>
+                            </x-slot>
+
+                            <x-slot:content>
+                                <v-field-category-tree
+                                    :field="{ name: 'condition_' + column.index, label: filterLabel(column) }"
+                                    :name="'condition_' + column.index"
+                                    :model-value="attributeCondition(column.index).value"
+                                    context="filter"
+                                    :fill-height="true"
+                                    @update:modelValue="setAttributeTreeValue(column, $event)"
+                                >
+                                </v-field-category-tree>
+                            </x-slot>
+                        </x-admin::product.section-drawer>
                     </div>
                 </template>
 

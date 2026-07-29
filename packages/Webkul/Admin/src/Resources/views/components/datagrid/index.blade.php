@@ -111,8 +111,6 @@
 
                     showFilterPicker: false,
 
-                    filterTreePanel: null,
-
                     filterPickerSearch: '',
 
                     pickerOptions: [],
@@ -640,8 +638,6 @@
 
                 runFilters() {
                     this.applied.pagination.page = 1;
-
-                    this.filterTreePanel = null;
 
                     this.get();
                 },
@@ -1364,8 +1360,6 @@
                 },
 
                 clearAllFilters() {
-                    this.filterTreePanel = null;
-
                     if (! this.hasAppliedFilters() && ! this.appliedViewId) {
                         this.closeSavedFilters();
 
@@ -1760,14 +1754,6 @@
 
                 attributeValueOptions(column) {
                     return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
-                },
-
-                openFilterTreePanel(column) {
-                    this.filterTreePanel = column;
-                },
-
-                closeFilterTreePanel() {
-                    this.filterTreePanel = null;
                 },
 
                 treeSelectionCount(column) {

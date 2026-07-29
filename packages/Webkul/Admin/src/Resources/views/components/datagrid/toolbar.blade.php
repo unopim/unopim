@@ -388,51 +388,6 @@
                 </x-slot>
             </x-admin::drawer>
 
-            <div
-                v-if="filterTreePanel"
-                class="fixed inset-y-0 z-[10002] flex w-[360px] flex-col border-gray-200 bg-white shadow-[0_5px_20px_rgba(0,0,0,0.15)] ltr:right-[350px] ltr:border-r rtl:left-[350px] rtl:border-l dark:border-cherry-800 dark:bg-cherry-800 max-md:inset-x-0 max-md:w-full max-md:border-0"
-                data-filter-tree-panel
-            >
-                <div class="flex items-center justify-between gap-2 border-b border-gray-100 p-3 dark:border-cherry-900">
-                    <p class="truncate text-base font-semibold text-gray-800 dark:text-white" v-text="filterLabel(filterTreePanel)"></p>
-
-                    <button
-                        type="button"
-                        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-500 transition-all hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-cherry-900"
-                        data-filter-panel-back
-                        :aria-label="'@lang('admin::app.components.datagrid.filters.back')'"
-                        :title="'@lang('admin::app.components.datagrid.filters.back')'"
-                        @click="closeFilterTreePanel()"
-                    >
-                        <span class="icon-cancel text-base" aria-hidden="true"></span>
-                    </button>
-                </div>
-
-                <div class="min-h-0 flex-1 overflow-auto p-5">
-                    <v-field-category-tree
-                        :key="'panel-' + filterTreePanel.index"
-                        :field="{ name: 'condition_' + filterTreePanel.index, label: filterLabel(filterTreePanel) }"
-                        :name="'condition_' + filterTreePanel.index"
-                        :model-value="attributeCondition(filterTreePanel.index).value"
-                        context="filter"
-                        :fill-height="true"
-                        @update:modelValue="setAttributeTreeValue(filterTreePanel, $event)"
-                    >
-                    </v-field-category-tree>
-                </div>
-
-                <div class="border-t border-gray-100 p-5 dark:border-cherry-900">
-                    <button
-                        type="button"
-                        class="primary-button w-full justify-center text-center"
-                        data-filter-panel-done
-                        @click="closeFilterTreePanel()"
-                    >
-                        @lang('admin::app.components.datagrid.filters.done')
-                    </button>
-                </div>
-            </div>
-
             <div class="flex items-center gap-x-2">
                 <x-admin::dropdown>
                     <x-slot:toggle>
