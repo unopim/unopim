@@ -144,6 +144,9 @@
                             id="datagrid-filter-categories"
                             :title="trans('admin::app.catalog.products.edit.categories.title')"
                             icon="icon-folder"
+                            :depth="10010"
+                            :full-height="true"
+                            :offset-end="350"
                         >
                             <x-slot:toggle>
                                 <button
@@ -162,15 +165,28 @@
                             </x-slot>
 
                             <x-slot:content>
-                                <v-field-category-tree
-                                    :field="{ name: 'condition_' + column.index, label: filterLabel(column) }"
-                                    :name="'condition_' + column.index"
-                                    :model-value="attributeCondition(column.index).value"
-                                    context="filter"
-                                    :fill-height="true"
-                                    @update:modelValue="setAttributeTreeValue(column, $event)"
+                                <div class="flex h-full flex-col">
+                                    <v-field-category-tree
+                                        :field="{ name: 'condition_' + column.index, label: filterLabel(column) }"
+                                        :name="'condition_' + column.index"
+                                        :model-value="attributeCondition(column.index).value"
+                                        context="filter"
+                                        :fill-height="true"
+                                        @update:modelValue="setAttributeTreeValue(column, $event)"
+                                    >
+                                    </v-field-category-tree>
+                                </div>
+                            </x-slot>
+
+                            <x-slot:footer>
+                                <button
+                                    type="button"
+                                    class="primary-button justify-center text-center"
+                                    data-filter-panel-done
+                                    @click="close"
                                 >
-                                </v-field-category-tree>
+                                    @lang('admin::app.components.datagrid.filters.done')
+                                </button>
                             </x-slot>
                         </x-admin::product.section-drawer>
                     </div>

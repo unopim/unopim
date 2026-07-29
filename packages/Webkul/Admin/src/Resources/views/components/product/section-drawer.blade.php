@@ -7,6 +7,9 @@
     'formFields'        => '',
     'searchable'        => false,
     'searchPlaceholder' => '',
+    'depth'             => 9999,
+    'fullHeight'        => false,
+    'offsetEnd'         => 0,
 ])
 
 <v-product-section-drawer
@@ -18,6 +21,9 @@
     form-fields="{{ $formFields }}"
     :searchable="{{ $searchable ? 'true' : 'false' }}"
     search-placeholder="{{ $searchPlaceholder }}"
+    :depth="{{ (int) $depth }}"
+    :full-height="{{ $fullHeight ? 'true' : 'false' }}"
+    :offset-end="{{ (int) $offsetEnd }}"
 >
     <template #toggle>
         {{ $toggle }}
@@ -187,6 +193,18 @@
                     type: String,
                     default: '',
                 },
+                depth: {
+                    type: Number,
+                    default: 9999,
+                },
+                fullHeight: {
+                    type: Boolean,
+                    default: false,
+                },
+                offsetEnd: {
+                    type: Number,
+                    default: 0,
+                },
             },
 
             data: () => ({
@@ -344,31 +362,37 @@
 
                     const rect = main.getBoundingClientRect();
                     const rtl = document.dir === 'rtl';
-                    const width = Math.round(rect.width * this.ratio());
 
-                    const top = Math.round(rect.top) + 'px';
-                    const bottom = Math.round(window.innerHeight - rect.bottom) + 'px';
+                    const width = this.offsetEnd
+                        ? Math.max(320, Math.round(window.innerWidth - this.offsetEnd - rect.left))
+                        : Math.round(rect.width * this.ratio());
+
+                    const top = this.fullHeight ? '0px' : Math.round(rect.top) + 'px';
+                    const bottom = this.fullHeight ? '0px' : Math.round(window.innerHeight - rect.bottom) + 'px';
 
                     // z-index set inline (not via Tailwind's z-[..] classes, which
-                    // aren't compiled from this x-template's markup) so the panel
-                    // sits above page content -- incl. the rich-text toolbars -- yet
-                    // below the app's own drawers/modals (z-index 10001).
+                    // aren't compiled from this x-template's markup). The default
+                    // clears page content -- incl. the rich-text toolbars -- while
+                    // staying under the app's drawers/modals (z-index 10001); a
+                    // caller opening this from inside one of those raises `depth`.
                     this.overlayStyle = {
                         top,
                         bottom,
-                        left: Math.round(rect.left) + 'px',
-                        width: Math.round(rect.width) + 'px',
-                        zIndex: 9998,
+                        left: this.offsetEnd ? '0px' : Math.round(rect.left) + 'px',
+                        width: this.offsetEnd
+                            ? Math.round(window.innerWidth - this.offsetEnd) + 'px'
+                            : Math.round(rect.width) + 'px',
+                        zIndex: this.depth - 1,
                     };
 
                     this.panelStyle = {
                         top,
                         bottom,
                         width: width + 'px',
-                        zIndex: 9999,
+                        zIndex: this.depth,
                         ...(rtl
-                            ? { left: Math.round(rect.left) + 'px' }
-                            : { right: Math.round(window.innerWidth - rect.right) + 'px' }),
+                            ? { left: (this.offsetEnd ? this.offsetEnd : Math.round(rect.left)) + 'px' }
+                            : { right: (this.offsetEnd ? this.offsetEnd : Math.round(window.innerWidth - rect.right)) + 'px' }),
                     };
                 },
 
