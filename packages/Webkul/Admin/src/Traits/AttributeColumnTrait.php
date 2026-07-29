@@ -69,6 +69,10 @@ trait AttributeColumnTrait
                 break;
         }
 
+        if ($attribute->type === Attribute::FILE_ATTRIBUTE_TYPE) {
+            $column['closure'] = $this->getFileClosure();
+        }
+
         return $column;
     }
 
@@ -130,6 +134,11 @@ trait AttributeColumnTrait
     protected function getImageClosure()
     {
         return fn ($value) => ! empty($value) ? Storage::url(is_array($value) ? $value[0] : $value) : '';
+    }
+
+    protected function getFileClosure()
+    {
+        return fn ($value) => ! empty($value) ? e(basename(is_array($value) ? $value[0] : $value)) : '';
     }
 
     protected function getGalleryClosure()
