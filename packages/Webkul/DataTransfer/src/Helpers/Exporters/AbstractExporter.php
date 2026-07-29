@@ -9,7 +9,7 @@ use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Error;
-use Webkul\DataTransfer\Helpers\Source;
+use Webkul\DataTransfer\Helpers\Sources\AbstractSource as Source;
 use Webkul\DataTransfer\Jobs\Export\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Export\ExportBatch as ExportBatchJob;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
