@@ -71,3 +71,6 @@ tests/e2e-pw/.secrets.local
 
 # Pest Test Impact Analysis cache (fallback when HOME is unavailable)
 .pest/
+
+# staging area for the separate unopim/agent-skills project — never commit here
+/agent-skills/
