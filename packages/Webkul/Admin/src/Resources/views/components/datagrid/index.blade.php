@@ -1615,27 +1615,6 @@
                         .join(', ');
                 },
 
-                clearFilter(column) {
-                    if (this.isAttributeFilter(column)) {
-                        const condition = this.attributeCondition(column.index);
-
-                        condition.value = '';
-                        condition.value2 = '';
-
-                        this.applyAttributeCondition(column);
-
-                        return;
-                    }
-
-                    /**
-                     * State-only reset; the grid refetches on Apply, matching every other
-                     * drawer edit instead of reloading mid-session.
-                     */
-                    this.applied.filters.columns = this.applied.filters.columns.filter(
-                        appliedColumn => appliedColumn.index !== column.index
-                    );
-                },
-
                 getActiveFilterColumns() {
                     return this.activeFilterIndices
                         .map(index => this.available.columns.find(col => col.index === index && col.filterable))

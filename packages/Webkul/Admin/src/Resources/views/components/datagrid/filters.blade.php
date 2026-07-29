@@ -33,16 +33,6 @@
         </button>
 
         <button
-            v-show="filterHasValue(column)"
-            type="button"
-            class="shrink-0 text-xs font-medium text-primary-700 transition-all hover:underline ltr:ml-1 rtl:mr-1 dark:text-primary-400"
-            data-clear-filter
-            @click.stop="clearFilter(column)"
-        >
-            @lang('admin::app.components.datagrid.filters.custom-filters.clear')
-        </button>
-
-        <button
             v-if="!defaultFilterIndices.includes(column.index)"
             type="button"
             class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-600 ltr:ml-1 rtl:mr-1 dark:text-gray-500 dark:hover:bg-cherry-800 dark:hover:text-gray-300"
