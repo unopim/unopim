@@ -3,7 +3,7 @@
     'compact' => false,
 ])
 
-<x-admin::form.fields.load :types="['text', 'number']" />
+<x-admin::form.fields.load :types="['text', 'number', 'category-tree']" />
 
 <v-datagrid
     compact="{{ $compact ? 'true' : 'false' }}"
@@ -1754,6 +1754,14 @@
 
                 attributeValueOptions(column) {
                     return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
+                },
+
+                setAttributeTreeValue(column, codes) {
+                    this.attributeCondition(column.index).value = Array.isArray(codes)
+                        ? codes.filter(Boolean)
+                        : [];
+
+                    this.applyAttributeCondition(column);
                 },
 
                 setAttributeOptionValue(column, event) {

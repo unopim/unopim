@@ -138,6 +138,20 @@
                     </x-admin::dropdown>
                 </template>
 
+                <template v-else-if="attributeValueControl(column) === 'category_tree'">
+                    <div class="col-span-2 min-w-0">
+                        <v-field-category-tree
+                            :key="'condition-value-' + column.index + '-' + attributeCondition(column.index).operator"
+                            :field="{ name: 'condition_' + column.index, label: filterLabel(column) }"
+                            :name="'condition_' + column.index"
+                            :model-value="attributeCondition(column.index).value"
+                            context="filter"
+                            @update:modelValue="setAttributeTreeValue(column, $event)"
+                        >
+                        </v-field-category-tree>
+                    </div>
+                </template>
+
                 <template v-else-if="attributeValueControl(column) === 'options'">
                     {{-- the multiselect has several root nodes, so the span goes on a wrapper --}}
                     <div class="col-span-2 min-w-0">

@@ -55,8 +55,8 @@ class ProductPropertyFilters
                 'index'          => self::CATEGORIES,
                 'label'          => trans('admin::app.catalog.products.index.datagrid.categories'),
                 'type'           => 'dropdown',
-                'attribute_type' => 'multiselect',
-                'operators'      => ProductFilterOperators::optionsForType('multiselect'),
+                'attribute_type' => 'category',
+                'operators'      => ProductFilterOperators::optionsForType('category'),
                 'options'        => [
                     'type'     => 'searchable',
                     'route'    => route('admin.catalog.options.fetch-all'),
