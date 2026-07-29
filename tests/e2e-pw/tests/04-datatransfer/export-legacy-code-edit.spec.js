@@ -51,17 +51,32 @@ test.describe('Export profile — legacy code', () => {
     await expect(code).toBeDisabled();
     await expect(code).toHaveValue(/\s/);
 
-    const before = await localesValue(adminPage).inputValue();
+    // Match the multiselect root exactly — `.multiselect__tags` also contains the
+    // substring "multiselect" but holds only the input, not the option list.
+    const localesControl = adminPage.locator('div.multiselect:has(input[name="filters[locales]"][type="text"])');
 
-    // Toggle the locale filter to whichever of the two locales is not selected,
-    // so the test is not order-dependent across runs.
-    const target = before.includes('de_DE') ? 'English (United States)' : 'German (Germany)';
-    const targetCode = target === 'German (Germany)' ? 'de_DE' : 'en_US';
+    // Drive the filter to an absolute selection rather than toggling, so the
+    // test neither depends on nor is confused by what a previous run left.
+    const tags = localesControl.locator('.multiselect__tag-icon');
+    for (let removed = await tags.count(); removed > 0; removed--) {
+      await tags.first().click();
+    }
+    await expect(localesValue(adminPage)).toHaveValue('');
 
-    await localesField(adminPage).locator('xpath=ancestor::div[contains(@class,"multiselect")][1]').click();
-    await adminPage.getByRole('option', { name: target }).first().click();
+    // Narrow the list by search and take it with Enter. Clicking the option
+    // races the list re-render, and the options of the page's other
+    // multiselects stay in the DOM while closed, so neither is a stable target.
+    await localesControl.click();
+    await localesField(adminPage).fill('German (Germany)');
 
-    await expect(localesValue(adminPage)).toHaveValue(new RegExp(targetCode));
+    // The search is debounced and refetched, so let the list settle to the single
+    // match before taking it — clicking mid-refresh detaches the element.
+    const option = localesControl.locator('li').first();
+    await expect(option).toContainText('German (Germany)', { timeout: 15000 });
+    await adminPage.waitForTimeout(800);
+    await option.click();
+
+    await expect(localesValue(adminPage)).toHaveValue('de_DE');
 
     await clickSaveAndExpect(
       adminPage,
@@ -75,6 +90,6 @@ test.describe('Export profile — legacy code', () => {
 
     // The change survived the round trip.
     await openLegacyProfile(adminPage);
-    await expect(localesValue(adminPage)).toHaveValue(new RegExp(targetCode));
+    await expect(localesValue(adminPage)).toHaveValue('de_DE');
   });
 });
