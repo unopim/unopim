@@ -9,7 +9,7 @@ return [
     'slug'                         => ':attribute는 유효한 슬러그여야 합니다.',
     'sku'                          => ':attribute는 유효한 SKU여야 합니다(영숫자, 하이픈 및 밑줄만 허용).',
     'comma-separated-integer'      => ':attribute 필드는 숫자여야 하며 콤마를 포함할 수 있습니다.',
-    'ip-address-list'      => ':attribute 필드에는 쉼표로 구분된 유효한 IP 주소를 입력해야 합니다.',
+    'ip-address-list'              => ':attribute 필드에는 쉼표로 구분된 유효한 IP 주소를 입력해야 합니다.',
     'type'                         => ':attribute는 유효한 유형이어야 합니다.',
     'validation-type'              => ':attribute는 유효한 유형이어야 합니다.',
     'field-option-not-found'       => ':attribute에는 잘못된 옵션이 포함되어 있습니다: :invalid_codes.',

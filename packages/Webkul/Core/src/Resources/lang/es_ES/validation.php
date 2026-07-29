@@ -9,7 +9,7 @@ return [
     'slug'                         => 'El :attribute debe ser un slug válido.',
     'sku'                          => 'El :attribute debe ser un SKU válido (solo caracteres alfanuméricos, guiones y guiones bajos).',
     'comma-separated-integer'      => 'El campo :attribute debe ser numérico y puede contener comas.',
-    'ip-address-list'      => 'El campo :attribute debe contener direcciones IP válidas separadas por comas.',
+    'ip-address-list'              => 'El campo :attribute debe contener direcciones IP válidas separadas por comas.',
     'type'                         => 'El :attribute debe ser de un tipo válido.',
     'validation-type'              => 'El :attribute debe ser de un tipo válido.',
     'field-option-not-found'       => 'El :attribute contiene opciones no válidas :invalid_codes.',
