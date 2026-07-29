@@ -309,6 +309,8 @@
                                 this.activeFilterIndices = currentDatagrid.activeFilterIndices;
                             }
 
+                            this.addedFilterColumns = currentDatagrid.addedFilterColumns ?? {};
+
                             this.appliedViewId = currentDatagrid.appliedViewId ?? null;
                             this.appliedViewLabel = currentDatagrid.appliedViewLabel ?? null;
                             this.viewSnapshot = currentDatagrid.viewSnapshot ?? null;
@@ -415,6 +417,10 @@
                                         this.available.columns.push(col);
                                     }
                                 });
+
+                                this.activeFilterIndices = this.activeFilterIndices.filter(
+                                    index => this.available.columns.some(col => col.index === index)
+                                );
                             }
 
                             this.available.actions = actions;
@@ -1141,6 +1147,7 @@
                                         available: this.available,
                                         applied: appliedForStorage,
                                         activeFilterIndices: this.activeFilterIndices,
+                                        addedFilterColumns: this.addedFilterColumns,
                                         appliedViewId: this.appliedViewId,
                                         appliedViewLabel: this.appliedViewLabel,
                                         viewSnapshot: this.viewSnapshot,
@@ -1177,6 +1184,7 @@
                         available: this.available,
                         applied: appliedForStorage,
                         activeFilterIndices: this.activeFilterIndices,
+                        addedFilterColumns: this.addedFilterColumns,
                         appliedViewId: this.appliedViewId,
                         appliedViewLabel: this.appliedViewLabel,
                         viewSnapshot: this.viewSnapshot,
