@@ -60,6 +60,7 @@
                         ::show-search="true"
                         ::navigate-on-select="true"
                         ::allow-create="{{ $canCreate ? 'true' : 'false' }}"
+                        ::allow-delete="{{ bouncer()->hasPermission('catalog.categories.delete') ? 'true' : 'false' }}"
                         :expanded-branch="json_encode($branchToParent)"
                         :items="json_encode($treeItems)"
                         :value="json_encode($selectedId)"

@@ -24,6 +24,13 @@
                 :href="categorytree.subCategoryUrl(id)"
                 title="@lang('admin::app.catalog.categories.browse.add-child')"
             >+</a>
+
+            <span
+                class="icon-delete invisible opacity-0 flex shrink-0 items-center justify-center w-6 h-6 text-xl text-gray-600 dark:text-gray-300 rounded cursor-pointer transition-opacity group-hover:visible group-hover:opacity-100 hover:bg-primary-50 dark:hover:bg-cherry-800"
+                v-if="categorytree.allowDelete"
+                title="@lang('admin::app.catalog.categories.index.datagrid.delete')"
+                @click.stop="categorytree.destroyCategory(item)"
+            ></span>
         </div>
 
         <template v-if="showChildren">

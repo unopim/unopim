@@ -24,15 +24,25 @@
 @pushOnce('scripts')
     <script type="x-template" id="v-category-tree-view-template">
         <div class="v-tree-container v-tree-item-wrapper">
-            <x-admin::search
-                class="mb-2"
-                name="category_tree_search"
-                :placeholder="trans('admin::app.catalog.categories.browse.search-placeholder')"
-                v-if="showSearch"
-                v-model="searchTerm"
-                @input="onSearchInput"
-                @keydown.esc="clearSearch"
-            />
+            <a
+                class="flex items-center gap-1 mb-2 text-sm text-primary-600 cursor-pointer"
+                v-if="allowRootCreate"
+                :href="createCategoryUrl()"
+            >
+                <span class="text-base leading-none">+</span>
+
+                @lang('admin::app.catalog.categories.browse.add-root')
+            </a>
+
+            <div class="mb-2" v-if="showSearch">
+                <x-admin::search
+                    name="category_tree_search"
+                    :placeholder="trans('admin::app.catalog.categories.browse.search-placeholder')"
+                    v-model="searchTerm"
+                    @input="onSearchInput"
+                    @keydown.esc="clearSearch"
+                />
+            </div>
 
             <template v-if="isSearching">
                 <p
@@ -175,6 +185,14 @@
                 navigateOnSelect: {
                     type: Boolean,
                     default: false
+                },
+                allowDelete: {
+                    type: Boolean,
+                    default: false
+                },
+                allowRootCreate: {
+                    type: Boolean,
+                    default: false
                 }
             },
 
@@ -186,6 +204,7 @@
                     fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
                     createUrl: "{{ route('admin.catalog.categories.index') }}",
                     searchUrl: "{{ route('admin.catalog.categories.search') }}",
+                    deleteUrl: "{{ route('admin.catalog.categories.delete', 'nodeId') }}",
                     cache: [],
                     nodes: [],
                     searchTerm: '',
@@ -315,13 +334,58 @@
                     this.nodes.forEach(node => node.showChildren = false);
                 },
 
-                subCategoryUrl(parentId) {
+                createCategoryUrl(parentId = null) {
                     const url = new URL(this.createUrl, window.location.origin);
 
                     url.searchParams.set('panel', 'create');
-                    url.searchParams.set('parent_id', parentId);
+
+                    if (parentId) {
+                        url.searchParams.set('parent_id', parentId);
+                    }
 
                     return url.toString();
+                },
+
+                subCategoryUrl(parentId) {
+                    return this.createCategoryUrl(parentId);
+                },
+
+                /**
+                 * Whether the page is built around this category, and so has nothing left
+                 * to reload onto once it is gone.
+                 */
+                isOnScreen(id) {
+                    if (String(id) === String(this.currentCategory)) {
+                        return true;
+                    }
+
+                    return new URL(window.location.href).searchParams.get('category') === String(id);
+                },
+
+                /**
+                 * The tree holds no state worth preserving after a delete, and the branch
+                 * the node sat in may have been revealed rather than fetched, so the page
+                 * is reloaded instead of pruned in place.
+                 */
+                destroyCategory(item) {
+                    this.$emitter.emit('open-delete-modal', {
+                        agree: () => {
+                            const id = item[this.idField];
+
+                            this.$axios.delete(this.deleteUrl.replace('nodeId', id))
+                                .then(({ data }) => {
+                                    this.$emitter.emit('add-flash', { type: 'success', message: data.message });
+
+                                    window.location.href = this.isOnScreen(id) ? this.createUrl : window.location.href;
+                                })
+                                .catch(({ response }) => {
+                                    this.$emitter.emit('add-flash', {
+                                        type:    'error',
+                                        message: response?.data?.message,
+                                    });
+                                });
+                        },
+                    });
                 },
 
                 parseInput(data) {

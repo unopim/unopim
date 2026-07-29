@@ -117,15 +117,15 @@ class CategoryController extends Controller
         $data['treeItems'] = CategoryTreeResource::collection($this->categoryRepository->getRootCategories())->toArray($request);
 
         if ($categoryId = $request->selectedCategoryId()) {
-            $data['category'] = $this->categoryRepository->findOrFail($categoryId);
-            $data['panelMode'] = 'edit';
-            $data['selectedId'] = $categoryId;
+            $data['category'] = $this->categoryRepository->find($categoryId);
+            $data['panelMode'] = $data['category'] ? 'edit' : null;
+            $data['selectedId'] = $data['category']?->id;
         } elseif ($request->wantsCreatePanel()) {
             $data['panelMode'] = 'create';
 
             if ($parentId = $request->parentCategoryId()) {
-                $data['parentCategory'] = $this->categoryRepository->findOrFail($parentId);
-                $data['selectedId'] = $parentId;
+                $data['parentCategory'] = $this->categoryRepository->find($parentId);
+                $data['selectedId'] = $data['parentCategory']?->id;
             }
         }
 

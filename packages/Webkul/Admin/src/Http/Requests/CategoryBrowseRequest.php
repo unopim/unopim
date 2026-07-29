@@ -18,6 +18,9 @@ class CategoryBrowseRequest extends FormRequest
     }
 
     /**
+     * A category id is only validated as a number: a link to one that has since
+     * been deleted should fall back to the bare tree, not bounce the request.
+     *
      * @return array<string, mixed>
      */
     public function rules(): array
@@ -25,8 +28,8 @@ class CategoryBrowseRequest extends FormRequest
         return [
             'view'      => ['nullable', 'string', Rule::in(['tree', 'list'])],
             'panel'     => ['nullable', 'string', Rule::in(['create'])],
-            'category'  => ['nullable', 'integer', Rule::exists('categories', 'id')],
-            'parent_id' => ['nullable', 'integer', Rule::exists('categories', 'id')],
+            'category'  => ['nullable', 'integer'],
+            'parent_id' => ['nullable', 'integer'],
             'locale'    => ['nullable', 'string', Rule::exists('locales', 'code')],
         ];
     }
