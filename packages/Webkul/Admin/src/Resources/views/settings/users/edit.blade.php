@@ -217,7 +217,6 @@
                         @if ($requiresCurrentPassword)
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label
-                                    class="required"
                                     :title="trans('admin::app.account.edit.current-password-info')"
                                 >
                                     @lang('admin::app.account.edit.current-password')
@@ -228,7 +227,6 @@
                                 <x-admin::form.control-group.control
                                     type="password"
                                     name="current_password"
-                                    rules="required"
                                     :label="trans('admin::app.account.edit.current-password')"
                                     :placeholder="trans('admin::app.account.edit.current-password')"
                                     autocomplete="current-password"
