@@ -473,7 +473,7 @@ test.describe.serial('Measurement - Product value', () => {
 
 test.describe('Measurement - System configuration', () => {
   test('precision settings page shows strategy, amount and base fields', async ({ adminPage }) => {
-    await gotoAdmin(adminPage, '/admin/configuration/system/system.measurement');
+    await gotoAdmin(adminPage, '/admin/configuration/system-settings/system.measurement');
 
     await expect(adminPage.getByText('Decimal strategy').first()).toBeVisible({ timeout: 25000 });
     await expect(adminPage.getByText('Amount decimals').first()).toBeVisible({ timeout: 15000 });

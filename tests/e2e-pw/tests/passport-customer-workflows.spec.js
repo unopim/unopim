@@ -63,7 +63,7 @@ async function adminRequest(page, method, path, body = null) {
 async function setAutoPublish(page, on) {
   await page.goto('/admin/dashboard', { waitUntil: 'domcontentloaded' });
 
-  return adminRequest(page, 'PUT', '/admin/configuration/system/digital_product_passport.product_passport', {
+  return adminRequest(page, 'PUT', '/admin/configuration/system-settings/digital_product_passport.product_passport', {
     catalog: {
       product_passport: {
         settings: {

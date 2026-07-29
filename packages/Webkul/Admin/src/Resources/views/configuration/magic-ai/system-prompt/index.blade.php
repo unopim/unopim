@@ -40,7 +40,7 @@
                         :key="record.id"
                         class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
-                        @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)"
+                        @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'edit')?.url)"
                     >
 
                         <!-- Title -->
@@ -64,17 +64,23 @@
 
                         <!-- Actions -->
                         <div class="flex justify-end" @click.stop>
-                            <a @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'action_1')?.url)">
+                            <a
+                                v-if="record.actions.find(action => action.index === 'edit')"
+                                @click="selectedPrompt=1;editModal(record.actions.find(action => action.index === 'edit')?.url)"
+                            >
                                 <span
-                                    :class="record.actions.find(action => action.index === 'action_1')?.icon"
+                                    :class="record.actions.find(action => action.index === 'edit')?.icon"
                                     title="@lang('admin::app.configuration.system-prompt.datagrid.edit')"
                                     class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >
                                 </span>
                             </a>
-                            <a @click="performAction(record.actions.find(action => action.index === 'action_2'))">
+                            <a
+                                v-if="record.actions.find(action => action.index === 'delete')"
+                                @click="performAction(record.actions.find(action => action.index === 'delete'))"
+                            >
                                 <span
-                                    :class="record.actions.find(action => action.index === 'action_2')?.icon"
+                                    :class="record.actions.find(action => action.index === 'delete')?.icon"
                                     title="@lang('admin::app.configuration.system-prompt.datagrid.delete')"
                                     class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 >

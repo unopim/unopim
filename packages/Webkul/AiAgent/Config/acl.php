@@ -367,4 +367,10 @@ return [
         'route' => 'ai-agent.settings',
         'sort'  => 1,
     ],
+    [
+        'key'   => 'ai-agent.general',
+        'name'  => 'ai-agent::app.acl.general',
+        'route' => 'admin.magic_ai.settings.store',
+        'sort'  => 1,
+    ],
 ];

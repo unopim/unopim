@@ -156,13 +156,18 @@ class AbstractOptionsController extends Controller
      */
     protected function applySearchQuery($repository, string $query, string $entityName)
     {
+        $search = '%'.mb_strtolower($query).'%';
+
         if (! $this->isTranslatableEntity($entityName)) {
-            return $repository->where('code', 'LIKE', '%'.$query.'%');
+            return $repository->whereRaw('LOWER(code) LIKE ?', [$search]);
         }
 
-        return $repository->where(function ($queryBuilder) use ($query, $entityName) {
-            $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
-                ->orWhere('code', $query);
+        $column = $this->getTranslationColumnName($entityName);
+
+        return $repository->where(function ($queryBuilder) use ($search, $column) {
+            $queryBuilder->whereHas('translations', function ($translations) use ($search, $column) {
+                $translations->whereRaw("LOWER($column) LIKE ?", [$search]);
+            })->orWhereRaw('LOWER(code) LIKE ?', [$search]);
         });
     }
 

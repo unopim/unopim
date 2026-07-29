@@ -26,12 +26,14 @@
             </a>
 
             <!-- Save Button -->
-            <a
-                href="{{ route('admin.settings.data_transfer.exports.edit', $export->id) }}"
-                class="primary-button"
-            >
-                @lang('admin::app.settings.data-transfer.exports.export.edit-btn')
-            </a>
+            @if (bouncer()->hasPermission('data_transfer.export.edit'))
+                <a
+                    href="{{ route('admin.settings.data_transfer.exports.edit', $export->id) }}"
+                    class="primary-button"
+                >
+                    @lang('admin::app.settings.data-transfer.exports.export.edit-btn')
+                </a>
+            @endif
         </div>
     </div>
 

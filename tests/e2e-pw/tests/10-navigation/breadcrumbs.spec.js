@@ -22,7 +22,7 @@ test.describe('admin breadcrumbs', () => {
         await expect(crumb(page).first()).toHaveText(/Catalog\s*\/\s*Categories/);
 
         // Hub fields page: leaf kept even though its URL sits under the hub URL.
-        await page.goto('/admin/configuration/system/system.email');
+        await page.goto('/admin/configuration/system-settings/system.email');
         await expect(crumb(page).first()).toHaveText(/Configuration\s*\/\s*System Settings\s*\/\s*Email/);
 
         // Off-menu hub page resolved to its sidebar parent.

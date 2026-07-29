@@ -71,3 +71,45 @@ it('keeps an attribute assigned to a variant level when the structure is saved',
 
     expect($saved['placements']['variant'])->toContain($plainCode);
 });
+
+it('forces a unique attribute such as sku onto the variant level instead of common', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    $this->loginAsAdmin();
+
+    [$family, $axisCode, $plainCode] = makeFamilyForPlacementSave();
+
+    $unique = Attribute::where('code', 'sku')->first();
+
+    expect($unique)->not->toBeNull()
+        ->and((bool) $unique->is_unique)->toBeTrue();
+
+    $family->attributeFamilyGroupMappings->first()->customAttributes()->attach($unique);
+
+    $family->refresh();
+
+    $structure = VariantStructure::create([
+        'attribute_family_id' => $family->id,
+        'code'                => 'vs_'.Str::random(8),
+        'name'                => 'VS',
+        'levels'              => 1,
+    ]);
+
+    $response = $this->putJson(route('admin.catalog.families.variant-structures.save', $family->id), [
+        'structure' => [
+            'id'         => $structure->id,
+            'code'       => $structure->code,
+            'name'       => $structure->name,
+            'levels'     => 1,
+            'axes'       => ['level_1' => [$axisCode], 'level_2' => []],
+            'placements' => [
+                'common'     => [$unique->code],
+                'sub_parent' => [],
+                'variant'    => [$plainCode],
+            ],
+        ],
+    ])->assertOk();
+
+    expect($response->json('data.placements.variant'))->toContain($unique->code)
+        ->and($response->json('data.placements.common'))->not->toContain($unique->code);
+});

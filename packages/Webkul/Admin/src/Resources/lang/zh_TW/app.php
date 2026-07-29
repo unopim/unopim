@@ -1967,7 +1967,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => '標誌、網站圖示與佈景主題。',
+            'info'           => '標誌與網站圖示。',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

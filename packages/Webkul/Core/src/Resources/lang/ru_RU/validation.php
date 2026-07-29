@@ -9,6 +9,7 @@ return [
     'slug'                         => ':attribute должен быть допустимым слагом.',
     'sku'                          => ':attribute должен быть допустимым SKU (только буквенно-цифровые символы, дефисы и символы подчеркивания).',
     'comma-separated-integer'      => 'Поле :attribute должно быть числовым и может содержать запятую.',
+    'ip-address-list'      => 'Поле :attribute должно содержать корректные IP-адреса, разделённые запятыми.',
     'type'                         => ':attribute должен быть допустимым типом.',
     'validation-type'              => ':attribute должен быть допустимым типом.',
     'field-option-not-found'       => ':attribute содержит недопустимые параметры :invalid_codes.',

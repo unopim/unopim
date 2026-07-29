@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ConfigurationForm extends FormRequest
@@ -33,11 +34,23 @@ class ConfigurationForm extends FormRequest
                 if (! $this->has($key.'.delete')) {
                     $validation = isset($field['validation']) && $field['validation'] ? $field['validation'] : 'nullable';
 
-                    return [$key => $validation];
+                    return [$key => $this->resolveRules($validation)];
                 }
 
                 return [];
             })->toArray();
         })->toArray();
+    }
+
+    protected function resolveRules(mixed $validation): mixed
+    {
+        if (! is_array($validation)) {
+            return $validation;
+        }
+
+        return array_map(
+            fn ($rule) => is_string($rule) && is_a($rule, ValidationRule::class, true) ? app($rule) : $rule,
+            $validation
+        );
     }
 }

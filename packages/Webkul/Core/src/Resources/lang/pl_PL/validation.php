@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Slug :attribute musi być poprawny.',
     'sku'                          => 'SKU :attribute musi być poprawny (dozwolone są tylko znaki alfanumeryczne, myślniki i podkreślenia).',
     'comma-separated-integer'      => 'Pole :attribute musi być liczbą i może zawierać przecinki.',
+    'ip-address-list'      => 'Pole :attribute musi zawierać prawidłowe adresy IP oddzielone przecinkami.',
     'type'                         => 'Typ :attribute musi być poprawny.',
     'validation-type'              => 'Typ walidacji :attribute musi być poprawny.',
     'field-option-not-found'       => 'Pole :attribute zawiera nieprawidłowe opcje: :invalid_codes.',

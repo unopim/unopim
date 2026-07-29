@@ -421,6 +421,7 @@
                 :preserve-search="false"
                 :searchable="true"
                 :placeholder="placeholder"
+                open-direction="bottom"
                 :close-on-select="true"
                 :clear-on-select="true"
                 :show-no-results="true"
@@ -1194,6 +1195,7 @@
                 :searchable="true"
                 :placeholder="placeholder"
                 :loading="isLoading ?? false"
+                open-direction="bottom"
                 :max-height="600"
                 :internal-search="false"
                 :close-on-select="onselect"
@@ -1385,8 +1387,18 @@
 
                     this.$emit('input', JSON.stringify(newValue));
                 },
+
+                value(newValue) {
+                    if (newValue !== '' && newValue !== null && newValue !== undefined) {
+                        return;
+                    }
+
+                    if (this.selectedValue !== null) {
+                        this.selectedValue = null;
+                    }
+                },
             },
-            
+
             methods: {
                 parseValue() {
                     try {

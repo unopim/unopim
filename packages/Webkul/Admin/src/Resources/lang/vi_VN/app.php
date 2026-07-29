@@ -1967,7 +1967,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logo, favicon và giao diện.',
+            'info'           => 'Logo và favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

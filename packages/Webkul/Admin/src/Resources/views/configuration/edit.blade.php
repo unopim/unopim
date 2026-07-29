@@ -20,7 +20,9 @@
     <x-admin::form
         id="configuration-edit-form"
         ajax
-        :action="route('admin.configuration.store', ['slug' => request()->route('slug'), 'slug2' => request()->route('slug2')])"
+        :action="request()->routeIs('admin.magic_ai.settings.index')
+            ? route('admin.magic_ai.settings.store')
+            : route('admin.configuration.store', ['slug' => request()->route('slug'), 'slug2' => request()->route('slug2')])"
         enctype="multipart/form-data"
     >
         <x-admin::layouts.edit-page-header

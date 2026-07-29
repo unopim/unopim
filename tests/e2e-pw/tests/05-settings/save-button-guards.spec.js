@@ -9,7 +9,7 @@ const { test, expect } = require('../../utils/fixtures');
  * text fields, so the bar activates on a real edit.
  */
 test.describe('Save button guards', () => {
-  const URL = '/admin/configuration/system/system.email';
+  const URL = '/admin/configuration/system-settings/system.email';
 
   const goto = (page) =>
     page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
@@ -41,7 +41,7 @@ test.describe('Save button guards', () => {
     // Count the actual save requests fired at the update endpoint.
     let saveRequests = 0;
     adminPage.on('request', (req) => {
-      if (req.method() === 'POST' && req.url().includes('/admin/configuration/system/')) {
+      if (req.method() === 'POST' && req.url().includes('/admin/configuration/system-settings/')) {
         saveRequests += 1;
       }
     });

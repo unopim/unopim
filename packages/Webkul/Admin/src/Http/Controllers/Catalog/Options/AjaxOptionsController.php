@@ -150,9 +150,14 @@ class AjaxOptionsController extends Controller
         }
 
         if (! empty($query) && ! $isCategory) {
-            $repository = $repository->where(function ($queryBuilder) use ($query, $entityName) {
-                $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
-                    ->orWhere('code', $query);
+            $search = '%'.mb_strtolower($query).'%';
+
+            $column = $this->getTranslationColumnName($entityName);
+
+            $repository = $repository->where(function ($queryBuilder) use ($search, $column) {
+                $queryBuilder->whereHas('translations', function ($translations) use ($search, $column) {
+                    $translations->whereRaw("LOWER($column) LIKE ?", [$search]);
+                })->orWhereRaw('LOWER(code) LIKE ?', [$search]);
             });
         }
 
