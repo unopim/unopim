@@ -51,7 +51,6 @@
         ])->all(),
     ])->values();
 
-    /** The async multiselect hydrates a bare, comma separated list of ids through its own lookup. */
     $familyValue = $template->families->pluck('id')->implode(',');
 @endphp
 
@@ -326,11 +325,6 @@
                 </x-slot>
             </x-admin::accordion>
 
-            {{-- Rows are edited in a modal so every control is a real admin form
-                 component: a Blade component cannot be rendered per row inside a
-                 `v-for`, but one modal bound to the row being edited can. The
-                 translatable field runs in draft mode, so its locale switcher
-                 edits the row instead of posting names of its own. --}}
             <x-admin::modal ref="sectionModal">
                 <x-slot:header>
                     <p class="text-lg font-bold text-gray-800 dark:text-white">
@@ -339,9 +333,6 @@
                 </x-slot>
 
                 <x-slot:content>
-                    {{-- Creating asks for the catalog-locale name only and derives the
-                         code from it; the other locales are translated later, when the
-                         row is edited. --}}
                     <template v-if="draftSection?.isNew">
                         <x-admin::form.control-group>
                             <x-admin::form.control-group.label
@@ -355,10 +346,27 @@
                             <x-admin::form.control-group.control
                                 type="text"
                                 name="draft_section_name"
+                                v-code-generator="'draft_section_code'"
                                 ::key="'section-new-' + draftSection.uid"
                                 :label="trans('passport::app.templates.builder.section-name')"
                                 :placeholder="trans('passport::app.templates.builder.section-name')"
                                 @input="onSectionNameInput($event.target.value)"
+                            />
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('passport::app.templates.builder.code')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="text"
+                                name="draft_section_code"
+                                v-code
+                                ::key="'section-new-code-' + draftSection.uid"
+                                :label="trans('passport::app.templates.builder.code')"
+                                :placeholder="trans('passport::app.templates.builder.code')"
+                                @input="onSectionCodeInput($event.target.value)"
                             />
                         </x-admin::form.control-group>
                     </template>
@@ -422,10 +430,27 @@
                                 <x-admin::form.control-group.control
                                     type="text"
                                     name="draft_field_name"
+                                    v-code-generator="'draft_field_code_new'"
                                     ::key="'field-new-' + draftField.uid"
                                     :label="trans('passport::app.templates.builder.field-label')"
                                     :placeholder="trans('passport::app.templates.builder.field-label')"
                                     @input="onFieldLabelInput($event.target.value)"
+                                />
+                            </x-admin::form.control-group>
+
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label>
+                                    @lang('passport::app.templates.builder.code')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="draft_field_code_new"
+                                    v-code
+                                    ::key="'field-new-code-' + draftField.uid"
+                                    :label="trans('passport::app.templates.builder.code')"
+                                    :placeholder="trans('passport::app.templates.builder.code')"
+                                    @input="onFieldCodeInput($event.target.value)"
                                 />
                             </x-admin::form.control-group>
                         </template>
@@ -676,15 +701,10 @@
                     }));
                 },
 
-                /**
-                 * Sources are searched server-side and scoped to the bound families,
-                 * so the page never embeds the attribute table.
-                 */
                 attributeQueryParams() {
                     return { inFamilies: this.familyIds };
                 },
 
-                /** The async select builds its params once, so it remounts when the families change. */
                 attributeSelectKey() {
                     return 'attribute-select-' + this.familyIds.join('-');
                 },
@@ -748,7 +768,6 @@
                     return field.attribute_label || this.lang.noAttribute;
                 },
 
-                /** Admin selects emit the chosen option as JSON; only its id is persisted. */
                 optionId(event) {
                     if (! event) {
                         return '';
@@ -871,30 +890,30 @@
 
                 onSectionNameInput(name) {
                     this.draftSection.locales[this.currentLocale].name = name;
+                },
 
-                    this.suggestCode(this.draftSection, name);
+                onSectionCodeInput(code) {
+                    this.draftSection.code = code;
                 },
 
                 onFieldLabelInput(label) {
                     this.draftField.locales[this.currentLocale].label = label;
+                },
 
-                    this.suggestCode(this.draftField, label);
+                onFieldCodeInput(code) {
+                    this.draftField.code = code;
                 },
 
                 onSectionNameChange(values) {
                     Object.entries(values).forEach(([code, name]) => {
                         this.draftSection.locales[code].name = name;
                     });
-
-                    this.suggestCode(this.draftSection, values[this.currentLocale]);
                 },
 
                 onFieldLabelChange(values) {
                     Object.entries(values).forEach(([code, label]) => {
                         this.draftField.locales[code].label = label;
                     });
-
-                    this.suggestCode(this.draftField, values[this.currentLocale]);
                 },
 
                 onFieldFixedChange(values) {
@@ -903,7 +922,6 @@
                     });
                 },
 
-                /** A label is optional, so an unnamed row still needs a unique code. */
                 generatedCode(prefix, rows) {
                     const taken = rows.map((row) => row.code);
 
@@ -916,21 +934,6 @@
                     return `${prefix}_${index}`;
                 },
 
-                /** A saved row keeps its code: the code identifies the row in published payloads. */
-                suggestCode(draft, label) {
-                    if (draft.isNew) {
-                        draft.code = this.slugify(label);
-                    }
-                },
-
-                slugify(value) {
-                    return (value ?? '')
-                        .toString()
-                        .trim()
-                        .toLowerCase()
-                        .replace(/[^a-z0-9]+/g, '_')
-                        .replace(/^_+|_+$/g, '');
-                },
             },
         });
     </script>

@@ -16,8 +16,6 @@
             :title="trans('passport::app.templates.edit.title')"
             :back-url="route('admin.catalog.passports.templates.index')"
             :back-label="trans('passport::app.templates.edit.back-btn')"
-            :save-label="trans('passport::app.templates.edit.save-btn')"
-            form="passport-template-edit-form"
             :sticky="false"
         />
     </x-slot>

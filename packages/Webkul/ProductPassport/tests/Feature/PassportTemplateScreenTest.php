@@ -83,7 +83,6 @@ it('renders every translatable field with a single values binding', function ():
     expect($matches[0])->not->toBeEmpty();
 
     foreach ($matches[0] as $tag) {
-        // A duplicate attribute is a fatal Vue template compile error, not a warning.
         expect(preg_match_all('/\s:values=/', $tag))->toBe(1);
     }
 });

@@ -6,11 +6,6 @@
     'label'         => '',
     'placeholder'   => '',
     'currentLocale' => null,
-    /**
-     * Set false when the field edits a draft (a repeater row in a modal) rather
-     * than the form itself: the hidden per-locale inputs are skipped and every
-     * edit is emitted as `update:values` for the caller to store instead.
-     */
     'submit' => true,
 ])
 
@@ -24,11 +19,6 @@
         $locale->code => $values[$locale->code] ?? '',
     ]);
 
-    /**
-     * A caller may bind the values reactively (`::values="draft"`). That binding
-     * replaces the rendered one instead of being appended, which would leave the
-     * tag with two `:values` attributes and fail Vue's template compiler.
-     */
     $valuesExpression = $attributes->get(':values') ?: $localeValues->toJson();
 
     $attributes = $attributes->except([':values']);

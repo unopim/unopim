@@ -1,10 +1,3 @@
-{{--
-    Create modal for passport templates, rendered on the index page.
-
-    It collects only the requested-locale `name` and the `code` (auto-generated
-    from the name, still editable), because families, sections and fields are
-    configured in the editor the store() redirect lands on.
---}}
 @php
     $currentLocaleCode = core()->getRequestedLocaleCode();
 @endphp

@@ -66,7 +66,26 @@ class PassportTemplateRepository extends Repository
 
         unset($data['families'], $data['sections'], $data['fields']);
 
-        return [$data, $families, $sections, $fields];
+        return [$this->translatableOf($data), $families, $sections, $fields];
+    }
+
+    /**
+     * Locale payloads the merchant never filled arrive as nulls (Laravel converts
+     * the empty inputs), and a translation row cannot hold one. Dropping them
+     * keeps the untranslated locales without a row, so lookups fall back.
+     *
+     * @param  array<string, mixed>  $row
+     * @return array<string, mixed>
+     */
+    private function translatableOf(array $row): array
+    {
+        return array_filter($row, function ($value, $key): bool {
+            if (! is_array($value) || is_numeric($key)) {
+                return ! is_array($value);
+            }
+
+            return array_filter($value, fn ($translated): bool => trim((string) $translated) !== '') !== [];
+        }, ARRAY_FILTER_USE_BOTH);
     }
 
     /**
@@ -167,6 +186,8 @@ class PassportTemplateRepository extends Repository
      */
     private function translationsOf(array $row): array
     {
-        return array_filter($row, fn ($value, $key): bool => is_array($value) && ! is_numeric($key), ARRAY_FILTER_USE_BOTH);
+        $locales = array_filter($row, fn ($value, $key): bool => is_array($value) && ! is_numeric($key), ARRAY_FILTER_USE_BOTH);
+
+        return $this->translatableOf($locales);
     }
 }

@@ -81,6 +81,7 @@ class PassportTemplateRequest extends FormRequest
         $this->merge([
             'fields'   => $fields,
             'sections' => $sections,
+            'families' => $this->familyIds(),
         ]);
     }
 
@@ -198,6 +199,26 @@ class PassportTemplateRequest extends FormRequest
                 'template' => $row->template?->name ?? $row->template?->code ?? '',
             ]));
         }
+    }
+
+    /**
+     * The admin multiselect posts its selection as one comma separated value, so
+     * both that shape and a plain array of ids are accepted.
+     *
+     * @return list<int>
+     */
+    private function familyIds(): array
+    {
+        $families = $this->input('families', []);
+
+        if (is_string($families)) {
+            $families = explode(',', $families);
+        }
+
+        return array_values(array_filter(array_map(
+            fn ($id): int => (int) trim((string) $id),
+            (array) $families,
+        )));
     }
 
     private function templateId(): ?int
