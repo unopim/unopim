@@ -2075,7 +2075,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Microsoft Entra ID में एक ऐप पंजीकृत करें और उसके क्रेडेंशियल यहाँ पेस्ट करें। पर्यावरण मानों पर वापस जाने के लिए इसे खाली छोड़ें। रीडायरेक्ट URI: /admin/microsoft/callback.',
+                        'info'          => 'Microsoft Entra ID में एक ऐप पंजीकृत करें और उसके क्रेडेंशियल यहाँ पेस्ट करें। पर्यावरण मानों पर वापस जाने के लिए इसे खाली छोड़ें। रीडायरेक्ट URI: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO सेटिंग्स',
                         'enabled'       => 'Microsoft SSO सक्षम करें',
                         'tenant'        => 'Tenant ID',

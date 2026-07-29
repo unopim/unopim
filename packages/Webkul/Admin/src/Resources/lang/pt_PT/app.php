@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registe uma aplicação no Microsoft Entra ID e cole as respetivas credenciais aqui. Deixe em branco para recorrer aos valores do ambiente. URI de redirecionamento: /admin/microsoft/callback.',
+                        'info'          => 'Registe uma aplicação no Microsoft Entra ID e cole as respetivas credenciais aqui. Deixe em branco para recorrer aos valores do ambiente. URI de redirecionamento: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Definições do Microsoft SSO',
                         'enabled'       => 'Ativar Microsoft SSO',
                         'tenant'        => 'Tenant ID',

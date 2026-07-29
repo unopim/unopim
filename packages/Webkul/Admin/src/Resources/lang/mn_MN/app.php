@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Microsoft Entra ID-д апп бүртгүүлж, түүний нэвтрэх мэдээллийг энд буулгана уу. Орчны утгыг ашиглахын тулд хоосон орхино уу. Чиглүүлэх URI: /admin/microsoft/callback.',
+                        'info'          => 'Microsoft Entra ID-д апп бүртгүүлж, түүний нэвтрэх мэдээллийг энд буулгана уу. Орчны утгыг ашиглахын тулд хоосон орхино уу. Чиглүүлэх URI: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO тохиргоо',
                         'enabled'       => 'Microsoft SSO идэвхжүүлэх',
                         'tenant'        => 'Tenant ID',

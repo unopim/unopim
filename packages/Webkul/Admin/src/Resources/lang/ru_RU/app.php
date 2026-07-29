@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Зарегистрируйте приложение в Microsoft Entra ID и вставьте его учётные данные здесь. Оставьте пустым, чтобы использовать значения окружения. URI перенаправления: /admin/microsoft/callback.',
+                        'info'          => 'Зарегистрируйте приложение в Microsoft Entra ID и вставьте его учётные данные здесь. Оставьте пустым, чтобы использовать значения окружения. URI перенаправления: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Настройки Microsoft SSO',
                         'enabled'       => 'Включить Microsoft SSO',
                         'tenant'        => 'Tenant ID',

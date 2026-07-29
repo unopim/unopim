@@ -2075,7 +2075,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'سجّل تطبيقًا في Microsoft Entra ID والصق بيانات اعتماده هنا. اتركه فارغًا للرجوع إلى قيم البيئة. عنوان إعادة التوجيه: /admin/microsoft/callback.',
+                        'info'          => 'سجّل تطبيقًا في Microsoft Entra ID والصق بيانات اعتماده هنا. اتركه فارغًا للرجوع إلى قيم البيئة. عنوان إعادة التوجيه: /admin/login/sso/microsoft/callback.',
                         'title'         => 'إعدادات Microsoft SSO',
                         'enabled'       => 'تفعيل Microsoft SSO',
                         'tenant'        => 'Tenant ID',

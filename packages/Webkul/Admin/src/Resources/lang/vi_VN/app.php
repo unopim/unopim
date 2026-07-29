@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Đăng ký một ứng dụng trong Microsoft Entra ID và dán thông tin xác thực của ứng dụng vào đây. Để trống để sử dụng các giá trị môi trường. URI chuyển hướng: /admin/microsoft/callback.',
+                        'info'          => 'Đăng ký một ứng dụng trong Microsoft Entra ID và dán thông tin xác thực của ứng dụng vào đây. Để trống để sử dụng các giá trị môi trường. URI chuyển hướng: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Cài đặt Microsoft SSO',
                         'enabled'       => 'Bật Microsoft SSO',
                         'tenant'        => 'Tenant ID',

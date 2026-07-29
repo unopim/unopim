@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => '在 Microsoft Entra ID 中注册应用并将其凭据粘贴到此处。留空则回退到环境变量值。重定向 URI：/admin/microsoft/callback。',
+                        'info'          => '在 Microsoft Entra ID 中注册应用并将其凭据粘贴到此处。留空则回退到环境变量值。重定向 URI：/admin/login/sso/microsoft/callback。',
                         'title'         => 'Microsoft SSO 设置',
                         'enabled'       => '启用 Microsoft SSO',
                         'tenant'        => 'Tenant ID',

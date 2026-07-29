@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Zarejestruj aplikację w Microsoft Entra ID i wklej jej poświadczenia tutaj. Pozostaw puste, aby użyć wartości środowiskowych. Identyfikator URI przekierowania: /admin/microsoft/callback.',
+                        'info'          => 'Zarejestruj aplikację w Microsoft Entra ID i wklej jej poświadczenia tutaj. Pozostaw puste, aby użyć wartości środowiskowych. Identyfikator URI przekierowania: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Ustawienia Microsoft SSO',
                         'enabled'       => 'Włącz Microsoft SSO',
                         'tenant'        => 'Tenant ID',

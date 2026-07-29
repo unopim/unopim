@@ -2075,7 +2075,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Rekisteröi sovellus Microsoft Entra ID:ssä ja liitä sen tunnistetiedot tähän. Jätä tyhjäksi käyttääksesi ympäristön arvoja. Uudelleenohjaus-URI: /admin/microsoft/callback.',
+                        'info'          => 'Rekisteröi sovellus Microsoft Entra ID:ssä ja liitä sen tunnistetiedot tähän. Jätä tyhjäksi käyttääksesi ympäristön arvoja. Uudelleenohjaus-URI: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO -asetukset',
                         'enabled'       => 'Ota Microsoft SSO käyttöön',
                         'tenant'        => 'Tenant ID',

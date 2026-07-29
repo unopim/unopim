@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Microsoft Entra ID에서 앱을 등록하고 자격 증명을 여기에 붙여넣으세요. 환경 값을 사용하려면 비워 두세요. 리디렉션 URI: /admin/microsoft/callback.',
+                        'info'          => 'Microsoft Entra ID에서 앱을 등록하고 자격 증명을 여기에 붙여넣으세요. 환경 값을 사용하려면 비워 두세요. 리디렉션 URI: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO 설정',
                         'enabled'       => 'Microsoft SSO 사용',
                         'tenant'        => 'Tenant ID',

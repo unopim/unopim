@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registrer en app i Microsoft Entra ID og lim inn legitimasjonen her. La feltet stå tomt for å falle tilbake til miljøverdier. Omdirigerings-URI: /admin/microsoft/callback.',
+                        'info'          => 'Registrer en app i Microsoft Entra ID og lim inn legitimasjonen her. La feltet stå tomt for å falle tilbake til miljøverdier. Omdirigerings-URI: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO-innstillinger',
                         'enabled'       => 'Aktiver Microsoft SSO',
                         'tenant'        => 'Tenant ID',

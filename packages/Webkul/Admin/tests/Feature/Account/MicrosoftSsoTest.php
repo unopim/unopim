@@ -28,10 +28,11 @@ it('logs in an existing admin via microsoft sso using email match', function () 
         ], 200),
     ]);
 
-    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
-        ->get(route('admin.session.microsoft.callback', [
-            'state' => 'valid-state',
-            'code'  => 'auth-code',
+    $response = $this->withSession(['sso_state' => ['microsoft' => 'valid-state']])
+        ->get(route('admin.session.sso.callback', [
+            'provider' => 'microsoft',
+            'state'    => 'valid-state',
+            'code'     => 'auth-code',
         ]));
 
     $response->assertRedirect(route('admin.dashboard.index'));
@@ -54,10 +55,11 @@ it('does not auto-create user when microsoft sso email is unknown', function () 
         ], 200),
     ]);
 
-    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
-        ->get(route('admin.session.microsoft.callback', [
-            'state' => 'valid-state',
-            'code'  => 'auth-code',
+    $response = $this->withSession(['sso_state' => ['microsoft' => 'valid-state']])
+        ->get(route('admin.session.sso.callback', [
+            'provider' => 'microsoft',
+            'state'    => 'valid-state',
+            'code'     => 'auth-code',
         ]));
 
     $response->assertRedirect(route('admin.session.create'));
@@ -112,10 +114,11 @@ it('does not allow inactive matched admin via microsoft sso', function () {
         ], 200),
     ]);
 
-    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
-        ->get(route('admin.session.microsoft.callback', [
-            'state' => 'valid-state',
-            'code'  => 'auth-code',
+    $response = $this->withSession(['sso_state' => ['microsoft' => 'valid-state']])
+        ->get(route('admin.session.sso.callback', [
+            'provider' => 'microsoft',
+            'state'    => 'valid-state',
+            'code'     => 'auth-code',
         ]));
 
     $response->assertRedirect(route('admin.session.create'));
@@ -147,10 +150,11 @@ it('matches microsoft sso email in a case-insensitive way', function () {
         ], 200),
     ]);
 
-    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
-        ->get(route('admin.session.microsoft.callback', [
-            'state' => 'valid-state',
-            'code'  => 'auth-code',
+    $response = $this->withSession(['sso_state' => ['microsoft' => 'valid-state']])
+        ->get(route('admin.session.sso.callback', [
+            'provider' => 'microsoft',
+            'state'    => 'valid-state',
+            'code'     => 'auth-code',
         ]));
 
     $response->assertRedirect(route('admin.dashboard.index'));
@@ -179,10 +183,11 @@ it('falls back to userPrincipalName when mail is missing', function () {
         ], 200),
     ]);
 
-    $response = $this->withSession(['microsoft_sso_state' => 'valid-state'])
-        ->get(route('admin.session.microsoft.callback', [
-            'state' => 'valid-state',
-            'code'  => 'auth-code',
+    $response = $this->withSession(['sso_state' => ['microsoft' => 'valid-state']])
+        ->get(route('admin.session.sso.callback', [
+            'provider' => 'microsoft',
+            'state'    => 'valid-state',
+            'code'     => 'auth-code',
         ]));
 
     $response->assertRedirect(route('admin.dashboard.index'));

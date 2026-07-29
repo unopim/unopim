@@ -2075,7 +2075,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registrieren Sie eine App in Microsoft Entra ID und fügen Sie deren Anmeldedaten hier ein. Leer lassen, um auf die Umgebungswerte zurückzugreifen. Weiterleitungs-URI: /admin/microsoft/callback.',
+                        'info'          => 'Registrieren Sie eine App in Microsoft Entra ID und fügen Sie deren Anmeldedaten hier ein. Leer lassen, um auf die Umgebungswerte zurückzugreifen. Weiterleitungs-URI: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO-Einstellungen',
                         'enabled'       => 'Microsoft SSO aktivieren',
                         'tenant'        => 'Tenant ID',

@@ -41,7 +41,7 @@ it('hides the Microsoft SSO option when SSO is not configured', function () {
 
     $this->get(route('admin.session.create'))
         ->assertOk()
-        ->assertDontSee(route('admin.session.microsoft.redirect'));
+        ->assertDontSee(route('admin.session.sso.redirect', ['provider' => 'microsoft']));
 });
 
 it('shows the Microsoft SSO option when SSO is configured', function () {
@@ -52,7 +52,7 @@ it('shows the Microsoft SSO option when SSO is configured', function () {
 
     $this->get(route('admin.session.create'))
         ->assertOk()
-        ->assertSee(route('admin.session.microsoft.redirect'), false);
+        ->assertSee(route('admin.session.sso.redirect', ['provider' => 'microsoft']), false);
 });
 
 it('keeps the admin logged in across the remember cookie when remember is checked', function () {

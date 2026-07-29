@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Microsoft Entra ID\'de bir uygulama kaydedin ve kimlik bilgilerini buraya yapıştırın. Ortam değerlerine geri dönmek için boş bırakın. Yönlendirme URI\'si: /admin/microsoft/callback.',
+                        'info'          => 'Microsoft Entra ID\'de bir uygulama kaydedin ve kimlik bilgilerini buraya yapıştırın. Ortam değerlerine geri dönmek için boş bırakın. Yönlendirme URI\'si: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO Ayarları',
                         'enabled'       => 'Microsoft SSO\'yu etkinleştir',
                         'tenant'        => 'Tenant ID',

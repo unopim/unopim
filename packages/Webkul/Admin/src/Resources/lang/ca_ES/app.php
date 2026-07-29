@@ -2075,7 +2075,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registra una aplicació a Microsoft Entra ID i enganxa les seves credencials aquí. Deixa-ho en blanc per recórrer als valors de l\'entorn. URI de redirecció: /admin/microsoft/callback.',
+                        'info'          => 'Registra una aplicació a Microsoft Entra ID i enganxa les seves credencials aquí. Deixa-ho en blanc per recórrer als valors de l\'entorn. URI de redirecció: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Configuració de Microsoft SSO',
                         'enabled'       => 'Activa Microsoft SSO',
                         'tenant'        => 'Tenant ID',

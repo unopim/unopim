@@ -2077,7 +2077,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Зареєструйте застосунок у Microsoft Entra ID і вставте його облікові дані тут. Залиште порожнім, щоб використовувати значення середовища. URI перенаправлення: /admin/microsoft/callback.',
+                        'info'          => 'Зареєструйте застосунок у Microsoft Entra ID і вставте його облікові дані тут. Залиште порожнім, щоб використовувати значення середовища. URI перенаправлення: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Налаштування Microsoft SSO',
                         'enabled'       => 'Увімкнути Microsoft SSO',
                         'tenant'        => 'Tenant ID',

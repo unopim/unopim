@@ -2075,7 +2075,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Register an app in Microsoft Entra ID and paste its credentials here. Leave blank to fall back to environment values. Redirect URI: /admin/microsoft/callback.',
+                        'info'          => 'Register an app in Microsoft Entra ID and paste its credentials here. Leave blank to fall back to environment values. Redirect URI: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Microsoft SSO Settings',
                         'enabled'       => 'Enable Microsoft SSO',
                         'tenant'        => 'Tenant ID',

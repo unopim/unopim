@@ -2075,7 +2075,7 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registrirajte aplikaciju u Microsoft Entra ID-u i ovdje zalijepite njezine vjerodajnice. Ostavite prazno za povratak na vrijednosti okruženja. URI preusmjeravanja: /admin/microsoft/callback.',
+                        'info'          => 'Registrirajte aplikaciju u Microsoft Entra ID-u i ovdje zalijepite njezine vjerodajnice. Ostavite prazno za povratak na vrijednosti okruženja. URI preusmjeravanja: /admin/login/sso/microsoft/callback.',
                         'title'         => 'Postavke Microsoft SSO-a',
                         'enabled'       => 'Omogući Microsoft SSO',
                         'tenant'        => 'Tenant ID',
