@@ -421,6 +421,7 @@
                 :preserve-search="false"
                 :searchable="true"
                 :placeholder="placeholder"
+                open-direction="below"
                 :close-on-select="true"
                 :clear-on-select="true"
                 :show-no-results="true"
