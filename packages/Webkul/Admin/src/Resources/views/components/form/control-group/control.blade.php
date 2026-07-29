@@ -1194,6 +1194,7 @@
                 :searchable="true"
                 :placeholder="placeholder"
                 :loading="isLoading ?? false"
+                open-direction="below"
                 :max-height="600"
                 :internal-search="false"
                 :close-on-select="onselect"
