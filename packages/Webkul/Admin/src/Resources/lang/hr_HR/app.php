@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Promijenite lozinku',
             'confirm-password'    => 'Potvrdite lozinku',
             'current-password'    => 'Trenutna lozinka',
+            'current-password-info'    => 'Potvrdite ovu promjenu lozinkom računa s kojim ste prijavljeni.',
             'email'               => 'E-pošta',
             'general'             => 'Opće',
             'invalid-password'    => 'Trenutna lozinka je neispravna.',

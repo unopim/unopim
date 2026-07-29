@@ -62,6 +62,7 @@ class UserForm extends FormRequest
                 Rule::unique('admins', 'email')->ignore($id, 'id'),
             ],
             'password'              => sprintf('%s|min:%s', $id ? 'nullable' : 'required', $passwordMin),
+            'current_password'      => $id ? ['required', 'current_password:admin'] : ['nullable'],
             'password_confirmation' => 'nullable|required_with:password|same:password',
             'status'                => 'sometimes',
             'ui_locale_id'          => 'required',

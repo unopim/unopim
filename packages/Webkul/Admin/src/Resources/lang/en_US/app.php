@@ -78,6 +78,7 @@ return [
             'change-password'     => 'Change Password',
             'confirm-password'    => 'Confirm Password',
             'current-password'    => 'Current Password',
+            'current-password-info'    => 'Confirm this change with the password of the account you are signed in with.',
             'default-channel'     => 'Default Channel',
             'email'               => 'Email',
             'general'             => 'General',

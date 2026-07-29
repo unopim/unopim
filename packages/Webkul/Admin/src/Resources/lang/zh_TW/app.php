@@ -72,6 +72,7 @@ return [
             'change-password'     => '更改密碼',
             'confirm-password'    => '確認密碼',
             'current-password'    => '當前密碼',
+            'current-password-info'    => '請輸入目前登入帳號的密碼以確認這項變更。',
             'email'               => '電子郵件',
             'general'             => '常規',
             'invalid-password'    => '您輸入的當前密碼不正確。',

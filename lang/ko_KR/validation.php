@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute 필드는 true 또는 false 여야 합니다.',
+    'current_password'      => '비밀번호가 올바르지 않습니다.',
     'confirmed'      => ':attribute 확인이 일치하지 않습니다.',
     'date'           => ':attribute 는(은) 유효한 날짜가 아닙니다.',
     'date_format'    => ':attribute 는(은) :format 형식과 일치하지 않습니다.',

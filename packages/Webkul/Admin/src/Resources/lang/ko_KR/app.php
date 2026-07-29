@@ -72,6 +72,7 @@ return [
             'change-password'     => '비밀번호 변경',
             'confirm-password'    => '비밀번호 확인',
             'current-password'    => '현재 비밀번호',
+            'current-password-info'    => '로그인한 계정의 비밀번호를 입력해 이 변경을 확인하세요.',
             'email'               => '이메일',
             'general'             => '일반',
             'invalid-password'    => '입력하신 현재 비밀번호가 잘못되었습니다.',

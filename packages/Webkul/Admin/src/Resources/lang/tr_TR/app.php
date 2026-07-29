@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Şifreyi Değiştir',
             'confirm-password'    => 'Şifreyi Onayla',
             'current-password'    => 'Mevcut Şifre',
+            'current-password-info'    => 'Bu değişikliği oturum açtığınız hesabın parolasıyla onaylayın.',
             'email'               => 'E-posta',
             'general'             => 'Genel',
             'invalid-password'    => 'Girdiğiniz mevcut şifre hatalı.',

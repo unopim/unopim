@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Endre passord',
             'confirm-password'    => 'Bekreft passord',
             'current-password'    => 'Nåværende passord',
+            'current-password-info'    => 'Bekreft denne endringen med passordet til kontoen du er logget inn med.',
             'email'               => 'E-post',
             'general'             => 'Generelt',
             'invalid-password'    => 'Nåværende passord er feil.',

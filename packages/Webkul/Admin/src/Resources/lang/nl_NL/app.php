@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Wachtwoord wijzigen',
             'confirm-password'    => 'Bevestig wachtwoord',
             'current-password'    => 'Huidig wachtwoord',
+            'current-password-info'    => 'Bevestig deze wijziging met het wachtwoord van het account waarmee u bent aangemeld.',
             'email'               => 'E-mailadres',
             'general'             => 'Algemeen',
             'invalid-password'    => 'Het huidige wachtwoord dat je hebt ingevoerd, is onjuist.',

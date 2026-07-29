@@ -78,14 +78,15 @@ it('should update the user', function () {
     ]);
 
     $response = $this->put(route('admin.settings.users.update'), [
-        'id'           => $admin->id,
-        'email'        => 'update@example.com',
-        'name'         => 'testadmin',
-        'status'       => 1,
-        'role_id'      => 1,
-        'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 2,
-        'password'     => '',
+        'id'               => $admin->id,
+        'email'            => 'update@example.com',
+        'name'             => 'testadmin',
+        'status'           => 1,
+        'role_id'          => 1,
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => 2,
+        'password'         => '',
+        'current_password' => 'password',
     ]);
 
     $response->assertStatus(200);
@@ -108,15 +109,16 @@ it('should update the user with image', function () {
     Storage::fake();
 
     $response = $this->put(route('admin.settings.users.update'), [
-        'id'           => $admin->id,
-        'email'        => 'update@example.com',
-        'name'         => 'testadmin',
-        'status'       => 1,
-        'role_id'      => 1,
-        'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 2,
-        'password'     => '',
-        'image'        => [
+        'id'               => $admin->id,
+        'email'            => 'update@example.com',
+        'name'             => 'testadmin',
+        'status'           => 1,
+        'role_id'          => 1,
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => 2,
+        'password'         => '',
+        'current_password' => 'password',
+        'image'            => [
             UploadedFile::fake()->image('avatar.jpg'),
         ],
     ]);
@@ -140,15 +142,16 @@ it('should not remove image when user is updated', function () {
     ]);
 
     $response = $this->put(route('admin.settings.users.update'), [
-        'id'           => $admin->id,
-        'email'        => 'update@example.com',
-        'name'         => 'testadmin',
-        'status'       => 1,
-        'role_id'      => 1,
-        'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 2,
-        'password'     => '',
-        'image'        => 'user/2/image.jpg',
+        'id'               => $admin->id,
+        'email'            => 'update@example.com',
+        'name'             => 'testadmin',
+        'status'           => 1,
+        'role_id'          => 1,
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => 2,
+        'password'         => '',
+        'current_password' => 'password',
+        'image'            => 'user/2/image.jpg',
     ]);
 
     $response->assertStatus(200);
@@ -171,14 +174,15 @@ it('should remove image if image is removed', function () {
     ]);
 
     $response = $this->put(route('admin.settings.users.update'), [
-        'id'           => $admin->id,
-        'email'        => 'update@example.com',
-        'name'         => 'testadmin',
-        'status'       => 1,
-        'role_id'      => 1,
-        'timezone'     => 'Asia/Kolkata',
-        'ui_locale_id' => 2,
-        'password'     => '',
+        'id'               => $admin->id,
+        'email'            => 'update@example.com',
+        'name'             => 'testadmin',
+        'status'           => 1,
+        'role_id'          => 1,
+        'timezone'         => 'Asia/Kolkata',
+        'ui_locale_id'     => 2,
+        'password'         => '',
+        'current_password' => 'password',
     ]);
 
     $response->assertStatus(200);

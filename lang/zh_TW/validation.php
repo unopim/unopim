@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute 必須是 true 或 false。',
+    'current_password'      => '密碼不正確。',
     'confirmed'      => ':attribute 確認不相符。',
     'date'           => ':attribute 不是有效的日期。',
     'date_format'    => ':attribute 不符合格式 :format。',

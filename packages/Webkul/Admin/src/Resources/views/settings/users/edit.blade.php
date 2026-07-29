@@ -12,8 +12,6 @@
             :title="$pageTitle"
             :back-url="$backUrl"
             :back-label="$backLabel"
-            :save-label="$saveLabel"
-            :form="$formId"
             :sticky="false"
         />
     </x-slot>
@@ -74,16 +72,15 @@
                                 :checked="(bool) old('use_gravatar', $user->use_gravatar)"
                             />
 
-                            <label class="text-sm text-gray-600 dark:text-gray-300">
+                            <label
+                                class="text-sm text-gray-600 dark:text-gray-300 cursor-help"
+                                title="{{ trans('admin::app.account.edit.use-gravatar-info', ['link' => 'gravatar.com']) }}"
+                            >
                                 @lang('admin::app.account.edit.use-gravatar')
+
+                                <span class="icon-information text-base align-middle cursor-help"></span>
                             </label>
                         </div>
-
-                        <p class="mt-1.5 text-xs text-gray-500 dark:text-gray-400">
-                            {!! trans('admin::app.account.edit.use-gravatar-info', [
-                                'link' => '<a href="https://gravatar.com/" target="_blank" rel="noopener noreferrer" class="text-blue-600 dark:text-blue-400 hover:underline">gravatar.com</a>',
-                            ]) !!}
-                        </p>
 
                         <x-admin::form.control-group.error control-name="image" />
                     </x-admin::form.control-group>
@@ -123,130 +120,10 @@
                         <x-admin::form.control-group.error control-name="email" />
                     </x-admin::form.control-group>
                 </div>
-            </div>
-
-            <div class="flex flex-col gap-2 w-[360px] max-w-full max-xl:w-full">
-                <x-admin::accordion>
-                    <x-slot:header>
-                        <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('admin::app.account.edit.change-password')
-                        </p>
-                    </x-slot>
-
-                    <x-slot:content>
-                        @if ($requiresCurrentPassword)
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.account.edit.current-password')
-                                </x-admin::form.control-group.label>
-
-                                <x-admin::form.control-group.control
-                                    type="password"
-                                    name="current_password"
-                                    rules="required"
-                                    :label="trans('admin::app.account.edit.current-password')"
-                                    :placeholder="trans('admin::app.account.edit.current-password')"
-                                    autocomplete="current-password"
-                                />
-
-                                <x-admin::form.control-group.error control-name="current_password" />
-                            </x-admin::form.control-group>
-                        @endif
-
-                        <x-admin::form.control-group>
-                            <x-admin::form.control-group.label>
-                                @lang('admin::app.account.edit.password')
-                            </x-admin::form.control-group.label>
-
-                            <x-admin::form.control-group.control
-                                type="password"
-                                name="password"
-                                rules="min:{{ config('admin.auth.password_min') }}"
-                                :label="trans('admin::app.account.edit.password')"
-                                :placeholder="trans('admin::app.account.edit.password')"
-                                ref="password"
-                                autocomplete="new-password"
-                            />
-
-                            <x-admin::form.control-group.error control-name="password" />
-                        </x-admin::form.control-group>
-
-                        <x-admin::form.control-group class="!mb-0">
-                            <x-admin::form.control-group.label>
-                                @lang('admin::app.account.edit.confirm-password')
-                            </x-admin::form.control-group.label>
-
-                            <x-admin::form.control-group.control
-                                type="password"
-                                name="password_confirmation"
-                                rules="confirmed:@password"
-                                :label="trans('admin::app.account.edit.confirm-password')"
-                                :placeholder="trans('admin::app.account.edit.confirm-password')"
-                                autocomplete="new-password"
-                            />
-
-                            <x-admin::form.control-group.error control-name="password_confirmation" />
-                        </x-admin::form.control-group>
-                    </x-slot>
-                </x-admin::accordion>
-
-                @if ($canManage)
-                    <x-admin::accordion>
-                        <x-slot:header>
-                            <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                @lang('admin::app.settings.users.edit.role')
-                            </p>
-                        </x-slot>
-
-                        <x-slot:content>
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.settings.users.edit.role')
-                                </x-admin::form.control-group.label>
-
-                                <x-admin::form.control-group.control
-                                    type="select"
-                                    name="role_id"
-                                    rules="required"
-                                    :value="old('role_id') ?: $user->role_id"
-                                    :label="trans('admin::app.settings.users.edit.role')"
-                                    :placeholder="trans('admin::app.settings.users.index.create.select')"
-                                    :options="$roles"
-                                    track-by="id"
-                                    label-by="name"
-                                />
-
-                                <x-admin::form.control-group.error control-name="role_id" />
-                            </x-admin::form.control-group>
-
-                            @if (! $isSelf)
-                                <x-admin::form.control-group class="!mb-0">
-                                    <x-admin::form.control-group.label>
-                                        @lang('admin::app.settings.users.edit.status')
-                                    </x-admin::form.control-group.label>
-
-                                    <input type="hidden" name="status" value="0" />
-
-                                    <x-admin::form.control-group.control
-                                        type="switch"
-                                        name="status"
-                                        value="1"
-                                        :label="trans('admin::app.settings.users.edit.status')"
-                                        :checked="(bool) old('status', $user->status)"
-                                    />
-
-                                    <x-admin::form.control-group.error control-name="status" />
-                                </x-admin::form.control-group>
-                            @else
-                                <input type="hidden" name="status" value="{{ (int) $user->status }}" />
-                            @endif
-                        </x-slot>
-                    </x-admin::accordion>
-                @endif
 
                 <x-admin::accordion>
                     <x-slot:header>
-                        <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
+                        <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
                             @lang('admin::app.account.edit.catalog-locale')
                         </p>
                     </x-slot>
@@ -336,6 +213,132 @@
                         </x-admin::form.control-group>
                     </x-slot>
                 </x-admin::accordion>
+            </div>
+
+            <div class="flex flex-col gap-2 w-[360px] max-w-full max-xl:w-full xl:sticky xl:top-4 xl:self-start">
+                <x-admin::accordion>
+                    <x-slot:header>
+                        <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
+                            @lang('admin::app.account.edit.change-password')
+                        </p>
+                    </x-slot>
+
+                    <x-slot:content>
+                        @if ($requiresCurrentPassword)
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label
+                                    class="required"
+                                    :title="trans('admin::app.account.edit.current-password-info')"
+                                >
+                                    @lang('admin::app.account.edit.current-password')
+
+                                    <span class="icon-information text-base align-middle cursor-help"></span>
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="password"
+                                    name="current_password"
+                                    rules="required"
+                                    :label="trans('admin::app.account.edit.current-password')"
+                                    :placeholder="trans('admin::app.account.edit.current-password')"
+                                    autocomplete="current-password"
+                                />
+
+                                <x-admin::form.control-group.error control-name="current_password" />
+                            </x-admin::form.control-group>
+                        @endif
+
+                        <x-admin::form.control-group>
+                            <x-admin::form.control-group.label>
+                                @lang('admin::app.account.edit.password')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="password"
+                                name="password"
+                                rules="min:{{ config('admin.auth.password_min') }}"
+                                :label="trans('admin::app.account.edit.password')"
+                                :placeholder="trans('admin::app.account.edit.password')"
+                                ref="password"
+                                autocomplete="new-password"
+                            />
+
+                            <x-admin::form.control-group.error control-name="password" />
+                        </x-admin::form.control-group>
+
+                        <x-admin::form.control-group class="!mb-0">
+                            <x-admin::form.control-group.label>
+                                @lang('admin::app.account.edit.confirm-password')
+                            </x-admin::form.control-group.label>
+
+                            <x-admin::form.control-group.control
+                                type="password"
+                                name="password_confirmation"
+                                rules="confirmed:@password"
+                                :label="trans('admin::app.account.edit.confirm-password')"
+                                :placeholder="trans('admin::app.account.edit.confirm-password')"
+                                autocomplete="new-password"
+                            />
+
+                            <x-admin::form.control-group.error control-name="password_confirmation" />
+                        </x-admin::form.control-group>
+                    </x-slot>
+                </x-admin::accordion>
+
+                @if ($canManage)
+                    <x-admin::accordion>
+                        <x-slot:header>
+                            <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
+                                @lang('admin::app.settings.users.edit.role')
+                            </p>
+                        </x-slot>
+
+                        <x-slot:content>
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.settings.users.edit.role')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="select"
+                                    name="role_id"
+                                    rules="required"
+                                    :value="old('role_id') ?: $user->role_id"
+                                    :label="trans('admin::app.settings.users.edit.role')"
+                                    :placeholder="trans('admin::app.settings.users.index.create.select')"
+                                    :options="$roles"
+                                    track-by="id"
+                                    label-by="name"
+                                />
+
+                                <x-admin::form.control-group.error control-name="role_id" />
+                            </x-admin::form.control-group>
+
+                            @if (! $isSelf)
+                                <x-admin::form.control-group class="!mb-0">
+                                    <x-admin::form.control-group.label>
+                                        @lang('admin::app.settings.users.edit.status')
+                                    </x-admin::form.control-group.label>
+
+                                    <input type="hidden" name="status" value="0" />
+
+                                    <x-admin::form.control-group.control
+                                        type="switch"
+                                        name="status"
+                                        value="1"
+                                        :label="trans('admin::app.settings.users.edit.status')"
+                                        :checked="(bool) old('status', $user->status)"
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="status" />
+                                </x-admin::form.control-group>
+                            @else
+                                <input type="hidden" name="status" value="{{ (int) $user->status }}" />
+                            @endif
+                        </x-slot>
+                    </x-admin::accordion>
+                @endif
+
             </div>
         </div>
     </x-admin::form>

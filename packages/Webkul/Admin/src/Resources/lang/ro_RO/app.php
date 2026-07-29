@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Schimbare parolă',
             'confirm-password'    => 'Confirmați parola',
             'current-password'    => 'Parola actuală',
+            'current-password-info'    => 'Confirmă această modificare cu parola contului cu care ești autentificat.',
             'email'               => 'E-mail',
             'general'             => 'General',
             'invalid-password'    => 'Parola curentă este greșită.',

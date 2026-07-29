@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Đổi mật khẩu',
             'confirm-password'    => 'Xác nhận mật khẩu',
             'current-password'    => 'Mật khẩu hiện tại',
+            'current-password-info'    => 'Xác nhận thay đổi này bằng mật khẩu của tài khoản bạn đang đăng nhập.',
             'email'               => 'Email',
             'general'             => 'Tổng quát',
             'invalid-password'    => 'Mật khẩu hiện tại bạn nhập không chính xác.',

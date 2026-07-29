@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Ganti kata sandi',
             'confirm-password'    => 'konfirmasi sandi',
             'current-password'    => 'kata sandi saat ini',
+            'current-password-info'    => 'Konfirmasi perubahan ini dengan kata sandi akun yang sedang Anda gunakan.',
             'email'               => 'Surel',
             'general'             => 'Umum',
             'invalid-password'    => 'Kata sandi saat ini yang Anda masukkan salah.',

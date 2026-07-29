@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Vaihda salasana',
             'confirm-password'    => 'Vahvista salasana',
             'current-password'    => 'Nykyinen salasana',
+            'current-password-info'    => 'Vahvista tämä muutos sen tilin salasanalla, jolla olet kirjautunut sisään.',
             'email'               => 'Sähköposti',
             'general'             => 'Yleinen',
             'invalid-password'    => 'Nykyinen salasana on virheellinen.',

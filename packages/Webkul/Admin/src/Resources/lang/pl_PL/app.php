@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Zmień hasło',
             'confirm-password'    => 'Potwierdź hasło',
             'current-password'    => 'Aktualne hasło',
+            'current-password-info'    => 'Potwierdź tę zmianę hasłem konta, na które jesteś zalogowany.',
             'email'               => 'E-mail',
             'general'             => 'Ogólne',
             'invalid-password'    => 'Wprowadzone aktualne hasło jest nieprawidłowe.',

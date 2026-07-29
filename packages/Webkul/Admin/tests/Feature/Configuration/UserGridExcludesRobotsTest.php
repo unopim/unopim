@@ -36,12 +36,13 @@ it('returns 404 when updating an API robot account', function () {
     $robot = Admin::factory()->create(['role_id' => $role->id, 'type' => 'api']);
 
     $this->put(route('admin.settings.users.update'), [
-        'id'           => $robot->id,
-        'name'         => 'Renamed Robot',
-        'email'        => $robot->email,
-        'role_id'      => $role->id,
-        'ui_locale_id' => $robot->ui_locale_id,
-        'timezone'     => 'UTC',
+        'id'               => $robot->id,
+        'name'             => 'Renamed Robot',
+        'email'            => $robot->email,
+        'role_id'          => $role->id,
+        'ui_locale_id'     => $robot->ui_locale_id,
+        'timezone'         => 'UTC',
+        'current_password' => 'password',
     ])->assertNotFound();
 });
 

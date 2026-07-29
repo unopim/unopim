@@ -72,6 +72,7 @@ return [
             'change-password'     => 'パスワードの変更',
             'confirm-password'    => 'パスワードの確認',
             'current-password'    => '現在のパスワード',
+            'current-password-info'    => 'ログイン中のアカウントのパスワードを入力して、この変更を確認してください。',
             'email'               => 'メール',
             'general'             => '全般',
             'invalid-password'    => '入力した現在のパスワードは正しくありません。',

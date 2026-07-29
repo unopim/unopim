@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute талбар нь үнэн эсвэл худал байх ёстой.',
+    'current_password'      => 'Нууц үг буруу байна.',
     'confirmed'      => ':attribute баталгаажуулалт таарахгүй байна.',
     'date'           => ':attribute нь хүчинтэй огноо биш байна.',
     'date_format'    => ':attribute нь :format форматтай таарахгүй байна.',

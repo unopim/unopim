@@ -72,6 +72,7 @@ return [
             'change-password'     => 'تغيير كلمة المرور',
             'confirm-password'    => 'تأكيد كلمة المرور',
             'current-password'    => 'كلمة السر الحالية',
+            'current-password-info'    => 'أكّد هذا التغيير بكلمة مرور الحساب الذي سجّلت الدخول به.',
             'email'               => 'بريد إلكتروني',
             'general'             => 'عام',
             'invalid-password'    => 'كلمة المرور الحالية التي أدخلتها غير صحيحة.',

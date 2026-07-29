@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Change Password',
             'confirm-password'    => 'Confirm Password',
             'current-password'    => 'Current Password',
+            'current-password-info'    => 'Confirm this change with the password of the account you are signed in with.',
             'email'               => 'Email',
             'general'             => 'General',
             'invalid-password'    => 'The current password you entered is incorrect.',

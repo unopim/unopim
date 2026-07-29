@@ -176,7 +176,7 @@ class UserController extends Controller
                 'roles'                   => $roles,
                 'canManage'               => true,
                 'isSelf'                  => $user->id === auth()->guard('admin')->id(),
-                'requiresCurrentPassword' => false,
+                'requiresCurrentPassword' => true,
                 'formId'                  => 'user-edit-form',
                 'formAction'              => route('admin.settings.users.update'),
                 'pageTitle'               => trans('admin::app.settings.users.edit.title'),
@@ -353,6 +353,8 @@ class UserController extends Controller
     private function prepareUserData(UserForm $request, $id)
     {
         $data = $request->validated();
+
+        unset($data['current_password']);
 
         $user = $this->adminRepository->find($id);
 

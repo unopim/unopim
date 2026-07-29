@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Baguhin ang Password',
             'confirm-password'    => 'Kumpirmahin ang Password',
             'current-password'    => 'Kasalukuyang Password',
+            'current-password-info'    => 'Kumpirmahin ang pagbabagong ito gamit ang password ng account na naka-sign in.',
             'email'               => 'Email',
             'general'             => 'Pangkalahatan',
             'invalid-password'    => 'Ang kasalukuyang password na iyong ipinasok ay mali.',

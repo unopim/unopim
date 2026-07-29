@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
@@ -39,9 +40,55 @@ it('renders the user edit page from the same view with the role controls', funct
     $response->assertStatus(200);
     $response->assertViewIs('admin::settings.users.edit');
     $response->assertViewHas('canManage', true);
-    $response->assertViewHas('requiresCurrentPassword', false);
+    $response->assertViewHas('requiresCurrentPassword', true);
     $response->assertSee('name="role_id"', false);
-    $response->assertDontSee('name="current_password"', false);
+    $response->assertSee('name="current_password"', false);
+});
+
+it('refuses a user update when the acting admin password is wrong', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+    $this->loginAsAdmin();
+
+    $target = Admin::factory()->create([
+        'name'    => 'Before Sudo',
+        'role_id' => Role::factory()->create(['permission_type' => 'all'])->id,
+    ]);
+
+    $this->put(route('admin.settings.users.update'), [
+        'id'               => $target->id,
+        'name'             => 'After Sudo',
+        'email'            => $target->email,
+        'role_id'          => $target->role_id,
+        'ui_locale_id'     => $target->ui_locale_id,
+        'timezone'         => 'Asia/Kolkata',
+        'password'         => '',
+        'current_password' => 'not-the-password',
+    ])->assertSessionHasErrors('current_password');
+
+    expect($target->fresh()->name)->toBe('Before Sudo');
+});
+
+it('accepts a user update when the acting admin password is right', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+    $this->loginAsAdmin();
+
+    $target = Admin::factory()->create([
+        'name'    => 'Before Sudo',
+        'role_id' => Role::factory()->create(['permission_type' => 'all'])->id,
+    ]);
+
+    $this->put(route('admin.settings.users.update'), [
+        'id'               => $target->id,
+        'name'             => 'After Sudo',
+        'email'            => $target->email,
+        'role_id'          => $target->role_id,
+        'ui_locale_id'     => $target->ui_locale_id,
+        'timezone'         => 'Asia/Kolkata',
+        'password'         => '',
+        'current_password' => 'password',
+    ]);
+
+    expect($target->fresh()->name)->toBe('After Sudo');
 });
 
 it('keeps the status switch off the user edit page when editing yourself', function () {

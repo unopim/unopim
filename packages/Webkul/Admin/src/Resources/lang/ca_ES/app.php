@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Canviar contrasenya',
             'confirm-password'    => 'Confirmar contrasenya',
             'current-password'    => 'Contrasenya actual',
+            'current-password-info'    => 'Confirma aquest canvi amb la contrasenya del compte amb què has iniciat la sessió.',
             'email'               => 'Correu electrònic',
             'general'             => 'General',
             'invalid-password'    => 'La contrasenya actual introduïda és incorrecta.',

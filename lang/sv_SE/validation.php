@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute måste vara sant eller falskt.',
+    'current_password'      => 'Lösenordet är felaktigt.',
     'confirmed'      => 'Bekräftelsen av :attribute stämmer inte.',
     'date'           => ':attribute är inte ett giltigt datum.',
     'date_format'    => ':attribute matchar inte formatet :format.',

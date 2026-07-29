@@ -31,6 +31,7 @@ return [
     ],
 
     'boolean'        => ':attribute precisa ser verdadeiro ou falso.',
+    'current_password'      => 'A senha está incorreta.',
     'confirmed'      => 'A confirmação de :attribute não confere.',
     'date'           => ':attribute não é uma data válida.',
     'date_format'    => ':attribute não corresponde ao formato :format.',

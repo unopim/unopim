@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Ändra lösenord',
             'confirm-password'    => 'Bekräfta lösenord',
             'current-password'    => 'Aktuellt lösenord',
+            'current-password-info'    => 'Bekräfta ändringen med lösenordet för kontot du är inloggad med.',
             'email'               => 'E-postadress',
             'general'             => 'Allmänt',
             'invalid-password'    => 'Det aktuella lösenordet är felaktigt.',

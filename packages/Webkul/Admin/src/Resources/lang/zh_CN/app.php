@@ -72,6 +72,7 @@ return [
             'change-password'     => '更改密码',
             'confirm-password'    => '确认密码',
             'current-password'    => '当前密码',
+            'current-password-info'    => '请输入当前登录账号的密码以确认此更改。',
             'email'               => '电子邮件',
             'general'             => '一般的',
             'invalid-password'    => '您输入的当前密码不正确。',

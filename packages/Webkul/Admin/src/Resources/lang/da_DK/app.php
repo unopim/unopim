@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Skift adgangskode',
             'confirm-password'    => 'Bekræft adgangskode',
             'current-password'    => 'Nuværende adgangskode',
+            'current-password-info'    => 'Bekræft denne ændring med adgangskoden til den konto, du er logget ind med.',
             'email'               => 'E-mail',
             'general'             => 'Generelt',
             'invalid-password'    => 'Den indtastede adgangskode er forkert.',

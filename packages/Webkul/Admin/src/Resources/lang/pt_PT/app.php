@@ -72,6 +72,7 @@ return [
             'change-password'     => 'Alterar palavra-passe',
             'confirm-password'    => 'Confirmar palavra-passe',
             'current-password'    => 'Palavra-passe atual',
+            'current-password-info'    => 'Confirme esta alteração com a palavra-passe da conta com que iniciou sessão.',
             'email'               => 'E-mail',
             'general'             => 'Geral',
             'invalid-password'    => 'A palavra-passe atual está incorreta.',
