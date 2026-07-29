@@ -74,6 +74,7 @@
                                         class="hidden peer"
                                         @checked(! $parentLabel)
                                         @change="
+                                            $refs.parentTree.clearSelection();
                                             $refs.parentPathLabel.textContent = $refs.rootLevelLabel.textContent.trim();
                                             $refs.parentPathLabel.title = $refs.rootLevelLabel.textContent.trim();
                                             $refs.parentDrawer.close();
@@ -88,6 +89,7 @@
                                 </label>
 
                                 <x-admin::tree.category.view
+                                    ref="parentTree"
                                     input-type="radio"
                                     name-field="parent_id"
                                     label-field="name"

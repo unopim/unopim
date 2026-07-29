@@ -27,6 +27,13 @@
             class="v-tree-container v-tree-item-wrapper"
             :class="fillHeight ? 'flex flex-col h-full min-h-0' : ''"
         >
+            <input
+                type="hidden"
+                v-if="inputType === 'radio'"
+                :name="nameField"
+                :value="formattedValues[0] ?? ''"
+            >
+
             <div :class="fillHeight ? 'shrink-0' : ''">
                 <a
                     class="flex items-center gap-1 mb-2 text-sm text-primary-600 cursor-pointer"
@@ -328,6 +335,10 @@
                     });
 
                     this.$emit('change-input', this.formattedValues);
+                },
+
+                clearSelection() {
+                    this.formattedValues = [];
                 },
 
                 registerNode(node) {
