@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'unauthorized' => 'Bu işlemi gerçekleştirme izniniz yok.',
-        'measurements' => 'Ölçümler',
+        'measurements' => 'Ölçüm',
         'families'     => 'Ölçüm Aileleri',
         'units'        => 'Ölçüm Birimleri',
     ],

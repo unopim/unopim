@@ -4,7 +4,7 @@ return [
 
     'acl' => [
         'unauthorized' => 'U heeft geen toestemming om deze actie uit te voeren.',
-        'measurements' => 'Metingen',
+        'measurements' => 'Meting',
         'families'     => 'Meetfamilies',
         'units'        => 'Meeteenheden',
     ],
