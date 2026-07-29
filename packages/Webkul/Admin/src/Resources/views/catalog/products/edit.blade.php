@@ -167,7 +167,11 @@
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
         @php
-            $variantHiddenCodes = $variantFieldLocks['hidden'] ?? [];
+            $variantAxisCodes = ($variantTree ?? null)
+                ? collect($variantTree['attributes'])->where('isAxis', true)->pluck('code')->all()
+                : [];
+
+            $variantHiddenCodes = array_merge($variantAxisCodes, ($variantFieldLocks['hidden'] ?? []));
         @endphp
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
@@ -264,12 +268,10 @@
     {!! view_render_event('unopim.admin.catalog.product.edit.after', ['product' => $product]) !!}
 
     @pushOnce('scripts')
-        {{-- Give the sticky edit header a solid white background once the page is scrolled
-             (Vue has no `.window` event modifier, so this is done with a plain listener). --}}
+        {{-- Solid white background on the sticky edit header once scrolled (Vue has no `.window` modifier). --}}
         <script>
             (function () {
-                // Query the header on each call — it's rendered by Vue (inside <v-form>),
-                // so it may not exist yet when this script first runs.
+                // Query the header each call — Vue renders it inside <v-form>, so it may not exist on first run.
                 const update = () => {
                     const header = document.querySelector('.js-sticky-header');
 
@@ -283,9 +285,7 @@
                     header.classList.toggle('shadow-md', scrolled);
                 };
 
-                // The SPA re-runs pushed scripts on every ajax visit, so drop any
-                // previous listener before adding a new one and clean up on navigate —
-                // otherwise scroll handlers accumulate across visits.
+                // The SPA re-runs pushed scripts each visit; drop the previous listener and clean up on navigate to avoid accumulation.
                 if (window.__stickyProductHeader) {
                     window.removeEventListener('scroll', window.__stickyProductHeader);
                 }

@@ -50,7 +50,7 @@ class CompletenessFilter extends AbstractPropertyFilter
 
         switch ($operator) {
             case FilterOperators::EQUAL:
-                $this->queryBuilder::where([
+                $this->queryBuilder->where([
                     'term' => [self::FIELD => (float) $this->scalarValue($value)],
                 ]);
                 break;
@@ -59,7 +59,7 @@ class CompletenessFilter extends AbstractPropertyFilter
             case FilterOperators::LESS_THAN_OR_EQUAL:
             case FilterOperators::GREATER_THAN:
             case FilterOperators::GREATER_THAN_OR_EQUAL:
-                $this->queryBuilder::where([
+                $this->queryBuilder->where([
                     'range' => [self::FIELD => [$operator->value => (float) $this->scalarValue($value)]],
                 ]);
                 break;
@@ -67,7 +67,7 @@ class CompletenessFilter extends AbstractPropertyFilter
             case FilterOperators::RANGE:
                 $values = array_values((array) $value);
 
-                $this->queryBuilder::where([
+                $this->queryBuilder->where([
                     'range' => [
                         self::FIELD => [
                             'gte' => (float) ($values[0] ?? 0),
@@ -78,11 +78,11 @@ class CompletenessFilter extends AbstractPropertyFilter
                 break;
 
             case FilterOperators::IS_EMPTY:
-                $this->queryBuilder::whereNot(['exists' => ['field' => self::FIELD]]);
+                $this->queryBuilder->whereNot(['exists' => ['field' => self::FIELD]]);
                 break;
 
             case FilterOperators::IS_NOT_EMPTY:
-                $this->queryBuilder::where(['exists' => ['field' => self::FIELD]]);
+                $this->queryBuilder->where(['exists' => ['field' => self::FIELD]]);
                 break;
         }
 

@@ -1,12 +1,8 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo } = require('../../utils/helpers');
 
-/**
- * Guards the ACL permission tree on the role form: clicking a folder's chevron
- * must reveal its child permissions. Regression cover for the toggle handler,
- * which resolves the `.v-tree-item` ancestor via `closest()` — a plain
- * `parentElement` lookup breaks once the row is wrapped for layout.
- */
+// Regression: the role-form ACL tree toggle resolves `.v-tree-item` via `closest()`;
+// a plain `parentElement` lookup breaks once the row is wrapped for layout.
 test.describe('Role permission tree', () => {
   test('expanding a folder chevron reveals its child permissions', async ({ adminPage }) => {
     await navigateTo(adminPage, 'roles');

@@ -17,9 +17,7 @@ class LocalTemporaryFile extends TemporaryFile
     {
         $this->LocalFilePath = storage_path(FileBuffer::PRIVATE_STORAGE_PATH.$this->filePath);
 
-        // The writer opens LocalFilePath directly, so ensure its own directory exists.
-        // Storage::makeDirectory() resolves against the default disk (which may be rooted
-        // elsewhere, e.g. app/public), leaving app/private/... uncreated and fopen failing.
+        // Ensure the writer's dir exists; Storage::makeDirectory() targets the default disk and can miss app/private.
         File::ensureDirectoryExists(dirname($this->LocalFilePath));
     }
 

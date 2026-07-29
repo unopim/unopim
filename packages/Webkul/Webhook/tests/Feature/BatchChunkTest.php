@@ -5,10 +5,7 @@ use Webkul\Product\Models\Product;
 use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Services\WebhookService;
 
-/*
- * A large product selection must be delivered in bounded chunks, not one
- * oversized request with every product loaded into memory.
- */
+// Small chunk size to prove a large selection is delivered in bounded chunks, not one oversized request.
 class ChunkedWebhookService extends WebhookService
 {
     protected function batchChunkSize(): int

@@ -4,13 +4,7 @@ use Illuminate\Support\Facades\DB;
 
 use function Pest\Laravel\get;
 
-/*
- * Contract + performance-regression coverage for the async option lookup
- * (AjaxOptionsController::getOptions) that powers every searchable multiselect.
- * Labels must resolve through the translation fallback, and formatting a page must
- * stay a small, constant number of queries — never one lazy translation load per row.
- */
-
+// Contract + N+1 regression for AjaxOptionsController::getOptions (powers searchable multiselects).
 it('returns translated attribute options with the paginated envelope', function () {
     $this->loginAsAdmin();
 

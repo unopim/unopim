@@ -206,7 +206,7 @@ class MediaFileController extends ApiController
                 );
             }
 
-            return $this->validateErrorResponse(['file' => ['Invalid file uploaded.']]);
+            return $this->validateErrorResponse(['file' => [trans('admin::app.catalog.products.upload-failure')]]);
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }

@@ -8,11 +8,7 @@ use Webkul\Product\Models\Product;
 
 use function Pest\Laravel\get;
 
-/*
- * Correctness guard for F2: after switching the select/multiselect branch to fetch
- * only the selected options, the pre-selected option's translated label must still
- * render on the product edit page.
- */
+// F2 guard: fetching only the selected options must still render the pre-selected label on product edit.
 it('renders the translated label of a selected select option (F2)', function () {
     $this->loginAsAdmin();
 

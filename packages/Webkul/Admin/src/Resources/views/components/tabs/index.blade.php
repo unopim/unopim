@@ -4,7 +4,12 @@
     position="{{ $position }}"
     {{ $attributes }}
 >
-    <x-admin::shimmer.tabs />
+    {{-- Tab items are the slot; the shimmer only stands in for callers that pass none. --}}
+    @if (trim($slot) !== '')
+        {{ $slot }}
+    @else
+        <x-admin::shimmer.tabs />
+    @endif
 </v-tabs>
 
 @pushOnce('scripts')

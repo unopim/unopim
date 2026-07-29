@@ -22,8 +22,7 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // BLOB caps at 64 KB; MEDIUMBLOB gives 16 MB. Raw statement, so it must
-        // honour the table prefix. MySQL only — Postgres bytea is untiered.
+        // BLOB caps at 64 KB; MEDIUMBLOB gives 16 MB. MySQL only — Postgres bytea is untiered.
         if (Schema::getConnection()->getDriverName() === 'mysql') {
             $table = Schema::getConnection()->getTablePrefix().'publication_version_payloads';
 

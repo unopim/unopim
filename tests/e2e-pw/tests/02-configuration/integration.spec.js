@@ -1,18 +1,14 @@
 const { test, expect } = require('../../utils/fixtures');
 const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
-/**
- * Open the index create modal (a header button, not a link) and wait for it to render.
- */
+// Open the index create modal (a header button, not a link) and wait for it to render.
 async function openCreateModal(adminPage) {
   await navigateTo(adminPage, 'integrations');
   await adminPage.getByRole('button', { name: 'Create', exact: true }).click();
   await adminPage.locator('input[name="name"]').waitFor({ state: 'visible', timeout: 15000 });
 }
 
-/**
- * Pick an option in the create modal's permission-type vue-multiselect by visible label.
- */
+// Pick an option in the create modal's permission-type vue-multiselect by visible label.
 async function selectPermissionType(adminPage, label) {
   const wrapper = adminPage.locator('input[name="permission_type"]')
     .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
@@ -20,9 +16,7 @@ async function selectPermissionType(adminPage, label) {
   await wrapper.locator('.multiselect__option', { hasText: label }).first().click();
 }
 
-/**
- * Create an integration (name + permission type) via the modal. Lands on the edit page.
- */
+// Create an integration (name + permission type) via the modal; lands on the edit page.
 async function createIntegration(adminPage, name) {
   await openCreateModal(adminPage);
   await adminPage.locator('input[name="name"]').fill(name);
@@ -30,9 +24,7 @@ async function createIntegration(adminPage, name) {
   await clickSaveAndExpect(adminPage, 'Save', /API Integration Created Successfully/i, /\/admin\/configuration\/integrations\/edit\//);
 }
 
-/**
- * Delete an integration by searching for its name in the datagrid.
- */
+// Delete an integration by searching its name in the datagrid.
 async function deleteIntegration(adminPage, name) {
   await navigateTo(adminPage, 'integrations');
   await searchInDataGrid(adminPage, name);

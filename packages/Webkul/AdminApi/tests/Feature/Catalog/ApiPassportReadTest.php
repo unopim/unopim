@@ -31,6 +31,20 @@ it('returns 404 for the list when the feature is disabled', function () {
         ->assertNotFound();
 });
 
+it('exposes the gtin and gs1 link identifiers on the list', function () {
+    enablePassportFeature();
+    $publication = Publication::factory()->create([
+        'gtin'             => '04006381333931',
+        'alias_identifier' => 'https://dpp.example.test/01/04006381333931',
+    ]);
+
+    $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.passports.index'))
+        ->assertOk()
+        ->assertJsonFragment(['gtin' => '04006381333931'])
+        ->assertJsonFragment(['gs1_link' => 'https://dpp.example.test/01/04006381333931']);
+});
+
 it('gets publications for a product by sku', function () {
     enablePassportFeature();
     $publication = Publication::factory()->create();

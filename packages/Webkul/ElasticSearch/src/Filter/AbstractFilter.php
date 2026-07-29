@@ -5,14 +5,13 @@ namespace Webkul\ElasticSearch\Filter;
 use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Support\Facades\Date;
 use Webkul\ElasticSearch\Contracts\Filter as FilterContract;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
+use Webkul\ElasticSearch\ElasticSearchQuery;
 
 abstract class AbstractFilter implements FilterContract
 {
     protected $dateFormat = 'Y-m-d H:i:s';
 
-    /** @var ElasticSearchQuery */
-    protected $queryBuilder;
+    protected mixed $queryBuilder = null;
 
     /** @var array */
     protected $allowedOperators = [];

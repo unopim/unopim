@@ -45,8 +45,7 @@ test.describe('UnoPim Export Jobs', () => {
 
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
 
-    // Export runs on the queue; the download link only renders once the job writes its
-    // file, so wait for the link before racing the popup/download it opens.
+    // Export runs on the queue; wait for the download link before racing its popup/download.
     const csvLink = adminPage.getByRole('link', { name: 'Download Exported Files' });
     await csvLink.waitFor({ state: 'visible', timeout: 60000 });
     const [, csvDownload] = await Promise.all([

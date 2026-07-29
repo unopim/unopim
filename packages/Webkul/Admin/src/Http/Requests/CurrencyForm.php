@@ -23,8 +23,7 @@ class CurrencyForm extends FormRequest
      */
     public function rules(): array
     {
-        // Discriminate on the HTTP verb (store=POST, update=PUT), never a body
-        // field — a store request could otherwise inject `id` to get laxer rules.
+        // Discriminate on the HTTP verb, not a body field, so a store request can't inject `id` for laxer rules.
         if ($this->isMethod('PUT')) {
             return [
                 'code'   => ['required', Rule::unique('currencies', 'code')->ignore($this->input('id')), new Code],

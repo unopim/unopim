@@ -16,9 +16,7 @@ use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\User\Models\AdminProxy;
 
 /**
- * The immutability guard below only fires on instance-level save()/delete().
- * Bulk query-builder writes and withoutEvents()/saveQuietly() bypass Eloquent
- * events and will silently mutate or destroy attested versions.
+ * The immutability guard fires only on instance save()/delete(); bulk writes and saveQuietly() bypass it.
  */
 #[Fillable([
     'publication_id',
@@ -39,18 +37,12 @@ class PublicationVersion extends Model implements PublicationVersionContract
     use HasFactory;
 
     /**
-     * Columns that may change after a version is written; everything else is
-     * sealed once published. Redaction columns are handled separately by
-     * isSanctionedRedaction() since that's a one-way (null -> set) transition,
-     * not an always-mutable column.
+     * Columns mutable after publish; everything else is sealed. Redaction columns are gated by isSanctionedRedaction().
      */
     private const MUTABLE_AFTER_PUBLISH = ['is_current', 'updated_at'];
 
     /**
-     * `payload` lives in `publication_version_payloads`, not this table (see
-     * the 000003 migration). Holds the in-flight value between construction
-     * and the `created` event that persists it, keeping the array API below
-     * unchanged for existing callers.
+     * Holds `payload` (stored in a separate table) in-flight between construction and the `created` event that persists it.
      */
     private ?array $pendingPayload = null;
 
@@ -102,11 +94,7 @@ class PublicationVersion extends Model implements PublicationVersionContract
     }
 
     /**
-     * The one sanctioned exception to immutability (GDPR Art. 17 erasure via
-     * redact()): redacted_at moving from null to a value, plus redacted_by_id/
-     * redacted_reason/updated_at, never in reverse. Checking getOriginal()
-     * makes it one-way — a second attempt falls through to the immutability
-     * check below and throws.
+     * The one immutability exception (GDPR Art. 17 redaction): redacted_at going null -> set, one-way via getOriginal().
      */
     private static function isSanctionedRedaction(self $version, array $dirty): bool
     {
@@ -125,8 +113,7 @@ class PublicationVersion extends Model implements PublicationVersionContract
     {
         if ($key === 'payload') {
             if ($this->exists) {
-                // Reassigning payload on a persisted version is a tamper attempt;
-                // redact() is the only legitimate write path and never touches it.
+                // Reassigning payload on a persisted version is a tamper attempt; redact() never touches it.
                 throw new ImmutableVersionException(
                     'Published version '.$this->id.' is immutable; attempted to change: payload'
                 );

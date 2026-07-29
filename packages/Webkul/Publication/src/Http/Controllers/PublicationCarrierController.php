@@ -16,12 +16,8 @@ class PublicationCarrierController extends Controller
     public function __construct(private readonly PublicationResolver $resolver) {}
 
     /**
-     * Emits an SVG QR code encoding the passport's canonical public URL. Gated
-     * behind the same publicly-resolvable-status and channel-enabled checks the
-     * page/asset controllers apply, so a non-public passport never yields a
-     * scannable carrier. The `type` arrives as a route default, read via the
-     * Request rather than a parameter: `defaults()` values are appended after
-     * URI captures, so a `string $type` parameter would receive `{uuid}`.
+     * Emits an SVG QR code of the passport's public URL, gated by the same resolvable-status and channel-enabled checks.
+     * `type` is read via the Request, not a parameter: route defaults are appended after URI captures.
      */
     public function show(Request $request, string $uuid): Response
     {
@@ -37,9 +33,7 @@ class PublicationCarrierController extends Controller
             return response()->view('publication::errors.404', [], 404);
         }
 
-        // `alias_identifier` carries the GS1 Digital Link once Task 6 populates
-        // it; until then the plain passport URL is encoded, so the two tasks
-        // compose without reordering.
+        // `alias_identifier` carries the GS1 Digital Link when populated; otherwise the plain passport URL is encoded.
         $target = $publication->alias_identifier
             ?: route('publication.public.'.$type.'.show', ['uuid' => $uuid]);
 

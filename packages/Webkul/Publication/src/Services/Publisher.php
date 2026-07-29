@@ -31,9 +31,7 @@ class Publisher
     ) {}
 
     /**
-     * Builds the payload, hashes it, and mints a new version when the
-     * checksum changed. Returns null when the completeness gate fails or
-     * the payload is unchanged since the current version.
+     * Mints a new version when the payload checksum changed; returns null on gate failure or unchanged payload.
      */
     public function publish(
         Product $product,
@@ -68,14 +66,12 @@ class Publisher
 
         $payload = $builder->build($product, $context);
 
-        // meta is identity/rebuild metadata, not content - hashing it would defeat
-        // dedupe. Keys are also canonicalized so insertion order can't change the hash.
+        // Exclude meta (identity, not content) and canonicalize so dedupe isn't defeated by insertion order.
         $canonical = $this->canonicalize(Arr::except($payload, 'meta'));
         $checksum = hash('sha256', json_encode($canonical, JSON_THROW_ON_ERROR));
 
         return DB::transaction(function () use ($publication, $locale, $payload, $checksum, $publishedById): ?PublicationVersion {
-            // Lock the row: concurrent workers publishing the same (publication, locale)
-            // must not both read the same current version and race the unique index.
+            // Lock the row so concurrent workers on the same (publication, locale) can't race the unique index.
             $publication = Publication::query()->whereKey($publication->id)->lockForUpdate()->firstOrFail();
 
             $current = $publication->currentVersion($locale->id);
@@ -84,8 +80,7 @@ class Publisher
                 return null;
             }
 
-            // MAX(version), not $current->version+1: redaction can leave a higher
-            // version sealed without flipping is_current, so $current isn't authoritative.
+            // MAX(version), not $current->version+1: a sealed redacted version can be higher without being current.
             $nextVersion = $publication->versions()
                 ->where('locale_id', $locale->id)
                 ->max('version') + 1;
@@ -102,14 +97,77 @@ class Publisher
                 'published_by_id' => $publishedById,
             ]);
 
-            // Only a Draft is auto-promoted; Withdrawn/Redacted stay sticky and require
-            // an explicit reinstate()/redactAll() call, never a routine publish.
+            // Only Draft auto-promotes; Withdrawn/Redacted are sticky and need an explicit transition, not a publish.
             if ($publication->status === PublicationStatus::Draft) {
                 $publication->update(['status' => PublicationStatus::Published]);
             }
 
-            // Dispatch after commit: a slow listener must not extend lock hold time,
-            // and it must see committed state, not a lock it can't read past.
+            // Dispatch after commit so a slow listener doesn't extend lock hold and sees committed state.
+            DB::afterCommit(fn () => PublicationPublished::dispatch($publication, $version));
+
+            return $version;
+        });
+    }
+
+    /**
+     * Rollback by forward-only mint: because versions are immutable, "rolling
+     * back" to an older version copies its frozen payload into a NEW current
+     * version with a fresh version number, leaving the source row untouched.
+     *
+     * Returns null when the source is already the live version (nothing to do).
+     * Refuses on a redacted publication or a redacted source — the payload bytes
+     * are gone, so there is nothing to republish.
+     */
+    public function republishFrom(PublicationVersion $source, ?int $publishedById = null): ?PublicationVersion
+    {
+        return DB::transaction(function () use ($source, $publishedById): ?PublicationVersion {
+            // Lock the row so a concurrent publish/republish on the same (publication, locale) can't race the unique index.
+            $publication = Publication::query()->whereKey($source->publication_id)->lockForUpdate()->firstOrFail();
+
+            if ($publication->status === PublicationStatus::Redacted) {
+                throw new InvalidPublicationTransitionException(
+                    'Publication '.$publication->id.' is redacted; its payloads are erased and cannot be republished.'
+                );
+            }
+
+            $payload = $source->payload;
+
+            if ($source->redacted_at !== null || $payload === null) {
+                throw new InvalidPublicationTransitionException(
+                    'Version '.$source->id.' has no payload to republish.'
+                );
+            }
+
+            $localeId = (int) $source->locale_id;
+
+            $current = $publication->currentVersion($localeId);
+
+            if ($current !== null && $current->getKey() === $source->getKey()) {
+                return null;
+            }
+
+            // MAX(version)+1, mirroring publish(): a sealed redacted version can be higher without being current.
+            $nextVersion = $publication->versions()
+                ->where('locale_id', $localeId)
+                ->max('version') + 1;
+
+            $current?->markSuperseded();
+
+            $version = $publication->versions()->create([
+                'locale_id'       => $localeId,
+                'version'         => $nextVersion,
+                'payload'         => $payload,
+                'checksum'        => $source->checksum,
+                'is_current'      => true,
+                'published_at'    => now(),
+                'published_by_id' => $publishedById,
+            ]);
+
+            // Only Draft auto-promotes; Withdrawn/Redacted are sticky and need an explicit transition, not a republish.
+            if ($publication->status === PublicationStatus::Draft) {
+                $publication->update(['status' => PublicationStatus::Published]);
+            }
+
             DB::afterCommit(fn () => PublicationPublished::dispatch($publication, $version));
 
             return $version;
@@ -127,9 +185,7 @@ class Publisher
     }
 
     /**
-     * Returns a withdrawn publication to Published. Throws instead of no-op
-     * when not withdrawn, so a Redacted publication can never be reinstated
-     * this way — redaction is one-way by design.
+     * Returns a withdrawn publication to Published; throws when not withdrawn, so redaction stays one-way.
      */
     public function reinstate(Publication $publication): void
     {
@@ -145,9 +201,7 @@ class Publisher
     }
 
     /**
-     * GDPR Art. 17 erasure: redacts every current version and flips the
-     * publication to Redacted (sticky, like Withdrawn). Throws rather than
-     * no-op'ing when already redacted or with nothing to redact.
+     * GDPR Art. 17 erasure: redacts every current version and flips the publication to Redacted (sticky).
      */
     public function redactAll(Publication $publication, int $redactedById, string $reason): void
     {
@@ -180,8 +234,7 @@ class Publisher
     }
 
     /**
-     * Best-effort canonical URL for the not-yet-shipped public tier, matching
-     * the `/{routePrefix}/{uuid}/{locale}` shape those routes will register.
+     * Canonical `/{routePrefix}/{uuid}/{locale}` URL for the public tier.
      */
     private function canonicalUrl(PublicationType $definition, string $uuid, Channel $channel, Locale $locale): string
     {
@@ -191,9 +244,7 @@ class Publisher
     }
 
     /**
-     * Recursively sorts keys/list items so identical payloads hash
-     * identically regardless of DB row order. For hashing only — the stored
-     * `$payload` keeps its original, meaningful order.
+     * Recursively sorts keys/list items so identical payloads hash identically regardless of row order (hashing only).
      *
      * @param  array<array-key, mixed>  $payload
      * @return array<array-key, mixed>
@@ -215,8 +266,7 @@ class Publisher
     }
 
     /**
-     * Sorts by each item's `code`, falling back to canonical JSON encoding
-     * for shapes without one, so the sort stays stable for any content shape.
+     * Sorts by each item's `code`, falling back to canonical JSON so the sort stays stable for any shape.
      *
      * @param  array<int, mixed>  $items
      * @return array<int, mixed>

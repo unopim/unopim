@@ -43,7 +43,7 @@ class FamilyFilter extends AbstractPropertyFilter
                     'attribute_family_id' => $value,
                 ],
             ];
-            $this->queryBuilder::where($clause);
+            $this->queryBuilder->where($clause);
         }
 
         return $this;

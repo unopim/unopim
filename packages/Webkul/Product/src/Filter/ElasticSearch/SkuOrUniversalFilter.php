@@ -76,7 +76,7 @@ class SkuOrUniversalFilter extends AbstractElasticSearchAttributeFilter
             ];
         }
 
-        $this->queryBuilder::where([
+        $this->queryBuilder->where([
             'bool' => [
                 'should'               => $clauses,
                 'minimum_should_match' => 1,

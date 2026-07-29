@@ -4,6 +4,14 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\DataGrids\Catalog\AssociationTypeDataGrid;
 
+/**
+ * The grid joins the translation for the requested locale, which falls back to the default
+ * channel's locale — not necessarily en_US. Pin it so the seeded English labels are the ones read.
+ */
+beforeEach(function () {
+    request()->merge(['locale' => 'en_US']);
+});
+
 function seedUserDefinedAssociationType(string $code): int
 {
     $id = DB::table('association_types')->insertGetId([

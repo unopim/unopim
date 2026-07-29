@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Models\Publication;
@@ -76,6 +77,30 @@ it('writes the passport mapping', function () {
         ->json('PUT', route('admin.api.passports.mapping.update'), ['mapping' => []])
         ->assertOk()
         ->assertJson(['success' => true]);
+});
+
+it('persists and returns custom passport fields', function () {
+    $attribute = Attribute::factory()->create(['type' => 'text']);
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.passports.mapping.update'), [
+            'mapping'       => [],
+            'custom_fields' => [['name' => 'Warranty', 'attribute' => $attribute->code]],
+        ])
+        ->assertOk();
+
+    $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.passports.mapping'))
+        ->assertOk()
+        ->assertJsonFragment(['name' => 'Warranty', 'attribute' => $attribute->code]);
+});
+
+it('rejects a custom field pointing at an unknown attribute', function () {
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.passports.mapping.update'), [
+            'custom_fields' => [['name' => 'X', 'attribute' => 'no_such_attr']],
+        ])
+        ->assertStatus(422);
 });
 
 it('forbids reinstate without publish permission', function () {

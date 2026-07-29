@@ -28,10 +28,7 @@ it('404s path traversal attempts instead of 500ing', function (string $attempt):
     '../../../.env',
     '..%2F..%2F.env',
     '/etc/passwd',
-    // A raw embedded newline is rejected by Symfony's Request::create() before
-    // the app ever sees it (and no real HTTP client can send one over the
-    // wire); %0A is how a control character would actually reach us, and
-    // exercises the same control-character guard in sanitizePath().
+    // %0A, not a raw newline (which Request::create() rejects first), exercises sanitizePath()'s control-char guard.
     'line1%0Aline2.pdf',
 ]);
 

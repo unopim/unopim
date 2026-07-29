@@ -88,6 +88,50 @@ if (! function_exists('clean_content')) {
     }
 }
 
+if (! function_exists('form_control_id')) {
+    /**
+     * Build the DOM id a form control renders for the given field name, so labels
+     * can point their `for` attribute at it. Field names carry array syntax
+     * (`values[common][sku]`) which is not usable in a CSS selector.
+     */
+    function form_control_id(?string $name, ?string $suffix = null): string
+    {
+        $toToken = fn (?string $value): string => trim((string) preg_replace('/[^A-Za-z0-9_.:-]+/', '_', (string) $value), '_');
+
+        $id = $toToken($name);
+
+        if (! in_array($suffix, [null, '', '0'], true)) {
+            $id = trim($id.'_'.$toToken($suffix), '_');
+        }
+
+        return $id;
+    }
+}
+
+if (! function_exists('unique_form_control_id')) {
+    /**
+     * Reserve a DOM id for the current request, suffixing repeats so that pages
+     * rendering the same field name in several forms (a page form plus its
+     * modals) do not emit duplicate ids.
+     */
+    function unique_form_control_id(string $id, bool $allowSuffix = true): string
+    {
+        if ($id === '') {
+            return $id;
+        }
+
+        $request = request();
+
+        $used = $request->attributes->get('form_control_ids', []);
+
+        $used[$id] = ($used[$id] ?? 0) + 1;
+
+        $request->attributes->set('form_control_ids', $used);
+
+        return $allowSuffix && $used[$id] > 1 ? $id.'_'.$used[$id] : $id;
+    }
+}
+
 if (! function_exists('image_manager')) {
     /**
      * Get the image manager instance.

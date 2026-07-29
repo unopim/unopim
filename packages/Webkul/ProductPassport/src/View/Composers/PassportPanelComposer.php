@@ -7,14 +7,16 @@ use Illuminate\View\View;
 use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Publication\Models\PublicationProxy;
+use Webkul\Publication\Models\PublicationVersionProxy;
+use Webkul\Publication\Models\PublicationViewStatProxy;
 
 /**
- * Computes the whole locale x status matrix in two queries (channel +
- * locales via one eager load, current versions via a second), never one
- * query per locale inside a loop.
+ * Computes the locale x status matrix in a fixed number of queries, never one per locale in a loop.
  */
 class PassportPanelComposer
 {
+    private const HISTORY_LIMIT = 25;
+
     public function compose(View $view): void
     {
         $product = $view->getData()['product'];
@@ -56,7 +58,7 @@ class PassportPanelComposer
             ? null
             : route('publication.public.dpp.carrier', ['uuid' => $publication->uuid]);
 
-        $rows = $channel->locales->map(function ($locale) use ($currentByLocale, $scores, $signedLink, $carrierLink): array {
+        $rows = $channel->locales->map(function ($locale) use ($product, $channel, $currentByLocale, $scores, $signedLink, $carrierLink): array {
             $version = $currentByLocale->get($locale->id);
             $score = $scores->get($locale->id);
 
@@ -67,23 +69,43 @@ class PassportPanelComposer
                 'published_at'   => $version?->published_at,
                 'score'          => $score?->score,
                 'missing_count'  => $score?->missing_count,
-                // Signed elevation links are the ONLY way to reveal
-                // operator/authority tiers, and only make sense once a version
-                // is live for the locale — minted server-side so no signature
-                // is ever constructed in the browser.
+                // Signed links are the only way to reveal operator/authority tiers; minted server-side, only once a version is live.
                 'operator_link'  => $version !== null ? $signedLink($locale->code, 'operator') : null,
                 'authority_link' => $version !== null ? $signedLink($locale->code, 'authority') : null,
-                // The QR carrier is publication-scoped (one uuid), surfaced per
-                // locale row only once that locale has a live version to scan.
                 'carrier_link'   => $version !== null ? $carrierLink : null,
+                // Admin-only, side-effect-free render of the current product data; available whether or not a version exists yet.
+                'preview_url'    => route('admin.catalog.products.passport.preview', [
+                    'product'    => $product->id,
+                    'channel_id' => $channel->id,
+                    'locale_id'  => $locale->id,
+                ]),
             ];
         });
 
+        $passportViews = $publication === null ? 0 : (int) PublicationViewStatProxy::modelClass()::query()
+            ->where('publication_id', $publication->id)
+            ->sum('views');
+
+        $versions = $publication === null ? collect() : PublicationVersionProxy::modelClass()::query()
+            ->where('publication_id', $publication->id)
+            ->with(['locale', 'publishedBy'])
+            ->orderByDesc('published_at')
+            ->orderByDesc('version')
+            ->limit(self::HISTORY_LIMIT)
+            ->get();
+
         $view->with([
-            'passportChannel'     => $channel,
-            'passportRows'        => $rows,
-            'passportEnabled'     => (bool) (core()->getConfigData('catalog.product_passport.settings.enabled', $channel->code) ?? false),
-            'passportAutoPublish' => (bool) (core()->getConfigData('catalog.product_passport.settings.auto_publish', $channel->code) ?? false),
+            'passportChannel'        => $channel,
+            'passportRows'           => $rows,
+            'passportPublishedCount' => $rows->whereNotNull('version')->count(),
+            'passportViews'          => $passportViews,
+            'passportVersions'       => $versions,
+            'passportHistoryTotal'   => $publication === null ? 0 : $publication->versions()->count(),
+            'passportRepublishUrl'   => $publication === null ? null : route('admin.catalog.passports.republish', $publication->id),
+            'passportCanPublish'     => bouncer()->hasPermission('catalog.passport.publish'),
+            'passportHistoryUrl'     => $publication === null ? null : route('admin.catalog.passports.versions', $publication->id),
+            'passportEnabled'        => (bool) (core()->getConfigData('catalog.product_passport.settings.enabled', $channel->code) ?? false),
+            'passportAutoPublish'    => (bool) (core()->getConfigData('catalog.product_passport.settings.auto_publish', $channel->code) ?? false),
         ]);
     }
 }

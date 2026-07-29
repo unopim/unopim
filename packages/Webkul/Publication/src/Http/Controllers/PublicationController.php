@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Jobs\RecordPublicationView;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Services\PublicationResolver;
@@ -24,10 +25,7 @@ class PublicationController extends Controller
     ) {}
 
     /**
-     * Every not-found branch below returns a Response instead of calling
-     * abort(): a thrown exception is rendered by Laravel's routing Pipeline
-     * via the global handler at the pipe that threw it, bypassing this
-     * package's own template (see PublicationErrorBoundary).
+     * Not-found branches return a Response, never abort(): a thrown exception bypasses this package's own 404 template.
      */
     public function redirect(Request $request, string $uuid): Response
     {
@@ -56,11 +54,7 @@ class PublicationController extends Controller
     }
 
     /**
-     * GS1 Digital Link entry point: maps a scanned `/01/{gtin}` to the product's
-     * designated passport and 302s to its canonical per-locale URL, where the
-     * existing Accept-Language resolution picks the language. Honours the same
-     * publicly-resolvable-status and channel-enabled gates as every other public
-     * route, keyed by the resolved row rather than request input.
+     * GS1 Digital Link entry point: maps a scanned `/01/{gtin}` to its passport and 302s to the canonical per-locale URL.
      */
     public function resolveByGtin(Request $request, string $gtin): Response
     {
@@ -120,10 +114,7 @@ class PublicationController extends Controller
         [$granted, $grantedIndex] = $this->grantedTier($request);
         $payload = $this->applyTierGate($version->payload, $grantedIndex);
 
-        // Only a Published passport exposes payload content: withdrawn/redacted
-        // states are publicly resolvable but the HTML path renders a tombstone
-        // only, so the JSON-LD branch must fall through to that same tombstone
-        // rather than leak the frozen payload as machine-readable content.
+        // Only Published exposes payload: withdrawn/redacted must fall through to the tombstone, not leak JSON-LD.
         if (
             $definition->jsonld !== null
             && $publication->status === PublicationStatus::Published
@@ -156,6 +147,13 @@ class PublicationController extends Controller
             return response('', 304)->header('ETag', $etag);
         }
 
+        // Count only a live (Published) full HTML render — never a 304, a JSON-LD
+        // negotiation, or a withdrawn/redacted tombstone. Queued so the render is
+        // not slowed, and it stores a daily count only: no IP, no visitor identity.
+        if ($publication->status === PublicationStatus::Published) {
+            RecordPublicationView::dispatch($publication->id, (int) $version->locale->id);
+        }
+
         $view = view($definition->template, [
             'payload'   => $payload,
             'withdrawn' => $publication->status !== PublicationStatus::Published,
@@ -174,12 +172,7 @@ class PublicationController extends Controller
     }
 
     /**
-     * Resolves the ESPR access tier this request is authorised for. Elevation
-     * above `consumer` is granted ONLY by a valid Laravel signed URL carrying a
-     * `tier` param that exists in the configured order — any missing/invalid
-     * signature, unknown tier, or tier outside `order` fails closed to the base
-     * tier. The `tier` param is never trusted without a valid signature, so an
-     * unsigned `?tier=authority` can never widen the surface.
+     * Resolves the granted ESPR tier. Elevation above base requires a valid signed URL, else it fails closed to base.
      *
      * @return array{0: string, 1: int}
      */
@@ -195,11 +188,8 @@ class PublicationController extends Controller
     }
 
     /**
-     * Collapses the tier-partitioned payload down to only the fields/documents
-     * visible up to the granted tier, overwriting the base `sections`/`documents`
-     * the template and JSON-LD resource read. A payload without a `tiers` key
-     * (a frozen version built before tiering, or a redacted null payload) is
-     * returned untouched — its existing base shape is already the consumer view.
+     * Collapses the tier-partitioned payload to the fields/documents visible up to the granted tier.
+     * A payload without a `tiers` key (pre-tiering or redacted) is returned untouched.
      */
     private function applyTierGate(mixed $payload, int $grantedIndex): mixed
     {
@@ -224,9 +214,7 @@ class PublicationController extends Controller
     }
 
     /**
-     * An elevated (above-base) tier response carries content a signed URL
-     * holder is uniquely authorised to see, so it must never enter a shared
-     * cache; the base tier keeps whatever caching the caller already set.
+     * Elevated-tier responses carry signed-URL-holder content, so they must never enter a shared cache.
      */
     private function tierCache(Response $response, int $grantedIndex): Response
     {
@@ -238,10 +226,8 @@ class PublicationController extends Controller
     }
 
     /**
-     * Reads the `type` route default via the Request rather than as a method
-     * parameter: ControllerDispatcher binds non-class parameters positionally,
-     * and `defaults()` values are appended after real URI captures — a
-     * `string $type` parameter would silently receive `{uuid}`'s value instead.
+     * Reads `type` via the Request, not a parameter: route defaults are appended after URI captures, so a
+     * `string $type` parameter would receive `{uuid}`'s value.
      */
     private function routeType(Request $request): string
     {
@@ -249,10 +235,7 @@ class PublicationController extends Controller
     }
 
     /**
-     * Resolves the publication and enforces scope gates against the resolved
-     * row itself, never request input. `general.publication.settings.enabled`
-     * is the per-channel public-tier kill switch; it's distinct from the
-     * publish-time-only gate enforced elsewhere, never here.
+     * Resolves the publication and enforces the resolvable-status and per-channel-enabled gates against the row itself.
      */
     private function resolveEnabledPublication(string $uuid, string $type): ?Publication
     {

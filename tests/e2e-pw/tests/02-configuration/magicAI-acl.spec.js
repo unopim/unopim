@@ -18,7 +18,6 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
 
         const platformsText = adminPage.getByText("Platform").first();
         if (!(await platformsText.isVisible())) {
-            // Find any expand icon associated with Magic AI and click it
             const expander = adminPage
                 .locator(".v-tree-item", { has: magicAILayer })
                 .locator("i.icon-chevron-right")
@@ -26,7 +25,7 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
             if (await expander.isVisible()) {
                 await expander.click();
             } else {
-                // Secondary attempt (label click often works)
+                // Fallback: label click often expands it.
                 await magicAILayer.click();
             }
         }

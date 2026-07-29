@@ -40,10 +40,7 @@ class SecureHeaders
      */
     private function setHeaders($response): void
     {
-        // This global middleware wraps the whole app, so it runs LAST on the
-        // response and would otherwise clobber a stricter Referrer-Policy a
-        // route already set (e.g. the public passport's 'no-referrer'). Only
-        // apply the app default when no inner layer opted into its own policy.
+        // Don't clobber a stricter Referrer-Policy an inner layer already set (e.g. passport's 'no-referrer').
         if (! $response->headers->has('Referrer-Policy')) {
             $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
         }

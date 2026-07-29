@@ -20,9 +20,12 @@ use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryRequestValidator;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class CategoryController extends Controller
 {
+    use HtmlPurifier;
+
     const DEFAULT_PAGE = 1;
 
     const SEARCH_PER_PAGE = 50;
@@ -38,6 +41,47 @@ class CategoryController extends Controller
         protected CategoryFieldRepository $categoryFieldRepository,
         protected CategoryRequestValidator $categoryValidator
     ) {}
+
+    /**
+     * Sanitize wysiwyg category-field values in additional_data before persisting.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function sanitizeAdditionalData(array $data): array
+    {
+        if (empty($data['additional_data'])) {
+            return $data;
+        }
+
+        $fields = $this->categoryFieldRepository->findByField('status', true)
+            ->where('enable_wysiwyg', '==', 1)
+            ->where('type', '==', 'textarea');
+
+        foreach ($fields as $field) {
+            if ($field->value_per_locale) {
+                foreach ($data['additional_data']['locale_specific'] ?? [] as $locale => $values) {
+                    foreach ($values ?? [] as $code => $value) {
+                        if (empty($value) || $field->code !== $code) {
+                            continue;
+                        }
+
+                        $data['additional_data']['locale_specific'][$locale][$code] = $this->purifyText($value);
+                    }
+                }
+            } else {
+                foreach ($data['additional_data']['common'] ?? [] as $code => $value) {
+                    if (empty($value) || $field->code !== $code) {
+                        continue;
+                    }
+
+                    $data['additional_data']['common'][$code] = $this->purifyText($value);
+                }
+            }
+        }
+
+        return $data;
+    }
 
     /**
      * Display a listing of the resource.
@@ -103,13 +147,13 @@ class CategoryController extends Controller
             throw $e;
         }
 
-        $category = $this->categoryRepository->create($categoryRequest->only([
+        $category = $this->categoryRepository->create($this->sanitizeAdditionalData($categoryRequest->only([
             'code',
             'locale',
             'name',
             'parent_id',
             'additional_data',
-        ]));
+        ])));
 
         Event::dispatch('catalog.category.create.after', $category);
 
@@ -173,12 +217,12 @@ class CategoryController extends Controller
             throw $e;
         }
 
-        $category = $this->categoryRepository->update($categoryRequest->only([
+        $category = $this->categoryRepository->update($this->sanitizeAdditionalData($categoryRequest->only([
             'locale',
             'parent_id',
             core()->getRequestedLocaleCode(),
             'additional_data',
-        ]), $id);
+        ])), $id);
 
         Event::dispatch('catalog.category.update.after', $category);
 

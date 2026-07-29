@@ -104,8 +104,7 @@ class ResetPasswordController extends Controller
 
         event(new PasswordReset($admin));
 
-        // Mirror the login gate: never auto-establish a session for an API robot
-        // or a deactivated account.
+        // Mirror the login gate: never auto-establish a session for an API robot or a deactivated account.
         if (! $admin->isApiUser() && $admin->status) {
             auth()->guard('admin')->login($admin);
         }

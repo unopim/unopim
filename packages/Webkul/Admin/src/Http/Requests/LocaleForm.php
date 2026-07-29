@@ -22,8 +22,7 @@ class LocaleForm extends FormRequest
      */
     public function rules(): array
     {
-        // Discriminate on the HTTP verb (store=POST, update=PUT), never a body
-        // field — a store request could otherwise inject `id` to skip code rules.
+        // Discriminate on the HTTP verb, not a body field, so a store request can't inject `id` to skip code rules.
         if ($this->isMethod('PUT')) {
             return [
                 'status' => ['boolean'],

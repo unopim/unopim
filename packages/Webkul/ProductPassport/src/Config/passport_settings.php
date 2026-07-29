@@ -21,10 +21,7 @@ return [
                 'type'  => 'boolean',
                 'info'  => 'passport::app.configuration.product_passport.settings.enabled-hint',
             ], [
-                // Defaults to false: publishing a Digital Product Passport is a
-                // deliberate, ten-year legal commitment (see Task 4's
-                // immutability guarantees), never an unattended side effect of
-                // saving a product. See PassportSettingsTest above.
+                // Defaults to false: publishing a passport is an immutable legal commitment, never an unattended save side effect.
                 'name'  => 'auto_publish',
                 'title' => 'passport::app.configuration.product_passport.settings.auto-publish',
                 'type'  => 'boolean',

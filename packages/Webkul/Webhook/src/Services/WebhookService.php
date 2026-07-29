@@ -289,8 +289,7 @@ class WebhookService
     {
         $adminName = $this->actingName();
 
-        // Store only this product's slice per row. Persisting the whole batch
-        // payload on every row was O(N²) storage for an N-product bulk edit.
+        // Store only this product's slice per row; persisting the whole batch payload per row was O(N²) storage.
         $dataBySku = collect($payload['data'] ?? [])->keyBy(fn ($entry): ?string => $entry['sku'] ?? null);
 
         $envelope = array_diff_key($payload, ['data' => true]);

@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Product\Contracts\Product;
@@ -87,9 +88,47 @@ class ProductRepository extends Repository
 
         $product->status = (int) $status;
 
-        $product->save();
+        $product->wasDirtyOnUpdate = $product->isDirty();
+
+        if ($product->wasDirtyOnUpdate) {
+            $product->save();
+        }
 
         return $product;
+    }
+
+    /**
+     * @param  array<int>  $productIds
+     */
+    public function massDelete(array $productIds): void
+    {
+        foreach ($productIds as $productId) {
+            $product = $this->find($productId);
+
+            if (! isset($product)) {
+                continue;
+            }
+
+            Event::dispatch('catalog.product.delete.before', $productId);
+
+            $this->delete($productId);
+
+            Event::dispatch('catalog.product.delete.after', $productId);
+        }
+    }
+
+    /**
+     * @param  array<int>  $productIds
+     */
+    public function massUpdateStatus(array $productIds, bool $status): void
+    {
+        foreach ($productIds as $productId) {
+            Event::dispatch('catalog.product.update.before', $productId);
+
+            $product = $this->updateStatus($status, $productId);
+
+            Event::dispatch('catalog.product.update.after', $product);
+        }
     }
 
     /**

@@ -8,34 +8,36 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\ProductPassport\Console\InstallPassportAttributesCommand;
-use Webkul\ProductPassport\DataGrids\Catalog\PassportProductDataGrid;
 use Webkul\ProductPassport\Http\Controllers\PublicationController;
+use Webkul\ProductPassport\Listeners\AutoPublishPassport;
 use Webkul\ProductPassport\Listeners\ValidateProductGtin;
 use Webkul\ProductPassport\View\Composers\PassportPanelComposer;
 
 class ProductPassportServiceProvider extends ServiceProvider
 {
     /**
-     * Bound (not singleton) so every product-grid resolution gets a fresh,
-     * request-scoped instance carrying the passport mass-publish action.
+     * Decorates the resolved product grid instead of rebinding it, so any other
+     * package that swaps the concrete ProductDataGrid keeps its own behaviour.
      */
     public function register(): void
     {
-        $this->app->bind(ProductDataGrid::class, PassportProductDataGrid::class);
+        $this->app->extend(ProductDataGrid::class, function (ProductDataGrid $dataGrid): ProductDataGrid {
+            if (PublicationController::featureEnabled() && bouncer()->hasPermission('catalog.passport.publish')) {
+                $dataGrid->addMassAction([
+                    'title'  => trans('passport::app.publications.mass-publish.action'),
+                    'url'    => route('admin.catalog.passports.mass_publish'),
+                    'method' => 'POST',
+                ]);
+            }
+
+            return $dataGrid;
+        });
     }
 
     /**
-     * Boots the package: registers the `dpp` publication type (merged into
-     * the `publication` namespace, consumed by `Webkul\Publication`'s
-     * registry) and this package's own three-level settings tree.
+     * Boots the package: registers the `dpp` publication type and this package's settings tree.
      *
-     * Merge order matters: `mergeConfigFrom` does a top-level, non-recursive
-     * `array_merge(file, existing)`, so whichever provider's `boot()` runs
-     * SECOND on the shared `publication` key wins on any colliding top-level
-     * key (here, `types`). This provider must boot BEFORE
-     * `PublicationServiceProvider` so its `types.dpp` entry survives
-     * `PublicationServiceProvider::boot()`'s own merge of `publication.php`
-     * (whose own `types` default is `[]`) — verified via `route:list --path=p`.
+     * mergeConfigFrom is top-level non-recursive, so must boot BEFORE PublicationServiceProvider or its `types.dpp` entry is clobbered.
      */
     public function boot(): void
     {
@@ -51,15 +53,14 @@ class ProductPassportServiceProvider extends ServiceProvider
 
         Route::middleware('web')->group(__DIR__.'/../Routes/admin.php');
 
-        // Validate the merchant-entered GTIN before the product save proceeds,
-        // so an invalid check digit is rejected with inline feedback rather
-        // than silently published to the passport later.
+        // Reject an invalid GTIN check digit at save time rather than at publish.
         Event::listen('catalog.product.update.before', ValidateProductGtin::class);
 
-        // Gating on the admin guard matters even though the whole surrounding
-        // page already requires an authenticated admin — a listener on a
-        // globally-fired event string has no other guarantee about who or
-        // what triggered it.
+        // Auto-publish the passport after a save when the setting is on; the listener guards to dpp-family products.
+        Event::listen('catalog.product.create.after', AutoPublishPassport::class);
+        Event::listen('catalog.product.update.after', AutoPublishPassport::class);
+
+        // Guard-check here too: a globally-fired event string carries no guarantee about who triggered it.
         Event::listen('unopim.admin.catalog.product.edit.form.links.after', function ($viewRenderEventManager): void {
             if (auth()->guard('admin')->check() && bouncer()->hasPermission('catalog.passport.view')) {
                 $viewRenderEventManager->addTemplate('passport::admin.catalog.products.edit.passport-panel');
@@ -68,10 +69,7 @@ class ProductPassportServiceProvider extends ServiceProvider
 
         View::composer('passport::admin.catalog.products.edit.passport-panel', PassportPanelComposer::class);
 
-        // Opt-in feature: drop the Passports menu item while it is disabled for
-        // every channel. Filtered on the resolved (per-request) menu tree so it
-        // reacts to the setting live, without a config-cache-breaking condition
-        // in the static menu config.
+        // Drop the Passports menu item while the feature is disabled; filtered per-request so it reacts to the setting live.
         $this->app->extend('unopim.admin.menu', function (array $menu): array {
             if (! PublicationController::featureEnabled()) {
                 unset($menu['tree']->items['catalog']['children']['passport']);
