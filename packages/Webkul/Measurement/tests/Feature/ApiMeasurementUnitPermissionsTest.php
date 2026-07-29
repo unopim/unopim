@@ -56,11 +56,11 @@ function measurementUnitTestFamily(): MeasurementFamily
 function measurementUnitRouteCalls(MeasurementFamily $family): array
 {
     return [
-        'index'  => ['getJson', route('admin.api.measurement-units.index', $family->id), null],
-        'show'   => ['getJson', route('admin.api.measurement-units.show', [$family->id, 'km']), null],
-        'store'  => ['postJson', route('admin.api.measurement-units.store', $family->id), []],
-        'update' => ['putJson', route('admin.api.measurement-units.update', [$family->id, 'km']), []],
-        'delete' => ['deleteJson', route('admin.api.measurement-units.delete', [$family->id, 'km']), null],
+        'index'  => ['getJson', route('admin.api.measurement-units.index', $family->code), null],
+        'show'   => ['getJson', route('admin.api.measurement-units.show', [$family->code, 'km']), null],
+        'store'  => ['postJson', route('admin.api.measurement-units.store', $family->code), []],
+        'update' => ['putJson', route('admin.api.measurement-units.update', [$family->code, 'km']), []],
+        'delete' => ['deleteJson', route('admin.api.measurement-units.delete', [$family->code, 'km']), null],
     ];
 }
 
@@ -182,7 +182,7 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements']);
 
         $this->withHeaders($headers)->getJson(route('admin.api.measurement.index'))->assertOk();
-        $this->withHeaders($headers)->getJson(route('admin.api.measurement.show', $family->id))->assertOk();
+        $this->withHeaders($headers)->getJson(route('admin.api.measurement.show', $family->code))->assertOk();
         $this->withHeaders($headers)
             ->getJson(route('admin.api.attribute-measurement.getUnitsByFamily', $family->code))
             ->assertOk();
@@ -202,7 +202,7 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements.edit']);
 
         expect(
-            $this->withHeaders($headers)->putJson(route('admin.api.measurement.update', $family->id), [])->status()
+            $this->withHeaders($headers)->putJson(route('admin.api.measurement.update', $family->code), [])->status()
         )->not->toBe(403);
     });
 
@@ -212,7 +212,7 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements.delete']);
 
         expect(
-            $this->withHeaders($headers)->deleteJson(route('admin.api.measurement.delete', $family->id))->status()
+            $this->withHeaders($headers)->deleteJson(route('admin.api.measurement.delete', $family->code))->status()
         )->not->toBe(403);
     });
 
@@ -222,11 +222,11 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements.units']);
 
         $this->withHeaders($headers)
-            ->getJson(route('admin.api.measurement-units.index', $family->id))
+            ->getJson(route('admin.api.measurement-units.index', $family->code))
             ->assertOk();
 
         $this->withHeaders($headers)
-            ->getJson(route('admin.api.measurement-units.show', [$family->id, 'km']))
+            ->getJson(route('admin.api.measurement-units.show', [$family->code, 'km']))
             ->assertOk();
     });
 
@@ -237,7 +237,7 @@ describe('measurement unit api enforcement', function () {
 
         expect(
             $this->withHeaders($headers)
-                ->postJson(route('admin.api.measurement-units.store', $family->id), [])
+                ->postJson(route('admin.api.measurement-units.store', $family->code), [])
                 ->status()
         )->not->toBe(403);
     });
@@ -248,7 +248,7 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements.units.edit']);
 
         $this->withHeaders($headers)
-            ->putJson(route('admin.api.measurement-units.update', [$family->id, 'km']), ['symbol' => 'KM'])
+            ->putJson(route('admin.api.measurement-units.update', [$family->code, 'km']), ['symbol' => 'KM'])
             ->assertOk();
     });
 
@@ -258,7 +258,7 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements.units.delete']);
 
         $this->withHeaders($headers)
-            ->deleteJson(route('admin.api.measurement-units.delete', [$family->id, 'km']))
+            ->deleteJson(route('admin.api.measurement-units.delete', [$family->code, 'km']))
             ->assertOk();
     });
 
@@ -268,15 +268,15 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements.units.create']);
 
         $this->withHeaders($headers)
-            ->getJson(route('admin.api.measurement-units.index', $family->id))
+            ->getJson(route('admin.api.measurement-units.index', $family->code))
             ->assertForbidden();
 
         $this->withHeaders($headers)
-            ->putJson(route('admin.api.measurement-units.update', [$family->id, 'km']), [])
+            ->putJson(route('admin.api.measurement-units.update', [$family->code, 'km']), [])
             ->assertForbidden();
 
         $this->withHeaders($headers)
-            ->deleteJson(route('admin.api.measurement-units.delete', [$family->id, 'km']))
+            ->deleteJson(route('admin.api.measurement-units.delete', [$family->code, 'km']))
             ->assertForbidden();
     });
 
@@ -286,15 +286,15 @@ describe('measurement unit api enforcement', function () {
         $headers = $this->getAuthenticationHeaders('custom', ['api.catalog.measurements.units']);
 
         $this->withHeaders($headers)
-            ->postJson(route('admin.api.measurement-units.store', $family->id), [])
+            ->postJson(route('admin.api.measurement-units.store', $family->code), [])
             ->assertForbidden();
 
         $this->withHeaders($headers)
-            ->putJson(route('admin.api.measurement-units.update', [$family->id, 'km']), [])
+            ->putJson(route('admin.api.measurement-units.update', [$family->code, 'km']), [])
             ->assertForbidden();
 
         $this->withHeaders($headers)
-            ->deleteJson(route('admin.api.measurement-units.delete', [$family->id, 'km']))
+            ->deleteJson(route('admin.api.measurement-units.delete', [$family->code, 'km']))
             ->assertForbidden();
     });
 
