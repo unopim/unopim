@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'No s\'ha trobat cap moneda amb el codi :code.',
-                'create-btn'            => 'Crear Moneda',
-                'currency'              => 'Moneda',
-                'title'                 => 'Monedes',
-                'can-not-delete-error'  => 'No es pot eliminar una moneda associada a un canal',
-                'can-not-disable-error' => 'No es pot desactivar una moneda associada a un canal',
-                'datagrid'              => [
+                'not-found'              => 'No s\'ha trobat cap moneda amb el codi :code.',
+                'create-btn'             => 'Crear Moneda',
+                'currency'               => 'Moneda',
+                'title'                  => 'Monedes',
+                'can-not-delete-error'   => 'No es pot eliminar una moneda associada a un canal',
+                'can-not-disable-error'  => 'No es pot desactivar una moneda associada a un canal',
+                'partial-update-success' => 'Les monedes seleccionades s\'han actualitzat, excepte :count associades a un canal.',
+                'datagrid'               => [
                     'actions'        => 'Accions',
                     'code'           => 'Codi',
                     'delete'         => 'Eliminar',
@@ -1991,7 +1992,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logotip, icona i tema.',
+            'info'           => 'Logotip i icona.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

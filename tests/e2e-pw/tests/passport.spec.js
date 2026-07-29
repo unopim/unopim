@@ -41,7 +41,7 @@ test.describe.serial('Digital Product Passport', () => {
 
   test('enable Digital Product Passport publishing via the System Settings hub', async ({ adminPage }) => {
     const page = adminPage;
-    await page.goto('/admin/configuration/system/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/configuration/system-settings/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
 
     // The boolean toggle carries no accessible name; `enabled` is the first checkbox on the page (order-stable).

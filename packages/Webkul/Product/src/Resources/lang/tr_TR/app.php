@@ -20,5 +20,6 @@ return [
         'configurable'  => 'Ayarlanabilir',
         'simple'        => 'Basit',
         'variant-group' => 'Varyant Grubu',
+        'variant_group' => 'Varyant Grubu',
     ],
 ];

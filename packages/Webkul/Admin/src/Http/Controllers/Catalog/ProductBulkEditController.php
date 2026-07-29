@@ -315,7 +315,7 @@ class ProductBulkEditController extends Controller
     {
         $query = $this->attributeRepository
             ->whereNotIn('code', ['sku'])
-            ->whereNotIn('type', ['table', 'file']);
+            ->whereNotIn('type', ['table']);
 
         $productIds = session('bulk_edit_product_ids', []);
 

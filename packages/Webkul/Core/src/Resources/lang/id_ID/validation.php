@@ -9,6 +9,7 @@ return [
     'slug'                         => ':attribute harus berupa slug yang valid.',
     'sku'                          => ':attribute harus berupa SKU yang valid (hanya karakter alfanumerik, tanda hubung, dan garis bawah).',
     'comma-separated-integer'      => 'Kolom :attribute harus berupa angka dan boleh berisi koma.',
+    'ip-address-list'      => 'Bidang :attribute harus berisi alamat IP yang valid dipisahkan dengan koma.',
     'type'                         => ':attribute harus bertipe valid.',
     'validation-type'              => ':attribute harus bertipe valid.',
     'field-option-not-found'       => ':attribute berisi opsi yang tidak valid :invalid_codes.',

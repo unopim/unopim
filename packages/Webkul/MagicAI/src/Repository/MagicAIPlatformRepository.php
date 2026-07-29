@@ -16,11 +16,21 @@ class MagicAIPlatformRepository extends Repository
     }
 
     /**
-     * Get the default active platform.
+     * Get the platform marked as default, enabled or not.
      */
     public function getDefault()
     {
-        return $this->model->active()->default()->first();
+        return $this->model->default()->first();
+    }
+
+    /**
+     * Get the default platform to generate with: the default one when it is
+     * enabled, else any other enabled platform.
+     */
+    public function getActiveDefault()
+    {
+        return $this->model->active()->default()->first()
+            ?? $this->model->active()->first();
     }
 
     /**

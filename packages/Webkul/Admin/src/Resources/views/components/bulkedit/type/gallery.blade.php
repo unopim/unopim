@@ -42,7 +42,6 @@
         @change="onFileChange"
       />
 
-      <!-- Preview handled by editor-level overlay via emitter -->
     </div>
   </script>
 
@@ -144,7 +143,10 @@
 
         preview() {
           if (this.imageList.length) {
-            this.$emitter.emit('preview-image', this.baseUrl + this.imageList[0]);
+            this.$emitter.emit('preview-image', {
+              url: this.baseUrl + this.imageList[0],
+              fileName: this.imageList[0].split('/').pop(),
+            });
           }
         },
 

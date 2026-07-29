@@ -29,6 +29,7 @@
                 <x-admin::media.image
                     name="logo_image"
                     :show-suggestions="false"
+                    :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS"
                     width="240px"
                     height="120px"
                     object-fit="contain"
@@ -53,6 +54,7 @@
                 <x-admin::media.image
                     name="favicon"
                     :show-suggestions="false"
+                    :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS"
                     width="120px"
                     height="120px"
                     object-fit="contain"

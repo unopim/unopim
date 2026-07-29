@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Valuta med koden :code hittades inte.',
-                'create-btn'            => 'Skapa Valuta',
-                'currency'              => 'Valuta',
-                'title'                 => 'Valutor',
-                'can-not-delete-error'  => 'Du kan inte radera en valuta kopplad till en kanal',
-                'can-not-disable-error' => 'Du kan inte inaktivera en valuta kopplad till en kanal',
-                'datagrid'              => [
+                'not-found'              => 'Valuta med koden :code hittades inte.',
+                'create-btn'             => 'Skapa Valuta',
+                'currency'               => 'Valuta',
+                'title'                  => 'Valutor',
+                'can-not-delete-error'   => 'Du kan inte radera en valuta kopplad till en kanal',
+                'can-not-disable-error'  => 'Du kan inte inaktivera en valuta kopplad till en kanal',
+                'partial-update-success' => 'Valda valutor uppdaterades, förutom :count som är kopplade till en kanal.',
+                'datagrid'               => [
                     'actions'        => 'Åtgärder',
                     'code'           => 'Kod',
                     'delete'         => 'Radera',
@@ -1993,7 +1994,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logotyp, favicon och tema.',
+            'info'           => 'Logotyp och favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

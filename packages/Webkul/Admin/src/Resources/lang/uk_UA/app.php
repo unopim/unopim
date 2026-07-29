@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Валюту з кодом :code не знайдено.',
-                'create-btn'            => 'Створити валюту',
-                'currency'              => 'Валюта',
-                'title'                 => 'Валюти',
-                'can-not-delete-error'  => 'Ви не можете видалити валюту, пов\'язані з каналом',
-                'can-not-disable-error' => 'Ви не можете відключити валюту, пов\'язані з каналом',
-                'datagrid'              => [
+                'not-found'              => 'Валюту з кодом :code не знайдено.',
+                'create-btn'             => 'Створити валюту',
+                'currency'               => 'Валюта',
+                'title'                  => 'Валюти',
+                'can-not-delete-error'   => 'Ви не можете видалити валюту, пов\'язані з каналом',
+                'can-not-disable-error'  => 'Ви не можете відключити валюту, пов\'язані з каналом',
+                'partial-update-success' => 'Обрані валюти було оновлено, окрім :count, пов\'язаних із каналом.',
+                'datagrid'               => [
                     'actions'        => 'Дії',
                     'code'           => 'Код',
                     'delete'         => 'Видалити',
@@ -1993,7 +1994,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Логотип, значок і тема.',
+            'info'           => 'Логотип і значок.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

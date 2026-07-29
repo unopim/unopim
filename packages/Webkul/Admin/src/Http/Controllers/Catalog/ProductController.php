@@ -93,13 +93,27 @@ class ProductController extends Controller
      *
      * @return View
      */
-    public function index(): View|JsonResponse|BinaryFileResponse
+    public function index(): View|JsonResponse|RedirectResponse
     {
-        if (request()->ajax()) {
-            return app(ProductDataGrid::class)->toJson();
+        if (! request()->ajax()) {
+            return view('admin::catalog.products.index');
         }
 
-        return view('admin::catalog.products.index');
+        if (request()->boolean('export')) {
+            return redirect()->route('admin.catalog.products.quick-export', request()->query());
+        }
+
+        return app(ProductDataGrid::class)->toJson();
+    }
+
+    /**
+     * Quick export of the product grid.
+     */
+    public function quickExport(): BinaryFileResponse
+    {
+        abort_unless(request()->boolean('export'), 404);
+
+        return app(ProductDataGrid::class)->toJson();
     }
 
     /**
@@ -600,6 +614,25 @@ class ProductController extends Controller
             'groupAttributes',
             'nextGroupId'
         ));
+    }
+
+    /** Current completeness of a product for the requested channel and locale. */
+    public function completeness(int $id): JsonResponse
+    {
+        $product = $this->productRepository->findOrFail($id);
+
+        $scores = $product->getCompletenessScore(core()->getRequestedChannel()->id);
+
+        $current = $scores[core()->getRequestedLocale()->id] ?? null;
+
+        return new JsonResponse([
+            'state' => [
+                'score'        => $current['score'] ?? null,
+                'missingCount' => $current['missing_count'] ?? 0,
+                'average'      => count($scores) ? round(array_sum(array_column($scores, 'score')) / count($scores)) : null,
+                'localeScores' => collect($scores)->map(fn ($row) => $row['score'])->all(),
+            ],
+        ]);
     }
 
     /**

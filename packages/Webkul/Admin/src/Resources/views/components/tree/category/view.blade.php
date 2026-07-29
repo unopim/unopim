@@ -235,6 +235,7 @@
                     searchLastPage: 1,
                     searchLoading: false,
                     searchTimer: null,
+                    savedValues: [],
 
                     labels: {}
                 };
@@ -250,7 +251,18 @@
                 this.formattedItems = this.parseInput(this.items);
                 this.formattedExpandedBranch = this.parseInput(this.expandedBranch);
                 this.formattedValues = this.getInitialFormattedValues();
+                this.savedValues = [...this.formattedValues];
                 this.mergeExpandedBranches();
+            },
+
+            mounted() {
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+                this.$emitter.on('form-saved', this.commitValues);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
+                this.$emitter.off('form-saved', this.commitValues);
             },
 
 
@@ -337,6 +349,12 @@
                     this.$emit('change-input', this.formattedValues);
                 },
 
+                resetToInitial() {
+                    this.formattedValues = [...this.savedValues];
+
+                    this.$emit('change-input', this.formattedValues);
+                },
+
                 clearSelection() {
                     this.formattedValues = [];
                 },
@@ -414,6 +432,10 @@
                                 });
                         },
                     });
+                },
+
+                commitValues() {
+                    this.savedValues = [...this.formattedValues];
                 },
 
                 parseInput(data) {

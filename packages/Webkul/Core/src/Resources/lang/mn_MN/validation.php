@@ -9,6 +9,7 @@ return [
     'slug'                         => ':attribute  нь хүчинтэй slug байх ёстой.',
     'sku'                          => ':attribute  нь хүчинтэй SKU байх ёстой (зөвхөн үсэг, тоо, зураас болон доогуур зураас).',
     'comma-separated-integer'      => ':attribute талбар нь тоон байх ёстой бөгөөд таслал агуулж болно.',
+    'ip-address-list'      => ':attribute талбар нь таслалаар тусгаарлагдсан хүчинтэй IP хаягуудыг агуулсан байх ёстой.',
     'type'                         => ':attribute  нь хүчинтэй төрөл байх ёстой.',
     'validation-type'              => ':attribute  нь хүчинтэй төрөл байх ёстой.',
     'field-option-not-found'       => ':attribute хүчингүй сонголт(ууд) агуулж байна :invalid_codes.',

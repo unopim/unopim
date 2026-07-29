@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => '值 :code 必須唯一。',
                     'incorrect-family-for-variant'             => '家族應與主家族相同',
                     'parent-not-exist'                         => '父類別不存在。',
+                    'variant-structure-not-found'              => '該屬性族不存在變體結構 :code。',
                 ],
             ],
         ],

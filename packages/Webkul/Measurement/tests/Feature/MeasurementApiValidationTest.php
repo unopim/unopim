@@ -40,7 +40,7 @@ it('rejects family update when the resulting standard_unit is not among units', 
     $family = probeFamily();
 
     $this->withHeaders($this->headers)
-        ->putJson(route('admin.api.measurement.update', $family->id), [
+        ->putJson(route('admin.api.measurement.update', $family->code), [
             'standard_unit' => 'lightyear',
         ])
         ->assertStatus(422)
@@ -64,7 +64,7 @@ it('rejects attribute-measurement on a non-measurement attribute type', function
     $family = probeFamily();
 
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.attribute-measurement.store', $attribute->id), [
+        ->postJson(route('admin.api.attribute-measurement.store', $attribute->code), [
             'family_code' => $family->code,
             'unit_code'   => 'meter',
         ])
@@ -79,7 +79,7 @@ it('saves attribute-measurement config for a valid measurement attribute', funct
     $family = probeFamily();
 
     $this->withHeaders($this->headers)
-        ->postJson(route('admin.api.attribute-measurement.store', $attribute->id), [
+        ->postJson(route('admin.api.attribute-measurement.store', $attribute->code), [
             'family_code' => $family->code,
             'unit_code'   => 'meter',
         ])

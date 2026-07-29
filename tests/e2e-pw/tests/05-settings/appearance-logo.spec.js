@@ -18,7 +18,7 @@ const path = require('path');
  * and it doubles as coverage for the drag-and-drop feature.
  */
 test.describe('Appearance — admin logo', () => {
-  const SETTINGS_URL = '/admin/settings/appearance';
+  const SETTINGS_URL = '/admin/configuration/system/system.appearance';
   const FIXTURE_B64 = fs.readFileSync(path.resolve(__dirname, '../../assets/dotted.png')).toString('base64');
 
   const gotoSettings = (page) =>
@@ -107,7 +107,7 @@ test.describe('Appearance — admin logo', () => {
 
     await dropLogo(adminPage);
 
-    await adminPage.route('**/admin/settings/appearance', async (route) => {
+    await adminPage.route('**/admin/configuration/system/system.appearance', async (route) => {
       const method = route.request().method();
 
       if (method !== 'GET' && method !== 'HEAD') {

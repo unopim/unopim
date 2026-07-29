@@ -102,11 +102,6 @@ abstract class DataGrid
     protected bool $exportable = false;
 
     /**
-     * Permission required to export this grid. Null leaves export ungated.
-     */
-    protected ?string $exportPermission = null;
-
-    /**
      * Every matching primary-key value for the current filter/search context.
      *
      * Populated only when the request asks for a "select all matching" id list,
@@ -273,7 +268,7 @@ abstract class DataGrid
                     foreach ($requestedValues as $value) {
                         collect($this->columns)
                             ->filter(fn ($column): bool => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
-                            ->each(fn ($column) => $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%'));
+                            ->each(fn ($column) => $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false));
                     }
                 });
             } else {
@@ -292,7 +287,7 @@ abstract class DataGrid
                 match ($column->type) {
                     ColumnTypeEnum::STRING->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
                         foreach ($requestedValues as $value) {
-                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
+                            $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false);
                         }
                     }),
                     ColumnTypeEnum::INTEGER->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
@@ -325,7 +320,7 @@ abstract class DataGrid
                     }),
                     default => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
                         foreach ($requestedValues as $value) {
-                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
+                            $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false);
                         }
                     }),
                 };
@@ -461,22 +456,7 @@ abstract class DataGrid
      */
     public function setExportFile($records, $format = 'csv'): void
     {
-        $this->enforceExportPermission();
-
         $this->exportFile = Excel::download(new DataGridExport($records), $this->getExportFileName().'.'.$format);
-    }
-
-    protected function enforceExportPermission(): void
-    {
-        if ($this->exportPermission === null) {
-            return;
-        }
-
-        abort_unless(
-            bouncer()->hasPermission($this->exportPermission),
-            403,
-            trans('admin::app.errors.403.message')
-        );
     }
 
     /**

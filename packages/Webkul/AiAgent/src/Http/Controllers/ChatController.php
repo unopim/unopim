@@ -358,7 +358,7 @@ class ChatController extends Controller
         }
 
         // Try default platform
-        $platform = $this->platformRepository->getDefault();
+        $platform = $this->platformRepository->getActiveDefault();
 
         if ($platform) {
             return $platform;

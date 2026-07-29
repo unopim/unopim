@@ -20,5 +20,6 @@ return [
         'configurable'  => '可配置的',
         'simple'        => '簡單的',
         'variant-group' => '變體組',
+        'variant_group' => '變體組',
     ],
 ];

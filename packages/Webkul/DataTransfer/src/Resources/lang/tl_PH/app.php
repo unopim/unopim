@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Ang halaga :code ay dapat na natatangi.',
                     'incorrect-family-for-variant'             => 'Ang pamilya ay dapat na parehong-pareho sa pangunahing pamilya',
                     'parent-not-exist'                         => 'Walang magulang.',
+                    'variant-structure-not-found'              => 'Walang variant structure na :code para sa attribute family na ito.',
                 ],
             ],
         ],

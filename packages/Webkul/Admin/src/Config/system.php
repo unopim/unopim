@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\Core\Rules\IpPatternRule;
+
 return [
     /**
      * General.
@@ -205,9 +207,10 @@ return [
                 'title' => 'admin::app.configuration.index.general.debug.settings.enabled',
                 'type'  => 'boolean',
             ], [
-                'name'  => 'allowed_ips',
-                'title' => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
-                'type'  => 'text',
+                'name'       => 'allowed_ips',
+                'title'      => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
+                'type'       => 'text',
+                'validation' => ['nullable', IpPatternRule::class],
             ],
         ],
     ], [

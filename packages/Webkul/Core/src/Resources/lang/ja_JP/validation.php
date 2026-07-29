@@ -9,6 +9,7 @@ return [
     'slug'                         => ':attribute は有効なスラッグでなければなりません。',
     'sku'                          => ':attribute は有効なSKUでなければなりません（英数字、ハイフン、アンダースコアのみ）。',
     'comma-separated-integer'      => ':attribute フィールドは数値でなければならず、カンマを含めることができます。',
+    'ip-address-list'      => ':attribute フィールドには、カンマで区切られた有効な IP アドレスを入力してください。',
     'type'                         => ':attribute は有効なタイプでなければなりません。',
     'validation-type'              => ':attribute は有効なタイプでなければなりません。',
     'field-option-not-found'       => ':attribute に無効なオプション :invalid_codes が含まれています。',

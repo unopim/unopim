@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Devise avec le code :code introuvable.',
-                'create-btn'            => 'Ajouter une devise',
-                'currency'              => 'Devise',
-                'title'                 => 'Devises',
-                'can-not-delete-error'  => 'Vous ne pouvez pas supprimer une devise liée à un canal',
-                'can-not-disable-error' => 'Vous ne pouvez pas désactiver une devise liée à un canal',
-                'datagrid'              => [
+                'not-found'              => 'Devise avec le code :code introuvable.',
+                'create-btn'             => 'Ajouter une devise',
+                'currency'               => 'Devise',
+                'title'                  => 'Devises',
+                'can-not-delete-error'   => 'Vous ne pouvez pas supprimer une devise liée à un canal',
+                'can-not-disable-error'  => 'Vous ne pouvez pas désactiver une devise liée à un canal',
+                'partial-update-success' => 'Les devises sélectionnées ont été mises à jour, sauf :count liées à un canal.',
+                'datagrid'               => [
                     'actions'        => 'Actions',
                     'code'           => 'Code',
                     'delete'         => 'Supprimer',
@@ -1990,7 +1991,7 @@ return [
         ],
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logo, favicon et thème.',
+            'info'           => 'Logo et favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

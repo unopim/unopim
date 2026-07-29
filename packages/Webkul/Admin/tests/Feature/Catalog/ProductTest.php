@@ -520,7 +520,7 @@ it('should return a downloadable file response for quick export in xls format', 
 
     $response = $this->withHeaders([
         'X-Requested-With' => 'XMLHttpRequest',
-    ])->json('GET', route('admin.catalog.products.index'), [
+    ])->json('GET', route('admin.catalog.products.quick-export'), [
         'export'     => 1,
         'format'     => 'xls',
         'pagination' => [

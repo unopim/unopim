@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Währung mit dem Code :code nicht gefunden.',
-                'create-btn'            => 'Währung erstellen',
-                'currency'              => 'Währung',
-                'title'                 => 'Währungen',
-                'can-not-delete-error'  => 'Sie können eine mit einem Kanal verknüpfte Währung nicht löschen',
-                'can-not-disable-error' => 'Sie können eine mit einem Kanal verknüpfte Währung nicht deaktivieren',
-                'datagrid'              => [
+                'not-found'              => 'Währung mit dem Code :code nicht gefunden.',
+                'create-btn'             => 'Währung erstellen',
+                'currency'               => 'Währung',
+                'title'                  => 'Währungen',
+                'can-not-delete-error'   => 'Sie können eine mit einem Kanal verknüpfte Währung nicht löschen',
+                'can-not-disable-error'  => 'Sie können eine mit einem Kanal verknüpfte Währung nicht deaktivieren',
+                'partial-update-success' => 'Die ausgewählten Währungen wurden aktualisiert, mit Ausnahme von :count, die mit einem Kanal verknüpft sind.',
+                'datagrid'               => [
                     'actions'        => 'Aktionen',
                     'code'           => 'Code',
                     'delete'         => 'Löschen',
@@ -1991,7 +1992,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logo, Favicon und Design.',
+            'info'           => 'Logo und Favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

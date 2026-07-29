@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => ':code kodlu para birimi bulunamadı.',
-                'create-btn'            => 'Lumikha ng Pera',
-                'currency'              => 'Pera',
-                'title'                 => 'Mga Pera',
-                'can-not-delete-error'  => 'Hindi mo maaaring tanggalin ang isang pera na nakakabit sa isang channel',
-                'can-not-disable-error' => 'Hindi mo maaaring i-disable ang isang pera na nakakabit sa isang channel',
-                'datagrid'              => [
+                'not-found'              => ':code kodlu para birimi bulunamadı.',
+                'create-btn'             => 'Lumikha ng Pera',
+                'currency'               => 'Pera',
+                'title'                  => 'Mga Pera',
+                'can-not-delete-error'   => 'Hindi mo maaaring tanggalin ang isang pera na nakakabit sa isang channel',
+                'can-not-disable-error'  => 'Hindi mo maaaring i-disable ang isang pera na nakakabit sa isang channel',
+                'partial-update-success' => 'Seçili para birimleri güncellendi, bir kanala bağlı olan :count hariç.',
+                'datagrid'               => [
                     'actions'        => 'Mga Aksyon',
                     'code'           => 'Kod',
                     'delete'         => 'Tanggalin',
@@ -1993,7 +1994,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logo, favicon ve tema.',
+            'info'           => 'Logo ve favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

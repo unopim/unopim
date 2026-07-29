@@ -1339,13 +1339,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => ':code кодтой валют олдсонгүй.',
-                'create-btn'            => 'Валют үүсгэх',
-                'currency'              => 'Мөнгө',
-                'title'                 => 'Валютууд',
-                'can-not-delete-error'  => 'Та суваг руу холбосон валютыг устгах боломжгүй',
-                'can-not-disable-error' => 'Та сувагтай холбосон валютыг идэвхгүй болгох боломжгүй',
-                'datagrid'              => [
+                'not-found'              => ':code кодтой валют олдсонгүй.',
+                'create-btn'             => 'Валют үүсгэх',
+                'currency'               => 'Мөнгө',
+                'title'                  => 'Валютууд',
+                'can-not-delete-error'   => 'Та суваг руу холбосон валютыг устгах боломжгүй',
+                'can-not-disable-error'  => 'Та сувагтай холбосон валютыг идэвхгүй болгох боломжгүй',
+                'partial-update-success' => 'Сонгосон валютуудыг шинэчилсэн бөгөөд сувагтай холбоотой :count валютыг хассан болно.',
+                'datagrid'               => [
                     'actions'        => 'Үйлдэл',
                     'code'           => 'Хуулө цааз',
                     'delete'         => 'Эдгээх',
@@ -1993,7 +1994,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Лого, favicon болон загвар.',
+            'info'           => 'Лого болон favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

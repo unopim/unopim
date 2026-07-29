@@ -20,5 +20,6 @@ return [
         'configurable'  => 'Конфігурований',
         'simple'        => 'Простий',
         'variant-group' => 'Група варіантів',
+        'variant_group' => 'Група варіантів',
     ],
 ];

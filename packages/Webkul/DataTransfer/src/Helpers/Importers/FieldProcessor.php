@@ -77,11 +77,15 @@ class FieldProcessor
         foreach ($paths as $path) {
             $trimmedPath = ltrim(trim((string) $path), '/');
 
-            $fullPath = $baseDir.'/'.$trimmedPath;
+            if ($trimmedPath === '') {
+                continue;
+            }
+
+            $fullPath = $baseDir === '' ? $trimmedPath : $baseDir.'/'.$trimmedPath;
             $storagePath = 'public/'.$fullPath;
 
             if (! array_key_exists($storagePath, self::$pathExistsCache)) {
-                self::$pathExistsCache[$storagePath] = StorageFacade::disk('local')->exists($storagePath);
+                self::$pathExistsCache[$storagePath] = StorageFacade::disk('local')->fileExists($storagePath);
             }
 
             if (self::$pathExistsCache[$storagePath]) {

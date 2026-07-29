@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'コード :code の通貨が見つかりません。',
-                'create-btn'            => '通貨の作成',
-                'currency'              => '通貨',
-                'title'                 => '通貨',
-                'can-not-delete-error'  => 'チャネルにリンクされた通貨は削除できません',
-                'can-not-disable-error' => 'チャネルにリンクされた通貨を無効にすることはできません',
-                'datagrid'              => [
+                'not-found'              => 'コード :code の通貨が見つかりません。',
+                'create-btn'             => '通貨の作成',
+                'currency'               => '通貨',
+                'title'                  => '通貨',
+                'can-not-delete-error'   => 'チャネルにリンクされた通貨は削除できません',
+                'can-not-disable-error'  => 'チャネルにリンクされた通貨を無効にすることはできません',
+                'partial-update-success' => '選択した通貨のうち、チャネルにリンクされている :count 件を除いて更新しました。',
+                'datagrid'               => [
                     'actions'        => 'アクション',
                     'code'           => 'コード',
                     'delete'         => '削除',
@@ -1991,7 +1992,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'ロゴ、ファビコン、テーマ。',
+            'info'           => 'ロゴとファビコン。',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => '找不到代碼為 :code 的貨幣。',
-                'create-btn'            => '創建貨幣',
-                'currency'              => '貨幣',
-                'title'                 => '貨幣',
-                'can-not-delete-error'  => '無法刪除與頻道關聯的貨幣',
-                'can-not-disable-error' => '無法禁用與頻道關聯的貨幣',
-                'datagrid'              => [
+                'not-found'              => '找不到代碼為 :code 的貨幣。',
+                'create-btn'             => '創建貨幣',
+                'currency'               => '貨幣',
+                'title'                  => '貨幣',
+                'can-not-delete-error'   => '無法刪除與頻道關聯的貨幣',
+                'can-not-disable-error'  => '無法禁用與頻道關聯的貨幣',
+                'partial-update-success' => '已更新所選貨幣，但與頻道關聯的 :count 個除外。',
+                'datagrid'               => [
                     'actions'        => '操作',
                     'code'           => '代碼',
                     'delete'         => '刪除',
@@ -1993,7 +1994,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => '標誌、網站圖示與佈景主題。',
+            'info'           => '標誌與網站圖示。',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

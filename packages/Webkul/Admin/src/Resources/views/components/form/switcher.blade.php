@@ -104,7 +104,7 @@
                 toggleClass() {
                     return this.variant === 'button'
                         ? 'flex gap-x-1 items-center px-1 py-1.5 border-2 border-transparent rounded-md font-semibold whitespace-nowrap cursor-pointer appearance-none transition-all hover:!bg-primary-50 dark:hover:!bg-cherry-900 text-gray-600 dark:!text-slate-50'
-                        : 'flex gap-1 items-center px-1 h-5 rounded-full box-shadow bg-gray-100 border border-gray-200 text-gray-600 dark:!text-gray-600 uppercase cursor-pointer transition-all hover:bg-primary-50';
+                        : 'switcher-chip flex gap-1 items-center px-1 h-5 rounded-full box-shadow bg-gray-100 border border-gray-200 text-gray-600 dark:!text-gray-600 uppercase cursor-pointer transition-all hover:bg-primary-50';
                 },
             },
         });

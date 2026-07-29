@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code मान अद्वितीय होना चाहिए।',
                     'incorrect-family-for-variant'             => 'परिवार मूल परिवार के समान ही होना चाहिए',
                     'parent-not-exist'                         => 'अभिभावक मौजूद नहीं है.',
+                    'variant-structure-not-found'              => 'इस विशेषता परिवार के लिए वेरिएंट संरचना :code मौजूद नहीं है।',
                 ],
             ],
         ],

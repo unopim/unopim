@@ -20,5 +20,6 @@ return [
         'configurable'  => 'कॉन्फ़िगर करने योग्य',
         'simple'        => 'सरल',
         'variant-group' => 'वैरिएंट समूह',
+        'variant_group' => 'वैरिएंट समूह',
     ],
 ];

@@ -1338,13 +1338,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => ':code कोड वाली मुद्रा नहीं मिली।',
-                'create-btn'            => 'मुद्रा बनाएँ',
-                'currency'              => 'मुद्रा',
-                'title'                 => 'मुद्राओं',
-                'can-not-delete-error'  => 'आप किसी चैनल से जुड़ी मुद्रा को हटा नहीं सकते',
-                'can-not-disable-error' => 'आप किसी चैनल से जुड़ी मुद्रा को अक्षम नहीं कर सकते',
-                'datagrid'              => [
+                'not-found'              => ':code कोड वाली मुद्रा नहीं मिली।',
+                'create-btn'             => 'मुद्रा बनाएँ',
+                'currency'               => 'मुद्रा',
+                'title'                  => 'मुद्राओं',
+                'can-not-delete-error'   => 'आप किसी चैनल से जुड़ी मुद्रा को हटा नहीं सकते',
+                'can-not-disable-error'  => 'आप किसी चैनल से जुड़ी मुद्रा को अक्षम नहीं कर सकते',
+                'partial-update-success' => 'चयनित मुद्राएं अपडेट कर दी गईं, सिवाय :count के जो किसी चैनल से जुड़ी हैं।',
+                'datagrid'               => [
                     'actions'        => 'कार्रवाई',
                     'code'           => 'कोड',
                     'delete'         => 'मिटाना',
@@ -1991,7 +1992,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'लोगो, फ़ेविकॉन और थीम।',
+            'info'           => 'लोगो और फ़ेविकॉन।',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

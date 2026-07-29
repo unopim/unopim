@@ -1339,13 +1339,14 @@ return [
         ],
         'currencies' => [
             'index' => [
-                'not-found'             => 'Moeda com o código :code não encontrada.',
-                'create-btn'            => 'Criar Moeda',
-                'currency'              => 'Moeda',
-                'title'                 => 'Moedas',
-                'can-not-delete-error'  => 'Você não pode excluir uma moeda vinculada a um canal',
-                'can-not-disable-error' => 'Você não pode desativar uma moeda vinculada a um canal',
-                'datagrid'              => [
+                'not-found'              => 'Moeda com o código :code não encontrada.',
+                'create-btn'             => 'Criar Moeda',
+                'currency'               => 'Moeda',
+                'title'                  => 'Moedas',
+                'can-not-delete-error'   => 'Você não pode excluir uma moeda vinculada a um canal',
+                'can-not-disable-error'  => 'Você não pode desativar uma moeda vinculada a um canal',
+                'partial-update-success' => 'As moedas selecionadas foram atualizadas, exceto :count vinculadas a um canal.',
+                'datagrid'               => [
                     'actions'        => 'Ações',
                     'code'           => 'Código',
                     'delete'         => 'Excluir',
@@ -1993,7 +1994,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logotipo, favicon e tema.',
+            'info'           => 'Logotipo e favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

@@ -20,5 +20,6 @@ return [
         'configurable'  => 'Konfigurabilan',
         'simple'        => 'Jednostavan',
         'variant-group' => 'Grupa varijanti',
+        'variant_group' => 'Grupa varijanti',
     ],
 ];

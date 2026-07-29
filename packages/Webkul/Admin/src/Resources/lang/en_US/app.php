@@ -1419,12 +1419,13 @@ return [
 
         'currencies' => [
             'index' => [
-                'not-found'             => 'Currency with code :code not found.',
-                'create-btn'            => 'Create Currency',
-                'currency'              => 'Currency',
-                'title'                 => 'Currencies',
-                'can-not-delete-error'  => 'You cannot delete a currency linked to a channel',
-                'can-not-disable-error' => 'You cannot disable a currency linked to a channel',
+                'not-found'              => 'Currency with code :code not found.',
+                'create-btn'             => 'Create Currency',
+                'currency'               => 'Currency',
+                'title'                  => 'Currencies',
+                'can-not-delete-error'   => 'You cannot delete a currency linked to a channel',
+                'can-not-disable-error'  => 'You cannot disable a currency linked to a channel',
+                'partial-update-success' => 'Selected currencies were updated, except :count linked to a channel.',
 
                 'datagrid' => [
                     'actions'        => 'Actions',
@@ -2110,7 +2111,7 @@ return [
 
         'appearance' => [
             'title'          => 'Appearance',
-            'info'           => 'Logo, favicon and theme.',
+            'info'           => 'Logo and favicon.',
             'section-title'  => 'Visual Branding',
             'section-info'   => 'Customize how the admin panel looks by uploading your own logo and favicon. Changes preview instantly and apply once saved.',
             'logo'           => 'Logo',

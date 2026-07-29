@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Nilai :code harus unik.',
                     'incorrect-family-for-variant'             => 'Keluarga tersebut harus sama dengan keluarga orang tua',
                     'parent-not-exist'                         => 'Orang tua tidak ada.',
+                    'variant-structure-not-found'              => 'Struktur varian :code tidak ada untuk keluarga atribut ini.',
                 ],
             ],
         ],
