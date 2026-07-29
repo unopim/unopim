@@ -121,12 +121,7 @@
                     </x-admin::form.control-group>
                 </div>
 
-                <x-admin::accordion>
-                    <x-slot:header>
-                        <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('admin::app.account.edit.catalog-locale')
-                        </p>
-                    </x-slot>
+                <x-admin::accordion :title="trans('admin::app.account.edit.catalog-locale')">
 
                     <x-slot:content>
                         <x-admin::form.control-group>
@@ -216,12 +211,7 @@
             </div>
 
             <div class="flex flex-col gap-2 w-[360px] max-w-full max-xl:w-full xl:sticky xl:top-4 xl:self-start">
-                <x-admin::accordion>
-                    <x-slot:header>
-                        <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('admin::app.account.edit.change-password')
-                        </p>
-                    </x-slot>
+                <x-admin::accordion :title="trans('admin::app.account.edit.change-password')">
 
                     <x-slot:content>
                         @if ($requiresCurrentPassword)
@@ -286,12 +276,7 @@
                 </x-admin::accordion>
 
                 @if ($canManage)
-                    <x-admin::accordion>
-                        <x-slot:header>
-                            <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
-                                @lang('admin::app.settings.users.edit.role')
-                            </p>
-                        </x-slot>
+                    <x-admin::accordion :title="trans('admin::app.settings.users.edit.role')">
 
                         <x-slot:content>
                             <x-admin::form.control-group>

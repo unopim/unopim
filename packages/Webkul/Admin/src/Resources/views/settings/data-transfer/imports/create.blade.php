@@ -156,14 +156,7 @@
                 <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                     {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.card.accordion.settings.before') !!}
 
-                    <x-admin::accordion>
-                        <x-slot:header>
-                            <div class="flex items-center justify-between">
-                                <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                    @lang('admin::app.settings.data-transfer.imports.create.settings')
-                                </p>
-                            </div>
-                        </x-slot>
+                    <x-admin::accordion :title="trans('admin::app.settings.data-transfer.imports.create.settings')">
                                     
                         <x-slot:content>
                             <template v-if="enableFileShow">

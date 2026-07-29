@@ -357,12 +357,7 @@
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.accordian.validations.before', ['attribute' => $attribute]) !!}
 
-                        <x-admin::accordion>
-                            <x-slot:header>
-                                <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
-                                    @lang('admin::app.catalog.attributes.edit.validations')
-                                </p>
-                            </x-slot>
+                        <x-admin::accordion :title="trans('admin::app.catalog.attributes.edit.validations')">
 
                             <x-slot:content>
                                 @if($attribute->type == 'text')
@@ -470,12 +465,7 @@
 
                         {!! view_render_event('unopim.admin.catalog.attributes.edit.card.accordian.configuration.before', ['attribute' => $attribute]) !!}
 
-                        <x-admin::accordion>
-                            <x-slot:header>
-                                <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
-                                    @lang('admin::app.catalog.attributes.edit.configuration')
-                                </p>
-                            </x-slot>
+                        <x-admin::accordion :title="trans('admin::app.catalog.attributes.edit.configuration')">
 
                             <x-slot:content>
                                 <x-admin::form.control-group

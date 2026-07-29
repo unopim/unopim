@@ -102,12 +102,7 @@
 
                 @if (! $rightCategoryFields?->isEmpty())
                     {!! view_render_event('unopim.admin.catalog.categories.create.card.accordion.right-section.before') !!}
-                    <x-admin::accordion>
-                        <x-slot:header>
-                            <p class="py-2 text-base text-gray-800 dark:text-white font-semibold">
-                                @lang('admin::app.catalog.categories.create.right-section')
-                            </p>
-                        </x-slot>
+                    <x-admin::accordion :title="trans('admin::app.catalog.categories.create.right-section')">
 
                         <x-slot:content>
                             <x-admin::categories.dynamic-fields

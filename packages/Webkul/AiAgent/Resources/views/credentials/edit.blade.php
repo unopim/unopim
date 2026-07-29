@@ -154,12 +154,7 @@
 
                         <!-- Right sidebar -->
                         <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                            <x-admin::accordion>
-                                <x-slot:header>
-                                    <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                        @lang('ai-agent::app.credentials.settings')
-                                    </p>
-                                </x-slot:header>
+                            <x-admin::accordion :title="trans('ai-agent::app.credentials.settings')">
 
                                 <x-slot:content>
                                     <!-- Status -->

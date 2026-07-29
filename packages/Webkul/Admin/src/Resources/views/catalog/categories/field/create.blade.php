@@ -286,12 +286,7 @@
                     {!! view_render_event('unopim.admin.catalog.category_fields.create.card.general.before') !!}
 
                     <div class="flex flex-col gap-2 w-[360px] max-w-full">
-                        <x-admin::accordion>
-                            <x-slot:header>
-                                <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
-                                    @lang('admin::app.catalog.category_fields.create.validations')
-                                </p>
-                            </x-slot>
+                        <x-admin::accordion :title="trans('admin::app.catalog.category_fields.create.validations')">
 
                             <x-slot:content>
                                 <x-admin::form.control-group v-if="selectedCategoryFieldType == 'text'">
@@ -397,12 +392,7 @@
                             </x-slot>
                         </x-admin::accordion>
 
-                        <x-admin::accordion>
-                            <x-slot:header>
-                                <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
-                                    @lang('admin::app.catalog.category_fields.create.configuration')
-                                </p>
-                            </x-slot>
+                        <x-admin::accordion :title="trans('admin::app.catalog.category_fields.create.configuration')">
 
                             <x-slot:content>
                                 <x-admin::form.control-group class="flex gap-2.5 items-center !mb-2 select-none">
@@ -425,12 +415,7 @@
                             </x-slot>
                         </x-admin::accordion>
 
-                        <x-admin::accordion>
-                            <x-slot:header>
-                                <p class="p-2.5 text-gray-800 dark:text-white text-base font-semibold">
-                                    @lang('admin::app.catalog.category_fields.create.settings')
-                                </p>
-                            </x-slot>
+                        <x-admin::accordion :title="trans('admin::app.catalog.category_fields.create.settings')">
 
                             <x-slot:content>
                                 <x-admin::form.control-group>
