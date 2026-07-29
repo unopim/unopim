@@ -279,6 +279,16 @@ abstract class DataGrid
             } else {
                 $column = collect($this->columns)->first(fn ($c): bool => $c->index === $requestedColumn);
 
+                if (! $column) {
+                    continue;
+                }
+
+                if ($condition = $this->extractRequestedCondition($requestedValues)) {
+                    $this->applyConditionFilter($column, $condition);
+
+                    continue;
+                }
+
                 match ($column->type) {
                     ColumnTypeEnum::STRING->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
                         foreach ($requestedValues as $value) {
@@ -323,6 +333,47 @@ abstract class DataGrid
         }
 
         return $this->queryBuilder;
+    }
+
+    /**
+     * Filters carrying an operator arrive as a single {operator, value, value2}
+     * payload rather than a list of plain values.
+     *
+     * @param  array<array-key, mixed>  $requestedValues
+     * @return array<string, mixed>|null
+     */
+    protected function extractRequestedCondition(array $requestedValues): ?array
+    {
+        $condition = reset($requestedValues);
+
+        return is_array($condition) && ! empty($condition['operator']) ? $condition : null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $condition
+     */
+    protected function applyConditionFilter(Column $column, array $condition): void
+    {
+        $name = $column->getDatabaseColumnName();
+        $value = $condition['value'] ?? '';
+        $value2 = $condition['value2'] ?? '';
+
+        match ($condition['operator']) {
+            'eq'             => $this->queryBuilder->where($name, $value),
+            'neq'            => $this->queryBuilder->where($name, '!=', $value),
+            'gt'             => $this->queryBuilder->where($name, '>', $value),
+            'gte'            => $this->queryBuilder->where($name, '>=', $value),
+            'lt'             => $this->queryBuilder->where($name, '<', $value),
+            'lte'            => $this->queryBuilder->where($name, '<=', $value),
+            'in_list'        => $this->queryBuilder->whereIn($name, (array) $value),
+            'not_in_list'    => $this->queryBuilder->whereNotIn($name, (array) $value),
+            'within_range'   => $this->queryBuilder->whereBetween($name, [$value, $value2]),
+            'outside_range'  => $this->queryBuilder->whereNotBetween($name, [$value, $value2]),
+            'blank'          => $this->queryBuilder->where(fn ($query) => $query->whereNull($name)->orWhere($name, '')),
+            'not_blank'      => $this->queryBuilder->whereNotNull($name)->where($name, '!=', ''),
+            'missing'        => $this->queryBuilder->where(fn ($query) => $query->whereNull($name)->orWhere($name, 'NOT LIKE', '%'.$value.'%')),
+            default          => $this->queryBuilder->where($name, 'LIKE', '%'.$value.'%'),
+        };
     }
 
     /**
