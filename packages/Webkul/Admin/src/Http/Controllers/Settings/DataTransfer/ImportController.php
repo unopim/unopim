@@ -146,12 +146,8 @@ class ImportController extends Controller
 
         $import = $this->jobInstancesRepository->findOrFail($id);
 
-        /**
-         * The code is fixed once the profile exists: the form renders it disabled and
-         * this update never persists it. Validating its format here would only reject
-         * codes the user cannot change, locking older profiles out of editing.
-         */
         $this->validate(request(), [
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
