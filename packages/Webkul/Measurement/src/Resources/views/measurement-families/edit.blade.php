@@ -67,30 +67,32 @@
         </div>
     </x-admin::form>
 
-    <div class="mt-4 rounded bg-white p-4 box-shadow dark:bg-cherry-900">
-        <v-locales>
-            <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
-                <p class="text-xl font-bold text-gray-800 dark:text-slate-50">
-                    @lang('measurement::app.measurement.edit.units')
-                </p>
+    @if (bouncer()->hasPermission('catalog.measurements.units'))
+        <div class="mt-4 rounded bg-white p-4 box-shadow dark:bg-cherry-900">
+            <v-locales>
+                <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
+                    <p class="text-xl font-bold text-gray-800 dark:text-slate-50">
+                        @lang('measurement::app.measurement.edit.units')
+                    </p>
 
-                <div class="flex items-center gap-x-2.5">
-                    @if (bouncer()->hasPermission('catalog.measurements.units.create'))
-                        <button
-                            type="button"
-                            class="primary-button"
-                        >
-                            @lang('measurement::app.measurement.edit.create_units')
-                        </button>
-                    @endif
+                    <div class="flex items-center gap-x-2.5">
+                        @if (bouncer()->hasPermission('catalog.measurements.units.create'))
+                            <button
+                                type="button"
+                                class="primary-button"
+                            >
+                                @lang('measurement::app.measurement.edit.create_units')
+                            </button>
+                        @endif
+                    </div>
                 </div>
-            </div>
 
-            <x-admin::shimmer.datagrid />
-        </v-locales>
-    </div>
-
+                <x-admin::shimmer.datagrid />
+            </v-locales>
+        </div>
+    @endif
     @pushOnce('scripts')
+        @if (bouncer()->hasPermission('catalog.measurements.units'))
         <script type="text/x-template" id="v-locales-template">
             <div class="flex items-center justify-between gap-4 max-sm:flex-wrap">
                 <p class="text-xl font-bold text-gray-800 dark:text-slate-50">
@@ -567,5 +569,6 @@
                 },
             });
         </script>
+        @endif
     @endPushOnce
 </x-admin::layouts.with-history>
