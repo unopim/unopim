@@ -20,7 +20,7 @@ describe('Profile image AI generation should not have @ suggestions', function (
     });
 
     it('account edit page disables suggestions for profile image', function () {
-        $viewPath = base_path('packages/Webkul/Admin/src/Resources/views/account/edit.blade.php');
+        $viewPath = base_path('packages/Webkul/Admin/src/Resources/views/settings/users/edit.blade.php');
         $content = file_get_contents($viewPath);
 
         // Verify show-suggestions is set to false for the profile image

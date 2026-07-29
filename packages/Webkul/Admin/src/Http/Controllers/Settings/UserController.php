@@ -169,7 +169,19 @@ class UserController extends Controller
         $timezone = ['id' => $user?->timezone, 'label' => $user?->timezone];
 
         if (! request()->expectsJson()) {
-            return view('admin::settings.users.edit', compact('roles', 'timezone', 'user'));
+            return view('admin::settings.users.edit', [
+                'user'                    => $user,
+                'roles'                   => $roles,
+                'canManage'               => true,
+                'isSelf'                  => $user->id === auth()->guard('admin')->id(),
+                'requiresCurrentPassword' => false,
+                'formId'                  => 'user-edit-form',
+                'formAction'              => route('admin.settings.users.update'),
+                'pageTitle'               => trans('admin::app.settings.users.edit.title'),
+                'backUrl'                 => route('admin.settings.users.index'),
+                'backLabel'               => trans('admin::app.settings.users.edit.back-btn'),
+                'saveLabel'               => trans('admin::app.settings.users.edit.save-btn'),
+            ]);
         }
 
         return new JsonResponse([

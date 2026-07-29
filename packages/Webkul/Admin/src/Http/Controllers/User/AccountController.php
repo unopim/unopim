@@ -30,7 +30,19 @@ class AccountController extends Controller
     {
         $user = auth()->guard('admin')->user();
 
-        return view('admin::account.edit', compact('user'));
+        return view('admin::settings.users.edit', [
+            'user'                    => $user,
+            'roles'                   => collect(),
+            'canManage'               => false,
+            'isSelf'                  => true,
+            'requiresCurrentPassword' => true,
+            'formId'                  => 'account-edit-form',
+            'formAction'              => route('admin.account.update'),
+            'pageTitle'               => trans('admin::app.account.edit.title'),
+            'backUrl'                 => route('admin.dashboard.index'),
+            'backLabel'               => trans('admin::app.account.edit.back-btn'),
+            'saveLabel'               => trans('admin::app.account.edit.save-btn'),
+        ]);
     }
 
     /**
