@@ -70,6 +70,8 @@ $packageTestPaths = array_map(
 foreach ($packageTestPaths as $testPath) {
     $package = dirname($testPath);
 
+    pest()->tia()->baselined();
+
     pest()->tia()->watch([
         $package.'/src/Resources/views/**'  => $testPath,
         $package.'/src/Resources/lang/**'   => $testPath,

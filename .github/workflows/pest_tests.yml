@@ -66,13 +66,9 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        run: |
-          # Run heavy suites in separate PHP processes so memory is released
-          # between them. The full suite in a single process peaked past the
-          # runner memory limit and was OOM-killed (exit 137).
-          vendor/bin/pest --testsuite "Admin Feature Test" --colors=always
-          vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
-          vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
+        # Each worker owns a database clone, so the suite no longer runs as one
+        # process - which is also what kept it under the runner's memory ceiling.
+        run: vendor/bin/pest --parallel --processes=4 --colors=always
 
   pest-elasticsearch:
     runs-on: ubuntu-24.04
@@ -153,13 +149,9 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        run: |
-          # Run heavy suites in separate PHP processes so memory is released
-          # between them. The full suite in a single process peaked past the
-          # runner memory limit and was OOM-killed (exit 137).
-          vendor/bin/pest --testsuite "Admin Feature Test" --colors=always
-          vendor/bin/pest --testsuite "Api Feature Test,DataTransfer Unit Test" --colors=always
-          vendor/bin/pest --exclude-testsuite "Admin Feature Test,Api Feature Test,DataTransfer Unit Test" --colors=always
+        # Each worker owns a database clone, so the suite no longer runs as one
+        # process - which is also what kept it under the runner's memory ceiling.
+        run: vendor/bin/pest --parallel --processes=4 --colors=always
 
   # Fast pull-request signal alongside the full suites: Pest's Test Impact Analysis
   # runs only the tests reached by the changed files. With no cached graph (or a
@@ -207,10 +199,15 @@ jobs:
         with:
           composer-options: "--optimize-autoloader"
 
+      # Pest keeps the graph under $HOME/.pest/tia/<project-key>, not in the workspace.
+      - name: Resolve the test impact graph path
+        id: tia
+        run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
+
       - name: Restore the test impact graph
         uses: actions/cache@v4
         with:
-          path: .pest
+          path: ${{ steps.tia.outputs.path }}
           key: pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ github.run_id }}
           restore-keys: |
             pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-
@@ -234,6 +231,4 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running impacted Pest tests
-        # Single process here, unlike the chunked full run: a cold graph means the
-        # whole suite in one process, which needs the memory cap lifted.
-        run: php -d memory_limit=-1 vendor/bin/pest --tia --colors=always
+        run: vendor/bin/pest --parallel --processes=4 --tia --colors=always
