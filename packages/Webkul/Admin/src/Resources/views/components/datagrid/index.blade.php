@@ -111,6 +111,8 @@
 
                     showFilterPicker: false,
 
+                    filterTreePanel: null,
+
                     filterPickerSearch: '',
 
                     pickerOptions: [],
@@ -1754,6 +1756,28 @@
 
                 attributeValueOptions(column) {
                     return Array.isArray(column.options) ? column.options : (column.options?.params?.options ?? []);
+                },
+
+                openFilterTreePanel(column) {
+                    this.filterTreePanel = column;
+                },
+
+                closeFilterTreePanel() {
+                    this.filterTreePanel = null;
+                },
+
+                treeSelectionCount(column) {
+                    const value = this.attributeCondition(column.index).value;
+
+                    return Array.isArray(value) ? value.length : 0;
+                },
+
+                treeSelectionLabel(column) {
+                    const count = this.treeSelectionCount(column);
+
+                    return count
+                        ? @json(trans('admin::app.components.datagrid.filters.values-selected')).replace(':count', count)
+                        : @json(trans('admin::app.components.datagrid.filters.select'));
                 },
 
                 setAttributeTreeValue(column, codes) {

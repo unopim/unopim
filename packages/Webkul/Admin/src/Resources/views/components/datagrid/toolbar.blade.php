@@ -298,14 +298,41 @@
                 </x-slot>
 
                 <x-slot:header>
-                    <div class="flex justify-between items-center p-3">
+                    <div class="flex items-center gap-2 p-3">
+                        <button
+                            v-if="filterTreePanel"
+                            type="button"
+                            class="flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-500 transition-all hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-cherry-800"
+                            data-filter-panel-back
+                            :aria-label="'@lang('admin::app.components.datagrid.filters.back')'"
+                            :title="'@lang('admin::app.components.datagrid.filters.back')'"
+                            @click="closeFilterTreePanel()"
+                        >
+                            <span class="icon-left-arrow text-xl" aria-hidden="true"></span>
+                        </button>
+
                         <p class="text-base text-gray-800 dark:text-white font-semibold">
-                            @lang('admin::app.components.datagrid.filters.title')
+                            <template v-if="filterTreePanel">@{{ filterLabel(filterTreePanel) }}</template>
+
+                            <template v-else>@lang('admin::app.components.datagrid.filters.title')</template>
                         </p>
                     </div>
                 </x-slot>
 
                 <x-slot:content class="!p-5">
+                    <div v-if="filterTreePanel">
+                        <v-field-category-tree
+                            :key="'panel-' + filterTreePanel.index"
+                            :field="{ name: 'condition_' + filterTreePanel.index, label: filterLabel(filterTreePanel) }"
+                            :name="'condition_' + filterTreePanel.index"
+                            :model-value="attributeCondition(filterTreePanel.index).value"
+                            context="filter"
+                            @update:modelValue="setAttributeTreeValue(filterTreePanel, $event)"
+                        >
+                        </v-field-category-tree>
+                    </div>
+
+                    <template v-else>
                     <x-admin::datagrid.filters />
 
                     <div class="mb-4" v-if="getInactiveFilterColumns().length || filterAttributesSrc">
@@ -363,12 +390,23 @@
                             </div>
                         </div>
                     </div>
-
+                    </template>
                 </x-slot>
 
                 <x-slot:footer class="mt-auto border-t border-gray-100 bg-white p-5 dark:border-cherry-800 dark:bg-cherry-800">
                     <div class="flex flex-col gap-y-1">
                         <button
+                            v-if="filterTreePanel"
+                            type="button"
+                            class="primary-button w-full justify-center text-center"
+                            data-filter-panel-done
+                            @click="closeFilterTreePanel()"
+                        >
+                            @lang('admin::app.components.datagrid.filters.done')
+                        </button>
+
+                        <button
+                            v-else
                             type="button"
                             class="primary-button w-full justify-center text-center"
                             @click="runFilters()"
@@ -377,6 +415,7 @@
                         </button>
 
                         <button
+                            v-if="! filterTreePanel"
                             type="button"
                             class="transparent-button justify-center self-center text-sm disabled:cursor-not-allowed disabled:opacity-50"
                             data-clear-all-filters
