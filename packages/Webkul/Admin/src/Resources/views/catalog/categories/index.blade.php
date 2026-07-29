@@ -46,8 +46,8 @@
     @else
         {!! view_render_event('unopim.admin.catalog.categories.browse.before') !!}
 
-        <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-            <div class="flex flex-col w-[340px] max-w-full max-xl:w-full p-4 h-[calc(100vh-190px)] max-xl:h-[420px] bg-white dark:bg-cherry-900 rounded box-shadow">
+        <div class="flex gap-2.5 mt-3.5 flex-wrap">
+            <div class="flex flex-col shrink-0 w-[360px] max-w-full p-4 h-[calc(100vh-170px)] bg-white dark:bg-cherry-900 rounded box-shadow">
                 <div class="flex flex-col gap-3 h-full overflow-y-auto">
                     <x-admin::tree.category.view
                         input-type="radio"
@@ -69,11 +69,11 @@
                 </div>
             </div>
 
-            <div class="flex-1 max-xl:flex-auto">
+            <div class="flex-1 min-w-0">
                 @if ($panelMode)
                     @include('admin::catalog.categories.partials.panel')
                 @else
-                    <div class="flex flex-col gap-4 items-center justify-center p-8 h-full min-h-[420px] bg-white dark:bg-cherry-900 rounded box-shadow">
+                    <div class="flex flex-col gap-4 items-center justify-center p-8 h-[calc(100vh-170px)] bg-white dark:bg-cherry-900 rounded box-shadow">
                         <span class="icon-folder text-8xl text-gray-300 dark:text-gray-500"></span>
 
                         <p class="text-base text-gray-600 dark:text-gray-300">
