@@ -2077,12 +2077,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Đăng ký một ứng dụng trong Microsoft Entra ID và dán thông tin xác thực của ứng dụng vào đây. Để trống để sử dụng các giá trị môi trường. URI chuyển hướng: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Cài đặt Microsoft SSO',
-                        'enabled'       => 'Bật Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Đăng ký một ứng dụng trong Microsoft Entra ID và dán thông tin xác thực của ứng dụng vào đây. Để trống để sử dụng các giá trị môi trường. URI chuyển hướng: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Cài đặt Microsoft SSO',
+                        'enabled'             => 'Bật Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'URI chuyển hướng',
+                        'redirect-uri-info'   => 'Đăng ký chính xác URL này trong đăng ký ứng dụng Microsoft Entra ID tại Xác thực → URI chuyển hướng, với nền tảng Web.',
+                        'redirect-uri-copy'   => 'Sao chép',
+                        'redirect-uri-copied' => 'Đã sao chép vào bảng nhớ tạm',
                     ],
                 ],
 

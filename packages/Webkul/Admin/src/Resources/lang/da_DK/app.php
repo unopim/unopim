@@ -2075,12 +2075,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registrer en app i Microsoft Entra ID, og indsæt dens legitimationsoplysninger her. Lad feltet stå tomt for at falde tilbage til miljøværdier. Omdirigerings-URI: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Microsoft SSO-indstillinger',
-                        'enabled'       => 'Aktivér Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Registrer en app i Microsoft Entra ID, og indsæt dens legitimationsoplysninger her. Lad feltet stå tomt for at falde tilbage til miljøværdier. Omdirigerings-URI: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Microsoft SSO-indstillinger',
+                        'enabled'             => 'Aktivér Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'Omdirigerings-URI',
+                        'redirect-uri-info'   => 'Registrer denne nøjagtige URL i din Microsoft Entra ID-appregistrering under Godkendelse → Omdirigerings-URI\'er med Web-platformen.',
+                        'redirect-uri-copy'   => 'Kopiér',
+                        'redirect-uri-copied' => 'Kopieret til udklipsholder',
                     ],
                 ],
 

@@ -40,6 +40,8 @@ use Webkul\User\Database\Factories\AdminFactory;
     'status',
     'type',
     'timezone',
+    'sso_provider',
+    'sso_identifier',
 ])]
 #[Hidden([
     'password',

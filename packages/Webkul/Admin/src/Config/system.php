@@ -227,6 +227,11 @@ return [
                 'type'          => 'boolean',
                 'default_value' => env('MICROSOFT_SSO_ENABLED', false) ? '1' : '0',
             ], [
+                'name'  => 'redirect_uri',
+                'title' => 'admin::app.configuration.index.general.microsoft-sso.settings.redirect-uri',
+                'type'  => 'blade',
+                'path'  => 'admin::configuration.microsoft-sso-callback',
+            ], [
                 'name'          => 'tenant',
                 'title'         => 'admin::app.configuration.index.general.microsoft-sso.settings.tenant',
                 'type'          => 'text',

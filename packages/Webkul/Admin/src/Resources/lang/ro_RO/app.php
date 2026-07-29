@@ -2077,12 +2077,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Înregistrați o aplicație în Microsoft Entra ID și lipiți acreditările acesteia aici. Lăsați necompletat pentru a reveni la valorile de mediu. URI de redirecționare: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Setări Microsoft SSO',
-                        'enabled'       => 'Activați Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Înregistrați o aplicație în Microsoft Entra ID și lipiți acreditările acesteia aici. Lăsați necompletat pentru a reveni la valorile de mediu. URI de redirecționare: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Setări Microsoft SSO',
+                        'enabled'             => 'Activați Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'URI de redirecționare',
+                        'redirect-uri-info'   => 'Înregistrați exact acest URL în înregistrarea aplicației Microsoft Entra ID la Autentificare → URI-uri de redirecționare, folosind platforma Web.',
+                        'redirect-uri-copy'   => 'Copiază',
+                        'redirect-uri-copied' => 'Copiat în clipboard',
                     ],
                 ],
 

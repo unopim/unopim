@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Hash;
 use Webkul\Admin\Sso\AbstractOAuthProvider;
 use Webkul\Admin\Sso\SsoIdentity;
 use Webkul\Admin\Sso\SsoManager;
+use Webkul\Admin\Sso\SsoToken;
 use Webkul\User\Models\Admin;
 
 use function Pest\Laravel\get;
@@ -29,19 +30,21 @@ class FakeSsoProvider extends AbstractOAuthProvider
         return static::$enabled;
     }
 
-    protected function buildAuthorizationUrl(string $state): string
+    protected function buildAuthorizationUrl(string $state, string $codeChallenge, string $nonce): string
     {
-        return 'https://fake-idp.test/authorize?state='.$state;
+        return 'https://fake-idp.test/authorize?state='.$state.'&code_challenge='.$codeChallenge;
     }
 
-    protected function exchangeCodeForToken(string $authorizationCode): ?string
+    protected function exchangeCodeForToken(string $authorizationCode, string $codeVerifier): ?SsoToken
     {
-        return 'fake-access-token';
+        return new SsoToken(accessToken: 'fake-access-token');
     }
 
-    protected function fetchIdentity(string $accessToken): ?SsoIdentity
+    protected function fetchIdentity(SsoToken $token): ?SsoIdentity
     {
-        return static::$email === null ? null : new SsoIdentity(email: static::$email);
+        return static::$email === null
+            ? null
+            : new SsoIdentity(identifier: 'fake-subject-'.static::$email, email: static::$email);
     }
 }
 
@@ -65,11 +68,14 @@ it('renders a sign-in button for a third-party registered driver', function () {
 it('redirects to the driver authorization url and stores a namespaced state', function () {
     $response = get(route('admin.session.sso.redirect', ['provider' => 'fake']));
 
-    $state = session('sso_state.fake');
+    $handshake = session('sso_handshake.fake');
 
-    expect($state)->toBeString()->not->toBeEmpty();
+    expect($handshake['state'])->toBeString()->not->toBeEmpty()
+        ->and($handshake['verifier'])->toBeString()->not->toBeEmpty();
 
-    $response->assertRedirect('https://fake-idp.test/authorize?state='.$state);
+    $challenge = rtrim(strtr(base64_encode(hash('sha256', $handshake['verifier'], true)), '+/', '-_'), '=');
+
+    $response->assertRedirect('https://fake-idp.test/authorize?state='.$handshake['state'].'&code_challenge='.$challenge);
 });
 
 it('logs an existing admin in through a third-party driver', function () {
@@ -79,7 +85,7 @@ it('logs an existing admin in through a third-party driver', function () {
         'status'   => 1,
     ]);
 
-    $this->withSession(['sso_state' => ['fake' => 'valid-state']])
+    $this->withSession(['sso_handshake' => ['fake' => ['state' => 'valid-state', 'verifier' => 'v', 'nonce' => 'n']]])
         ->get(route('admin.session.sso.callback', [
             'provider' => 'fake',
             'state'    => 'valid-state',
@@ -96,7 +102,7 @@ it('rejects a callback whose state does not match the driver namespace', functio
         'status'   => 1,
     ]);
 
-    $response = $this->withSession(['sso_state' => ['microsoft' => 'valid-state']])
+    $response = $this->withSession(['sso_handshake' => ['microsoft' => ['state' => 'valid-state', 'verifier' => 'v', 'nonce' => 'n']]])
         ->get(route('admin.session.sso.callback', [
             'provider' => 'fake',
             'state'    => 'valid-state',

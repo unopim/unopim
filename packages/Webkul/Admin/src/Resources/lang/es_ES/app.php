@@ -2075,12 +2075,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registra una aplicación en Microsoft Entra ID y pega sus credenciales aquí. Déjalo en blanco para recurrir a los valores del entorno. URI de redirección: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Configuración de Microsoft SSO',
-                        'enabled'       => 'Habilitar Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Registra una aplicación en Microsoft Entra ID y pega sus credenciales aquí. Déjalo en blanco para recurrir a los valores del entorno. URI de redirección: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Configuración de Microsoft SSO',
+                        'enabled'             => 'Habilitar Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'URI de redirección',
+                        'redirect-uri-info'   => 'Registre esta URL exacta en su registro de aplicación de Microsoft Entra ID en Autenticación → URI de redirección, usando la plataforma Web.',
+                        'redirect-uri-copy'   => 'Copiar',
+                        'redirect-uri-copied' => 'Copiado al portapapeles',
                     ],
                 ],
 

@@ -2077,12 +2077,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registreer een app in Microsoft Entra ID en plak de referenties hier. Laat leeg om terug te vallen op omgevingswaarden. Omleidings-URI: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Microsoft SSO-instellingen',
-                        'enabled'       => 'Microsoft SSO inschakelen',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Registreer een app in Microsoft Entra ID en plak de referenties hier. Laat leeg om terug te vallen op omgevingswaarden. Omleidings-URI: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Microsoft SSO-instellingen',
+                        'enabled'             => 'Microsoft SSO inschakelen',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'Omleidings-URI',
+                        'redirect-uri-info'   => 'Registreer exact deze URL in uw Microsoft Entra ID-app-registratie onder Verificatie → Omleidings-URI\'s, met het Web-platform.',
+                        'redirect-uri-copy'   => 'Kopiëren',
+                        'redirect-uri-copied' => 'Gekopieerd naar klembord',
                     ],
                 ],
 

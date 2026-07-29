@@ -2077,12 +2077,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Зареєструйте застосунок у Microsoft Entra ID і вставте його облікові дані тут. Залиште порожнім, щоб використовувати значення середовища. URI перенаправлення: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Налаштування Microsoft SSO',
-                        'enabled'       => 'Увімкнути Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Зареєструйте застосунок у Microsoft Entra ID і вставте його облікові дані тут. Залиште порожнім, щоб використовувати значення середовища. URI перенаправлення: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Налаштування Microsoft SSO',
+                        'enabled'             => 'Увімкнути Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'URI перенаправлення',
+                        'redirect-uri-info'   => 'Зареєструйте саме цю URL-адресу в реєстрації застосунку Microsoft Entra ID у розділі «Автентифікація» → «URI перенаправлення», обравши платформу Web.',
+                        'redirect-uri-copy'   => 'Копіювати',
+                        'redirect-uri-copied' => 'Скопійовано до буфера обміну',
                     ],
                 ],
 

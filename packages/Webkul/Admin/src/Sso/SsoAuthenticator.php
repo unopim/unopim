@@ -23,12 +23,7 @@ class SsoAuthenticator
     {
         Event::dispatch('unopim.admin.sso.identity.resolved', [$identity, $provider]);
 
-        $email = mb_strtolower(trim($identity->email));
-
-        $admin = $this->adminRepository->getModel()
-            ->newQuery()
-            ->whereRaw('LOWER(email) = ?', [$email])
-            ->first();
+        $admin = $this->resolveAdmin($identity, $provider);
 
         if (! $admin || $admin->isApiUser()) {
             throw SsoAuthenticationException::rejected($identity->email);
@@ -46,6 +41,48 @@ class SsoAuthenticator
         $request->session()->regenerateToken();
 
         Event::dispatch('unopim.admin.sso.login.after', [$admin, $provider]);
+
+        return $admin;
+    }
+
+    /**
+     * Prefer the provider's immutable subject id. Email is only used to link an
+     * account the first time, because directories reassign addresses and a reused
+     * address would otherwise inherit the previous holder's admin account.
+     */
+    protected function resolveAdmin(SsoIdentity $identity, SsoProvider $provider): ?Admin
+    {
+        $admin = $this->adminRepository->getModel()
+            ->newQuery()
+            ->where('sso_provider', $provider->getCode())
+            ->where('sso_identifier', $identity->identifier)
+            ->first();
+
+        if ($admin) {
+            return $admin;
+        }
+
+        $admin = $this->adminRepository->getModel()
+            ->newQuery()
+            ->whereRaw('LOWER(email) = ?', [mb_strtolower(trim($identity->email))])
+            ->first();
+
+        if (! $admin) {
+            return null;
+        }
+
+        if (
+            $admin->sso_provider === $provider->getCode()
+            && $admin->sso_identifier !== null
+            && $admin->sso_identifier !== $identity->identifier
+        ) {
+            throw SsoAuthenticationException::rejected($identity->email);
+        }
+
+        $admin->forceFill([
+            'sso_provider'   => $provider->getCode(),
+            'sso_identifier' => $identity->identifier,
+        ])->save();
 
         return $admin;
     }

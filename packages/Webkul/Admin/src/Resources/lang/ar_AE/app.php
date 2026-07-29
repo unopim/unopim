@@ -2075,12 +2075,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'سجّل تطبيقًا في Microsoft Entra ID والصق بيانات اعتماده هنا. اتركه فارغًا للرجوع إلى قيم البيئة. عنوان إعادة التوجيه: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'إعدادات Microsoft SSO',
-                        'enabled'       => 'تفعيل Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'سجّل تطبيقًا في Microsoft Entra ID والصق بيانات اعتماده هنا. اتركه فارغًا للرجوع إلى قيم البيئة. عنوان إعادة التوجيه: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'إعدادات Microsoft SSO',
+                        'enabled'             => 'تفعيل Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'عنوان إعادة التوجيه',
+                        'redirect-uri-info'   => 'سجّل هذا الرابط بالضبط في تسجيل تطبيق Microsoft Entra ID ضمن المصادقة ← عناوين إعادة التوجيه، باستخدام منصة الويب.',
+                        'redirect-uri-copy'   => 'نسخ',
+                        'redirect-uri-copied' => 'تم النسخ إلى الحافظة',
                     ],
                 ],
 

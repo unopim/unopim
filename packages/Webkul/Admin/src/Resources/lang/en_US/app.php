@@ -2208,12 +2208,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Register an app in Microsoft Entra ID and paste its credentials here. Leave blank to fall back to environment values. Redirect URI: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Microsoft SSO Settings',
-                        'enabled'       => 'Enable Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Register an app in Microsoft Entra ID and paste its credentials here. Leave blank to fall back to environment values. Redirect URI: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Microsoft SSO Settings',
+                        'enabled'             => 'Enable Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'Redirect URI',
+                        'redirect-uri-info'   => 'Register this exact URL in your Microsoft Entra ID app registration under Authentication → Redirect URIs, using the Web platform.',
+                        'redirect-uri-copy'   => 'Copy',
+                        'redirect-uri-copied' => 'Copied to clipboard',
                     ],
                 ],
 

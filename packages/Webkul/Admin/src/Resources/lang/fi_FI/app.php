@@ -2075,12 +2075,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Rekisteröi sovellus Microsoft Entra ID:ssä ja liitä sen tunnistetiedot tähän. Jätä tyhjäksi käyttääksesi ympäristön arvoja. Uudelleenohjaus-URI: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Microsoft SSO -asetukset',
-                        'enabled'       => 'Ota Microsoft SSO käyttöön',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Rekisteröi sovellus Microsoft Entra ID:ssä ja liitä sen tunnistetiedot tähän. Jätä tyhjäksi käyttääksesi ympäristön arvoja. Uudelleenohjaus-URI: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Microsoft SSO -asetukset',
+                        'enabled'             => 'Ota Microsoft SSO käyttöön',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'Uudelleenohjaus-URI',
+                        'redirect-uri-info'   => 'Rekisteröi täsmälleen tämä URL-osoite Microsoft Entra ID -sovellusrekisteröinnissä kohdassa Todennus → Uudelleenohjaus-URIt käyttäen Web-alustaa.',
+                        'redirect-uri-copy'   => 'Kopioi',
+                        'redirect-uri-copied' => 'Kopioitu leikepöydälle',
                     ],
                 ],
 

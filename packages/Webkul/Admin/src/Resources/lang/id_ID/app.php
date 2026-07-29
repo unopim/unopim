@@ -2075,12 +2075,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Daftarkan aplikasi di Microsoft Entra ID dan tempel kredensialnya di sini. Biarkan kosong untuk kembali ke nilai lingkungan. URI pengalihan: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Pengaturan Microsoft SSO',
-                        'enabled'       => 'Aktifkan Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Daftarkan aplikasi di Microsoft Entra ID dan tempel kredensialnya di sini. Biarkan kosong untuk kembali ke nilai lingkungan. URI pengalihan: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Pengaturan Microsoft SSO',
+                        'enabled'             => 'Aktifkan Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'URI Pengalihan',
+                        'redirect-uri-info'   => 'Daftarkan URL persis ini di registrasi aplikasi Microsoft Entra ID Anda pada Autentikasi → URI Pengalihan, menggunakan platform Web.',
+                        'redirect-uri-copy'   => 'Salin',
+                        'redirect-uri-copied' => 'Disalin ke papan klip',
                     ],
                 ],
 

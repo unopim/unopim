@@ -2077,12 +2077,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Magrehistro ng app sa Microsoft Entra ID at i-paste ang mga kredensyal nito dito. Iwanang blangko upang gamitin ang mga halaga ng environment. Redirect URI: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Mga Setting ng Microsoft SSO',
-                        'enabled'       => 'Paganahin ang Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Magrehistro ng app sa Microsoft Entra ID at i-paste ang mga kredensyal nito dito. Iwanang blangko upang gamitin ang mga halaga ng environment. Redirect URI: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Mga Setting ng Microsoft SSO',
+                        'enabled'             => 'Paganahin ang Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'Redirect URI',
+                        'redirect-uri-info'   => 'Irehistro ang eksaktong URL na ito sa iyong Microsoft Entra ID app registration sa ilalim ng Authentication → Redirect URIs, gamit ang Web platform.',
+                        'redirect-uri-copy'   => 'Kopyahin',
+                        'redirect-uri-copied' => 'Nakopya sa clipboard',
                     ],
                 ],
 

@@ -2077,12 +2077,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => '在 Microsoft Entra ID 中註冊應用程式並將其認證資訊貼到此處。留空則改用環境變數值。重新導向 URI：/admin/login/sso/microsoft/callback。',
-                        'title'         => 'Microsoft SSO 設定',
-                        'enabled'       => '啟用 Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => '在 Microsoft Entra ID 中註冊應用程式並將其認證資訊貼到此處。留空則改用環境變數值。重新導向 URI：/admin/login/sso/microsoft/callback。',
+                        'title'               => 'Microsoft SSO 設定',
+                        'enabled'             => '啟用 Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => '重新導向 URI',
+                        'redirect-uri-info'   => '請將此 URL 原樣註冊到 Microsoft Entra ID 應用程式註冊的「驗證」→「重新導向 URI」中，平台選擇 Web。',
+                        'redirect-uri-copy'   => '複製',
+                        'redirect-uri-copied' => '已複製到剪貼簿',
                     ],
                 ],
 

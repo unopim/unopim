@@ -2075,12 +2075,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Registrieren Sie eine App in Microsoft Entra ID und fügen Sie deren Anmeldedaten hier ein. Leer lassen, um auf die Umgebungswerte zurückzugreifen. Weiterleitungs-URI: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Microsoft SSO-Einstellungen',
-                        'enabled'       => 'Microsoft SSO aktivieren',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Registrieren Sie eine App in Microsoft Entra ID und fügen Sie deren Anmeldedaten hier ein. Leer lassen, um auf die Umgebungswerte zurückzugreifen. Weiterleitungs-URI: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Microsoft SSO-Einstellungen',
+                        'enabled'             => 'Microsoft SSO aktivieren',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'Redirect-URI',
+                        'redirect-uri-info'   => 'Registrieren Sie genau diese URL in Ihrer Microsoft Entra ID-App-Registrierung unter Authentifizierung → Umleitungs-URIs mit der Plattform Web.',
+                        'redirect-uri-copy'   => 'Kopieren',
+                        'redirect-uri-copied' => 'In die Zwischenablage kopiert',
                     ],
                 ],
 

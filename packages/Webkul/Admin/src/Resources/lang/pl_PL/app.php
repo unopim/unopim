@@ -2077,12 +2077,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Zarejestruj aplikację w Microsoft Entra ID i wklej jej poświadczenia tutaj. Pozostaw puste, aby użyć wartości środowiskowych. Identyfikator URI przekierowania: /admin/login/sso/microsoft/callback.',
-                        'title'         => 'Ustawienia Microsoft SSO',
-                        'enabled'       => 'Włącz Microsoft SSO',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Zarejestruj aplikację w Microsoft Entra ID i wklej jej poświadczenia tutaj. Pozostaw puste, aby użyć wartości środowiskowych. Identyfikator URI przekierowania: /admin/login/sso/microsoft/callback.',
+                        'title'               => 'Ustawienia Microsoft SSO',
+                        'enabled'             => 'Włącz Microsoft SSO',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'Identyfikator URI przekierowania',
+                        'redirect-uri-info'   => 'Zarejestruj dokładnie ten adres URL w rejestracji aplikacji Microsoft Entra ID w sekcji Uwierzytelnianie → Identyfikatory URI przekierowania, używając platformy Web.',
+                        'redirect-uri-copy'   => 'Kopiuj',
+                        'redirect-uri-copied' => 'Skopiowano do schowka',
                     ],
                 ],
 

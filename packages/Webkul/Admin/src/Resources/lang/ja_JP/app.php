@@ -2075,12 +2075,16 @@ return [
                     'title' => 'Microsoft SSO',
 
                     'settings' => [
-                        'info'          => 'Microsoft Entra ID でアプリを登録し、その資格情報をここに貼り付けます。空欄のままにすると環境値が使用されます。リダイレクト URI: /admin/login/sso/microsoft/callback。',
-                        'title'         => 'Microsoft SSO 設定',
-                        'enabled'       => 'Microsoft SSO を有効にする',
-                        'tenant'        => 'Tenant ID',
-                        'client-id'     => 'Client ID',
-                        'client-secret' => 'Client Secret',
+                        'info'                => 'Microsoft Entra ID でアプリを登録し、その資格情報をここに貼り付けます。空欄のままにすると環境値が使用されます。リダイレクト URI: /admin/login/sso/microsoft/callback。',
+                        'title'               => 'Microsoft SSO 設定',
+                        'enabled'             => 'Microsoft SSO を有効にする',
+                        'tenant'              => 'Tenant ID',
+                        'client-id'           => 'Client ID',
+                        'client-secret'       => 'Client Secret',
+                        'redirect-uri'        => 'リダイレクト URI',
+                        'redirect-uri-info'   => 'この URL をそのまま Microsoft Entra ID のアプリ登録の「認証」→「リダイレクト URI」に、Web プラットフォームとして登録してください。',
+                        'redirect-uri-copy'   => 'コピー',
+                        'redirect-uri-copied' => 'クリップボードにコピーしました',
                     ],
                 ],
 
