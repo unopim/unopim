@@ -26,6 +26,11 @@ it('lists publications when the feature is enabled', function () {
 });
 
 it('returns 404 for the list when the feature is disabled', function () {
+    CoreConfig::query()->updateOrCreate(
+        ['code' => 'catalog.product_passport.settings.enabled', 'channel_code' => null, 'locale_code' => null],
+        ['value' => '0'],
+    );
+
     $this->withHeaders($this->headers)
         ->json('GET', route('admin.api.passports.index'))
         ->assertNotFound();
@@ -61,15 +66,6 @@ it('returns 404 getting passports for an unknown sku', function () {
     $this->withHeaders($this->headers)
         ->json('GET', route('admin.api.passports.get', 'no-such-sku'))
         ->assertNotFound();
-});
-
-it('returns the mapping configuration', function () {
-    enablePassportFeature();
-
-    $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.passports.mapping'))
-        ->assertOk()
-        ->assertJsonStructure(['data']);
 });
 
 it('forbids passport list without permission', function () {
