@@ -167,6 +167,13 @@ return [
             'publish'  => 'Publish',
             'withdraw' => 'Withdraw',
         ],
+
+        'templates' => [
+            'view'   => 'View Templates',
+            'create' => 'Create Template',
+            'edit'   => 'Edit Template',
+            'delete' => 'Delete Template',
+        ],
     ],
 
     'components' => [
@@ -241,6 +248,107 @@ return [
         'type-mismatch'           => 'The selected source is not compatible with this passport field\'s type.',
         'custom-media-source'     => 'A custom field cannot use a file or image attribute as its source; choose a value attribute.',
         'saved'                   => 'Field mapping saved successfully.',
+    ],
+
+    'templates' => [
+        'menu'           => 'Templates',
+        'create-success' => 'Passport template created successfully.',
+        'update-success' => 'Passport template updated successfully.',
+        'delete-success' => 'Passport template deleted successfully.',
+
+        'sources' => [
+            'attribute' => 'Product attribute',
+            'fixed'     => 'Fixed value',
+        ],
+
+        'tiers' => [
+            'consumer'  => 'Consumer',
+            'operator'  => 'Operator',
+            'authority' => 'Authority',
+        ],
+
+        'roles' => [
+            'gtin'  => 'GTIN',
+            'model' => 'Model identifier',
+            'batch' => 'Batch identifier',
+        ],
+
+        'index' => [
+            'title'      => 'Passport Templates',
+            'create-btn' => 'Create Template',
+        ],
+
+        'create' => [
+            'title'             => 'Create Passport Template',
+            'info'              => 'Name the template, then choose its families and fields on the next screen.',
+            'name'              => 'Name',
+            'name-placeholder'  => 'EU ESPR (general)',
+            'code'              => 'Code',
+            'code-placeholder'  => 'espr_general',
+            'save-btn'          => 'Save Template',
+        ],
+
+        'edit' => [
+            'title'    => 'Edit Passport Template',
+            'back-btn' => 'Back',
+            'save-btn' => 'Save Template',
+            'general'  => 'General',
+            'code'     => 'Code',
+            'enabled'  => 'Enabled',
+            'label'    => 'Name',
+        ],
+
+        'builder' => [
+            'families-heading'      => 'Applies To',
+            'families-info'         => 'Products in these attribute families publish this passport. A family belongs to one template only.',
+            'select-families'       => 'Select attribute families',
+            'sections-heading'      => 'Sections',
+            'sections-info'         => 'Sections group the fields on the published passport page.',
+            'sections-empty'        => 'No sections yet. Fields without a section publish under the default one.',
+            'add-section'           => 'Add Section',
+            'section-name'          => 'Section name',
+            'fields-heading'        => 'Fields',
+            'fields-info'           => 'Each field publishes one row, sourced from a product attribute or a fixed value.',
+            'fields-empty'          => 'No fields yet.',
+            'add-field'             => 'Add Field',
+            'field-label'           => 'Label',
+            'code'                  => 'Code',
+            'section'               => 'Section',
+            'no-section'            => 'Default section',
+            'source'                => 'Source',
+            'attribute'             => 'Source attribute',
+            'select-attribute'      => 'Select an attribute',
+            'select-families-first' => 'Select a family first',
+            'fixed-value'           => 'Fixed value',
+            'tier'                  => 'Access tier',
+            'role'                  => 'Identifier role',
+            'no-role'               => 'None',
+            'required'              => 'Required',
+            'remove'                => 'Remove',
+            'readiness'             => ':sourced of :required required fields sourced',
+        ],
+
+        'datagrid' => [
+            'name'            => 'Name',
+            'code'            => 'Code',
+            'families'        => 'Families',
+            'fields'          => 'Fields',
+            'readiness'       => 'Required Sourced',
+            'readiness-value' => ':sourced of :required',
+            'status'          => 'Status',
+            'enabled'         => 'Enabled',
+            'disabled'        => 'Disabled',
+            'edit'            => 'Edit',
+            'delete'          => 'Delete',
+        ],
+
+        'errors' => [
+            'duplicate-code'     => 'This code is already used by another row in this template.',
+            'duplicate-role'     => 'This identifier role is already taken by another field in this template.',
+            'attribute-required' => 'Choose a source attribute, or switch this field to a fixed value.',
+            'unknown-section'    => 'The selected section does not exist in this template.',
+            'family-claimed'     => 'The family :family already belongs to the template :template.',
+        ],
     ],
 
     'validation' => [

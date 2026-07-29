@@ -51,6 +51,8 @@ class ProductPassportServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'passport');
 
+        $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+
         Route::middleware('web')->group(__DIR__.'/../Routes/admin.php');
 
         // Reject an invalid GTIN check digit at save time rather than at publish.

@@ -16,6 +16,13 @@
             'url'   => route('admin.catalog.passports.mapping.edit'),
         ];
     }
+
+    if (bouncer()->hasPermission('catalog.passport.template.view')) {
+        $tabs['templates'] = [
+            'title' => trans('passport::app.templates.menu'),
+            'url'   => route('admin.catalog.passports.templates.index'),
+        ];
+    }
 @endphp
 
 {{-- Route-driven tabs: the two passport surfaces share one visual tab bar, each a
