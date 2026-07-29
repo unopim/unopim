@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count træer',
                 'expand-all'         => 'Udvid',
                 'collapse-all'       => 'Fold sammen',
-                'expand-all-hint'    => 'Udvider de grene, der allerede er indlæst.',
+                'expand-all-hint'    => 'Åbner ét niveau mere af træet.',
                 'search-failed'      => 'Kategorierne kunne ikke søges.',
                 'children-failed'    => 'Underkategorierne kunne ikke indlæses.',
             ],

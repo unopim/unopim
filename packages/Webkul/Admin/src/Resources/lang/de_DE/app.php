@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count Bäume',
                 'expand-all'         => 'Ausklappen',
                 'collapse-all'       => 'Einklappen',
-                'expand-all-hint'    => 'Klappt die bereits geladenen Zweige aus.',
+                'expand-all-hint'    => 'Öffnet eine weitere Ebene des Baums.',
                 'search-failed'      => 'Kategorien konnten nicht durchsucht werden.',
                 'children-failed'    => 'Unterkategorien konnten nicht geladen werden.',
             ],

@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count stabala',
                 'expand-all'         => 'Proširi',
                 'collapse-all'       => 'Sažmi',
-                'expand-all-hint'    => 'Proširuje grane koje su već učitane.',
+                'expand-all-hint'    => 'Otvara još jednu razinu stabla.',
                 'search-failed'      => 'Pretraživanje kategorija nije uspjelo.',
                 'children-failed'    => 'Učitavanje potkategorija nije uspjelo.',
             ],

@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count na puno',
                 'expand-all'         => 'Palawakin',
                 'collapse-all'       => 'Tiklupin',
-                'expand-all-hint'    => 'Pinapalawak ang mga sangang nakarga na.',
+                'expand-all-hint'    => 'Nagbubukas ng isa pang antas ng puno.',
                 'search-failed'      => 'Hindi mahanap ang mga kategorya.',
                 'children-failed'    => 'Hindi ma-load ang mga subkategorya.',
             ],

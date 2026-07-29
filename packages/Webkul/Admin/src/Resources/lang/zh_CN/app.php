@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count 棵树',
                 'expand-all'         => '展开',
                 'collapse-all'       => '折叠',
-                'expand-all-hint'    => '展开已加载的分支。',
+                'expand-all-hint'    => '再展开一级目录树。',
                 'search-failed'      => '无法搜索类目。',
                 'children-failed'    => '无法加载子类目。',
             ],

@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count puuta',
                 'expand-all'         => 'Laajenna',
                 'collapse-all'       => 'Tiivistä',
-                'expand-all-hint'    => 'Laajentaa jo ladatut haarat.',
+                'expand-all-hint'    => 'Avaa puusta yhden tason lisää.',
                 'search-failed'      => 'Kategorioita ei voitu hakea.',
                 'children-failed'    => 'Alakategorioita ei voitu ladata.',
             ],

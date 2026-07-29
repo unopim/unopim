@@ -813,7 +813,7 @@ return [
                 'roots-count'        => ':count bomen',
                 'expand-all'         => 'Uitklappen',
                 'collapse-all'       => 'Inklappen',
-                'expand-all-hint'    => 'Klapt de takken uit die al geladen zijn.',
+                'expand-all-hint'    => 'Opent één niveau meer van de boom.',
                 'search-failed'      => 'Categorieën konden niet worden doorzocht.',
                 'children-failed'    => 'Subcategorieën konden niet worden geladen.',
             ],

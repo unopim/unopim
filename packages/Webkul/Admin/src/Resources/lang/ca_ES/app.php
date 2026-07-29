@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count arbres',
                 'expand-all'         => 'Desplega',
                 'collapse-all'       => 'Plega',
-                'expand-all-hint'    => 'Desplega les branques ja carregades.',
+                'expand-all-hint'    => 'Obre un nivell més de l\'arbre.',
                 'search-failed'      => 'No s\'han pogut cercar les categories.',
                 'children-failed'    => 'No s\'han pogut carregar les subcategories.',
             ],

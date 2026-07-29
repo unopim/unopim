@@ -813,7 +813,7 @@ return [
                 'roots-count'        => ':count arbori',
                 'expand-all'         => 'Extinde',
                 'collapse-all'       => 'Restrânge',
-                'expand-all-hint'    => 'Extinde ramurile deja încărcate.',
+                'expand-all-hint'    => 'Deschide încă un nivel din arbore.',
                 'search-failed'      => 'Categoriile nu au putut fi căutate.',
                 'children-failed'    => 'Subcategoriile nu au putut fi încărcate.',
             ],

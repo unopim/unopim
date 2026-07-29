@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count pohon',
                 'expand-all'         => 'Bentangkan',
                 'collapse-all'       => 'Ciutkan',
-                'expand-all-hint'    => 'Membentangkan cabang yang sudah dimuat.',
+                'expand-all-hint'    => 'Membuka satu tingkat pohon lagi.',
                 'search-failed'      => 'Kategori tidak dapat dicari.',
                 'children-failed'    => 'Subkategori tidak dapat dimuat.',
             ],

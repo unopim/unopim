@@ -813,7 +813,7 @@ return [
                 'roots-count'        => ':count trær',
                 'expand-all'         => 'Utvid',
                 'collapse-all'       => 'Skjul',
-                'expand-all-hint'    => 'Utvider grenene som allerede er lastet inn.',
+                'expand-all-hint'    => 'Åpner ett nivå til av treet.',
                 'search-failed'      => 'Kunne ikke søke i kategoriene.',
                 'children-failed'    => 'Kunne ikke laste underkategoriene.',
             ],

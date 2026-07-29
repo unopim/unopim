@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count träd',
                 'expand-all'         => 'Expandera',
                 'collapse-all'       => 'Fäll ihop',
-                'expand-all-hint'    => 'Expanderar de grenar som redan är laddade.',
+                'expand-all-hint'    => 'Öppnar ytterligare en nivå av trädet.',
                 'search-failed'      => 'Kategorierna kunde inte sökas.',
                 'children-failed'    => 'Underkategorierna kunde inte laddas.',
             ],

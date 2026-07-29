@@ -40,6 +40,7 @@
                 :item="child"
                 :level="level + 1"
                 @change-input="$emit('change-input', $event)"
+                @select-node="$emit('select-node', $event)"
             />
 
             <div
@@ -178,6 +179,24 @@
         },
 
         methods: {
+            expandBranch() {
+                if (this.showChildren || ! this.hasChildren) {
+                    return;
+                }
+
+                this.showChildren = true;
+
+                if (this.hasFetchedChildren) {
+                    return;
+                }
+
+                if (this.paginateChildren) {
+                    this.loadMoreChildren();
+                } else {
+                    this.fetchAllChildren();
+                }
+            },
+
             toggleBranch() {
                 this.showChildren = !this.showChildren;
 
@@ -384,6 +403,24 @@
                 return this.categorytree.has(value);
             },
 
+            /**
+             * Ancestor labels come from the component chain rather than a request: a node
+             * is only ever rendered inside the nodes it descends from.
+             */
+            path() {
+                const labels = [this.label];
+
+                for (let parent = this.$parent; parent; parent = parent.$parent) {
+                    if (! parent.item) {
+                        break;
+                    }
+
+                    labels.unshift(parent.label);
+                }
+
+                return labels.join(' / ');
+            },
+
             onInputChange() {
                 if (this.categorytree.navigateOnSelect) {
                     this.categorytree.navigateTo(this.id);
@@ -394,6 +431,13 @@
                 if (this.categorytree.inputType === 'checkbox') {
                     this.categorytree.handleCheckbox(this.item);
                 }
+
+                this.$emit('select-node', {
+                    value: this.value,
+                    label: this.label,
+                    path:  this.path(),
+                });
+
                 this.$emit('change-input', this.categorytree.formattedValues);
             },
         }

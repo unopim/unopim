@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count 件のツリー',
                 'expand-all'         => '展開',
                 'collapse-all'       => '折りたたむ',
-                'expand-all-hint'    => 'すでに読み込まれた枝を展開します。',
+                'expand-all-hint'    => 'ツリーをもう一階層開きます。',
                 'search-failed'      => 'カテゴリを検索できませんでした。',
                 'children-failed'    => 'サブカテゴリを読み込めませんでした。',
             ],

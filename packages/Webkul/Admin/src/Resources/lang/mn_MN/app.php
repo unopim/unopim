@@ -813,7 +813,7 @@ return [
                 'roots-count'        => ':count мод',
                 'expand-all'         => 'Дэлгэх',
                 'collapse-all'       => 'Хумих',
-                'expand-all-hint'    => 'Аль хэдийн ачаалагдсан мөчрүүдийг дэлгэнэ.',
+                'expand-all-hint'    => 'Модны бас нэг түвшинг нээнэ.',
                 'search-failed'      => 'Ангилал хайж чадсангүй.',
                 'children-failed'    => 'Дэд ангиллуудыг ачаалж чадсангүй.',
             ],

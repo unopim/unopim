@@ -42,10 +42,14 @@
                     </x-admin::form.control-group.label>
 
                     @if ($parentPicker ?? false)
-                        <x-admin::drawer width="480px">
+                        <x-admin::drawer width="480px" ref="parentDrawer">
                             <x-slot:toggle>
                                 <div class="flex gap-2.5 items-center justify-between w-full px-3 py-2 border dark:border-cherry-800 rounded-md cursor-pointer hover:border-gray-400">
-                                    <span class="text-sm text-gray-600 dark:text-gray-300 truncate" title="{{ $parentLabel }}">
+                                    <span
+                                        class="text-sm text-gray-600 dark:text-gray-300 truncate"
+                                        ref="parentPathLabel"
+                                        title="{{ $parentLabel }}"
+                                    >
                                         {{ $parentLabel }}
                                     </span>
 
@@ -74,6 +78,11 @@
                                     :items="json_encode($treeItems)"
                                     :value="old('parent_id') ?? json_encode($category?->parent_id ?? $parentCategory?->id)"
                                     :fallback-locale="config('app.fallback_locale')"
+                                    @select-node="
+                                        $refs.parentPathLabel.textContent = $event.path;
+                                        $refs.parentPathLabel.title = $event.path;
+                                        $refs.parentDrawer.close();
+                                    "
                                 />
                             </x-slot>
                         </x-admin::drawer>
@@ -120,9 +129,6 @@
                             children-page-size="100"
                             ::show-search="true"
                             ::show-toolbar="true"
-                            ::allow-create="{{ bouncer()->hasPermission('catalog.categories.create') ? 'true' : 'false' }}"
-                            ::allow-root-create="{{ bouncer()->hasPermission('catalog.categories.create') ? 'true' : 'false' }}"
-                            ::allow-delete="{{ bouncer()->hasPermission('catalog.categories.delete') ? 'true' : 'false' }}"
                             :current-category="$category?->id"
                             :expanded-branch="json_encode($branchToParent)"
                             :items="json_encode($treeItems)"

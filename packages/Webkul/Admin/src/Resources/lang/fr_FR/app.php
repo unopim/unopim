@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count arborescences',
                 'expand-all'         => 'Déplier',
                 'collapse-all'       => 'Replier',
-                'expand-all-hint'    => 'Déplie les branches déjà chargées.',
+                'expand-all-hint'    => 'Ouvre un niveau supplémentaire de l\'arborescence.',
                 'search-failed'      => 'Impossible de rechercher les catégories.',
                 'children-failed'    => 'Impossible de charger les sous-catégories.',
             ],

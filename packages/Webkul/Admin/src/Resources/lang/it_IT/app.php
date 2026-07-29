@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count alberi',
                 'expand-all'         => 'Espandi',
                 'collapse-all'       => 'Comprimi',
-                'expand-all-hint'    => 'Espande i rami già caricati.',
+                'expand-all-hint'    => 'Apre un altro livello dell\'albero.',
                 'search-failed'      => 'Impossibile cercare le categorie.',
                 'children-failed'    => 'Impossibile caricare le sottocategorie.',
             ],

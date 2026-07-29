@@ -868,7 +868,7 @@ return [
                 'roots-count'        => ':count trees',
                 'expand-all'         => 'Expand',
                 'collapse-all'       => 'Collapse',
-                'expand-all-hint'    => 'Expands the branches that are already loaded.',
+                'expand-all-hint'    => 'Opens one more level of the tree.',
                 'search-failed'      => 'Categories could not be searched.',
                 'children-failed'    => 'Subcategories could not be loaded.',
             ],

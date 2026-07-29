@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count ट्री',
                 'expand-all'         => 'विस्तृत करें',
                 'collapse-all'       => 'संक्षिप्त करें',
-                'expand-all-hint'    => 'पहले से लोड की गई शाखाओं को विस्तृत करता है।',
+                'expand-all-hint'    => 'ट्री का एक और स्तर खोलता है।',
                 'search-failed'      => 'श्रेणियाँ खोजी नहीं जा सकीं।',
                 'children-failed'    => 'उपश्रेणियाँ लोड नहीं हो सकीं।',
             ],

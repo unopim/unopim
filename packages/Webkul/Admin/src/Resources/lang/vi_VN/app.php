@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count cây',
                 'expand-all'         => 'Mở rộng',
                 'collapse-all'       => 'Thu gọn',
-                'expand-all-hint'    => 'Mở rộng các nhánh đã được tải.',
+                'expand-all-hint'    => 'Mở thêm một cấp của cây.',
                 'search-failed'      => 'Không thể tìm kiếm danh mục.',
                 'children-failed'    => 'Không thể tải danh mục con.',
             ],

@@ -813,7 +813,7 @@ return [
                 'roots-count'        => ':count drzew',
                 'expand-all'         => 'Rozwiń',
                 'collapse-all'       => 'Zwiń',
-                'expand-all-hint'    => 'Rozwija gałęzie, które są już wczytane.',
+                'expand-all-hint'    => 'Otwiera kolejny poziom drzewa.',
                 'search-failed'      => 'Nie udało się wyszukać kategorii.',
                 'children-failed'    => 'Nie udało się wczytać podkategorii.',
             ],

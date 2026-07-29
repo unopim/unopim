@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count أشجار',
                 'expand-all'         => 'توسيع',
                 'collapse-all'       => 'طي',
-                'expand-all-hint'    => 'يوسّع الفروع التي تم تحميلها بالفعل.',
+                'expand-all-hint'    => 'يفتح مستوى إضافياً من الشجرة.',
                 'search-failed'      => 'تعذر البحث في الفئات.',
                 'children-failed'    => 'تعذر تحميل الفئات الفرعية.',
             ],

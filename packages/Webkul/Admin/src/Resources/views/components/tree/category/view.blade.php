@@ -106,6 +106,7 @@
                 :item="item"
                 :level="1"
                 @change-input="$emit('change-input', $event)"
+                @select-node="$emit('select-node', $event)"
             />
             </template>
         </div>
@@ -306,6 +307,12 @@
 
                     this.clearSearch();
 
+                    this.$emit('select-node', {
+                        value: result.id.toString(),
+                        label: result.label,
+                        path:  result.path || result.label,
+                    });
+
                     this.$emit('change-input', this.formattedValues);
                 },
 
@@ -318,16 +325,12 @@
                 },
 
                 /**
-                 * Bounded on purpose: only branches already fetched are opened. Walking the
-                 * whole tree would fire a request per node, and catalogues here run to tens
-                 * of thousands of them.
+                 * One level per press rather than the whole tree: opening everything would
+                 * fire a request per node, and catalogues here run to tens of thousands of
+                 * them. The list grows as children mount, so it is walked from a snapshot.
                  */
                 expandAll() {
-                    this.nodes.forEach(node => {
-                        if (node.hasFetchedChildren || node.children.length) {
-                            node.showChildren = true;
-                        }
-                    });
+                    this.nodes.slice().forEach(node => node.expandBranch());
                 },
 
                 collapseAll() {

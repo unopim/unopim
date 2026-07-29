@@ -812,7 +812,7 @@ return [
                 'roots-count'        => ':count ağaç',
                 'expand-all'         => 'Genişlet',
                 'collapse-all'       => 'Daralt',
-                'expand-all-hint'    => 'Zaten yüklenmiş dalları genişletir.',
+                'expand-all-hint'    => 'Ağacın bir seviyesini daha açar.',
                 'search-failed'      => 'Kategorilerde arama yapılamadı.',
                 'children-failed'    => 'Alt kategoriler yüklenemedi.',
             ],

@@ -813,7 +813,7 @@ return [
                 'roots-count'        => ':count개 트리',
                 'expand-all'         => '펼치기',
                 'collapse-all'       => '접기',
-                'expand-all-hint'    => '이미 불러온 가지를 펼칩니다.',
+                'expand-all-hint'    => '트리를 한 단계 더 펼칩니다.',
                 'search-failed'      => '카테고리를 검색하지 못했습니다.',
                 'children-failed'    => '하위 카테고리를 불러오지 못했습니다.',
             ],
