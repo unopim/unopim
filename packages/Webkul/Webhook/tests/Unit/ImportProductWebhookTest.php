@@ -105,3 +105,40 @@ it('runs the import webhook job without an admin instead of fatalling', function
 
     $job->handle(app(WebhookService::class));
 })->throwsNoExceptions();
+
+it('queues only a created webhook when afterBulkCreate is called directly', function () {
+    Queue::fake();
+
+    silenceExistingWebhooks();
+
+    subscribeWebhook([WebhookService::EVENT_PRODUCT_CREATED, WebhookService::EVENT_PRODUCT_UPDATED]);
+
+    app(ProductListener::class)->afterBulkCreate([1, 2]);
+
+    Queue::assertPushed(SendBulkProductWebhook::class, 1);
+});
+
+it('queues only an updated webhook when afterBulkEditFromImport is called directly', function () {
+    Queue::fake();
+
+    silenceExistingWebhooks();
+
+    subscribeWebhook([WebhookService::EVENT_PRODUCT_CREATED, WebhookService::EVENT_PRODUCT_UPDATED]);
+
+    app(ProductListener::class)->afterBulkEditFromImport([3, 4]);
+
+    Queue::assertPushed(SendBulkProductWebhook::class, 1);
+});
+
+it('queues nothing when a split function is given no ids', function () {
+    Queue::fake();
+
+    silenceExistingWebhooks();
+
+    subscribeWebhook([WebhookService::EVENT_PRODUCT_CREATED, WebhookService::EVENT_PRODUCT_UPDATED]);
+
+    app(ProductListener::class)->afterBulkCreate([]);
+    app(ProductListener::class)->afterBulkEditFromImport([]);
+
+    Queue::assertNothingPushed();
+});
