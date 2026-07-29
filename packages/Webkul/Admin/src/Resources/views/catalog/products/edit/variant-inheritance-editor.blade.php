@@ -53,7 +53,7 @@
                         </span>
                     </button>
 
-                    <div v-show="p.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg" style="z-index: 10">
+                    <div v-show="p.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg z-10">
                         <div class="p-2 border-b border-gray-100 dark:border-cherry-800">
                             <div class="flex items-center w-full border rounded-md px-2.5 py-1.5 dark:border-gray-600">
                                 <span class="icon-search text-gray-400"></span>
@@ -106,7 +106,7 @@
                         </span>
                     </button>
 
-                    <div v-show="c.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg" style="z-index: 10">
+                    <div v-show="c.open" class="absolute mt-1 w-full bg-white dark:bg-cherry-900 border border-gray-200 dark:border-cherry-700 rounded-md shadow-lg z-10">
                         <div class="p-2 border-b border-gray-100 dark:border-cherry-800">
                             <div class="flex items-center w-full border rounded-md px-2.5 py-1.5 dark:border-gray-600">
                                 <span class="icon-search text-gray-400"></span>
