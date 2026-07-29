@@ -51,6 +51,7 @@
 
                         <div class="flex justify-end">
                             <span
+                                v-if="record.actions.find(a => a.index === 'view')"
                                 class="icon-view cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                 :title="'@lang('webhook::app.configuration.webhook.logs.index.datagrid.view')'"
                                 @click="openLog(record.actions.find(a => a.index === 'view')?.url)"
