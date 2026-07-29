@@ -55,7 +55,7 @@ class PassportPresetSeeder
             }
 
             foreach (array_values($preset['fields'] ?? []) as $position => $field) {
-                $labelKey = 'passport::app.templates.preset.fields.'.$field['code'];
+                $labelKey = ($preset['label_prefix'] ?? 'passport::app.templates.preset.fields.').$field['code'];
 
                 $template->fields()->create(array_merge([
                     'code'                         => $field['code'],

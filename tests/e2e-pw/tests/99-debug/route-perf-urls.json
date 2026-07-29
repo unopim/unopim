@@ -1,0 +1,538 @@
+[
+  {
+    "name": "admin",
+    "url": "/admin"
+  },
+  {
+    "name": "admin.account.edit",
+    "url": "/admin/account"
+  },
+  {
+    "name": "ai-agent.agents.index",
+    "url": "/admin/ai-agent/agents"
+  },
+  {
+    "name": "ai-agent.agents.create",
+    "url": "/admin/ai-agent/agents/create"
+  },
+  {
+    "name": "ai-agent.agents.get",
+    "url": "/admin/ai-agent/agents/get"
+  },
+  {
+    "name": "ai-agent.agents.edit",
+    "url": "/admin/ai-agent/agents/1/edit"
+  },
+  {
+    "name": "ai-agent.chat.magic-ai-config",
+    "url": "/admin/ai-agent/chat/magic-ai-config"
+  },
+  {
+    "name": "ai-agent.conversations.index",
+    "url": "/admin/ai-agent/conversations"
+  },
+  {
+    "name": "ai-agent.conversations.show",
+    "url": "/admin/ai-agent/conversations/1"
+  },
+  {
+    "name": "ai-agent.dashboard.analytics",
+    "url": "/admin/ai-agent/dashboard/analytics"
+  },
+  {
+    "name": "ai-agent.dashboard.audit-trail",
+    "url": "/admin/ai-agent/dashboard/audit-trail"
+  },
+  {
+    "name": "ai-agent.dashboard.notifications",
+    "url": "/admin/ai-agent/dashboard/notifications"
+  },
+  {
+    "name": "ai-agent.generate.index",
+    "url": "/admin/ai-agent/generate"
+  },
+  {
+    "name": "ai-agent.settings",
+    "url": "/admin/ai-agent/settings"
+  },
+  {
+    "name": "admin.catalog.options.fetch-all",
+    "url": "/admin/catalog/ajax-options/fetch-options"
+  },
+  {
+    "name": "admin.catalog.association_types.index",
+    "url": "/admin/catalog/association-types"
+  },
+  {
+    "name": "admin.catalog.association_types.edit",
+    "url": "/admin/catalog/association-types/edit/1"
+  },
+  {
+    "name": "admin.catalog.association_types.search",
+    "url": "/admin/catalog/association-types/search"
+  },
+  {
+    "name": "admin.catalog.families.index",
+    "url": "/admin/catalog/attribute-families"
+  },
+  {
+    "name": "admin.catalog.families.edit",
+    "url": "/admin/catalog/attribute-families/edit/1"
+  },
+  {
+    "name": "admin.catalog.families.groups",
+    "url": "/admin/catalog/attribute-families/edit/1/groups"
+  },
+  {
+    "name": "admin.catalog.families.group-attributes",
+    "url": "/admin/catalog/attribute-families/edit/1/groups/1/attributes"
+  },
+  {
+    "name": "admin.catalog.families.variant-structures.index",
+    "url": "/admin/catalog/attribute-families/edit/1/variant-structures"
+  },
+  {
+    "name": "admin.catalog.attribute.groups.index",
+    "url": "/admin/catalog/attribute-groups"
+  },
+  {
+    "name": "admin.catalog.attribute.groups.create",
+    "url": "/admin/catalog/attribute-groups/create"
+  },
+  {
+    "name": "admin.catalog.attribute.groups.edit",
+    "url": "/admin/catalog/attribute-groups/edit/1"
+  },
+  {
+    "name": "admin.catalog.attributes.index",
+    "url": "/admin/catalog/attributes"
+  },
+  {
+    "name": "admin.catalog.attributes.create",
+    "url": "/admin/catalog/attributes/create"
+  },
+  {
+    "name": "admin.catalog.attributes.edit",
+    "url": "/admin/catalog/attributes/edit/1"
+  },
+  {
+    "name": "admin.catalog.attributes.options.index",
+    "url": "/admin/catalog/attributes/23/options"
+  },
+  {
+    "name": "admin.catalog.attributes.options.edit",
+    "url": "/admin/catalog/attributes/23/options/edit/1"
+  },
+  {
+    "name": "admin.catalog.categories.index",
+    "url": "/admin/catalog/categories"
+  },
+  {
+    "name": "admin.catalog.categories.children.tree",
+    "url": "/admin/catalog/categories/children-tree"
+  },
+  {
+    "name": "admin.catalog.categories.create",
+    "url": "/admin/catalog/categories/create"
+  },
+  {
+    "name": "admin.catalog.categories.edit",
+    "url": "/admin/catalog/categories/edit/2462"
+  },
+  {
+    "name": "admin.catalog.categories.search",
+    "url": "/admin/catalog/categories/search"
+  },
+  {
+    "name": "admin.catalog.category_fields.index",
+    "url": "/admin/catalog/category-fields"
+  },
+  {
+    "name": "admin.catalog.category_fields.create",
+    "url": "/admin/catalog/category-fields/create"
+  },
+  {
+    "name": "admin.catalog.category_fields.edit",
+    "url": "/admin/catalog/category-fields/edit/1"
+  },
+  {
+    "name": "admin.catalog.category_fields.search",
+    "url": "/admin/catalog/category-fields/search"
+  },
+  {
+    "name": "admin.catalog.category_fields.tree",
+    "url": "/admin/catalog/category-fields/tree"
+  },
+  {
+    "name": "admin.catalog.category_fields.options",
+    "url": "/admin/catalog/category-fields/1/options"
+  },
+  {
+    "name": "admin.catalog.products.index",
+    "url": "/admin/catalog/products"
+  },
+  {
+    "name": "admin.catalog.products.bulkedit",
+    "url": "/admin/catalog/products/bulkedit"
+  },
+  {
+    "name": "admin.catalog.bulkedit.attributes.fetch-all",
+    "url": "/admin/catalog/products/bulkedit/fetch-attributes"
+  },
+  {
+    "name": "admin.catalog.products.edit",
+    "url": "/admin/catalog/products/edit/172579"
+  },
+  {
+    "name": "admin.catalog.products.attribute_groups",
+    "url": "/admin/catalog/products/edit/172579/attribute-groups"
+  },
+  {
+    "name": "admin.catalog.products.attribute_group_fields",
+    "url": "/admin/catalog/products/edit/172579/attribute-groups/1/fields"
+  },
+  {
+    "name": "admin.catalog.products.filterable_attributes",
+    "url": "/admin/catalog/products/filterable-attributes"
+  },
+  {
+    "name": "admin.catalog.product.get_attribute",
+    "url": "/admin/catalog/products/get/attributes"
+  },
+  {
+    "name": "admin.catalog.product.get_locale",
+    "url": "/admin/catalog/products/get/locale"
+  },
+  {
+    "name": "admin.catalog.products.grid_views.index",
+    "url": "/admin/catalog/products/grid-views"
+  },
+  {
+    "name": "admin.catalog.products.search",
+    "url": "/admin/catalog/products/search"
+  },
+  {
+    "name": "admin.catalog.products.variant_children",
+    "url": "/admin/catalog/products/172579/variant-children"
+  },
+  {
+    "name": "admin/catalog/sync",
+    "url": "/admin/catalog/sync"
+  },
+  {
+    "name": "admin.catalog.families.completeness.edit",
+    "url": "/admin/completeness-settings/1/edit"
+  },
+  {
+    "name": "admin.dashboard.completeness.data",
+    "url": "/admin/completeness/dashboard/channel-stats"
+  },
+  {
+    "name": "admin/configuration/general/magic_ai",
+    "url": "/admin/configuration/general/magic_ai"
+  },
+  {
+    "name": "admin.configuration.integrations.index",
+    "url": "/admin/configuration/integrations"
+  },
+  {
+    "name": "admin.configuration.integrations.create",
+    "url": "/admin/configuration/integrations/create"
+  },
+  {
+    "name": "admin.configuration.integrations.edit",
+    "url": "/admin/configuration/integrations/edit/1"
+  },
+  {
+    "name": "admin.configuration.search",
+    "url": "/admin/configuration/search"
+  },
+  {
+    "name": "admin.settings.system.index",
+    "url": "/admin/configuration/system"
+  },
+  {
+    "name": "admin.configuration.system.information",
+    "url": "/admin/configuration/system-information"
+  },
+  {
+    "name": "admin.settings.system.edit",
+    "url": "/admin/configuration/system/1"
+  },
+  {
+    "name": "webhook.index",
+    "url": "/admin/configuration/webhook"
+  },
+  {
+    "name": "webhook.edit",
+    "url": "/admin/configuration/webhook/edit/1"
+  },
+  {
+    "name": "webhook.logs.index",
+    "url": "/admin/configuration/webhook/logs"
+  },
+  {
+    "name": "webhook.logs.show",
+    "url": "/admin/configuration/webhook/logs/show/1"
+  },
+  {
+    "name": "webhook.logs.for-webhook",
+    "url": "/admin/configuration/webhook/logs/webhook/1"
+  },
+  {
+    "name": "admin.configuration.edit",
+    "url": "/admin/configuration"
+  },
+  {
+    "name": "admin.configuration.download",
+    "url": "/admin/configuration/1"
+  },
+  {
+    "name": "admin.dashboard.index",
+    "url": "/admin/dashboard"
+  },
+  {
+    "name": "admin.dashboard.stats",
+    "url": "/admin/dashboard/stats"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.index",
+    "url": "/admin/data-transfer/exports"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.create",
+    "url": "/admin/data-transfer/exports/create"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.edit",
+    "url": "/admin/data-transfer/exports/edit/1"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.filters.attribute_families",
+    "url": "/admin/data-transfer/exports/filters/attribute-families"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.filters.attributes",
+    "url": "/admin/data-transfer/exports/filters/attributes"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.filters.categories",
+    "url": "/admin/data-transfer/exports/filters/categories"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.filters.channels",
+    "url": "/admin/data-transfer/exports/filters/channels"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.filters.currencies",
+    "url": "/admin/data-transfer/exports/filters/currencies"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.filters.locales",
+    "url": "/admin/data-transfer/exports/filters/locales"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.index_data",
+    "url": "/admin/data-transfer/exports/index/1"
+  },
+  {
+    "name": "admin.settings.data_transfer.exports.stats",
+    "url": "/admin/data-transfer/exports/stats/1"
+  },
+  {
+    "name": "admin.settings.data_transfer.systems.edit",
+    "url": "/admin/data-transfer/exports/system/edit/1"
+  },
+  {
+    "name": "admin.settings.data_transfer.imports.index",
+    "url": "/admin/data-transfer/imports"
+  },
+  {
+    "name": "admin.settings.data_transfer.imports.create",
+    "url": "/admin/data-transfer/imports/create"
+  },
+  {
+    "name": "admin.settings.data_transfer.imports.edit",
+    "url": "/admin/data-transfer/imports/edit/1"
+  },
+  {
+    "name": "admin.settings.data_transfer.imports.index_data",
+    "url": "/admin/data-transfer/imports/index/1"
+  },
+  {
+    "name": "admin.settings.data_transfer.imports.stats",
+    "url": "/admin/data-transfer/imports/stats/1"
+  },
+  {
+    "name": "admin.settings.data_transfer.tracker.index",
+    "url": "/admin/data-transfer/job-tracker"
+  },
+  {
+    "name": "admin.datagrid.available_columns",
+    "url": "/admin/datagrid/available-columns"
+  },
+  {
+    "name": "admin.datagrid.look_up",
+    "url": "/admin/datagrid/look-up"
+  },
+  {
+    "name": "admin.forget_password.create",
+    "url": "/admin/forget-password"
+  },
+  {
+    "name": "admin.notification.get_notification",
+    "url": "/admin/get-notifications"
+  },
+  {
+    "name": "admin.help.index",
+    "url": "/admin/help"
+  },
+  {
+    "name": "admin.session.create",
+    "url": "/admin/login"
+  },
+  {
+    "name": "admin.session.microsoft.redirect",
+    "url": "/admin/login/microsoft"
+  },
+  {
+    "name": "admin.session.microsoft.callback",
+    "url": "/admin/login/microsoft/callback"
+  },
+  {
+    "name": "admin.magic_ai.available_model",
+    "url": "/admin/magic-ai/available-model"
+  },
+  {
+    "name": "admin.magic_ai.default_prompt",
+    "url": "/admin/magic-ai/default-prompt"
+  },
+  {
+    "name": "admin.magic_ai.prompt.edit",
+    "url": "/admin/magic-ai/edit/1"
+  },
+  {
+    "name": "admin.magic_ai.model",
+    "url": "/admin/magic-ai/model"
+  },
+  {
+    "name": "admin.magic_ai.platforms",
+    "url": "/admin/magic-ai/platform-options"
+  },
+  {
+    "name": "admin.magic_ai.platform.index",
+    "url": "/admin/magic-ai/platforms"
+  },
+  {
+    "name": "admin.magic_ai.platform.edit",
+    "url": "/admin/magic-ai/platforms/1"
+  },
+  {
+    "name": "admin.magic_ai.prompt.index",
+    "url": "/admin/magic-ai/prompts"
+  },
+  {
+    "name": "admin.magic_ai.settings.index",
+    "url": "/admin/magic-ai/settings"
+  },
+  {
+    "name": "admin.magic_ai.suggestion_values",
+    "url": "/admin/magic-ai/suggestion-values"
+  },
+  {
+    "name": "admin.magic_ai.validate_credential",
+    "url": "/admin/magic-ai/validate-credential"
+  },
+  {
+    "name": "admin.measurement.attribute.units",
+    "url": "/admin/measurement/attribute-units"
+  },
+  {
+    "name": "admin.measurement.families.index",
+    "url": "/admin/measurement/families"
+  },
+  {
+    "name": "admin.measurement.families.create",
+    "url": "/admin/measurement/families/create"
+  },
+  {
+    "name": "admin.measurement.families.edit",
+    "url": "/admin/measurement/families/7/edit"
+  },
+  {
+    "name": "admin.measurement.families.units",
+    "url": "/admin/measurement/measurement-families/7/units"
+  },
+  {
+    "name": "measurement.attribute",
+    "url": "/admin/measurement/measurement/attribute/7"
+  },
+  {
+    "name": "admin.notification.index",
+    "url": "/admin/notifications"
+  },
+  {
+    "name": "admin.settings.appearance.index",
+    "url": "/admin/settings/appearance"
+  },
+  {
+    "name": "admin.settings.channels.index",
+    "url": "/admin/settings/channels"
+  },
+  {
+    "name": "admin.settings.channels.create",
+    "url": "/admin/settings/channels/create"
+  },
+  {
+    "name": "admin.settings.channels.edit",
+    "url": "/admin/settings/channels/edit/1"
+  },
+  {
+    "name": "admin.settings.currencies.index",
+    "url": "/admin/settings/currencies"
+  },
+  {
+    "name": "admin.settings.currencies.edit",
+    "url": "/admin/settings/currencies/edit/1"
+  },
+  {
+    "name": "admin.settings.locales.index",
+    "url": "/admin/settings/locales"
+  },
+  {
+    "name": "admin.settings.locales.edit",
+    "url": "/admin/settings/locales/edit/1"
+  },
+  {
+    "name": "admin.settings.roles.index",
+    "url": "/admin/settings/roles"
+  },
+  {
+    "name": "admin.settings.roles.create",
+    "url": "/admin/settings/roles/create"
+  },
+  {
+    "name": "admin.settings.roles.edit",
+    "url": "/admin/settings/roles/edit/1"
+  },
+  {
+    "name": "admin.settings.users.index",
+    "url": "/admin/settings/users"
+  },
+  {
+    "name": "admin.settings.users.edit",
+    "url": "/admin/settings/users/edit/1"
+  },
+  {
+    "name": "admin.magic_ai.system_prompt.index",
+    "url": "/admin/system-prompts"
+  },
+  {
+    "name": "admin.magic_ai.system_prompt.edit",
+    "url": "/admin/system-prompts/edit/1"
+  },
+  {
+    "name": "admin.vue_js_select.select.options",
+    "url": "/admin/vue-js-select/select-options"
+  }
+]

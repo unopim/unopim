@@ -14,8 +14,63 @@ use Webkul\ProductPassport\Enums\PassportFieldTier;
  * catalog locale, so a preset ships translated wherever the keys exist.
  */
 return [
+    /**
+     * Batteries are the first product group the EU actually mandates a passport
+     * for (Regulation 2023/1542, Annex XIII, from 18 February 2027), so the data
+     * points and their disclosure levels follow that annex rather than the
+     * general ESPR list: repair and repurposing detail is operator-tier, the
+     * conformity declaration is authority-tier.
+     */
+    'battery' => [
+        'name_key' => 'passport::app.templates.preset.battery.name',
+
+        'sections' => [
+            'identity'     => 'passport::app.templates.preset.battery.sections.identity',
+            'performance'  => 'passport::app.templates.preset.battery.sections.performance',
+            'materials'    => 'passport::app.templates.preset.battery.sections.materials',
+            'circularity'  => 'passport::app.templates.preset.battery.sections.circularity',
+            'compliance'   => 'passport::app.templates.preset.battery.sections.compliance',
+        ],
+
+        'label_prefix' => 'passport::app.templates.preset.battery.fields.',
+
+        'fields' => [
+            ['code' => 'battery_unique_id', 'section' => 'identity', 'role' => PassportFieldRole::Gtin, 'required' => true],
+            ['code' => 'battery_manufacturer', 'section' => 'identity', 'required' => true],
+            ['code' => 'battery_category', 'section' => 'identity', 'required' => true],
+            ['code' => 'battery_manufacture_date', 'section' => 'identity', 'required' => true],
+            ['code' => 'battery_place_of_manufacture', 'section' => 'identity'],
+            ['code' => 'battery_batch', 'section' => 'identity', 'role' => PassportFieldRole::Batch],
+            ['code' => 'battery_model', 'section' => 'identity', 'role' => PassportFieldRole::Model],
+
+            ['code' => 'battery_rated_capacity', 'section' => 'performance', 'required' => true],
+            ['code' => 'battery_nominal_voltage', 'section' => 'performance', 'required' => true],
+            ['code' => 'battery_weight', 'section' => 'performance', 'required' => true],
+            ['code' => 'battery_expected_lifetime', 'section' => 'performance'],
+            ['code' => 'battery_cycle_life', 'section' => 'performance'],
+            ['code' => 'battery_state_of_health', 'section' => 'performance', 'tier' => PassportFieldTier::Operator],
+
+            ['code' => 'battery_chemistry', 'section' => 'materials', 'required' => true],
+            ['code' => 'battery_hazardous_substances', 'section' => 'materials', 'required' => true],
+            ['code' => 'battery_carbon_footprint', 'section' => 'materials', 'required' => true],
+            ['code' => 'battery_recycled_cobalt', 'section' => 'materials'],
+            ['code' => 'battery_recycled_lithium', 'section' => 'materials'],
+            ['code' => 'battery_recycled_nickel', 'section' => 'materials'],
+            ['code' => 'battery_recycled_lead', 'section' => 'materials'],
+
+            ['code' => 'battery_safety_measures', 'section' => 'circularity', 'required' => true],
+            ['code' => 'battery_collection_information', 'section' => 'circularity', 'required' => true],
+            ['code' => 'battery_dismantling_information', 'section' => 'circularity', 'tier' => PassportFieldTier::Operator],
+            ['code' => 'battery_supply_chain_notes', 'section' => 'circularity', 'tier' => PassportFieldTier::Operator],
+
+            ['code' => 'battery_conformity_declaration', 'section' => 'compliance', 'tier' => PassportFieldTier::Authority, 'required' => true],
+            ['code' => 'battery_test_reports', 'section' => 'compliance', 'tier' => PassportFieldTier::Authority],
+        ],
+    ],
+
     'espr_general' => [
-        'name_key' => 'passport::app.templates.preset.name',
+        'name_key'     => 'passport::app.templates.preset.name',
+        'label_prefix' => 'passport::app.templates.preset.fields.',
 
         'sections' => [
             'identification' => 'passport::app.templates.preset.sections.identification',
