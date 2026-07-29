@@ -29,12 +29,22 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
      * Magic AI settings — the `general.magic_ai` config group surfaced under its own
      * Magic AI section instead of the Configuration hub. Reuses ConfigurationController
      * with fixed slug/slug2 defaults so the stored config codes (general.magic_ai.*)
-     * stay unchanged; the shared config form still posts to admin.configuration.store.
+     * stay unchanged.
+     *
+     * The save has its own route rather than reusing admin.configuration.store, whose
+     * permission is the Configuration section's: a role granted Magic AI could open the
+     * page and then be refused on save. Fixing the slugs here keeps the payload scoped
+     * to general.magic_ai, so the Magic AI permission cannot reach any other section.
      */
     Route::get('magic-ai/settings', [ConfigurationController::class, 'index'])
         ->defaults('slug', 'general')
         ->defaults('slug2', 'magic_ai')
         ->name('admin.magic_ai.settings.index');
+
+    Route::post('magic-ai/settings', [ConfigurationController::class, 'store'])
+        ->defaults('slug', 'general')
+        ->defaults('slug2', 'magic_ai')
+        ->name('admin.magic_ai.settings.store');
 
     /**
      * Redirect the legacy Configuration deep link to the relocated Magic AI settings
