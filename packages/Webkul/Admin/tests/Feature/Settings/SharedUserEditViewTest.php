@@ -40,7 +40,7 @@ it('renders the user edit page from the same view with the role controls', funct
     $response->assertSee('name="current_password"', false);
 });
 
-it('refuses a user update when the acting admin password is wrong', function () {
+it('refuses a password change for another user when the acting admin password is wrong', function () {
     $this->withoutMiddleware(PreventRequestForgery::class);
     $this->loginAsAdmin();
 
@@ -50,17 +50,63 @@ it('refuses a user update when the acting admin password is wrong', function () 
     ]);
 
     $this->put(route('admin.settings.users.update'), [
-        'id'               => $target->id,
-        'name'             => 'After Sudo',
-        'email'            => $target->email,
-        'role_id'          => $target->role_id,
-        'ui_locale_id'     => $target->ui_locale_id,
-        'timezone'         => 'Asia/Kolkata',
-        'password'         => '',
-        'current_password' => 'not-the-password',
+        'id'                    => $target->id,
+        'name'                  => 'After Sudo',
+        'email'                 => $target->email,
+        'role_id'               => $target->role_id,
+        'ui_locale_id'          => $target->ui_locale_id,
+        'timezone'              => 'Asia/Kolkata',
+        'password'              => 'NewPassw0rd',
+        'password_confirmation' => 'NewPassw0rd',
+        'current_password'      => 'not-the-password',
     ])->assertSessionHasErrors('current_password');
 
     expect($target->fresh()->name)->toBe('Before Sudo');
+});
+
+it('refuses a password change for another user without the acting admin password', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+    $this->loginAsAdmin();
+
+    $target = Admin::factory()->create([
+        'name'    => 'Before Sudo',
+        'role_id' => Role::factory()->create(['permission_type' => 'all'])->id,
+    ]);
+
+    $this->put(route('admin.settings.users.update'), [
+        'id'                    => $target->id,
+        'name'                  => 'After Sudo',
+        'email'                 => $target->email,
+        'role_id'               => $target->role_id,
+        'ui_locale_id'          => $target->ui_locale_id,
+        'timezone'              => 'Asia/Kolkata',
+        'password'              => 'NewPassw0rd',
+        'password_confirmation' => 'NewPassw0rd',
+    ])->assertSessionHasErrors('current_password');
+
+    expect($target->fresh()->name)->toBe('Before Sudo');
+});
+
+it('updates another user without the acting admin password when no new password is set', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+    $this->loginAsAdmin();
+
+    $target = Admin::factory()->create([
+        'name'    => 'Before Rename',
+        'role_id' => Role::factory()->create(['permission_type' => 'all'])->id,
+    ]);
+
+    $this->put(route('admin.settings.users.update'), [
+        'id'           => $target->id,
+        'name'         => 'After Rename',
+        'email'        => $target->email,
+        'role_id'      => $target->role_id,
+        'ui_locale_id' => $target->ui_locale_id,
+        'timezone'     => 'Asia/Kolkata',
+        'password'     => '',
+    ]);
+
+    expect($target->fresh()->name)->toBe('After Rename');
 });
 
 it('accepts a user update when the acting admin password is right', function () {
