@@ -99,13 +99,14 @@
                         </span>
                     </div>
 
-                    <div class="flex items-center w-full max-w-xs border rounded-md overflow-hidden text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 focus-within:border-gray-400 dark:bg-cherry-900 dark:border-gray-600">
+                    <div class="focus-ring-within flex items-center w-full max-w-xs border rounded-md overflow-hidden text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 focus-within:border-gray-400 dark:bg-cherry-900 dark:border-gray-600">
                         <span class="icon-search text-xl ltr:pl-2 rtl:pr-2 text-gray-500"></span>
 
                         <input
                             type="text"
                             v-model="query"
                             class="w-full px-2 py-1.5 bg-transparent outline-none"
+                            style="box-shadow: none"
                             placeholder="@lang('admin::app.help.system-info.search-packages')"
                         />
                     </div>
