@@ -80,6 +80,10 @@ class AssociationTypeRepository extends Repository
                     ? ($existingIds[$fieldData['code'] ?? ''] ?? null)
                     : $fieldId;
 
+                if ($resolvedId !== null && ! $existingIds->contains($resolvedId)) {
+                    $resolvedId = $existingIds[$fieldData['code'] ?? ''] ?? null;
+                }
+
                 if (filter_var($fieldData['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
                     if ($resolvedId) {
                         $this->associationTypeFieldRepository->delete($resolvedId);
