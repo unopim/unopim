@@ -362,6 +362,11 @@ return [
         'sort'            => 4,
         'also_authorizes' => ['admin.catalog.families.edit'],
     ], [
+        'key'   => 'catalog.families.variant-structures.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => null,
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.families.variant-structures.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.families.variant-structures.edit',
