@@ -30,16 +30,23 @@ const openCategoryFilterPanel = async (page) => {
 
   const drawer = page.locator('[data-drawer-panel]');
   await expect(drawer).toBeVisible();
-
-  await drawer.getByRole('button', { name: 'Add Filter' }).click();
-
-  await drawer.locator('input[placeholder="Search..."]').fill('categor');
-
-  const option = drawer.locator('p.cursor-pointer', { hasText: /^Categories$/ }).first();
-  await expect(option).toBeVisible();
-  await option.click();
+  await expect(page.locator('[data-datagrid-filter]').first()).toBeVisible({ timeout: 60_000 });
 
   const toggle = page.locator('[data-open-tree-panel]');
+
+  if (! await toggle.count()) {
+    await drawer.getByRole('button', { name: 'Add Filter' }).click();
+    await drawer.locator('input[placeholder="Search..."]').fill('categor');
+
+    const option = drawer.locator('p.cursor-pointer', { hasText: /^Categories$/ }).first();
+    await expect(option).toBeVisible({ timeout: 60_000 });
+    await option.click();
+  }
+
+  if (! await toggle.isVisible()) {
+    await page.locator('[data-datagrid-filter]:has([data-open-tree-panel]) [data-filter-toggle]').click();
+  }
+
   await expect(toggle).toBeVisible();
   await toggle.click();
 
