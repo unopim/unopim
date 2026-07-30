@@ -15,6 +15,16 @@ class AccountForm extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $user = auth()->guard('admin')->user();
+
+        $this->merge([
+            'timezone'     => $this->input('timezone') ?: ($user?->timezone ?: config('app.timezone', 'UTC')),
+            'ui_locale_id' => $this->input('ui_locale_id') ?: $user?->ui_locale_id,
+        ]);
+    }
+
     /**
      * @return array<string, mixed>
      */

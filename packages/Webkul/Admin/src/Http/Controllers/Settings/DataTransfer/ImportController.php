@@ -151,7 +151,7 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/'],
+            'code'                => ['required'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -694,7 +694,11 @@ class ImportController extends Controller
     public function uploadImagesZip(): JsonResponse
     {
         $this->validate(request(), [
-            'images_zip' => 'required|file|mimes:zip|max:102400',
+            'images_zip' => 'required|file|mimes:zip|max:'.$this->maxUploadKilobytes(),
+        ], [
+            'images_zip.max' => trans('admin::app.settings.data-transfer.imports.zip-exceeds-server-limit', [
+                'limit' => $this->maxUploadKilobytes(),
+            ]),
         ]);
 
         $file = request()->file('images_zip');
@@ -712,11 +716,13 @@ class ImportController extends Controller
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (! $this->archiveIsWithinLimits($zip)) {
+        $rejection = $this->archiveRejectionReason($zip);
+
+        if ($rejection !== null) {
             $zip->close();
 
             return new JsonResponse([
-                'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
+                'message' => trans('admin::app.settings.data-transfer.imports.'.$rejection['key'], $rejection['replace']),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -831,14 +837,17 @@ class ImportController extends Controller
         return $extractedCount;
     }
 
-    protected function archiveIsWithinLimits(\ZipArchive $zip): bool
+    protected function archiveRejectionReason(\ZipArchive $zip): ?array
     {
-        $maxEntries = (int) config('image_import.max_entries', 1000);
+        $maxEntries = (int) config('image_import.max_entries', 10000);
         $maxTotalSize = (int) config('image_import.max_total_size', 500 * 1024 * 1024);
         $maxCompressionRatio = (float) config('image_import.max_compression_ratio', 100);
 
         if ($maxEntries > 0 && $zip->numFiles > $maxEntries) {
-            return false;
+            return [
+                'key'     => 'zip-too-many-entries',
+                'replace' => ['count' => $zip->numFiles, 'limit' => $maxEntries],
+            ];
         }
 
         $totalSize = 0;
@@ -847,7 +856,7 @@ class ImportController extends Controller
             $stat = $zip->statIndex($index);
 
             if ($stat === false) {
-                return false;
+                return ['key' => 'invalid-zip', 'replace' => []];
             }
 
             $size = (int) ($stat['size'] ?? 0);
@@ -855,7 +864,10 @@ class ImportController extends Controller
             $totalSize += $size;
 
             if ($maxTotalSize > 0 && $totalSize > $maxTotalSize) {
-                return false;
+                return [
+                    'key'     => 'zip-contents-too-large',
+                    'replace' => ['limit' => (int) round($maxTotalSize / 1048576)],
+                ];
             }
 
             if (
@@ -863,10 +875,44 @@ class ImportController extends Controller
                 && $size > 0
                 && ($compressedSize === 0 || ($size / $compressedSize) > $maxCompressionRatio)
             ) {
-                return false;
+                return [
+                    'key'     => 'zip-compression-suspicious',
+                    'replace' => ['entry' => (string) ($stat['name'] ?? '')],
+                ];
             }
         }
 
-        return true;
+        return null;
+    }
+
+    protected function maxUploadKilobytes(): int
+    {
+        $limits = array_filter([
+            $this->iniSizeInBytes((string) ini_get('upload_max_filesize')),
+            $this->iniSizeInBytes((string) ini_get('post_max_size')),
+        ]);
+
+        $configured = (int) config('image_import.max_upload_kilobytes', 102400);
+
+        return $limits === [] ? $configured : min($configured, intdiv(min($limits), 1024));
+    }
+
+    protected function iniSizeInBytes(string $value): int
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (int) $value;
+
+        return match ($unit) {
+            'g'     => $number * 1024 ** 3,
+            'm'     => $number * 1024 ** 2,
+            'k'     => $number * 1024,
+            default => $number,
+        };
     }
 }

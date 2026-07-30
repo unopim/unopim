@@ -800,7 +800,9 @@ class AttributeFamilyController extends Controller
         }
 
         throw ValidationException::withMessages([
-            'code' => trans('validation.exists', ['attribute' => $missing->implode(', ')]),
+            'code' => trans('admin::app.catalog.families.variant-axis-attribute-required', [
+                'attributes' => $missing->implode(', '),
+            ]),
         ]);
     }
 

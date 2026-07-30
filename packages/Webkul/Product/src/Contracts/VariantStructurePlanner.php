@@ -13,6 +13,8 @@ interface VariantStructurePlanner
 
     public function ownsAttribute(Product $product, string $attributeCode): bool;
 
+    public function ownsAtOwnLevel(Product $product, string $attributeCode): bool;
+
     /** @return array<string, array<int, string>> */
     public function axisCodesByLevel(VariantStructure $structure): array;
 

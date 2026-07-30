@@ -182,17 +182,11 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
         $images = [];
 
         foreach ($response->images as $image) {
-            // Prefer a base64 data URL so the image survives the provider's
-            // hosted-URL expiration window; fall back to the URL.
-            $base64 = $image->base64 ?? null;
-            $url = $image->url ?? null;
-            $mimeType = $image->mimeType ?? 'image/png';
-
-            if (! empty($base64)) {
-                $images[] = ['url' => sprintf('data:%s;base64,%s', $mimeType, $base64)];
-            } elseif (! empty($url)) {
-                $images[] = ['url' => $url];
+            if ($image->image === '') {
+                continue;
             }
+
+            $images[] = ['url' => sprintf('data:%s;base64,%s', $image->mime(), $image->image)];
         }
 
         return $images;

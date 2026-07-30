@@ -27,7 +27,7 @@
             'key'        => 'completeness',
             'url'        => '?completeness',
             'label'      => 'completeness::app.components.layouts.sidebar.completeness',
-            'permission' => 'catalog.families.edit',
+            'permission' => 'catalog.families.completeness',
         ],
     ], fn ($tab) => bouncer()->hasPermission($tab['permission'])));
 

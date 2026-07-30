@@ -3,7 +3,6 @@
 return [
     'acl' => [
         'variant-structures' => 'Estruturas de variantes',
-        'ai-suggest'         => 'Sugestão de IA',
     ],
 
     'datagrid' => [

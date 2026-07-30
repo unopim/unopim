@@ -3,7 +3,6 @@
 return [
     'acl' => [
         'variant-structures' => '變體結構',
-        'ai-suggest'         => 'AI 建議',
     ],
 
     'datagrid' => [

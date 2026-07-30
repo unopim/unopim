@@ -56,16 +56,12 @@ class WebhookService
 
     public function sendBatchCreatedByIds(array $ids): ?Response
     {
-        return $this->deliverChunked('id', $ids, requireChanges: false, event: self::EVENT_PRODUCT_CREATED);
+        return $this->deliverChunked('id', $ids, computeChanges: false, event: self::EVENT_PRODUCT_CREATED, skipIfNoChanges: false);
     }
 
-    /**
-     * Send a batch of products to every subscribed webhook without requiring
-     * change detection. Used for bulk-edit where no per-product diff exists.
-     */
     public function sendBatchForBulkEdit(array $ids): ?Response
     {
-        return $this->deliverChunked('id', $ids, requireChanges: false);
+        return $this->deliverChunked('id', $ids, skipIfNoChanges: false);
     }
 
     /**
@@ -82,15 +78,16 @@ class WebhookService
      *
      * @param  array<int, int|string>  $values
      */
-    protected function deliverChunked(string $field, array $values, bool $requireChanges = true, string $event = self::EVENT_PRODUCT_UPDATED): ?Response
+    protected function deliverChunked(string $field, array $values, bool $computeChanges = true, string $event = self::EVENT_PRODUCT_UPDATED, bool $skipIfNoChanges = true): ?Response
     {
         $lastResponse = null;
 
         foreach (array_chunk($values, $this->batchChunkSize()) as $chunk) {
             $lastResponse = $this->sendBatch(
                 $this->productRepository->findWhereIn($field, $chunk),
-                $requireChanges,
+                $computeChanges,
                 $event,
+                $skipIfNoChanges,
             );
         }
 
@@ -137,11 +134,8 @@ class WebhookService
     /**
      * Internal helper to send a collection of products as a single batch
      * payload to each subscribed webhook.
-     *
-     * @param  bool  $requireChanges  When false, every product is included
-     *                                regardless of whether an audit diff exists.
      */
-    protected function sendBatch($products, bool $requireChanges = true, string $event = self::EVENT_PRODUCT_UPDATED): ?Response
+    protected function sendBatch($products, bool $computeChanges = true, string $event = self::EVENT_PRODUCT_UPDATED, bool $skipIfNoChanges = true): ?Response
     {
         $webhooks = $this->webhookRepository->getActiveForEvent($event);
 
@@ -152,11 +146,11 @@ class WebhookService
         $normalized = [];
 
         foreach ($products as $product) {
-            $productChanges = $requireChanges
+            $productChanges = $computeChanges
                 ? $this->getProductChangesForWebhook($product)
                 : [];
 
-            if ($requireChanges && $productChanges === []) {
+            if ($skipIfNoChanges && $productChanges === []) {
                 continue;
             }
 

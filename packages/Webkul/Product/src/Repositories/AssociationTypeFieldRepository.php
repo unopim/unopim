@@ -84,6 +84,10 @@ class AssociationTypeFieldRepository extends Repository
                 ? ($existingIds[$option['code'] ?? ''] ?? null)
                 : $optionId;
 
+            if ($resolvedId !== null && ! $existingIds->contains($resolvedId)) {
+                $resolvedId = $existingIds[$option['code'] ?? ''] ?? null;
+            }
+
             if (filter_var($option['isDelete'] ?? false, FILTER_VALIDATE_BOOLEAN)) {
                 if ($resolvedId) {
                     $this->associationTypeFieldOptionRepository->delete($resolvedId);

@@ -21,8 +21,12 @@ class Product
     /**
      * Update or create product indices
      */
-    public function afterUpdate(\Webkul\Product\Contracts\Product $product): void
+    public function afterUpdate(\Webkul\Product\Contracts\Product $product, bool $isBulkEdit = false): void
     {
+        if ($isBulkEdit) {
+            return;
+        }
+
         if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
             return;
         }
@@ -49,17 +53,6 @@ class Product
         }
 
         dispatch(new SendProductWebhook($product->id, $changes, 'created', auth('admin')?->user()?->id))->onQueue('webhooks');
-    }
-
-    public function afterBulkUpdate(array $ids, array $createdIds = [], array $updatedIds = []): void
-    {
-        if ($createdIds === [] && $updatedIds === []) {
-            $updatedIds = $ids;
-        }
-
-        $this->afterBulkCreate($createdIds);
-
-        $this->afterBulkEditFromImport($updatedIds);
     }
 
     public function afterBulkCreate(array $ids): void

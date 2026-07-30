@@ -13,7 +13,7 @@
 @if ($hasTranslateAction)
 @pushOnce('scripts')
     <script type="text/x-template" id="v-custom-dropdown-template">
-        <div class="relative inline-block text-left">
+        <div class="relative inline-block text-left ltr:mr-11 rtl:ml-11">
             <span
                 class="text-gray-700 dark:text-slate-50 cursor-pointer flex p-2 w-full items-center"
                 @click="toggleDropdown"

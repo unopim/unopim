@@ -95,6 +95,21 @@ it('saves a family whose variant axis attributes are all still assigned', functi
     )->assertSessionHasNoErrors();
 });
 
+it('names the offending axis attribute in the validation message', function () {
+    $this->loginAsAdmin();
+
+    [$family, $axis] = familyWithVariantAxis();
+
+    $this->put(
+        route('admin.catalog.families.update', $family->id),
+        familyUpdatePayload($family, [])
+    )->assertSessionHasErrors([
+        'code' => trans('admin::app.catalog.families.variant-axis-attribute-required', [
+            'attributes' => $axis->code,
+        ]),
+    ]);
+});
+
 it('checks the variant axis guard without binding one parameter per family attribute', function () {
     $this->loginAsAdmin();
 
