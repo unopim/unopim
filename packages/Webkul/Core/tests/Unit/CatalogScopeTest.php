@@ -160,15 +160,25 @@ it('prefers the configured application locale over the channel locale order when
 
     $channel = core()->getDefaultChannel();
 
-    $appLocale = $channel->locales->where('code', '!=', $channel->locales->first()->code)->first();
+    $locales = Locale::whereIn('code', ['en_US', 'fr_FR'])->get();
 
-    expect($appLocale)->not->toBeNull();
+    expect($locales)->toHaveCount(2);
+
+    $locales->each(fn ($locale) => $locale->update(['status' => 1]));
+
+    $channel->locales()->syncWithoutDetaching($locales->pluck('id')->all());
+
+    $channel->unsetRelation('locales');
+
+    $channelFirstLocaleCode = $channel->locales->first()->code;
+
+    $appLocale = $channel->locales->firstWhere('code', '!=', $channelFirstLocaleCode);
 
     config(['app.locale' => $appLocale->code]);
 
     expect(scope()->localeCode())
         ->toBe($appLocale->code)
-        ->not->toBe($channel->locales->first()->code);
+        ->not->toBe($channelFirstLocaleCode);
 });
 
 it('keeps the channel first locale when the application locale is not attached to the channel', function () {
