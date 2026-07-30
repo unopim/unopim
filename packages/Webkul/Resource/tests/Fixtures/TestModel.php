@@ -11,7 +11,7 @@ class TestModel extends Model
      *
      * @var string
      */
-    protected $table = 'wk_resource_kit_items';
+    protected $table = 'resource_kit_items';
 
     /**
      * The attributes that are mass assignable.

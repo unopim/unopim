@@ -14,7 +14,7 @@ it('stores a status when creating a family', function () {
         'status' => 1,
     ]);
 
-    expect($family->refresh()->status)->toBe(1);
+    expect((int) $family->refresh()->status)->toBe(1);
 });
 
 it('rejects a duplicate family code at the database level', function () {

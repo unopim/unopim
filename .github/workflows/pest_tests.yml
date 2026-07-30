@@ -174,10 +174,14 @@ jobs:
   # Fast pull-request signal alongside the full suites: Pest's Test Impact Analysis
   # runs only the tests reached by the changed files. With no cached graph (or a
   # stale one) it falls back to the whole suite and records a new graph.
+  # Advisory: the full matrix above is the merge gate; this experiments with
+  # test-impact analysis, whose coverage recording is memory-fragile on the
+  # shared runners.
   pest-impacted:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
     name: Pest Tests (impacted)
+    continue-on-error: true
 
     services:
       mysql:
@@ -248,5 +252,9 @@ jobs:
       - name: Set Passport OAuth key permissions
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
+      # One worker: coverage recording for the impact graph OOMs the runner
+      # with more.
       - name: Running impacted Pest tests
-        run: vendor/bin/pest --parallel --processes=4 --tia --colors=always
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: vendor/bin/pest --parallel --processes=1 --tia --colors=always

@@ -350,6 +350,13 @@ class ProductPassportTestCase extends TestCase
             'values'              => ['common' => [$gtinAttribute->code => $gtin]],
         ]);
 
+        /**
+         * The designated passport channel is a catalogue-wide setting, and the
+         * fixture publishes to channels it creates itself, so any inherited value
+         * is cleared before the run and each test sets what it needs.
+         */
+        CoreConfig::query()->where('code', 'general.publication.settings.gs1_passport_channel')->delete();
+
         $channels = [];
         $versions = [];
 

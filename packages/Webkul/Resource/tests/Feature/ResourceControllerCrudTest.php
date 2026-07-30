@@ -16,9 +16,9 @@ it('updates and deletes a record', function () {
 
     $this->putJson(route('admin.resource-kit-items.update', $item->id), ['name' => 'New'])
         ->assertOk()->assertJsonStructure(['data' => ['redirect_url'], 'message']);
-    $this->assertDatabaseHas('wk_resource_kit_items', ['id' => $item->id, 'name' => 'New']);
+    $this->assertDatabaseHas('resource_kit_items', ['id' => $item->id, 'name' => 'New']);
 
     $this->deleteJson(route('admin.resource-kit-items.destroy', $item->id))
         ->assertOk()->assertJsonStructure(['message']);
-    $this->assertDatabaseMissing('wk_resource_kit_items', ['id' => $item->id]);
+    $this->assertDatabaseMissing('resource_kit_items', ['id' => $item->id]);
 });
