@@ -1,49 +1,63 @@
 #!/bin/bash
-# Ensures Laravel APP_KEY is set in .env before any artisan command runs.
+# Resolves Laravel's APP_KEY for a container, in order of precedence:
 #
-# Behavior:
-#   - APP_KEY already valid  -> no-op
-#   - APP_ENV=production     -> fail fast (never auto-regenerate; would destroy
-#                               existing encrypted data such as sessions,
-#                               password resets, encrypted columns)
-#   - Dev/local/staging      -> generate new key
+#   1. APP_KEY in the environment (injected secret — always wins)
+#   2. APP_KEY in .env (source checkout / development stack)
+#   3. A key persisted to the storage volume by an earlier boot
+#   4. A freshly generated key, persisted for every later boot
+#
+# Step 4 is what lets the published image run with no configuration at all. The
+# key is written once and reused, so encrypted data stays readable across
+# restarts and image upgrades — the failure the old production guard existed to
+# prevent. Losing the storage volume with no APP_KEY in the environment is still
+# unrecoverable, which is why production is told to inject one.
 #
 # Idempotent: safe to source on every container start.
 
 ensure_app_key() {
     local env_file="${1:-/var/www/html/.env}"
+    local key_file="${UNOPIM_APP_KEY_FILE:-/var/www/html/storage/app/private/.app_key}"
 
-    if [ ! -f "$env_file" ]; then
-        echo "✗ .env not found at $env_file" >&2
-        return 1
-    fi
-
-    if [ ! -w "$env_file" ]; then
-        echo "✗ .env not writable at $env_file (check volume mount permissions)" >&2
-        return 1
-    fi
-
-    # Valid key format: APP_KEY=base64:<non-empty-value>
-    if grep -qE "^APP_KEY=base64:.+" "$env_file"; then
+    if [[ "${APP_KEY:-}" == base64:* ]]; then
         return 0
     fi
 
-    if [ "${APP_ENV:-local}" = "production" ]; then
-        echo "✗ APP_KEY is missing or invalid in production." >&2
-        echo "  Production deployments must inject APP_KEY via secret management" >&2
-        echo "  (Docker secret, Kubernetes Secret, Vault, etc.) — never auto-generate." >&2
-        echo "  Auto-generating would invalidate all existing encrypted data." >&2
+    if [ -f "$env_file" ] && grep -qE '^APP_KEY=base64:.+' "$env_file"; then
+        APP_KEY=$(grep -E '^APP_KEY=' "$env_file" | head -1 | cut -d '=' -f 2-)
+        export APP_KEY
+
+        return 0
+    fi
+
+    if [ -s "$key_file" ]; then
+        APP_KEY=$(cat "$key_file")
+        export APP_KEY
+
+        return 0
+    fi
+
+    if ! mkdir -p "$(dirname "$key_file")" 2>/dev/null; then
+        echo "✗ APP_KEY is not set and $(dirname "$key_file") is not writable." >&2
+        echo "  Inject APP_KEY as a secret, or mount a writable storage volume." >&2
+
         return 1
     fi
 
-    echo "→ APP_KEY missing or empty — generating new key (non-production)..."
+    echo "→ APP_KEY not set — generating one and persisting it to ${key_file}"
 
-    # Ensure APP_KEY line exists so key:generate has a target to update.
-    grep -q "^APP_KEY=" "$env_file" || echo "APP_KEY=" >> "$env_file"
+    # Generated without booting Laravel so this still works before the
+    # autoloader exists. Same shape as key:generate: 32 random bytes, base64.
+    APP_KEY="base64:$(php -r 'echo base64_encode(random_bytes(32));')"
+    export APP_KEY
 
-    php artisan key:generate --force --no-interaction
-    php artisan config:clear --no-interaction >/dev/null 2>&1 || true
+    ( umask 077 && printf '%s' "$APP_KEY" > "$key_file" )
 
-    # Re-export so the current shell + child processes (PHP-FPM master) inherit it.
-    export APP_KEY=$(grep "^APP_KEY=" "$env_file" | cut -d '=' -f 2-)
+    # Keep a source checkout's .env in step so host-side artisan agrees.
+    if [ -f "$env_file" ] && [ -w "$env_file" ]; then
+        if grep -qE '^APP_KEY=' "$env_file"; then
+            sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" "$env_file"
+        else
+            echo "APP_KEY=${APP_KEY}" >> "$env_file"
+        fi
+    fi
 }

@@ -112,7 +112,9 @@ RUN git config --system --add safe.directory /var/www/html
 
 EXPOSE 9000
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
-    CMD ["php-fpm","-t"]
+# Config validity alone would report healthy while setup is still running, and
+# the queue and scheduler containers gate on this.
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
+    CMD test -f /var/www/html/storage/unopim.lock && php-fpm -t
 
 ENTRYPOINT ["/var/www/html/dockerfiles/fpm-entrypoint.sh"]

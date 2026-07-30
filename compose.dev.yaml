@@ -1,6 +1,10 @@
 # =============================================================================
-# UnoPim Docker Compose — Production-Grade Multi-Container Setup
+# UnoPim Docker Compose — Development Stack (builds from this checkout)
 # =============================================================================
+#
+# For contributors. The working tree is bind-mounted, so edits are live and
+# Composer dependencies are installed into ./vendor on first boot. To run
+# UnoPim rather than work on it, use compose.yaml — it pulls published images.
 #
 # Defaults: Nginx + PHP-FPM web stack, PostgreSQL 16 database
 #
@@ -17,11 +21,14 @@
 #
 # Quick start:
 #   cp .env.docker .env
-#   docker compose up -d
-#   # Wait ~90s for first-time setup, then open http://localhost:8000/admin
+#   docker compose -f compose.dev.yaml up -d
+#   # First boot installs Composer dependencies, then http://localhost:8000/admin
+#
+# Make it the default for this checkout:
+#   COMPOSE_FILE=compose.dev.yaml
 #
 # ─── Web server: Nginx (default) or Apache ──────────────────────────
-#   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
+#   docker compose -f compose.dev.yaml -f compose.dev.apache.yaml up -d
 #
 # ─── Database: PostgreSQL (default) or MySQL ────────────────────────
 # Selected by COMPOSE_PROFILES in .env — only the chosen engine starts.
@@ -108,6 +115,9 @@ services:
     env_file: .env
     environment:
       <<: *app-environment
+      # Contributors need the dev dependencies the published images omit.
+      COMPOSER_INSTALL_ARGS: "${COMPOSER_INSTALL_ARGS-}"
+      UNOPIM_SKIP_MIGRATIONS: "${UNOPIM_SKIP_MIGRATIONS:-false}"
     depends_on:
       <<: *app-depends
     logging: *default-logging
@@ -132,6 +142,8 @@ services:
       QUEUE_NAMES: "webhooks,system,completeness,default,publication"
     depends_on:
       <<: *app-depends
+      unopim-fpm:
+        condition: service_healthy
     logging: *default-logging
 
   # ---------------------------------------------------------------------------
@@ -154,6 +166,8 @@ services:
       <<: *app-environment
     depends_on:
       <<: *app-depends
+      unopim-fpm:
+        condition: service_healthy
     logging:
       driver: "json-file"
       options:

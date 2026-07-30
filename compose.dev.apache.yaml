@@ -4,13 +4,13 @@
 # Replaces Nginx + PHP-FPM with Apache + mod_php (single container).
 #
 # Usage:
-#   docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
+#   docker compose -f compose.dev.yaml -f compose.dev.apache.yaml up -d
 #
 # Or set in .env:
-#   COMPOSE_FILE=docker-compose.yml:docker-compose.apache.yml
+#   COMPOSE_FILE=compose.dev.yaml:compose.dev.apache.yaml
 #
 # Database choice is independent of the web server — see COMPOSE_PROFILES
-# in docker-compose.yml.
+# in compose.dev.yaml.
 # =============================================================================
 
 services:

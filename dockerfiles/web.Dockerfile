@@ -98,7 +98,7 @@ RUN chown -R www-data:www-data storage bootstrap/cache \
 
 EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
-    CMD curl -sf http://localhost/ -o /dev/null -w '%{http_code}' | grep -qE '^(200|302)$' || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
+    CMD curl -fsS http://localhost/up > /dev/null || exit 1
 
 ENTRYPOINT ["/var/www/html/dockerfiles/web-entrypoint.sh"]

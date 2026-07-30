@@ -50,6 +50,10 @@ x-app-environment: &app-environment
   REDIS_HOST: unopim-redis
   REDIS_PORT: "6379"
   REDIS_PASSWORD: "null"
+  # Must stay above the longest job timeout — ExportBatch scales its own to
+  # max(600, rows * 3), and the 90s default would release a still-running
+  # export back onto the queue and process it twice.
+  REDIS_QUEUE_RETRY_AFTER: "${REDIS_QUEUE_RETRY_AFTER:-7200}"
   ELASTICSEARCH_ENABLED: "${ELASTICSEARCH_ENABLED:-true}"
   ELASTICSEARCH_HOST: unopim-elasticsearch:9200
   ELASTICSEARCH_INDEX_PREFIX: "${ELASTICSEARCH_INDEX_PREFIX:-unopim}"
@@ -115,7 +119,7 @@ services:
   # ---------------------------------------------------------------------------
   unopim-scheduler:
     image: webkul/unopim-queue:${UNOPIM_TAG:-latest}
-    entrypoint: ["php", "artisan", "schedule:work", "--no-interaction"]
+    entrypoint: ["/var/www/html/dockerfiles/scheduler-entrypoint.sh"]
     volumes:
       - unopim-storage:/var/www/html/storage
     restart: unless-stopped
