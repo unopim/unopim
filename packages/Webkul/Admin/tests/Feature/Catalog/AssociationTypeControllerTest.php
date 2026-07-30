@@ -563,3 +563,17 @@ it('should render the edit page with the quantity field prefilled', function () 
     $response->assertSee('quantity', false);
     $response->assertSee($associationType->code, false);
 });
+
+it('should not render the update button on the association type history tab', function () {
+    $this->loginAsAdmin();
+
+    $associationType = createAssociationType();
+
+    $this->get(route('admin.catalog.association_types.edit', $associationType->id))
+        ->assertStatus(200)
+        ->assertSee(trans('admin::app.catalog.association_types.edit.save-btn'), false);
+
+    $this->get(route('admin.catalog.association_types.edit', $associationType->id).'?history=1')
+        ->assertStatus(200)
+        ->assertDontSee(trans('admin::app.catalog.association_types.edit.save-btn'), false);
+});
