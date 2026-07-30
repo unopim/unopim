@@ -517,20 +517,26 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         if (isset($requestedParams['mass_action_ids']) && (bool) $requestedParams['mass_action_ids']) {
-            $this->setElasticSort($requestedParams['sort'] ?? []);
-            $this->setElasticFilters($requestedParams['filters'] ?? []);
+            try {
+                $this->setElasticSort($requestedParams['sort'] ?? []);
+                $this->setElasticFilters($requestedParams['filters'] ?? []);
 
-            $esQuery = $this->prepareQuery->build();
+                $esQuery = $this->prepareQuery->build();
 
-            $matchingParams = $requestedParams;
-            $matchingParams['pagination'] = [
-                'page'     => 1,
-                'per_page' => self::MASS_ACTION_ID_LIMIT,
-            ];
+                $matchingParams = $requestedParams;
+                $matchingParams['pagination'] = [
+                    'page'     => 1,
+                    'per_page' => self::MASS_ACTION_ID_LIMIT,
+                ];
 
-            $result = ResultCursorFactory::createCursor($esQuery, $matchingParams);
+                $result = ResultCursorFactory::createCursor($esQuery, $matchingParams);
 
-            $this->massActionIds = array_map('intval', $result->getAllIds());
+                $this->massActionIds = array_map('intval', $result->getAllIds());
+            } catch (\Exception $e) {
+                Log::error('Elasticsearch unavailable, falling back to database query: '.$e->getMessage());
+
+                parent::processRequest();
+            }
 
             return;
         }
