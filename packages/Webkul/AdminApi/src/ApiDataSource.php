@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
+use Webkul\AdminApi\Cache\StructureCache;
 use Webkul\AdminApi\Checker\QueryParametersChecker;
 use Webkul\Core\Eloquent\Repository;
 
@@ -91,6 +92,12 @@ abstract class ApiDataSource
      * Whether the current request paginates by keyset cursor instead of page offset.
      */
     protected bool $useCursorPagination = false;
+
+    /**
+     * StructureCache group for this data source's list responses; null disables caching.
+     * Only slow-changing structure entities may set this — never products.
+     */
+    protected ?string $structureCacheGroup = null;
 
     /**
      * Prepare query builder.
@@ -595,8 +602,24 @@ abstract class ApiDataSource
      */
     public function toJson()
     {
-        $this->prepare();
+        $structureCache = app(StructureCache::class);
 
-        return response()->json($this->responseFormatData());
+        if (! $this->structureCacheGroup || ! $structureCache->enabled()) {
+            $this->prepare();
+
+            return response()->json($this->responseFormatData());
+        }
+
+        $payload = $structureCache->remember(
+            $this->structureCacheGroup,
+            sha1(json_encode(request()->only(['filters', 'sort', 'limit', 'page', 'pagination_type', 'search_after']))),
+            function (): array {
+                $this->prepare();
+
+                return $this->responseFormatData();
+            }
+        );
+
+        return response()->json($payload);
     }
 }

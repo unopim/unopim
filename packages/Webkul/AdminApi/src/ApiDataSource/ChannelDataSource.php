@@ -9,6 +9,8 @@ use Webkul\Core\Repositories\ChannelRepository;
 
 class ChannelDataSource extends ApiDataSource
 {
+    protected ?string $structureCacheGroup = 'channels';
+
     /**
      * Create a new DataSource instance.
      *
