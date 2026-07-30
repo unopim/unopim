@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute via UI and land on the edit page.
@@ -16,7 +16,7 @@ async function createAttribute(adminPage, code, name, type = 'Text') {
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.locator('input[name="type"][type="text"]').fill(type);
   await adminPage.getByRole('option', { name: type }).first().click();
-  await adminPage.locator('input[name$="[name]"]').first().fill(name);
+  await fillLocalizedField(adminPage, name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
     clickSave(adminPage, 'Save Attribute'),
@@ -44,7 +44,7 @@ async function createSelectSwatchAttribute(adminPage, code, name, swatchType = '
     await swatchMs.click();
     await swatchMs.locator('.multiselect__option', { hasText: swatchType }).first().click();
   }
-  await adminPage.locator('input[name$="[name]"]').first().fill(name);
+  await fillLocalizedField(adminPage, name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
     clickSave(adminPage, 'Save Attribute'),
@@ -153,7 +153,7 @@ test.describe('UnoPim Attribute', () => {
     // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await clickSave(adminPage, 'Save Attribute');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
   });
 
   test('Create attribute with empty Type field', async ({ adminPage }) => {
@@ -165,7 +165,7 @@ test.describe('UnoPim Attribute', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
     await clickSave(adminPage, 'Save Attribute');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
   });
 
   test('Create attribute with empty Code and Type field', async ({ adminPage }) => {
@@ -176,8 +176,8 @@ test.describe('UnoPim Attribute', () => {
     // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await clickSave(adminPage, 'Save Attribute');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
   });
 
   test('Create attribute', { timeout: 60000 }, async ({ adminPage }) => {
@@ -691,7 +691,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await swatchMs.click();
     await swatchMs.locator('.multiselect__option', { hasText: 'Color Swatch' }).first().click();
     await expect(swatchMs).toContainText('Color Swatch');
-    await adminPage.locator('input[name$="[name]"]').first().fill('Color Swatch');
+    await fillLocalizedField(adminPage, 'Color Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
       clickSave(adminPage, 'Save Attribute'),
@@ -751,7 +751,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await swatchMs.click();
     await swatchMs.locator('.multiselect__option', { hasText: 'Image Swatch' }).first().click();
     await expect(swatchMs).toContainText('Image Swatch');
-    await adminPage.locator('input[name$="[name]"]').first().fill('Image Swatch');
+    await fillLocalizedField(adminPage, 'Image Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
       clickSave(adminPage, 'Save Attribute'),

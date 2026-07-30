@@ -8,8 +8,9 @@ const { clickSave, navigateTo, generateUid, searchInDataGrid, clickEditOnRow } =
 const bar = (page) => page.getByText('You have unsaved changes');
 
 async function confirmDiscard(page) {
-  await page.getByRole('button', { name: 'Discard' }).click();
-  await page.locator('button.danger-button').first().click().catch(() => {});
+  /** force: the unsaved bar keeps animating, so actionability never settles. */
+  await page.getByRole('button', { name: 'Discard' }).click({ force: true });
+  await page.locator('button.danger-button').first().click({ force: true }).catch(() => {});
 }
 
 async function createSimpleProduct(adminPage, sku) {

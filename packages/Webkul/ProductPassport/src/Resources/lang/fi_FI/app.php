@@ -82,7 +82,7 @@ return [
             'views'           => 'Katselukerrat',
             'version-history' => 'Versiohistoria',
             'withdraw'        => 'Peruuta',
-            'mass-publish'    => 'Julkaise valitut',
+            'mass-publish'    => 'Julkaise valitut uudelleen',
         ],
         'publish-queued'      => 'Passin julkaisu on jonossa.',
         'bulk-publish-queued' => 'Valittujen passien julkaisu on lisätty jonoon.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digitaalinen tuotepassi',
                     'publishing-disabled' => 'Passin julkaisu on poistettu käytöstä tälle kanavalle.',
+                    'required-badge'      => 'Pakollinen DPP:tä varten',
+                    'publish-blocked'     => 'Täytä kaikki passin pakolliset kentät ennen julkaisua.',
+                    'missing-template'    => 'Passimalli vaaditaan',
                     'locale'              => 'Kieli',
                     'version'             => 'Versio',
                     'published-at'        => 'Julkaistu',

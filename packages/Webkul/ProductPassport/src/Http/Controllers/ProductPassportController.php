@@ -8,12 +8,19 @@ use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Models\Product;
+use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportPayloadBuilder;
+use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\DataTransferObjects\PublicationContext;
 use Webkul\Publication\Models\PublicationProxy;
 
 class ProductPassportController extends Controller
 {
+    public function __construct(
+        private readonly PassportFeature $feature,
+        private readonly PassportReadinessService $readiness,
+    ) {}
+
     public function show(Product $product): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('catalog.passport.view'), 403);
@@ -22,6 +29,8 @@ class ProductPassportController extends Controller
             ->where('code', core()->getRequestedChannelCode())
             ->with('locales')
             ->firstOrFail();
+
+        abort_unless($this->feature->enabledFor($channel), 404);
 
         $publication = PublicationProxy::modelClass()::query()
             ->where('product_id', $product->id)
@@ -32,10 +41,18 @@ class ProductPassportController extends Controller
 
         $currentByLocale = $publication?->versions->keyBy('locale_id') ?? collect();
 
-        $rows = $channel->locales->map(fn ($locale): array => [
-            'locale_code' => $locale->code,
-            'version'     => $currentByLocale->get($locale->id)?->version,
-        ]);
+        $assessments = $this->readiness->assessMany($product, $channel, $channel->locales);
+
+        $rows = $channel->locales->map(function ($locale) use ($currentByLocale, $assessments): array {
+            $assessment = $assessments->get($locale->id);
+
+            return [
+                'locale_code'   => $locale->code,
+                'version'       => $currentByLocale->get($locale->id)?->version,
+                'ready'         => $assessment->isReady(),
+                'missing_count' => $assessment->template === null ? null : $assessment->missingFields->count(),
+            ];
+        });
 
         return new JsonResponse(['rows' => $rows]);
     }
@@ -51,7 +68,7 @@ class ProductPassportController extends Controller
     {
         abort_unless(bouncer()->hasPermission('catalog.passport.view'), 403);
 
-        abort_unless(PublicationController::featureEnabled(), 404);
+        abort_unless($this->feature->globallyEnabled(), 404);
 
         $channel = ChannelProxy::modelClass()::query()
             ->when(
@@ -61,6 +78,8 @@ class ProductPassportController extends Controller
             )
             ->with('locales')
             ->firstOrFail();
+
+        abort_unless($this->feature->enabledFor($channel), 404);
 
         $locale = $request->filled('locale_id')
             ? $channel->locales->firstWhere('id', $request->integer('locale_id'))

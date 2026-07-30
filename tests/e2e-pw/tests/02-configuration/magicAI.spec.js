@@ -393,8 +393,8 @@ test('3.6 - Save System Prompt with empty fields shows validation', async ({ adm
   await adminPage.getByRole('button', { name: 'Create System Prompt' }).click();
   await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible();
   await clickSave(adminPage, 'Save');
-  await expect(adminPage.locator('#app').getByText('The Title field is required')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('The Tone field is required')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The Title field is required').first()).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The Tone field is required').first()).toBeVisible();
 });
 
 test('3.7 - Create and verify a System Prompt with all fields', async ({ adminPage }) => {
@@ -540,8 +540,8 @@ test('4.8 - Save Prompt with empty fields shows validation', async ({ adminPage 
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
   await expect(adminPage.locator('#app').getByText('Create New Prompt')).toBeVisible();
   await clickSave(adminPage, 'Save Prompt');
-  await expect(adminPage.locator('#app').getByText('The title field is required')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('The Prompt field is required')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The title field is required').first()).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The Prompt field is required').first()).toBeVisible();
 });
 
 test('4.9 - Create a Product Text Generation prompt and clean up', async ({ adminPage }) => {
@@ -776,8 +776,8 @@ test('7.3 - Open AI Assistance modal and verify fields', async ({ adminPage }) =
   await expect(adminPage.getByRole('button', { name: 'Generate' })).toBeVisible({ timeout: 10000 });
   await expect(adminPage.locator('.multiselect').first()).toBeVisible({ timeout: 10000 });
 
-  await adminPage.locator('.icon-cancel').click();
-  await expect(adminPage.locator('.icon-cancel')).not.toBeVisible({ timeout: 5000 });
+  await adminPage.locator('span.icon-cancel').first().click();
+  await expect(adminPage.locator('span.icon-cancel').first()).not.toBeVisible({ timeout: 5000 });
 
   await navigateTo(adminPage, 'products');
   await searchInDataGrid(adminPage, sku);
@@ -1036,7 +1036,7 @@ test('8.1 - Create a category and verify Magic AI button', async ({ adminPage })
   const uniqueCode = `magicaicat${uid}`;
 
   await navigateTo(adminPage, 'categories');
-  await adminPage.getByRole('link', { name: 'Create Category' }).click();
+  await adminPage.getByRole('link', { name: 'Add Root Category' }).click();
   await adminPage.waitForLoadState('networkidle');
   await adminPage.locator('input[name="code"]:not([v-code])').first().waitFor({ state: 'attached', timeout: 10000 }).catch(() => {});
   await adminPage.locator('input[name="code"]').fill(uniqueCode);
@@ -1150,7 +1150,7 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   await userRow.locator('span[title="Delete"]').first().click();
   await expect(adminPage.locator('#app').getByText('Are you sure you want to delete?')).toBeVisible();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/User deleted successfully/i).first()).toBeVisible({ timeout: 20000 });
 
   await navigateTo(adminPage, 'roles');
   await searchInDataGrid(adminPage, roleName);

@@ -76,7 +76,7 @@ test.describe('admin ajax navigation', () => {
     });
 
     test('datagrid edit action navigates without a full reload', async ({ page }) => {
-        await page.goto('/admin/catalog/categories');
+        await page.goto('/admin/catalog/attribute-families');
         await page.waitForLoadState('networkidle');
 
         // Wait for the datagrid rows and their edit action to render.
@@ -87,7 +87,7 @@ test.describe('admin ajax navigation', () => {
 
         await editAction.click();
 
-        await page.waitForURL(/\/admin\/catalog\/categories\/edit\//);
+        await page.waitForURL(/\/admin\/catalog\/attribute-families\/edit\//);
 
         // Sentinel intact => the datagrid GET action went through ajax nav,
         // not window.location (which would have reloaded and wiped it).

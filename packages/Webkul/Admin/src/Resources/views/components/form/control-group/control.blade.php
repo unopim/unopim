@@ -411,9 +411,8 @@
     </script>
 
     <script type="text/x-template" id="v-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy ?? 'id'"
                 :label="labelBy ?? 'label'"
                 :options="formattedOptions"
@@ -565,9 +564,8 @@
     </script>
 
     <script type="text/x-template" id="v-multiselect-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :options="formattedOptions"
@@ -724,9 +722,8 @@
     </script>
 
     <script type="text/x-template" id="v-tagging-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :taggable="true"
@@ -891,9 +888,8 @@
     </script>
 
     <script type="text/x-template" id="v-taggingselect-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :taggable="true"
@@ -1182,9 +1178,8 @@
     </script>
 
     <script type="text/x-template" id="v-async-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :options="formattedOptions"

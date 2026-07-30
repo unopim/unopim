@@ -19,9 +19,12 @@ permissions:
   contents: read
 
 jobs:
+  # Advisory: baseline recording is an optimization experiment and must not
+  # redden the release branches while its memory profile is being tamed.
   baseline:
     runs-on: ubuntu-24.04
     name: Record the test impact baseline
+    continue-on-error: true
 
     services:
       mysql:
@@ -50,7 +53,10 @@ jobs:
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          ini-values: error_reporting=E_ALL
+          # pcov instruments every file it loads, and the graph only cares about
+          # our own source, so keeping vendor out of it is what keeps the
+          # recording inside the runner's memory.
+          ini-values: error_reporting=E_ALL, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           coverage: pcov
 
@@ -76,8 +82,21 @@ jobs:
       - name: Set Passport OAuth key permissions
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
+      # Coverage recording peaks past the runner's 7 GB with several workers
+      # (exit 137); swap absorbs the spike and two workers keep it tolerable.
+      # The runner already holds /swapfile open, so the extra file goes on /mnt,
+      # which is both free and the larger disk.
+      - name: Add swap headroom for coverage recording
+        run: |
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
+
       - name: Record the baseline
-        run: vendor/bin/pest --parallel --processes=4 --tia --fresh --colors=always
+        run: vendor/bin/pest --parallel --processes=2 --tia --fresh --colors=always
 
       - name: Resolve the baseline path
         id: baseline

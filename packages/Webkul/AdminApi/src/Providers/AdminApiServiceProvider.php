@@ -5,12 +5,14 @@ namespace Webkul\AdminApi\Providers;
 use Carbon\CarbonInterval;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Bridge\UserRepository as PassportUserRepository;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
+use Webkul\AdminApi\Cache\StructureCache;
 use Webkul\AdminApi\Console\ApiClientCommand;
 use Webkul\AdminApi\Http\Middleware\DeprecatedRoute;
 use Webkul\AdminApi\Http\Middleware\EnsureAcceptsJson;
@@ -18,6 +20,22 @@ use Webkul\AdminApi\Http\Middleware\LocaleMiddleware;
 use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
 use Webkul\AdminApi\Models\Client;
 use Webkul\AdminApi\Repositories\UserRepository;
+use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Attribute\Models\AttributeFamilyGroupMapping;
+use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Attribute\Models\AttributeGroupTranslation;
+use Webkul\Attribute\Models\AttributeOption;
+use Webkul\Attribute\Models\AttributeOptionTranslation;
+use Webkul\Attribute\Models\AttributeTranslation;
+use Webkul\Category\Models\CategoryField;
+use Webkul\Category\Models\CategoryFieldOption;
+use Webkul\Category\Models\CategoryFieldOptionTranslation;
+use Webkul\Category\Models\CategoryFieldTranslation;
+use Webkul\Core\Models\Channel;
+use Webkul\Core\Models\ChannelTranslation;
+use Webkul\Core\Models\Currency;
+use Webkul\Core\Models\Locale;
 use Webkul\Core\Tree;
 use Webkul\User\Models\Admin;
 
@@ -52,6 +70,42 @@ class AdminApiServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'admin_api');
         $this->composeView();
         $this->registerACL();
+        $this->registerStructureCacheInvalidation();
+    }
+
+    /**
+     * Rotate the structure-response cache whenever a structure entity is
+     * written through Eloquent, and wholesale after any import completes
+     * (imports may write structure rows below the model layer).
+     */
+    protected function registerStructureCacheInvalidation(): void
+    {
+        $modelGroups = [
+            Attribute::class                          => ['attributes', 'families'],
+            AttributeTranslation::class               => ['attributes'],
+            AttributeOption::class                    => ['attributes'],
+            AttributeOptionTranslation::class         => ['attributes'],
+            AttributeGroup::class                     => ['attribute_groups', 'families'],
+            AttributeGroupTranslation::class          => ['attribute_groups', 'families'],
+            AttributeFamily::class                    => ['families'],
+            AttributeFamilyGroupMapping::class        => ['families'],
+            CategoryField::class                      => ['category_fields'],
+            CategoryFieldTranslation::class           => ['category_fields'],
+            CategoryFieldOption::class                => ['category_fields'],
+            CategoryFieldOptionTranslation::class     => ['category_fields'],
+            Channel::class                            => ['channels'],
+            ChannelTranslation::class                 => ['channels'],
+            Locale::class                             => ['locales', 'channels'],
+            Currency::class                           => ['currencies', 'channels'],
+        ];
+
+        foreach ($modelGroups as $model => $groups) {
+            foreach (['saved', 'deleted'] as $modelEvent) {
+                $model::{$modelEvent}(static fn () => app(StructureCache::class)->bump(...$groups));
+            }
+        }
+
+        Event::listen('data_transfer.imports.completed', static fn () => app(StructureCache::class)->bumpAll());
     }
 
     /**

@@ -82,7 +82,7 @@ return [
             'views'           => 'Pregledi',
             'version-history' => 'Povijest verzija',
             'withdraw'        => 'Povuci',
-            'mass-publish'    => 'Objavi odabrano',
+            'mass-publish'    => 'Ponovno objavi odabrano',
         ],
         'publish-queued'      => 'Objava putovnice je stavljena u red čekanja.',
         'bulk-publish-queued' => 'Objava odabranih putovnica stavljena je u red čekanja.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digitalna putovnica proizvoda',
                     'publishing-disabled' => 'Objava putovnica je onemogućena za ovaj kanal.',
+                    'required-badge'      => 'Obavezno za DPP',
+                    'publish-blocked'     => 'Ispunite sva obavezna polja putovnice prije objave.',
+                    'missing-template'    => 'Potreban je predložak putovnice',
                     'locale'              => 'Jezik',
                     'version'             => 'Verzija',
                     'published-at'        => 'Objavljeno',

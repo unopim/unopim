@@ -167,6 +167,27 @@ function generateUid() {
   return Date.now().toString(36) + randomBytes(4).toString('hex');
 }
 
+/**
+ * Fill a localized name field regardless of how the page renders it: the
+ * quick-create modals expose a visible `<locale>[name]` input, while full
+ * pages use the translatable-field component whose named inputs are hidden
+ * behind an unnamed visible editor.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} value
+ * @param {string} field
+ */
+async function fillLocalizedField(page, value, field = 'name') {
+  const named = page.locator(`input[name$="[${field}]"]`).first();
+  await named.waitFor({ state: 'attached', timeout: 20000 });
+
+  if (await named.isVisible().catch(() => false)) {
+    await named.fill(value);
+    return;
+  }
+
+  await named.locator('..').locator('input[type="text"]').first().fill(value);
+}
+
 module.exports = {
   ROUTES,
   navigateTo,
@@ -178,4 +199,5 @@ module.exports = {
   clickSave,
   clickSaveAndExpect,
   generateUid,
+  fillLocalizedField,
 };

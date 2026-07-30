@@ -56,7 +56,7 @@ test.describe('UnoPim Category Tests', () => {
     await openCreateForm(adminPage);
     await adminPage.locator('#name').fill('Television');
     await clickSave(adminPage, 'Save Category');
-    await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The code field is required').first()).toBeVisible();
   });
 
   test('Create Categories with empty Name field', async ({ adminPage }) => {
@@ -64,7 +64,7 @@ test.describe('UnoPim Category Tests', () => {
     await adminPage.locator('input[name="code"]').fill('television_empty_name');
     await adminPage.locator('#name').fill('');
     await clickSave(adminPage, 'Save Category');
-    await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Name field is required').first()).toBeVisible();
   });
 
   test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
@@ -75,8 +75,8 @@ test.describe('UnoPim Category Tests', () => {
     // unsaved-changes tracker and the bar only shows once the form is dirty.
     await adminPage.locator('label[for="1"]').first().click();
     await clickSaveChanges(adminPage);
-    await expect(adminPage.locator('#app').getByText('The code field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Name field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The code field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Name field is required').first()).toBeVisible();
   });
 
   test('Create Categories with all fields', async ({ adminPage }) => {

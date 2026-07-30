@@ -82,7 +82,7 @@ return [
             'views'           => '浏览量',
             'version-history' => '版本历史',
             'withdraw'        => '撤回',
-            'mass-publish'    => '发布所选',
+            'mass-publish'    => '重新发布所选',
         ],
         'publish-queued'      => '护照发布已排队。',
         'bulk-publish-queued' => '所选护照的发布已加入队列。',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => '数字产品护照',
                     'publishing-disabled' => '该渠道已禁用护照发布。',
+                    'required-badge'      => 'DPP 必填',
+                    'publish-blocked'     => '发布前请填写所有护照必填字段。',
+                    'missing-template'    => '需要护照模板',
                     'locale'              => '语言',
                     'version'             => '版本',
                     'published-at'        => '发布时间',
