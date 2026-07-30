@@ -78,6 +78,10 @@ trait HistoryTrait
             return false;
         }
 
+        if ($this->isCustomEvent) {
+            return true;
+        }
+
         if ($this->auditEvent === 'updated') {
             $this->resolveAuditExclusions();
 
