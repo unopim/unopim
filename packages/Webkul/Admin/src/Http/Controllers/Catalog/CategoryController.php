@@ -273,7 +273,26 @@ class CategoryController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.categories.create-success'));
 
-        return redirect()->route('admin.catalog.categories.index');
+        return redirect()->route(...$this->savedDestination($categoryRequest, $category->id, 'admin.catalog.categories.index'));
+    }
+
+    /**
+     * Where a save lands. The panel is part of the tree workspace, so a save made
+     * there returns to the category it just wrote — selected, and with the branch
+     * around it revealed — rather than dropping the editor back on the listing.
+     *
+     * @return array{0: string, 1: array<string, mixed>}
+     */
+    private function savedDestination(CategoryRequest $request, int $categoryId, string $route, array $params = []): array
+    {
+        if (! $request->boolean('panel')) {
+            return [$route, $params];
+        }
+
+        return ['admin.catalog.categories.index', [
+            'category' => $categoryId,
+            'locale'   => core()->getRequestedLocaleCode(),
+        ]];
     }
 
     /**
@@ -305,10 +324,17 @@ class CategoryController extends Controller
     {
         Event::dispatch('catalog.category.update.before', $id);
 
+        $rejected = $this->savedDestination($categoryRequest, $id, 'admin.catalog.categories.edit', ['id' => $id]);
+
+        $destination = $this->savedDestination($categoryRequest, $id, 'admin.catalog.categories.edit', [
+            'id'     => $id,
+            'locale' => core()->getRequestedLocaleCode(),
+        ]);
+
         if (! empty($categoryRequest->input('parent_id')) && $this->isRelatedToChannel($id)) {
             session()->flash('error', trans('admin::app.catalog.categories.can-not-update'));
 
-            return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+            return redirect()->route(...$rejected);
         }
 
         if (! empty($categoryRequest->input('parent_id'))) {
@@ -319,7 +345,7 @@ class CategoryController extends Controller
             if ($parentId === $id || ($category && $parentCategory && $parentCategory->isDescendantOf($category))) {
                 session()->flash('error', trans('admin::app.catalog.categories.invalid-parent'));
 
-                return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+                return redirect()->route(...$rejected);
             }
         }
 
@@ -342,7 +368,7 @@ class CategoryController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.categories.update-success'));
 
-        return redirect()->route('admin.catalog.categories.edit', ['id' => $id, 'locale' => core()->getRequestedLocaleCode()]);
+        return redirect()->route(...$destination);
     }
 
     /**

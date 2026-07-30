@@ -101,6 +101,43 @@ it('moves a category back to root level', function () {
     $this->assertDatabaseHas('categories', ['id' => $child->id, 'parent_id' => null]);
 });
 
+it('stays on the newly created category when saved from the panel', function () {
+    $parent = Category::factory()->create(['parent_id' => null]);
+
+    $this->post(route('admin.catalog.categories.store'), [
+        'code'      => 'panel_child',
+        'locale'    => core()->getDefaultLocaleCodeFromDefaultChannel(),
+        'parent_id' => $parent->id,
+        'panel'     => 1,
+    ])->assertRedirect(route('admin.catalog.categories.index', [
+        'category' => Category::where('code', 'panel_child')->value('id'),
+        'locale'   => core()->getRequestedLocaleCode(),
+    ]));
+});
+
+it('stays on the edited category when saved from the panel', function () {
+    $category = Category::factory()->create(['parent_id' => null]);
+
+    $this->put(route('admin.catalog.categories.update', $category->id), [
+        'locale' => core()->getDefaultLocaleCodeFromDefaultChannel(),
+        'panel'  => 1,
+    ])->assertRedirect(route('admin.catalog.categories.index', [
+        'category' => $category->id,
+        'locale'   => core()->getRequestedLocaleCode(),
+    ]));
+});
+
+it('leaves the legacy pages on their own redirects', function () {
+    $category = Category::factory()->create(['parent_id' => null]);
+
+    $this->put(route('admin.catalog.categories.update', $category->id), [
+        'locale' => core()->getDefaultLocaleCodeFromDefaultChannel(),
+    ])->assertRedirect(route('admin.catalog.categories.edit', [
+        'id'     => $category->id,
+        'locale' => core()->getRequestedLocaleCode(),
+    ]));
+});
+
 it('moves through the tree without a hard page load', function () {
     $view = file_get_contents(base_path('packages/Webkul/Admin/src/Resources/views/components/tree/category/view.blade.php'));
 
