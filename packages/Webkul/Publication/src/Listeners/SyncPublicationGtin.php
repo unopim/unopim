@@ -4,9 +4,12 @@ namespace Webkul\Publication\Listeners;
 
 use Webkul\Publication\Events\PublicationPublished;
 use Webkul\Publication\Models\PublicationProxy;
+use Webkul\Publication\Services\Gs1DigitalLink;
 
 class SyncPublicationGtin
 {
+    public function __construct(private readonly Gs1DigitalLink $gs1) {}
+
     /**
      * Mirrors the freshly published version's GTIN onto its publication and
      * maintains the canonical GS1 Digital Link alias for the product.
@@ -20,6 +23,10 @@ class SyncPublicationGtin
      * mirroring `PublicationResolver::findByGtin`'s undesignated fallback) and
      * cleared from any sibling that still holds it, so the QR carrier on a
      * non-canonical channel falls back to its own per-channel passport URL.
+     *
+     * A GTIN outside the public route's grammar is stored as routing metadata but
+     * never aliased: the link it would produce cannot resolve, and a carrier must
+     * not encode a dead URL.
      *
      * Query-builder writes (not Eloquent saves) keep this event-free: it must
      * neither re-fire PublicationPublished nor touch any immutable version row.
@@ -49,10 +56,11 @@ class SyncPublicationGtin
             return;
         }
 
-        $base = core()->getConfigData('general.publication.settings.base_url', $canonical->channel->code)
-            ?: config('app.url');
+        if (! $this->gs1->isWellFormed($gtin)) {
+            return;
+        }
 
-        $link = rtrim((string) $base, '/')."/01/{$gtin}";
+        $link = $this->gs1->build($gtin, $canonical->channel->code);
 
         $model::query()
             ->where('gtin', $gtin)

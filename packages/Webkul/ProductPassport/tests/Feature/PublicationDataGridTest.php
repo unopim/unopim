@@ -8,10 +8,14 @@ use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
 
-it('exports gtin, gs1 link and public url columns for the print hand-off', function (): void {
+/**
+ * The exported link is rebuilt from the current base url — the stored alias marks
+ * GTIN ownership only, so a stale host can never reach a printed carrier.
+ */
+it('exports gtin, a freshly built gs1 link and the public url for the print hand-off', function (): void {
     $publication = Publication::factory()->create([
         'gtin'             => '04006381333931',
-        'alias_identifier' => 'https://dpp.example.test/01/04006381333931',
+        'alias_identifier' => 'https://stale.example.test/01/04006381333931',
     ]);
 
     $grid = resolve(PublicationDataGrid::class);
@@ -26,7 +30,7 @@ it('exports gtin, gs1 link and public url columns for the print hand-off', funct
     $row = (array) $rows[0];
 
     expect($row['gtin'])->toBe('04006381333931')
-        ->and($row['gs1_link'])->toBe('https://dpp.example.test/01/04006381333931')
+        ->and($row['gs1_link'])->toBe(url('/01/04006381333931'))
         ->and($row['public_url'])->toContain($publication->uuid);
 });
 

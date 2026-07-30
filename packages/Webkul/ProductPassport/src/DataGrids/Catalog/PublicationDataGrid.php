@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Services\Gs1DigitalLink;
 
 class PublicationDataGrid extends DataGrid implements ExportableInterface
 {
@@ -132,6 +133,7 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
+            'closure'    => fn ($row): string => $this->gs1Link($row),
         ]);
 
         $this->addColumn([
@@ -229,6 +231,7 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             ->lazyById(1000, 'publications.id')
             ->map(function (object $row): object {
                 $row->public_url = $this->publicUrl($row);
+                $row->gs1_link = $this->gs1Link($row);
 
                 unset($row->status_code);
 
@@ -236,6 +239,22 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             })
             ->collect()
             ->all();
+    }
+
+    /**
+     * The GS1 Digital Link the printed carrier resolves through, rebuilt from the
+     * current base url rather than read from the alias stamped at publish time —
+     * the column and the QR code must never disagree about where a scan lands.
+     */
+    private function gs1Link(object $row): string
+    {
+        $gs1 = resolve(Gs1DigitalLink::class);
+
+        if ($row->gs1_link === null || ! $gs1->isWellFormed($row->gtin)) {
+            return '';
+        }
+
+        return $gs1->build((string) $row->gtin, $row->channel_code ?? null);
     }
 
     /**
