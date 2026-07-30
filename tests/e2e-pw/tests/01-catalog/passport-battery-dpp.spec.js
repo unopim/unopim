@@ -22,7 +22,16 @@ const AUTHORITY_FIELD = { label: 'EU Declaration of Conformity', attribute: 'EU 
 let fixture;
 let templateUrl;
 
+/** Dev envs run the app in docker; CI runs it on the host (PASSPORT_E2E_LOCAL=1). */
 function inContainer(args) {
+  if (process.env.PASSPORT_E2E_LOCAL === '1') {
+    return execFileSync(args[0], args.slice(1), {
+      cwd: `${__dirname}/../../../..`,
+      encoding: 'utf-8',
+      timeout: 600_000,
+    });
+  }
+
   return execFileSync('docker', ['exec', '-w', '/var/www/html', CONTAINER, ...args], {
     encoding: 'utf-8',
     timeout: 600_000,

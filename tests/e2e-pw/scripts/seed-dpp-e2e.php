@@ -2,10 +2,12 @@
 
 // Idempotent backend prereq for the DPP E2E suites. Run once per env:
 //   docker exec unopim-unopim-fpm-1 php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
-// Builds a canonical `dpp_e2e` attribute family (cloned from `default` + the full
-// `dpp` group + two plain source attributes), a completeness requirement that is
-// always satisfied (sku), a second channel locale (fr_FR) for multi-locale
-// scenarios, and the passport/publication config the specs assume.
+// Builds the `dpp` attribute group with the canonical dpp_* attributes (the
+// retired DppAttributeSeeder's set, now test-only data), a lean `dpp_e2e`
+// attribute family, a `dpp_e2e` passport template bound to that family whose
+// fields mirror the old tier map (so publishing is gated and tiered exactly as
+// the specs assume), a second channel locale (fr_FR), and the passport /
+// publication config the specs expect.
 
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
@@ -14,11 +16,64 @@ use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\Locale;
-use Webkul\ProductPassport\Database\Seeders\DppAttributeSeeder;
+use Webkul\ProductPassport\Enums\PassportFieldSource;
+use Webkul\ProductPassport\Models\PassportTemplateProxy;
 
-resolve(DppAttributeSeeder::class)->run();
+/* --- the dpp attribute set the specs fill (formerly DppAttributeSeeder) --- */
+$dppAttributes = [
+    ['code' => 'dpp_material_composition', 'type' => 'textarea', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_substances_of_concern', 'type' => 'textarea', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_recycled_content_pct', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_carbon_footprint', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_energy_consumption', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_durability_statement', 'type' => 'textarea', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_repairability_score', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_spare_parts_availability', 'type' => 'textarea', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_care_instructions', 'type' => 'textarea', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_disassembly_guide', 'type' => 'file', 'locale' => false, 'channel' => false, 'extensions' => ['pdf']],
+    ['code' => 'dpp_manufacturer_name', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_manufacturing_site', 'type' => 'text', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_country_of_origin', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_supply_chain_notes', 'type' => 'textarea', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_end_of_life_instructions', 'type' => 'textarea', 'locale' => true, 'channel' => false],
+    ['code' => 'dpp_take_back_scheme', 'type' => 'textarea', 'locale' => true, 'channel' => true],
+    ['code' => 'dpp_declaration_of_conformity', 'type' => 'file', 'locale' => false, 'channel' => false, 'extensions' => ['pdf']],
+    ['code' => 'dpp_test_reports', 'type' => 'file', 'locale' => false, 'channel' => false, 'extensions' => ['pdf']],
+    ['code' => 'dpp_certificates', 'type' => 'file', 'locale' => false, 'channel' => false, 'extensions' => ['pdf']],
+    ['code' => 'dpp_gtin', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_model_identifier', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_batch_identifier', 'type' => 'text', 'locale' => false, 'channel' => false],
+    ['code' => 'dpp_warranty_terms', 'type' => 'textarea', 'locale' => true, 'channel' => true],
+];
 
-/* --- plain source attributes for field-mapping + custom-field scenarios --- */
+$labelFor = fn (string $code): string => ucwords(str_replace('_', ' ', preg_replace('/^dpp_/', '', $code)));
+
+$dppGroup = AttributeGroup::firstOrCreate(['code' => 'dpp']);
+DB::table('attribute_group_translations')->updateOrInsert(
+    ['attribute_group_id' => $dppGroup->id, 'locale' => 'en_US'],
+    ['name' => 'Digital Product Passport'],
+);
+
+foreach ($dppAttributes as $definition) {
+    $attribute = Attribute::firstOrCreate(
+        ['code' => $definition['code']],
+        [
+            'type'               => $definition['type'],
+            'value_per_locale'   => $definition['locale'] ? 1 : 0,
+            'value_per_channel'  => $definition['channel'] ? 1 : 0,
+            'is_required'        => 0,
+            'is_unique'          => 0,
+            'allowed_extensions' => $definition['extensions'] ?? null,
+        ],
+    );
+
+    DB::table('attribute_translations')->updateOrInsert(
+        ['attribute_id' => $attribute->id, 'locale' => 'en_US'],
+        ['name' => $labelFor($definition['code'])],
+    );
+}
+
+/* --- plain source attributes for extra-source scenarios --- */
 $sources = [
     'origin_country' => ['en_US' => 'Origin Country', 'fr_FR' => "Pays d'origine"],
     'shelf_life'     => ['en_US' => 'Shelf Life', 'fr_FR' => 'Durée de conservation'],
@@ -62,8 +117,6 @@ DB::table('attribute_group_translations')->updateOrInsert(
     ['name' => 'General'],
 );
 
-$dppGroup = AttributeGroup::where('code', 'dpp')->firstOrFail();
-
 $family->familyGroups()->syncWithoutDetaching([$generalGroup->id, $dppGroup->id]);
 $family->load('attributeFamilyGroupMappings');
 
@@ -77,27 +130,67 @@ foreach (Attribute::where('code', 'like', 'dpp_%')->pluck('id') as $id) {
     $dppMapping->customAttributes()->syncWithoutDetaching([$id]);
 }
 
-/* --- completeness requirement = sku (always filled -> 100%) on default channel --- */
-$channel = Channel::where('code', 'default')->firstOrFail();
+/* --- passport template bound to the family: publishing is gated on a template
+ * existing, and tiers/roles are now declared per template field. The tier map
+ * mirrors the retired config-level map the suites were written against; no
+ * field is required, so a product is always publishable (the old suites relied
+ * on an always-satisfied completeness gate the same way). --- */
+$tierFor = fn (string $code): string => match ($code) {
+    'dpp_supply_chain_notes', 'dpp_manufacturing_site'                      => 'operator',
+    'dpp_declaration_of_conformity', 'dpp_test_reports', 'dpp_certificates' => 'authority',
+    default                                                                 => 'consumer',
+};
 
-DB::table('completeness_settings')->updateOrInsert(
-    ['family_id' => $family->id, 'channel_id' => $channel->id, 'attribute_id' => 1],
-    ['updated_at' => now(), 'created_at' => now()],
+$roleFor = fn (string $code): ?string => match ($code) {
+    'dpp_gtin'             => 'gtin',
+    'dpp_model_identifier' => 'model',
+    'dpp_batch_identifier' => 'batch',
+    default                => null,
+};
+
+$template = PassportTemplateProxy::modelClass()::firstOrCreate(
+    ['code' => 'dpp_e2e'],
+    ['is_enabled' => true, 'en_US' => ['name' => 'DPP E2E']],
 );
 
+$template->families()->syncWithoutDetaching([$family->id]);
+
+if ($template->fields()->count() === 0) {
+    $section = $template->sections()->create([
+        'code'     => 'dpp_e2e_main',
+        'position' => 0,
+        'en_US'    => ['name' => 'Product Data'],
+    ]);
+
+    foreach ($dppAttributes as $position => $definition) {
+        $template->fields()->create([
+            'code'                         => $definition['code'],
+            'passport_template_section_id' => $section->id,
+            'source_type'                  => PassportFieldSource::Attribute,
+            'attribute_id'                 => Attribute::where('code', $definition['code'])->value('id'),
+            'tier'                         => $tierFor($definition['code']),
+            'is_required'                  => false,
+            'role'                         => $roleFor($definition['code']),
+            'position'                     => $position,
+            'en_US'                        => ['label' => $labelFor($definition['code'])],
+        ]);
+    }
+}
+
 /* --- second locale on the default channel for multi-locale scenarios --- */
+$channel = Channel::where('code', 'default')->firstOrFail();
+
 $fr = Locale::where('code', 'fr_FR')->firstOrFail();
 $fr->update(['status' => 1]);
 $channel->locales()->syncWithoutDetaching([$fr->id]);
 
 /* --- passport / publication config the specs assume --- */
 $config = [
-    'catalog.product_passport.settings.enabled'                => '1',
-    'catalog.product_passport.settings.auto_publish'           => '0',
-    'catalog.product_passport.settings.completeness_threshold' => '1',
-    'catalog.product_passport.settings.operator_name'          => 'Acme Corp GmbH',
-    'general.publication.settings.enabled'                     => '1',
-    'general.publication.settings.indexable'                   => '0',
+    'catalog.product_passport.settings.enabled'       => '1',
+    'catalog.product_passport.settings.auto_publish'  => '0',
+    'catalog.product_passport.settings.operator_name' => 'Acme Corp GmbH',
+    'general.publication.settings.enabled'            => '1',
+    'general.publication.settings.indexable'          => '0',
 ];
 
 foreach ($config as $code => $value) {
@@ -108,6 +201,8 @@ foreach ($config as $code => $value) {
 }
 
 echo 'SEED OK family_id='.$family->id
+    .' template_id='.$template->id
     .' dpp_attrs='.Attribute::where('code', 'like', 'dpp_%')->count()
+    .' template_fields='.$template->fields()->count()
     .' locales='.$channel->locales()->count()
     ."\n";

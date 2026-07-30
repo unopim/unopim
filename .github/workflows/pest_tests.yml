@@ -66,9 +66,23 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        # Each worker owns a database clone, so the suite no longer runs as one
-        # process - which is also what kept it under the runner's memory ceiling.
-        run: vendor/bin/pest --parallel --processes=4 --colors=always
+        # Each worker owns a database clone. The suite runs as two halves so
+        # every half starts with fresh workers: per-process memory grows over
+        # thousands of tests and a single long run ends with a worker
+        # OOM-killed (exit 137), which aborts paratest mid-run.
+        # The teamcity log streams per-test results, so it survives a crashed
+        # worker where a junit report would not.
+        run: |
+          vendor/bin/pest --parallel --processes=3 --colors=always --log-teamcity pest-teamcity-1.log --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
+          vendor/bin/pest --parallel --processes=3 --colors=always --log-teamcity pest-teamcity-2.log --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+
+      - name: Upload failure report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pest-mysql-teamcity
+          path: pest-teamcity-*.log
+          if-no-files-found: ignore
 
   pest-elasticsearch:
     runs-on: ubuntu-24.04
@@ -149,9 +163,13 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        # Each worker owns a database clone, so the suite no longer runs as one
-        # process - which is also what kept it under the runner's memory ceiling.
-        run: vendor/bin/pest --parallel --processes=4 --colors=always
+        # Each worker owns a database clone. The suite runs as two halves so
+        # every half starts with fresh workers: per-process memory grows over
+        # thousands of tests and a single long run ends with a worker
+        # OOM-killed (exit 137), which aborts paratest mid-run.
+        run: |
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
 
   # Fast pull-request signal alongside the full suites: Pest's Test Impact Analysis
   # runs only the tests reached by the changed files. With no cached graph (or a

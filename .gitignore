@@ -25,6 +25,7 @@ package-lock.json
 /storage/*.key
 /storage/unopim.lock
 /storage/dcc-data/
+/storage/parallel/
 /vendor
 yarn.lock
 yarn-error.log

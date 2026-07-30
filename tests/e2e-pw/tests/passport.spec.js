@@ -41,7 +41,7 @@ test.describe.serial('Digital Product Passport', () => {
 
   test('enable Digital Product Passport publishing via the System Settings hub', async ({ adminPage }) => {
     const page = adminPage;
-    await page.goto('/admin/configuration/system-settings/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/configuration/system/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
 
     // The boolean toggle carries no accessible name; `enabled` is the first checkbox on the page (order-stable).
@@ -50,7 +50,6 @@ test.describe.serial('Digital Product Passport', () => {
       await enabled.check({ force: true });
     }
 
-    await page.getByRole('textbox', { name: /Completeness Threshold/i }).fill('1');
     // A unique operator name guarantees the form goes dirty every run (surfacing the sticky save bar,
     // which replaces the tracker-removed in-form submit) and feeds the JSON-LD manufacturer name.
     await page.getByRole('textbox', { name: /Economic Operator Name/i }).fill(`Acme Corp GmbH ${generateUid()}`);

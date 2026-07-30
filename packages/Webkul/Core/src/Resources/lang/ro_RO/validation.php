@@ -9,7 +9,7 @@ return [
     'slug'                         => 'Slug-ul :attribute trebuie să fie valid.',
     'sku'                          => 'SKU-ul :attribute trebuie să fie valid (doar caractere alfanumerice, cratime și liniuțe de subliniere).',
     'comma-separated-integer'      => 'Câmpul :attribute trebuie să fie numeric și poate conține virgulă.',
-    'ip-address-list'      => 'Câmpul :attribute trebuie să conțină adrese IP valide separate prin virgule.',
+    'ip-address-list'              => 'Câmpul :attribute trebuie să conțină adrese IP valide separate prin virgule.',
     'type'                         => 'Tipul :attribute trebuie să fie valid.',
     'validation-type'              => 'Tipul validării :attribute trebuie să fie valid.',
     'field-option-not-found'       => 'Câmpul :attribute conține opțiuni nevalide: :invalid_codes.',

@@ -39,7 +39,14 @@ class RecordPublicationView implements ShouldQueue
     {
         $model = PublicationViewStatProxy::modelClass();
 
-        DB::table((new $model)->getTable())->upsert(
+        $table = (new $model)->getTable();
+
+        /**
+         * The increment reads the stored row, so the column is table-qualified:
+         * PostgreSQL rejects a bare `views` in the conflict clause as ambiguous
+         * against the row proposed for insertion.
+         */
+        DB::table($table)->upsert(
             [[
                 'publication_id' => $this->publicationId,
                 'locale_id'      => $this->localeId,
@@ -49,7 +56,7 @@ class RecordPublicationView implements ShouldQueue
                 'updated_at'     => now(),
             ]],
             ['publication_id', 'locale_id', 'viewed_on'],
-            ['views' => DB::raw('views + 1'), 'updated_at' => now()],
+            ['views' => DB::raw(DB::getQueryGrammar()->wrapTable($table).'.views + 1'), 'updated_at' => now()],
         );
     }
 }

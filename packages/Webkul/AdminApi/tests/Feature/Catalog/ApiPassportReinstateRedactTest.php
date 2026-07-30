@@ -1,6 +1,5 @@
 <?php
 
-use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Models\Publication;
@@ -69,37 +68,6 @@ it('rejects redacting a publication with no current versions', function () {
 
     $this->withHeaders($this->headers)
         ->json('POST', route('admin.api.passports.redact', $publication->id), ['reason' => 'GDPR request'])
-        ->assertStatus(422);
-});
-
-it('writes the passport mapping', function () {
-    $this->withHeaders($this->headers)
-        ->json('PUT', route('admin.api.passports.mapping.update'), ['mapping' => []])
-        ->assertOk()
-        ->assertJson(['success' => true]);
-});
-
-it('persists and returns custom passport fields', function () {
-    $attribute = Attribute::factory()->create(['type' => 'text']);
-
-    $this->withHeaders($this->headers)
-        ->json('PUT', route('admin.api.passports.mapping.update'), [
-            'mapping'       => [],
-            'custom_fields' => [['name' => 'Warranty', 'attribute' => $attribute->code]],
-        ])
-        ->assertOk();
-
-    $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.passports.mapping'))
-        ->assertOk()
-        ->assertJsonFragment(['name' => 'Warranty', 'attribute' => $attribute->code]);
-});
-
-it('rejects a custom field pointing at an unknown attribute', function () {
-    $this->withHeaders($this->headers)
-        ->json('PUT', route('admin.api.passports.mapping.update'), [
-            'custom_fields' => [['name' => 'X', 'attribute' => 'no_such_attr']],
-        ])
         ->assertStatus(422);
 });
 

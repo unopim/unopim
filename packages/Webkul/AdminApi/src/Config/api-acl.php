@@ -423,7 +423,6 @@ return [
         'route' => 'admin.api.passports.get',
         'sort'  => 7,
     ], [
-    ], [
         'key'   => 'api.catalog.passports.publish',
         'name'  => 'admin::app.acl.publish',
         'route' => 'admin.api.passports.publish',

@@ -20,9 +20,9 @@ it('renders a fields edit page and persists to core config', function () {
 
 it('redirects to the hub when the key has no fields', function () {
     config(['system_settings' => [
-        ['key' => 'system.appearance', 'name' => 'admin::app.settings.appearance.title', 'route' => 'admin.settings.appearance.index', 'sort' => 1],
+        ['key' => 'system.routed_row', 'name' => 'admin::app.settings.appearance.title', 'route' => 'admin.settings.appearance.index', 'sort' => 1],
     ]]);
 
-    $this->get(route('admin.settings.system.edit', 'system.appearance'))
+    $this->get(route('admin.settings.system.edit', 'system.routed_row'))
         ->assertRedirect(route('admin.settings.system.index'));
 });

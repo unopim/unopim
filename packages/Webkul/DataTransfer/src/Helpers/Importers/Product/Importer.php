@@ -1450,14 +1450,26 @@ class Importer extends AbstractImporter
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
 
+        /**
+         * Disabled only for the duration of the batch: these statics outlive the
+         * job in a long-running queue worker (or Octane), and leaving them off
+         * would silently stop indexing and completeness for every later save
+         * the same process handles.
+         */
         ElasticProductObserver::disable();
 
         CompletenessProductObserver::disable();
 
-        if ($batch->jobTrack->action == Import::ACTION_DELETE) {
-            $this->deleteProducts($batch);
-        } else {
-            $this->saveProductsData($batch);
+        try {
+            if ($batch->jobTrack->action == Import::ACTION_DELETE) {
+                $this->deleteProducts($batch);
+            } else {
+                $this->saveProductsData($batch);
+            }
+        } finally {
+            ElasticProductObserver::enable();
+
+            CompletenessProductObserver::enable();
         }
 
         /**

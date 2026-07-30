@@ -9,7 +9,7 @@ return [
     'slug'                         => 'Slug :attribute phải hợp lệ.',
     'sku'                          => 'SKU :attribute phải hợp lệ (chỉ bao gồm ký tự chữ và số, dấu gạch ngang và gạch dưới).',
     'comma-separated-integer'      => 'Trường :attribute phải là số và có thể chứa dấu phẩy.',
-    'ip-address-list'      => 'Trường :attribute phải chứa các địa chỉ IP hợp lệ, phân tách bằng dấu phẩy.',
+    'ip-address-list'              => 'Trường :attribute phải chứa các địa chỉ IP hợp lệ, phân tách bằng dấu phẩy.',
     'type'                         => 'Loại :attribute phải hợp lệ.',
     'validation-type'              => 'Loại xác thực :attribute phải hợp lệ.',
     'field-option-not-found'       => 'Trường :attribute có các tùy chọn không hợp lệ: :invalid_codes.',

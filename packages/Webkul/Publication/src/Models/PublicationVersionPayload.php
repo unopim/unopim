@@ -86,7 +86,7 @@ class PublicationVersionPayload extends Model implements PublicationVersionPaylo
                     ? '\x'.bin2hex($gzip)
                     : $gzip;
             },
-        );
+        )->shouldCache();
     }
 
     protected static function decodeBinary(mixed $value): ?string
@@ -96,6 +96,14 @@ class PublicationVersionPayload extends Model implements PublicationVersionPaylo
         }
 
         if (is_resource($value)) {
+            /**
+             * A pgsql bytea arrives as a stream, and reading it moves the pointer:
+             * without the rewind the second consumer of the same instance (the
+             * publish listeners after the page has rendered it, say) reads an empty
+             * string and sees a payload that looks absent.
+             */
+            @rewind($value);
+
             $value = stream_get_contents($value);
         }
 

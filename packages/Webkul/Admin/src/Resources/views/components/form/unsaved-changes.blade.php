@@ -250,6 +250,7 @@
                     return [...this.$refs.root.querySelectorAll('input[name], select[name], textarea[name]')]
                         .filter(el => ! ['submit', 'button'].includes(el.type))
                         .filter(el => ! ['_token', '_method'].includes(el.name))
+                        .filter(el => ! el.closest('[data-unsaved-ignore]'))
                         .filter(el => ! el.disabled && ! el.readOnly);
                 },
 
@@ -261,8 +262,12 @@
                         return map;
                     }
 
+                    const ignored = new Set(
+                        [...this.$refs.root.querySelectorAll('[data-unsaved-ignore] [name]')].map(el => el.name)
+                    );
+
                     for (const [key, value] of new FormData(form).entries()) {
-                        if (key === '_token' || key === '_method') {
+                        if (key === '_token' || key === '_method' || ignored.has(key)) {
                             continue;
                         }
 

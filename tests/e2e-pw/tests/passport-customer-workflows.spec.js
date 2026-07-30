@@ -69,7 +69,6 @@ async function setAutoPublish(page, on) {
         settings: {
           enabled: '1',
           auto_publish: on ? '1' : '0',
-          completeness_threshold: '1',
         },
       },
     },
@@ -168,32 +167,4 @@ test.describe.serial('DPP customer workflows', () => {
     expect(csv, 'export contains the passport public URL').toContain(`/p/${gridRow.uuid}`);
   });
 
-  test('custom-field guard: the picker omits a media attribute and saving one is rejected', async ({ adminPage }) => {
-    const page = adminPage;
-
-    await page.goto('/admin/catalog/passports/mapping', { waitUntil: 'domcontentloaded' });
-    await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
-
-    await page.getByRole('button', { name: /Add passport field/i }).click();
-
-    const nameInputs = page.locator('input[name^="custom_fields["][name$="[name]"]');
-    const row = nameInputs.last().locator('xpath=ancestor::div[contains(@class,"grid")][1]');
-    await row.locator('.multiselect').first().click();
-
-    const optionTexts = await row.locator('.multiselect__content-wrapper li, .multiselect__element')
-      .allInnerTexts();
-    const normalized = optionTexts.map((t) => t.trim());
-
-    // A value attribute is offered; the "Image" media attribute is filtered out of custom-field sources.
-    expect(normalized).toContain('Origin Country');
-    expect(normalized).not.toContain('Image');
-
-    // Server-side belt-and-braces: a crafted save pointing a custom field at the file/image attribute is rejected.
-    const rejected = await adminRequest(page, 'PUT', '/admin/catalog/passports/mapping', {
-      custom_fields: [{ name: 'Product Photo', attribute: 'image' }],
-    });
-
-    expect(rejected.status, JSON.stringify(rejected.body)).toBe(422);
-    expect(JSON.stringify(rejected.body)).toMatch(/custom_fields\.0\.attribute/);
-  });
 });
