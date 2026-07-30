@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Jobausführung gestartet',
         'completed' => 'Jobausführung abgeschlossen',
+        'stalled'   => 'Der Auftrag hat länger als :minutes Minuten nicht reagiert und wurde als fehlgeschlagen markiert. Der ausführende Worker wurde vermutlich beendet.',
+        'reaped'    => ':count hängengebliebene Aufträge wurden als fehlgeschlagen markiert.',
     ],
 ];

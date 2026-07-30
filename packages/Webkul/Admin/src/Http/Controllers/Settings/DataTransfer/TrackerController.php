@@ -12,6 +12,7 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobHealth;
 use Webkul\DataTransfer\Services\JobLogger;
 use ZipArchive;
 
@@ -26,7 +27,8 @@ class TrackerController extends Controller
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
         protected Import $importHelper,
-        protected Export $exportHelper
+        protected Export $exportHelper,
+        protected JobHealth $jobHealth,
     ) {}
 
     /**
@@ -53,6 +55,13 @@ class TrackerController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($batchId);
+
+        if ($this->jobHealth->isStalled($import)) {
+            $this->jobHealth->fail($import);
+
+            $import->refresh();
+        }
+
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
 

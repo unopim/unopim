@@ -16,6 +16,7 @@ use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobHealth;
 
 class ImportController extends Controller
 {
@@ -32,7 +33,8 @@ class ImportController extends Controller
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
         protected Import $importHelper,
-        protected Export $exportHelper
+        protected Export $exportHelper,
+        protected JobHealth $jobHealth,
     ) {}
 
     /**
@@ -583,6 +585,15 @@ class ImportController extends Controller
         }
 
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        // The scheduled reaper is the safety net; failing it here too stops the
+        // tracker polling a dead job for up to a scheduler tick.
+        if ($this->jobHealth->isStalled($import)) {
+            $this->jobHealth->fail($import);
+
+            $import->refresh();
+        }
+
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
 

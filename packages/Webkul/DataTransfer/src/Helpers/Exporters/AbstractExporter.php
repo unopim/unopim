@@ -11,6 +11,7 @@ use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Jobs\Export\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Export\ExportBatch as ExportBatchJob;
@@ -22,6 +23,8 @@ use Webkul\User\Models\AdminProxy;
 
 abstract class AbstractExporter
 {
+    use TracksJobHeartbeat;
+
     /**
      * Error code for system exception.
      */
@@ -488,6 +491,11 @@ abstract class AbstractExporter
 
     protected function assertExportIsFeasible($results): void {}
 
+    protected function getHeartbeatTrack(): mixed
+    {
+        return $this->export ?? null;
+    }
+
     protected function guardAgainstOversizedExport(int $rows, int $columns): void
     {
         $freeBytes = @disk_free_space(sys_get_temp_dir());
@@ -530,6 +538,8 @@ abstract class AbstractExporter
      */
     public function updateBatchState(int $id, string $state): void
     {
+        $this->heartbeat(force: true);
+
         $processed = $this->getCreatedItemsCount() - $this->getskippedtemsCount();
         /**
          * Update import batch summary

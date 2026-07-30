@@ -29,6 +29,7 @@ use Webkul\DataTransfer\Database\Factories\JobTrackFactory;
     'summary',
     'started_at',
     'completed_at',
+    'heartbeat_at',
     'meta',
     'job_instances_id',
     'user_id',
@@ -84,6 +85,7 @@ class JobTrack extends Model implements JobTrackContract
             'errors'       => 'array',
             'started_at'   => 'datetime',
             'completed_at' => 'datetime',
+            'heartbeat_at' => 'datetime',
         ];
     }
 }

@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Nagsimula ang trabaho sa trabaho',
         'completed' => 'Nagtapos ang trabaho sa trabaho',
+        'stalled'   => 'Huminto sa pagtugon ang trabaho nang mahigit :minutes minuto at minarkahan itong nabigo. Malamang na natapos ang proseso na nagpapatakbo nito.',
+        'reaped'    => 'Minarkahang nabigo ang :count na na-stuck na trabaho.',
     ],
 ];

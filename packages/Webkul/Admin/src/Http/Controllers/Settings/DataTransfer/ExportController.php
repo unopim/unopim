@@ -16,6 +16,7 @@ use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
+use Webkul\DataTransfer\Services\JobHealth;
 
 class ExportController extends Controller
 {
@@ -29,7 +30,8 @@ class ExportController extends Controller
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
-        protected Export $jobHelper
+        protected Export $jobHelper,
+        protected JobHealth $jobHealth,
     ) {}
 
     /**
@@ -492,6 +494,12 @@ class ExportController extends Controller
         }
 
         $export = $this->jobTrackRepository->findOrFail($id);
+
+        if ($this->jobHealth->isStalled($export)) {
+            $this->jobHealth->fail($export);
+
+            $export->refresh();
+        }
 
         $stats = $this->jobHelper
             ->setExport($export)

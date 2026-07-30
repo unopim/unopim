@@ -44,6 +44,8 @@ class ImportBatch implements ShouldQueue
             return;
         }
 
+        $importHelper->heartbeat(force: true);
+
         $logger->info("ImportBatch #{$this->importBatch->id} started processing.");
 
         $importHelper->getTypeImporter()->importBatch($this->importBatch);

@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'De taak is gestart.',
         'completed' => 'Taak succesvol voltooid.',
+        'stalled'   => 'De taak reageerde langer dan :minutes minuten niet en is als mislukt gemarkeerd. De uitvoerende worker is waarschijnlijk beëindigd.',
+        'reaped'    => ':count vastgelopen taken zijn als mislukt gemarkeerd.',
     ],
 ];

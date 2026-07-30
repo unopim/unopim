@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Eksekusi pekerjaan dimulai',
         'completed' => 'Eksekusi pekerjaan selesai',
+        'stalled'   => 'Tugas berhenti merespons selama lebih dari :minutes menit dan ditandai gagal. Proses yang menjalankannya kemungkinan besar dihentikan.',
+        'reaped'    => ':count tugas yang macet ditandai sebagai gagal.',
     ],
 ];
