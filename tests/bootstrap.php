@@ -11,6 +11,8 @@ $overrides = [
     'APP_DEBUG'         => 'true',
     'APP_CONFIG_CACHE'  => $cacheBypass,
     'APP_ROUTES_CACHE'  => $cacheBypass,
+    // Date assertions (elastic cursor bounds, audit timestamps) are written in UTC; a .env timezone shifts them.
+    'APP_TIMEZONE'      => 'UTC',
     'BCRYPT_ROUNDS'     => '4',
     'CACHE_STORE'       => 'array',
     'CACHE_DRIVER'      => 'array',
@@ -18,6 +20,8 @@ $overrides = [
     'QUEUE_CONNECTION'  => 'sync',
     'SESSION_DRIVER'    => 'array',
     'TELESCOPE_ENABLED' => 'false',
+    // The spoofed-proxy guard tests assume only loopback is trusted; a permissive .env (`*`) would defeat them.
+    'TRUSTED_PROXIES'   => '127.0.0.1',
     // Restore the real low limit that throttle tests need; the e2e .env raises it for Playwright's many logins.
     'ADMIN_LOGIN_RATE_LIMIT' => '5',
 ];
