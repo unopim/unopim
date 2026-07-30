@@ -238,7 +238,7 @@ it('rejects a family already claimed by another template', function (): void {
 
     $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
 
-    $owner = PassportTemplate::create(['code' => 'battery', 'is_enabled' => true]);
+    $owner = PassportTemplate::create(['code' => 'tpl_owner_'.uniqid(), 'is_enabled' => true]);
     $owner->families()->attach($family->id);
 
     $other = PassportTemplate::create(['code' => 'tpl_under_test', 'is_enabled' => true]);

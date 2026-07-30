@@ -337,7 +337,7 @@
                     </p>
                 </x-slot>
 
-                <x-slot:content>
+                <x-slot:content data-unsaved-ignore>
                     <template v-if="draftSection?.isNew">
                         <x-admin::form.control-group>
                             <x-admin::form.control-group.label
@@ -420,7 +420,7 @@
                     </p>
                 </x-slot>
 
-                <x-slot:content>
+                <x-slot:content data-unsaved-ignore>
                     <template v-if="draftField">
                         <template v-if="draftField.isNew">
                             <x-admin::form.control-group>

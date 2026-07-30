@@ -101,10 +101,20 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.asset');
 
-                    // Registered before `/{uuid}/{locale}` so first-match resolves `carrier.svg` here, not as a locale.
-                    Route::get('/{uuid}/carrier.svg', [PublicationCarrierController::class, 'show'])
+                    /**
+                     * Extensionless: a `.svg` suffix is intercepted by the static-file
+                     * rules in a typical nginx vhost and never reaches PHP. Registered
+                     * before `/{uuid}/{locale}` so first-match resolves it here rather
+                     * than as a locale, and the suffixed path stays as an alias for
+                     * carriers already printed on a product.
+                     */
+                    Route::get('/{uuid}/carrier', [PublicationCarrierController::class, 'show'])
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.carrier');
+
+                    Route::get('/{uuid}/carrier.svg', [PublicationCarrierController::class, 'show'])
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.carrier.svg');
 
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)
