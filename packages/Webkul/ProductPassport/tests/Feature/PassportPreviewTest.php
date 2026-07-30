@@ -23,9 +23,11 @@ it('renders the current product data behind a not-published banner with zero sid
         ->assertHeader('X-Robots-Tag', 'noindex, nofollow');
 
     // No Publication, no immutable version, and no counted view: preview is read-only.
-    expect(Publication::count())->toBe(0)
-        ->and(PublicationVersion::count())->toBe(0)
-        ->and(PublicationViewStat::count())->toBe(0);
+    $publications = Publication::query()->where('product_id', $product->id)->pluck('id');
+
+    expect($publications)->toBeEmpty()
+        ->and(PublicationVersion::query()->whereIn('publication_id', $publications)->count())->toBe(0)
+        ->and(PublicationViewStat::query()->whereIn('publication_id', $publications)->count())->toBe(0);
 });
 
 it('lists document fields as pending without writing to the asset disk', function (): void {

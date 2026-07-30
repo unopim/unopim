@@ -38,8 +38,8 @@ it('returns the seeded default association type rows with the joined translation
     expect($rows)->toHaveKeys(['related_products', 'up_sells', 'cross_sells']);
 
     expect($rows['related_products']->name)->toBe('Related Products');
-    expect($rows['related_products']->status)->toBe(1);
-    expect($rows['related_products']->is_user_defined)->toBe(0);
+    expect((int) $rows['related_products']->status)->toBe(1);
+    expect((int) $rows['related_products']->is_user_defined)->toBe(0);
 
     expect($rows['up_sells']->name)->toBe('Up Sells');
     expect($rows['cross_sells']->name)->toBe('Cross Sells');

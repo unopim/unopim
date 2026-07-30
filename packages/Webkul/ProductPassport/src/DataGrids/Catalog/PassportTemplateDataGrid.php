@@ -13,39 +13,45 @@ class PassportTemplateDataGrid extends DataGrid
     protected $sortOrder = 'asc';
 
     /**
-     * Counts are aggregated in SQL rather than by loading each template's
-     * relations, so the grid stays one query as templates and fields grow.
+     * Counts are aggregated in SQL rather than by loading each template's relations,
+     * so the grid stays one query as templates and fields grow. Sub-builders keep it
+     * prefix-safe: an installation with a table prefix gets it applied to the joined
+     * tables AND to their aliases, so the raw coalesce fragments have to name the
+     * prefixed alias to reach the same columns.
      */
     public function prepareQueryBuilder(): Builder
     {
+        $prefix = DB::getTablePrefix();
+
+        $fieldCounts = DB::table('passport_template_fields')
+            ->select('passport_template_id')
+            ->selectRaw('count(*) as field_count')
+            ->selectRaw('count(case when is_required then 1 end) as required_count')
+            ->selectRaw("count(case when is_required and (source_type = 'fixed' or attribute_id is not null) then 1 end) as sourced_count")
+            ->groupBy('passport_template_id');
+
+        $familyCounts = DB::table('passport_template_families')
+            ->select('passport_template_id')
+            ->selectRaw('count(*) as family_count')
+            ->groupBy('passport_template_id');
+
         $queryBuilder = DB::table('passport_templates')
             ->leftJoin('passport_template_translations as requested_translation', function ($leftJoin): void {
                 $leftJoin->on('requested_translation.passport_template_id', '=', 'passport_templates.id')
                     ->where('requested_translation.locale', core()->getRequestedLocaleCode());
             })
-            ->leftJoin(DB::raw('(
-                select passport_template_id,
-                    count(*) as field_count,
-                    count(case when is_required then 1 end) as required_count,
-                    count(case when is_required and (source_type = \'fixed\' or attribute_id is not null) then 1 end) as sourced_count
-                from passport_template_fields
-                group by passport_template_id
-            ) as field_counts'), 'field_counts.passport_template_id', '=', 'passport_templates.id')
-            ->leftJoin(DB::raw('(
-                select passport_template_id, count(*) as family_count
-                from passport_template_families
-                group by passport_template_id
-            ) as family_counts'), 'family_counts.passport_template_id', '=', 'passport_templates.id')
+            ->leftJoinSub($fieldCounts, 'field_counts', 'field_counts.passport_template_id', '=', 'passport_templates.id')
+            ->leftJoinSub($familyCounts, 'family_counts', 'family_counts.passport_template_id', '=', 'passport_templates.id')
             ->select(
                 'passport_templates.id',
                 'passport_templates.code',
                 'passport_templates.is_enabled',
                 'requested_translation.name as name',
-                DB::raw('coalesce(family_counts.family_count, 0) as family_count'),
-                DB::raw('coalesce(field_counts.field_count, 0) as field_count'),
-                DB::raw('coalesce(field_counts.required_count, 0) as required_count'),
-                DB::raw('coalesce(field_counts.sourced_count, 0) as sourced_count'),
-            );
+            )
+            ->selectRaw("coalesce({$prefix}family_counts.family_count, 0) as family_count")
+            ->selectRaw("coalesce({$prefix}field_counts.field_count, 0) as field_count")
+            ->selectRaw("coalesce({$prefix}field_counts.required_count, 0) as required_count")
+            ->selectRaw("coalesce({$prefix}field_counts.sourced_count, 0) as sourced_count");
 
         $this->addFilter('name', 'requested_translation.name');
         $this->addFilter('code', 'passport_templates.code');
@@ -81,6 +87,7 @@ class PassportTemplateDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => true,
+            'closure'    => fn ($row): int => (int) ($row->family_count ?? 0),
         ]);
 
         $this->addColumn([
@@ -90,6 +97,7 @@ class PassportTemplateDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => true,
+            'closure'    => fn ($row): int => (int) ($row->field_count ?? 0),
         ]);
 
         $this->addColumn([
@@ -100,8 +108,8 @@ class PassportTemplateDataGrid extends DataGrid
             'filterable' => false,
             'sortable'   => false,
             'closure'    => fn ($row): string => trans('passport::app.templates.datagrid.readiness-value', [
-                'sourced'  => $row->sourced_count,
-                'required' => $row->required_count,
+                'sourced'  => (int) ($row->sourced_count ?? 0),
+                'required' => (int) ($row->required_count ?? 0),
             ]),
         ]);
 

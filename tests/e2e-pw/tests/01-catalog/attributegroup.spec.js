@@ -34,7 +34,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await clickSave(adminPage, 'Save Attribute Group');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
   });
 
   test('Create Attribute Group', async ({ adminPage }) => {

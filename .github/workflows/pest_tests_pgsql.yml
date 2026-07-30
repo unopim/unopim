@@ -1,9 +1,16 @@
 name: Pest Tests (PostgreSQL)
 
-on: [push, pull_request]
+# A branch push and its own pull request are the same commit, so pushes are
+# limited to the release lines and everything else arrives through the PR event.
+on:
+  push:
+    branches: [master, '2.1']
+  pull_request:
 
+# head_ref is the branch on a pull request and empty elsewhere, which keeps a
+# branch's runs in one group no matter which event opened them.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:

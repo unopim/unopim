@@ -1,9 +1,16 @@
 name: Playwright Tests
 
-on: [push, pull_request]
+# A branch push and its own pull request are the same commit, so pushes are
+# limited to the release lines and everything else arrives through the PR event.
+on:
+  push:
+    branches: [master, '2.1']
+  pull_request:
 
+# head_ref is the branch on a pull request and empty elsewhere, which keeps a
+# branch's runs in one group no matter which event opened them.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -133,6 +140,7 @@ jobs:
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
           php artisan unopim:passport:install-preset
+          php artisan db:seed --class=DiscardQaFixtureSeeder
           php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
           php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
           php artisan queue:work --queue=webhooks,default,system,completeness,publication > /tmp/queue.log 2>&1 &

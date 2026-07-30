@@ -154,6 +154,52 @@ describe('header row export parameter', function () {
     });
 });
 
+describe('header locale selection', function () {
+    function headerLocaleFor(array $channelsAndLocales): ?string
+    {
+        $exporter = app(Exporter::class);
+
+        $property = new ReflectionProperty($exporter, 'channelsAndLocales');
+        $property->setAccessible(true);
+        $property->setValue($exporter, $channelsAndLocales);
+
+        $method = new ReflectionMethod($exporter, 'headerLocale');
+        $method->setAccessible(true);
+
+        return $method->invoke($exporter);
+    }
+
+    it('labels the header in the configured locale even when another locale is listed first', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['de_DE', 'en_US', 'fr_FR']]))->toBe('en_US');
+    });
+
+    it('does not use the configured locale when the export does not cover it', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['de_DE', 'fr_FR']]))->toBe('de_DE');
+    });
+
+    it('picks the same locale no matter what order the channel lists them in', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['fr_FR', 'de_DE', 'en_US']]))
+            ->toBe(headerLocaleFor(['default' => ['de_DE', 'en_US', 'fr_FR']]));
+    });
+
+    it('considers the locales of every exported channel, not only the first', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['german' => ['de_DE'], 'american' => ['en_US']]))->toBe('en_US');
+    });
+
+    it('returns null when no exported channel carries a locale', function () {
+        expect(headerLocaleFor([]))->toBeNull()
+            ->and(headerLocaleFor(['default' => []]))->toBeNull();
+    });
+});
+
 describe('date value formatting', function () {
     function formatDate(mixed $value, string $format): mixed
     {

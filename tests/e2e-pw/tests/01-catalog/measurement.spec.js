@@ -182,18 +182,17 @@ test.describe('UnoPim Measurement Feature', () => {
     }
 
     async function fillAttributeLabel(page, label) {
-        const englishLabel = page.getByText('English (United States)', { exact: true }).first();
-        if (await englishLabel.isVisible().catch(() => false)) {
-            const englishInput = englishLabel.locator('..').locator('input').first();
-            await englishInput.fill(label);
-            return;
-        }
+        const translatable = page.locator('input[name$="[name]"]').first();
 
-        const labelSection = page.getByText('Label', { exact: true }).first();
-        if (await labelSection.isVisible().catch(() => false)) {
-            const firstVisible = labelSection.locator('..').locator('input').first();
-            if (await firstVisible.isVisible().catch(() => false)) {
-                await firstVisible.fill(label);
+        if (await translatable.count()) {
+            if (await translatable.isVisible().catch(() => false)) {
+                await translatable.fill(label);
+                return;
+            }
+
+            const visibleSibling = translatable.locator('..').locator('input[type="text"]').first();
+            if (await visibleSibling.isVisible().catch(() => false)) {
+                await visibleSibling.fill(label);
                 return;
             }
         }

@@ -82,7 +82,7 @@ return [
             'views'           => '조회수',
             'version-history' => '버전 기록',
             'withdraw'        => '철회',
-            'mass-publish'    => '선택 항목 게시',
+            'mass-publish'    => '선택 항목 다시 게시',
         ],
         'publish-queued'      => '여권 게시가 대기열에 추가되었습니다.',
         'bulk-publish-queued' => '선택한 여권 게시가 대기열에 추가되었습니다.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => '디지털 제품 여권',
                     'publishing-disabled' => '이 채널에서는 여권 게시가 비활성화되어 있습니다.',
+                    'required-badge'      => 'DPP 필수',
+                    'publish-blocked'     => '게시하기 전에 여권의 모든 필수 항목을 입력하세요.',
+                    'missing-template'    => '여권 템플릿이 필요합니다',
                     'locale'              => '언어',
                     'version'             => '버전',
                     'published-at'        => '게시일',

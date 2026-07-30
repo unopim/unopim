@@ -298,7 +298,22 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             }
         }
 
-        return $productImage;
+        return $productImage ?: $this->getVariantDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
+    }
+
+    public function getVariantDisplayImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): ?string
+    {
+        if (! $this->id) {
+            return null;
+        }
+
+        foreach ($this->variants as $variant) {
+            if ($variantImage = $variant->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes)) {
+                return $variantImage;
+            }
+        }
+
+        return null;
     }
 
     /**

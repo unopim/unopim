@@ -13,11 +13,6 @@
  *   php tests/e2e-pw/scripts/seed-passport-template-e2e.php
  */
 
-require __DIR__.'/../../../vendor/autoload.php';
-
-$app = require_once __DIR__.'/../../../bootstrap/app.php';
-$app->make(Kernel::class)->bootstrap();
-
 use Illuminate\Contracts\Console\Kernel;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
@@ -26,6 +21,11 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Product\Models\ProductProxy;
+
+require __DIR__.'/../../../vendor/autoload.php';
+
+$app = require_once __DIR__.'/../../../bootstrap/app.php';
+$app->make(Kernel::class)->bootstrap();
 
 $familyCode = 'battery_dpp';
 $groupCode = 'battery_specs';

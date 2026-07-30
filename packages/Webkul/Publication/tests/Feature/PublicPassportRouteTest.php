@@ -84,7 +84,7 @@ it('404s an unknown uuid without leaking the admin error page', function (): voi
     $response->assertNotFound();
 
     expect($response->getContent())
-        ->not->toContain(core()->getAdminEmailDetails()['email'] ?? 'unopim@webkul.com')
+        ->not->toContain((core()->getAdminEmailDetails()['email'] ?? null) ?: 'unopim@webkul.com')
         ->and($response->getContent())->not->toContain('layouts.anonymous');
 });
 

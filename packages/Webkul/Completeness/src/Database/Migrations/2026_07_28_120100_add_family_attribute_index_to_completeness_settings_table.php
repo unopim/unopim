@@ -20,7 +20,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('completeness_settings', function (Blueprint $table): void {
+            $table->dropForeign(['family_id']);
             $table->dropIndex('cs_family_attribute_idx');
+            $table->foreign('family_id')->references('id')->on('attribute_families')->cascadeOnDelete();
         });
     }
 };

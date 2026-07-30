@@ -10,6 +10,7 @@ Route::group([
         'throttle:rest-api',
         'api.scope',
         'request.locale',
+        'cache.headers:private;etag',
     ],
 ], function () {
     /**

@@ -21,11 +21,17 @@ test.describe('My Account discard', () => {
     await group.scrollIntoViewIfNeeded();
     await adminPage.locator('.unsaved-bar').evaluate((bar) => (bar.style.pointerEvents = 'none'));
 
-    await group.locator('[role="combobox"]').click();
-    await group.locator('input[name="timezone"][type="text"]').fill('Kolkata');
-    await group.locator('[role="option"]').first().click();
+    /**
+     * Pick a zone that differs from the saved one: selecting the already
+     * selected option toggles it off and empties the field instead.
+     */
+    const targetZone = savedTimezone === 'Asia/Dubai' ? 'Asia/Kolkata' : 'Asia/Dubai';
 
-    await expect(timezone).toHaveValue('Asia/Kolkata');
+    await group.locator('[role="combobox"]').click();
+    await group.locator('input[name="timezone"][type="text"]').fill(targetZone.split('/')[1]);
+    await group.locator('[role="option"]').filter({ hasText: targetZone }).first().click();
+
+    await expect(timezone).toHaveValue(targetZone);
     await expect(adminPage.locator('.unsaved-bar')).toBeVisible();
 
     await adminPage.locator('.unsaved-bar').evaluate((bar) => (bar.style.pointerEvents = ''));

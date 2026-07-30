@@ -352,9 +352,9 @@
                     name="{{ $name }}"
                     class="sr-only peer"
                     v-bind="field"
-                    {{ $attributes->except(['for', 'v-model', 'rules', ':rules', 'label', ':label'])->merge($idAttribute) }}
+                    {{ $attributes->except(['for', ':for', 'v-model', 'rules', ':rules', 'label', ':label'])->merge($idAttribute) }}
                 />
-                
+
                 <v-checkbox-handler
                     class="hidden"
                     :field="field"
@@ -366,6 +366,7 @@
             <label
                 class="rounded-full w-9 h-5 bg-gray-200 cursor-pointer peer-focus:ring-primary-300 after:bg-white dark:after:bg-white after:border-gray-300 dark:after:border-white peer-checked:bg-primary-700 dark:peer-checked:bg-primary-700 peer peer-checked:after:border-white peer-checked:after:ltr:translate-x-full peer-checked:after:rtl:-translate-x-full after:content-[''] after:absolute after:top-0.5 after:ltr:left-0.5 after:rtl:right-0.5 peer-focus:outline-none after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-cherry-800"
                 @if ('' !== $controlId) for="{{ $controlId }}" @endif
+                {{ $attributes->only([':for']) }}
             ></label>
         </span>
 
@@ -411,16 +412,14 @@
     </script>
 
     <script type="text/x-template" id="v-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy ?? 'id'"
                 :label="labelBy ?? 'label'"
                 :options="formattedOptions"
                 :preserve-search="false"
                 :searchable="true"
                 :placeholder="placeholder"
-                open-direction="bottom"
                 :close-on-select="true"
                 :clear-on-select="true"
                 :show-no-results="true"
@@ -565,9 +564,8 @@
     </script>
 
     <script type="text/x-template" id="v-multiselect-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :options="formattedOptions"
@@ -724,9 +722,8 @@
     </script>
 
     <script type="text/x-template" id="v-tagging-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :taggable="true"
@@ -891,9 +888,8 @@
     </script>
 
     <script type="text/x-template" id="v-taggingselect-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :taggable="true"
@@ -1182,9 +1178,8 @@
     </script>
 
     <script type="text/x-template" id="v-async-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                :id="id"
                 :track-by="trackBy"
                 :label="labelBy"
                 :options="formattedOptions"
@@ -1192,7 +1187,6 @@
                 :searchable="true"
                 :placeholder="placeholder"
                 :loading="isLoading ?? false"
-                open-direction="bottom"
                 :max-height="600"
                 :internal-search="false"
                 :close-on-select="onselect"

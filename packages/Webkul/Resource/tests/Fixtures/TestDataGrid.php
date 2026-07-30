@@ -15,11 +15,11 @@ class TestDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()
     {
-        $queryBuilder = DB::table('wk_resource_kit_items')
-            ->select('wk_resource_kit_items.id', 'wk_resource_kit_items.name');
+        $queryBuilder = DB::table('resource_kit_items')
+            ->select('resource_kit_items.id', 'resource_kit_items.name');
 
-        $this->addFilter('id', 'wk_resource_kit_items.id');
-        $this->addFilter('name', 'wk_resource_kit_items.name');
+        $this->addFilter('id', 'resource_kit_items.id');
+        $this->addFilter('name', 'resource_kit_items.name');
 
         return $queryBuilder;
     }

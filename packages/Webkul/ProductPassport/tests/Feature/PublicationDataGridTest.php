@@ -17,7 +17,9 @@ it('exports gtin, gs1 link and public url columns for the print hand-off', funct
     $grid = resolve(PublicationDataGrid::class);
     $grid->setQueryBuilder();
 
-    $rows = $grid->getExportableData();
+    $rows = collect($grid->getExportableData())
+        ->filter(fn ($row): bool => ((array) $row)['gtin'] === '04006381333931')
+        ->values();
 
     expect($rows)->toHaveCount(1);
 
@@ -42,6 +44,18 @@ it('lists publications for an authorised admin', function (): void {
     $this->getJson(route('admin.catalog.passports.index'), ['X-Requested-With' => 'XMLHttpRequest'])
         ->assertOk()
         ->assertSee($version->publication->uuid);
+});
+
+it('labels the publication bulk action as republish', function (): void {
+    $this->loginWithPermissions('all');
+
+    $grid = resolve(PublicationDataGrid::class);
+    $grid->prepareMassActions();
+
+    $massActionTitles = collect($grid->getMassActions())
+        ->pluck('title');
+
+    expect($massActionTitles)->toContain('Republish selected');
 });
 
 it('rejects withdrawal without the withdraw permission', function (): void {

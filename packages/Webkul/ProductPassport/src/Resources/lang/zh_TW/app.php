@@ -82,7 +82,7 @@ return [
             'views'           => '瀏覽次數',
             'version-history' => '版本歷程',
             'withdraw'        => '撤回',
-            'mass-publish'    => '發布所選',
+            'mass-publish'    => '重新發布所選',
         ],
         'publish-queued'      => '護照發布已排入佇列。',
         'bulk-publish-queued' => '所選護照的發布已加入佇列。',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => '數位產品護照',
                     'publishing-disabled' => '此通路已停用護照發布。',
+                    'required-badge'      => 'DPP 必填',
+                    'publish-blocked'     => '發布前請填寫所有護照必填欄位。',
+                    'missing-template'    => '需要護照範本',
                     'locale'              => '語言',
                     'version'             => '版本',
                     'published-at'        => '發布時間',

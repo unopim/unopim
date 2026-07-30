@@ -41,7 +41,26 @@ class ProductDataSource extends ApiDataSource
     {
         [$queryBuilder] = $this->productRepository->queryBuilderFromDatabase([]);
 
+        $this->addFilter('sku', [
+            '=',
+            'IN',
+            'NOT IN',
+        ]);
+        $this->addFilter('status', ['=']);
+        $this->registerDateFilters();
+
         return $queryBuilder;
+    }
+
+    /**
+     * Registers the delta-sync filters shared by every product listing endpoint.
+     */
+    protected function registerDateFilters(): void
+    {
+        $operators = ['>', '>=', '<', '<=', 'BETWEEN'];
+
+        $this->addFilter('updated_at', $operators, null, 'datetime');
+        $this->addFilter('created_at', $operators, null, 'datetime');
     }
 
     /**
@@ -182,6 +201,10 @@ class ProductDataSource extends ApiDataSource
                 break;
             case 'categories':
                 $scopeQueryBuilder = $this->filterByCategories($scopeQueryBuilder, $value['operator'], $filterTable, $value['value']);
+                break;
+            case 'updated_at':
+            case 'created_at':
+                $scopeQueryBuilder = $this->applyComparisonFilter($scopeQueryBuilder, $filterTable.$requestedColumn, $value);
                 break;
             default:
                 $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);

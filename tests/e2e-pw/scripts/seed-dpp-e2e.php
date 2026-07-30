@@ -184,6 +184,15 @@ $fr = Locale::where('code', 'fr_FR')->firstOrFail();
 $fr->update(['status' => 1]);
 $channel->locales()->syncWithoutDetaching([$fr->id]);
 
+/* --- deterministic catalog scope: specs type into en_US[...] fields, but a
+       fresh admin has no catalog locale and the scope then falls back to the
+       channel's alphabetically-first locale (de_DE with demo data) --- */
+$enUs = Locale::where('code', 'en_US')->firstOrFail();
+$enUs->update(['status' => 1]);
+$channel->locales()->syncWithoutDetaching([$enUs->id]);
+
+DB::table('admins')->whereNull('catalog_locale_id')->update(['catalog_locale_id' => $enUs->id]);
+
 /* --- passport / publication config the specs assume --- */
 $config = [
     'catalog.product_passport.settings.enabled'       => '1',

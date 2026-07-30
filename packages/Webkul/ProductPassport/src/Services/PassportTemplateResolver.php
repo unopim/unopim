@@ -30,7 +30,12 @@ class PassportTemplateResolver
             return $this->byFamily[$familyId];
         }
 
-        return $this->byFamily[$familyId] = PassportTemplateProxy::modelClass()::query()
+        return $this->byFamily[$familyId] = $this->resolveFamily($familyId);
+    }
+
+    private function resolveFamily(int $familyId): ?PassportTemplateContract
+    {
+        return PassportTemplateProxy::modelClass()::query()
             ->where('is_enabled', true)
             ->whereHas('families', fn ($query) => $query->where('attribute_families.id', $familyId))
             ->with([

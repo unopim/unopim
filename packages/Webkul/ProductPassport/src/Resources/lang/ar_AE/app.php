@@ -82,7 +82,7 @@ return [
             'views'           => 'المشاهدات',
             'version-history' => 'سجل الإصدارات',
             'withdraw'        => 'سحب',
-            'mass-publish'    => 'نشر المحدد',
+            'mass-publish'    => 'إعادة نشر المحدد',
         ],
         'publish-queued'      => 'تمت جدولة نشر الجواز.',
         'bulk-publish-queued' => 'تمت جدولة نشر جوازات المنتجات المحددة.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'جواز المنتج الرقمي',
                     'publishing-disabled' => 'نشر الجواز معطل لهذه القناة.',
+                    'required-badge'      => 'مطلوب لجواز المنتج الرقمي',
+                    'publish-blocked'     => 'أكمل جميع حقول الجواز المطلوبة قبل النشر.',
+                    'missing-template'    => 'قالب جواز المنتج مطلوب',
                     'locale'              => 'اللغة',
                     'version'             => 'الإصدار',
                     'published-at'        => 'تاريخ النشر',

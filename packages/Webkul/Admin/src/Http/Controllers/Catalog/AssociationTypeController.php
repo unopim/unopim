@@ -67,8 +67,10 @@ class AssociationTypeController extends Controller
 
         if ($search !== '') {
             $query->where(function ($builder) use ($search) {
-                $builder->whereTranslationLike('name', '%'.$search.'%')
-                    ->orWhere('code', 'LIKE', '%'.$search.'%');
+                $builder->whereHas(
+                    'translations',
+                    fn ($translation) => $translation->whereLike('name', '%'.$search.'%', false)
+                )->orWhereLike('code', '%'.$search.'%', false);
             });
         }
 

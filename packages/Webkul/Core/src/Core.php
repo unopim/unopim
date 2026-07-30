@@ -140,10 +140,6 @@ class Core
      */
     public function getDefaultChannel(): ?Channel
     {
-        // An explicitly set channel always wins. Otherwise the memoised channel is
-        // reused only while it still matches the configured code, so a runtime change
-        // to config('app.channel') is honoured and no stale channel leaks across
-        // Octane requests.
         if ($this->defaultChannel
             && ($this->defaultChannelExplicit || $this->defaultChannel->code === config('app.channel'))
         ) {
@@ -177,16 +173,18 @@ class Core
         return $this->getDefaultChannel()?->code ?? config('app.channel');
     }
 
-    /**
-     * Returns default locale code from default channel.
-     *
-     * Was previously hardcoded to 'en_US', which silently mislabelled every fallback translation on
-     * an install whose channel does not carry English.
-     */
     public function getDefaultLocaleCodeFromDefaultChannel(): string
     {
-        return $this->getDefaultChannel()?->locales->first()?->code
+        return $this->getLocaleCodeInChannel($this->getDefaultChannel())
             ?? config('app.locale');
+    }
+
+    public function getLocaleCodeInChannel(?Channel $channel): ?string
+    {
+        $codes = $channel?->locales->pluck('code') ?? collect();
+        $configured = config('app.locale');
+
+        return $codes->contains($configured) ? $configured : $codes->sort()->first();
     }
 
     /**
@@ -300,19 +298,12 @@ class Core
     }
 
     /**
-     * Get locale from request.
-     *
      * @return Contracts\Locale|null
      */
     public function getRequestedLocale()
     {
-        $code = request()->query('locale');
-
-        if ($code) {
-            return $this->localeRepository->findOneByField('code', $code);
-        }
-
-        return $this->getCurrentLocale();
+        return $this->localeRepository->findOneByField('code', $this->getRequestedLocaleCode())
+            ?? $this->getCurrentLocale();
     }
 
     /**
@@ -360,11 +351,11 @@ class Core
 
         $requestedChannel = $this->getRequestedChannel();
 
-        if ($requestedChannel->locales->contains('code', $requestedLocaleCode)) {
+        if ($requestedChannel?->locales->contains('code', $requestedLocaleCode)) {
             return $requestedLocaleCode;
         }
 
-        return $requestedChannel->locales->first()?->code
+        return $this->getLocaleCodeInChannel($requestedChannel)
             ?? $this->getDefaultLocaleCodeFromDefaultChannel();
     }
 

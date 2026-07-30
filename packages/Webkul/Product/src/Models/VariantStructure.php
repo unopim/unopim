@@ -48,6 +48,19 @@ class VariantStructure extends Model implements HistoryContract, PresentableHist
         return $this->hasMany(VariantStructureAttribute::class, 'variant_structure_id');
     }
 
+    public function hasAllAxisAttributesInFamily(): bool
+    {
+        $axisAttributeIds = $this->axes->pluck('attribute_id')->filter()->unique();
+
+        if ($axisAttributeIds->isEmpty()) {
+            return true;
+        }
+
+        $familyAttributeIds = $this->attribute_family?->customAttributes()->pluck('attributes.id') ?? collect();
+
+        return $axisAttributeIds->diff($familyAttributeIds)->isEmpty();
+    }
+
     /**
      * {@inheritdoc}
      */
