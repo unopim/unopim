@@ -28,6 +28,8 @@ it('queues bulk-edit webhook delivery instead of sending inline', function () {
 it('does nothing when no webhook subscribes to the event', function () {
     Queue::fake();
 
+    Webhook::query()->delete();
+
     app(ProductListener::class)->afterBulkEdit([1, 2, 3]);
 
     Queue::assertNothingPushed();

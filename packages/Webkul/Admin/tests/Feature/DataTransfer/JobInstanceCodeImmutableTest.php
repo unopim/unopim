@@ -5,11 +5,12 @@ use Webkul\DataTransfer\Models\JobInstances as JobInstance;
 function legacyExport(string $code): JobInstance
 {
     return JobInstance::create([
-        'code'        => $code,
-        'entity_type' => 'products',
-        'type'        => 'export',
-        'action'      => 'fetch',
-        'filters'     => ['file_format' => 'Csv', 'with_media' => '1'],
+        'code'                => $code,
+        'entity_type'         => 'products',
+        'type'                => 'export',
+        'action'              => 'fetch',
+        'validation_strategy' => 'skip',
+        'filters'             => ['file_format' => 'Csv', 'with_media' => '1'],
     ]);
 }
 
@@ -40,11 +41,12 @@ it('persists import settings for a job whose code contains a space', function ()
     $this->loginAsAdmin();
 
     $import = JobInstance::create([
-        'code'        => 'Product Import '.uniqid(),
-        'entity_type' => 'products',
-        'type'        => 'import',
-        'action'      => 'append',
-        'filters'     => [],
+        'code'                => 'Product Import '.uniqid(),
+        'entity_type'         => 'products',
+        'type'                => 'import',
+        'action'              => 'append',
+        'validation_strategy' => 'stop-on-errors',
+        'filters'             => [],
     ]);
 
     $this->put(route('admin.settings.data_transfer.imports.update', $import->id), [
