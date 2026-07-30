@@ -140,7 +140,7 @@ class ProductController extends Controller
         if (ProductType::hasVariants($data['type'])) {
             $structures = $this->variantStructureRepository->findWhere([
                 'attribute_family_id' => $data['attribute_family_id'],
-            ]);
+            ])->filter(fn ($structure) => $structure->hasAllAxisAttributesInFamily())->values();
 
             if (! empty($data['variant_structure_id'])) {
                 $structure = $structures->firstWhere('id', (int) $data['variant_structure_id']);
