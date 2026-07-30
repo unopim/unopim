@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Models\AssociationType;
@@ -588,4 +589,29 @@ it('should not render the display section control in the association type field 
         ->getContent();
 
     expect(substr_count($content, 'name="section"'))->toBe(0);
+});
+
+it('searches association types case-insensitively by name and code', function () {
+    $this->loginAsAdmin();
+
+    $match = createAssociationType([
+        'code'  => 'zzcasehit_'.uniqid(),
+        'en_US' => ['name' => 'Related Products'],
+    ]);
+
+    DB::enableQueryLog();
+
+    $byName = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'related']))->assertOk();
+
+    $sql = collect(DB::getQueryLog())->pluck('query')->implode(' ');
+
+    DB::disableQueryLog();
+
+    expect($sql)->not->toContain(' LIKE ');
+
+    expect(collect($byName->json('data'))->pluck('code'))->toContain($match->code);
+
+    $byCode = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'ZZCASEHIT']))->assertOk();
+
+    expect(collect($byCode->json('data'))->pluck('code'))->toContain($match->code);
 });
