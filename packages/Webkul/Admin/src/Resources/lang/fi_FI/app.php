@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Lisää',
                     'no-types-info'     => 'Käytä ”Lisää assosiaatiotyyppi” liittääksesi tämän tuotteen assosiaatiotyypin alle.',
                     'no-types-title'    => 'Ei lisättyjä assosiaatioita',
+                    'remove-product'    => 'Poista tuote',
                     'search-types'      => 'Hae liitostyyppejä',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Liitännäiset tuotteet',

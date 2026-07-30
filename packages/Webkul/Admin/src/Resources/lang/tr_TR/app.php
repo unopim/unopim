@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Daha fazla',
                     'no-types-info'     => 'Bu ürünü bir ilişki türü altında bağlamak için "İlişki Türü Ekle" seçeneğini kullanın.',
                     'no-types-title'    => 'Hiç ilişki eklenmedi',
+                    'remove-product'    => 'Ürünü kaldır',
                     'search-types'      => 'İlişki türlerini ara',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Ürünler',

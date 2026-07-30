@@ -314,6 +314,7 @@ return [
                     'more-types'        => 'Mais',
                     'no-types-info'     => 'Use “Adicionar tipo de associação” para vincular este produto a um tipo de associação.',
                     'no-types-title'    => 'Nenhuma associação adicionada',
+                    'remove-product'    => 'Remover produto',
                     'search-types'      => 'Pesquisar tipos de associação',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produtos',

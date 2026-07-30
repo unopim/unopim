@@ -314,6 +314,7 @@ return [
                     'more-types'        => 'Meer',
                     'no-types-info'     => 'Gebruik „Associatietype toevoegen” om dit product onder een associatietype te koppelen.',
                     'no-types-title'    => 'Geen associaties toegevoegd',
+                    'remove-product'    => 'Product verwijderen',
                     'search-types'      => 'Zoek associatietypes',
                     'sku'               => 'SKU: :sku',
                     'title'             => 'Koppelingen',

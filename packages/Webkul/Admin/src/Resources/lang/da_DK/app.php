@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Flere',
                     'no-types-info'     => 'Brug »Tilføj associationstype« for at knytte dette produkt til en associationstype.',
                     'no-types-title'    => 'Ingen associationer tilføjet',
+                    'remove-product'    => 'Fjern produkt',
                     'search-types'      => 'Søg i tilknytningstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Forbindelser',

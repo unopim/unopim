@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Mehr',
                     'no-types-info'     => 'Verwenden Sie „Assoziationstyp hinzufügen“, um dieses Produkt einem Assoziationstyp zuzuordnen.',
                     'no-types-title'    => 'Keine Assoziationen hinzugefügt',
+                    'remove-product'    => 'Produkt entfernen',
                     'search-types'      => 'Verknüpfungstypen suchen',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Verbände',

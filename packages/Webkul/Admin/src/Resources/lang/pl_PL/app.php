@@ -314,6 +314,7 @@ return [
                     'more-types'        => 'Więcej',
                     'no-types-info'     => 'Użyj „Dodaj typ powiązania”, aby powiązać ten produkt z typem powiązania.',
                     'no-types-title'    => 'Nie dodano żadnych powiązań',
+                    'remove-product'    => 'Usuń produkt',
                     'search-types'      => 'Szukaj typów powiązań',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkty',

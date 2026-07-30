@@ -16,13 +16,10 @@
     :key="'assoc-field-' + type.code + '-' + assocField.code + '-' + index"
 >
     <x-admin::form.control-group
-        class="flex flex-wrap items-center gap-x-2 gap-y-1 mb-0"
-        style="flex: 1 1 300px; min-width: 260px; max-width: 420px"
+        class="flex flex-col gap-1 mb-0"
+        style="flex: 1 1 220px; min-width: 200px; max-width: 320px"
     >
-        <div
-            class="inline-flex justify-between items-center gap-1 shrink-0"
-            style="width: 145px"
-        >
+        <div class="inline-flex justify-between items-center gap-1 w-full">
             <x-admin::form.control-group.label
                 class="mb-0 truncate"
                 ::for="assocFieldName(type.code, index, assocField)"
@@ -45,7 +42,7 @@
             </div>
         </div>
 
-        <div class="flex-1 min-w-0">
+        <div class="w-full min-w-0">
 
         <template v-if="assocField.type === 'checkbox'">
             {{--

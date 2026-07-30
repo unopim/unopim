@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Thêm',
                     'no-types-info'     => 'Sử dụng "Thêm Loại Liên Kết" để liên kết sản phẩm này dưới một loại liên kết.',
                     'no-types-title'    => 'Chưa thêm liên kết nào',
+                    'remove-product'    => 'Xóa sản phẩm',
                     'search-types'      => 'Tìm loại liên kết',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Sản phẩm',

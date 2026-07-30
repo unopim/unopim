@@ -313,6 +313,7 @@ return [
                     'more-types'        => '更多',
                     'no-types-info'     => '使用“添加关联类型”将此产品链接到某个关联类型下。',
                     'no-types-title'    => '尚未添加关联',
+                    'remove-product'    => '移除商品',
                     'search-types'      => '搜索关联类型',
                     'sku'               => '滑雪 - :sku',
                     'title'             => '协会',

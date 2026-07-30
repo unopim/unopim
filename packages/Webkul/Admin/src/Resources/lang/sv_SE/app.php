@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Fler',
                     'no-types-info'     => 'Använd ”Lägg till associationstyp” för att koppla den här produkten till en associationstyp.',
                     'no-types-title'    => 'Inga associationer tillagda',
+                    'remove-product'    => 'Ta bort produkt',
                     'search-types'      => 'Sök associationstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',

@@ -313,6 +313,7 @@ return [
                     'more-types'        => '更多',
                     'no-types-info'     => '使用「新增關聯類型」將此產品連結至某個關聯類型下。',
                     'no-types-title'    => '尚未新增關聯',
+                    'remove-product'    => '移除商品',
                     'search-types'      => '搜尋關聯類型',
                     'sku'               => 'SKU - :sku',
                     'title'             => '產品',

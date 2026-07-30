@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'その他',
                     'no-types-info'     => 'この製品を関連タイプに紐付けるには「関連タイプを追加」を使用します。',
                     'no-types-title'    => '関連付けが追加されていません',
+                    'remove-product'    => '商品を削除',
                     'search-types'      => '関連タイプを検索',
                     'sku'               => 'SKU - :sku',
                     'title'             => '関連付け',

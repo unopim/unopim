@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Más',
                     'no-types-info'     => 'Usa «Agregar tipo de asociación» para vincular este producto a un tipo de asociación.',
                     'no-types-title'    => 'No se han agregado asociaciones',
+                    'remove-product'    => 'Quitar producto',
                     'search-types'      => 'Buscar tipos de asociación',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asociaciones',

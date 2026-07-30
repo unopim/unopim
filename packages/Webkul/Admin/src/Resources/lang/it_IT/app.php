@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Altri',
                     'no-types-info'     => 'Usa «Aggiungi tipo di associazione» per collegare questo prodotto a un tipo di associazione.',
                     'no-types-title'    => 'Nessuna associazione aggiunta',
+                    'remove-product'    => 'Rimuovi prodotto',
                     'search-types'      => 'Cerca tipi di associazione',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Prodotti',

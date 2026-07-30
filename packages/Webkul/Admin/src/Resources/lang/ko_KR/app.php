@@ -314,6 +314,7 @@ return [
                     'more-types'        => '더 보기',
                     'no-types-info'     => '이 제품을 연관 유형에 연결하려면 "연관 유형 추가"를 사용하세요.',
                     'no-types-title'    => '추가된 연관이 없습니다',
+                    'remove-product'    => '제품 제거',
                     'search-types'      => '연관 유형 검색',
                     'sku'               => 'SKU - :sku',
                     'title'             => '제품',

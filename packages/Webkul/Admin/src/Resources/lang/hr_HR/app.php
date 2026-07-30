@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Više',
                     'no-types-info'     => 'Upotrijebite „Dodaj vrstu povezivanja” za povezivanje ovog proizvoda pod vrstom povezivanja.',
                     'no-types-title'    => 'Nije dodano nijedno povezivanje',
+                    'remove-product'    => 'Ukloni proizvod',
                     'search-types'      => 'Pretraži vrste povezivanja',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Proizvodi',

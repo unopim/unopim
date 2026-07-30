@@ -314,6 +314,7 @@ return [
                     'more-types'        => 'Mai multe',
                     'no-types-info'     => 'Utilizează „Adaugă tip de asociere” pentru a lega acest produs la un tip de asociere.',
                     'no-types-title'    => 'Nicio asociere adăugată',
+                    'remove-product'    => 'Elimină produsul',
                     'search-types'      => 'Caută tipuri de asociere',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produse',

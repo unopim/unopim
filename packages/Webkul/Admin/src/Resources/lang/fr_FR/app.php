@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Plus',
                     'no-types-info'     => 'Utilisez « Ajouter un type d\'association » pour lier ce produit à un type d\'association.',
                     'no-types-title'    => 'Aucune association ajoutée',
+                    'remove-product'    => 'Retirer le produit',
                     'search-types'      => 'Rechercher des types d\'association',
                     'sku'               => 'sku - :sku',
                     'title'             => 'Associations',

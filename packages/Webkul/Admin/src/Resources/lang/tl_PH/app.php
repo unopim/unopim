@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Higit pa',
                     'no-types-info'     => 'Gamitin ang "Magdagdag ng Uri ng Asosasyon" upang iugnay ang produktong ito sa ilalim ng isang uri ng asosasyon.',
                     'no-types-title'    => 'Walang naidagdag na asosasyon',
+                    'remove-product'    => 'Alisin ang produkto',
                     'search-types'      => 'Maghanap ng uri ng asosasyon',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Mga Produkto',

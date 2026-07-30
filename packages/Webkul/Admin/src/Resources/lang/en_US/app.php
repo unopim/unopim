@@ -354,6 +354,7 @@ return [
                     'more-types'        => 'More',
                     'no-types-info'     => 'Use "Add Association Type" to link this product under an association type.',
                     'no-types-title'    => 'No Associations Added',
+                    'remove-product'    => 'Remove Product',
                     'search-types'      => 'Search association types',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associations',

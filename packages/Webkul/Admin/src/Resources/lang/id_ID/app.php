@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Lainnya',
                     'no-types-info'     => 'Gunakan "Tambah Jenis Asosiasi" untuk menautkan produk ini di bawah suatu jenis asosiasi.',
                     'no-types-title'    => 'Belum ada asosiasi ditambahkan',
+                    'remove-product'    => 'Hapus produk',
                     'search-types'      => 'Cari tipe asosiasi',
                     'sku'               => 'Ski - :sku',
                     'title'             => 'Asosiasi',

@@ -314,6 +314,7 @@ return [
                     'more-types'        => 'Flere',
                     'no-types-info'     => 'Bruk «Legg til assosiasjonstype» for å knytte dette produktet til en assosiasjonstype.',
                     'no-types-title'    => 'Ingen assosiasjoner lagt til',
+                    'remove-product'    => 'Fjern produkt',
                     'search-types'      => 'Søk i tilknytningstyper',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Produkter',

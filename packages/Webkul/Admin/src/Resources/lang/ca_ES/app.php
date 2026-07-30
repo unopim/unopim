@@ -313,6 +313,7 @@ return [
                     'more-types'        => 'Més',
                     'no-types-info'     => 'Utilitza «Afegir Tipus d\'Associació» per enllaçar aquest producte sota un tipus d\'associació.',
                     'no-types-title'    => 'No s\'ha afegit cap associació',
+                    'remove-product'    => 'Elimina el producte',
                     'search-types'      => 'Cerca tipus d\'associació',
                     'sku'               => 'SKU - :sku',
                     'title'             => 'Associacions',
