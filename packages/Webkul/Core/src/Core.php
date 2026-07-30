@@ -298,19 +298,12 @@ class Core
     }
 
     /**
-     * Get locale from request.
-     *
      * @return Contracts\Locale|null
      */
     public function getRequestedLocale()
     {
-        $code = request()->query('locale');
-
-        if ($code) {
-            return $this->localeRepository->findOneByField('code', $code);
-        }
-
-        return $this->getCurrentLocale();
+        return $this->localeRepository->findOneByField('code', $this->getRequestedLocaleCode())
+            ?? $this->getCurrentLocale();
     }
 
     /**
