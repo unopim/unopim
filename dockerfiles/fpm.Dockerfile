@@ -93,6 +93,11 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
+# The entrypoint reinstalls when composer.lock is newer than the install
+# manifest. COPY carries build-context timestamps, so stamp it once here to keep
+# a published image from reinstalling its own dependencies on every start.
+RUN touch vendor/composer/installed.json
+
 # Align www-data with the host user so bind-mounted storage stays
 # writable on both sides (defaults keep the stock image behavior).
 ARG HOST_UID=33

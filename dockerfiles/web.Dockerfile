@@ -92,6 +92,11 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
+# The entrypoint reinstalls when composer.lock is newer than the install
+# manifest. COPY carries build-context timestamps, so stamp it once here to keep
+# a published image from reinstalling its own dependencies on every start.
+RUN touch vendor/composer/installed.json
+
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
