@@ -44,18 +44,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Maintenance Mode Allowed IPs
-    |--------------------------------------------------------------------------
-    |
-    | Comma-separated list of IPs that can access the application during
-    | maintenance mode.
-    |
-    */
-
-    'maintenance_allowed_ips' => env('MAINTENANCE_ALLOWED_IPS'),
-
-    /*
-    |--------------------------------------------------------------------------
     | Debug Allowed IPs
     |--------------------------------------------------------------------------
     |

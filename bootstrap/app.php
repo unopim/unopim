@@ -5,7 +5,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\TrustProxies;
 use Webkul\Admin\Http\Middleware\ConvertAjaxFormRedirect;
-use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
 use Webkul\Core\Http\Middleware\NoCacheMiddleware;
 use Webkul\Core\Http\Middleware\SecureHeaders;
 use Webkul\Installer\Http\Middleware\CanInstall;
@@ -35,7 +34,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append([
             SecureHeaders::class,
             NoCacheMiddleware::class,
-            CheckForMaintenanceMode::class,
             CanInstall::class,
         ]);
 
