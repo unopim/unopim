@@ -21,21 +21,15 @@ class TestServiceProvider extends ServiceProvider
     /**
      * Bootstrap the fixture resource: migrate its table (once), register it
      * in the ResourceRegistry, and register its admin CRUD routes.
+     *
+     * Under --parallel, boot still targets the main database, so the DDL is
+     * re-run from a booted() callback — queued after the framework's
+     * per-worker database swap, before each test's transaction opens.
      */
     public function boot(): void
     {
         $this->ensureFixtureTable();
 
-        /*
-         * Under `--parallel`, boot runs against the main database before the
-         * framework switches the connection to the per-worker database — so the
-         * DDL above lands in the wrong schema. Re-run it once the switch has
-         * happened. setUpTestCase callbacks fire in registration order, and this
-         * provider boots before the framework's ParallelTestingServiceProvider —
-         * registering from `booted()` queues the callback after the framework's
-         * database swap, and it still runs before DatabaseTransactions opens its
-         * per-test transaction.
-         */
         $this->app->booted(function (): void {
             ParallelTesting::setUpTestCase(function (): void {
                 $this->ensureFixtureTable();
@@ -56,12 +50,12 @@ class TestServiceProvider extends ServiceProvider
      */
     protected function ensureFixtureTable(): void
     {
-        if (! Schema::hasTable('wk_resource_kit_items')) {
+        if (! Schema::hasTable('resource_kit_items')) {
             (require __DIR__.'/migrations/2026_07_15_000001_create_resource_kit_items_table.php')->up();
         }
 
-        if (! Schema::hasColumn('wk_resource_kit_items', 'label')) {
-            Schema::table('wk_resource_kit_items', function ($table) {
+        if (! Schema::hasColumn('resource_kit_items', 'label')) {
+            Schema::table('resource_kit_items', function ($table) {
                 $table->string('label')->nullable();
             });
         }

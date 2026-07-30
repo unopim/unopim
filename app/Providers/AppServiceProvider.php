@@ -69,11 +69,8 @@ class AppServiceProvider extends ServiceProvider
          * the worker database. Forget them after the switch so the first
          * core() call re-reads the per-worker database.
          *
-         * The Prettus repository cache (enabled for the Channel, Locale and
-         * Currency repositories) is primed during that same boot, so a fresh
-         * Core instance would still be handed the main-database channel — with
-         * its locales relation already loaded — straight from the cache. Flush
-         * it alongside the memoized singletons.
+         * The repository cache is primed during that same boot, so it is
+         * flushed alongside the memoized singletons.
          *
          * Runtime storage_path() writers (the installer's `storage/installed`
          * marker, job logs, AI temp files) are also swapped to a per-worker

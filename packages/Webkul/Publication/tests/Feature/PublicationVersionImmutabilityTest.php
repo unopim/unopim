@@ -78,11 +78,6 @@ it('refuses to delete a product that still has an attested publication', functio
 
     $product = $version->publication->product;
 
-    /**
-     * The savepoint matters on PostgreSQL: without it the constraint violation
-     * aborts DatabaseTransactions' wrapping transaction and the assertion query
-     * below dies with 25P02.
-     */
     try {
         DB::transaction(fn () => $product->delete());
 

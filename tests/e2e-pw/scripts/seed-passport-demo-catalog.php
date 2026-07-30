@@ -14,11 +14,6 @@
  *   php tests/e2e-pw/scripts/seed-passport-demo-catalog.php
  */
 
-require __DIR__.'/../../../vendor/autoload.php';
-
-$app = require_once __DIR__.'/../../../bootstrap/app.php';
-$app->make(Kernel::class)->bootstrap();
-
 use Illuminate\Contracts\Console\Kernel;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
@@ -32,6 +27,11 @@ use Webkul\ProductPassport\Models\PassportTemplate;
 use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Services\Publisher;
+
+require __DIR__.'/../../../vendor/autoload.php';
+
+$app = require_once __DIR__.'/../../../bootstrap/app.php';
+$app->make(Kernel::class)->bootstrap();
 
 $locales = LocaleProxy::modelClass()::query()->pluck('code');
 

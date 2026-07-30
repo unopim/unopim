@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('wk_resource_kit_items', function (Blueprint $table) {
+        Schema::create('resource_kit_items', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('label')->nullable();
@@ -28,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('wk_resource_kit_items');
+        Schema::dropIfExists('resource_kit_items');
     }
 };
