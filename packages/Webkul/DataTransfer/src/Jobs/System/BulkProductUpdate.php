@@ -6,8 +6,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\Attribute;
+use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\DataTransfer\Helpers\AbstractJob;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
@@ -120,6 +122,8 @@ class BulkProductUpdate implements ShouldQueue
 
         try {
             $this->started();
+
+            $this->normalizeMediaPaths($this->updateProducts, $products);
 
             $formatted = $this->formatData($this->updateProducts, $products);
 
@@ -253,6 +257,81 @@ class BulkProductUpdate implements ShouldQueue
         }
 
         $this->updateProgress($processed);
+    }
+
+    protected function normalizeMediaPaths(array &$updateProducts, $products): void
+    {
+        $mediaTypes = [
+            AttributeTypes::IMAGE_ATTRIBUTE_TYPE,
+            AttributeTypes::FILE_ATTRIBUTE_TYPE,
+            AttributeTypes::GALLERY_ATTRIBUTE_TYPE,
+        ];
+
+        foreach ($updateProducts as $productId => &$attributeData) {
+            if (! is_array($attributeData) || ! $products->has($productId)) {
+                continue;
+            }
+
+            foreach ($attributeData as $attributeCode => &$value) {
+                $attribute = $this->attributeService->findAttributeByCode($attributeCode);
+
+                if (! $attribute instanceof Attribute || ! in_array($attribute->type, $mediaTypes, true)) {
+                    continue;
+                }
+
+                $value = $this->normalizeMediaValue(
+                    $value,
+                    (int) $productId,
+                    $attributeCode,
+                    $attribute->type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE
+                );
+            }
+        }
+
+        unset($attributeData, $value);
+    }
+
+    protected function normalizeMediaValue(mixed $value, int $productId, string $attributeCode, bool $isMultiple): mixed
+    {
+        if (is_array($value)) {
+            foreach ($value as $key => $item) {
+                $value[$key] = $this->normalizeMediaValue($item, $productId, $attributeCode, $isMultiple);
+            }
+
+            return $value;
+        }
+
+        if (! is_string($value) || $value === '') {
+            return $value;
+        }
+
+        $prefix = 'product/'.$productId.'/'.$attributeCode.'/';
+
+        $paths = $isMultiple
+            ? array_filter(array_map('trim', explode(',', $value)))
+            : [$value];
+
+        $normalized = array_map(
+            fn (string $path): string => str_starts_with($path, $prefix)
+                ? $path
+                : $this->copyMediaToProduct($path, $prefix),
+            $paths
+        );
+
+        return implode(',', array_filter($normalized));
+    }
+
+    protected function copyMediaToProduct(string $sourcePath, string $targetPrefix): string
+    {
+        if (! Storage::exists($sourcePath)) {
+            return $sourcePath;
+        }
+
+        $targetPath = $targetPrefix.pathinfo($sourcePath, PATHINFO_BASENAME);
+
+        Storage::put($targetPath, Storage::get($sourcePath));
+
+        return $targetPath;
     }
 
     /**
