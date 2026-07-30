@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Se ha puesto en cola la publicación del pasaporte.',
         'bulk-publish-queued' => 'Se ha puesto en cola la publicación de los pasaportes seleccionados.',
         'withdrawn'           => 'Pasaporte retirado correctamente.',
+        'withdraw-invalid'    => 'Solo se puede retirar un pasaporte publicado.',
         'republished'         => 'Versión republicada correctamente.',
         'republish-invalid'   => 'Esta versión no se puede republicar.',
         'republish-noop'      => 'Esta versión ya es la actual.',

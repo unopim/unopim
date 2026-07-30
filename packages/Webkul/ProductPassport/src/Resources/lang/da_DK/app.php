@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Udgivelse af pas er sat i kø.',
         'bulk-publish-queued' => 'Udgivelse af de valgte pas er sat i kø.',
         'withdrawn'           => 'Pas trukket tilbage.',
+        'withdraw-invalid'    => 'Kun et udgivet pas kan trækkes tilbage.',
         'republished'         => 'Versionen blev genudgivet.',
         'republish-invalid'   => 'Denne version kan ikke genudgives.',
         'republish-noop'      => 'Denne version er allerede den aktuelle.',

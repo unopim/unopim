@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Objava putovnice je stavljena u red čekanja.',
         'bulk-publish-queued' => 'Objava odabranih putovnica stavljena je u red čekanja.',
         'withdrawn'           => 'Putovnica uspješno povučena.',
+        'withdraw-invalid'    => 'Samo se objavljena putovnica može povući.',
         'republished'         => 'Verzija je ponovno objavljena.',
         'republish-invalid'   => 'Ovu verziju nije moguće ponovno objaviti.',
         'republish-noop'      => 'Ova je verzija već trenutna.',

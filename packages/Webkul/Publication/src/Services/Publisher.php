@@ -177,10 +177,18 @@ class Publisher
     }
 
     /**
-     * Marks the publication Withdrawn. Reversible via reinstate().
+     * Marks the publication Withdrawn. Reversible via reinstate(); throws when the
+     * publication is not published, so a redacted one can never be walked back to
+     * withdrawn and a no-op withdrawal cannot pass for a real state change.
      */
     public function withdraw(Publication $publication): void
     {
+        if ($publication->status !== PublicationStatus::Published) {
+            throw new InvalidPublicationTransitionException(
+                'Publication '.$publication->id.' is not published; only a published publication can be withdrawn.'
+            );
+        }
+
         $publication->update(['status' => PublicationStatus::Withdrawn]);
 
         DB::afterCommit(fn () => PublicationWithdrawn::dispatch($publication));

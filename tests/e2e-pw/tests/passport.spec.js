@@ -16,7 +16,6 @@ const {
   passportLocaleIds,
   publishAndWait,
   passportRowForSku,
-  withdrawViaFetch,
 } = require('../fixtures/passport');
 
 test.describe.serial('Digital Product Passport', () => {
@@ -119,12 +118,30 @@ test.describe.serial('Digital Product Passport', () => {
     await expect(page.locator('html')).toHaveAttribute('lang', other, { timeout: 15000 });
   });
 
+  test('withdraws from the grid, flashes success and drops the action', async ({ adminPage }) => {
+    const page = adminPage;
+    await page.goto('/admin/catalog/passports', { waitUntil: 'domcontentloaded' });
+
+    await page.getByRole('textbox', { name: 'Search' }).fill(product.sku);
+    await page.getByRole('textbox', { name: 'Search' }).press('Enter');
+
+    const row = page.locator('.row', { hasText: product.sku }).first();
+    await row.locator("span[title='Withdraw']").click();
+    await page.getByRole('button', { name: 'Agree', exact: true }).click();
+
+    await expect(page.getByText(/withdrawn successfully/i).first()).toBeVisible({ timeout: 15000 });
+    await expect(row).toContainText(/withdrawn/i);
+    await expect(row.locator("span[title='Withdraw']")).toHaveCount(0);
+  });
+
   test('withdrawing keeps the public url at 200 with a tombstone', async ({ adminPage }) => {
     const page = adminPage;
     await page.goto('/admin/dashboard', { waitUntil: 'domcontentloaded' });
-    const row = await passportRowForSku(page, product.sku);
 
-    expect(await withdrawViaFetch(page, row.id)).toBe(200);
+    // Already withdrawn by the grid test above; re-withdrawing is refused now that the
+    // transition is guarded, so this only asserts what the withdrawn state renders.
+    const row = await passportRowForSku(page, product.sku);
+    expect(row).toBeTruthy();
 
     const response = await page.goto(`/p/${publicationUuid}/${localeCodes[0]}`, { waitUntil: 'domcontentloaded' });
     expect(response.status()).toBe(200);

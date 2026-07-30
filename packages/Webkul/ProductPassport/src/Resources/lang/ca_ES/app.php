@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'S\'ha posat en cua la publicació del passaport.',
         'bulk-publish-queued' => 'S\'ha posat a la cua la publicació dels passaports seleccionats.',
         'withdrawn'           => 'Passaport retirat correctament.',
+        'withdraw-invalid'    => 'Només es pot retirar un passaport publicat.',
         'republished'         => 'Versió republicada correctament.',
         'republish-invalid'   => 'Aquesta versió no es pot republicar.',
         'republish-noop'      => 'Aquesta versió ja és l’actual.',

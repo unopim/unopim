@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Publikacja paszportu została zakolejkowana.',
         'bulk-publish-queued' => 'Publikacja wybranych paszportów została dodana do kolejki.',
         'withdrawn'           => 'Paszport pomyślnie wycofany.',
+        'withdraw-invalid'    => 'Wycofać można tylko opublikowany paszport.',
         'republished'         => 'Wersja została ponownie opublikowana.',
         'republish-invalid'   => 'Tej wersji nie można opublikować ponownie.',
         'republish-noop'      => 'Ta wersja jest już bieżąca.',

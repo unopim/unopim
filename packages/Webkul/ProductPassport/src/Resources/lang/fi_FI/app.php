@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Passin julkaisu on jonossa.',
         'bulk-publish-queued' => 'Valittujen passien julkaisu on lisätty jonoon.',
         'withdrawn'           => 'Passi peruutettu onnistuneesti.',
+        'withdraw-invalid'    => 'Vain julkaistu passi voidaan peruuttaa.',
         'republished'         => 'Versio julkaistiin uudelleen.',
         'republish-invalid'   => 'Tätä versiota ei voi julkaista uudelleen.',
         'republish-noop'      => 'Tämä versio on jo nykyinen.',

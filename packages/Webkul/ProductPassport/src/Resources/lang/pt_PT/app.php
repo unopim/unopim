@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'A publicação do passaporte foi colocada em fila.',
         'bulk-publish-queued' => 'A publicação dos passaportes selecionados foi colocada em fila.',
         'withdrawn'           => 'Passaporte retirado com sucesso.',
+        'withdraw-invalid'    => 'Apenas um passaporte publicado pode ser retirado.',
         'republished'         => 'Versão republicada com sucesso.',
         'republish-invalid'   => 'Esta versão não pode ser republicada.',
         'republish-noop'      => 'Esta versão já é a atual.',

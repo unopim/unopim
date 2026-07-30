@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Publicatie van het paspoort is in de wachtrij geplaatst.',
         'bulk-publish-queued' => 'Het publiceren van de geselecteerde paspoorten is in de wachtrij geplaatst.',
         'withdrawn'           => 'Paspoort succesvol ingetrokken.',
+        'withdraw-invalid'    => 'Alleen een gepubliceerd paspoort kan worden ingetrokken.',
         'republished'         => 'Versie opnieuw gepubliceerd.',
         'republish-invalid'   => 'Deze versie kan niet opnieuw worden gepubliceerd.',
         'republish-noop'      => 'Deze versie is al de huidige versie.',

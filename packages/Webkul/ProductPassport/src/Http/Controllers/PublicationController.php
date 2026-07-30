@@ -189,15 +189,25 @@ class PublicationController extends Controller
         ]);
     }
 
+    /**
+     * No `redirect_url`: the grid short-circuits on one, skipping the success
+     * flash and reloading the very page the action was fired from. Returning the
+     * message alone lets the row refresh in place with the confirmation shown.
+     */
     public function withdraw(Publication $publication, Publisher $publisher): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('catalog.passport.withdraw'), 403);
 
-        $publisher->withdraw($publication);
+        try {
+            $publisher->withdraw($publication);
+        } catch (InvalidPublicationTransitionException) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.withdraw-invalid'),
+            ], 422);
+        }
 
         return new JsonResponse([
-            'message'      => trans('passport::app.publications.withdrawn'),
-            'redirect_url' => route('admin.catalog.passports.index'),
+            'message' => trans('passport::app.publications.withdrawn'),
         ]);
     }
 

@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Publicering av passet har lagts i kö.',
         'bulk-publish-queued' => 'Publiceringen av de valda passen har lagts i kö.',
         'withdrawn'           => 'Pass indraget.',
+        'withdraw-invalid'    => 'Endast ett publicerat pass kan dras in.',
         'republished'         => 'Versionen publicerades om.',
         'republish-invalid'   => 'Den här versionen kan inte publiceras om.',
         'republish-noop'      => 'Den här versionen är redan den aktuella.',

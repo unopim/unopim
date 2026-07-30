@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Publicarea pașaportului a fost pusă în coadă.',
         'bulk-publish-queued' => 'Publicarea pașapoartelor selectate a fost adăugată în coadă.',
         'withdrawn'           => 'Pașaport retras cu succes.',
+        'withdraw-invalid'    => 'Doar un pașaport publicat poate fi retras.',
         'republished'         => 'Versiunea a fost republicată cu succes.',
         'republish-invalid'   => 'Această versiune nu poate fi republicată.',
         'republish-noop'      => 'Această versiune este deja cea curentă.',

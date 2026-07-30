@@ -87,6 +87,7 @@ return [
         'publish-queued'      => '여권 게시가 대기열에 추가되었습니다.',
         'bulk-publish-queued' => '선택한 여권 게시가 대기열에 추가되었습니다.',
         'withdrawn'           => '여권이 철회되었습니다.',
+        'withdraw-invalid'    => '게시된 여권만 철회할 수 있습니다.',
         'republished'         => '버전이 다시 게시되었습니다.',
         'republish-invalid'   => '이 버전은 다시 게시할 수 없습니다.',
         'republish-noop'      => '이 버전은 이미 현재 버전입니다.',

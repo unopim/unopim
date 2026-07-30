@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Naka-queue na ang paglalathala ng pasaporte.',
         'bulk-publish-queued' => 'Naka-queue na ang pag-publish ng mga napiling passport.',
         'withdrawn'           => 'Matagumpay na nabawi ang pasaporte.',
+        'withdraw-invalid'    => 'Isang nailathalang pasaporte lang ang maaaring bawiin.',
         'republished'         => 'Matagumpay na na-publish muli ang bersyon.',
         'republish-invalid'   => 'Hindi maaaring i-publish muli ang bersyong ito.',
         'republish-noop'      => 'Ito na ang kasalukuyang bersyon.',

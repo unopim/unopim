@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Pasaport yayını sıraya alındı.',
         'bulk-publish-queued' => 'Seçili pasaportların yayımlanması kuyruğa alındı.',
         'withdrawn'           => 'Pasaport başarıyla geri çekildi.',
+        'withdraw-invalid'    => 'Yalnızca yayımlanmış bir pasaport geri çekilebilir.',
         'republished'         => 'Sürüm yeniden yayımlandı.',
         'republish-invalid'   => 'Bu sürüm yeniden yayımlanamaz.',
         'republish-noop'      => 'Bu sürüm zaten geçerli sürüm.',

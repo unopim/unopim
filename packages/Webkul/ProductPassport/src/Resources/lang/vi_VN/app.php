@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Việc xuất bản hộ chiếu đã được đưa vào hàng đợi.',
         'bulk-publish-queued' => 'Việc xuất bản các hộ chiếu đã chọn đã được đưa vào hàng đợi.',
         'withdrawn'           => 'Đã thu hồi hộ chiếu thành công.',
+        'withdraw-invalid'    => 'Chỉ có thể thu hồi hộ chiếu đã xuất bản.',
         'republished'         => 'Đã xuất bản lại phiên bản thành công.',
         'republish-invalid'   => 'Không thể xuất bản lại phiên bản này.',
         'republish-noop'      => 'Phiên bản này đã là phiên bản hiện tại.',

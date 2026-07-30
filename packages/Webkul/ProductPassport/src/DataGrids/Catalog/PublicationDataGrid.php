@@ -20,6 +20,10 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'publications.id',
                 'publications.uuid',
                 'publications.status as publication_status',
+                // Column closures run before action conditions and overwrite
+                // `publication_status` with its translated label, so the raw enum
+                // value has to survive under a second alias.
+                'publications.status as status_code',
                 'publications.live_locale_count',
                 'publications.last_published_at',
                 'publications.gtin',
@@ -153,11 +157,12 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
 
         if (bouncer()->hasPermission('catalog.passport.withdraw')) {
             $this->addAction([
-                'index'  => 'withdraw',
-                'icon'   => 'icon-cancel',
-                'title'  => trans('passport::app.publications.datagrid.withdraw'),
-                'method' => 'POST',
-                'url'    => fn ($row): string => route('admin.catalog.passports.withdraw', $row->id),
+                'index'     => 'withdraw',
+                'icon'      => 'icon-cancel',
+                'title'     => trans('passport::app.publications.datagrid.withdraw'),
+                'method'    => 'POST',
+                'url'       => fn ($row): string => route('admin.catalog.passports.withdraw', $row->id),
+                'condition' => fn ($row): bool => $row->status_code === PublicationStatus::Published->value,
             ]);
         }
     }
@@ -180,6 +185,9 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
      *
      * `public_url` is a closure column, so the CSV writer (which reads raw row
      * properties, not the grid's formatter) never sees it unless stamped here.
+     * `status_code` goes the other way: it exists only for the action conditions,
+     * and the writer derives its header row from the row's keys, so leaving it in
+     * would add a duplicate status column to every export.
      */
     public function getExportableData(array $parameters = []): array
     {
@@ -188,6 +196,8 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             ->lazyById(1000, 'publications.id')
             ->map(function (object $row): object {
                 $row->public_url = $this->publicUrl($row);
+
+                unset($row->status_code);
 
                 return $row;
             })

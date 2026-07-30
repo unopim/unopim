@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'La pubblicazione del passaporto è stata messa in coda.',
         'bulk-publish-queued' => 'La pubblicazione dei passaporti selezionati è stata messa in coda.',
         'withdrawn'           => 'Passaporto ritirato con successo.',
+        'withdraw-invalid'    => 'Solo un passaporto pubblicato può essere ritirato.',
         'republished'         => 'Versione ripubblicata correttamente.',
         'republish-invalid'   => 'Questa versione non può essere ripubblicata.',
         'republish-noop'      => 'Questa versione è già quella corrente.',

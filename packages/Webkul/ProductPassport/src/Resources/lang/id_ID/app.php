@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Penerbitan paspor telah diantrekan.',
         'bulk-publish-queued' => 'Penerbitan paspor yang dipilih telah dimasukkan ke antrean.',
         'withdrawn'           => 'Paspor berhasil ditarik kembali.',
+        'withdraw-invalid'    => 'Hanya paspor yang diterbitkan yang dapat ditarik kembali.',
         'republished'         => 'Versi berhasil diterbitkan ulang.',
         'republish-invalid'   => 'Versi ini tidak dapat diterbitkan ulang.',
         'republish-noop'      => 'Versi ini sudah menjadi versi saat ini.',

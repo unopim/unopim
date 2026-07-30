@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'パスポートの公開がキューに登録されました。',
         'bulk-publish-queued' => '選択したパスポートの公開をキューに追加しました。',
         'withdrawn'           => 'パスポートを撤回しました。',
+        'withdraw-invalid'    => '公開済みのパスポートのみ撤回できます。',
         'republished'         => 'バージョンを再公開しました。',
         'republish-invalid'   => 'このバージョンは再公開できません。',
         'republish-noop'      => 'このバージョンはすでに現行版です。',

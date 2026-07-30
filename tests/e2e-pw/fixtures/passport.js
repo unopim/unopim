@@ -13,6 +13,16 @@ exports.BASE_URL = FAMILY_BASE_URL;
 exports.generateUid = generateUid;
 exports.withFamilyPage = withFamilyPage;
 
+const HIDE_OVERLAYS_SCRIPT = `
+  (function() {
+    var s = document.createElement('style');
+    s.id = 'pw-hide-widget';
+    s.textContent = '.ap-shell, .ap-panel, .ap-backdrop, .phpdebugbar, .phpdebugbar-open-handler { display: none !important; }';
+    if (document.head) { document.head.appendChild(s); }
+    else { document.addEventListener('DOMContentLoaded', function() { document.head.appendChild(s); }); }
+  })();
+`;
+
 // The canonical family seeded by scripts/seed-dpp-e2e.php. Persistent — never deleted by the suite.
 const DPP_FAMILY = { code: 'dpp_e2e', name: 'DPP E2E' };
 exports.DPP_FAMILY = DPP_FAMILY;
@@ -76,6 +86,9 @@ exports.test = base.test.extend({
 
   adminPage: async ({ browser, passportState }, use) => {
     const context = await browser.newContext({ storageState: passportState, baseURL: FAMILY_BASE_URL });
+    // Same overlay hiding as utils/fixtures.js: on an APP_DEBUG host the Debugbar
+    // sits over the unsaved-changes bar and swallows its clicks. No-op in CI.
+    await context.addInitScript(HIDE_OVERLAYS_SCRIPT);
     const page = await context.newPage();
     await use(page);
     await page.close();
@@ -128,9 +141,14 @@ function gridRecords(grid) {
 }
 exports.gridRecords = gridRecords;
 
-/** Resolve the numeric id of a settings entity (channel/locale) by code. */
+/**
+ * Resolve the numeric id of a settings entity (channel/locale) by code. Searched
+ * through the grid's own filter rather than read off page 1 — an environment with
+ * more than a page of channels/locales would otherwise silently resolve nothing.
+ */
 async function settingsIdByCode(page, path, code) {
-  const grid = await fetchGridRows(page, path);
+  const query = new URLSearchParams({ 'filters[all][]': code }).toString();
+  const grid = await fetchGridRows(page, `${path}${path.includes('?') ? '&' : '?'}${query}`);
   const row = gridRecords(grid).find((r) => r.code === code);
 
   return row?.id;

@@ -87,6 +87,7 @@ return [
         'publish-queued'      => '護照發布已排入佇列。',
         'bulk-publish-queued' => '所選護照的發布已加入佇列。',
         'withdrawn'           => '護照已成功撤回。',
+        'withdraw-invalid'    => '只有已發布的護照才能撤回。',
         'republished'         => '版本已重新發布。',
         'republish-invalid'   => '此版本無法重新發布。',
         'republish-noop'      => '此版本已是目前版本。',

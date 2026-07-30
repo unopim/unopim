@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Die Veröffentlichung des Passes wurde eingeplant.',
         'bulk-publish-queued' => 'Die Veröffentlichung der ausgewählten Pässe wurde in die Warteschlange gestellt.',
         'withdrawn'           => 'Pass erfolgreich zurückgezogen.',
+        'withdraw-invalid'    => 'Nur ein veröffentlichter Pass kann zurückgezogen werden.',
         'republished'         => 'Version erfolgreich erneut veröffentlicht.',
         'republish-invalid'   => 'Diese Version kann nicht erneut veröffentlicht werden.',
         'republish-noop'      => 'Diese Version ist bereits die aktuelle.',

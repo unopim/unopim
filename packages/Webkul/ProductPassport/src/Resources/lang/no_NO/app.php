@@ -87,6 +87,7 @@ return [
         'publish-queued'      => 'Publisering av passet er satt i kø.',
         'bulk-publish-queued' => 'Publisering av de valgte passene er lagt i kø.',
         'withdrawn'           => 'Pass trukket tilbake.',
+        'withdraw-invalid'    => 'Bare et publisert pass kan trekkes tilbake.',
         'republished'         => 'Versjonen ble publisert på nytt.',
         'republish-invalid'   => 'Denne versjonen kan ikke publiseres på nytt.',
         'republish-noop'      => 'Denne versjonen er allerede den gjeldende.',

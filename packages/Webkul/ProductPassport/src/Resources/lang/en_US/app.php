@@ -92,6 +92,7 @@ return [
         'publish-queued'      => 'Passport publishing has been queued.',
         'bulk-publish-queued' => 'Passport publishing has been queued for the selected passports.',
         'withdrawn'           => 'Passport withdrawn successfully.',
+        'withdraw-invalid'    => 'Only a published passport can be withdrawn.',
         'republished'         => 'Version republished successfully.',
         'republish-invalid'   => 'This version cannot be republished.',
         'republish-noop'      => 'This version is already the current one.',
