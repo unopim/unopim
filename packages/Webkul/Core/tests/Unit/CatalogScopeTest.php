@@ -151,3 +151,35 @@ it('does not let a boot-time resolution freeze the answer for the rest of the re
         ->toBe('fr_FR')
         ->not->toBe($bootTimeLocaleCode);
 });
+
+it('prefers the configured application locale over the channel locale order when no catalog locale is set', function () {
+    $admin = Admin::first();
+    $admin->update(['catalog_locale_id' => null]);
+
+    auth()->guard('admin')->login($admin);
+
+    $channel = core()->getDefaultChannel();
+
+    $appLocale = $channel->locales->where('code', '!=', $channel->locales->first()->code)->first();
+
+    expect($appLocale)->not->toBeNull();
+
+    config(['app.locale' => $appLocale->code]);
+
+    expect(scope()->localeCode())
+        ->toBe($appLocale->code)
+        ->not->toBe($channel->locales->first()->code);
+});
+
+it('keeps the channel first locale when the application locale is not attached to the channel', function () {
+    $admin = Admin::first();
+    $admin->update(['catalog_locale_id' => null]);
+
+    auth()->guard('admin')->login($admin);
+
+    $channel = core()->getDefaultChannel();
+
+    config(['app.locale' => 'zz_ZZ']);
+
+    expect(scope()->localeCode())->toBe($channel->locales->first()->code);
+});
