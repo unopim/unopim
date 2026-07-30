@@ -117,8 +117,12 @@ return [
             'system'        => 'System',
         ],
         'mass-publish' => [
-            'action' => 'Udgiv digitalt produktpas',
-            'queued' => 'Udgivelse af pas sat i kø for :count produkt(er).',
+            'action'                => 'Udgiv digitalt produktpas',
+            'queued'                => 'Udgivelse af pas sat i kø for :count produkt(er).',
+            'published-now'         => 'Pas udgivet for :count sprog.',
+            'publish-unchanged'     => 'Passet er allerede opdateret; der blev ikke oprettet nogen ny version.',
+            'publish-failed'        => 'Udgivelsen blev ikke fuldført. Kontrollér kø-workeren, og prøv igen.',
+            'publish-still-running' => 'Udgivelsen kører stadig. Genindlæs siden for at se resultatet.',
         ],
     ],
     'acl' => [

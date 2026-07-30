@@ -122,8 +122,12 @@ return [
             'system'         => 'System',
         ],
         'mass-publish'        => [
-            'action' => 'Publish Digital Product Passport',
-            'queued' => 'Passport publishing queued for :count product(s).',
+            'action'                => 'Publish Digital Product Passport',
+            'queued'                => 'Passport publishing queued for :count product(s).',
+            'published-now'         => 'Passport published for :count locale(s).',
+            'publish-unchanged'     => 'The passport is already up to date; no new version was created.',
+            'publish-failed'        => 'Publishing did not finish. Check the queue worker and try again.',
+            'publish-still-running' => 'Publishing is still running. Reload the page to see the result.',
         ],
     ],
 

@@ -117,8 +117,12 @@ return [
             'system'        => 'Sistem',
         ],
         'mass-publish' => [
-            'action' => 'Publică Pașaportul Digital al Produsului',
-            'queued' => 'Publicarea pașaportului a fost pusă în coadă pentru :count produs(e).',
+            'action'                => 'Publică Pașaportul Digital al Produsului',
+            'queued'                => 'Publicarea pașaportului a fost pusă în coadă pentru :count produs(e).',
+            'published-now'         => 'Pașaport publicat pentru :count limbi.',
+            'publish-unchanged'     => 'Pașaportul este deja actualizat; nu a fost creată nicio versiune nouă.',
+            'publish-failed'        => 'Publicarea nu s-a finalizat. Verificați procesul de coadă și încercați din nou.',
+            'publish-still-running' => 'Publicarea este încă în curs. Reîncărcați pagina pentru a vedea rezultatul.',
         ],
     ],
     'acl' => [

@@ -117,8 +117,12 @@ return [
             'system'        => 'Järjestelmä',
         ],
         'mass-publish' => [
-            'action' => 'Julkaise digitaalinen tuotepassi',
-            'queued' => 'Passin julkaisu asetettu jonoon :count tuotteelle.',
+            'action'                => 'Julkaise digitaalinen tuotepassi',
+            'queued'                => 'Passin julkaisu asetettu jonoon :count tuotteelle.',
+            'published-now'         => 'Passi julkaistu :count kielelle.',
+            'publish-unchanged'     => 'Passi on jo ajan tasalla; uutta versiota ei luotu.',
+            'publish-failed'        => 'Julkaisu ei valmistunut. Tarkista jonon työntekijä ja yritä uudelleen.',
+            'publish-still-running' => 'Julkaisu on yhä käynnissä. Päivitä sivu nähdäksesi tuloksen.',
         ],
     ],
     'acl' => [

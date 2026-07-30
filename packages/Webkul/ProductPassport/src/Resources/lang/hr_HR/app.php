@@ -117,8 +117,12 @@ return [
             'system'        => 'Sustav',
         ],
         'mass-publish' => [
-            'action' => 'Objavi digitalnu putovnicu proizvoda',
-            'queued' => 'Objava putovnice stavljena u red čekanja za :count proizvod(a).',
+            'action'                => 'Objavi digitalnu putovnicu proizvoda',
+            'queued'                => 'Objava putovnice stavljena u red čekanja za :count proizvod(a).',
+            'published-now'         => 'Putovnica objavljena za :count jezika.',
+            'publish-unchanged'     => 'Putovnica je već ažurna; nova verzija nije stvorena.',
+            'publish-failed'        => 'Objava nije dovršena. Provjerite radnika reda čekanja i pokušajte ponovno.',
+            'publish-still-running' => 'Objava je još u tijeku. Ponovno učitajte stranicu da vidite rezultat.',
         ],
     ],
     'acl' => [

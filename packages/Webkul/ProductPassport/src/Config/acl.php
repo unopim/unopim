@@ -22,6 +22,11 @@ return [
         'route' => 'admin.catalog.passports.versions',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.passport.view',
+        'name'  => 'passport::app.acl.passports.view',
+        'route' => 'admin.catalog.passports.publish_attempt',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.passport.publish',
         'name'  => 'passport::app.acl.passports.publish',
         'route' => 'admin.catalog.passports.publish',

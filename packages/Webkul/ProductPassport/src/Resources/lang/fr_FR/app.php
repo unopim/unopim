@@ -117,8 +117,12 @@ return [
             'system'        => 'Système',
         ],
         'mass-publish' => [
-            'action' => 'Publier le passeport numérique de produit',
-            'queued' => 'Publication du passeport mise en file d\'attente pour :count produit(s).',
+            'action'                => 'Publier le passeport numérique de produit',
+            'queued'                => 'Publication du passeport mise en file d\'attente pour :count produit(s).',
+            'published-now'         => 'Passeport publié pour :count langues.',
+            'publish-unchanged'     => 'Le passeport est déjà à jour ; aucune nouvelle version n’a été créée.',
+            'publish-failed'        => 'La publication ne s’est pas terminée. Vérifiez le worker de la file d’attente et réessayez.',
+            'publish-still-running' => 'La publication est toujours en cours. Rechargez la page pour voir le résultat.',
         ],
     ],
     'acl' => [

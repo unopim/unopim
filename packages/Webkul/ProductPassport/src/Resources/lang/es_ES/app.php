@@ -117,8 +117,12 @@ return [
             'system'        => 'Sistema',
         ],
         'mass-publish' => [
-            'action' => 'Publicar el pasaporte digital de producto',
-            'queued' => 'Publicación del pasaporte en cola para :count producto(s).',
+            'action'                => 'Publicar el pasaporte digital de producto',
+            'queued'                => 'Publicación del pasaporte en cola para :count producto(s).',
+            'published-now'         => 'Pasaporte publicado para :count idiomas.',
+            'publish-unchanged'     => 'El pasaporte ya está actualizado; no se creó ninguna versión nueva.',
+            'publish-failed'        => 'La publicación no finalizó. Revisa el worker de la cola e inténtalo de nuevo.',
+            'publish-still-running' => 'La publicación sigue en curso. Recarga la página para ver el resultado.',
         ],
     ],
     'acl' => [

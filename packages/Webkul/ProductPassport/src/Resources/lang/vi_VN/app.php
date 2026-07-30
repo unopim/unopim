@@ -117,8 +117,12 @@ return [
             'system'        => 'Hệ thống',
         ],
         'mass-publish' => [
-            'action' => 'Xuất bản Hộ chiếu Sản phẩm Kỹ thuật số',
-            'queued' => 'Đã đưa việc xuất bản hộ chiếu vào hàng đợi cho :count sản phẩm.',
+            'action'                => 'Xuất bản Hộ chiếu Sản phẩm Kỹ thuật số',
+            'queued'                => 'Đã đưa việc xuất bản hộ chiếu vào hàng đợi cho :count sản phẩm.',
+            'published-now'         => 'Đã xuất bản hộ chiếu cho :count ngôn ngữ.',
+            'publish-unchanged'     => 'Hộ chiếu đã được cập nhật; không có phiên bản mới nào được tạo.',
+            'publish-failed'        => 'Việc xuất bản chưa hoàn tất. Hãy kiểm tra worker hàng đợi và thử lại.',
+            'publish-still-running' => 'Việc xuất bản vẫn đang chạy. Tải lại trang để xem kết quả.',
         ],
     ],
     'acl' => [

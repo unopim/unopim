@@ -19,9 +19,13 @@ use Webkul\ProductPassport\Jobs\BulkTransitionPassportsJob;
 use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Enums\PublishAttemptStatus;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationProxy;
+use Webkul\Publication\Models\PublicationPublishAttempt;
+use Webkul\Publication\Models\PublicationPublishAttemptProxy;
 use Webkul\Publication\Models\PublicationVersionProxy;
 use Webkul\Publication\Services\Publisher;
 
@@ -125,17 +129,63 @@ class PublicationController extends Controller
             ], 422);
         }
 
+        $adminId = auth()->guard('admin')->id();
+
+        $attempt = PublicationPublishAttemptProxy::modelClass()::create([
+            'product_id'      => $product->id,
+            'channel_id'      => $channel->id,
+            'type'            => 'dpp',
+            'locale_ids'      => $localeIds,
+            'status'          => PublishAttemptStatus::Queued,
+            'requested_by_id' => $adminId,
+        ]);
+
         PublishPassportForProductChannelJob::dispatch(
             $product->id,
             $channel->id,
             'dpp',
             $localeIds,
-            auth()->guard('admin')->id(),
+            $adminId,
+            $attempt->id,
         );
 
         return new JsonResponse([
-            'message'      => trans('passport::app.publications.publish-queued'),
-            'redirect_url' => route('admin.catalog.passports.index'),
+            'message'     => trans('passport::app.publications.publish-queued'),
+            'attempt_url' => route('admin.catalog.passports.publish_attempt', $attempt->id),
+        ]);
+    }
+
+    /**
+     * What the queued publish did, for the panel that is waiting on it: the
+     * settled status plus the live version of every locale it covered.
+     */
+    public function publishAttempt(PublicationPublishAttempt $attempt): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('catalog.passport.view'), 403);
+
+        $versions = PublicationProxy::modelClass()::query()
+            ->where('product_id', $attempt->product_id)
+            ->where('channel_id', $attempt->channel_id)
+            ->where('type', $attempt->type)
+            ->first()
+            ?->versions()
+            ->where('is_current', true)
+            ->whereIn('locale_id', $attempt->locale_ids)
+            ->get()
+            ->keyBy('locale_id');
+
+        return new JsonResponse([
+            'status'   => $attempt->status->value,
+            'refused'  => $attempt->wasRefused(),
+            'settled'  => $attempt->status->isSettled(),
+            'locales'  => collect($attempt->locale_ids)
+                ->map(fn (int $localeId): array => [
+                    'locale_id'    => $localeId,
+                    'version'      => $versions?->get($localeId)?->version,
+                    'published_at' => (string) $versions?->get($localeId)?->published_at,
+                    'published'    => in_array($localeId, $attempt->publishedLocaleIds(), true),
+                ])
+                ->values(),
         ]);
     }
 

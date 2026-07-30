@@ -98,9 +98,9 @@
                                         >
                                             <x-admin::table.td>{{ $row['locale_code'] }}</x-admin::table.td>
 
-                                            <x-admin::table.td>{{ $row['version'] ?? trans('passport::app.catalog.products.edit.passport.not-published') }}</x-admin::table.td>
+                                            <x-admin::table.td data-passport-version="{{ $row['locale_id'] }}">{{ $row['version'] ?? trans('passport::app.catalog.products.edit.passport.not-published') }}</x-admin::table.td>
 
-                                            <x-admin::table.td>{{ $row['published_at'] ?? '—' }}</x-admin::table.td>
+                                            <x-admin::table.td data-passport-published-at="{{ $row['locale_id'] }}">{{ $row['published_at'] ?? '—' }}</x-admin::table.td>
 
                                             <x-admin::table.td>
                                                 @if ($row['missing_count'] === null)
@@ -353,7 +353,89 @@
         var channelId    = {{ $passportChannel->id }};
         var csrfToken    = '{{ csrf_token() }}';
 
-        function publish(button, localeIds, doneLabel) {
+        var pollInterval = 2000;
+        var pollLimit    = 45;
+
+        function flash(type, message) {
+            window.app.config.globalProperties.$emitter?.emit('add-flash', { type: type, message: message });
+        }
+
+        function applyLocaleState(locales) {
+            locales.forEach(function (locale) {
+                var version = document.querySelector('[data-passport-version="' + locale.locale_id + '"]');
+                var publishedAt = document.querySelector('[data-passport-published-at="' + locale.locale_id + '"]');
+
+                if (version && locale.version) {
+                    version.textContent = locale.version;
+                }
+
+                if (publishedAt && locale.published_at) {
+                    publishedAt.textContent = locale.published_at;
+                }
+
+                var publishButton = document.querySelector('.passport-publish-btn[data-locale-id="' + locale.locale_id + '"]');
+
+                if (publishButton && locale.version) {
+                    publishButton.textContent = @json(trans('passport::app.catalog.products.edit.passport.republish'));
+                }
+            });
+        }
+
+        {{-- Publishing runs on the queue, so the panel follows the attempt the request created rather than claiming a result the worker has not reached yet. --}}
+        function watch(url, button, original, attempt) {
+            fetch(url, { headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                if (! data.settled) {
+                    if (attempt >= pollLimit) {
+                        button.textContent = original;
+                        button.disabled = false;
+
+                        flash('warning', @json(trans('passport::app.catalog.products.edit.passport.publish-still-running')));
+
+                        return;
+                    }
+
+                    setTimeout(function () { watch(url, button, original, attempt + 1); }, pollInterval);
+
+                    return;
+                }
+
+                button.disabled = false;
+                button.textContent = original;
+
+                applyLocaleState(data.locales);
+
+                if (data.status === 'failed') {
+                    flash('error', @json(trans('passport::app.catalog.products.edit.passport.publish-failed')));
+
+                    return;
+                }
+
+                if (data.refused) {
+                    flash('error', @json(trans('passport::app.publications.publish-withdrawn')));
+
+                    return;
+                }
+
+                var published = data.locales.filter(function (locale) { return locale.published; }).length;
+
+                flash(
+                    published ? 'success' : 'info',
+                    published
+                        ? @json(trans('passport::app.catalog.products.edit.passport.published-now')).replace(':count', published)
+                        : @json(trans('passport::app.catalog.products.edit.passport.publish-unchanged'))
+                );
+            })
+            .catch(function () {
+                button.textContent = original;
+                button.disabled = false;
+
+                flash('error', @json(trans('admin::app.components.form.ajax-error')));
+            });
+        }
+
+        function publish(button, localeIds) {
             button.disabled = true;
 
             var original = button.textContent;
@@ -375,24 +457,18 @@
                     button.textContent = original;
                     button.disabled = false;
 
-                    window.app.config.globalProperties.$emitter?.emit('add-flash', {
-                        type: 'error',
-                        message: result.data.message || @json(trans('admin::app.components.form.ajax-error')),
-                    });
+                    flash('error', result.data.message || @json(trans('admin::app.components.form.ajax-error')));
 
                     return;
                 }
 
-                button.textContent = doneLabel;
+                watch(result.data.attempt_url, button, original, 1);
             })
             .catch(function () {
                 button.textContent = original;
                 button.disabled = false;
 
-                window.app.config.globalProperties.$emitter?.emit('add-flash', {
-                    type: 'error',
-                    message: @json(trans('admin::app.components.form.ajax-error')),
-                });
+                flash('error', @json(trans('admin::app.components.form.ajax-error')));
             });
         }
 
@@ -472,7 +548,7 @@
             var single = event.target.closest('.passport-publish-btn');
 
             if (single && ! single.disabled) {
-                publish(single, [parseInt(single.dataset.localeId, 10)], @json(trans('passport::app.catalog.products.edit.passport.queued')));
+                publish(single, [parseInt(single.dataset.localeId, 10)]);
 
                 return;
             }
@@ -483,7 +559,7 @@
                 var ids = JSON.parse(all.dataset.localeIds || '[]');
 
                 if (ids.length) {
-                    publish(all, ids, @json(trans('passport::app.catalog.products.edit.passport.queued')));
+                    publish(all, ids);
                 }
             }
         });

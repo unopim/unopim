@@ -117,8 +117,12 @@ return [
             'system'        => 'Sistema',
         ],
         'mass-publish' => [
-            'action' => 'Publicar el passaport digital de producte',
-            'queued' => 'Publicació del passaport en cua per a :count producte(s).',
+            'action'                => 'Publicar el passaport digital de producte',
+            'queued'                => 'Publicació del passaport en cua per a :count producte(s).',
+            'published-now'         => 'Passaport publicat per a :count configuracions regionals.',
+            'publish-unchanged'     => 'El passaport ja està actualitzat; no s’ha creat cap versió nova.',
+            'publish-failed'        => 'La publicació no ha acabat. Comprova el worker de la cua i torna-ho a provar.',
+            'publish-still-running' => 'La publicació encara s’està executant. Torna a carregar la pàgina per veure’n el resultat.',
         ],
     ],
     'acl' => [

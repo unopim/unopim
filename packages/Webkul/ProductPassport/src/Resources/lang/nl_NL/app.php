@@ -117,8 +117,12 @@ return [
             'system'        => 'Systeem',
         ],
         'mass-publish' => [
-            'action' => 'Digitaal productpaspoort publiceren',
-            'queued' => 'Paspoortpublicatie in de wachtrij geplaatst voor :count product(en).',
+            'action'                => 'Digitaal productpaspoort publiceren',
+            'queued'                => 'Paspoortpublicatie in de wachtrij geplaatst voor :count product(en).',
+            'published-now'         => 'Paspoort gepubliceerd voor :count talen.',
+            'publish-unchanged'     => 'Het paspoort is al actueel; er is geen nieuwe versie aangemaakt.',
+            'publish-failed'        => 'Publiceren is niet voltooid. Controleer de queue-worker en probeer het opnieuw.',
+            'publish-still-running' => 'Publiceren is nog bezig. Laad de pagina opnieuw om het resultaat te zien.',
         ],
     ],
     'acl' => [

@@ -117,8 +117,12 @@ return [
             'system'        => 'System',
         ],
         'mass-publish' => [
-            'action' => 'Publiser digitalt produktpass',
-            'queued' => 'Passpublisering satt i kø for :count produkt(er).',
+            'action'                => 'Publiser digitalt produktpass',
+            'queued'                => 'Passpublisering satt i kø for :count produkt(er).',
+            'published-now'         => 'Pass publisert for :count språk.',
+            'publish-unchanged'     => 'Passet er allerede oppdatert; ingen ny versjon ble opprettet.',
+            'publish-failed'        => 'Publiseringen ble ikke fullført. Sjekk køarbeideren og prøv igjen.',
+            'publish-still-running' => 'Publiseringen pågår fortsatt. Last inn siden på nytt for å se resultatet.',
         ],
     ],
     'acl' => [

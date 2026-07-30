@@ -117,8 +117,12 @@ return [
             'system'        => 'Sistema',
         ],
         'mass-publish' => [
-            'action' => 'Ilathala ang Digital na Pasaporte ng Produkto',
-            'queued' => 'Naka-queue ang paglalathala ng pasaporte para sa :count produkto.',
+            'action'                => 'Ilathala ang Digital na Pasaporte ng Produkto',
+            'queued'                => 'Naka-queue ang paglalathala ng pasaporte para sa :count produkto.',
+            'published-now'         => 'Nailathala ang pasaporte para sa :count na lokal.',
+            'publish-unchanged'     => 'Napapanahon na ang pasaporte; walang bagong bersyong nalikha.',
+            'publish-failed'        => 'Hindi natapos ang paglalathala. Suriin ang queue worker at subukang muli.',
+            'publish-still-running' => 'Tumatakbo pa ang paglalathala. I-reload ang pahina para makita ang resulta.',
         ],
     ],
     'acl' => [

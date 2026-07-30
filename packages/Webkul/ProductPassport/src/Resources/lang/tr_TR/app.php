@@ -117,8 +117,12 @@ return [
             'system'        => 'Sistem',
         ],
         'mass-publish' => [
-            'action' => 'Dijital Ürün Pasaportunu Yayınla',
-            'queued' => ':count ürün için pasaport yayını sıraya alındı.',
+            'action'                => 'Dijital Ürün Pasaportunu Yayınla',
+            'queued'                => ':count ürün için pasaport yayını sıraya alındı.',
+            'published-now'         => ':count dil için pasaport yayımlandı.',
+            'publish-unchanged'     => 'Pasaport zaten güncel; yeni sürüm oluşturulmadı.',
+            'publish-failed'        => 'Yayımlama tamamlanmadı. Kuyruk işleyicisini kontrol edip yeniden deneyin.',
+            'publish-still-running' => 'Yayımlama hâlâ sürüyor. Sonucu görmek için sayfayı yeniden yükleyin.',
         ],
     ],
     'acl' => [

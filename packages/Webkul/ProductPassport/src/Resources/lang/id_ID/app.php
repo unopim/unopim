@@ -117,8 +117,12 @@ return [
             'system'        => 'Sistem',
         ],
         'mass-publish' => [
-            'action' => 'Terbitkan Paspor Produk Digital',
-            'queued' => 'Penerbitan paspor diantrekan untuk :count produk.',
+            'action'                => 'Terbitkan Paspor Produk Digital',
+            'queued'                => 'Penerbitan paspor diantrekan untuk :count produk.',
+            'published-now'         => 'Paspor diterbitkan untuk :count lokal.',
+            'publish-unchanged'     => 'Paspor sudah mutakhir; tidak ada versi baru yang dibuat.',
+            'publish-failed'        => 'Penerbitan tidak selesai. Periksa worker antrean dan coba lagi.',
+            'publish-still-running' => 'Penerbitan masih berjalan. Muat ulang halaman untuk melihat hasilnya.',
         ],
     ],
     'acl' => [

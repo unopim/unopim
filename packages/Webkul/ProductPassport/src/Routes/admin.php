@@ -9,6 +9,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::controller(PublicationController::class)->prefix('catalog/passports')->group(function (): void {
         Route::get('', 'index')->name('admin.catalog.passports.index');
         Route::post('publish/{product}', 'publish')->name('admin.catalog.passports.publish');
+        Route::get('publish-attempts/{attempt}', 'publishAttempt')->name('admin.catalog.passports.publish_attempt');
         Route::post('mass-publish', 'massPublish')->name('admin.catalog.passports.mass_publish');
         Route::post('bulk-publish', 'bulkPublish')->name('admin.catalog.passports.bulk-publish');
         Route::post('withdraw/{publication}', 'withdraw')->name('admin.catalog.passports.withdraw');

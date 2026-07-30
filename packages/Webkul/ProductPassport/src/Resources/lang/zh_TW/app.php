@@ -117,8 +117,12 @@ return [
             'system'        => '系統',
         ],
         'mass-publish' => [
-            'action' => '發布數位產品護照',
-            'queued' => '已將 :count 個產品的護照發布排入佇列。',
+            'action'                => '發布數位產品護照',
+            'queued'                => '已將 :count 個產品的護照發布排入佇列。',
+            'published-now'         => '已為 :count 個語系發布護照。',
+            'publish-unchanged'     => '護照已是最新，未建立新版本。',
+            'publish-failed'        => '發布未完成。請檢查佇列工作程序後重試。',
+            'publish-still-running' => '發布仍在進行中。請重新載入頁面查看結果。',
         ],
     ],
     'acl' => [

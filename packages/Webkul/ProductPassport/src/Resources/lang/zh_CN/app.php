@@ -117,8 +117,12 @@ return [
             'system'        => '系统',
         ],
         'mass-publish' => [
-            'action' => '发布数字产品护照',
-            'queued' => '已将 :count 个产品的护照发布加入队列。',
+            'action'                => '发布数字产品护照',
+            'queued'                => '已将 :count 个产品的护照发布加入队列。',
+            'published-now'         => '已为 :count 个语言发布护照。',
+            'publish-unchanged'     => '护照已是最新，未创建新版本。',
+            'publish-failed'        => '发布未完成。请检查队列工作进程后重试。',
+            'publish-still-running' => '发布仍在进行中。请重新加载页面查看结果。',
         ],
     ],
     'acl' => [

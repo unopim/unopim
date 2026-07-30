@@ -117,8 +117,12 @@ return [
             'system'        => 'Sistema',
         ],
         'mass-publish' => [
-            'action' => 'Publicar Passaporte Digital do Produto',
-            'queued' => 'Publicação do passaporte colocada em fila para :count produto(s).',
+            'action'                => 'Publicar Passaporte Digital do Produto',
+            'queued'                => 'Publicação do passaporte colocada em fila para :count produto(s).',
+            'published-now'         => 'Passaporte publicado para :count idiomas.',
+            'publish-unchanged'     => 'O passaporte já está atualizado; não foi criada nenhuma versão nova.',
+            'publish-failed'        => 'A publicação não terminou. Verifique o worker da fila e tente novamente.',
+            'publish-still-running' => 'A publicação ainda está a decorrer. Recarregue a página para ver o resultado.',
         ],
     ],
     'acl' => [

@@ -117,8 +117,12 @@ return [
             'system'        => 'System',
         ],
         'mass-publish' => [
-            'action' => 'Opublikuj cyfrowy paszport produktu',
-            'queued' => 'Publikacja paszportu zakolejkowana dla :count produktu(-ów).',
+            'action'                => 'Opublikuj cyfrowy paszport produktu',
+            'queued'                => 'Publikacja paszportu zakolejkowana dla :count produktu(-ów).',
+            'published-now'         => 'Paszport opublikowany dla :count języków.',
+            'publish-unchanged'     => 'Paszport jest już aktualny; nie utworzono nowej wersji.',
+            'publish-failed'        => 'Publikacja nie została ukończona. Sprawdź workera kolejki i spróbuj ponownie.',
+            'publish-still-running' => 'Publikacja nadal trwa. Odśwież stronę, aby zobaczyć wynik.',
         ],
     ],
     'acl' => [

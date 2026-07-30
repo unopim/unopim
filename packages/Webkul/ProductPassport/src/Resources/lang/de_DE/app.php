@@ -117,8 +117,12 @@ return [
             'system'        => 'System',
         ],
         'mass-publish' => [
-            'action' => 'Digitalen Produktpass veröffentlichen',
-            'queued' => 'Passveröffentlichung für :count Produkt(e) eingeplant.',
+            'action'                => 'Digitalen Produktpass veröffentlichen',
+            'queued'                => 'Passveröffentlichung für :count Produkt(e) eingeplant.',
+            'published-now'         => 'Pass für :count Sprachen veröffentlicht.',
+            'publish-unchanged'     => 'Der Pass ist bereits aktuell; es wurde keine neue Version erstellt.',
+            'publish-failed'        => 'Die Veröffentlichung wurde nicht abgeschlossen. Prüfen Sie den Queue-Worker und versuchen Sie es erneut.',
+            'publish-still-running' => 'Die Veröffentlichung läuft noch. Laden Sie die Seite neu, um das Ergebnis zu sehen.',
         ],
     ],
     'acl' => [

@@ -117,8 +117,12 @@ return [
             'system'        => '시스템',
         ],
         'mass-publish' => [
-            'action' => '디지털 제품 여권 게시',
-            'queued' => '제품 :count개의 여권 게시가 대기열에 추가되었습니다.',
+            'action'                => '디지털 제품 여권 게시',
+            'queued'                => '제품 :count개의 여권 게시가 대기열에 추가되었습니다.',
+            'published-now'         => ':count개 로케일에 여권을 게시했습니다.',
+            'publish-unchanged'     => '여권이 이미 최신 상태이며 새 버전이 생성되지 않았습니다.',
+            'publish-failed'        => '게시가 완료되지 않았습니다. 대기열 워커를 확인한 후 다시 시도하세요.',
+            'publish-still-running' => '게시가 아직 진행 중입니다. 결과를 보려면 페이지를 새로고침하세요.',
         ],
     ],
     'acl' => [
