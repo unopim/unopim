@@ -32,7 +32,11 @@ function inContainer(args) {
     });
   }
 
-  return execFileSync('docker', ['exec', '-w', '/var/www/html', CONTAINER, ...args], {
+  const command = args[0] === 'php'
+    ? ['php', '-d', 'auto_prepend_file=tests/bootstrap.php', ...args.slice(1)]
+    : args;
+
+  return execFileSync('docker', ['exec', '-w', '/var/www/html', CONTAINER, ...command], {
     encoding: 'utf-8',
     timeout: 600_000,
   });
@@ -127,6 +131,8 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await page.goto(templateUrl);
 
     await pickInMultiselect(page, 'families', fixture.family_name);
+    await page.getByRole('button', { name: /^Save changes$/ }).click();
+    await expect(page.getByText(/updated successfully/i)).toBeVisible();
 
     await page.getByRole('button', { name: 'Add Section' }).click();
 
@@ -181,6 +187,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
 
     await expect(page.getByText('Digital Product Passport').first()).toBeVisible();
+    await expect(page.locator('[data-requirement="dpp"]').filter({ hasText: 'Required for DPP' }).first()).toBeVisible();
 
     const preview = page.locator('a[href*="/passport/preview"]').first();
 
@@ -196,6 +203,68 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
     expect(body).toContain('Battery Data');
     expect(body).toContain(CONSUMER_FIELD.value);
+  });
+
+  test('missing DPP attributes explain the blocker and disable publishing', async ({ page }) => {
+    await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+
+    const capacity = page.locator('input[name="values[common][battery_rated_capacity]"]').first();
+
+    await capacity.fill('');
+    await page.getByRole('button', { name: /Save changes|Save Product/ }).last().click();
+    await expect(page.getByText(/updated successfully|saved successfully/i).first()).toBeVisible();
+
+    await page.locator('v-product-section-drawer[id="passport"] [role="button"]').first().click();
+
+    const panel = page.locator('[data-section-id="passport"]');
+    const localeRow = panel.locator('tr[data-locale-code]').first();
+
+    await expect(localeRow.locator('.passport-publish-btn')).toBeDisabled();
+    await localeRow.getByRole('button', { name: 'Missing Fields' }).click();
+    await expect(localeRow.getByText(CONSUMER_FIELD.label, { exact: true })).toBeVisible();
+
+    await panel.getByRole('button', { name: 'Close' }).click();
+    await capacity.fill(CONSUMER_FIELD.value);
+    await page.getByRole('button', { name: /Save changes|Save Product/ }).last().click();
+    await expect(page.getByText(/updated successfully|saved successfully/i).first()).toBeVisible();
+  });
+
+  test('keeps the locale table scroll inside the DPP drawer on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 478, height: 860 });
+    await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+
+    const passportCard = page
+      .getByText('Digital Product Passport', { exact: true })
+      .first()
+      .locator('xpath=ancestor::*[@role="button"][1]');
+
+    await passportCard.click({ force: true });
+
+    const panel = page.locator('[data-section-id="passport"]');
+    const drawerScroll = panel.locator('.overflow-auto').first();
+    const localeScroll = panel.locator('.passport-locales-table');
+
+    await expect(panel).toBeVisible();
+    await expect(localeScroll).toBeVisible();
+
+    await localeScroll.locator('a[href*="/passport/preview"]').first().focus();
+
+    const scrollState = await panel.evaluate((drawer) => {
+      const outer = drawer.querySelector('.overflow-auto');
+      const locales = drawer.querySelector('.passport-locales-table');
+
+      return {
+        drawerScrollLeft: outer.scrollLeft,
+        drawerScrollWidth: outer.scrollWidth,
+        drawerClientWidth: outer.clientWidth,
+        localesScrollWidth: locales.scrollWidth,
+        localesClientWidth: locales.clientWidth,
+      };
+    });
+
+    expect(scrollState.drawerScrollLeft).toBe(0);
+    expect(scrollState.drawerScrollWidth).toBe(scrollState.drawerClientWidth);
+    expect(scrollState.localesScrollWidth).toBeGreaterThan(scrollState.localesClientWidth);
   });
 
   test('publishing exposes the consumer tier only', async ({ page }) => {
@@ -214,6 +283,12 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await page.goto('/admin/catalog/passports');
 
     await expect(page.getByText(fixture.sku).first()).toBeVisible();
+
+    const rowCheckboxLabel = page.locator('label[for^="mass_action_select_record_"]').first();
+
+    await rowCheckboxLabel.click();
+    await page.getByRole('button', { name: 'Select Action' }).click();
+    await expect(page.getByText('Republish selected', { exact: true })).toBeVisible();
 
     const publicLink = page.locator('a[href*="/p/"]').first();
 

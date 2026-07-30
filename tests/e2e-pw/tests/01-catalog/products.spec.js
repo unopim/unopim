@@ -26,7 +26,8 @@ async function selectMultiselect(page, fieldName, optionLabel) {
   await wrapper.locator('.multiselect__tags').click();
   await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   if (optionLabel) {
-    // Options carry no role="option"; match on the option element text.
+    // Narrow long or lazily-searched option lists before matching on text.
+    await wrapper.locator(`input[name="${fieldName}"][type="text"]`).fill(optionLabel).catch(() => {});
     await wrapper.locator('.multiselect__option', { hasText: optionLabel }).first().click();
   } else {
     await wrapper

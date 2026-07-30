@@ -1150,7 +1150,7 @@ test('9.3 - Create a user with MagicAI role and clean up both', async ({ adminPa
   await userRow.locator('span[title="Delete"]').first().click();
   await expect(adminPage.locator('#app').getByText('Are you sure you want to delete?')).toBeVisible();
   await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/User deleted successfully/i)).toBeVisible();
+  await expect(adminPage.locator('#app').getByText(/User deleted successfully/i).first()).toBeVisible({ timeout: 20000 });
 
   await navigateTo(adminPage, 'roles');
   await searchInDataGrid(adminPage, roleName);

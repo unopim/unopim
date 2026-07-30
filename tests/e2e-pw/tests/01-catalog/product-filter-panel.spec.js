@@ -147,9 +147,9 @@ test.describe('Product DataGrid filter panel', () => {
     const block = adminPage.locator('[data-attribute-filter="categories"]');
 
     await block.getByText('Select', { exact: true }).last().click();
-    await adminPage.locator('.multiselect__element').nth(3).waitFor();
+    await adminPage.locator('.multiselect__element').first().waitFor();
 
-    const option = adminPage.locator('.multiselect__element').nth(3);
+    const option = adminPage.locator('.multiselect__element').last();
 
     const picked = (await option.innerText()).trim();
 
