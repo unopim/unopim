@@ -29,7 +29,6 @@ it('prefers the configured base_url over app.url when building the canonical url
         'label'           => 'publication::app.publications.status.draft',
         'payload_builder' => StubPayloadBuilder::class,
         'template'        => 'publication::dpp.show',
-        'required_group'  => 'dpp_group',
         'route_prefix'    => 'dpp',
     ]);
 
@@ -54,7 +53,6 @@ it('falls back to app.url when no base_url is configured', function (): void {
         'label'           => 'publication::app.publications.status.draft',
         'payload_builder' => StubPayloadBuilder::class,
         'template'        => 'publication::dpp.show',
-        'required_group'  => 'dpp_group',
         'route_prefix'    => 'dpp',
     ]);
 

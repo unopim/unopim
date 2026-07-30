@@ -99,7 +99,6 @@ class PublicationTestCase extends TestCase
             'label'           => 'publication::app.publications.status.published',
             'payload_builder' => StubPayloadBuilder::class,
             'template'        => 'publication::public.stub',
-            'required_group'  => 'dpp',
             'route_prefix'    => 'p',
         ]);
 
@@ -139,7 +138,6 @@ class PublicationTestCase extends TestCase
             'label'           => 'publication::app.publications.status.published',
             'payload_builder' => DocumentStubPayloadBuilder::class,
             'template'        => 'publication::public.stub',
-            'required_group'  => 'dpp',
             'route_prefix'    => 'p',
         ]);
 

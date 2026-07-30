@@ -9,17 +9,23 @@ use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 
+/**
+ * Both scopes are written: an unscoped row left in the catalogue would otherwise
+ * decide the outcome, since a channel without its own row falls back to it.
+ */
 function setChannelPassportConfig(string $channelCode, bool $enabled, bool $autoPublish): void
 {
-    CoreConfig::query()->updateOrCreate(
-        ['code' => 'catalog.product_passport.settings.enabled', 'channel_code' => $channelCode, 'locale_code' => null],
-        ['value' => $enabled ? '1' : '0'],
-    );
-
-    CoreConfig::query()->updateOrCreate(
-        ['code' => 'catalog.product_passport.settings.auto_publish', 'channel_code' => $channelCode, 'locale_code' => null],
-        ['value' => $autoPublish ? '1' : '0'],
-    );
+    foreach ([
+        'catalog.product_passport.settings.enabled'      => $enabled,
+        'catalog.product_passport.settings.auto_publish' => $autoPublish,
+    ] as $code => $value) {
+        foreach ([$channelCode, null] as $scope) {
+            CoreConfig::query()->updateOrCreate(
+                ['code' => $code, 'channel_code' => $scope, 'locale_code' => null],
+                ['value' => $value ? '1' : '0'],
+            );
+        }
+    }
 }
 
 it('dispatches a publish job when auto_publish is on for a dpp-family product', function (): void {

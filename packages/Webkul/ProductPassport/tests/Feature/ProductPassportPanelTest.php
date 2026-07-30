@@ -30,13 +30,13 @@ it('renders the panel as a drawer card with locales and history tabs', function 
 });
 
 it('summarises how many locales are published on the drawer card', function (): void {
-    [$product, $channel] = $this->productWithTwoDppLocales();
+    [$product, $channel, , $complete] = $this->productWithTwoDppLocales();
 
     $this->enablePassportPublishing($channel->code);
 
     $this->loginWithPermissions('all');
 
-    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code]))
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $channel->code, 'locale' => $complete->code]))
         ->assertOk()
         ->assertSee(trans('passport::app.catalog.products.edit.passport.published-summary', [
             'published' => 0,
