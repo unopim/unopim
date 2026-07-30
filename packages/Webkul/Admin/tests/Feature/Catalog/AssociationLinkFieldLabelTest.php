@@ -11,9 +11,11 @@ it('labels every association link field control so validation messages never exp
         ->assertOk()
         ->getContent();
 
-    $ruleBindings = substr_count($content, ':rules="assocField.rules"');
-    $labelBindings = substr_count($content, ':label="assocField.label"');
+    preg_match_all('/<[^>]*:rules="assocField\.rules"[^>]*>/', $content, $matches);
 
-    expect($ruleBindings)->toBeGreaterThan(0);
-    expect($labelBindings)->toBe($ruleBindings);
+    expect($matches[0])->not->toBeEmpty();
+
+    foreach ($matches[0] as $tag) {
+        expect($tag)->toContain(':label="assocField.label"');
+    }
 });

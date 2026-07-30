@@ -100,6 +100,8 @@
                 type="switch"
                 ::id="assocFieldName(type.code, index, assocField)"
                 ::name="assocFieldName(type.code, index, assocField)"
+                ::for="assocFieldName(type.code, index, assocField)"
+                ::label="assocField.label"
                 ::checked="assocFieldBoolean(link, assocField)"
                 value="true"
             />
