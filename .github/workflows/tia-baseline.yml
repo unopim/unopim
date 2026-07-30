@@ -81,12 +81,16 @@ jobs:
 
       # Coverage recording peaks past the runner's 7 GB with several workers
       # (exit 137); swap absorbs the spike and two workers keep it tolerable.
+      # The runner already holds /swapfile open, so the extra file goes on /mnt,
+      # which is both free and the larger disk.
       - name: Add swap headroom for coverage recording
         run: |
-          sudo fallocate -l 8G /swapfile
-          sudo chmod 600 /swapfile
-          sudo mkswap /swapfile
-          sudo swapon /swapfile
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
 
       - name: Record the baseline
         run: vendor/bin/pest --parallel --processes=2 --tia --fresh --colors=always
