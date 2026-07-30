@@ -520,14 +520,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $isExport = $jobTrack->type === 'export';
+
+        if ($isExport) {
             $this->exportHelper->setExport($jobTrack)->pause();
         } else {
             $this->importHelper->setImport($jobTrack)->pause();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.paused'),
+            'message' => trans('admin::app.settings.data-transfer.tracker.paused'.($isExport ? '-export' : '')),
         ]);
     }
 
@@ -538,14 +540,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $isExport = $jobTrack->type === 'export';
+
+        if ($isExport) {
             $this->exportHelper->setExport($jobTrack)->resume();
         } else {
             $this->importHelper->setImport($jobTrack)->resume();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'),
+            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'.($isExport ? '-export' : '')),
         ]);
     }
 
@@ -556,14 +560,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $isExport = $jobTrack->type === 'export';
+
+        if ($isExport) {
             $this->exportHelper->setExport($jobTrack)->cancel();
         } else {
             $this->importHelper->setImport($jobTrack)->cancel();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'),
+            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'.($isExport ? '-export' : '')),
         ]);
     }
 

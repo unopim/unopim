@@ -981,6 +981,12 @@
                     }
                 },
 
+                computed: {
+                    isExport() {
+                        return this.jobInstance?.type === 'export';
+                    },
+                },
+
                 methods: {
                     toBoolean(value) {
                         if (typeof value === 'boolean') {
@@ -1053,7 +1059,7 @@
                                 this.getStats();
                             })
                             .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.settings.data-transfer.tracker.pause-failed')" });
+                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || (this.isExport ? "@lang('admin::app.settings.data-transfer.tracker.pause-failed-export')" : "@lang('admin::app.settings.data-transfer.tracker.pause-failed')") });
                             })
                             .finally(() => {
                                 this.isActionInProgress = false;
@@ -1068,7 +1074,7 @@
                                 this.getStats();
                             })
                             .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.settings.data-transfer.tracker.resume-failed')" });
+                                this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || (this.isExport ? "@lang('admin::app.settings.data-transfer.tracker.resume-failed-export')" : "@lang('admin::app.settings.data-transfer.tracker.resume-failed')") });
                             })
                             .finally(() => {
                                 this.isActionInProgress = false;
@@ -1094,7 +1100,7 @@
                                         this.getStats();
                                     })
                                     .catch(error => {
-                                        this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || "@lang('admin::app.settings.data-transfer.tracker.cancel-failed')" });
+                                        this.$emitter.emit('add-flash', { type: 'error', message: error.response?.data?.message || (this.isExport ? "@lang('admin::app.settings.data-transfer.tracker.cancel-failed-export')" : "@lang('admin::app.settings.data-transfer.tracker.cancel-failed')") });
                                     })
                                     .finally(() => {
                                         this.isActionInProgress = false;
