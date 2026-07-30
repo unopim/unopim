@@ -117,9 +117,12 @@ RUN git config --system --add safe.directory /var/www/html
 
 EXPOSE 9000
 
-# Config validity alone would report healthy while setup is still running, and
-# the queue and scheduler containers gate on this.
+# php-fpm -t only parses the config: it passes while the entrypoint is still
+# migrating and no worker is listening, which reports healthy to an nginx that
+# then serves 502. Probe the pool socket instead, and require setup to have
+# finished since the queue and scheduler containers gate on this.
 HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
-    CMD test -f /var/www/html/storage/unopim.lock && php-fpm -t
+    CMD test -f /var/www/html/storage/unopim.lock \
+        && timeout 5 bash -c 'exec 3<>/dev/tcp/127.0.0.1/9000'
 
 ENTRYPOINT ["/var/www/html/dockerfiles/fpm-entrypoint.sh"]
