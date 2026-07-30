@@ -20,10 +20,6 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    /**
-     * MySQL drops each foreign key's own index once these cover it, leaving them as the only index
-     * serving that key, so the keys have to be detached before the indexes can go.
-     */
     public function down(): void
     {
         Schema::table('product_completeness', function (Blueprint $table): void {

@@ -5,7 +5,6 @@ namespace Webkul\Core;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 
-/** Per-request catalog locale and channel. Bind with `scoped()`, never `singleton()` — Octane leaks it. */
 class CatalogScope
 {
     public function __construct(
@@ -13,13 +12,11 @@ class CatalogScope
         protected ChannelRepository $channelRepository
     ) {}
 
-    /** Request parameter, else the admin's active catalog locale, else the channel default. Never memoize. */
     public function localeCode(): string
     {
         return $this->resolveLocaleCode();
     }
 
-    /** Request parameter, else the admin's default channel, else the configured one. Never memoize. */
     public function channelCode(): ?string
     {
         return $this->resolveChannelCode();
@@ -54,7 +51,6 @@ class CatalogScope
             ?? core()->getDefaultChannelCode();
     }
 
-    /** The authenticated admin, or null in CLI, queue, API and importer contexts. */
     protected function admin()
     {
         if (! app()->bound('auth')) {

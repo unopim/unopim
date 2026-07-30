@@ -17,10 +17,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * MySQL drops the foreign key's own index once this composite covers it, leaving the composite as
-     * the only index serving that key, so it cannot be dropped until the key is detached first.
-     */
     public function down(): void
     {
         Schema::table('completeness_settings', function (Blueprint $table): void {

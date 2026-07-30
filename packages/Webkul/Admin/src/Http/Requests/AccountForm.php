@@ -15,10 +15,6 @@ class AccountForm extends FormRequest
         return true;
     }
 
-    /**
-     * Keep the editor's current values when a select is cleared, so an untouched preference cannot
-     * fail the form and cost them the credentials they already typed.
-     */
     protected function prepareForValidation(): void
     {
         $user = auth()->guard('admin')->user();

@@ -43,11 +43,6 @@ function riskChannelWithLocalesInsertedInOrder(array $codes): Channel
     return $channel->fresh();
 }
 
-/**
- * `channel_locales` is InnoDB with PRIMARY KEY (channel_id, locale_id), so an unordered read comes
- * back in locale_id order, not insertion order. The only arrangement that tells the two apart is a
- * pair whose id order is the inverse of its code order.
- */
 function riskLocalesWithIdOrderInverseToCodeOrder(): array
 {
     $suffix = strtoupper(fake()->unique()->lexify('??'));

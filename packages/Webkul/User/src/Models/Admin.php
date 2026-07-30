@@ -177,10 +177,6 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
         ];
     }
 
-    /**
-     * The audit stores whatever type each side happened to carry — an int from the database against a
-     * bool from the request — so both sides are cast at presentation, which also repairs older rows.
-     */
     public static function getPresenters(): array
     {
         return [

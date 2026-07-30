@@ -8,10 +8,6 @@ use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
 
-/**
- * Mirrors Admin with the cast proposed for issue #1241, so the effect of the cast on what
- * gets written to the audit trail can be measured without editing the shipped model.
- */
 class StatusCastAdmin extends Admin
 {
     protected $table = 'admins';

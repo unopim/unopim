@@ -173,14 +173,12 @@ class Core
         return $this->getDefaultChannel()?->code ?? config('app.channel');
     }
 
-    /** Default locale of the default channel, falling back to the configured one. */
     public function getDefaultLocaleCodeFromDefaultChannel(): string
     {
         return $this->getLocaleCodeInChannel($this->getDefaultChannel())
             ?? config('app.locale');
     }
 
-    /** Configured application locale when the channel carries it, else its first locale by code. */
     public function getLocaleCodeInChannel(?Channel $channel): ?string
     {
         $codes = $channel?->locales->pluck('code') ?? collect();

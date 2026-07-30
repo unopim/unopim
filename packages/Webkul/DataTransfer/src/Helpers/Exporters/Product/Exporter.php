@@ -572,7 +572,6 @@ class Exporter extends AbstractExporter
         return $labels;
     }
 
-    /** Header labels follow the configured locale when the export covers it. */
     protected function headerLocale(): ?string
     {
         $codes = collect($this->channelsAndLocales)->flatten()->unique();

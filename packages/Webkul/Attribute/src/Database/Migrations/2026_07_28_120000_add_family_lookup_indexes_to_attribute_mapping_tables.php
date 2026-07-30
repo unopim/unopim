@@ -26,10 +26,6 @@ return new class extends Migration
         });
     }
 
-    /**
-     * MySQL drops each foreign key's own index once these cover it, leaving them as the only index
-     * serving that key, so the key has to be detached before the index can go.
-     */
     public function down(): void
     {
         Schema::table('attribute_family_group_mappings', function (Blueprint $table): void {

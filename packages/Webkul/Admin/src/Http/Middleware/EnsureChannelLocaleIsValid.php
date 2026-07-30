@@ -5,7 +5,6 @@ namespace Webkul\Admin\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-/** Redirects when the requested locale is not available for the requested channel. */
 class EnsureChannelLocaleIsValid
 {
     /**
