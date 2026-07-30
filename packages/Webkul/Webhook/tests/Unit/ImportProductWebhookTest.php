@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
 use Webkul\Webhook\Listeners\Product as ProductListener;
@@ -26,7 +27,7 @@ it('queues a product.created webhook for rows the import inserted', function () 
 
     subscribeWebhook([WebhookService::EVENT_PRODUCT_CREATED]);
 
-    app(ProductListener::class)->afterBulkUpdate([1, 2], [1, 2], []);
+    Event::dispatch('data_transfer.imports.batch.product.created.after', ['product_id' => [1, 2]]);
 
     Queue::assertPushed(SendBulkProductWebhook::class, 1);
 });
@@ -36,7 +37,7 @@ it('queues a product.updated webhook for rows the import updated', function () {
 
     subscribeWebhook([WebhookService::EVENT_PRODUCT_UPDATED]);
 
-    app(ProductListener::class)->afterBulkUpdate([3], [], [3]);
+    Event::dispatch('data_transfer.imports.batch.product.updated.after', ['product_id' => [3]]);
 
     Queue::assertPushed(SendBulkProductWebhook::class, 1);
 });
@@ -46,7 +47,8 @@ it('queues both events when one import batch creates and updates products', func
 
     subscribeWebhook([WebhookService::EVENT_PRODUCT_CREATED, WebhookService::EVENT_PRODUCT_UPDATED]);
 
-    app(ProductListener::class)->afterBulkUpdate([1, 2, 3], [1, 2], [3]);
+    Event::dispatch('data_transfer.imports.batch.product.created.after', ['product_id' => [1, 2]]);
+    Event::dispatch('data_transfer.imports.batch.product.updated.after', ['product_id' => [3]]);
 
     Queue::assertPushed(SendBulkProductWebhook::class, 2);
 });
@@ -56,7 +58,8 @@ it('sends import webhooks on the webhooks queue', function () {
 
     subscribeWebhook([WebhookService::EVENT_PRODUCT_CREATED, WebhookService::EVENT_PRODUCT_UPDATED]);
 
-    app(ProductListener::class)->afterBulkUpdate([1, 2], [1], [2]);
+    Event::dispatch('data_transfer.imports.batch.product.created.after', ['product_id' => [1]]);
+    Event::dispatch('data_transfer.imports.batch.product.updated.after', ['product_id' => [2]]);
 
     Queue::assertPushed(
         SendBulkProductWebhook::class,
@@ -71,19 +74,23 @@ it('does not queue a created webhook when nobody subscribes to product.created',
 
     subscribeWebhook([WebhookService::EVENT_PRODUCT_UPDATED]);
 
-    app(ProductListener::class)->afterBulkUpdate([1], [1], []);
+    Event::dispatch('data_transfer.imports.batch.product.created.after', ['product_id' => [1]]);
 
     Queue::assertNothingPushed();
 });
 
-it('treats a legacy payload without the split ids as updates', function () {
+it('ignores the legacy bundled save event so a batch never double-fires', function () {
     Queue::fake();
 
-    subscribeWebhook([WebhookService::EVENT_PRODUCT_UPDATED]);
+    subscribeWebhook([WebhookService::EVENT_PRODUCT_CREATED, WebhookService::EVENT_PRODUCT_UPDATED]);
 
-    app(ProductListener::class)->afterBulkUpdate([7, 8]);
+    Event::dispatch('data_transfer.imports.batch.product.save.after', [
+        'product_id'  => [7, 8],
+        'created_ids' => [7],
+        'updated_ids' => [8],
+    ]);
 
-    Queue::assertPushed(SendBulkProductWebhook::class, 1);
+    Queue::assertNothingPushed();
 });
 
 it('does nothing when no webhook subscribes at all', function () {
@@ -91,7 +98,8 @@ it('does nothing when no webhook subscribes at all', function () {
 
     silenceExistingWebhooks();
 
-    app(ProductListener::class)->afterBulkUpdate([1, 2], [1], [2]);
+    Event::dispatch('data_transfer.imports.batch.product.created.after', ['product_id' => [1]]);
+    Event::dispatch('data_transfer.imports.batch.product.updated.after', ['product_id' => [2]]);
 
     Queue::assertNothingPushed();
 });

@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Webkul\Admin\Http\Requests\AssociationTypeRequest;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Models\AssociationType;
 use Webkul\Product\Models\AssociationTypeField;
@@ -562,4 +564,82 @@ it('should render the edit page with the quantity field prefilled', function () 
     // initial Vue data payload, so it must be present in the raw HTML response.
     $response->assertSee('quantity', false);
     $response->assertSee($associationType->code, false);
+});
+
+it('should not render the update button on the association type history tab', function () {
+    $this->loginAsAdmin();
+
+    $associationType = createAssociationType();
+
+    $this->get(route('admin.catalog.association_types.edit', $associationType->id))
+        ->assertStatus(200)
+        ->assertSee(trans('admin::app.catalog.association_types.edit.save-btn'), false);
+
+    $this->get(route('admin.catalog.association_types.edit', $associationType->id).'?history=1')
+        ->assertStatus(200)
+        ->assertDontSee(trans('admin::app.catalog.association_types.edit.save-btn'), false);
+});
+
+it('should not render the display section control in the association type field form', function () {
+    $this->loginAsAdmin();
+
+    $associationType = createAssociationType();
+
+    $content = $this->get(route('admin.catalog.association_types.edit', $associationType->id))
+        ->assertStatus(200)
+        ->getContent();
+
+    expect(substr_count($content, 'name="section"'))->toBe(0);
+});
+
+it('searches association types case-insensitively by name and code', function () {
+    $this->loginAsAdmin();
+
+    $match = createAssociationType([
+        'code'  => 'zzcasehit_'.uniqid(),
+        'en_US' => ['name' => 'Related Products'],
+    ]);
+
+    DB::enableQueryLog();
+
+    $byName = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'related']))->assertOk();
+
+    $sql = collect(DB::getQueryLog())->pluck('query')->implode(' ');
+
+    DB::disableQueryLog();
+
+    expect($sql)->not->toContain(' LIKE ');
+
+    expect(collect($byName->json('data'))->pluck('code'))->toContain($match->code);
+
+    $byCode = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'ZZCASEHIT']))->assertOk();
+
+    expect(collect($byCode->json('data'))->pluck('code'))->toContain($match->code);
+});
+
+it('updates an association type with untranslated locale labels and never leaks the raw locale key', function () {
+    $this->loginAsAdmin();
+
+    $code = 'locale_label_'.uniqid();
+
+    $this->post(route('admin.catalog.association_types.store'), ['code' => $code])->assertRedirect();
+
+    $associationType = AssociationType::where('code', $code)->firstOrFail();
+
+    $payload = ['position' => 1, 'status' => 1];
+
+    foreach (app(LocaleRepository::class)->getActiveLocales() as $locale) {
+        $payload[$locale->code] = ['name' => ''];
+    }
+
+    $this->put(route('admin.catalog.association_types.update', $associationType->id), $payload)
+        ->assertRedirect()
+        ->assertSessionHasNoErrors();
+
+    $attributes = app(AssociationTypeRequest::class)->attributes();
+
+    foreach (app(LocaleRepository::class)->getActiveLocales() as $locale) {
+        expect($attributes)->toHaveKey($locale->code.'.name');
+        expect($attributes[$locale->code.'.name'])->toContain($locale->code);
+    }
 });

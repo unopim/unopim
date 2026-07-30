@@ -1730,6 +1730,18 @@ class Importer extends AbstractImporter
             'created_ids' => $createdIds,
             'updated_ids' => $updatedIds,
         ]);
+
+        if ($createdIds !== []) {
+            Event::dispatch('data_transfer.imports.batch.product.created.after', [
+                'product_id' => $createdIds,
+            ]);
+        }
+
+        if ($updatedIds !== []) {
+            Event::dispatch('data_transfer.imports.batch.product.updated.after', [
+                'product_id' => $updatedIds,
+            ]);
+        }
     }
 
     /**

@@ -62,7 +62,7 @@ class CatalogScope
             return $catalogLocale->code;
         }
 
-        return $this->defaultChannelLocaleCode() ?? config('app.locale');
+        return $this->applicationLocaleCode() ?? $this->defaultChannelLocaleCode() ?? config('app.locale');
     }
 
     protected function resolveChannelCode(): ?string
@@ -75,6 +75,17 @@ class CatalogScope
 
         return $this->admin()?->defaultChannel?->code
             ?? core()->getDefaultChannelCode();
+    }
+
+    protected function applicationLocaleCode(): ?string
+    {
+        $applicationLocale = config('app.locale');
+
+        if (! core()->isValidScopeCode($applicationLocale)) {
+            return null;
+        }
+
+        return core()->getDefaultChannel()?->locales->firstWhere('code', $applicationLocale)?->code;
     }
 
     /**

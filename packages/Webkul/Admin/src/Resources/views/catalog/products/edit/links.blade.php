@@ -232,28 +232,27 @@
                                     <p class="text-gray-600 dark:text-gray-300 truncate">
                                         @{{ "@lang('admin::app.catalog.products.edit.links.sku')".replace(':sku', link.sku) }}
                                     </p>
+
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center gap-1 text-xs text-red-600 hover:text-red-700 font-medium transition-all"
+                                        @click="remove(type.code, link)"
+                                        title="@lang('admin::app.catalog.products.edit.links.remove-product')"
+                                        aria-label="@lang('admin::app.catalog.products.edit.links.remove-product')"
+                                    >
+                                        <span class="icon-delete text-base"></span>
+
+                                        @lang('admin::app.catalog.products.edit.links.remove-product')
+                                    </button>
                                 </div>
                             </div>
 
                             <!-- Custom Association Fields -->
                             <div
-                                class="flex flex-wrap items-center gap-x-4 gap-y-2 flex-1 min-w-0"
+                                class="flex flex-wrap items-start gap-x-4 gap-y-3 flex-1 min-w-0"
                                 v-if="(type.fields || []).length"
                             >
                                 <x-admin::associations.link-fields />
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="grid gap-1 place-content-start text-right">
-                                <button
-                                    type="button"
-                                    class="text-red-600 hover:text-red-700 transition-all"
-                                    @click="remove(type.code, link)"
-                                    title="@lang('admin::app.catalog.products.index.datagrid.delete')"
-                                    aria-label="@lang('admin::app.catalog.products.index.datagrid.delete')"
-                                >
-                                    <span class="icon-delete text-xl"></span>
-                                </button>
                             </div>
                         </div>
                     </div>

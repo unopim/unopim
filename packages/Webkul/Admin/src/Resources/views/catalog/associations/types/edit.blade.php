@@ -1,3 +1,7 @@
+@php
+    $isHistoryTab = request()->has('history') && bouncer()->hasPermission('history');
+@endphp
+
 <x-admin::layouts.with-history>
     <x-slot:entityName>
         association_type
@@ -16,7 +20,7 @@
             :title="trans('admin::app.catalog.association_types.edit.title')"
             :back-url="route('admin.catalog.association_types.index')"
             :back-label="trans('admin::app.catalog.category_fields.create.back-btn')"
-            :save-label="trans('admin::app.catalog.association_types.edit.save-btn')"
+            :save-label="$isHistoryTab ? null : trans('admin::app.catalog.association_types.edit.save-btn')"
             form="association-type-edit-form"
             :sticky="false"
         />

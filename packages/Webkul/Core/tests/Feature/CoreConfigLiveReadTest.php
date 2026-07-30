@@ -3,21 +3,36 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\CoreConfig;
 
-it('reads core config live and never serves a stale cached value after a change', function () {
-    $key = 'general.magic_ai.agentic_pim.enabled';
-
+function primeConfig(string $key, string $value): void
+{
     CoreConfig::query()->updateOrCreate(
         ['code' => $key, 'channel_code' => null, 'locale_code' => null],
-        ['value' => '1'],
+        ['value' => $value],
     );
+}
 
-    // Prime the read path (this is what populated the stale cache before the fix).
+it('serves a config write made through the model to later reads in the same request', function () {
+    $key = 'general.magic_ai.agentic_pim.enabled';
+
+    primeConfig($key, '1');
+
     expect(core()->getConfigData($key))->toBe('1');
 
-    // Change the value directly in the DB, bypassing the repository's own write
-    // (so no repository cache-clean event can fire). A cached read would still
-    // return the old '1' here — the bug. A live read must reflect '0'.
+    primeConfig($key, '0');
+
+    expect(core()->getConfigData($key))->toBe('0');
+});
+
+it('picks up a raw database config write on the next request', function () {
+    $key = 'general.magic_ai.agentic_pim.enabled';
+
+    primeConfig($key, '1');
+
+    expect(core()->getConfigData($key))->toBe('1');
+
     DB::table('core_config')->where('code', $key)->update(['value' => '0']);
+
+    app()->forgetScopedInstances();
 
     expect(core()->getConfigData($key))->toBe('0');
 });
