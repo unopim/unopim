@@ -1488,6 +1488,7 @@ return [
                 'resumed'               => 'De import is hervat.',
                 'resumed-export'        => 'De export is hervat.',
                 'zip-failed'            => 'Kan het zip-bestand niet aanmaken.',
+                'nothing-to-archive'    => 'Er zijn geen geëxporteerde bestanden om te downloaden.',
                 'cancelled'             => 'De import is geannuleerd.',
                 'cancelled-export'      => 'De export is geannuleerd.',
                 'paused-info'           => 'De import is gepauzeerd. Resterende batches staan in de wacht.',

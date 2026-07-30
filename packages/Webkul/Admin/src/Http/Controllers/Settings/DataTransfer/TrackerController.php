@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
@@ -136,13 +137,22 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $import = $this->jobTrackRepository->findOrFail($id);
+        $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        return Storage::disk('private')->download($import->file_path);
+        $disk = Storage::disk('private');
+
+        if ($disk->fileExists($jobTrack->file_path)) {
+            return $disk->download($jobTrack->file_path);
+        }
+
+        return $this->archiveJobFiles($jobTrack);
     }
 
     /**
-     * Download archive
+     * Download archive.
+     *
+     * Reads from the private disk the exporters write to, and refuses an empty export up front:
+     * a zip with no entries is never written to disk, so the download would fail on a missing file.
      */
     public function downloadArchive(int $id)
     {
@@ -150,7 +160,14 @@ class TrackerController extends Controller
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
-        $jobTrack = $this->jobTrackRepository->findOrFail($id);
+        return $this->archiveJobFiles($this->jobTrackRepository->findOrFail($id));
+    }
+
+    /**
+     * Zip everything a job wrote and stream it back.
+     */
+    protected function archiveJobFiles(JobTrackContract $jobTrack): mixed
+    {
         $zip = new ZipArchive;
 
         // Slug the parts and basename the result so a job code containing "../"
@@ -168,18 +185,24 @@ class TrackerController extends Controller
             mkdir(dirname($zipFilePath), 0755, true);
         }
 
-        if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
-            $folderPath = $jobTrack->file_path;
-            $files = Storage::allFiles($folderPath);
-            $directories = Storage::allDirectories($folderPath);
+        $folderPath = $jobTrack->file_path;
 
-            // Add files to the ZIP archive
+        $disk = Storage::disk('private');
+
+        $files = $disk->allFiles($folderPath);
+
+        if (empty($files)) {
+            abort(404, trans('admin::app.settings.data-transfer.tracker.nothing-to-archive'));
+        }
+
+        if ($zip->open($zipFilePath, ZipArchive::CREATE) === true) {
+            $directories = $disk->allDirectories($folderPath);
+
             foreach ($files as $file) {
                 $relativePath = str_replace($folderPath.'/', '', $file);
-                $zip->addFile(Storage::path($file), $relativePath);
+                $zip->addFile($disk->path($file), $relativePath);
             }
 
-            // Add directories to the ZIP archive
             foreach ($directories as $directory) {
                 $relativePath = str_replace($folderPath.'/', '', $directory);
                 $zip->addEmptyDir($relativePath);

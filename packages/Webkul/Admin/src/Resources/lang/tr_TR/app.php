@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'İçe aktarım devam ettirildi.',
                 'resumed-export'        => 'Dışa aktarım devam ettirildi.',
                 'zip-failed'            => 'Zip dosyası oluşturulamadı.',
+                'nothing-to-archive'    => 'İndirilebilecek dışa aktarılmış dosya yok.',
                 'cancelled'             => 'İçe aktarım iptal edildi.',
                 'cancelled-export'      => 'Dışa aktarım iptal edildi.',
                 'paused-info'           => 'İçe aktarım duraklatıldı. Kalan gruplar beklemede.',

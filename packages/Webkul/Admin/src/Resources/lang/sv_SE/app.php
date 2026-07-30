@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'Importen har återupptagits.',
                 'resumed-export'        => 'Exporten har återupptagits.',
                 'zip-failed'            => 'Det gick inte att skapa zip-filen.',
+                'nothing-to-archive'    => 'Det finns inga exporterade filer att ladda ner.',
                 'cancelled'             => 'Importen har avbrutits.',
                 'cancelled-export'      => 'Exporten har avbrutits.',
                 'paused-info'           => 'Importen är pausad. Återstående batcher är parkerade.',

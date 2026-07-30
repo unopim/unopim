@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'Impor telah dilanjutkan.',
                 'resumed-export'        => 'Ekspor telah dilanjutkan.',
                 'zip-failed'            => 'Gagal membuat file zip.',
+                'nothing-to-archive'    => 'Tidak ada berkas hasil ekspor yang dapat diunduh.',
                 'cancelled'             => 'Impor telah dibatalkan.',
                 'cancelled-export'      => 'Ekspor telah dibatalkan.',
                 'paused-info'           => 'Impor dijeda. Batch yang tersisa ditahan.',

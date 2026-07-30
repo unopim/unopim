@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => '导入已恢复。',
                 'resumed-export'        => '导出已恢复。',
                 'zip-failed'            => '无法创建 zip 文件。',
+                'nothing-to-archive'    => '没有可下载的导出文件。',
                 'cancelled'             => '导入已取消。',
                 'cancelled-export'      => '导出已取消。',
                 'paused-info'           => '导入已暂停。剩余批次处于保留状态。',

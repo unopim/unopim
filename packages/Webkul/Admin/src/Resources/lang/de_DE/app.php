@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'Der Import wurde fortgesetzt.',
                 'resumed-export'        => 'Der Export wurde fortgesetzt.',
                 'zip-failed'            => 'Die ZIP-Datei konnte nicht erstellt werden.',
+                'nothing-to-archive'    => 'Es sind keine exportierten Dateien zum Herunterladen vorhanden.',
                 'cancelled'             => 'Der Import wurde abgebrochen.',
                 'cancelled-export'      => 'Der Export wurde abgebrochen.',
                 'paused-info'           => 'Der Import ist pausiert. Verbleibende Stapel warten.',

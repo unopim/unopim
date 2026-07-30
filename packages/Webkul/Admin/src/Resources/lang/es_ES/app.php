@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'La importación se ha reanudado.',
                 'resumed-export'        => 'La exportación se ha reanudado.',
                 'zip-failed'            => 'No se pudo crear el archivo zip.',
+                'nothing-to-archive'    => 'No hay archivos exportados disponibles para descargar.',
                 'cancelled'             => 'La importación se ha cancelado.',
                 'cancelled-export'      => 'La exportación se ha cancelado.',
                 'paused-info'           => 'La importación está en pausa. Los lotes restantes están en espera.',

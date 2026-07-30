@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'Quá trình nhập đã được tiếp tục.',
                 'resumed-export'        => 'Quá trình xuất đã được tiếp tục.',
                 'zip-failed'            => 'Không thể tạo tệp zip.',
+                'nothing-to-archive'    => 'Không có tệp đã xuất nào để tải xuống.',
                 'cancelled'             => 'Quá trình nhập đã bị hủy.',
                 'cancelled-export'      => 'Quá trình xuất đã bị hủy.',
                 'paused-info'           => 'Quá trình nhập đang tạm dừng. Các lô còn lại đang chờ.',

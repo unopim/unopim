@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'Uvoz je nastavljen.',
                 'resumed-export'        => 'Izvoz je nastavljen.',
                 'zip-failed'            => 'Izrada zip datoteke nije uspjela.',
+                'nothing-to-archive'    => 'Nema izvezenih datoteka dostupnih za preuzimanje.',
                 'cancelled'             => 'Uvoz je otkazan.',
                 'cancelled-export'      => 'Izvoz je otkazan.',
                 'paused-info'           => 'Uvoz je pauziran. Preostali paketi su na čekanju.',

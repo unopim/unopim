@@ -1488,6 +1488,7 @@ return [
                 'resumed'               => '가져오기가 재개되었습니다.',
                 'resumed-export'        => '내보내기가 재개되었습니다.',
                 'zip-failed'            => 'ZIP 파일을 만들지 못했습니다.',
+                'nothing-to-archive'    => '다운로드할 수 있는 내보내기 파일이 없습니다.',
                 'cancelled'             => '가져오기가 취소되었습니다.',
                 'cancelled-export'      => '내보내기가 취소되었습니다.',
                 'paused-info'           => '가져오기가 일시 중지 중입니다. 나머지 배치가 보류 중입니다.',

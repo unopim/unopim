@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'La importació s\'ha reprès.',
                 'resumed-export'        => 'L\'exportació s\'ha reprès.',
                 'zip-failed'            => 'No s\'ha pogut crear el fitxer zip.',
+                'nothing-to-archive'    => 'No hi ha fitxers exportats disponibles per descarregar.',
                 'cancelled'             => 'La importació s\'ha cancel·lat.',
                 'cancelled-export'      => 'L\'exportació s\'ha cancel·lat.',
                 'paused-info'           => 'La importació està en pausa. Els lots restants estan en espera.',

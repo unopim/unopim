@@ -1488,6 +1488,7 @@ return [
                 'resumed'               => 'Importul a fost reluat.',
                 'resumed-export'        => 'Exportul a fost reluat.',
                 'zip-failed'            => 'Crearea fișierului zip a eșuat.',
+                'nothing-to-archive'    => 'Nu există fișiere exportate disponibile pentru descărcare.',
                 'cancelled'             => 'Importul a fost anulat.',
                 'cancelled-export'      => 'Exportul a fost anulat.',
                 'paused-info'           => 'Importul este suspendat. Loturile rămase sunt în așteptare.',

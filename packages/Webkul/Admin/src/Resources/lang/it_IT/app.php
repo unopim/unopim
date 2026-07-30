@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'L\'importazione è stata ripresa.',
                 'resumed-export'        => 'L\'esportazione è stata ripresa.',
                 'zip-failed'            => 'Impossibile creare il file zip.',
+                'nothing-to-archive'    => 'Non ci sono file esportati disponibili per il download.',
                 'cancelled'             => 'L\'importazione è stata annullata.',
                 'cancelled-export'      => 'L\'esportazione è stata annullata.',
                 'paused-info'           => 'L\'importazione è in pausa. I batch rimanenti sono in attesa.',

@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'Naipagpatuloy na ang pag-import.',
                 'resumed-export'        => 'Naipagpatuloy na ang pag-export.',
                 'zip-failed'            => 'Nabigong gawin ang zip file.',
+                'nothing-to-archive'    => 'Walang na-export na file na maaaring i-download.',
                 'cancelled'             => 'Na-cancel na ang pag-import.',
                 'cancelled-export'      => 'Na-cancel na ang pag-export.',
                 'paused-info'           => 'Naka-pause ang pag-import. Ang mga natitirang batch ay nasa hold.',

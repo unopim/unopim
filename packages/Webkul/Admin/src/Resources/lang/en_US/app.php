@@ -1580,6 +1580,7 @@ return [
                 'resumed'               => 'Import has been resumed.',
                 'resumed-export'        => 'Export has been resumed.',
                 'zip-failed'            => 'Failed to create the zip file.',
+                'nothing-to-archive'    => 'There are no exported files available to download.',
                 'cancelled'             => 'Import has been cancelled.',
                 'cancelled-export'      => 'Export has been cancelled.',
                 'paused-info'           => 'Import is paused. Remaining batches are on hold.',

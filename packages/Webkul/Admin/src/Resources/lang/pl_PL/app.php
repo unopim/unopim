@@ -1488,6 +1488,7 @@ return [
                 'resumed'               => 'Import został wznowiony.',
                 'resumed-export'        => 'Eksport został wznowiony.',
                 'zip-failed'            => 'Nie udało się utworzyć pliku zip.',
+                'nothing-to-archive'    => 'Brak wyeksportowanych plików do pobrania.',
                 'cancelled'             => 'Import został anulowany.',
                 'cancelled-export'      => 'Eksport został anulowany.',
                 'paused-info'           => 'Import jest wstrzymany. Pozostałe partie są w zawieszeniu.',

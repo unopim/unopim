@@ -1487,6 +1487,7 @@ return [
                 'resumed'               => 'Tuontia on jatkettu.',
                 'resumed-export'        => 'Vientiä on jatkettu.',
                 'zip-failed'            => 'ZIP-tiedoston luonti epäonnistui.',
+                'nothing-to-archive'    => 'Ladattavia vietyjä tiedostoja ei ole.',
                 'cancelled'             => 'Tuonti on peruutettu.',
                 'cancelled-export'      => 'Vienti on peruutettu.',
                 'paused-info'           => 'Tuonti on keskeytetty. Jäljellä olevat erät ovat pidossa.',
