@@ -19,7 +19,6 @@ const {
   passportRowForSku,
   withdrawViaFetch,
   adminPost,
-  selectHandlerOption,
 } = require('../fixtures/passport');
 
 const SAMPLE_PDF = path.resolve(__dirname, '../fixtures/files/sample.pdf');
@@ -161,66 +160,38 @@ test.describe.serial('DPP industry use cases', () => {
     }
   });
 
-  test('5. Footwear — country of origin surfaced via field mapping', async ({ adminPage }) => {
+  test('5. Footwear — country of origin publishes under its template field label', async ({ adminPage }) => {
     const page = adminPage;
     const sku = `ftw_${generateUid()}`;
 
-    // Map the regulatory dpp_country_of_origin field to the plain `origin_country` source attribute.
-    await page.goto('/admin/catalog/passports/mapping', { waitUntil: 'domcontentloaded' });
-    await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
-    await selectHandlerOption(page, 'mapping[dpp_country_of_origin]', 'Origin Country');
-    await page.locator('[data-unsaved-save]').first().click();
-    // Save succeeds when the dirty tracker clears (flash toasts teleport to body / the page redirects).
-    await expect(page.locator('[data-unsaved-save]')).toBeHidden({ timeout: 20000 });
-
     const { uuid } = await publishScenario(page, sku, async () => {
       await fillDppField(page, 'dpp_repairability_score', '8.5 / 10');
-      await fillDppField(page, 'origin_country', 'Portugal');
+      await fillDppField(page, 'dpp_country_of_origin', 'Portugal');
     });
 
     const { body } = await publicText(page, uuid);
-    // The mapped source value surfaces under the dpp field's own "Country of Origin" label.
-    expect(body).toContain('Country of Origin');
+    // The attribute-sourced value surfaces under the template field's own label.
+    expect(body).toMatch(/Country Of Origin/i);
     expect(body).toContain('Portugal');
     expect(body).toContain('8.5 / 10');
   });
 
-  test('6. Cosmetics — substances + a custom "Shelf Life" field on the page and in JSON-LD', async ({ adminPage }) => {
+  test('6. Cosmetics — substances publish on the page and as a JSON-LD additionalProperty', async ({ adminPage }) => {
     const page = adminPage;
     const sku = `cos_${generateUid()}`;
-    // A unique custom-field label guarantees a fresh row (dirty form) even when a prior run persisted one.
-    const customLabel = `Shelf Life ${generateUid()}`;
-
-    // Add a custom passport field: label sourced from the `shelf_life` attribute.
-    await page.goto('/admin/catalog/passports/mapping', { waitUntil: 'domcontentloaded' });
-    await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
-    await page.getByRole('button', { name: /Add passport field/i }).click();
-
-    // Target the newly-added (last) custom row; a previous run's saved rows may precede it.
-    const nameInputs = page.locator('input[name^="custom_fields["][name$="[name]"]');
-    const lastRowName = nameInputs.last();
-    await lastRowName.fill(customLabel);
-
-    const row = lastRowName.locator('xpath=ancestor::div[contains(@class,"grid")][1]');
-    await row.locator('.multiselect').first().click();
-    await row.locator('.multiselect__content-wrapper li, .multiselect__element').filter({ hasText: 'Shelf Life' }).first().click();
-
-    await page.locator('[data-unsaved-save]').first().click();
-    await expect(page.locator('[data-unsaved-save]')).toBeHidden({ timeout: 20000 });
 
     const { uuid } = await publishScenario(page, sku, async () => {
       await fillDppField(page, 'dpp_substances_of_concern', 'No parabens; contains fragrance allergens');
-      await fillDppField(page, 'shelf_life', '24 months after opening');
     });
 
     const { body } = await publicText(page, uuid);
-    expect(body).toContain(customLabel);
-    expect(body).toContain('24 months after opening');
+    expect(body).toContain('No parabens; contains fragrance allergens');
 
+    // Every published template field mirrors into JSON-LD under its own label.
     const jsonld = await page.request.get(`/p/${uuid}/en_US`, { headers: { Accept: 'application/ld+json' } });
     const graph = await jsonld.json();
     const props = (graph.additionalProperty || []).map((p) => `${p.name}=${p.value}`);
-    expect(props).toContain(`${customLabel}=24 months after opening`);
+    expect(props.join('|')).toContain('No parabens; contains fragrance allergens');
   });
 
   test('7. Toys — certificate document hidden from consumers, revealed on a signed authority URL', async ({ adminPage }) => {
@@ -327,11 +298,11 @@ test.describe.serial('DPP industry use cases', () => {
     const page = adminPage;
 
     // The re-keyed hub renders a top-level "Digital Product Passport" section with both rows reachable.
-    await page.goto('/admin/configuration/system-settings/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/configuration/system/digital_product_passport.product_passport', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
     await expect(page.getByRole('textbox', { name: /Operator Name/i }).first()).toBeVisible();
 
-    await page.goto('/admin/configuration/system-settings/digital_product_passport.publication', { waitUntil: 'domcontentloaded' });
+    await page.goto('/admin/configuration/system/digital_product_passport.publication', { waitUntil: 'domcontentloaded' });
     await page.locator('#app').waitFor({ state: 'visible', timeout: 30000 });
     await expect(page.getByRole('textbox', { name: /Base URL/i }).first()).toBeVisible();
 

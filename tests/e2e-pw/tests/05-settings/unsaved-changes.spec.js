@@ -2,7 +2,7 @@ const { test, expect } = require('../../utils/fixtures');
 const { clickSave } = require('../../utils/helpers');
 
 test.describe('Unsaved changes bar', () => {
-  const URL = '/admin/configuration/system-settings/system.email';
+  const URL = '/admin/configuration/system/system.email';
 
   const gotoSettings = (page) =>
     page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
@@ -107,11 +107,11 @@ test.describe('Unsaved changes bar', () => {
     await adminPage.locator('a[href$="/admin/dashboard"]').first().click({ timeout: 5000 });
     await expect(adminPage.getByText('Leave this page?', { exact: false })).toBeVisible({ timeout: 5000 });
     expect(nativeDialog).toBe(false);
-    expect(adminPage.url()).toContain('configuration/system-settings');
+    expect(adminPage.url()).toContain('configuration/system');
 
     await adminPage.getByRole('button', { name: 'Stay on page' }).click();
     await expect(adminPage.getByText('Leave this page?', { exact: false })).toBeHidden();
-    expect(adminPage.url()).toContain('configuration/system-settings');
+    expect(adminPage.url()).toContain('configuration/system');
 
     await adminPage.locator('a[href$="/admin/dashboard"]').first().click({ timeout: 5000 });
     await adminPage.getByRole('button', { name: 'Leave' }).click({ timeout: 5000 });
@@ -126,7 +126,7 @@ test.describe('Unsaved changes bar', () => {
     await adminPage.goto('/admin/dashboard', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
 
     await adminPage.locator('a[href$="/admin/configuration/system-settings"]').first().click({ timeout: 15000 });
-    await adminPage.locator('a[href$="/admin/configuration/system-settings/system.email"]').first().click({ timeout: 15000 });
+    await adminPage.locator('a[href$="/admin/configuration/system/system.email"]').first().click({ timeout: 15000 });
 
     const field = firstField(adminPage);
     await field.waitFor({ state: 'visible', timeout: 15000 });

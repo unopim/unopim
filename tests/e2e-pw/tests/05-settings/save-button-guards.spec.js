@@ -9,7 +9,7 @@ const { test, expect } = require('../../utils/fixtures');
  * text fields, so the bar activates on a real edit.
  */
 test.describe('Save button guards', () => {
-  const URL = '/admin/configuration/system-settings/system.email';
+  const URL = '/admin/configuration/system/system.email';
 
   const goto = (page) =>
     page.goto(URL, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});

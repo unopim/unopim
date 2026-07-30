@@ -69,7 +69,6 @@ async function setAutoPublish(page, on) {
         settings: {
           enabled: '1',
           auto_publish: on ? '1' : '0',
-          completeness_threshold: '1',
         },
       },
     },
