@@ -23,8 +23,12 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('product_completeness', function (Blueprint $table): void {
+            $table->dropForeign(['channel_id']);
+            $table->dropForeign(['locale_id']);
             $table->dropIndex('pc_channel_product_idx');
             $table->dropIndex('pc_locale_product_idx');
+            $table->foreign('channel_id')->references('id')->on('channels')->cascadeOnDelete();
+            $table->foreign('locale_id')->references('id')->on('locales')->cascadeOnDelete();
         });
     }
 };

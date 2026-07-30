@@ -374,7 +374,7 @@ window.revealInvalidField = (element, message = null) => {
 
     const controlGroup = element.closest("[data-control-group]");
 
-    if (message && controlGroup) {
+    if (message && controlGroup && ! controlGroup.querySelector("[data-error-slot]")) {
         window.markFieldInvalid(controlGroup, message);
     }
 

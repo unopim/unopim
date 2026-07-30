@@ -29,11 +29,15 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('attribute_family_group_mappings', function (Blueprint $table): void {
+            $table->dropForeign(['attribute_family_id']);
             $table->dropIndex('afgm_family_idx');
+            $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->cascadeOnDelete();
         });
 
         Schema::table('attribute_group_mappings', function (Blueprint $table): void {
+            $table->dropForeign(['attribute_family_group_id']);
             $table->dropIndex('agm_family_group_idx');
+            $table->foreign('attribute_family_group_id')->references('id')->on('attribute_family_group_mappings')->cascadeOnDelete();
         });
     }
 };
