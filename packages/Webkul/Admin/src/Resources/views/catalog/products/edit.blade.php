@@ -114,11 +114,7 @@
         {!! view_render_event('unopim.admin.catalog.product.edit.form.before', ['product' => $product]) !!}
 
         @php
-            $variantAxisCodes = ($variantTree ?? null)
-                ? collect($variantTree['attributes'])->where('isAxis', true)->pluck('code')->all()
-                : [];
-
-            $variantHiddenCodes = array_merge($variantAxisCodes, ($variantFieldLocks['hidden'] ?? []));
+            $variantHiddenCodes = $variantFieldLocks['hidden'] ?? [];
         @endphp
         <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
             <div class="left-column flex flex-col gap-2 flex-1 max-xl:flex-auto">
