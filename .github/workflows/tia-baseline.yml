@@ -19,9 +19,12 @@ permissions:
   contents: read
 
 jobs:
+  # Advisory: baseline recording is an optimization experiment and must not
+  # redden the release branches while its memory profile is being tamed.
   baseline:
     runs-on: ubuntu-24.04
     name: Record the test impact baseline
+    continue-on-error: true
 
     services:
       mysql:
@@ -76,8 +79,17 @@ jobs:
       - name: Set Passport OAuth key permissions
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
+      # Coverage recording peaks past the runner's 7 GB with several workers
+      # (exit 137); swap absorbs the spike and two workers keep it tolerable.
+      - name: Add swap headroom for coverage recording
+        run: |
+          sudo fallocate -l 8G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+
       - name: Record the baseline
-        run: vendor/bin/pest --parallel --processes=4 --tia --fresh --colors=always
+        run: vendor/bin/pest --parallel --processes=2 --tia --fresh --colors=always
 
       - name: Resolve the baseline path
         id: baseline
