@@ -9,7 +9,7 @@ it('renders the panel into the product edit page for an authorised admin', funct
 
     $this->loginWithPermissions('all');
 
-    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code]))
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code, 'locale' => $context->locale->code]))
         ->assertOk()
         // The panel id, not its heading: the fixture's attribute group carries the same label.
         ->assertSee('id="passport-panel"', false);
@@ -22,7 +22,7 @@ it('renders the panel as a drawer card with locales and history tabs', function 
 
     $this->loginWithPermissions('all');
 
-    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code]))
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code, 'locale' => $context->locale->code]))
         ->assertOk()
         ->assertSee('v-product-section-drawer', false)
         ->assertSee('value="passport-locales"', false)
@@ -51,7 +51,7 @@ it('does not render the panel for an admin without view permission', function ()
 
     $this->loginWithPermissions('custom', ['catalog.products', 'catalog.products.edit']);
 
-    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code]))
+    $this->get(route('admin.catalog.products.edit', ['id' => $product->id, 'channel' => $context->channel->code, 'locale' => $context->locale->code]))
         ->assertOk()
         ->assertDontSee('id="passport-panel"', false);
 });
