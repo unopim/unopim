@@ -133,15 +133,16 @@ it('withdraws only the published rows of a mass selection', function (): void {
 });
 
 it('reports how many selected passports the bulk publish skipped', function (): void {
-    $publication = $this->publishedPassportFixture()->publication;
+    $published = $this->publishedPassportFixture()->publication;
+    $withdrawn = $this->publishedPassportFixture()->publication;
 
-    resolve(Publisher::class)->withdraw($publication);
+    resolve(Publisher::class)->withdraw($withdrawn);
 
     $this->loginWithPermissions('all');
 
     Bus::fake();
 
-    $this->postJson(route('admin.catalog.passports.bulk-publish'), ['indices' => [$publication->id]])
+    $this->postJson(route('admin.catalog.passports.bulk-publish'), ['indices' => [$published->id, $withdrawn->id]])
         ->assertOk()
         ->assertJsonPath('message', trans('passport::app.publications.bulk-publish-queued-skipped', ['count' => 1]));
 });

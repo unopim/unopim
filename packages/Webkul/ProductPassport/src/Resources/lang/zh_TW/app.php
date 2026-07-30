@@ -89,6 +89,7 @@ return [
         'publish-queued'              => '護照發布已排入佇列。',
         'bulk-publish-queued'         => '所選護照的發布已加入佇列。',
         'bulk-publish-queued-skipped' => '護照發布已加入佇列。已略過 :count 個已撤回的護照。',
+        'publish-none-publishable'    => '沒有任何項目加入佇列：發布前需先復原 :count 個已撤回的護照。',
         'publish-withdrawn'           => '此護照已撤回。請先復原後再發布某個語言環境。',
         'mass-withdraw-queued'        => '已將 :count 個護照的撤回加入佇列。',
         'mass-reinstate-queued'       => '已將 :count 個護照的復原加入佇列。',

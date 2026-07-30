@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Việc xuất bản hộ chiếu đã được đưa vào hàng đợi.',
         'bulk-publish-queued'         => 'Việc xuất bản các hộ chiếu đã chọn đã được đưa vào hàng đợi.',
         'bulk-publish-queued-skipped' => 'Đã xếp hàng xuất bản hộ chiếu. Đã bỏ qua :count hộ chiếu bị thu hồi.',
+        'publish-none-publishable'    => 'Không có gì được xếp hàng: cần khôi phục :count hộ chiếu bị thu hồi trước khi xuất bản.',
         'publish-withdrawn'           => 'Hộ chiếu này đã bị thu hồi. Hãy khôi phục trước khi xuất bản một ngôn ngữ.',
         'mass-withdraw-queued'        => 'Đã xếp hàng thu hồi cho :count hộ chiếu.',
         'mass-reinstate-queued'       => 'Đã xếp hàng khôi phục cho :count hộ chiếu.',

@@ -5,6 +5,7 @@ use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
+use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
 
@@ -115,6 +116,61 @@ it('mass publishes selected products, one job dispatch per product', function ()
     ])->assertOk();
 
     Bus::assertDispatchedTimes(PublishPassportForProductChannelJob::class, 2);
+});
+
+it('leaves a withdrawn passport out of a mass publish and reports the skip', function (): void {
+    Bus::fake();
+
+    [$productA, $context] = $this->productWithSecretAndDppAttributes();
+    $productB = ProductProxy::factory()->create([
+        'attribute_family_id' => $productA->attribute_family_id,
+    ]);
+
+    Publication::factory()->create([
+        'product_id' => $productB->id,
+        'channel_id' => $context->channel->id,
+        'type'       => 'dpp',
+        'status'     => PublicationStatus::Withdrawn,
+    ]);
+
+    $this->enablePassportPublishing($context->channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->postJson(route('admin.catalog.passports.mass_publish'), [
+        'channel' => $context->channel->code,
+        'indices' => [$productA->id, $productB->id],
+    ])
+        ->assertOk()
+        ->assertJsonPath('message', trans('passport::app.publications.bulk-publish-queued-skipped', ['count' => 1]));
+
+    Bus::assertDispatchedTimes(PublishPassportForProductChannelJob::class, 1);
+});
+
+it('refuses a mass publish whose every product passport is withdrawn', function (): void {
+    Bus::fake();
+
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
+
+    Publication::factory()->create([
+        'product_id' => $product->id,
+        'channel_id' => $context->channel->id,
+        'type'       => 'dpp',
+        'status'     => PublicationStatus::Withdrawn,
+    ]);
+
+    $this->enablePassportPublishing($context->channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->postJson(route('admin.catalog.passports.mass_publish'), [
+        'channel' => $context->channel->code,
+        'indices' => [$product->id],
+    ])
+        ->assertStatus(422)
+        ->assertJsonPath('message', trans('passport::app.publications.publish-none-publishable', ['count' => 1]));
+
+    Bus::assertNotDispatched(PublishPassportForProductChannelJob::class);
 });
 
 it('rejects mass publish without the publish permission', function (): void {

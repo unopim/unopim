@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'S\'ha posat en cua la publicació del passaport.',
         'bulk-publish-queued'         => 'S\'ha posat a la cua la publicació dels passaports seleccionats.',
         'bulk-publish-queued-skipped' => 'S’ha programat la publicació. S’han omès :count passaports retirats.',
+        'publish-none-publishable'    => 'No s’ha programat res: cal restablir :count passaports retirats abans de publicar.',
         'publish-withdrawn'           => 'Aquest passaport està retirat. Restabliu-lo abans de publicar una llengua.',
         'mass-withdraw-queued'        => 'S’ha programat la retirada de :count passaports.',
         'mass-reinstate-queued'       => 'S’ha programat el restabliment de :count passaports.',

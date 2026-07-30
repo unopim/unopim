@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'パスポートの公開がキューに登録されました。',
         'bulk-publish-queued'         => '選択したパスポートの公開をキューに追加しました。',
         'bulk-publish-queued-skipped' => 'パスポートの公開をキューに追加しました。撤回済みの :count 件はスキップされました。',
+        'publish-none-publishable'    => 'キューに追加された項目はありません。撤回済みの :count 件を公開前に復元してください。',
         'publish-withdrawn'           => 'このパスポートは撤回されています。ロケールを公開する前に復元してください。',
         'mass-withdraw-queued'        => ':count 件のパスポートの撤回をキューに追加しました。',
         'mass-reinstate-queued'       => ':count 件のパスポートの復元をキューに追加しました。',

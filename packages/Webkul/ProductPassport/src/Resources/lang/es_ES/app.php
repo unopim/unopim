@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Se ha puesto en cola la publicación del pasaporte.',
         'bulk-publish-queued'         => 'Se ha puesto en cola la publicación de los pasaportes seleccionados.',
         'bulk-publish-queued-skipped' => 'Publicación en cola. Se omitieron :count pasaportes retirados.',
+        'publish-none-publishable'    => 'No se puso nada en cola: :count pasaportes retirados deben restablecerse antes de publicar.',
         'publish-withdrawn'           => 'Este pasaporte está retirado. Restablécelo antes de publicar un idioma.',
         'mass-withdraw-queued'        => 'Retirada en cola para :count pasaportes.',
         'mass-reinstate-queued'       => 'Restablecimiento en cola para :count pasaportes.',

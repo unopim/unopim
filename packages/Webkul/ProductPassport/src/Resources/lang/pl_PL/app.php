@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Publikacja paszportu została zakolejkowana.',
         'bulk-publish-queued'         => 'Publikacja wybranych paszportów została dodana do kolejki.',
         'bulk-publish-queued-skipped' => 'Publikacja została dodana do kolejki. Pominięto :count wycofanych paszportów.',
+        'publish-none-publishable'    => 'Nic nie dodano do kolejki: :count wycofanych paszportów trzeba przywrócić przed publikacją.',
         'publish-withdrawn'           => 'Ten paszport jest wycofany. Przywróć go przed opublikowaniem języka.',
         'mass-withdraw-queued'        => 'Wycofanie dodane do kolejki dla :count paszportów.',
         'mass-reinstate-queued'       => 'Przywrócenie dodane do kolejki dla :count paszportów.',

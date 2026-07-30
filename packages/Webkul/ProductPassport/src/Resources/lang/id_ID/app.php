@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Penerbitan paspor telah diantrekan.',
         'bulk-publish-queued'         => 'Penerbitan paspor yang dipilih telah dimasukkan ke antrean.',
         'bulk-publish-queued-skipped' => 'Penerbitan paspor telah diantrekan. :count paspor yang ditarik dilewati.',
+        'publish-none-publishable'    => 'Tidak ada yang diantrekan: :count paspor yang ditarik harus dipulihkan sebelum diterbitkan.',
         'publish-withdrawn'           => 'Paspor ini ditarik. Pulihkan sebelum menerbitkan sebuah lokal.',
         'mass-withdraw-queued'        => 'Penarikan diantrekan untuk :count paspor.',
         'mass-reinstate-queued'       => 'Pemulihan diantrekan untuk :count paspor.',

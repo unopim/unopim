@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Publicarea pașaportului a fost pusă în coadă.',
         'bulk-publish-queued'         => 'Publicarea pașapoartelor selectate a fost adăugată în coadă.',
         'bulk-publish-queued-skipped' => 'Publicarea a fost pusă în coadă. :count pașapoarte retrase au fost omise.',
+        'publish-none-publishable'    => 'Nu a fost pus nimic în coadă: :count pașapoarte retrase trebuie reactivate înainte de publicare.',
         'publish-withdrawn'           => 'Acest pașaport este retras. Restabiliți-l înainte de a publica o limbă.',
         'mass-withdraw-queued'        => 'Retragerea a fost pusă în coadă pentru :count pașapoarte.',
         'mass-reinstate-queued'       => 'Restabilirea a fost pusă în coadă pentru :count pașapoarte.',

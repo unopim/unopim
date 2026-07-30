@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Objava putovnice je stavljena u red čekanja.',
         'bulk-publish-queued'         => 'Objava odabranih putovnica stavljena je u red čekanja.',
         'bulk-publish-queued-skipped' => 'Objava je u redu čekanja. Preskočeno je :count povučenih putovnica.',
+        'publish-none-publishable'    => 'Ništa nije stavljeno u red čekanja: :count povučenih putovnica mora se vratiti prije objave.',
         'publish-withdrawn'           => 'Ova je putovnica povučena. Vratite je prije objave jezika.',
         'mass-withdraw-queued'        => 'Povlačenje je u redu čekanja za :count putovnica.',
         'mass-reinstate-queued'       => 'Vraćanje je u redu čekanja za :count putovnica.',

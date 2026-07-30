@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Publisering av passet er satt i kø.',
         'bulk-publish-queued'         => 'Publisering av de valgte passene er lagt i kø.',
         'bulk-publish-queued-skipped' => 'Publisering er lagt i kø. :count tilbaketrukne pass ble hoppet over.',
+        'publish-none-publishable'    => 'Ingenting ble lagt i kø: :count tilbaketrukne pass må gjenopprettes før publisering.',
         'publish-withdrawn'           => 'Dette passet er trukket tilbake. Gjenopprett det før du publiserer et språk.',
         'mass-withdraw-queued'        => 'Tilbaketrekking er lagt i kø for :count pass.',
         'mass-reinstate-queued'       => 'Gjenoppretting er lagt i kø for :count pass.',

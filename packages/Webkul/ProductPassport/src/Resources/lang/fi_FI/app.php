@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Passin julkaisu on jonossa.',
         'bulk-publish-queued'         => 'Valittujen passien julkaisu on lisätty jonoon.',
         'bulk-publish-queued-skipped' => 'Julkaisu jonossa. :count peruutettua passia ohitettiin.',
+        'publish-none-publishable'    => 'Mitään ei lisätty jonoon: :count peruutettua passia on palautettava ennen julkaisua.',
         'publish-withdrawn'           => 'Tämä passi on peruutettu. Palauta se ennen kielen julkaisua.',
         'mass-withdraw-queued'        => 'Peruutus jonossa :count passille.',
         'mass-reinstate-queued'       => 'Palautus jonossa :count passille.',

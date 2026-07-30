@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'A publicação do passaporte foi colocada em fila.',
         'bulk-publish-queued'         => 'A publicação dos passaportes selecionados foi colocada em fila.',
         'bulk-publish-queued-skipped' => 'Publicação em fila. :count passaportes retirados foram ignorados.',
+        'publish-none-publishable'    => 'Nada foi colocado em fila: :count passaportes retirados têm de ser repostos antes da publicação.',
         'publish-withdrawn'           => 'Este passaporte está retirado. Restabeleça-o antes de publicar um idioma.',
         'mass-withdraw-queued'        => 'Retirada em fila para :count passaportes.',
         'mass-reinstate-queued'       => 'Restabelecimento em fila para :count passaportes.',

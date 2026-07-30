@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Publicering av passet har lagts i kö.',
         'bulk-publish-queued'         => 'Publiceringen av de valda passen har lagts i kö.',
         'bulk-publish-queued-skipped' => 'Publicering har köats. :count indragna pass hoppades över.',
+        'publish-none-publishable'    => 'Inget köades: :count indragna pass måste återställas före publicering.',
         'publish-withdrawn'           => 'Detta pass är indraget. Återställ det innan du publicerar ett språk.',
         'mass-withdraw-queued'        => 'Indragning har köats för :count pass.',
         'mass-reinstate-queued'       => 'Återställning har köats för :count pass.',

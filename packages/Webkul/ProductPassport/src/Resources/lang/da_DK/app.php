@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Udgivelse af pas er sat i kø.',
         'bulk-publish-queued'         => 'Udgivelse af de valgte pas er sat i kø.',
         'bulk-publish-queued-skipped' => 'Udgivelse er sat i kø. :count tilbagetrukne pas blev sprunget over.',
+        'publish-none-publishable'    => 'Intet blev sat i kø: :count tilbagetrukne pas skal genindsættes før udgivelse.',
         'publish-withdrawn'           => 'Dette pas er trukket tilbage. Gendan det, før du udgiver et sprog.',
         'mass-withdraw-queued'        => 'Tilbagetrækning er sat i kø for :count pas.',
         'mass-reinstate-queued'       => 'Gendannelse er sat i kø for :count pas.',

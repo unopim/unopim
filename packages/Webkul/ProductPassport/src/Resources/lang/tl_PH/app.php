@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Naka-queue na ang paglalathala ng pasaporte.',
         'bulk-publish-queued'         => 'Naka-queue na ang pag-publish ng mga napiling passport.',
         'bulk-publish-queued-skipped' => 'Nakapila na ang paglalathala. Nilaktawan ang :count na nabawing pasaporte.',
+        'publish-none-publishable'    => 'Walang naipila: kailangan munang ibalik ang :count na nabawing pasaporte bago ilathala.',
         'publish-withdrawn'           => 'Nabawi ang pasaporteng ito. Ibalik ito bago maglathala ng isang lokal.',
         'mass-withdraw-queued'        => 'Nakapila ang pagbawi para sa :count na pasaporte.',
         'mass-reinstate-queued'       => 'Nakapila ang pagbabalik para sa :count na pasaporte.',

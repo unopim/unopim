@@ -89,6 +89,7 @@ return [
         'publish-queued'              => '여권 게시가 대기열에 추가되었습니다.',
         'bulk-publish-queued'         => '선택한 여권 게시가 대기열에 추가되었습니다.',
         'bulk-publish-queued-skipped' => '여권 게시가 대기열에 추가되었습니다. 회수된 여권 :count건은 건너뛰었습니다.',
+        'publish-none-publishable'    => '대기열에 추가된 항목이 없습니다. 게시하려면 회수된 여권 :count건을 먼저 복원하세요.',
         'publish-withdrawn'           => '이 여권은 회수되었습니다. 로케일을 게시하기 전에 복원하세요.',
         'mass-withdraw-queued'        => ':count건의 여권 회수를 대기열에 추가했습니다.',
         'mass-reinstate-queued'       => ':count건의 여권 복원을 대기열에 추가했습니다.',

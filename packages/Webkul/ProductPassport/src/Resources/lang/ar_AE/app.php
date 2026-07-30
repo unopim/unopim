@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'تمت جدولة نشر الجواز.',
         'bulk-publish-queued'         => 'تمت جدولة نشر جوازات المنتجات المحددة.',
         'bulk-publish-queued-skipped' => 'تمت جدولة نشر الجوازات. تم تخطي :count جواز مسحوب.',
+        'publish-none-publishable'    => 'لم تتم جدولة أي نشر: يجب إعادة تفعيل :count جواز مسحوب قبل النشر.',
         'publish-withdrawn'           => 'هذا الجواز مسحوب. أعده قبل نشر لغة.',
         'mass-withdraw-queued'        => 'تمت جدولة سحب :count جواز.',
         'mass-reinstate-queued'       => 'تمت جدولة إعادة :count جواز.',

@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Passport publishing has been queued.',
         'bulk-publish-queued'         => 'Passport publishing has been queued for the selected passports.',
         'bulk-publish-queued-skipped' => 'Passport publishing has been queued. :count withdrawn passport(s) were skipped.',
+        'publish-none-publishable'    => 'Nothing was queued: :count withdrawn passport(s) must be reinstated before publishing.',
         'publish-withdrawn'           => 'This passport is withdrawn. Reinstate it before publishing a locale.',
         'mass-withdraw-queued'        => 'Withdrawal queued for :count passport(s).',
         'mass-reinstate-queued'       => 'Reinstatement queued for :count passport(s).',

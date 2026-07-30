@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Publicatie van het paspoort is in de wachtrij geplaatst.',
         'bulk-publish-queued'         => 'Het publiceren van de geselecteerde paspoorten is in de wachtrij geplaatst.',
         'bulk-publish-queued-skipped' => 'Publicatie staat in de wachtrij. :count ingetrokken paspoorten zijn overgeslagen.',
+        'publish-none-publishable'    => 'Er is niets in de wachtrij gezet: :count ingetrokken paspoorten moeten eerst worden hersteld.',
         'publish-withdrawn'           => 'Dit paspoort is ingetrokken. Herstel het voordat u een taal publiceert.',
         'mass-withdraw-queued'        => 'Intrekken staat in de wachtrij voor :count paspoorten.',
         'mass-reinstate-queued'       => 'Herstellen staat in de wachtrij voor :count paspoorten.',

@@ -142,6 +142,9 @@ class PublicationController extends Controller
     /**
      * Publish every locale of the requested channel for each selected product,
      * one job dispatch per product (each job loops the channel's locales).
+     *
+     * A product whose passport is withdrawn or redacted is left out: publishing
+     * it would be refused downstream, so reporting it as queued would be a lie.
      */
     public function massPublish(MassPublishPassportRequest $request): JsonResponse
     {
@@ -166,14 +169,32 @@ class PublicationController extends Controller
 
         $productIds = $request->collect('indices')->map(fn ($id): int => (int) $id);
 
+        $offline = Publication::query()
+            ->whereIn('product_id', $productIds)
+            ->where('channel_id', $channel->id)
+            ->where('type', 'dpp')
+            ->whereNotIn('status', PublicationStatus::publishable())
+            ->pluck('product_id')
+            ->map(fn ($id): int => (int) $id);
+
+        $publishable = $productIds->reject(fn (int $productId): bool => $offline->contains($productId))->values();
+
+        if ($publishable->isEmpty()) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.publish-none-publishable', ['count' => $offline->count()]),
+            ], 422);
+        }
+
         $adminId = auth()->guard('admin')->id();
 
-        foreach ($productIds as $productId) {
+        foreach ($publishable as $productId) {
             PublishPassportForProductChannelJob::dispatch($productId, $channel->id, 'dpp', $localeIds, $adminId);
         }
 
         return new JsonResponse([
-            'message' => trans('passport::app.publications.mass-publish.queued', ['count' => $productIds->count()]),
+            'message' => $offline->isEmpty()
+                ? trans('passport::app.publications.mass-publish.queued', ['count' => $publishable->count()])
+                : trans('passport::app.publications.bulk-publish-queued-skipped', ['count' => $offline->count()]),
         ]);
     }
 
@@ -181,6 +202,9 @@ class PublicationController extends Controller
      * Publish the selected passport rows across each publication's own channel
      * locales. Fans out through a chunking orchestrator job so the request
      * returns immediately regardless of how many rows were selected.
+     *
+     * Answers 422 when nothing in the selection can publish, so an all-withdrawn
+     * selection reads as the no-op it is rather than a queued success.
      */
     public function bulkPublish(BulkPublishPassportRequest $request): JsonResponse
     {
@@ -190,12 +214,18 @@ class PublicationController extends Controller
 
         $publicationIds = $request->collect('indices')->map(fn ($id): int => (int) $id)->all();
 
-        BulkPublishPassportsJob::dispatch($publicationIds, auth()->guard('admin')->id());
-
         $skipped = Publication::query()
             ->whereIn('id', $publicationIds)
             ->whereNotIn('status', PublicationStatus::publishable())
             ->count();
+
+        if ($skipped === count($publicationIds)) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.publish-none-publishable', ['count' => $skipped]),
+            ], 422);
+        }
+
+        BulkPublishPassportsJob::dispatch($publicationIds, auth()->guard('admin')->id());
 
         return new JsonResponse([
             'message' => $skipped === 0

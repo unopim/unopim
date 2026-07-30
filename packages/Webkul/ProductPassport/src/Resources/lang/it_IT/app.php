@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'La pubblicazione del passaporto è stata messa in coda.',
         'bulk-publish-queued'         => 'La pubblicazione dei passaporti selezionati è stata messa in coda.',
         'bulk-publish-queued-skipped' => 'Pubblicazione in coda. :count passaporti ritirati sono stati saltati.',
+        'publish-none-publishable'    => 'Nulla è stato messo in coda: :count passaporti ritirati devono essere ripristinati prima della pubblicazione.',
         'publish-withdrawn'           => 'Questo passaporto è ritirato. Ripristinalo prima di pubblicare una lingua.',
         'mass-withdraw-queued'        => 'Ritiro in coda per :count passaporti.',
         'mass-reinstate-queued'       => 'Ripristino in coda per :count passaporti.',

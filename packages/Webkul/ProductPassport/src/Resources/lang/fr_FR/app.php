@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'La publication du passeport a été mise en file d\'attente.',
         'bulk-publish-queued'         => 'La publication des passeports sélectionnés a été mise en file d\'attente.',
         'bulk-publish-queued-skipped' => 'Publication mise en file d’attente. :count passeports retirés ont été ignorés.',
+        'publish-none-publishable'    => 'Rien n’a été mis en file d’attente : :count passeports retirés doivent être rétablis avant la publication.',
         'publish-withdrawn'           => 'Ce passeport est retiré. Rétablissez-le avant de publier une langue.',
         'mass-withdraw-queued'        => 'Retrait mis en file d’attente pour :count passeports.',
         'mass-reinstate-queued'       => 'Rétablissement mis en file d’attente pour :count passeports.',

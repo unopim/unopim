@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Pasaport yayını sıraya alındı.',
         'bulk-publish-queued'         => 'Seçili pasaportların yayımlanması kuyruğa alındı.',
         'bulk-publish-queued-skipped' => 'Pasaport yayımlama kuyruğa alındı. :count geri çekilmiş pasaport atlandı.',
+        'publish-none-publishable'    => 'Hiçbir şey kuyruğa alınmadı: yayımlamadan önce :count geri çekilmiş pasaport eski durumuna getirilmelidir.',
         'publish-withdrawn'           => 'Bu pasaport geri çekilmiş. Bir yerel ayarı yayımlamadan önce geri alın.',
         'mass-withdraw-queued'        => ':count pasaport için geri çekme kuyruğa alındı.',
         'mass-reinstate-queued'       => ':count pasaport için geri alma kuyruğa alındı.',

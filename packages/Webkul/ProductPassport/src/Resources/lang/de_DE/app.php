@@ -89,6 +89,7 @@ return [
         'publish-queued'              => 'Die Veröffentlichung des Passes wurde eingeplant.',
         'bulk-publish-queued'         => 'Die Veröffentlichung der ausgewählten Pässe wurde in die Warteschlange gestellt.',
         'bulk-publish-queued-skipped' => 'Veröffentlichung eingeplant. :count zurückgezogene Pässe wurden übersprungen.',
+        'publish-none-publishable'    => 'Nichts eingeplant: :count zurückgezogene Pässe müssen vor der Veröffentlichung wiederhergestellt werden.',
         'publish-withdrawn'           => 'Dieser Pass ist zurückgezogen. Stellen Sie ihn wieder her, bevor Sie eine Sprache veröffentlichen.',
         'mass-withdraw-queued'        => 'Zurückziehen für :count Pässe eingeplant.',
         'mass-reinstate-queued'       => 'Wiederherstellung für :count Pässe eingeplant.',

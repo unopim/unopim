@@ -89,6 +89,7 @@ return [
         'publish-queued'              => '护照发布已排队。',
         'bulk-publish-queued'         => '所选护照的发布已加入队列。',
         'bulk-publish-queued-skipped' => '护照发布已加入队列。已跳过 :count 个已撤回的护照。',
+        'publish-none-publishable'    => '没有任何内容加入队列：发布前需先恢复 :count 个已撤回的护照。',
         'publish-withdrawn'           => '此护照已撤回。请先恢复后再发布某个语言环境。',
         'mass-withdraw-queued'        => '已将 :count 个护照的撤回加入队列。',
         'mass-reinstate-queued'       => '已将 :count 个护照的恢复加入队列。',
