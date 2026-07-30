@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\Catalog;
 
+use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -766,18 +767,29 @@ class AttributeFamilyController extends Controller
      * Reject a save that drops an attribute one of the family's variant structures
      * still uses as an axis, which would leave the structure selectable on the
      * configurable product form with an axis the family no longer has.
+     *
+     * The family membership check stays an anti-join: a large family holds more
+     * attributes than a driver accepts bound parameters.
      */
     protected function guardVariantStructureAxes(AttributeFamily $attributeFamily): void
     {
-        $familyAttributeIds = $attributeFamily->customAttributes()->pluck('attributes.id')->all();
-
         $missing = VariantStructureAxis::query()
             ->with('attribute')
             ->whereIn(
                 'variant_structure_id',
                 VariantStructure::query()->where('attribute_family_id', $attributeFamily->id)->select('id')
             )
-            ->whereNotIn('attribute_id', $familyAttributeIds)
+            ->whereNotExists(fn (QueryBuilder $query) => $query
+                ->from('attribute_group_mappings')
+                ->join(
+                    'attribute_family_group_mappings',
+                    'attribute_group_mappings.attribute_family_group_id',
+                    '=',
+                    'attribute_family_group_mappings.id'
+                )
+                ->whereColumn('attribute_group_mappings.attribute_id', 'variant_structure_axes.attribute_id')
+                ->where('attribute_family_group_mappings.attribute_family_id', $attributeFamily->id)
+            )
             ->get()
             ->map(fn (VariantStructureAxis $axis): ?string => $axis->attribute?->code)
             ->filter()

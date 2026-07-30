@@ -1,6 +1,8 @@
 <?php
 
+use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -91,4 +93,38 @@ it('saves a family whose variant axis attributes are all still assigned', functi
         route('admin.catalog.families.update', $family->id),
         familyUpdatePayload($family, [$axis->id])
     )->assertSessionHasNoErrors();
+});
+
+it('checks the variant axis guard without binding one parameter per family attribute', function () {
+    $this->loginAsAdmin();
+
+    [$family, $axis] = familyWithVariantAxis();
+
+    $factory = AttributeFamily::factory();
+
+    $extraIds = [];
+
+    foreach (range(1, 30) as $index) {
+        $attribute = Attribute::factory()->create(['code' => 'extra_'.$index.'_'.Str::random(6)]);
+
+        $factory->linkAttributesToFamily($family->fresh(), $attribute);
+
+        $extraIds[] = $attribute->id;
+    }
+
+    $bindingCounts = [];
+
+    DB::listen(function (QueryExecuted $query) use (&$bindingCounts): void {
+        if (str_contains($query->sql, 'variant_structure_axes')) {
+            $bindingCounts[] = count($query->bindings);
+        }
+    });
+
+    $this->put(
+        route('admin.catalog.families.update', $family->id),
+        familyUpdatePayload($family, [$axis->id, ...$extraIds])
+    )->assertSessionHasNoErrors();
+
+    expect($bindingCounts)->not->toBeEmpty()
+        ->and(max($bindingCounts))->toBeLessThan(10);
 });
