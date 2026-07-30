@@ -142,6 +142,7 @@
                                 v-bind="{animation: 200}"
                                 :list="sections"
                                 item-key="uid"
+                                @end="touch('sections')"
                             >
                                 <template #item="{ element, index }">
                                     <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
@@ -167,7 +168,7 @@
                                             <span
                                                 class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                                                 :title="lang.remove"
-                                                @click="sections.splice(index, 1)"
+                                                @click="sections.splice(index, 1); touch('sections')"
                                             ></span>
                                         </x-admin::table.td>
 
@@ -249,6 +250,7 @@
                                 v-bind="{animation: 200}"
                                 :list="fields"
                                 item-key="uid"
+                                @end="touch('fields')"
                             >
                                 <template #item="{ element, index }">
                                     <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
@@ -297,7 +299,7 @@
                                             <span
                                                 class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
                                                 :title="lang.remove"
-                                                @click="fields.splice(index, 1)"
+                                                @click="fields.splice(index, 1); touch('fields')"
                                             ></span>
                                         </x-admin::table.td>
 
@@ -749,6 +751,23 @@
             },
 
             methods: {
+                /**
+                 * Row inputs are hidden and written by Vue, so they raise no input
+                 * event of their own; the tracker is told which field group changed.
+                 */
+                touch(group) {
+                    this.$nextTick(() => {
+                        this.$el?.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                            detail: { name: group },
+                            bubbles: true,
+                        }));
+                    });
+                },
+
+                touchFamilies() {
+                    this.touch('families');
+                },
+
                 localeMap(saved, shape) {
                     return this.locales.reduce((carry, locale) => {
                         carry[locale.code] = { ...shape, ...(saved?.[locale.code] ?? {}) };
@@ -801,6 +820,8 @@
                     this.familyIds = (Array.isArray(selected) ? selected : [selected])
                         .filter(Boolean)
                         .map((option) => String(option.id ?? option));
+
+                    this.touchFamilies();
                 },
 
                 onAttributeSelected(event) {
@@ -845,6 +866,8 @@
                     this.draftSection = null;
                     this.editingSection = null;
 
+                    this.touch('sections');
+
                     this.$refs.sectionModal.toggle();
                 },
 
@@ -881,6 +904,8 @@
 
                     this.draftField = null;
                     this.editingField = null;
+
+                    this.touch('fields');
 
                     this.$refs.fieldModal.toggle();
                 },
