@@ -128,6 +128,7 @@ return [
             'withdraw' => '撤回',
         ],
         'templates' => [
+            'index'  => 'テンプレート',
             'view'   => 'テンプレートの表示',
             'create' => 'テンプレートの作成',
             'edit'   => 'テンプレートの編集',

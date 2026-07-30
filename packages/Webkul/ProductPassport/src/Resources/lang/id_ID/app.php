@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Tarik Kembali',
         ],
         'templates' => [
+            'index'  => 'Templat',
             'view'   => 'Lihat Templat',
             'create' => 'Buat Templat',
             'edit'   => 'Edit Templat',

@@ -57,6 +57,17 @@ return [
         'route' => 'admin.catalog.passports.mass_transition',
         'sort'  => 3,
     ], [
+        /**
+         * The group node for `catalog.passport.template.*`. Without an entry of
+         * its own the tree seeds it headless, and Core::sortItems() drops every
+         * headless node — taking the four template permissions with it, so they
+         * never reach the role form.
+         */
+        'key'   => 'catalog.passport.template',
+        'name'  => 'passport::app.acl.templates.index',
+        'route' => null,
+        'sort'  => 4,
+    ], [
         'key'   => 'catalog.passport.template.view',
         'name'  => 'passport::app.acl.templates.view',
         'route' => 'admin.catalog.passports.templates.index',

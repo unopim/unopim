@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Retirar',
         ],
         'templates' => [
+            'index'  => 'Modelos',
             'view'   => 'Visualizar modelos',
             'create' => 'Criar modelo',
             'edit'   => 'Editar modelo',

@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Ritira',
         ],
         'templates' => [
+            'index'  => 'Modelli',
             'view'   => 'Visualizza template',
             'create' => 'Crea template',
             'edit'   => 'Modifica template',

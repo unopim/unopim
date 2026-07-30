@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Peruuta',
         ],
         'templates' => [
+            'index'  => 'Mallit',
             'view'   => 'Näytä mallipohjat',
             'create' => 'Luo mallipohja',
             'edit'   => 'Muokkaa mallipohjaa',

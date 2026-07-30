@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Intrekken',
         ],
         'templates' => [
+            'index'  => 'Sjablonen',
             'view'   => 'Sjablonen bekijken',
             'create' => 'Sjabloon aanmaken',
             'edit'   => 'Sjabloon bewerken',

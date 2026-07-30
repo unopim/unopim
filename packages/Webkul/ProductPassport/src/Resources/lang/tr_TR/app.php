@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Geri Çek',
         ],
         'templates' => [
+            'index'  => 'Şablonlar',
             'view'   => 'Şablonları Görüntüle',
             'create' => 'Şablon Oluştur',
             'edit'   => 'Şablonu Düzenle',

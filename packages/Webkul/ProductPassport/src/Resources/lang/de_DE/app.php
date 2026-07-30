@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Zurückziehen',
         ],
         'templates' => [
+            'index'  => 'Vorlagen',
             'view'   => 'Vorlagen anzeigen',
             'create' => 'Vorlage erstellen',
             'edit'   => 'Vorlage bearbeiten',

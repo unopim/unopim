@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Trekk tilbake',
         ],
         'templates' => [
+            'index'  => 'Maler',
             'view'   => 'Vis maler',
             'create' => 'Opprett mal',
             'edit'   => 'Rediger mal',

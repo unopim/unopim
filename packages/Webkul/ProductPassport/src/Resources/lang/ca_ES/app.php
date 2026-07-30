@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Retirar',
         ],
         'templates' => [
+            'index'  => 'Plantilles',
             'view'   => 'Veure plantilles',
             'create' => 'Crear plantilla',
             'edit'   => 'Editar plantilla',

@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Retrage',
         ],
         'templates' => [
+            'index'  => 'Șabloane',
             'view'   => 'Vizualizare șabloane',
             'create' => 'Creare șablon',
             'edit'   => 'Editare șablon',

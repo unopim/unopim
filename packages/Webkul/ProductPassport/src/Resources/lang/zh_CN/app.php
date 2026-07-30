@@ -128,6 +128,7 @@ return [
             'withdraw' => '撤回',
         ],
         'templates' => [
+            'index'  => '模板',
             'view'   => '查看模板',
             'create' => '创建模板',
             'edit'   => '编辑模板',

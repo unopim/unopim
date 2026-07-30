@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Træk tilbage',
         ],
         'templates' => [
+            'index'  => 'Skabeloner',
             'view'   => 'Vis skabeloner',
             'create' => 'Opret skabelon',
             'edit'   => 'Redigér skabelon',

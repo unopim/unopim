@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Wycofaj',
         ],
         'templates' => [
+            'index'  => 'Szablony',
             'view'   => 'Podgląd szablonów',
             'create' => 'Tworzenie szablonu',
             'edit'   => 'Edycja szablonu',

@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Bawiin',
         ],
         'templates' => [
+            'index'  => 'Mga Template',
             'view'   => 'Tingnan ang mga Template',
             'create' => 'Gumawa ng Template',
             'edit'   => 'I-edit ang Template',

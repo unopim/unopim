@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Thu hồi',
         ],
         'templates' => [
+            'index'  => 'Mẫu',
             'view'   => 'Xem mẫu',
             'create' => 'Tạo mẫu',
             'edit'   => 'Chỉnh sửa mẫu',

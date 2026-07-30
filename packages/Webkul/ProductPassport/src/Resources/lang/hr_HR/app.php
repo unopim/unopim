@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Povuci',
         ],
         'templates' => [
+            'index'  => 'Predlošci',
             'view'   => 'Prikaži predloške',
             'create' => 'Stvori predložak',
             'edit'   => 'Uredi predložak',

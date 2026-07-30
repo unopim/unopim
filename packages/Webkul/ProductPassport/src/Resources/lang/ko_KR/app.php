@@ -128,6 +128,7 @@ return [
             'withdraw' => '철회',
         ],
         'templates' => [
+            'index'  => '템플릿',
             'view'   => '템플릿 보기',
             'create' => '템플릿 생성',
             'edit'   => '템플릿 편집',

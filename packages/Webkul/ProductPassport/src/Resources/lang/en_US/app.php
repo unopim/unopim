@@ -135,6 +135,8 @@ return [
         ],
 
         'templates' => [
+
+            'index'  => 'Templates',
             'view'   => 'View Templates',
             'create' => 'Create Template',
             'edit'   => 'Edit Template',

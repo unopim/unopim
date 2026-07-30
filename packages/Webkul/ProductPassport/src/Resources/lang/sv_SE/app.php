@@ -128,6 +128,7 @@ return [
             'withdraw' => 'Dra tillbaka',
         ],
         'templates' => [
+            'index'  => 'Mallar',
             'view'   => 'Visa mallar',
             'create' => 'Skapa mall',
             'edit'   => 'Redigera mall',
