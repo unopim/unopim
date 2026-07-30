@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Webkul\Admin\Http\Controllers\Settings\DataTransfer\ImportController;
 
 function uploadLimitsJpeg(): string
 {
@@ -82,12 +83,12 @@ it('still rejects an archive that expands far beyond its compressed size', funct
 });
 
 it('caps the upload rule at what the server actually accepts', function () {
-    $controller = new ReflectionClass(\Webkul\Admin\Http\Controllers\Settings\DataTransfer\ImportController::class);
+    $controller = new ReflectionClass(ImportController::class);
 
     $method = $controller->getMethod('maxUploadKilobytes');
     $method->setAccessible(true);
 
-    $instance = app(\Webkul\Admin\Http\Controllers\Settings\DataTransfer\ImportController::class);
+    $instance = app(ImportController::class);
 
     $phpLimitKb = intdiv(min(
         (int) (ini_get('upload_max_filesize')[0] ?? 0) * 1024 * 1024,
