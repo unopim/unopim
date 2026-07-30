@@ -377,6 +377,11 @@
 
                                             <div class="grid grid-cols-2 gap-x-6 gap-y-1 px-6 py-6 border-b border-gray-200 max-sm:grid-cols-1">
                                                 <!-- Database Connection-->
+                                                @php
+                                                    $currentDbConnection = in_array(config('database.default'), ['mysql', 'pgsql'], true)
+                                                        ? config('database.default')
+                                                        : 'mysql';
+                                                @endphp
                                                 <x-installer::form.control-group class="mb-2.5 col-span-2 max-sm:col-span-1">
                                                     <x-installer::form.control-group.label class="required">
                                                         @lang('installer::app.installer.index.environment-configuration.database-connection')
@@ -385,19 +390,22 @@
                                                     <x-installer::form.control-group.control
                                                         type="select"
                                                         name="db_connection"
-                                                        ::value="envData.db_connection ?? 'mysql'"
+                                                        ::value="envData.db_connection ?? '{{ $currentDbConnection }}'"
                                                         rules="required"
                                                         :label="trans('installer::app.installer.index.environment-configuration.database-connection')"
                                                         :placeholder="trans('installer::app.installer.index.environment-configuration.database-connection')"
                                                     >
                                                         <option
                                                             value="mysql"
-                                                            selected
+                                                            {{ $currentDbConnection === 'mysql' ? 'selected' : '' }}
                                                         >
                                                             @lang('installer::app.installer.index.environment-configuration.mysql')
                                                         </option>
 
-                                                        <option value="pgsql">
+                                                        <option
+                                                            value="pgsql"
+                                                            {{ $currentDbConnection === 'pgsql' ? 'selected' : '' }}
+                                                        >
                                                             @lang('installer::app.installer.index.environment-configuration.pgsql')
                                                         </option>
                                                     </x-installer::form.control-group.control>
