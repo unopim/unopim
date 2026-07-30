@@ -121,6 +121,17 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::get('track/archive/download/{batch_id}', 'downloadArchive')->name('admin.settings.data_transfer.tracker.archive.download');
             Route::get('track/download-log/{track_id}', 'downloadLogFile')->name('admin.settings.data_transfer.tracker.log.download');
         });
+
+        /**
+         * Job control routes. The `imports.pause|resume|cancel` names remain registered for
+         * backward compatibility and are dropped in the next major version.
+         */
+        Route::controller(ImportController::class)->prefix('jobs')->group(function () {
+            Route::post('pause/{id}', 'pause')->name('admin.settings.data_transfer.jobs.pause');
+            Route::post('resume/{id}', 'resume')->name('admin.settings.data_transfer.jobs.resume');
+            Route::post('cancel/{id}', 'cancel')->name('admin.settings.data_transfer.jobs.cancel');
+            Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.jobs.stats');
+        });
         /**
          * Import routes.
          */

@@ -49,6 +49,18 @@ enum JobType: string
         ];
     }
 
+    /**
+     * System jobs are created by the application itself, so they have no editable job instance.
+     */
+    public function editRouteName(): ?string
+    {
+        return match ($this) {
+            self::IMPORT => 'admin.settings.data_transfer.imports.edit',
+            self::EXPORT => 'admin.settings.data_transfer.exports.edit',
+            self::SYSTEM => null,
+        };
+    }
+
     public function executePermission(): string
     {
         return $this->isExport()

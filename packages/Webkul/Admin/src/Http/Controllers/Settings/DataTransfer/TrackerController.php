@@ -80,7 +80,11 @@ class TrackerController extends Controller
 
         $messages = $jobType->trackerMessages();
 
-        return view('admin::settings.data-transfer.tracker.import', compact(
+        $view = $jobType->isExport()
+            ? 'admin::settings.data-transfer.tracker.export'
+            : 'admin::settings.data-transfer.tracker.import';
+
+        return view($view, compact(
             'import',
             'isValid',
             'stats',
