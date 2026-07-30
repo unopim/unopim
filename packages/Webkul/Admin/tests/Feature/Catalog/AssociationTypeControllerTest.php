@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Routing\Exception\RouteNotFoundException;
+use Webkul\Admin\Http\Requests\AssociationTypeRequest;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Models\AssociationType;
 use Webkul\Product\Models\AssociationTypeField;
@@ -614,4 +615,31 @@ it('searches association types case-insensitively by name and code', function ()
     $byCode = $this->json('GET', route('admin.catalog.association_types.search', ['query' => 'ZZCASEHIT']))->assertOk();
 
     expect(collect($byCode->json('data'))->pluck('code'))->toContain($match->code);
+});
+
+it('updates an association type with untranslated locale labels and never leaks the raw locale key', function () {
+    $this->loginAsAdmin();
+
+    $code = 'locale_label_'.uniqid();
+
+    $this->post(route('admin.catalog.association_types.store'), ['code' => $code])->assertRedirect();
+
+    $associationType = AssociationType::where('code', $code)->firstOrFail();
+
+    $payload = ['position' => 1, 'status' => 1];
+
+    foreach (app(LocaleRepository::class)->getActiveLocales() as $locale) {
+        $payload[$locale->code] = ['name' => ''];
+    }
+
+    $this->put(route('admin.catalog.association_types.update', $associationType->id), $payload)
+        ->assertRedirect()
+        ->assertSessionHasNoErrors();
+
+    $attributes = app(AssociationTypeRequest::class)->attributes();
+
+    foreach (app(LocaleRepository::class)->getActiveLocales() as $locale) {
+        expect($attributes)->toHaveKey($locale->code.'.name');
+        expect($attributes[$locale->code.'.name'])->toContain($locale->code);
+    }
 });
