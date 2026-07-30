@@ -5,6 +5,7 @@ namespace App\Providers;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\ParallelTesting;
@@ -68,6 +69,12 @@ class AppServiceProvider extends ServiceProvider
          * the worker database. Forget them after the switch so the first
          * core() call re-reads the per-worker database.
          *
+         * The Prettus repository cache (enabled for the Channel, Locale and
+         * Currency repositories) is primed during that same boot, so a fresh
+         * Core instance would still be handed the main-database channel — with
+         * its locales relation already loaded — straight from the cache. Flush
+         * it alongside the memoized singletons.
+         *
          * Runtime storage_path() writers (the installer's `storage/installed`
          * marker, job logs, AI temp files) are also swapped to a per-worker
          * directory — those files are process-shared state that concurrent
@@ -78,6 +85,8 @@ class AppServiceProvider extends ServiceProvider
             $this->app->forgetInstance('core');
             $this->app->forgetInstance(CatalogScope::class);
             Facade::clearResolvedInstance('core');
+
+            Cache::flush();
 
             $workerStorage = $this->app->basePath('storage/parallel/'.$token);
 

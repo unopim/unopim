@@ -2,6 +2,7 @@
 
 namespace Webkul\Resource\Tests\Fixtures;
 
+use Illuminate\Support\Facades\ParallelTesting;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
@@ -23,16 +24,23 @@ class TestServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (! Schema::hasTable('wk_resource_kit_items')) {
-            (require __DIR__.'/migrations/2026_07_15_000001_create_resource_kit_items_table.php')->up();
-        }
+        $this->ensureFixtureTable();
 
-        // Backfill `label` for test databases created before it was added to the CREATE above.
-        if (! Schema::hasColumn('wk_resource_kit_items', 'label')) {
-            Schema::table('wk_resource_kit_items', function ($table) {
-                $table->string('label')->nullable();
+        /*
+         * Under `--parallel`, boot runs against the main database before the
+         * framework switches the connection to the per-worker database — so the
+         * DDL above lands in the wrong schema. Re-run it once the switch has
+         * happened. setUpTestCase callbacks fire in registration order, and this
+         * provider boots before the framework's ParallelTestingServiceProvider —
+         * registering from `booted()` queues the callback after the framework's
+         * database swap, and it still runs before DatabaseTransactions opens its
+         * per-test transaction.
+         */
+        $this->app->booted(function (): void {
+            ParallelTesting::setUpTestCase(function (): void {
+                $this->ensureFixtureTable();
             });
-        }
+        });
 
         $this->app->make(ResourceRegistry::class)->register('resource-kit-items', TestResource::class);
 
@@ -40,5 +48,22 @@ class TestServiceProvider extends ServiceProvider
         Route::middleware('web')->group(function () {
             Resource::routes('resource-kit-items', TestController::class);
         });
+    }
+
+    /**
+     * Migrate the fixture table (once) and backfill `label` for test
+     * databases created before it was added to the CREATE.
+     */
+    protected function ensureFixtureTable(): void
+    {
+        if (! Schema::hasTable('wk_resource_kit_items')) {
+            (require __DIR__.'/migrations/2026_07_15_000001_create_resource_kit_items_table.php')->up();
+        }
+
+        if (! Schema::hasColumn('wk_resource_kit_items', 'label')) {
+            Schema::table('wk_resource_kit_items', function ($table) {
+                $table->string('label')->nullable();
+            });
+        }
     }
 }
