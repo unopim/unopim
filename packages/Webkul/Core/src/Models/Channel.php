@@ -51,12 +51,11 @@ class Channel extends TranslatableModel implements ChannelContract, HistoryContr
         'name',
     ];
 
-    /**
-     * Get the channel locales.
-     */
+    /** Ordered by code so `first()` is stable across engines and re-syncs. */
     public function locales(): BelongsToMany
     {
-        return $this->belongsToMany(LocaleProxy::modelClass(), 'channel_locales', 'channel_id');
+        return $this->belongsToMany(LocaleProxy::modelClass(), 'channel_locales', 'channel_id')
+            ->orderBy('code');
     }
 
     /**

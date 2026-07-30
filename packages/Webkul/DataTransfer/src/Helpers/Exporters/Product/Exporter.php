@@ -572,15 +572,13 @@ class Exporter extends AbstractExporter
         return $labels;
     }
 
+    /** Header labels follow the configured locale when the export covers it. */
     protected function headerLocale(): ?string
     {
-        foreach ($this->channelsAndLocales as $locales) {
-            if (! empty($locales)) {
-                return $locales[0];
-            }
-        }
+        $codes = collect($this->channelsAndLocales)->flatten()->unique();
+        $configured = config('app.locale');
 
-        return null;
+        return $codes->contains($configured) ? $configured : $codes->sort()->first();
     }
 
     protected function formatDateValue(mixed $value, string $format): mixed
