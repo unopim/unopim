@@ -72,6 +72,8 @@ async function pickInMultiselect(scope, hiddenName, optionLabel) {
     await option.click({ timeout: 8_000 }).catch(() => {});
 
     if (await hidden.inputValue().catch(() => '')) {
+      await (scope.keyboard ?? scope.page().keyboard).press('Escape');
+
       return;
     }
   }
