@@ -3,7 +3,6 @@
 return [
     'acl' => [
         'variant-structures' => 'بنى المتغيرات',
-        'ai-suggest'         => 'اقتراح الذكاء الاصطناعي',
     ],
 
     'datagrid' => [

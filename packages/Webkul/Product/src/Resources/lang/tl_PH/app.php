@@ -3,7 +3,6 @@
 return [
     'acl' => [
         'variant-structures' => 'Mga Istruktura ng Variant',
-        'ai-suggest'         => 'Mungkahi ng AI',
     ],
 
     'datagrid' => [
