@@ -1,0 +1,6 @@
+# Deprecated — kept so existing commands and docker-compose.override.yml files
+# keep working. The development stack now lives in compose.dev.yaml, and a
+# bare `docker compose up` resolves compose.yaml, which pulls published images
+# instead of building from this checkout.
+include:
+  - compose.dev.yaml

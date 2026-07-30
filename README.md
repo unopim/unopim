@@ -182,35 +182,38 @@ php artisan queue:work --queue=webhooks,system,default,completeness,publication
 
 Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/2.0.x/introduction/installation.html#install-using-docker) for advanced configuration.
 
+**Run UnoPim** — pre-built images, no checkout, no configuration:
+
 ```bash
-git clone https://github.com/unopim/unopim.git
-cd unopim
-cp .env.docker .env
+curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.yaml
 docker compose up -d
 ```
 
-Wait ~90 seconds for first-time migrations/seeding, then open `http://localhost:8000/admin` and log in with `admin@example.com` / `admin123`.
+Open `http://localhost:8000/admin` and log in with `admin@example.com` / `admin123`. Every setting has a working default; override any of them by exporting it or putting it in a `.env` file next to `compose.yaml`.
 
-The stack defaults to **Nginx + PHP-FPM** and **PostgreSQL 16**. Both are swappable.
-
-**Apache instead of Nginx:**
+**MySQL instead of PostgreSQL:**
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
-```
-
-**MySQL instead of PostgreSQL** — set these in `.env` before the first `up`; only the selected engine's container starts:
-
-```dotenv
-COMPOSE_PROFILES=mysql
-DB_CONNECTION=mysql
-DB_HOST=unopim-mysql
-DB_PORT=3306
+curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.mysql.yaml
+docker compose -f compose.yaml -f compose.mysql.yaml up -d
 ```
 
 > Switching engines on an existing install needs a fresh database — data is not migrated between them.
 
+**Develop UnoPim** — builds from your checkout and bind-mounts it, so edits are live:
+
+```bash
+git clone https://github.com/unopim/unopim.git
+cd unopim
+cp .env.docker .env
+docker compose -f compose.dev.yaml up -d
+```
+
+First boot installs Composer dependencies into `./vendor`. The stack defaults to **Nginx + PHP-FPM** and **PostgreSQL 16**; for Apache use `-f compose.dev.yaml -f compose.dev.apache.yaml`, and for MySQL set `COMPOSE_PROFILES=mysql`, `DB_CONNECTION=mysql`, `DB_HOST=unopim-mysql`, `DB_PORT=3306` in `.env` before the first `up`.
+
 > **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
+
+**Deploying?** Inject `APP_KEY` as a secret rather than letting the container generate one, and set `UNOPIM_SKIP_MIGRATIONS=true` where the schema is managed by the deployment itself — a Kubernetes Job or a release step — so scaled replicas do not race each other.
 
 ### ☁️ Cloud Hosting (Managed — no setup)
 <p>
