@@ -153,7 +153,7 @@ test.describe('UnoPim Attribute', () => {
     // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await clickSave(adminPage, 'Save Attribute');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
   });
 
   test('Create attribute with empty Type field', async ({ adminPage }) => {
@@ -165,7 +165,7 @@ test.describe('UnoPim Attribute', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
     await adminPage.locator('input[name$="[name]"]').first().fill('Product Name');
     await clickSave(adminPage, 'Save Attribute');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
   });
 
   test('Create attribute with empty Code and Type field', async ({ adminPage }) => {
@@ -176,8 +176,8 @@ test.describe('UnoPim Attribute', () => {
     // v-code derives the code from the name, so clear it to submit an empty code.
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await clickSave(adminPage, 'Save Attribute');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
   });
 
   test('Create attribute', { timeout: 60000 }, async ({ adminPage }) => {

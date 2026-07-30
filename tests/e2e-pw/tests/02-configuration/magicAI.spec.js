@@ -393,8 +393,8 @@ test('3.6 - Save System Prompt with empty fields shows validation', async ({ adm
   await adminPage.getByRole('button', { name: 'Create System Prompt' }).click();
   await expect(adminPage.locator('#app').getByText('Create New System Prompt')).toBeVisible();
   await clickSave(adminPage, 'Save');
-  await expect(adminPage.locator('#app').getByText('The Title field is required')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('The Tone field is required')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The Title field is required').first()).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The Tone field is required').first()).toBeVisible();
 });
 
 test('3.7 - Create and verify a System Prompt with all fields', async ({ adminPage }) => {
@@ -540,8 +540,8 @@ test('4.8 - Save Prompt with empty fields shows validation', async ({ adminPage 
   await adminPage.getByRole('button', { name: 'Create Prompt' }).click();
   await expect(adminPage.locator('#app').getByText('Create New Prompt')).toBeVisible();
   await clickSave(adminPage, 'Save Prompt');
-  await expect(adminPage.locator('#app').getByText('The title field is required')).toBeVisible();
-  await expect(adminPage.locator('#app').getByText('The Prompt field is required')).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The title field is required').first()).toBeVisible();
+  await expect(adminPage.locator('#app').getByText('The Prompt field is required').first()).toBeVisible();
 });
 
 test('4.9 - Create a Product Text Generation prompt and clean up', async ({ adminPage }) => {
