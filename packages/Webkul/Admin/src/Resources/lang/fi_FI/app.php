@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Ei muutoksia tallennettavaksi.',
+                'locked-cell'                  => 'Kuuluu toiselle tasolle – ei muokattavissa täällä.',
                 'invalid-datetime'             => 'Anna kelvollinen päivämäärä ja kellonaika.',
                 'resize-column'                => 'Vedä muuttaaksesi sarakkeen leveyttä',
                 'success'                      => 'Toiminto suoritettu onnistuneesti.',

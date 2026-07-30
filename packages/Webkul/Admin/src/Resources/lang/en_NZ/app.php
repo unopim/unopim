@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'No changes to save.',
+                'locked-cell'                  => 'Belongs to a different level — not editable here.',
                 'invalid-datetime'             => 'Please enter a valid date and time.',
                 'resize-column'                => 'Drag to resize column',
                 'success'                      => 'Job executed successfully.',

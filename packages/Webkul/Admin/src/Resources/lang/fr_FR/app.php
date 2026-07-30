@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Aucun changement à enregistrer.',
+                'locked-cell'                  => 'Appartient à un autre niveau – non modifiable ici.',
                 'invalid-datetime'             => 'Veuillez saisir une date et une heure valides.',
                 'resize-column'                => 'Faites glisser pour redimensionner la colonne',
                 'success'                      => 'Opération réussie.',

@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => '没有可保存的更改。',
+                'locked-cell'                  => '属于不同级别 – 此处不可编辑。',
                 'invalid-datetime'             => '请输入有效的日期和时间。',
                 'resize-column'                => '拖动以调整列宽',
                 'success'                      => '任务已成功执行。',

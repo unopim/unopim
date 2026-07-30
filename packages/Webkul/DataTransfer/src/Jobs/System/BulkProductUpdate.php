@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Jobs\System;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Contracts\Attribute;
@@ -12,6 +13,8 @@ use Webkul\DataTransfer\Helpers\AbstractJob;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\ProductValuesValidator;
 
@@ -47,9 +50,19 @@ class BulkProductUpdate implements ShouldQueue
     protected ProductValuesValidator $valuesValidator;
 
     /**
+     * Resolves a product's variant structure level and attribute ownership.
+     */
+    protected VariantStructurePlanner $variantStructurePlanner;
+
+    /**
      * Collected validation or process errors.
      */
     protected array $errors = [];
+
+    /**
+     * Non-fatal skip warnings (locked-cell writes rejected server-side).
+     */
+    protected array $warnings = [];
 
     /**
      * Cached attribute codes for product families.
@@ -80,6 +93,7 @@ class BulkProductUpdate implements ShouldQueue
         $this->jobTrackRepository = resolve(JobTrackRepository::class);
         $this->attributeService = resolve(AttributeService::class);
         $this->valuesValidator = resolve(ProductValuesValidator::class);
+        $this->variantStructurePlanner = resolve(VariantStructurePlanner::class);
 
         $jobInstance = $this->jobInstancesRepository->findOneByField('code', 'bulk_product_update')
             ?? $this->createDemoJobInstance();
@@ -98,18 +112,22 @@ class BulkProductUpdate implements ShouldQueue
         ]);
 
         $this->jobLogger = JobLogger::make($this->jobTrackInstance->id);
-        $productRepository = resolve(ProductRepository::class);
+
+        $products = resolve(ProductRepository::class)
+            ->with('parent.parent')
+            ->findWhereIn('id', array_keys($this->updateProducts))
+            ->keyBy('id');
 
         try {
             $this->started();
 
-            $formatted = $this->formatData($this->updateProducts, $productRepository);
+            $formatted = $this->formatData($this->updateProducts, $products);
 
             $this->validateData($formatted);
 
             $this->markValidated(count($this->updateProducts));
 
-            $this->saveProducts($this->updateProducts, $productRepository);
+            $this->saveProducts($this->updateProducts, $products);
 
             $this->markCompleted();
         } catch (\Exception $e) {
@@ -125,16 +143,16 @@ class BulkProductUpdate implements ShouldQueue
      * Save updated attribute values for products.
      *
      * @param  array  $updateProducts  Product updates keyed by product ID.
-     * @param  ProductRepository  $productRepository  Repository for fetching and saving products.
+     * @param  Collection<int, Product>  $products  Preloaded products, keyed by id, with their ancestor chain eager loaded.
      * @return void
      */
-    protected function saveProducts(array $updateProducts, ProductRepository $productRepository)
+    protected function saveProducts(array $updateProducts, $products)
     {
         $processed = 0;
         $productIds = [];
 
         foreach ($updateProducts as $productId => $attributeData) {
-            $product = $productRepository->find($productId);
+            $product = $products->get($productId);
             if (! $product) {
                 continue;
             }
@@ -146,7 +164,7 @@ class BulkProductUpdate implements ShouldQueue
 
             $values = $product->values;
 
-            $familyAttributeCodes = $this->getFamilyAttribute($productId, $productRepository, $product);
+            $familyAttributeCodes = $this->getFamilyAttribute($productId, $products);
 
             foreach ($attributeData as $attributeCode => $value) {
                 $attribute = $this->attributeService->findAttributeByCode($attributeCode);
@@ -156,6 +174,12 @@ class BulkProductUpdate implements ShouldQueue
                 }
 
                 if (! in_array($attributeCode, $familyAttributeCodes, true)) {
+                    continue;
+                }
+
+                if ($this->isBulkEditRestricted($product, $attributeCode)) {
+                    $this->warnings[] = "Product ID {$productId} - {$attributeCode}: not editable at this product's variant level, skipped.";
+
                     continue;
                 }
 
@@ -259,10 +283,10 @@ class BulkProductUpdate implements ShouldQueue
      * Format raw product update data into structured groups.
      *
      * @param  array  $updateProducts  Product updates keyed by product ID.
-     * @param  ProductRepository  $productRepository  Repository for fetching product details.
+     * @param  Collection<int, Product>  $products  Preloaded products, keyed by id, with their ancestor chain eager loaded.
      * @return array Formatted product data grouped by attribute type.
      */
-    protected function formatData(array $updateProducts, ProductRepository $productRepository): array
+    protected function formatData(array $updateProducts, $products): array
     {
         $formatted = [];
 
@@ -274,11 +298,17 @@ class BulkProductUpdate implements ShouldQueue
                 'channel_locale_specific' => [],
             ];
 
-            $familyAttributeCodes = $this->getFamilyAttribute($productId, $productRepository);
+            $product = $products->get($productId);
+
+            $familyAttributeCodes = $this->getFamilyAttribute($productId, $products);
 
             foreach ($attributes as $attributeCode => $attributeValue) {
 
                 if (! in_array($attributeCode, $familyAttributeCodes, true)) {
+                    continue;
+                }
+
+                if ($product && $this->isBulkEditRestricted($product, $attributeCode)) {
                     continue;
                 }
 
@@ -369,6 +399,7 @@ class BulkProductUpdate implements ShouldQueue
             'state'        => AbstractJob::STATE_COMPLETED,
             'summary'      => $summary,
             'completed_at' => now(),
+            'errors'       => $this->warnings,
         ], $this->jobTrackInstance->id);
 
         $this->jobLogger->info(trans('data_transfer::app.job.completed'));
@@ -412,12 +443,12 @@ class BulkProductUpdate implements ShouldQueue
      * Get attribute codes for the product's family.
      *
      * @param  int  $productId  ID of the product.
-     * @param  ProductRepository  $productRepository  Repository to fetch product details.
+     * @param  Collection<int, Product>  $products  Preloaded products, keyed by id.
      * @return array List of attribute codes belonging to the family.
      */
-    public function getFamilyAttribute(int $productId, ProductRepository $productRepository, $product = null)
+    public function getFamilyAttribute(int $productId, $products)
     {
-        $product = $product ?: $productRepository->find($productId);
+        $product = $products->get($productId);
 
         if (! $product) {
             return [];
@@ -435,6 +466,27 @@ class BulkProductUpdate implements ShouldQueue
         }
 
         return $this->familyAttributeCache[$familyId];
+    }
+
+    /**
+     * Whether a bulk-edited attribute is off limits for this product: not
+     * maintained at its own variant structure level, or an axis attribute
+     * (which defines the variant's identity and is never bulk-editable).
+     */
+    protected function isBulkEditRestricted(Product $product, string $attributeCode): bool
+    {
+        if ($attributeCode === 'sku') {
+            return false;
+        }
+
+        if (! $this->variantStructurePlanner->ownsAtOwnLevel($product, $attributeCode)) {
+            return true;
+        }
+
+        $structure = $this->variantStructurePlanner->structureFor($product);
+
+        return $structure
+            && in_array($attributeCode, $this->variantStructurePlanner->allAxisCodes($structure), true);
     }
 
     /**

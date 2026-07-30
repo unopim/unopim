@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Không có thay đổi nào để lưu.',
+                'locked-cell'                  => 'Thuộc cấp khác – không thể chỉnh sửa tại đây.',
                 'invalid-datetime'             => 'Vui lòng nhập ngày và giờ hợp lệ.',
                 'resize-column'                => 'Kéo để thay đổi kích thước cột',
                 'success'                      => 'Thực thi công việc thành công.',

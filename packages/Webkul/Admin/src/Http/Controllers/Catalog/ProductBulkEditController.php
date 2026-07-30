@@ -19,6 +19,8 @@ use Webkul\Core\Filesystem\FileStorer;
 use Webkul\DataTransfer\Jobs\System\BulkProductUpdate;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\API\UploadMediaValidator;
 
@@ -43,7 +45,8 @@ class ProductBulkEditController extends Controller
         protected AttributeRepository $attributeRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected UploadMediaValidator $mediaValidator,
-        protected FileStorer $fileStorer
+        protected FileStorer $fileStorer,
+        protected VariantStructurePlanner $variantStructurePlanner
     ) {}
 
     /**
@@ -96,12 +99,118 @@ class ProductBulkEditController extends Controller
 
         $columns = $this->attributeRepository->whereIn('id', $attributeIds)->with('translations')->get()->toArray();
 
-        $rows = $this->productRepository
-            ->select('id', 'values')
-            ->whereIn('id', $productIds)
-            ->get()->toArray();
+        $products = $this->productRepository
+            ->with('parent.parent')
+            ->findWhereIn('id', $productIds);
+
+        $attributeCodes = array_column($columns, 'code');
+
+        $rows = $products
+            ->map(fn (Product $product) => $this->buildBulkEditRow($product, $attributeCodes))
+            ->all();
 
         return view('admin::catalog.bulk-edit.index', compact('columns', 'rows'));
+    }
+
+    /**
+     * A product's own values, the values it inherits from its real
+     * ancestors (for locked cells — same owner-resolution as the
+     * single-product edit page's {@see ProductController::buildVariantFieldLocks()}),
+     * and each selected attribute's state at this product's own structure level:
+     * - "own": editable here.
+     * - "inherited": owned by an ancestor; locked, shows the owner's value.
+     * - "na": owned by a level below this product; locked, no value to show.
+     */
+    protected function buildBulkEditRow(Product $product, array $attributeCodes): array
+    {
+        $structure = $this->variantStructurePlanner->structureFor($product);
+
+        $configurableAncestor = $product;
+
+        while ($configurableAncestor && $configurableAncestor->type !== 'configurable') {
+            $configurableAncestor = $configurableAncestor->parent;
+        }
+
+        $groupAncestor = $product->type === 'simple' && $product->parent?->type === 'variant_group'
+            ? $product->parent
+            : null;
+
+        $ownerByLevel = [
+            'common'     => $configurableAncestor,
+            'sub_parent' => $groupAncestor,
+        ];
+
+        $locks = [];
+        $inheritedValues = [
+            'common'                  => [],
+            'channel_specific'        => [],
+            'locale_specific'         => [],
+            'channel_locale_specific' => [],
+        ];
+
+        foreach ($attributeCodes as $code) {
+            if ($code === 'sku' || $this->variantStructurePlanner->ownsAtOwnLevel($product, $code)) {
+                $locks[$code] = 'own';
+
+                continue;
+            }
+
+            if (! $this->variantStructurePlanner->ownsAttribute($product, $code)) {
+                $locks[$code] = 'na';
+
+                continue;
+            }
+
+            $locks[$code] = 'inherited';
+
+            $placement = $structure ? $this->variantStructurePlanner->placementOf($structure, $code) : 'common';
+            $owner = $ownerByLevel[$placement] ?? null;
+
+            if ($owner) {
+                $this->copyAttributeValue($owner->values ?? [], $inheritedValues, $code);
+            }
+        }
+
+        return [
+            'id'                   => $product->id,
+            'type'                 => $product->type,
+            'parent_id'            => $product->parent_id,
+            'variant_structure_id' => $product->variant_structure_id,
+            'values'               => $product->values,
+            'inheritedValues'      => $inheritedValues,
+            'locks'                => $locks,
+        ];
+    }
+
+    /**
+     * Copy one attribute's value, across every scope bucket it appears in,
+     * from an owner's raw values into the row's inherited-values scaffold.
+     */
+    protected function copyAttributeValue(array $ownerValues, array &$inheritedValues, string $code): void
+    {
+        if (array_key_exists($code, $ownerValues['common'] ?? [])) {
+            $inheritedValues['common'][$code] = $ownerValues['common'][$code];
+        }
+
+        foreach ($ownerValues['channel_specific'] ?? [] as $channel => $bucket) {
+            if (array_key_exists($code, $bucket)) {
+                $inheritedValues['channel_specific'][$channel][$code] = $bucket[$code];
+            }
+        }
+
+        foreach ($ownerValues['locale_specific'] ?? [] as $locale => $bucket) {
+            if (array_key_exists($code, $bucket)) {
+                $inheritedValues['locale_specific'][$locale][$code] = $bucket[$code];
+            }
+        }
+
+        foreach ($ownerValues['channel_locale_specific'] ?? [] as $channel => $locales) {
+            foreach ($locales as $locale => $bucket) {
+                if (array_key_exists($code, $bucket)) {
+                    $inheritedValues['channel_locale_specific'][$channel][$locale][$code] = $bucket[$code];
+                }
+            }
+        }
     }
 
     /**
@@ -309,6 +418,32 @@ class ProductBulkEditController extends Controller
     }
 
     /**
+     * Axis attribute ids for every variant structure the given products
+     * belong to. Axis attributes define a variant's identity, so they are
+     * never offered as a bulk-edit column.
+     */
+    protected function axisAttributeIdsForProducts(array $productIds): array
+    {
+        $products = $this->productRepository
+            ->with('parent.parent')
+            ->findWhereIn('id', $productIds);
+
+        $axisCodes = [];
+
+        foreach ($products as $product) {
+            if ($structure = $this->variantStructurePlanner->structureFor($product)) {
+                $axisCodes = array_merge($axisCodes, $this->variantStructurePlanner->allAxisCodes($structure));
+            }
+        }
+
+        if (empty($axisCodes)) {
+            return [];
+        }
+
+        return $this->attributeRepository->whereIn('code', array_unique($axisCodes))->pluck('id')->all();
+    }
+
+    /**
      * Retrieve attributes for bulk edit.
      */
     public function getAttributes(Request $request): JsonResponse
@@ -330,6 +465,12 @@ class ProductBulkEditController extends Controller
                 ->toArray();
 
             $query = $query->whereIn('id', $familyAttributeIds);
+
+            $axisAttributeIds = $this->axisAttributeIdsForProducts($productIds);
+
+            if (! empty($axisAttributeIds)) {
+                $query = $query->whereNotIn('id', $axisAttributeIds);
+            }
         }
 
         if ($request->filled('ids')) {

@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => '저장할 변경 사항이 없습니다.',
+                'locked-cell'                  => '다른 레벨에 속함 – 여기서는 편집 불가.',
                 'invalid-datetime'             => '유효한 날짜와 시간을 입력하세요.',
                 'resize-column'                => '드래그하여 열 너비 조정',
                 'success'                      => '작업이 성공적으로 실행되었습니다.',

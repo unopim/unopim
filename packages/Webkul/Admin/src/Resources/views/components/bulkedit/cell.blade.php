@@ -5,9 +5,11 @@
             class="relative text-sm border border-gray-200 dark:border-cherry-700 whitespace-nowrap focus:outline-none"
             :class="{
                 'z-[2]': isActive,
-                'bg-primary-50 dark:bg-primary-900/30': isSelected && !isActive
+                'bg-primary-50 dark:bg-primary-900/30': isSelected && !isActive,
+                'opacity-60 cursor-not-allowed': locked
             }"
             :style="isActive ? 'box-shadow: inset 0 0 0 2px var(--active-cell-color, rgb(var(--c-primary-600))); outline: none;' : ''"
+            :title="locked ? lockedTooltip : null"
             :data-row="rowId"
             :data-col="colId"
             @click="onClick"
@@ -17,18 +19,20 @@
             @mouseenter="onHover"
             @mousedown.prevent="onSelectStart"
         >
-            <component
-                ref="component"
-                :is="getComponentType(col.type)"
-                @focus="onInputFocus"
-                :isActive="isActive"
-                v-model="internalValue"
-                :column="col"
-                :entityId="entityId"
-                :attribute="attribute"
-            />
+            <div :inert="locked" class="contents">
+                <component
+                    ref="component"
+                    :is="getComponentType(col.type)"
+                    @focus="onInputFocus"
+                    :isActive="isActive"
+                    v-model="internalValue"
+                    :column="col"
+                    :entityId="entityId"
+                    :attribute="attribute"
+                />
+            </div>
             <div
-                v-if="isActive"
+                v-if="isActive && !locked"
                 class="absolute bottom-[-4px] right-[-4px] w-[8px] h-[8px] bg-primary-600 dark:bg-primary-400 cursor-crosshair z-10 rounded-sm"
                 @mousedown.stop.prevent="onDragHandleDown($event)"
             ></div>
@@ -57,6 +61,10 @@
                 },
                 attribute: {
                     type:Object,
+                },
+                locked: {
+                    type: Boolean,
+                    default: false,
                 }
             },
 
@@ -67,6 +75,7 @@
                     internalValue: this.value,
                     isInputFocused: false,
                     valuePasted: false,
+                    lockedTooltip: @json(trans('admin::app.catalog.products.bulk-edit.locked-cell')),
                 };
             },
 
@@ -167,6 +176,7 @@
 
                     this._keyDownHandler = (e) => {
                         if (
+                            this.locked ||
                             e.key === 'Tab' ||
                             e.key.startsWith('Arrow') ||
                             e.metaKey || e.ctrlKey || e.altKey || e.shiftKey
@@ -224,6 +234,10 @@
                 },
 
                 onDoubleClick() {
+                    if (this.locked) {
+                        return;
+                    }
+
                     if (!this.isInputFocused) {
                         this.isInputFocused = true;
 
@@ -256,6 +270,10 @@
                 },
 
                 updateValue(value) {
+                    if (this.locked) {
+                        return;
+                    }
+
                     this.internalValue = value;
 
                     this.$emitter.emit('update-spreadsheet-data', {

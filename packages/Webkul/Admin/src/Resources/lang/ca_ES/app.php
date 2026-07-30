@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'No hi ha canvis per desar.',
+                'locked-cell'                  => 'Pertany a un altre nivell – no editable aquí.',
                 'invalid-datetime'             => 'Introdueix una data i hora vàlides.',
                 'resize-column'                => 'Arrossega per redimensionar la columna',
                 'success'                      => 'Operació completada amb èxit.',

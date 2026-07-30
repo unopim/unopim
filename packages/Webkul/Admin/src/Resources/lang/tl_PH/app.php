@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Walang pagbabago para i-save.',
+                'locked-cell'                  => 'Kabilang sa ibang antas – hindi maaaring i-edit dito.',
                 'invalid-datetime'             => 'Maglagay ng wastong petsa at oras.',
                 'resize-column'                => 'I-drag upang baguhin ang lapad ng column',
                 'success'                      => 'Matagumpay na naisagawa ang gawain.',

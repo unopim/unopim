@@ -502,6 +502,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Nema promjena za spremiti.',
+                'locked-cell'                  => 'Pripada drugoj razini – ne može se uređivati ovdje.',
                 'invalid-datetime'             => 'Unesite valjani datum i vrijeme.',
                 'resize-column'                => 'Povucite za promjenu širine stupca',
                 'success'                      => 'Operacija uspješno izvršena.',

@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Brak zmian do zapisania.',
+                'locked-cell'                  => 'Należy do innego poziomu – nie można edytować tutaj.',
                 'invalid-datetime'             => 'Wprowadź prawidłową datę i godzinę.',
                 'resize-column'                => 'Przeciągnij, aby zmienić szerokość kolumny',
                 'success'                      => 'Zadanie zostało pomyślnie wykonane.',

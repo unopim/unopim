@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Ingen endringer å lagre.',
+                'locked-cell'                  => 'Tilhører et annet nivå – kan ikke redigeres her.',
                 'invalid-datetime'             => 'Angi en gyldig dato og et gyldig klokkeslett.',
                 'resize-column'                => 'Dra for å endre kolonnebredde',
                 'success'                      => 'Jobb fullført.',
