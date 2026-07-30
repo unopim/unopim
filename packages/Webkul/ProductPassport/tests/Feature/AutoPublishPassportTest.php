@@ -49,7 +49,7 @@ it('dispatches nothing when auto_publish is off', function (): void {
     Queue::assertNotPushed(PublishPassportForProductChannelJob::class);
 });
 
-it('dispatches nothing for a product whose family lacks the dpp group', function (): void {
+it('dispatches nothing for a product whose family carries no passport template', function (): void {
     Queue::fake();
 
     $channel = ChannelProxy::factory()->create();

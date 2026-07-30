@@ -2,26 +2,30 @@
 
 namespace Webkul\ProductPassport\Listeners;
 
-use Webkul\Attribute\Models\AttributeFamilyGroupMappingProxy;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Models\Product;
+use Webkul\ProductPassport\Services\PassportTemplateResolver;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 
 /**
  * Wires the `catalog.product_passport.settings.auto_publish` setting: when a
  * product is saved, queue a passport publish for every channel where both
- * `enabled` and `auto_publish` are on. The job's `CompletenessGate` skips any
- * locale below the channel threshold, so an incomplete save publishes nothing;
- * the job is `ShouldBeUnique`, so rapid re-saves de-dupe rather than pile up.
+ * `enabled` and `auto_publish` are on. The publish itself is gated by the
+ * template readiness check, so an incomplete save publishes nothing; the job
+ * is `ShouldBeUnique`, so rapid re-saves de-dupe rather than pile up.
  *
- * Guarded to `dpp`-family products only — a save of an unrelated product must
- * never spawn a passport job.
+ * Guarded to products whose family carries a passport template — a save of an
+ * unrelated product must never spawn a passport job.
  */
 class AutoPublishPassport
 {
+    public function __construct(
+        private readonly PassportTemplateResolver $templates,
+    ) {}
+
     public function handle(Product $product): void
     {
-        if (! $this->familyHasDppGroup($product)) {
+        if ($this->templates->forProduct($product) === null) {
             return;
         }
 
@@ -46,18 +50,5 @@ class AutoPublishPassport
 
                 PublishPassportForProductChannelJob::dispatch($product->id, $channel->id, 'dpp', $localeIds, $adminId);
             });
-    }
-
-    private function familyHasDppGroup(Product $product): bool
-    {
-        if ($product->attribute_family_id === null) {
-            return false;
-        }
-
-        return AttributeFamilyGroupMappingProxy::modelClass()::query()
-            ->join('attribute_groups', 'attribute_family_group_mappings.attribute_group_id', '=', 'attribute_groups.id')
-            ->where('attribute_groups.code', 'dpp')
-            ->where('attribute_family_group_mappings.attribute_family_id', $product->attribute_family_id)
-            ->exists();
     }
 }

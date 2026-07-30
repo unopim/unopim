@@ -40,7 +40,7 @@ it('summarises how many locales are published on the drawer card', function (): 
         ->assertOk()
         ->assertSee(trans('passport::app.catalog.products.edit.passport.published-summary', [
             'published' => 0,
-            'total'     => 2,
+            'total'     => $channel->locales()->count(),
         ]));
 });
 

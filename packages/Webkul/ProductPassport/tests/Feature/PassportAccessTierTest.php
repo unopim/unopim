@@ -91,14 +91,11 @@ it('partitions fields into config-driven tier buckets in the built payload', fun
         ->and($payload['sections'][0]['fields'])->toBe($payload['tiers']['consumer']['fields']);
 });
 
-it('treats every field as consumer when the tiers map is empty (backward compatible)', function (): void {
-    config(['publication.tiers.map' => []]);
-
+it('keeps consumer fields public while the template-declared operator tier stays gated', function (): void {
     $version = $this->publishedTieredPassportFixture();
 
-    // With no classification the operator field collapses into the consumer tier and shows on the public page.
     $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)
         ->assertOk()
         ->assertSee('Recycled cotton, 80%')
-        ->assertSee('Tier 2 supplier in Poland');
+        ->assertDontSee('Tier 2 supplier in Poland');
 });

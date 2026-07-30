@@ -1,7 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Event;
-use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Events\PublicationReinstated;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
@@ -9,6 +8,7 @@ use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Services\Publisher;
 use Webkul\Publication\Tests\Support\ListOrderVariantPayloadBuilder;
 use Webkul\Publication\Tests\Support\OrderVariantPayloadBuilder;
+use Webkul\Publication\Tests\Support\RefusingLocaleGate;
 use Webkul\Publication\Tests\Support\StubPayloadBuilder;
 use Webkul\User\Models\Admin;
 
@@ -24,13 +24,16 @@ beforeEach(function (): void {
     OrderVariantPayloadBuilder::$order = 'a';
 });
 
-it('blocks a locale below the completeness threshold and publishes a complete sibling', function (): void {
-    [$product, $channel, $incomplete, $complete] = $this->seedPassportFixture();
+it('blocks a locale its gate refuses and publishes a passing sibling', function (): void {
+    [$product, $channel, $refused, $passing] = $this->seedPassportFixture(completeBoth: true);
+
+    config()->set('publication.types.dpp.gate', RefusingLocaleGate::class);
+    RefusingLocaleGate::$refusedLocaleCode = $refused->code;
 
     $publisher = resolve(Publisher::class);
 
-    expect($publisher->publish($product, $channel, $incomplete, 'dpp'))->toBeNull()
-        ->and($publisher->publish($product, $channel, $complete, 'dpp'))
+    expect($publisher->publish($product, $channel, $refused, 'dpp'))->toBeNull()
+        ->and($publisher->publish($product, $channel, $passing, 'dpp'))
         ->toBeInstanceOf(PublicationVersion::class);
 });
 
@@ -127,18 +130,13 @@ it('refuses to reinstate a redacted publication: redaction is one-way, not withd
         ->toThrow(InvalidPublicationTransitionException::class);
 });
 
-it('blocks publishing when a completeness score exists but is below the threshold', function (): void {
+it('rejects a configured gate that does not implement the gate contract', function (): void {
     [$product, $channel, , $complete] = $this->seedPassportFixture();
 
-    ProductCompletenessScore::query()
-        ->where('product_id', $product->id)
-        ->where('channel_id', $channel->id)
-        ->where('locale_id', $complete->id)
-        ->update(['score' => 50]);
+    config()->set('publication.types.dpp.gate', StubPayloadBuilder::class);
 
-    $publisher = resolve(Publisher::class);
-
-    expect($publisher->publish($product, $channel, $complete, 'dpp'))->toBeNull();
+    expect(fn (): mixed => resolve(Publisher::class)->publish($product, $channel, $complete, 'dpp'))
+        ->toThrow(InvalidArgumentException::class);
 });
 
 it('canonicalises payload key order so reordered but identical payloads mint only one version', function (): void {
