@@ -17,7 +17,6 @@ ensure_app_key
 
 echo "→ Starting queue worker: ${QUEUE_NAMES}"
 
-# --max-jobs/--max-time recycle the worker so long-lived leaks cannot accumulate.
 exec gosu www-data php artisan queue:work \
     --queue="${QUEUE_NAMES}" \
     --timeout="${QUEUE_TIMEOUT}" \

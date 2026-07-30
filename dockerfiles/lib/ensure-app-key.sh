@@ -12,6 +12,10 @@
 # prevent. Losing the storage volume with no APP_KEY in the environment is still
 # unrecoverable, which is why production is told to inject one.
 #
+# The key is generated without booting Laravel so this stays usable before the
+# autoloader exists, and mirrored into a source checkout's .env so host-side
+# artisan agrees with the container.
+#
 # Idempotent: safe to source on every container start.
 
 ensure_app_key() {
@@ -45,14 +49,11 @@ ensure_app_key() {
 
     echo "→ APP_KEY not set — generating one and persisting it to ${key_file}"
 
-    # Generated without booting Laravel so this still works before the
-    # autoloader exists. Same shape as key:generate: 32 random bytes, base64.
     APP_KEY="base64:$(php -r 'echo base64_encode(random_bytes(32));')"
     export APP_KEY
 
     ( umask 077 && printf '%s' "$APP_KEY" > "$key_file" )
 
-    # Keep a source checkout's .env in step so host-side artisan agrees.
     if [ -f "$env_file" ] && [ -w "$env_file" ]; then
         if grep -qE '^APP_KEY=' "$env_file"; then
             sed -i "s|^APP_KEY=.*|APP_KEY=${APP_KEY}|" "$env_file"

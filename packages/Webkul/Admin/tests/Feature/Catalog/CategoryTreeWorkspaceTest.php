@@ -14,6 +14,16 @@ it('renders the history modal on the tree workspace so a version can be opened',
         ->assertSee('v-modal-history', false);
 });
 
+it('falls back to the overview when the requested category no longer exists', function () {
+    Category::factory()->create(['parent_id' => null]);
+
+    $missingId = (int) Category::query()->max('id') + 1000;
+
+    $this->get(route('admin.catalog.categories.index', ['category' => $missingId, 'history' => 1]))
+        ->assertOk()
+        ->assertSee(trans('admin::app.catalog.categories.browse.trees'), false);
+});
+
 it('keeps the list view on its own create flow', function () {
     $this->get(route('admin.catalog.categories.index', ['view' => 'list']))
         ->assertOk()

@@ -8,8 +8,6 @@ source "${ROOT}/dockerfiles/lib/ensure-app-key.sh"
 source "${ROOT}/dockerfiles/lib/wait-for-db.sh"
 source "${ROOT}/dockerfiles/lib/setup-app.sh"
 
-# Order matters: nothing may call artisan before the autoloader exists and
-# APP_KEY resolves.
 ensure_vendor "$ROOT"
 ensure_app_key
 wait_for_db

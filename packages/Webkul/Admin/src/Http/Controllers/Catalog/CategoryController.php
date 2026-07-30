@@ -88,6 +88,9 @@ class CategoryController extends Controller
 
     /**
      * Tree workspace, or the flat listing when `view=list` is asked for.
+     *
+     * A category id that no longer resolves leaves no panel to render, so the
+     * workspace falls back to the overview instead of a partial with no data.
      */
     public function index(CategoryBrowseRequest $request): View|JsonResponse
     {
@@ -132,7 +135,9 @@ class CategoryController extends Controller
                 $data['parentCategory'] = $this->categoryRepository->find($parentId);
                 $data['selectedId'] = $data['parentCategory']?->id;
             }
-        } else {
+        }
+
+        if (! $data['panelMode']) {
             $data['overview'] = [
                 'total'          => $this->categoryRepository->getModel()->count(),
                 'roots'          => $roots,
