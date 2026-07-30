@@ -22,6 +22,8 @@ use Webkul\AdminApi\Models\Apikey;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
+use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Notification\Models\UserNotification;
 use Webkul\User\Contracts\Admin as AdminContract;
@@ -50,7 +52,7 @@ use Webkul\User\Jobs\RefreshGravatarPayload;
     'api_token',
     'remember_token',
 ])]
-class Admin extends Authenticatable implements AdminContract, HistoryAuditable, OAuthenticatable
+class Admin extends Authenticatable implements AdminContract, HistoryAuditable, OAuthenticatable, PresentableHistoryInterface
 {
     use HasApiTokens, HasFactory, HistoryTrait, Notifiable;
 
@@ -172,6 +174,18 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
     {
         return [
             'use_gravatar' => 'boolean',
+        ];
+    }
+
+    /**
+     * The audit stores whatever type each side happened to carry — an int from the database against a
+     * bool from the request — so both sides are cast at presentation, which also repairs older rows.
+     */
+    public static function getPresenters(): array
+    {
+        return [
+            'status'       => BooleanPresenter::class,
+            'use_gravatar' => BooleanPresenter::class,
         ];
     }
 
