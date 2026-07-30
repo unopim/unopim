@@ -1,0 +1,67 @@
+# =============================================================================
+# UnoPim — MySQL overlay for compose.yaml
+# =============================================================================
+#
+#   docker compose -f compose.yaml -f compose.mysql.yaml up -d
+#
+# Or make it permanent for the current directory:
+#   COMPOSE_FILE=compose.yaml:compose.mysql.yaml
+#
+# Switching engines on an existing install needs a fresh database — data is not
+# migrated between them.
+# =============================================================================
+
+x-mysql-environment: &mysql-environment
+  DB_CONNECTION: mysql
+  DB_HOST: unopim-mysql
+  DB_PORT: "3306"
+
+x-mysql-depends: &mysql-depends
+  unopim-mysql:
+    condition: service_healthy
+
+services:
+  unopim:
+    environment: *mysql-environment
+    depends_on: *mysql-depends
+
+  unopim-queue:
+    environment: *mysql-environment
+    depends_on: *mysql-depends
+
+  unopim-scheduler:
+    environment: *mysql-environment
+    depends_on: *mysql-depends
+
+  # An unselected profile keeps the default engine from starting alongside MySQL.
+  unopim-pgsql:
+    profiles: ["pgsql-disabled"]
+
+  unopim-mysql:
+    image: mysql:8.0.36-debian
+    volumes:
+      - unopim-mysql-data:/var/lib/mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${DB_ROOT_PASSWORD:-unopim}"
+      MYSQL_DATABASE: "${DB_DATABASE:-unopim}"
+      MYSQL_USER: "${DB_USERNAME:-unopim}"
+      MYSQL_PASSWORD: "${DB_PASSWORD:-unopim}"
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --log-bin-trust-function-creators=1
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  unopim-mysql-data:
