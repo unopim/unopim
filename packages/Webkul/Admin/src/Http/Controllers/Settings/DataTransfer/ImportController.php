@@ -147,7 +147,7 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/'],
+            'code'                => ['required'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
