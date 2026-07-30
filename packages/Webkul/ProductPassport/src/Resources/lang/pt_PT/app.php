@@ -82,7 +82,7 @@ return [
             'views'           => 'Visualizações',
             'version-history' => 'Histórico de versões',
             'withdraw'        => 'Retirar',
-            'mass-publish'    => 'Publicar selecionados',
+            'mass-publish'    => 'Republicar selecionados',
         ],
         'publish-queued'      => 'A publicação do passaporte foi colocada em fila.',
         'bulk-publish-queued' => 'A publicação dos passaportes selecionados foi colocada em fila.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Passaporte Digital do Produto',
                     'publishing-disabled' => 'A publicação de passaportes está desativada para este canal.',
+                    'required-badge'      => 'Obrigatório para o DPP',
+                    'publish-blocked'     => 'Preencha todos os campos obrigatórios do passaporte antes de publicar.',
+                    'missing-template'    => 'É necessário um modelo de passaporte',
                     'locale'              => 'Idioma',
                     'version'             => 'Versão',
                     'published-at'        => 'Publicado em',

@@ -82,7 +82,7 @@ return [
             'views'           => 'Vues',
             'version-history' => 'Historique des versions',
             'withdraw'        => 'Retirer',
-            'mass-publish'    => 'Publier la sélection',
+            'mass-publish'    => 'Republier la sélection',
         ],
         'publish-queued'      => 'La publication du passeport a été mise en file d\'attente.',
         'bulk-publish-queued' => 'La publication des passeports sélectionnés a été mise en file d\'attente.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Passeport Numérique du Produit',
                     'publishing-disabled' => 'La publication des passeports est désactivée pour ce canal.',
+                    'required-badge'      => 'Requis pour le DPP',
+                    'publish-blocked'     => 'Renseignez tous les champs obligatoires du passeport avant de le publier.',
+                    'missing-template'    => 'Un modèle de passeport est requis',
                     'locale'              => 'Langue',
                     'version'             => 'Version',
                     'published-at'        => 'Publié le',

@@ -106,7 +106,7 @@ class ProductPassportTestCase extends TestCase
 
         $secretAttribute = $this->passportSourceAttribute();
 
-        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
+        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes($material)->create();
 
         $channel = ChannelProxy::factory()->create();
         $locale = $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
@@ -288,6 +288,7 @@ class ProductPassportTestCase extends TestCase
         [$product, $context] = $this->productWithSecretAndDppAttributes($withDocument);
 
         $this->enablePublicTier($context->channel->code);
+        $this->enablePassportPublishing($context->channel->code);
 
         return resolve(Publisher::class)->publish($product, $context->channel, $context->locale, 'dpp');
     }
@@ -322,6 +323,7 @@ class ProductPassportTestCase extends TestCase
         ]);
 
         $this->enablePublicTier($channel->code);
+        $this->enablePassportPublishing($channel->code);
 
         return resolve(Publisher::class)->publish($product, $channel, $locale, 'dpp');
     }
@@ -365,6 +367,7 @@ class ProductPassportTestCase extends TestCase
             $locale = $channel->locales()->first() ?: tap(Locale::factory()->create(), fn ($l) => $channel->locales()->attach($l));
 
             $this->enablePublicTier($channel->code);
+            $this->enablePassportPublishing($channel->code);
 
             $channels[] = $channel;
             $versions[] = resolve(Publisher::class)->publish($product, $channel, $locale, 'dpp');
@@ -384,7 +387,7 @@ class ProductPassportTestCase extends TestCase
     {
         $material = $this->passportSourceAttribute(['type' => 'textarea', 'value_per_locale' => 1]);
 
-        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes()->create();
+        $family = AttributeFamilyProxy::factory()->withMinimalAttributesForProductTypes($material)->create();
 
         $this->passportTemplateFor($family, [
             'dpp_material_composition' => ['attribute' => $material, 'label' => 'Material Composition', 'required' => true],

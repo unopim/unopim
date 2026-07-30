@@ -3,6 +3,7 @@
 namespace Webkul\ProductPassport\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 use Webkul\Publication\Rules\Gs1CheckDigit;
 
 class PublishPassportRequest extends FormRequest
@@ -20,7 +21,12 @@ class PublishPassportRequest extends FormRequest
         return [
             'channel_id'   => ['required', 'integer', 'exists:channels,id'],
             'locale_ids'   => ['required', 'array', 'min:1'],
-            'locale_ids.*' => ['integer', 'exists:locales,id'],
+            'locale_ids.*' => [
+                'integer',
+                'distinct',
+                Rule::exists('channel_locales', 'locale_id')
+                    ->where('channel_id', $this->integer('channel_id')),
+            ],
             'gtin'         => ['nullable', 'string', new Gs1CheckDigit],
         ];
     }

@@ -46,6 +46,7 @@
                     :channelCurrencies="$currentChannel->currencies"
                     :variantFields="$product?->parent ? $product->parent->super_attributes->pluck('code')->toArray() : []"
                     :completeness-attributes="$requiredAttributes"
+                    :requirement-indicators="$attributeRequirements ?? []"
                     :locked-fields="($variantFieldLocks['locks'] ?? [])"
                     fieldsWrapper="values"
                 >

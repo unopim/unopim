@@ -82,7 +82,7 @@ return [
             'views'           => 'Visualizaciones',
             'version-history' => 'Historial de versiones',
             'withdraw'        => 'Retirar',
-            'mass-publish'    => 'Publicar seleccionados',
+            'mass-publish'    => 'Republicar seleccionados',
         ],
         'publish-queued'      => 'Se puso en cola la publicación del pasaporte.',
         'bulk-publish-queued' => 'Se ha puesto en cola la publicación de los pasaportes seleccionados.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Pasaporte Digital del Producto',
                     'publishing-disabled' => 'La publicación de pasaportes está deshabilitada para este canal.',
+                    'required-badge'      => 'Obligatorio para el DPP',
+                    'publish-blocked'     => 'Complete todos los campos obligatorios del pasaporte antes de publicarlo.',
+                    'missing-template'    => 'Se requiere una plantilla de pasaporte',
                     'locale'              => 'Idioma',
                     'version'             => 'Versión',
                     'published-at'        => 'Publicado el',

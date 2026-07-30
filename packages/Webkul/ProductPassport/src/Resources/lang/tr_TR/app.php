@@ -82,7 +82,7 @@ return [
             'views'           => 'Görüntülenme',
             'version-history' => 'Sürüm geçmişi',
             'withdraw'        => 'Geri Çek',
-            'mass-publish'    => 'Seçilenleri yayımla',
+            'mass-publish'    => 'Seçilenleri yeniden yayımla',
         ],
         'publish-queued'      => 'Pasaport yayını sıraya alındı.',
         'bulk-publish-queued' => 'Seçili pasaportların yayımlanması kuyruğa alındı.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Dijital Ürün Pasaportu',
                     'publishing-disabled' => 'Bu kanal için pasaport yayınlama devre dışı.',
+                    'required-badge'      => 'DPP için zorunlu',
+                    'publish-blocked'     => 'Yayınlamadan önce tüm zorunlu pasaport alanlarını tamamlayın.',
+                    'missing-template'    => 'Pasaport şablonu gerekli',
                     'locale'              => 'Dil',
                     'version'             => 'Sürüm',
                     'published-at'        => 'Yayınlanma Tarihi',

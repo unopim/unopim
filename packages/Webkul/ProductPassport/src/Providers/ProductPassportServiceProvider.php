@@ -11,6 +11,8 @@ use Webkul\ProductPassport\Console\InstallPassportPresetCommand;
 use Webkul\ProductPassport\Http\Controllers\PublicationController;
 use Webkul\ProductPassport\Listeners\AutoPublishPassport;
 use Webkul\ProductPassport\Listeners\ValidateProductGtin;
+use Webkul\ProductPassport\Services\PassportAttributeRequirements;
+use Webkul\ProductPassport\View\Composers\PassportAttributeRequirementsComposer;
 use Webkul\ProductPassport\View\Composers\PassportPanelComposer;
 
 class ProductPassportServiceProvider extends ServiceProvider
@@ -21,6 +23,8 @@ class ProductPassportServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->scoped(PassportAttributeRequirements::class);
+
         $this->app->extend(ProductDataGrid::class, function (ProductDataGrid $dataGrid): ProductDataGrid {
             if (PublicationController::featureEnabled() && bouncer()->hasPermission('catalog.passport.publish')) {
                 $dataGrid->addMassAction([
@@ -71,6 +75,7 @@ class ProductPassportServiceProvider extends ServiceProvider
         });
 
         View::composer('passport::admin.catalog.products.edit.passport-panel', PassportPanelComposer::class);
+        View::composer('admin::catalog.products.edit.attribute-group-panel', PassportAttributeRequirementsComposer::class);
 
         // Drop the Passports menu item while the feature is disabled; filtered per-request so it reacts to the setting live.
         $this->app->extend('unopim.admin.menu', function (array $menu): array {

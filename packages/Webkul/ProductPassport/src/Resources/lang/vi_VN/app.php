@@ -82,7 +82,7 @@ return [
             'views'           => 'Lượt xem',
             'version-history' => 'Lịch sử phiên bản',
             'withdraw'        => 'Thu hồi',
-            'mass-publish'    => 'Xuất bản mục đã chọn',
+            'mass-publish'    => 'Xuất bản lại mục đã chọn',
         ],
         'publish-queued'      => 'Việc xuất bản hộ chiếu đã được đưa vào hàng đợi.',
         'bulk-publish-queued' => 'Việc xuất bản các hộ chiếu đã chọn đã được đưa vào hàng đợi.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Hộ chiếu Sản phẩm Kỹ thuật số',
                     'publishing-disabled' => 'Việc xuất bản hộ chiếu bị vô hiệu hóa cho kênh này.',
+                    'required-badge'      => 'Bắt buộc cho DPP',
+                    'publish-blocked'     => 'Hoàn thành tất cả trường hộ chiếu bắt buộc trước khi xuất bản.',
+                    'missing-template'    => 'Cần có mẫu hộ chiếu',
                     'locale'              => 'Ngôn ngữ',
                     'version'             => 'Phiên bản',
                     'published-at'        => 'Ngày xuất bản',

@@ -82,7 +82,7 @@ return [
             'views'           => 'Weergaven',
             'version-history' => 'Versiegeschiedenis',
             'withdraw'        => 'Intrekken',
-            'mass-publish'    => 'Selectie publiceren',
+            'mass-publish'    => 'Selectie opnieuw publiceren',
         ],
         'publish-queued'      => 'Publicatie van het paspoort is in de wachtrij geplaatst.',
         'bulk-publish-queued' => 'Het publiceren van de geselecteerde paspoorten is in de wachtrij geplaatst.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digitaal Productpaspoort',
                     'publishing-disabled' => 'Het publiceren van paspoorten is uitgeschakeld voor dit kanaal.',
+                    'required-badge'      => 'Verplicht voor DPP',
+                    'publish-blocked'     => 'Vul alle verplichte paspoortvelden in voordat u publiceert.',
+                    'missing-template'    => 'Paspoortsjabloon vereist',
                     'locale'              => 'Taal',
                     'version'             => 'Versie',
                     'published-at'        => 'Gepubliceerd op',
