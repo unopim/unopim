@@ -21,8 +21,12 @@ class Product
     /**
      * Update or create product indices
      */
-    public function afterUpdate(\Webkul\Product\Contracts\Product $product): void
+    public function afterUpdate(\Webkul\Product\Contracts\Product $product, bool $isBulkEdit = false): void
     {
+        if ($isBulkEdit) {
+            return;
+        }
+
         if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
             return;
         }

@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Jobs\System;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -19,6 +20,7 @@ use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\ProductValuesValidator;
+use Webkul\User\Models\AdminProxy;
 
 class BulkProductUpdate implements ShouldQueue
 {
@@ -91,6 +93,10 @@ class BulkProductUpdate implements ShouldQueue
      */
     public function handle(): void
     {
+        if ($this->userId && ($admin = AdminProxy::find($this->userId))) {
+            Auth::login($admin);
+        }
+
         $this->jobInstancesRepository = resolve(JobInstancesRepository::class);
         $this->jobTrackRepository = resolve(JobTrackRepository::class);
         $this->attributeService = resolve(AttributeService::class);
@@ -238,7 +244,7 @@ class BulkProductUpdate implements ShouldQueue
             if ($product->isDirty()) {
                 $product->save();
 
-                Event::dispatch('catalog.product.update.after', $product);
+                Event::dispatch('catalog.product.update.after', [$product, true]);
             }
 
             $processed++;
