@@ -26,14 +26,22 @@ return new class extends Migration
         });
     }
 
+    /**
+     * MySQL drops each foreign key's own index once these cover it, leaving them as the only index
+     * serving that key, so the key has to be detached before the index can go.
+     */
     public function down(): void
     {
         Schema::table('attribute_family_group_mappings', function (Blueprint $table): void {
+            $table->dropForeign(['attribute_family_id']);
             $table->dropIndex('afgm_family_idx');
+            $table->foreign('attribute_family_id')->references('id')->on('attribute_families')->cascadeOnDelete();
         });
 
         Schema::table('attribute_group_mappings', function (Blueprint $table): void {
+            $table->dropForeign(['attribute_family_group_id']);
             $table->dropIndex('agm_family_group_idx');
+            $table->foreign('attribute_family_group_id')->references('id')->on('attribute_family_group_mappings')->cascadeOnDelete();
         });
     }
 };
