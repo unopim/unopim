@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationVersion;
@@ -77,8 +78,13 @@ it('refuses to delete a product that still has an attested publication', functio
 
     $product = $version->publication->product;
 
+    /**
+     * The savepoint matters on PostgreSQL: without it the constraint violation
+     * aborts DatabaseTransactions' wrapping transaction and the assertion query
+     * below dies with 25P02.
+     */
     try {
-        $product->delete();
+        DB::transaction(fn () => $product->delete());
 
         $this->fail('Expected deleting a product with an attested publication to raise a QueryException.');
     } catch (QueryException $exception) {
