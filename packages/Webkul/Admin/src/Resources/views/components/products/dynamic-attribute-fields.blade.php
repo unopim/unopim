@@ -7,7 +7,8 @@
     'channelCurrencies'      => [],
     'variantFields'          => [],
     'completenessAttributes' => [],
-    'lockedFields'           => []
+    'lockedFields'           => [],
+    'requirementIndicators'  => [],
 ])
 
 @php
@@ -137,7 +138,10 @@
 
     {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.field.before', ['field' => $field]) !!}
 
-    <x-admin::form.control-group>
+    <x-admin::form.control-group
+        id="attribute-{{ $field->id }}"
+        data-attribute-id="{{ $field->id }}"
+    >
         <div class="inline-flex justify-between w-full">
             <x-admin::form.control-group.label :for="form_control_id($fieldName)">
                 {{ $fieldLabel }}
@@ -152,6 +156,10 @@
             </x-admin::form.control-group.label>
 
             <div class="self-end mb-2 text-xs flex gap-1 items-center">
+                <x-admin::products.attribute-requirements
+                    :requirements="$requirementIndicators[$field->id] ?? []"
+                />
+
                 @if ($isLocked && $lockLabel)
                     <a
                         @if ($lockOwnerId) href="{{ route('admin.catalog.products.edit', $lockOwnerId) }}" @endif
@@ -357,7 +365,7 @@
                         <div class="grid w-full">
                             <x-admin::form.control-group.control
                                 type="price"
-                                :id="$field->code"
+                                :id="$field->code . '_' . $currency->code"
                                 :name="$fieldName . '[' . $currency->code . ']'"
                                 ::rules="{{ $field->getValidationsField() }}"
                                 :value="$currencyValue"

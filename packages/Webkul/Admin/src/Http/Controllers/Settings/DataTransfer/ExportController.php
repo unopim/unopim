@@ -133,7 +133,7 @@ class ExportController extends Controller
         $export = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/'],
+            'code'                => ['required'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],

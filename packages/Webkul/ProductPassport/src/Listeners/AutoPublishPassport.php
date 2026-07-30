@@ -4,6 +4,7 @@ namespace Webkul\ProductPassport\Listeners;
 
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Models\Product;
+use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportTemplateResolver;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 
@@ -21,6 +22,7 @@ class AutoPublishPassport
 {
     public function __construct(
         private readonly PassportTemplateResolver $templates,
+        private readonly PassportFeature $feature,
     ) {}
 
     public function handle(Product $product): void
@@ -35,10 +37,7 @@ class AutoPublishPassport
             ->with('locales:id')
             ->get()
             ->each(function ($channel) use ($product, $adminId): void {
-                $enabled = (bool) (core()->getConfigData('catalog.product_passport.settings.enabled', $channel->code) ?? false);
-                $autoPublish = (bool) (core()->getConfigData('catalog.product_passport.settings.auto_publish', $channel->code) ?? false);
-
-                if (! $enabled || ! $autoPublish) {
+                if (! $this->feature->autoPublishEnabledFor($channel)) {
                     return;
                 }
 

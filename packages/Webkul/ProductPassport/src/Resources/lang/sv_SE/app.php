@@ -82,7 +82,7 @@ return [
             'views'           => 'Visningar',
             'version-history' => 'Versionshistorik',
             'withdraw'        => 'Dra tillbaka',
-            'mass-publish'    => 'Publicera valda',
+            'mass-publish'    => 'Publicera om valda',
         ],
         'publish-queued'      => 'Publicering av passet har lagts i kö.',
         'bulk-publish-queued' => 'Publiceringen av de valda passen har lagts i kö.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digitalt Produktpass',
                     'publishing-disabled' => 'Publicering av pass är inaktiverad för denna kanal.',
+                    'required-badge'      => 'Obligatoriskt för DPP',
+                    'publish-blocked'     => 'Fyll i alla obligatoriska passfält före publicering.',
+                    'missing-template'    => 'Passmall krävs',
                     'locale'              => 'Språk',
                     'version'             => 'Version',
                     'published-at'        => 'Publicerad',

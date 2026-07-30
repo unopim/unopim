@@ -82,7 +82,7 @@ return [
             'views'           => 'Visualitzacions',
             'version-history' => 'Historial de versions',
             'withdraw'        => 'Retirar',
-            'mass-publish'    => 'Publica la selecció',
+            'mass-publish'    => 'Torna a publicar la selecció',
         ],
         'publish-queued'      => 'S\'ha posat en cua la publicació del passaport.',
         'bulk-publish-queued' => 'S\'ha posat a la cua la publicació dels passaports seleccionats.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Passaport Digital del Producte',
                     'publishing-disabled' => 'La publicació de passaports està desactivada per a aquest canal.',
+                    'required-badge'      => 'Obligatori per al DPP',
+                    'publish-blocked'     => 'Completeu tots els camps obligatoris del passaport abans de publicar-lo.',
+                    'missing-template'    => 'Cal una plantilla de passaport',
                     'locale'              => 'Idioma',
                     'version'             => 'Versió',
                     'published-at'        => 'Publicat el',

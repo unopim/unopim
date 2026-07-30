@@ -1,9 +1,16 @@
 name: Pest Tests
 
-on: [push, pull_request]
+# A branch push and its own pull request are the same commit, so pushes are
+# limited to the release lines and everything else arrives through the PR event.
+on:
+  push:
+    branches: [master, '2.1']
+  pull_request:
 
+# head_ref is the branch on a pull request and empty elsewhere, which keeps a
+# branch's runs in one group no matter which event opened them.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -211,7 +218,10 @@ jobs:
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          ini-values: error_reporting=E_ALL
+          # pcov instruments every file it loads, and the graph only cares about
+          # our own source, so keeping vendor out of it is what keeps the
+          # recording inside the runner's memory.
+          ini-values: error_reporting=E_ALL, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           # The dependency graph is recorded from coverage data.
           coverage: pcov
@@ -252,8 +262,20 @@ jobs:
       - name: Set Passport OAuth key permissions
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
-      # One worker: coverage recording for the impact graph OOMs the runner
-      # with more.
+      # Coverage recording peaks past the runner's 7 GB (exit 137); swap absorbs
+      # the spike. The runner already holds /swapfile open, so the extra file
+      # goes on /mnt, which is both free and the larger disk.
+      - name: Add swap headroom for coverage recording
+        run: |
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
+
+      # A second worker doubles the resident coverage map and still gets killed
+      # with the swap in place, so this job trades its parallelism for headroom.
       - name: Running impacted Pest tests
         env:
           GH_TOKEN: ${{ github.token }}

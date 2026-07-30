@@ -33,7 +33,8 @@ test.describe('unsaved-changes save feedback', () => {
   test('a validation failure flashes the failing field, not the generic ajax error', async ({ page }) => {
     await page.goto(PRODUCT_EDIT);
 
-    // Dirty an optional field so the save bar opens while required fields stay empty.
+    // Empty the always-required SKU so the save is guaranteed to fail validation.
+    await page.locator('input[name="values[common][sku]"]').fill('');
     await page.locator(NUMBER_INPUT).fill('e2e-save-feedback');
     await page.locator(NUMBER_INPUT).blur();
 
@@ -42,7 +43,7 @@ test.describe('unsaved-changes save feedback', () => {
     await clickSave(page);
 
     // Inline error proves validation ran and blocked the submit.
-    await expect(page.getByText(/The Name field is required/i).first()).toBeVisible();
+    await expect(page.getByText(/The SKU field is required/i).first()).toBeVisible();
 
     // The toast must state what actually happened. The generic ajax error would mean
     // the bar reported a request failure it never observed — nothing was ever sent.

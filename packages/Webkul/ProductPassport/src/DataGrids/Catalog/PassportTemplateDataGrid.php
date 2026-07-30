@@ -14,13 +14,15 @@ class PassportTemplateDataGrid extends DataGrid
 
     /**
      * Counts are aggregated in SQL rather than by loading each template's relations,
-     * so the grid stays one query as templates and fields grow. Sub-builders and
-     * plain column selects keep it prefix-safe: an installation with a table prefix
-     * gets it applied to the joined tables AND to their aliases, which a raw
-     * fragment naming those aliases would miss.
+     * so the grid stays one query as templates and fields grow. Sub-builders keep it
+     * prefix-safe: an installation with a table prefix gets it applied to the joined
+     * tables AND to their aliases, so the raw coalesce fragments have to name the
+     * prefixed alias to reach the same columns.
      */
     public function prepareQueryBuilder(): Builder
     {
+        $prefix = DB::getTablePrefix();
+
         $fieldCounts = DB::table('passport_template_fields')
             ->select('passport_template_id')
             ->selectRaw('count(*) as field_count')
@@ -45,11 +47,11 @@ class PassportTemplateDataGrid extends DataGrid
                 'passport_templates.code',
                 'passport_templates.is_enabled',
                 'requested_translation.name as name',
-                'family_counts.family_count',
-                'field_counts.field_count',
-                'field_counts.required_count',
-                'field_counts.sourced_count',
-            );
+            )
+            ->selectRaw("coalesce({$prefix}family_counts.family_count, 0) as family_count")
+            ->selectRaw("coalesce({$prefix}field_counts.field_count, 0) as field_count")
+            ->selectRaw("coalesce({$prefix}field_counts.required_count, 0) as required_count")
+            ->selectRaw("coalesce({$prefix}field_counts.sourced_count, 0) as sourced_count");
 
         $this->addFilter('name', 'requested_translation.name');
         $this->addFilter('code', 'passport_templates.code');

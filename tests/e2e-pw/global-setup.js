@@ -29,4 +29,23 @@ export default async function globalSetup() {
 
   await page.context().storageState({ path: STORAGE_PATH });
   await browser.close();
+
+  /*
+   * Bootstrap the API integration once, before workers spawn. Left to the
+   * workers, each one that finds no .api-config.json creates or rotates the
+   * client secret concurrently — every worker holding a losing secret then
+   * fails token requests with invalid_client.
+   */
+  try {
+    const { ensureApiCredentials } = await import('./utils/api-credential-setup.js');
+
+    await ensureApiCredentials({
+      baseUrl: (process.env.API_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:8000').replace(/\/$/, ''),
+      adminEmail: process.env.ADMIN_EMAIL || process.env.ADMIN_USERNAME,
+      adminPassword: process.env.ADMIN_PASSWORD,
+      integrationName: process.env.API_INTEGRATION_NAME,
+    });
+  } catch (error) {
+    console.warn('[global-setup] API credential bootstrap skipped:', error.message);
+  }
 }

@@ -9,6 +9,8 @@ use Webkul\Category\Repositories\CategoryFieldRepository;
 
 class CategoryFieldDataSource extends ApiDataSource
 {
+    protected ?string $structureCacheGroup = 'category_fields';
+
     /**
      * Create a new DataSource instance.
      *

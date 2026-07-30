@@ -18,13 +18,19 @@
     </x-slot:toggle>
 
     <x-slot:headerActions>
-        <button
-            type="button"
-            class="passport-publish-all-btn primary-button shrink-0"
-            data-locale-ids="{{ json_encode($passportRows->pluck('locale_id')->values()) }}"
-        >
-            {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
-        </button>
+        @if ($passportCanPublish)
+            <button
+                type="button"
+                class="passport-publish-all-btn primary-button shrink-0"
+                data-locale-ids="{{ json_encode($passportRows->where('ready', true)->pluck('locale_id')->values()) }}"
+                title="{{ $passportRows->every('ready')
+                    ? trans('passport::app.catalog.products.edit.passport.publish-all')
+                    : trans('passport::app.catalog.products.edit.passport.publish-blocked') }}"
+                @disabled(! $passportRows->every('ready'))
+            >
+                {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
+            </button>
+        @endif
     </x-slot:headerActions>
 
     <x-slot:content>
@@ -58,7 +64,7 @@
                         value="passport-locales"
                         :is-selected="true"
                     >
-                        <div>
+                        <div class="passport-locales-table overflow-x-auto">
                             <x-admin::table class="min-w-0">
                                 <x-admin::table.thead>
                                     <x-admin::table.thead.tr>
@@ -82,7 +88,69 @@
 
                                             <x-admin::table.td>{{ $row['published_at'] ?? '—' }}</x-admin::table.td>
 
-                                            <x-admin::table.td>{{ $row['missing_count'] ?? trans('passport::app.catalog.products.edit.passport.unscored') }}</x-admin::table.td>
+                                            <x-admin::table.td>
+                                                @if ($row['missing_count'] === null)
+                                                    @if ($row['template_url'])
+                                                        <a
+                                                            href="{{ $row['template_url'] }}"
+                                                            title="{{ trans('passport::app.templates.builder.edit') }}"
+                                                        >
+                                                            <x-admin::badge variant="danger">
+                                                                @lang('passport::app.catalog.products.edit.passport.missing-template')
+                                                            </x-admin::badge>
+                                                        </a>
+                                                    @else
+                                                        <x-admin::badge variant="danger">
+                                                            @lang('passport::app.catalog.products.edit.passport.missing-template')
+                                                        </x-admin::badge>
+                                                    @endif
+                                                @elseif ($row['missing_count'] > 0)
+                                                    <x-admin::dropdown position="bottom-right">
+                                                        <x-slot:toggle>
+                                                            <button
+                                                                type="button"
+                                                                aria-label="{{ trans('passport::app.catalog.products.edit.passport.missing-fields') }}"
+                                                            >
+                                                                <x-admin::badge variant="danger">
+                                                                    {{ $row['missing_count'] }}
+                                                                </x-admin::badge>
+                                                            </button>
+                                                        </x-slot>
+
+                                                        <x-slot:content class="w-80">
+                                                            <p class="mb-3 text-sm text-gray-600 dark:text-gray-300">
+                                                                @lang('passport::app.catalog.products.edit.passport.publish-blocked')
+                                                            </p>
+
+                                                            <div class="grid gap-2">
+                                                                @foreach ($row['missing_fields'] as $missingField)
+                                                                    <div class="flex items-center justify-between gap-4">
+                                                                        @if ($missingField['action_url'])
+                                                                            <a
+                                                                                href="{{ $missingField['action_url'] }}"
+                                                                                class="font-medium text-primary-600 hover:text-primary-700 dark:text-primary-300"
+                                                                                title="{{ trans('passport::app.templates.builder.edit') }}"
+                                                                            >
+                                                                                {{ $missingField['label'] }}
+                                                                            </a>
+                                                                        @else
+                                                                            <span class="font-medium text-gray-800 dark:text-white">
+                                                                                {{ $missingField['label'] }}
+                                                                            </span>
+                                                                        @endif
+
+                                                                        <x-admin::badge variant="neutral">
+                                                                            {{ $missingField['source'] }}
+                                                                        </x-admin::badge>
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </x-slot>
+                                                    </x-admin::dropdown>
+                                                @else
+                                                    <x-admin::badge variant="success">0</x-admin::badge>
+                                                @endif
+                                            </x-admin::table.td>
 
                                             <x-admin::table.td>
                                                 <div class="flex items-center justify-end gap-2.5">
@@ -97,15 +165,21 @@
                                                         </a>
                                                     @endif
 
-                                                    <button
-                                                        type="button"
-                                                        class="passport-publish-btn primary-button"
-                                                        data-locale-id="{{ $row['locale_id'] }}"
-                                                    >
-                                                        {{ $row['version'] === null
-                                                            ? trans('passport::app.catalog.products.edit.passport.publish')
-                                                            : trans('passport::app.catalog.products.edit.passport.republish') }}
-                                                    </button>
+                                                    @if ($passportCanPublish)
+                                                        <button
+                                                            type="button"
+                                                            class="passport-publish-btn primary-button"
+                                                            data-locale-id="{{ $row['locale_id'] }}"
+                                                            title="{{ $row['ready']
+                                                                ? trans('passport::app.catalog.products.edit.passport.publish')
+                                                                : trans('passport::app.catalog.products.edit.passport.publish-blocked') }}"
+                                                            @disabled(! $row['ready'])
+                                                        >
+                                                            {{ $row['version'] === null
+                                                                ? trans('passport::app.catalog.products.edit.passport.publish')
+                                                                : trans('passport::app.catalog.products.edit.passport.republish') }}
+                                                        </button>
+                                                    @endif
 
                                                     @if (! empty($row['operator_link']) || ! empty($row['authority_link']) || ! empty($row['carrier_link']))
                                                         <x-admin::dropdown position="bottom-{{ core()->getRequestedLocale()?->direction === 'rtl' ? 'left' : 'right' }}">
@@ -265,20 +339,38 @@
 
             fetch(publishRoute, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrfToken },
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'X-Requested-With': 'XMLHttpRequest',
+                },
                 body: JSON.stringify({ channel_id: channelId, locale_ids: localeIds }),
             })
             .then(function (response) { return response.json().then(function (data) { return { ok: response.ok, data: data }; }); })
             .then(function (result) {
-                button.textContent = result.ok ? doneLabel : (result.data.message || original);
-
                 if (! result.ok) {
+                    button.textContent = original;
                     button.disabled = false;
+
+                    window.app.config.globalProperties.$emitter?.emit('add-flash', {
+                        type: 'error',
+                        message: result.data.message || @json(trans('admin::app.components.form.ajax-error')),
+                    });
+
+                    return;
                 }
+
+                button.textContent = doneLabel;
             })
             .catch(function () {
                 button.textContent = original;
                 button.disabled = false;
+
+                window.app.config.globalProperties.$emitter?.emit('add-flash', {
+                    type: 'error',
+                    message: @json(trans('admin::app.components.form.ajax-error')),
+                });
             });
         }
 

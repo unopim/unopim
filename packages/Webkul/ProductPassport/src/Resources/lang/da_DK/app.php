@@ -82,7 +82,7 @@ return [
             'views'           => 'Visninger',
             'version-history' => 'Versionshistorik',
             'withdraw'        => 'Træk tilbage',
-            'mass-publish'    => 'Udgiv valgte',
+            'mass-publish'    => 'Genudgiv valgte',
         ],
         'publish-queued'      => 'Udgivelse af pas er sat i kø.',
         'bulk-publish-queued' => 'Udgivelse af de valgte pas er sat i kø.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digitalt Produktpas',
                     'publishing-disabled' => 'Udgivelse af pas er deaktiveret for denne kanal.',
+                    'required-badge'      => 'Påkrævet til DPP',
+                    'publish-blocked'     => 'Udfyld alle påkrævede pasfelter før udgivelse.',
+                    'missing-template'    => 'Paskabelon er påkrævet',
                     'locale'              => 'Sprog',
                     'version'             => 'Version',
                     'published-at'        => 'Udgivet den',

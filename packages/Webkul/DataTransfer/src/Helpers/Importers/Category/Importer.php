@@ -53,6 +53,7 @@ class Importer extends AbstractImporter
         'code',
         'parent',
         'locale',
+        'productCounts',
     ];
 
     protected array $categoryFields;

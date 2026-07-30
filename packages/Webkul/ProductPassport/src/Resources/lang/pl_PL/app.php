@@ -82,7 +82,7 @@ return [
             'views'           => 'Wyświetlenia',
             'version-history' => 'Historia wersji',
             'withdraw'        => 'Wycofaj',
-            'mass-publish'    => 'Opublikuj wybrane',
+            'mass-publish'    => 'Opublikuj wybrane ponownie',
         ],
         'publish-queued'      => 'Publikacja paszportu została zakolejkowana.',
         'bulk-publish-queued' => 'Publikacja wybranych paszportów została dodana do kolejki.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Cyfrowy Paszport Produktu',
                     'publishing-disabled' => 'Publikowanie paszportów jest wyłączone dla tego kanału.',
+                    'required-badge'      => 'Wymagane dla DPP',
+                    'publish-blocked'     => 'Przed publikacją uzupełnij wszystkie wymagane pola paszportu.',
+                    'missing-template'    => 'Wymagany jest szablon paszportu',
                     'locale'              => 'Język',
                     'version'             => 'Wersja',
                     'published-at'        => 'Opublikowano',

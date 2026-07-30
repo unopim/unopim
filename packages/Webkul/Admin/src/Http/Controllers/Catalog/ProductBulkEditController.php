@@ -299,10 +299,11 @@ class ProductBulkEditController extends Controller
     public function createBulkProductJobInstance()
     {
         $job = $this->jobInstancesRepository->create([
-            'type'           => 'system',
-            'action'         => 'update',
-            'code'           => 'bulk_product_update',
-            'entity_type'    => 'products',
+            'type'                => 'system',
+            'action'              => 'update',
+            'code'                => 'bulk_product_update',
+            'entity_type'         => 'products',
+            'validation_strategy' => 'strict',
         ]);
 
         return $job;

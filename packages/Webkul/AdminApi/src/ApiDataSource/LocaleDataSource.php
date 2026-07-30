@@ -9,6 +9,8 @@ use Webkul\Core\Repositories\LocaleRepository;
 
 class LocaleDataSource extends ApiDataSource
 {
+    protected ?string $structureCacheGroup = 'locales';
+
     /**
      * Create a new DataSource instance.
      *

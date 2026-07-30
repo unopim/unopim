@@ -46,6 +46,18 @@ it('lists publications for an authorised admin', function (): void {
         ->assertSee($version->publication->uuid);
 });
 
+it('labels the publication bulk action as republish', function (): void {
+    $this->loginWithPermissions('all');
+
+    $grid = resolve(PublicationDataGrid::class);
+    $grid->prepareMassActions();
+
+    $massActionTitles = collect($grid->getMassActions())
+        ->pluck('title');
+
+    expect($massActionTitles)->toContain('Republish selected');
+});
+
 it('rejects withdrawal without the withdraw permission', function (): void {
     $version = $this->publishedPassportFixture();
 

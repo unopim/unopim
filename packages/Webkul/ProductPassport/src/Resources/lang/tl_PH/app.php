@@ -82,7 +82,7 @@ return [
             'views'           => 'Mga panonood',
             'version-history' => 'Kasaysayan ng bersyon',
             'withdraw'        => 'Bawiin',
-            'mass-publish'    => 'I-publish ang napili',
+            'mass-publish'    => 'I-publish muli ang napili',
         ],
         'publish-queued'      => 'Naka-queue na ang paglalathala ng pasaporte.',
         'bulk-publish-queued' => 'Naka-queue na ang pag-publish ng mga napiling passport.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digital na Pasaporte ng Produkto',
                     'publishing-disabled' => 'Naka-disable ang paglalathala ng pasaporte para sa channel na ito.',
+                    'required-badge'      => 'Kinakailangan para sa DPP',
+                    'publish-blocked'     => 'Kumpletuhin ang lahat ng kinakailangang field ng pasaporte bago ilathala.',
+                    'missing-template'    => 'Kailangan ang template ng pasaporte',
                     'locale'              => 'Wika',
                     'version'             => 'Bersyon',
                     'published-at'        => 'Inilathala Noong',

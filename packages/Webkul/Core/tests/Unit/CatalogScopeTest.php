@@ -210,3 +210,45 @@ it('does not let a boot-time resolution freeze the answer for the rest of the re
         ->toBe('fr_FR')
         ->not->toBe($bootTimeLocaleCode);
 });
+
+it('prefers the configured application locale over the channel locale order when no catalog locale is set', function () {
+    $admin = Admin::first();
+    $admin->update(['catalog_locale_id' => null]);
+
+    auth()->guard('admin')->login($admin);
+
+    $channel = core()->getDefaultChannel();
+
+    $locales = Locale::whereIn('code', ['en_US', 'fr_FR'])->get();
+
+    expect($locales)->toHaveCount(2);
+
+    $locales->each(fn ($locale) => $locale->update(['status' => 1]));
+
+    $channel->locales()->syncWithoutDetaching($locales->pluck('id')->all());
+
+    $channel->unsetRelation('locales');
+
+    $channelFirstLocaleCode = $channel->locales->first()->code;
+
+    $appLocale = $channel->locales->firstWhere('code', '!=', $channelFirstLocaleCode);
+
+    config(['app.locale' => $appLocale->code]);
+
+    expect(scope()->localeCode())
+        ->toBe($appLocale->code)
+        ->not->toBe($channelFirstLocaleCode);
+});
+
+it('keeps the channel first locale when the application locale is not attached to the channel', function () {
+    $admin = Admin::first();
+    $admin->update(['catalog_locale_id' => null]);
+
+    auth()->guard('admin')->login($admin);
+
+    $channel = core()->getDefaultChannel();
+
+    config(['app.locale' => 'zz_ZZ']);
+
+    expect(scope()->localeCode())->toBe($channel->locales->first()->code);
+});
