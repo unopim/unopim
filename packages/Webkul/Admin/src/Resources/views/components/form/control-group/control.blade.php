@@ -411,7 +411,7 @@
     </script>
 
     <script type="text/x-template" id="v-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
                 :id="id"
                 :track-by="trackBy ?? 'id'"
@@ -1182,7 +1182,7 @@
     </script>
 
     <script type="text/x-template" id="v-async-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
                 :id="id"
                 :track-by="trackBy"

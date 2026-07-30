@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
 
 /**
  * Helper: Create an attribute via UI and land on the edit page.
@@ -16,7 +16,7 @@ async function createAttribute(adminPage, code, name, type = 'Text') {
   await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.locator('input[name="type"][type="text"]').fill(type);
   await adminPage.getByRole('option', { name: type }).first().click();
-  await adminPage.locator('input[name$="[name]"]').first().fill(name);
+  await fillLocalizedField(adminPage, name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
     clickSave(adminPage, 'Save Attribute'),
@@ -44,7 +44,7 @@ async function createSelectSwatchAttribute(adminPage, code, name, swatchType = '
     await swatchMs.click();
     await swatchMs.locator('.multiselect__option', { hasText: swatchType }).first().click();
   }
-  await adminPage.locator('input[name$="[name]"]').first().fill(name);
+  await fillLocalizedField(adminPage, name);
   await Promise.all([
     adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
     clickSave(adminPage, 'Save Attribute'),
@@ -691,7 +691,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await swatchMs.click();
     await swatchMs.locator('.multiselect__option', { hasText: 'Color Swatch' }).first().click();
     await expect(swatchMs).toContainText('Color Swatch');
-    await adminPage.locator('input[name$="[name]"]').first().fill('Color Swatch');
+    await fillLocalizedField(adminPage, 'Color Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
       clickSave(adminPage, 'Save Attribute'),
@@ -751,7 +751,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await swatchMs.click();
     await swatchMs.locator('.multiselect__option', { hasText: 'Image Swatch' }).first().click();
     await expect(swatchMs).toContainText('Image Swatch');
-    await adminPage.locator('input[name$="[name]"]').first().fill('Image Swatch');
+    await fillLocalizedField(adminPage, 'Image Swatch');
     await Promise.all([
       adminPage.waitForURL(/\/attributes\/edit\//, { timeout: 20000 }),
       clickSave(adminPage, 'Save Attribute'),
