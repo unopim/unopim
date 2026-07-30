@@ -8,6 +8,7 @@ async function selectMultiselect(page, fieldName, optionLabel) {
   await wrapper.locator('.multiselect__tags').click();
   await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   if (optionLabel) {
+    await wrapper.locator(`input[name="${fieldName}"][type="text"]`).fill(optionLabel).catch(() => {});
     await page.getByRole('option', { name: optionLabel }).first().click();
   } else {
     await wrapper

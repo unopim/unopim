@@ -56,7 +56,7 @@ test.describe('UnoPim Import Jobs', () => {
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
   });
 
   test('Create Import with empty Type field shows validation error', async ({ adminPage }) => {
@@ -69,7 +69,7 @@ test.describe('UnoPim Import Jobs', () => {
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
   });
 
   test('Create Import with empty File field shows validation error', async ({ adminPage }) => {
@@ -80,7 +80,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.locator('#import-type').getByRole('combobox').locator('div').filter({ hasText: 'Categories' }).click();
     await adminPage.getByRole('option', { name: 'Products' }).locator('span').first().click();
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The File field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The File field is required').first()).toBeVisible();
   });
 
   test('Create Import with all required fields empty shows all validation errors', async ({ adminPage }) => {
@@ -96,12 +96,12 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Allowed Errors' }).fill('');
     await adminPage.getByRole('textbox', { name: 'Field Separator' }).fill('');
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Action field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Validation Strategy field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Allowed Errors field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Field Separator field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Action field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Validation Strategy field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Allowed Errors field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Field Separator field is required').first()).toBeVisible();
   });
 
   test('Create Import with empty Action field shows validation error', async ({ adminPage }) => {
@@ -116,7 +116,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.locator('#action').getByRole('combobox').locator('div').filter({ hasText: 'Create/Update' }).click();
     await adminPage.getByRole('option', { name: 'Create/Update' }).locator('span').first().click();
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The Action field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Action field is required').first()).toBeVisible();
   });
 
   test('Create Import with empty Validation Strategy field shows validation error', async ({ adminPage }) => {
@@ -131,7 +131,7 @@ test.describe('UnoPim Import Jobs', () => {
     await adminPage.locator('#validation_strategy').getByRole('combobox').locator('div').filter({ hasText: 'Stop on Errors' }).click();
     await adminPage.getByRole('option', { name: 'Stop on Errors' }).locator('span').first().click();
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The Validation Strategy field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Validation Strategy field is required').first()).toBeVisible();
   });
 
   test('Create Import with empty Allowed Errors field shows validation error', async ({ adminPage }) => {
@@ -145,7 +145,7 @@ test.describe('UnoPim Import Jobs', () => {
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await adminPage.getByRole('textbox', { name: 'Allowed Errors' }).fill('');
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The Allowed Errors field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Allowed Errors field is required').first()).toBeVisible();
   });
 
   test('Create Import with empty Field Separator field shows validation error', async ({ adminPage }) => {
@@ -159,7 +159,7 @@ test.describe('UnoPim Import Jobs', () => {
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await adminPage.getByRole('textbox', { name: 'Field Separator' }).fill('');
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText('The Field Separator field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Field Separator field is required').first()).toBeVisible();
   });
 
   // ── Create Product Import, run Import Now ──
@@ -199,7 +199,7 @@ test.describe('UnoPim Import Jobs', () => {
     const fileInput = adminPage.locator('input[type="file"]').first();
     await fileInput.setInputFiles('assets/1k_products.xlsx');
     await clickSave(adminPage, 'Save Import');
-    await expect(adminPage.locator('#app').getByText(/code has already been taken/i)).toBeVisible({ timeout: 20000 });
+    await expect(adminPage.locator('#app').getByText(/code has already been taken/i).first()).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteImport(adminPage, code);

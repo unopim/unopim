@@ -45,7 +45,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
     await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
   });
 
   test('Create Export with empty Type field shows validation error', async ({ adminPage }) => {
@@ -59,7 +59,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
     await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
   });
 
   test('Create Export with empty File Format field shows validation error', async ({ adminPage }) => {
@@ -69,7 +69,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(`exp-fmt-${uid}`);
     await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
-    await expect(adminPage.locator('#app').getByText('The File Format field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The File Format field is required').first()).toBeVisible();
   });
 
   test('Create Export with all fields empty shows all validation errors', async ({ adminPage }) => {
@@ -80,9 +80,9 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.getByRole('option', { name: 'Categories' }).locator('span').first().click();
     await adminPage.getByText('With Media').click();
     await clickSave(adminPage, 'Save Export');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The File Format field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The File Format field is required').first()).toBeVisible();
   });
 
   // ── Create & Delete: Category CSV ──
@@ -113,7 +113,7 @@ test.describe('UnoPim Export Jobs', () => {
     await adminPage.locator('input[name="filters[file_format]"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').click();
     await adminPage.getByRole('option', { name: 'CSV' }).locator('span').first().click();
     await clickSave(adminPage, 'Save Export');
-    await expect(adminPage.locator('#app').getByText(/Code has already been taken|already exists/i)).toBeVisible({ timeout: 20000 });
+    await expect(adminPage.locator('#app').getByText(/Code has already been taken|already exists/i).first()).toBeVisible({ timeout: 20000 });
 
     // Cleanup
     await deleteExport(adminPage, code);

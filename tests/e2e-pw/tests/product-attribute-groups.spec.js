@@ -15,6 +15,15 @@ const scrollToBottom = (page) => page.evaluate(() => {
 
 const panels = (page) => page.locator('[data-attribute-group]');
 
+/*
+ * These specs drive the load-lab catalog (products 499/487 in a
+ * many-thousand-attribute family), which only the perf workstation seeds.
+ */
+test.beforeEach(async ({ request }) => {
+    const res = await request.get(`/admin/catalog/products/edit/${LARGE_FAMILY_PRODUCT}`).catch(() => null);
+    test.skip(! res || res.status() !== 200, 'load-lab fixture products are not seeded');
+});
+
 test('loads further attribute groups as the page is scrolled', async ({ page }) => {
     const failures = [];
 

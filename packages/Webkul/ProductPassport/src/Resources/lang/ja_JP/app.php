@@ -82,7 +82,7 @@ return [
             'views'           => '表示回数',
             'version-history' => 'バージョン履歴',
             'withdraw'        => '撤回',
-            'mass-publish'    => '選択項目を公開',
+            'mass-publish'    => '選択項目を再公開',
         ],
         'publish-queued'      => 'パスポートの公開がキューに登録されました。',
         'bulk-publish-queued' => '選択したパスポートの公開をキューに追加しました。',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'デジタルプロダクトパスポート',
                     'publishing-disabled' => 'このチャネルではパスポートの公開が無効になっています。',
+                    'required-badge'      => 'DPP 必須',
+                    'publish-blocked'     => '公開する前に、パスポートの必須項目をすべて入力してください。',
+                    'missing-template'    => 'パスポートテンプレートが必要です',
                     'locale'              => '言語',
                     'version'             => 'バージョン',
                     'published-at'        => '公開日',

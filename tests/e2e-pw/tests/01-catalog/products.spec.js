@@ -26,7 +26,8 @@ async function selectMultiselect(page, fieldName, optionLabel) {
   await wrapper.locator('.multiselect__tags').click();
   await wrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   if (optionLabel) {
-    // Options carry no role="option"; match on the option element text.
+    // Narrow long or lazily-searched option lists before matching on text.
+    await wrapper.locator(`input[name="${fieldName}"][type="text"]`).fill(optionLabel).catch(() => {});
     await wrapper.locator('.multiselect__option', { hasText: optionLabel }).first().click();
   } else {
     await wrapper
@@ -92,7 +93,7 @@ test.describe('Product Creation - Validation', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(`val1_${generateUid()}`);
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
   });
 
   test('2 - with empty family field', async ({ adminPage }) => {
@@ -101,7 +102,7 @@ test.describe('Product Creation - Validation', () => {
     await selectMultiselect(adminPage, 'type', 'Simple');
     await adminPage.locator('input[name="sku"]').fill(`val2_${generateUid()}`);
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Family field is required').first()).toBeVisible();
   });
 
   test('3 - with empty sku field', async ({ adminPage }) => {
@@ -110,7 +111,7 @@ test.describe('Product Creation - Validation', () => {
     await selectMultiselect(adminPage, 'type', 'Simple');
     await selectMultiselect(adminPage, 'attribute_family_id');
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
+    await expect(adminPage.locator('input[name="sku"] ~ p.text-red-600')).toHaveText('The SKU field is required');
   });
 
   test('4 - with empty product type and family field', async ({ adminPage }) => {
@@ -118,8 +119,8 @@ test.describe('Product Creation - Validation', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.locator('input[name="sku"]').fill(`val4_${generateUid()}`);
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Family field is required').first()).toBeVisible();
   });
 
   test('5 - with empty product type and sku field', async ({ adminPage }) => {
@@ -127,8 +128,8 @@ test.describe('Product Creation - Validation', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'attribute_family_id');
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
-    await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
+    await expect(adminPage.locator('input[name="sku"] ~ p.text-red-600')).toHaveText('The SKU field is required');
   });
 
   test('6 - with empty family and sku field', async ({ adminPage }) => {
@@ -136,17 +137,17 @@ test.describe('Product Creation - Validation', () => {
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await selectMultiselect(adminPage, 'type', 'Simple');
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
-    await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
+    await expect(adminPage.locator('#app').getByText('The Family field is required').first()).toBeVisible();
+    await expect(adminPage.locator('input[name="sku"] ~ p.text-red-600')).toHaveText('The SKU field is required');
   });
 
   test('7 - with all fields empty', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('#app').getByText('The Type field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Family field is required')).toBeVisible();
-    await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The SKU field is required');
+    await expect(adminPage.locator('#app').getByText('The Type field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Family field is required').first()).toBeVisible();
+    await expect(adminPage.locator('input[name="sku"] ~ p.text-red-600')).toHaveText('The SKU field is required');
   });
 });
 
@@ -262,7 +263,7 @@ test.describe('Simple Product CRUD', () => {
     await selectMultiselect(adminPage, 'attribute_family_id');
     await adminPage.locator('input[name="sku"]').fill(sku);
     await clickSave(adminPage, 'Save Product');
-    await expect(adminPage.locator('input[name="sku"] + p.text-red-600')).toHaveText('The sku has already been taken.');
+    await expect(adminPage.locator('input[name="sku"] ~ p.text-red-600')).toHaveText('The sku has already been taken.');
     await deleteProductBySku(adminPage, sku);
   });
 
@@ -280,7 +281,7 @@ test.describe('Simple Product CRUD', () => {
     await adminPage.locator('#name').fill(`Test Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
     // Multi-currency default channel in demo seed; fill every #price for per-currency validation.
-    const priceInputs = adminPage.locator('#price');
+    const priceInputs = adminPage.locator('[id^="price_"], #price');
     const priceCount = await priceInputs.count();
     for (let i = 0; i < priceCount; i++) {
       await priceInputs.nth(i).fill('40000');
@@ -333,7 +334,7 @@ test.describe('Configurable Product CRUD', () => {
     await adminPage.locator('#weight').fill('1.5');
     // Multi-currency default channel; fill every #price input.
     {
-      const prices = adminPage.locator('#price');
+      const prices = adminPage.locator('[id^="price_"], #price');
       const pc = await prices.count();
       for (let i = 0; i < pc; i++) {
         await prices.nth(i).fill('25000');

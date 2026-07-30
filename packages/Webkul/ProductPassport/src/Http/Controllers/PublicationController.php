@@ -7,7 +7,6 @@ use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Core\Models\ChannelProxy;
-use Webkul\Core\Models\CoreConfig;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
 use Webkul\ProductPassport\Http\Requests\BulkPublishPassportRequest;
@@ -15,6 +14,8 @@ use Webkul\ProductPassport\Http\Requests\MassPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\PublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\RepublishPassportVersionRequest;
 use Webkul\ProductPassport\Jobs\BulkPublishPassportsJob;
+use Webkul\ProductPassport\Services\PassportFeature;
+use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
@@ -23,6 +24,11 @@ use Webkul\Publication\Services\Publisher;
 
 class PublicationController extends Controller
 {
+    public function __construct(
+        private readonly PassportFeature $feature,
+        private readonly PassportReadinessService $readiness,
+    ) {}
+
     public function index(): View|JsonResponse|BinaryFileResponse
     {
         abort_unless(bouncer()->hasPermission('catalog.passport.view'), 403);
@@ -47,10 +53,7 @@ class PublicationController extends Controller
      */
     public static function featureEnabled(): bool
     {
-        return CoreConfig::query()
-            ->where('code', 'catalog.product_passport.settings.enabled')
-            ->where('value', '1')
-            ->exists();
+        return resolve(PassportFeature::class)->globallyEnabled();
     }
 
     /**
@@ -62,15 +65,62 @@ class PublicationController extends Controller
         $channel = ChannelProxy::modelClass()::findOrFail($request->integer('channel_id'));
 
         abort_unless(
-            (bool) (core()->getConfigData('catalog.product_passport.settings.enabled', $channel->code) ?? false),
+            $this->feature->enabledFor($channel),
             403,
+            trans('passport::app.catalog.products.edit.passport.publishing-disabled'),
         );
+
+        $localeIds = $request->collect('locale_ids')
+            ->map(fn ($id): int => (int) $id)
+            ->values()
+            ->all();
+
+        $locales = $channel->locales()
+            ->whereIn('locales.id', $localeIds)
+            ->get();
+
+        $assessments = $this->readiness->assessMany($product, $channel, $locales);
+
+        $blockedLocales = $locales
+            ->map(function ($locale) use ($assessments): array {
+                $assessment = $assessments->get($locale->id);
+
+                return [
+                    'locale_code'    => $locale->code,
+                    'status'         => $assessment->template === null ? 'missing_template' : 'missing_fields',
+                    'missing_fields' => $assessment->missingFields
+                        ->map(fn ($field): array => [
+                            'code'   => $field->code,
+                            'label'  => $field->getTranslatedValueWithFallback('label', $locale->code) ?: $field->code,
+                            'source' => $field->source_type->value,
+                        ])
+                        ->all(),
+                    'ready' => $assessment->isReady(),
+                ];
+            })
+            ->where('ready', false)
+            ->values()
+            ->map(function (array $locale): array {
+                unset($locale['ready']);
+
+                return $locale;
+            });
+
+        if ($blockedLocales->isNotEmpty()) {
+            return new JsonResponse([
+                'message'         => trans('passport::app.catalog.products.edit.passport.publish-blocked'),
+                'errors'          => [
+                    'locale_ids' => [trans('passport::app.catalog.products.edit.passport.publish-blocked')],
+                ],
+                'blocked_locales' => $blockedLocales,
+            ], 422);
+        }
 
         PublishPassportForProductChannelJob::dispatch(
             $product->id,
             $channel->id,
             'dpp',
-            $request->collect('locale_ids')->map(fn ($id): int => (int) $id)->all(),
+            $localeIds,
             auth()->guard('admin')->id(),
         );
 
@@ -98,8 +148,9 @@ class PublicationController extends Controller
         abort_if($channel === null, 404);
 
         abort_unless(
-            (bool) (core()->getConfigData('catalog.product_passport.settings.enabled', $channel->code) ?? false),
+            $this->feature->enabledFor($channel),
             403,
+            trans('passport::app.catalog.products.edit.passport.publishing-disabled'),
         );
 
         $localeIds = $channel->locales->pluck('id')->all();

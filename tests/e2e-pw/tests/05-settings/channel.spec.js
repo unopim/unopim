@@ -92,7 +92,7 @@ test.describe('Channel Management', () => {
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
     await adminPage.getByRole('textbox', { name: 'Code' }).blur();
     await clickSave(adminPage, 'Save Channel');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
   });
 
   test('Create Channel with empty Root Category shows validation error', async ({ adminPage }) => {
@@ -101,7 +101,7 @@ test.describe('Channel Management', () => {
     await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}rc`, name: 'E-Commerce', selectRootCategory: false });
     await clickSave(adminPage, 'Save Channel');
-    await expect(adminPage.locator('#app').getByText('The Root Category field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Root Category field is required').first()).toBeVisible();
   });
 
   test('Create Channel with empty Locales shows validation error', async ({ adminPage }) => {
@@ -110,7 +110,7 @@ test.describe('Channel Management', () => {
     await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}lc`, name: 'E-Commerce', selectLocale: false });
     await clickSave(adminPage, 'Save Channel');
-    await expect(adminPage.locator('#app').getByText('The Locales field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Locales field is required').first()).toBeVisible();
   });
 
   test('Create Channel with empty Currency shows validation error', async ({ adminPage }) => {
@@ -119,7 +119,7 @@ test.describe('Channel Management', () => {
     await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     await fillChannelForm(adminPage, { code: `${uid}cu`, name: 'E-Commerce', selectCurrency: false });
     await clickSave(adminPage, 'Save Channel');
-    await expect(adminPage.locator('#app').getByText('The Currencies field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Currencies field is required').first()).toBeVisible();
   });
 
   test('Create Channel with all required fields empty shows all validation errors', async ({ adminPage }) => {
@@ -127,10 +127,10 @@ test.describe('Channel Management', () => {
     await adminPage.getByRole('button', { name: 'Create Channel' }).click();
     // Leave code untouched (fill('') suppresses its required message) and submit.
     await clickSave(adminPage, 'Save Channel');
-    await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Root Category field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Locales field is required')).toBeVisible();
-    await expect(adminPage.locator('#app').getByText('The Currencies field is required')).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Code field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Root Category field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Locales field is required').first()).toBeVisible();
+    await expect(adminPage.locator('#app').getByText('The Currencies field is required').first()).toBeVisible();
   });
 
   test('Create Channel successfully', async ({ adminPage }) => {

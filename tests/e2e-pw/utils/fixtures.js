@@ -7,8 +7,9 @@ const STORAGE_STATE = path.resolve(__dirname, '../.state/admin-auth.json');
 /**
  * Init-script injected into every page to hide overlays that collide with the
  * admin UI in tests:
- *  - `.ap-shell` — the Agenting PIM chat widget, whose buttons/inputs cause
- *    Playwright strict-mode violations. agentingPIM.spec.js opts out via the
+ *  - `.ap-shell` (and the `.ap-panel`/`.ap-backdrop` it teleports to `<body>`) —
+ *    the Agenting PIM chat widget, whose buttons/inputs cause Playwright
+ *    strict-mode violations. agentingPIM.spec.js opts out via the
  *    `adminPageWithWidget` fixture.
  *  - `.phpdebugbar` — the dev Debugbar, a fixed bottom overlay that on the dev
  *    server (APP_DEBUG) sits over the unsaved-changes bar and intercepts pointer
@@ -20,7 +21,7 @@ const HIDE_WIDGET_SCRIPT = `
   (function() {
     var s = document.createElement('style');
     s.id = 'pw-hide-widget';
-    s.textContent = '.ap-shell, .phpdebugbar { display: none !important; }';
+    s.textContent = '.ap-shell, .ap-panel, .ap-backdrop, .phpdebugbar { display: none !important; }';
     if (document.head) { document.head.appendChild(s); }
     else { document.addEventListener('DOMContentLoaded', function() { document.head.appendChild(s); }); }
   })();

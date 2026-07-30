@@ -82,7 +82,7 @@ return [
             'views'           => 'Views',
             'version-history' => 'Version history',
             'withdraw'        => 'Withdraw',
-            'mass-publish'    => 'Publish selected',
+            'mass-publish'    => 'Republish selected',
         ],
         'publish-queued'      => 'Passport publishing has been queued.',
         'bulk-publish-queued' => 'Passport publishing has been queued for the selected passports.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digital Product Passport',
                     'publishing-disabled' => 'Passport publishing is disabled for this channel.',
+                    'required-badge'      => 'Required for DPP',
+                    'publish-blocked'     => 'Complete all required passport fields before publishing.',
+                    'missing-template'    => 'Passport template required',
                     'locale'              => 'Locale',
                     'version'             => 'Version',
                     'published-at'        => 'Published At',

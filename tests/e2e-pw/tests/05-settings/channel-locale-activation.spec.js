@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
 
 /**
  * Channel-derived locale activation.
@@ -112,10 +112,11 @@ test.describe('Channel locale activation', () => {
     expect(await readLocaleStatus(adminPage, TARGET_CODE)).toBe('Disabled');
 
     try {
-      await adminPage.goto('/admin/settings/channels/create', { waitUntil: 'load' });
+      await navigateTo(adminPage, 'channels');
+      await adminPage.getByRole('button', { name: 'Create Channel' }).click();
 
       await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
-      await adminPage.locator('input[name="en_US\\[name\\]"]').fill(`${code} Channel`);
+      await fillLocalizedField(adminPage, `${code} Channel`);
 
       const { control: rootCategory } = await openMultiselect(adminPage, 'root_category_id');
       await rootCategory.getByRole('option').first().click();

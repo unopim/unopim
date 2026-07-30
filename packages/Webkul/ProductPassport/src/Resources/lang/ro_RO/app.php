@@ -82,7 +82,7 @@ return [
             'views'           => 'Vizualizări',
             'version-history' => 'Istoric versiuni',
             'withdraw'        => 'Retrage',
-            'mass-publish'    => 'Publică selecția',
+            'mass-publish'    => 'Republică selecția',
         ],
         'publish-queued'      => 'Publicarea pașaportului a fost pusă în coadă.',
         'bulk-publish-queued' => 'Publicarea pașapoartelor selectate a fost adăugată în coadă.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Pașaport Digital al Produsului',
                     'publishing-disabled' => 'Publicarea pașapoartelor este dezactivată pentru acest canal.',
+                    'required-badge'      => 'Obligatoriu pentru DPP',
+                    'publish-blocked'     => 'Completați toate câmpurile obligatorii ale pașaportului înainte de publicare.',
+                    'missing-template'    => 'Este necesar un șablon de pașaport',
                     'locale'              => 'Limbă',
                     'version'             => 'Versiune',
                     'published-at'        => 'Publicat la',

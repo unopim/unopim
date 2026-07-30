@@ -82,7 +82,7 @@ return [
             'views'           => 'Tampilan',
             'version-history' => 'Riwayat versi',
             'withdraw'        => 'Tarik Kembali',
-            'mass-publish'    => 'Terbitkan yang dipilih',
+            'mass-publish'    => 'Terbitkan ulang yang dipilih',
         ],
         'publish-queued'      => 'Penerbitan paspor telah diantrekan.',
         'bulk-publish-queued' => 'Penerbitan paspor yang dipilih telah dimasukkan ke antrean.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Paspor Produk Digital',
                     'publishing-disabled' => 'Penerbitan paspor dinonaktifkan untuk saluran ini.',
+                    'required-badge'      => 'Wajib untuk DPP',
+                    'publish-blocked'     => 'Lengkapi semua bidang paspor yang wajib sebelum menerbitkan.',
+                    'missing-template'    => 'Templat paspor diperlukan',
                     'locale'              => 'Bahasa',
                     'version'             => 'Versi',
                     'published-at'        => 'Diterbitkan Pada',

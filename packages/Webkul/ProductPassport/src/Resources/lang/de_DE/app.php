@@ -82,7 +82,7 @@ return [
             'views'           => 'Aufrufe',
             'version-history' => 'Versionsverlauf',
             'withdraw'        => 'Zurückziehen',
-            'mass-publish'    => 'Auswahl veröffentlichen',
+            'mass-publish'    => 'Auswahl erneut veröffentlichen',
         ],
         'publish-queued'      => 'Die Veröffentlichung des Passes wurde eingeplant.',
         'bulk-publish-queued' => 'Die Veröffentlichung der ausgewählten Pässe wurde in die Warteschlange gestellt.',
@@ -144,6 +144,9 @@ return [
                 'passport' => [
                     'title'               => 'Digitaler Produktpass',
                     'publishing-disabled' => 'Die Veröffentlichung ist für diesen Kanal deaktiviert.',
+                    'required-badge'      => 'Für den DPP erforderlich',
+                    'publish-blocked'     => 'Füllen Sie vor der Veröffentlichung alle erforderlichen Passfelder aus.',
+                    'missing-template'    => 'Passvorlage erforderlich',
                     'locale'              => 'Sprache',
                     'version'             => 'Version',
                     'published-at'        => 'Veröffentlicht am',

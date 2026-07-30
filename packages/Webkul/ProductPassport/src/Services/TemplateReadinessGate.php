@@ -14,11 +14,13 @@ use Webkul\Publication\Contracts\PublicationGate;
 class TemplateReadinessGate implements PublicationGate
 {
     public function __construct(
+        private readonly PassportFeature $feature,
         private readonly PassportReadinessService $readiness,
     ) {}
 
     public function passes(Product $product, Channel $channel, Locale $locale): bool
     {
-        return $this->readiness->isReady($product, $channel, $locale);
+        return $this->feature->enabledFor($channel)
+            && $this->readiness->isReady($product, $channel, $locale);
     }
 }
