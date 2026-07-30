@@ -211,7 +211,10 @@ jobs:
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          ini-values: error_reporting=E_ALL
+          # pcov instruments every file it loads, and the graph only cares about
+          # our own source, so keeping vendor out of it is what keeps the
+          # recording inside the runner's memory.
+          ini-values: error_reporting=E_ALL, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           # The dependency graph is recorded from coverage data.
           coverage: pcov
