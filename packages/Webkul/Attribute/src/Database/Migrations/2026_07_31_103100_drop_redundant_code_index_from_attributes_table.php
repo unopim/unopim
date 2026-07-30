@@ -4,10 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * `code` is already unique, and that index serves every lookup the plain one
- * would; keeping both only costs write time on each attribute save.
- */
+/** `code` is already unique, so the plain copy only costs write time. */
 return new class extends Migration
 {
     public function up(): void

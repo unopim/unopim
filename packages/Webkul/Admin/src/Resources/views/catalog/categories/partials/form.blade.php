@@ -48,10 +48,7 @@
                     </x-admin::form.control-group.label>
 
                     @if ($parentPicker ?? false)
-                        {{--
-                            The drawer body is only in the DOM while it is open, so the picker
-                            itself cannot carry the value into the submit — this field does.
-                        --}}
+                        {{-- The drawer body leaves the DOM when it closes, so the picker cannot carry the value into the submit. --}}
                         <input
                             type="hidden"
                             name="parent_id"

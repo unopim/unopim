@@ -4,11 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Both columns already carry a unique constraint, which serves every lookup the
- * plain index would. The duplicate only costs write time — each index has to be
- * maintained on every insert and update of the row.
- */
+/** Both columns are already unique, so the plain copy only costs write time. */
 return new class extends Migration
 {
     /**

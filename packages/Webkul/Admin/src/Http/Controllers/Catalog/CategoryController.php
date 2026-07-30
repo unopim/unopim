@@ -282,9 +282,8 @@ class CategoryController extends Controller
     }
 
     /**
-     * Where a save lands. The panel is part of the tree workspace, so a save made
-     * there returns to the category it just wrote — selected, and with the branch
-     * around it revealed — rather than dropping the editor back on the listing.
+     * A save made in the tree panel returns to the category it wrote, selected,
+     * rather than to the listing.
      *
      * @return array{0: string, 1: array<string, mixed>}
      */

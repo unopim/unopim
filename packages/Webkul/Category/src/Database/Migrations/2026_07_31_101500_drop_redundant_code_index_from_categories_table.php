@@ -5,10 +5,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 /**
- * `code` carries both a unique constraint and a plain index, and the unique one
- * already serves every lookup. The duplicate only costs write time: inserting a
- * category shifts `_lft`/`_rgt` across the whole tree, and every shifted row has
- * to be re-entered into each index on the table.
+ * `code` is already unique. The duplicate costs write time on every insert,
+ * which shifts `_lft`/`_rgt` across the whole tree and re-indexes each row.
  */
 return new class extends Migration
 {
