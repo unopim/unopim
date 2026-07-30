@@ -68,7 +68,15 @@ jobs:
       - name: Running Pest Tests
         # Each worker owns a database clone, so the suite no longer runs as one
         # process - which is also what kept it under the runner's memory ceiling.
-        run: vendor/bin/pest --parallel --processes=4 --colors=always
+        run: vendor/bin/pest --parallel --processes=4 --colors=always --log-junit pest-junit.xml
+
+      - name: Upload failure report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pest-mysql-junit
+          path: pest-junit.xml
+          if-no-files-found: ignore
 
   pest-elasticsearch:
     runs-on: ubuntu-24.04
