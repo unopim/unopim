@@ -577,3 +577,15 @@ it('should not render the update button on the association type history tab', fu
         ->assertStatus(200)
         ->assertDontSee(trans('admin::app.catalog.association_types.edit.save-btn'), false);
 });
+
+it('should not render the display section control in the association type field form', function () {
+    $this->loginAsAdmin();
+
+    $associationType = createAssociationType();
+
+    $content = $this->get(route('admin.catalog.association_types.edit', $associationType->id))
+        ->assertStatus(200)
+        ->getContent();
+
+    expect(substr_count($content, 'name="section"'))->toBe(0);
+});

@@ -544,27 +544,6 @@
                                 </x-admin::form.control-group>
                             </div>
 
-                            <!-- Display Section -->
-                            <x-admin::form.control-group
-                                class="w-full mb-2.5"
-                                v-if="! isFieldNew"
-                            >
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.catalog.category_fields.create.set-section')
-                                </x-admin::form.control-group.label>
-
-                                <x-admin::form.control-group.control
-                                    type="select"
-                                    name="section"
-                                    rules="required"
-                                    ::options="sectionOptions"
-                                    track-by="id"
-                                    label-by="label"
-                                />
-
-                                <x-admin::form.control-group.error control-name="section" />
-                            </x-admin::form.control-group>
-
                             <!-- Options -->
                             <div v-if="! isFieldNew && ['select', 'multiselect', 'checkbox'].includes(selectedFieldType)">
                                 <div class="flex justify-between items-center mb-3">
@@ -804,7 +783,6 @@
                         is_required: element.is_required ? '1' : '',
                         is_unique: element.is_unique ? '1' : '',
                         value_per_locale: element.value_per_locale ? '1' : '',
-                        section: element.section ?? 'left',
                     };
 
                     this.locales.forEach((locale) => {
@@ -864,8 +842,6 @@
                         locales[locale.code] = params[locale.code] ?? '';
                     });
 
-                    let sectionValue = this.optionId(params.section) || 'left';
-
                     if (this.isFieldNew) {
                         this.localFields.push({
                             id: 'new_' + this.fieldSeq++,
@@ -895,7 +871,6 @@
                                 is_required: !! params.is_required,
                                 is_unique: !! params.is_unique,
                                 value_per_locale: !! params.value_per_locale,
-                                section: sectionValue,
                                 locales: locales,
                                 options: this.draftOptions,
                             });
