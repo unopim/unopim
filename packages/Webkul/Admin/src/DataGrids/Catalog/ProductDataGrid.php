@@ -60,6 +60,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         'attribute_family',
         'status',
         'type',
+        'parent',
         'completeness',
     ];
 
@@ -195,6 +196,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,
+                // Opt-in from the "Add Filter" list, like completeness: variants are a
+                // minority of most catalogs, so it does not earn a slot in the default bar.
+                'default_filter'   => false,
+                'removable_filter' => true,
             ],
             'product_id' => [
                 'index'      => 'product_id',
