@@ -105,7 +105,10 @@
                                                         </x-admin::badge>
                                                     @endif
                                                 @elseif ($row['missing_count'] > 0)
-                                                    <x-admin::dropdown position="bottom-right">
+                                                    <x-admin::dropdown
+                                                        position="bottom-right"
+                                                        :teleport="true"
+                                                    >
                                                         <x-slot:toggle>
                                                             <button
                                                                 type="button"
@@ -117,7 +120,7 @@
                                                             </button>
                                                         </x-slot>
 
-                                                        <x-slot:content class="w-80">
+                                                        <x-slot:content class="passport-missing-fields w-80 max-h-80 overflow-y-auto">
                                                             <p class="mb-3 text-sm text-gray-600 dark:text-gray-300">
                                                                 @lang('passport::app.catalog.products.edit.passport.publish-blocked')
                                                             </p>
@@ -182,7 +185,10 @@
                                                     @endif
 
                                                     @if (! empty($row['operator_link']) || ! empty($row['authority_link']) || ! empty($row['carrier_link']))
-                                                        <x-admin::dropdown position="bottom-{{ core()->getRequestedLocale()?->direction === 'rtl' ? 'left' : 'right' }}">
+                                                        <x-admin::dropdown
+                                                            position="bottom-{{ core()->getRequestedLocale()?->direction === 'rtl' ? 'left' : 'right' }}"
+                                                            :teleport="true"
+                                                        >
                                                             <x-slot:toggle>
                                                                 <button
                                                                     type="button"
