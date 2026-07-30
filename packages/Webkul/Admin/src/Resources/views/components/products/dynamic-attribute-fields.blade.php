@@ -357,7 +357,7 @@
                         <div class="grid w-full">
                             <x-admin::form.control-group.control
                                 type="price"
-                                :id="$field->code"
+                                :id="$field->code . '_' . $currency->code"
                                 :name="$fieldName . '[' . $currency->code . ']'"
                                 ::rules="{{ $field->getValidationsField() }}"
                                 :value="$currencyValue"

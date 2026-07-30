@@ -252,7 +252,12 @@ async function fillRequiredProductAttributes(page, { name, urlKey, price }) {
 	await page.locator('#url_key').fill(urlKey);
 	await fillTinyMCE(page, 'short_description', 'E2E test short description.');
 	await fillTinyMCE(page, 'description', 'E2E test description.');
-	await page.locator('#price').fill(price);
+
+	const prices = page.locator('[id^="price_"], #price');
+	const count = await prices.count();
+	for (let i = 0; i < count; i++) {
+		await prices.nth(i).fill(price);
+	}
 }
 
 /**

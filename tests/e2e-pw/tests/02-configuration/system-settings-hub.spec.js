@@ -16,7 +16,7 @@ test.describe('System Settings hub', () => {
         await adminPage.locator('input[data-settings-search]').fill('');
         await expect(appearance).toBeVisible();
         await appearance.click();
-        await expect(adminPage).toHaveURL(/\/admin\/settings\/appearance/);
+        await expect(adminPage).toHaveURL(/\/admin\/configuration\/system\/system\.appearance/);
     });
 
     test('opens the generic fields editor for the debug row', async ({ adminPage }) => {
