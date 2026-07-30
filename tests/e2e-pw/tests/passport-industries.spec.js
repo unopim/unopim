@@ -134,17 +134,21 @@ test.describe.serial('DPP industry use cases', () => {
     const page = adminPage;
     const sku = `fur_${generateUid()}`;
 
-    const { uuid, localeMap } = await publishScenario(page, sku, async () => {
+    const published = ['en_US', 'fr_FR'];
+
+    const { uuid } = await publishScenario(page, sku, async () => {
       await fillDppField(page, 'dpp_durability_statement', 'Rated for 10 years of domestic use');
       await fillDppField(page, 'dpp_model_identifier', 'CHAIR-2026');
-    }, { locales: ['en_US', 'fr_FR'] });
+    }, { locales: published });
 
     // en_US shows the durability statement; the model id (common) shows in every locale's identifier block.
     const en = await publicText(page, uuid, 'en_US');
     expect(en.body).toContain('Rated for 10 years of domestic use');
     expect(en.body).toContain('CHAIR-2026');
 
-    const other = Object.keys(localeMap).find((code) => code !== 'en_US');
+    // Only the locales we actually published are live; the panel's locale map
+    // also lists channel locales that were never requested (de_DE in demo data).
+    const other = published.find((code) => code !== 'en_US');
     if (other) {
       const alt = await publicText(page, uuid, other);
       expect(alt.status).toBe(200);
