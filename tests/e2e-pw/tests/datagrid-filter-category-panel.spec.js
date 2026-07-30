@@ -2,21 +2,10 @@ const { test, expect } = require('@playwright/test');
 
 const PANEL = '.fixed[data-section-id="datagrid-filter-categories"]';
 
-/**
- * The Agentic PIM panel decides whether `#app` gets `contain: paint`, which
- * changes how everything inside it stacks against the teleported panel -- so
- * each test pins the state it means to exercise rather than inheriting the
- * instance default.
- */
 const pinAgenticPim = (page, isOpen) => page.addInitScript((open) => {
   sessionStorage.setItem('agenting_pim_state', JSON.stringify({ isOpen: open }));
 }, isOpen);
 
-/**
- * The filter drawer's overlay spans the whole viewport, so "is the panel on
- * top?" cannot be answered from geometry -- hit-test the panel's own centre
- * and see what the browser would hand the click to.
- */
 const topmostAtPanelCentre = (page) => page.evaluate((sel) => {
   const panel = document.querySelector(sel);
 

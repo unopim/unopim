@@ -355,11 +355,6 @@
                     return [...document.querySelectorAll(this.dockTo)].filter(el => el.getClientRects().length);
                 },
 
-                /**
-                 * Edge of whatever is docked against the same side, so the panel
-                 * stops at their border rather than a fixed guess -- a second docked
-                 * panel opening after this one would otherwise be overlapped.
-                 */
                 dockEdge() {
                     const rtl = document.dir === 'rtl';
 
@@ -376,15 +371,6 @@
                     return rtl ? Math.max(...edges) : Math.min(...edges);
                 },
 
-                /**
-                 * Stacking level for the overlay (base) and panel (base + 1), applied
-                 * inline because Tailwind's `z-[..]` classes are not compiled from this
-                 * x-template. A panel opened from inside a docked element -- the
-                 * datagrid's filter drawer -- has to clear that element's own
-                 * viewport-wide overlay, which would otherwise dim it and swallow every
-                 * click, so the level is read off whatever it docks against rather than
-                 * being a constant. Teleported dropdowns sit at 10010, above either.
-                 */
                 stackBase() {
                     const levels = this.dockTargets()
                         .map(el => parseInt(window.getComputedStyle(el).zIndex, 10))
@@ -393,14 +379,6 @@
                     return levels.length ? Math.max(...levels) + 1 : 9998;
                 },
 
-                /**
-                 * Positions the fixed overlay/panel over the visible main-content
-                 * region using its live bounding rect, so the drawer tracks the
-                 * left sidebar and app header without covering them and stays in the
-                 * viewport regardless of page scroll. Widths come off the client area
-                 * rather than window.innerWidth, which counts the scrollbar and would
-                 * leave the panel short of the dock edge.
-                 */
                 reposition() {
                     const main = this.main();
 
