@@ -17,7 +17,6 @@ beforeEach(function (): void {
         'label'           => 'publication::app.publications.status.draft',
         'payload_builder' => StubPayloadBuilder::class,
         'template'        => 'publication::dpp.show',
-        'required_group'  => 'dpp_group',
         'route_prefix'    => 'dpp',
     ]);
 

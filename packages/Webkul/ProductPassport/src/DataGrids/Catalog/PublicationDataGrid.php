@@ -30,7 +30,7 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             // Single correlated aggregate, not a per-row query: the sum of every daily counter for this publication.
             ->selectSub(
                 DB::table('publication_view_stats')
-                    ->selectRaw('COALESCE(SUM(publication_view_stats.views), 0)')
+                    ->selectRaw('COALESCE(SUM(views), 0)')
                     ->whereColumn('publication_view_stats.publication_id', 'publications.id'),
                 'views',
             );

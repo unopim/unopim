@@ -9,7 +9,7 @@ it('stores a record via the repository and returns a redirect url', function () 
 
     $response->assertOk()->assertJsonStructure(['data' => ['redirect_url'], 'message']);
 
-    $this->assertDatabaseHas('wk_resource_kit_items', ['name' => 'Acme']);
+    $this->assertDatabaseHas('resource_kit_items', ['name' => 'Acme']);
 });
 
 it('rejects invalid input via the FormRequest', function () {
@@ -31,7 +31,7 @@ it('persists schema fields that have no validation rules', function () {
 
     $response->assertOk()->assertJsonStructure(['data' => ['redirect_url'], 'message']);
 
-    $this->assertDatabaseHas('wk_resource_kit_items', [
+    $this->assertDatabaseHas('resource_kit_items', [
         'name'  => 'Acme',
         'label' => 'Blue',
     ]);

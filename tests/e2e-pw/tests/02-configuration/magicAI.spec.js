@@ -6,7 +6,7 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const MAGIC_AI_CONFIG_URL = '/admin/magic-ai/settings';
 const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platforms';
 const MAGIC_AI_PROMPT_URL = '/admin/magic-ai/prompts';
-const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/system-prompts';
+const MAGIC_AI_SYSTEM_PROMPT_URL = '/admin/magic-ai/system-prompts';
 
 async function ensureMagicAITextEnabled(adminPage) {
   await adminPage.goto(MAGIC_AI_CONFIG_URL, { waitUntil: 'networkidle' });
@@ -334,7 +334,7 @@ test('2.9 - Save Configuration without any changes', async ({ adminPage }) => {
 
 test('3.1 - Verify System Prompt page opens', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_SYSTEM_PROMPT_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage).toHaveURL(/.*admin\/system-prompts.*/);
+  await expect(adminPage).toHaveURL(/.*admin\/magic-ai\/system-prompts.*/);
   await expect(adminPage.getByRole('button', { name: 'Create System Prompt' })).toBeVisible();
 });
 
@@ -666,7 +666,7 @@ test('5.2 - Edit the default channel and save via the unsaved-changes bar', asyn
   const nameField = adminPage.locator('input[name="en_US\\[name\\]"]').first();
   await expect(nameField).toHaveValue(/.+/, { timeout: 10000 });
   const originalName = await nameField.inputValue();
-  await nameField.fill(`${originalName} ${generateUid()}`);
+  await nameField.locator('..').locator('input[type="text"]').first().fill(`${originalName} ${generateUid()}`);
 
   await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
 
@@ -676,7 +676,7 @@ test('5.2 - Edit the default channel and save via the unsaved-changes bar', asyn
   await clickEditOnRow(adminPage, 'default');
   const nameFieldRestore = adminPage.locator('input[name="en_US\\[name\\]"]').first();
   await expect(nameFieldRestore).toHaveValue(/.+/, { timeout: 10000 });
-  await nameFieldRestore.fill(originalName);
+  await nameFieldRestore.locator('..').locator('input[type="text"]').first().fill(originalName);
   await clickSaveAndExpect(adminPage, 'Save changes', /Update Channel Successfully/i);
 });
 

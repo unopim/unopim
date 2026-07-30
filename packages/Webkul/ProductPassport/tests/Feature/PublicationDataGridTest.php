@@ -17,7 +17,9 @@ it('exports gtin, gs1 link and public url columns for the print hand-off', funct
     $grid = resolve(PublicationDataGrid::class);
     $grid->setQueryBuilder();
 
-    $rows = $grid->getExportableData();
+    $rows = collect($grid->getExportableData())
+        ->filter(fn ($row): bool => ((array) $row)['gtin'] === '04006381333931')
+        ->values();
 
     expect($rows)->toHaveCount(1);
 

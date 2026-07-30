@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\DB;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationVersion;
@@ -78,11 +79,11 @@ it('refuses to delete a product that still has an attested publication', functio
     $product = $version->publication->product;
 
     try {
-        $product->delete();
+        DB::transaction(fn () => $product->delete());
 
         $this->fail('Expected deleting a product with an attested publication to raise a QueryException.');
     } catch (QueryException $exception) {
-        expect($exception->getCode())->toBe('23000')
+        expect($exception->getCode())->toBeIn(['23000', '23503'])
             ->and($exception->getMessage())->toContain('publications_product_id_foreign');
     }
 

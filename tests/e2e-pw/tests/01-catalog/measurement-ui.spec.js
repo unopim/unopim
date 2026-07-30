@@ -95,7 +95,7 @@ async function createMeasurementAttribute(page, { familyCode = MEASUREMENT_FAMIL
   await gotoAdmin(page, '/admin/catalog/attributes');
   await clickCreate(page, 'Create Attribute');
 
-  const nameInput = page.locator('input[name="en_US\\[name\\]"]').first();
+  const nameInput = page.locator('input[name$="[name]"]').first();
   await nameInput.waitFor({ state: 'visible', timeout: 20000 });
   await nameInput.fill(name);
 
