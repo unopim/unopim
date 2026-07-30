@@ -12,6 +12,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::post('mass-publish', 'massPublish')->name('admin.catalog.passports.mass_publish');
         Route::post('bulk-publish', 'bulkPublish')->name('admin.catalog.passports.bulk-publish');
         Route::post('withdraw/{publication}', 'withdraw')->name('admin.catalog.passports.withdraw');
+        Route::post('reinstate/{publication}', 'reinstate')->name('admin.catalog.passports.reinstate');
+        Route::post('mass-transition', 'massTransition')->name('admin.catalog.passports.mass_transition');
         Route::get('{publication}/versions', 'versions')->name('admin.catalog.passports.versions');
         Route::post('{publication}/versions/republish', 'republish')->name('admin.catalog.passports.republish');
     });

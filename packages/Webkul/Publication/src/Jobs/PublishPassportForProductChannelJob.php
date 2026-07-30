@@ -11,6 +11,7 @@ use Illuminate\Queue\SerializesModels;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Services\Publisher;
 
 /**
@@ -53,6 +54,11 @@ class PublishPassportForProductChannelJob implements ShouldBeUnique, ShouldQueue
         return "{$this->productId}:{$this->channelId}:{$this->type}";
     }
 
+    /**
+     * A withdrawn or redacted passport aborts the whole dispatch rather than failing:
+     * the retry would hit the same sticky status, and with auto-publish on a large
+     * catalog that is one dead job per saved product until someone reinstates it.
+     */
     public function handle(Publisher $publisher): void
     {
         $product = ProductProxy::modelClass()::find($this->productId);
@@ -73,8 +79,14 @@ class PublishPassportForProductChannelJob implements ShouldBeUnique, ShouldQueue
         foreach ($this->localeIds as $localeId) {
             $locale = $locales->get($localeId);
 
-            if ($locale) {
+            if (! $locale) {
+                continue;
+            }
+
+            try {
                 $publisher->publish($product, $channel, $locale, $this->type, $this->publishedById);
+            } catch (InvalidPublicationTransitionException) {
+                return;
             }
         }
     }

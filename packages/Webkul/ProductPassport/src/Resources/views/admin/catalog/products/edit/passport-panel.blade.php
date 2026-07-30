@@ -23,10 +23,12 @@
                 type="button"
                 class="passport-publish-all-btn primary-button shrink-0"
                 data-locale-ids="{{ json_encode($passportRows->where('ready', true)->pluck('locale_id')->values()) }}"
-                title="{{ $passportRows->every('ready')
-                    ? trans('passport::app.catalog.products.edit.passport.publish-all')
-                    : trans('passport::app.catalog.products.edit.passport.publish-blocked') }}"
-                @disabled(! $passportRows->every('ready'))
+                title="{{ $passportOffline
+                    ? trans('passport::app.publications.publish-withdrawn')
+                    : ($passportRows->every('ready')
+                        ? trans('passport::app.catalog.products.edit.passport.publish-all')
+                        : trans('passport::app.catalog.products.edit.passport.publish-blocked')) }}"
+                @disabled($passportOffline || ! $passportRows->every('ready'))
             >
                 {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
             </button>
@@ -40,6 +42,18 @@
             data-republish-url="{{ $passportRepublishUrl }}"
             class="grid gap-2.5"
         >
+            @if ($passportOffline)
+                <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex items-center gap-2.5">
+                    <x-admin::badge variant="danger">
+                        {{ $passportStatusLabel }}
+                    </x-admin::badge>
+
+                    <p class="text-xs text-gray-600 dark:text-gray-300">
+                        @lang('passport::app.publications.publish-withdrawn')
+                    </p>
+                </div>
+            @endif
+
             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex flex-wrap justify-between items-center gap-4">
                 <p class="text-xs text-gray-500 dark:text-gray-400">
                     @if ($passportAutoPublish)
@@ -173,10 +187,12 @@
                                                             type="button"
                                                             class="passport-publish-btn primary-button"
                                                             data-locale-id="{{ $row['locale_id'] }}"
-                                                            title="{{ $row['ready']
-                                                                ? trans('passport::app.catalog.products.edit.passport.publish')
-                                                                : trans('passport::app.catalog.products.edit.passport.publish-blocked') }}"
-                                                            @disabled(! $row['ready'])
+                                                            title="{{ $passportOffline
+                                                                ? trans('passport::app.publications.publish-withdrawn')
+                                                                : ($row['ready']
+                                                                    ? trans('passport::app.catalog.products.edit.passport.publish')
+                                                                    : trans('passport::app.catalog.products.edit.passport.publish-blocked')) }}"
+                                                            @disabled($passportOffline || ! $row['ready'])
                                                         >
                                                             {{ $row['version'] === null
                                                                 ? trans('passport::app.catalog.products.edit.passport.publish')

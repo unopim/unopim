@@ -47,6 +47,16 @@ return [
         'route' => 'admin.catalog.passports.withdraw',
         'sort'  => 3,
     ], [
+        'key'   => 'catalog.passport.withdraw',
+        'name'  => 'passport::app.acl.passports.withdraw',
+        'route' => 'admin.catalog.passports.reinstate',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.passport.withdraw',
+        'name'  => 'passport::app.acl.passports.withdraw',
+        'route' => 'admin.catalog.passports.mass_transition',
+        'sort'  => 3,
+    ], [
         'key'   => 'catalog.passport.template.view',
         'name'  => 'passport::app.acl.templates.view',
         'route' => 'admin.catalog.passports.templates.index',

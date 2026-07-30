@@ -10,6 +10,11 @@ use Webkul\Publication\Enums\PublicationStatus;
 
 class PublicationDataGrid extends DataGrid implements ExportableInterface
 {
+    /**
+     * `status_code` duplicates the status column on purpose: column closures run
+     * before action conditions and overwrite `publication_status` with its
+     * translated label, so the raw enum value has to survive under a second alias.
+     */
     public function prepareQueryBuilder(): Builder
     {
         $queryBuilder = DB::table('publications')
@@ -20,9 +25,6 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'publications.id',
                 'publications.uuid',
                 'publications.status as publication_status',
-                // Column closures run before action conditions and overwrite
-                // `publication_status` with its translated label, so the raw enum
-                // value has to survive under a second alias.
                 'publications.status as status_code',
                 'publications.live_locale_count',
                 'publications.last_published_at',
@@ -148,7 +150,7 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
         if (bouncer()->hasPermission('catalog.passport.view')) {
             $this->addAction([
                 'index'  => 'versions',
-                'icon'   => 'icon-time-machine',
+                'icon'   => 'icon-view',
                 'title'  => trans('passport::app.publications.datagrid.version-history'),
                 'method' => 'GET',
                 'url'    => fn ($row): string => route('admin.catalog.passports.versions', $row->id),
@@ -164,6 +166,15 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'url'       => fn ($row): string => route('admin.catalog.passports.withdraw', $row->id),
                 'condition' => fn ($row): bool => $row->status_code === PublicationStatus::Published->value,
             ]);
+
+            $this->addAction([
+                'index'     => 'reinstate',
+                'icon'      => 'icon-done',
+                'title'     => trans('passport::app.publications.datagrid.reinstate'),
+                'method'    => 'POST',
+                'url'       => fn ($row): string => route('admin.catalog.passports.reinstate', $row->id),
+                'condition' => fn ($row): bool => $row->status_code === PublicationStatus::Withdrawn->value,
+            ]);
         }
     }
 
@@ -174,6 +185,28 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'title'  => trans('passport::app.publications.datagrid.mass-publish'),
                 'url'    => route('admin.catalog.passports.bulk-publish'),
                 'method' => 'POST',
+            ]);
+        }
+
+        if (bouncer()->hasPermission('catalog.passport.withdraw')) {
+            $this->addMassAction([
+                'title'   => trans('passport::app.publications.datagrid.mass-transition'),
+                'url'     => route('admin.catalog.passports.mass_transition'),
+                'method'  => 'POST',
+                'options' => [
+                    'type'   => 'basic',
+                    'params' => [
+                        'options' => [
+                            [
+                                'label' => trans('passport::app.publications.datagrid.withdraw'),
+                                'value' => PublicationStatus::Withdrawn->value,
+                            ], [
+                                'label' => trans('passport::app.publications.datagrid.reinstate'),
+                                'value' => PublicationStatus::Published->value,
+                            ],
+                        ],
+                    ],
+                ],
             ]);
         }
     }

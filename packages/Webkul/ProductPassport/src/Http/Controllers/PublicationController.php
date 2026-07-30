@@ -11,11 +11,14 @@ use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
 use Webkul\ProductPassport\Http\Requests\BulkPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\MassPublishPassportRequest;
+use Webkul\ProductPassport\Http\Requests\MassTransitionPassportRequest;
 use Webkul\ProductPassport\Http\Requests\PublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\RepublishPassportVersionRequest;
 use Webkul\ProductPassport\Jobs\BulkPublishPassportsJob;
+use Webkul\ProductPassport\Jobs\BulkTransitionPassportsJob;
 use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportReadinessService;
+use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
@@ -116,6 +119,12 @@ class PublicationController extends Controller
             ], 422);
         }
 
+        if (! $this->publicationAcceptsPublishing($product->id, $channel->id)) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.publish-withdrawn'),
+            ], 422);
+        }
+
         PublishPassportForProductChannelJob::dispatch(
             $product->id,
             $channel->id,
@@ -179,14 +188,85 @@ class PublicationController extends Controller
             abort(404);
         }
 
-        BulkPublishPassportsJob::dispatch(
-            $request->collect('indices')->map(fn ($id): int => (int) $id)->all(),
-            auth()->guard('admin')->id(),
-        );
+        $publicationIds = $request->collect('indices')->map(fn ($id): int => (int) $id)->all();
+
+        BulkPublishPassportsJob::dispatch($publicationIds, auth()->guard('admin')->id());
+
+        $skipped = Publication::query()
+            ->whereIn('id', $publicationIds)
+            ->whereNotIn('status', PublicationStatus::publishable())
+            ->count();
 
         return new JsonResponse([
-            'message' => trans('passport::app.publications.bulk-publish-queued'),
+            'message' => $skipped === 0
+                ? trans('passport::app.publications.bulk-publish-queued')
+                : trans('passport::app.publications.bulk-publish-queued-skipped', ['count' => $skipped]),
         ]);
+    }
+
+    /**
+     * Returns a withdrawn passport to Published, making every locale it already
+     * holds reachable again. Refuses on anything but a withdrawn publication —
+     * redaction is one-way.
+     */
+    public function reinstate(Publication $publication, Publisher $publisher): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('catalog.passport.withdraw'), 403);
+
+        try {
+            $publisher->reinstate($publication);
+        } catch (InvalidPublicationTransitionException) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.reinstate-invalid'),
+            ], 422);
+        }
+
+        return new JsonResponse([
+            'message' => trans('passport::app.publications.reinstated'),
+        ]);
+    }
+
+    /**
+     * Withdraw or reinstate a grid selection. Fans out through a chunking job so
+     * an arbitrarily large selection never runs in the web request, and so each
+     * row still transitions through Publisher (events, counters) rather than a
+     * blind mass UPDATE.
+     */
+    public function massTransition(MassTransitionPassportRequest $request): JsonResponse
+    {
+        if (! $this->featureEnabled()) {
+            abort(404);
+        }
+
+        $publicationIds = $request->collect('indices')->map(fn ($id): int => (int) $id)->all();
+
+        $target = PublicationStatus::from($request->string('value')->value());
+
+        BulkTransitionPassportsJob::dispatch($publicationIds, $target);
+
+        return new JsonResponse([
+            'message' => trans(
+                $target === PublicationStatus::Withdrawn
+                    ? 'passport::app.publications.mass-withdraw-queued'
+                    : 'passport::app.publications.mass-reinstate-queued',
+                ['count' => count($publicationIds)],
+            ),
+        ]);
+    }
+
+    /**
+     * Whether the product's passport for this channel can still take new versions.
+     * A passport that does not exist yet is publishable — publish() creates it.
+     */
+    private function publicationAcceptsPublishing(int $productId, int $channelId): bool
+    {
+        $status = Publication::query()
+            ->where('product_id', $productId)
+            ->where('channel_id', $channelId)
+            ->where('type', 'dpp')
+            ->value('status');
+
+        return ! $status instanceof PublicationStatus || $status->acceptsNewVersions();
     }
 
     /**

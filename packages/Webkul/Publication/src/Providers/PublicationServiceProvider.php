@@ -12,6 +12,8 @@ use Illuminate\Support\ServiceProvider;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Events\PublicationPublished;
 use Webkul\Publication\Events\PublicationRedacted;
+use Webkul\Publication\Events\PublicationReinstated;
+use Webkul\Publication\Events\PublicationWithdrawn;
 use Webkul\Publication\Http\Controllers\PublicationAssetController;
 use Webkul\Publication\Http\Controllers\PublicationCarrierController;
 use Webkul\Publication\Http\Controllers\PublicationController;
@@ -57,6 +59,8 @@ class PublicationServiceProvider extends ServiceProvider
 
         Event::listen(PublicationPublished::class, SyncPublicationVersionDocuments::class);
         Event::listen(PublicationPublished::class, SyncPublicationCounters::class);
+        Event::listen(PublicationWithdrawn::class, SyncPublicationCounters::class);
+        Event::listen(PublicationReinstated::class, SyncPublicationCounters::class);
         Event::listen(PublicationPublished::class, SyncPublicationGtin::class);
         Event::listen(PublicationRedacted::class, PrunePublicationVersionDocumentsOnRedaction::class);
         Event::listen('catalog.product.delete.before', GuardProductDeletionAgainstPublications::class);
