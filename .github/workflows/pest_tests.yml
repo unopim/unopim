@@ -67,15 +67,18 @@ jobs:
 
       - name: Running Pest Tests
         # Each worker owns a database clone, so the suite no longer runs as one
-        # process - which is also what kept it under the runner's memory ceiling.
-        run: vendor/bin/pest --parallel --processes=4 --colors=always --log-junit pest-junit.xml
+        # process. Three workers, not four: the suite outgrew the runner's
+        # memory ceiling and a fourth worker gets OOM-killed (exit 137), which
+        # aborts paratest mid-run. The teamcity log streams per-test results,
+        # so it survives a crashed worker where a junit report would not.
+        run: vendor/bin/pest --parallel --processes=3 --colors=always --log-teamcity pest-teamcity.log
 
       - name: Upload failure report
         if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: pest-mysql-junit
-          path: pest-junit.xml
+          name: pest-mysql-teamcity
+          path: pest-teamcity.log
           if-no-files-found: ignore
 
   pest-elasticsearch:
