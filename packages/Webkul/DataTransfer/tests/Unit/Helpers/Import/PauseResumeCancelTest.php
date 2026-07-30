@@ -340,6 +340,73 @@ describe('Export Controller Pause/Resume/Cancel', function () {
     });
 });
 
+describe('Job Control Authorization', function () {
+    $permissions = [
+        'dashboard',
+        'data_transfer',
+        'data_transfer.job_tracker',
+        'data_transfer.imports',
+        'data_transfer.export',
+    ];
+
+    it('lets an import execute role control an import job', function () use ($permissions) {
+        $this->loginWithPermissions(permissions: [...$permissions, 'data_transfer.imports.execute']);
+
+        $jobInstance = createTestJobInstance();
+        $jobTrack = createTestJobTrack($jobInstance, Import::STATE_PROCESSING);
+
+        $this->postJson(route('admin.settings.data_transfer.imports.pause', $jobTrack->id))->assertOk();
+
+        $jobInstance->delete();
+    });
+
+    it('refuses an import job to a role without import execute', function () use ($permissions) {
+        $this->loginWithPermissions(permissions: [...$permissions, 'data_transfer.export.execute']);
+
+        $jobInstance = createTestJobInstance();
+        $jobTrack = createTestJobTrack($jobInstance, Import::STATE_PROCESSING);
+
+        $this->postJson(route('admin.settings.data_transfer.imports.pause', $jobTrack->id))->assertForbidden();
+
+        expect($jobTrack->refresh()->state)->toBe(Import::STATE_PROCESSING);
+
+        $jobInstance->delete();
+    });
+
+    it('lets an export execute role control an export job', function () use ($permissions) {
+        $this->loginWithPermissions(permissions: [...$permissions, 'data_transfer.export.execute']);
+
+        [$jobInstance, $jobTrack] = createTestExportJob(Import::STATE_PROCESSING);
+
+        $this->postJson(route('admin.settings.data_transfer.imports.pause', $jobTrack->id))->assertOk();
+
+        $jobInstance->delete();
+    });
+
+    it('refuses an export job to a role holding only import execute', function () use ($permissions) {
+        $this->loginWithPermissions(permissions: [...$permissions, 'data_transfer.imports.execute']);
+
+        [$jobInstance, $jobTrack] = createTestExportJob(Import::STATE_PROCESSING);
+
+        $this->postJson(route('admin.settings.data_transfer.imports.cancel', $jobTrack->id))->assertForbidden();
+
+        expect($jobTrack->refresh()->state)->toBe(Import::STATE_PROCESSING);
+
+        $jobInstance->delete();
+    });
+
+    it('lets a tracker only role poll job stats', function () {
+        $this->loginWithPermissions(permissions: ['dashboard', 'data_transfer', 'data_transfer.job_tracker']);
+
+        $jobInstance = createTestJobInstance();
+        $jobTrack = createTestJobTrack($jobInstance, Import::STATE_PROCESSING);
+
+        $this->getJson(route('admin.settings.data_transfer.imports.stats', $jobTrack->id))->assertOk();
+
+        $jobInstance->delete();
+    });
+});
+
 describe('Import State Constants', function () {
     it('has paused state constant', function () {
         expect(Import::STATE_PAUSED)->toBe('paused');

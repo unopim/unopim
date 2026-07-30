@@ -10,7 +10,9 @@ use Illuminate\View\View;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
+use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
@@ -516,22 +518,37 @@ class ImportController extends Controller
     }
 
     /**
+     * Authorize control of a running job against the permission of its own type, since this
+     * controller serves import, export and system job tracks alike.
+     */
+    protected function authorizeJobControl(JobTrackContract $jobTrack): JobType
+    {
+        $jobType = JobType::fromTrack($jobTrack);
+
+        if (! bouncer()->hasPermission($jobType->executePermission())) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        return $jobType;
+    }
+
+    /**
      * Pause a running import job
      */
     public function pause(int $id): JsonResponse
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        $isExport = $jobTrack->type === 'export';
+        $jobType = $this->authorizeJobControl($jobTrack);
 
-        if ($isExport) {
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->pause();
         } else {
             $this->importHelper->setImport($jobTrack)->pause();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.paused'.($isExport ? '-export' : '')),
+            'message' => $jobType->trackerMessage('paused'),
         ]);
     }
 
@@ -542,16 +559,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        $isExport = $jobTrack->type === 'export';
+        $jobType = $this->authorizeJobControl($jobTrack);
 
-        if ($isExport) {
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->resume();
         } else {
             $this->importHelper->setImport($jobTrack)->resume();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'.($isExport ? '-export' : '')),
+            'message' => $jobType->trackerMessage('resumed'),
         ]);
     }
 
@@ -562,16 +579,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        $isExport = $jobTrack->type === 'export';
+        $jobType = $this->authorizeJobControl($jobTrack);
 
-        if ($isExport) {
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->cancel();
         } else {
             $this->importHelper->setImport($jobTrack)->cancel();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'.($isExport ? '-export' : '')),
+            'message' => $jobType->trackerMessage('cancelled'),
         ]);
     }
 
@@ -580,7 +597,7 @@ class ImportController extends Controller
      */
     public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
     {
-        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
