@@ -16,6 +16,20 @@ class AccountForm extends FormRequest
     }
 
     /**
+     * Keep the editor's current values when a select is cleared, so an untouched preference cannot
+     * fail the form and cost them the credentials they already typed.
+     */
+    protected function prepareForValidation(): void
+    {
+        $user = auth()->guard('admin')->user();
+
+        $this->merge([
+            'timezone'     => $this->input('timezone') ?: ($user?->timezone ?: config('app.timezone', 'UTC')),
+            'ui_locale_id' => $this->input('ui_locale_id') ?: $user?->ui_locale_id,
+        ]);
+    }
+
+    /**
      * @return array<string, mixed>
      */
     public function rules(): array
