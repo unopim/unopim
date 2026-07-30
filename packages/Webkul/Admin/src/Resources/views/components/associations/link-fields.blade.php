@@ -84,6 +84,7 @@
                 type="hidden"
                 ::name="assocFieldName(type.code, index, assocField)"
                 ::rules="assocField.rules"
+                ::label="assocField.label"
                 ::value="assocFieldValue(link, assocField)"
             />
         </template>
@@ -110,6 +111,7 @@
                 ::id="assocFieldName(type.code, index, assocField)"
                 ::name="assocFieldName(type.code, index, assocField)"
                 ::rules="assocField.rules"
+                ::label="assocField.label"
                 ::value="JSON.stringify(assocFieldOption(link, assocField))"
                 ::options="assocField.options"
                 track-by="code"
@@ -123,6 +125,7 @@
                 ::id="assocFieldName(type.code, index, assocField)"
                 ::name="assocFieldName(type.code, index, assocField)"
                 ::rules="assocField.rules"
+                ::label="assocField.label"
                 ::value="JSON.stringify(assocFieldOptions(link, assocField))"
                 ::options="assocField.options"
                 track-by="code"
@@ -136,6 +139,7 @@
                 ::id="assocFieldName(type.code, index, assocField)"
                 ::name="assocFieldName(type.code, index, assocField)"
                 ::rules="assocField.rules"
+                ::label="assocField.label"
                 ::value="assocFieldValue(link, assocField)"
             />
         </template>
@@ -146,6 +150,7 @@
                 ::id="assocFieldName(type.code, index, assocField)"
                 ::name="assocFieldName(type.code, index, assocField)"
                 ::rules="assocField.rules"
+                ::label="assocField.label"
                 ::value="assocFieldValue(link, assocField)"
             />
         </template>
@@ -156,6 +161,7 @@
                 ::id="assocFieldName(type.code, index, assocField)"
                 ::name="assocFieldName(type.code, index, assocField)"
                 ::rules="assocField.rules"
+                ::label="assocField.label"
                 ::value="assocFieldValue(link, assocField)"
             />
         </template>
@@ -166,6 +172,7 @@
                 ::id="assocFieldName(type.code, index, assocField)"
                 ::name="assocFieldName(type.code, index, assocField)"
                 ::rules="assocField.rules"
+                ::label="assocField.label"
                 ::value="assocFieldValue(link, assocField)"
             />
         </template>
