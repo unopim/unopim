@@ -538,6 +538,7 @@ return [
 
                 'id'              => 'ID',
                 'no-changes'      => 'No changes to save.',
+                'locked-cell'                  => 'Belongs to a different level — not editable here.',
 
                 'invalid-datetime' => 'Please enter a valid date and time.',
 
@@ -3163,6 +3164,7 @@ return [
         'bulk-edit'                => 'Bulk Edit',
         'quick-export'             => 'Quick Export',
         'variant-structures'       => 'Variant Structures',
+        'completeness'             => 'Completeness',
     ],
 
     'errors' => [

@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Tidak ada perubahan untuk disimpan.',
+                'locked-cell'                  => 'Termasuk level lain – tidak dapat diedit di sini.',
                 'invalid-datetime'             => 'Masukkan tanggal dan waktu yang valid.',
                 'resize-column'                => 'Seret untuk mengubah lebar kolom',
                 'success'                      => 'Pekerjaan berhasil dijalankan.',
@@ -2970,6 +2971,7 @@ return [
         'bulk-edit'                => 'Pengeditan massal',
         'quick-export'             => 'Ekspor cepat',
         'variant-structures'       => 'Struktur Varian',
+        'completeness'             => 'Kelengkapan',
     ],
     'errors' => [
         'dashboard' => 'Dasbor',

@@ -113,6 +113,24 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
         return $this->levelMaps[$structure->id] = $map;
     }
 
+    /** Whether an attribute is editable at a product's own level (not inherited, not owned by a level below it). */
+    public function ownsAtOwnLevel(Product $product, string $attributeCode): bool
+    {
+        $structure = $this->structureFor($product);
+
+        if (! $structure instanceof VariantStructure) {
+            return true;
+        }
+
+        $level = $this->levelOf($product);
+
+        if ($level === null) {
+            return true;
+        }
+
+        return ($this->levelMap($structure)[$attributeCode] ?? 'common') === $level;
+    }
+
     /** Structure level an axis is fixed at. */
     protected function axisLevelOf(VariantStructure $structure, string $attributeCode): string
     {

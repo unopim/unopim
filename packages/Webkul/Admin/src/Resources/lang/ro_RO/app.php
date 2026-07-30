@@ -504,6 +504,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Nicio modificare de salvat.',
+                'locked-cell'                  => 'Aparține unui alt nivel – nu poate fi editat aici.',
                 'invalid-datetime'             => 'Introduceți o dată și oră valide.',
                 'resize-column'                => 'Trageți pentru a redimensiona coloana',
                 'success'                      => 'Sarcină executată cu succes.',
@@ -2973,6 +2974,7 @@ return [
         'bulk-edit'                => 'Editare în masă',
         'quick-export'             => 'Export rapid',
         'variant-structures'       => 'Structuri de variante',
+        'completeness'             => 'Completitudine',
     ],
     'errors' => [
         'dashboard' => 'Tablou de Bord',

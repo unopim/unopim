@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Nema promjena za spremiti.',
+                'locked-cell'                  => 'Pripada drugoj razini – ne može se uređivati ovdje.',
                 'invalid-datetime'             => 'Unesite valjani datum i vrijeme.',
                 'resize-column'                => 'Povucite za promjenu širine stupca',
                 'success'                      => 'Operacija uspješno izvršena.',
@@ -2970,6 +2971,7 @@ return [
         'bulk-edit'                => 'Masovno uređivanje',
         'quick-export'             => 'Brzi izvoz',
         'variant-structures'       => 'Strukture varijanti',
+        'completeness'             => 'Potpunost',
     ],
     'errors' => [
         'dashboard' => 'Nadzorna ploča',

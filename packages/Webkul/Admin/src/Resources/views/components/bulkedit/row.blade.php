@@ -13,7 +13,8 @@
                 <v-spreadsheet-cell
                     :colId="index"
                     :rowId="rowId"
-                    :value="getValue(row['values'], col)"
+                    :value="cellValue(col)"
+                    :locked="isLocked(col)"
                     :entityId="row.id"
                     :col="col"
                     :attribute="columns[col.id]"
@@ -57,6 +58,26 @@
             },
 
             methods: {
+                lockState(col) {
+                    return this.row.locks?.[col.code] ?? 'own';
+                },
+
+                isLocked(col) {
+                    return this.lockState(col) !== 'own';
+                },
+
+                cellValue(col) {
+                    const state = this.lockState(col);
+
+                    if (state === 'na') {
+                        return null;
+                    }
+
+                    const source = state === 'inherited' ? (this.row.inheritedValues || {}) : this.row.values;
+
+                    return this.getValue(source, col);
+                },
+
                 getValue(data, col) {
                     switch (col.key) {
                         case 'pcl':

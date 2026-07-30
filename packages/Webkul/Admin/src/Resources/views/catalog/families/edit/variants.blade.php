@@ -24,14 +24,16 @@
             :title="trans('admin::app.catalog.families.edit.variants')"
         >
             <x-slot:actions>
-                <button
-                    type="button"
-                    class="primary-button"
-                    @click="openVariantModal"
-                >
-                    <span class="icon-add text-lg"></span>
-                    @lang('admin::app.catalog.families.edit.add-variant')
-                </button>
+                @if (bouncer()->hasPermission('catalog.families.variant-structures.create'))
+                    <button
+                        type="button"
+                        class="primary-button"
+                        @click="openVariantModal"
+                    >
+                        <span class="icon-add text-lg"></span>
+                        @lang('admin::app.catalog.families.edit.add-variant')
+                    </button>
+                @endif
             </x-slot>
 
             <div

@@ -504,6 +504,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Nenhuma alteração para salvar.',
+                'locked-cell'                  => 'Pertence a outro nível – não editável aqui.',
                 'invalid-datetime'             => 'Informe uma data e hora válidas.',
                 'resize-column'                => 'Arraste para redimensionar a coluna',
                 'success'                      => 'A tarefa foi executada com sucesso.',
@@ -2973,6 +2974,7 @@ return [
         'bulk-edit'                => 'Edição em massa',
         'quick-export'             => 'Exportação rápida',
         'variant-structures'       => 'Estruturas de variantes',
+        'completeness'             => 'Completude',
     ],
     'errors' => [
         'dashboard' => 'Painel',

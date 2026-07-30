@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => '没有可保存的更改。',
+                'locked-cell'                  => '属于不同级别 – 此处不可编辑。',
                 'invalid-datetime'             => '请输入有效的日期和时间。',
                 'resize-column'                => '拖动以调整列宽',
                 'success'                      => '任务已成功执行。',
@@ -2973,6 +2974,7 @@ return [
         'bulk-edit'                => '批量编辑',
         'quick-export'             => '快速导出',
         'variant-structures'       => '变体结构',
+        'completeness'             => '完整性',
     ],
     'errors' => [
         'dashboard' => '仪表板',

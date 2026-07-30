@@ -504,6 +504,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Geen wijzigingen om op te slaan.',
+                'locked-cell'                  => 'Behoort tot een ander niveau – hier niet bewerkbaar.',
                 'invalid-datetime'             => 'Voer een geldige datum en tijd in.',
                 'resize-column'                => 'Sleep om de kolom te vergroten of verkleinen.',
                 'success'                      => 'Taak succesvol uitgevoerd.',
@@ -2973,6 +2974,7 @@ return [
         'bulk-edit'                => 'Bulkbewerking',
         'quick-export'             => 'Snelle export',
         'variant-structures'       => 'Variantstructuren',
+        'completeness'             => 'Volledigheid',
     ],
     'errors' => [
         'dashboard' => 'Dashboard',

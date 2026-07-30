@@ -527,7 +527,10 @@ class Installer extends Command
         $databaseDetails = [
             'DB_CONNECTION' => select(
                 'Please select the database connection',
-                ['mysql', 'pgsql', 'sqlsrv']
+                ['mysql', 'pgsql', 'sqlsrv'],
+                default: in_array(static::envDefault('DB_CONNECTION'), ['mysql', 'pgsql', 'sqlsrv'], true)
+                    ? static::envDefault('DB_CONNECTION')
+                    : 'mysql'
             ),
 
             'DB_HOST'       => text(

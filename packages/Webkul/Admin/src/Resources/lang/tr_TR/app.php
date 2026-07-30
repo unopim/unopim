@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Kaydedilecek değişiklik yok.',
+                'locked-cell'                  => 'Farklı bir seviyeye ait – burada düzenlenemez.',
                 'invalid-datetime'             => 'Geçerli bir tarih ve saat girin.',
                 'resize-column'                => 'Sütun genişliğini değiştirmek için sürükleyin',
                 'success'                      => 'İşlem başarıyla gerçekleştirildi.',
@@ -2973,6 +2974,7 @@ return [
         'bulk-edit'                => 'Toplu Düzenleme',
         'quick-export'             => 'Hızlı dışa aktarma',
         'variant-structures'       => 'Varyant Yapıları',
+        'completeness'             => 'Bütünlük',
     ],
     'errors' => [
         'dashboard' => 'Gösterge Paneli',

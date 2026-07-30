@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => '保存する変更はありません。',
+                'locked-cell'                  => '別のレベルに属しています。ここでは編集できません。',
                 'invalid-datetime'             => '有効な日付と時刻を入力してください。',
                 'resize-column'                => 'ドラッグして列幅を変更',
                 'success'                      => 'ジョブが正常に実行されました。',
@@ -2970,6 +2971,7 @@ return [
         'bulk-edit'                => '一括編集',
         'quick-export'             => 'クイックエクスポート',
         'variant-structures'       => 'バリアント構造',
+        'completeness'             => '完全性',
     ],
     'errors' => [
         'dashboard' => 'ダッシュボード',

@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Inga ändringar att spara.',
+                'locked-cell'                  => 'Tillhör en annan nivå – kan inte redigeras här.',
                 'invalid-datetime'             => 'Ange ett giltigt datum och klockslag.',
                 'resize-column'                => 'Dra för att ändra kolumnbredd',
                 'success'                      => 'Uppgiften har utförts.',
@@ -2973,6 +2974,7 @@ return [
         'bulk-edit'                => 'Massredigering',
         'quick-export'             => 'Snabbexport',
         'variant-structures'       => 'Variantstrukturer',
+        'completeness'             => 'Fullständighet',
     ],
     'errors' => [
         'dashboard' => 'Instrumentpanel',

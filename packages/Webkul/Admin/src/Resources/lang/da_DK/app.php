@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Ingen ændringer at gemme.',
+                'locked-cell'                  => 'Hører til et andet niveau – kan ikke redigeres her.',
                 'invalid-datetime'             => 'Indtast en gyldig dato og klokkeslæt.',
                 'resize-column'                => 'Træk for at ændre kolonnebredden',
                 'success'                      => 'Handling gennemført med succes.',
@@ -2970,6 +2971,7 @@ return [
         'bulk-edit'                => 'Masse redigering',
         'quick-export'             => 'Hurtig eksport',
         'variant-structures'       => 'Variantstrukturer',
+        'completeness'             => 'Fuldstændighed',
     ],
     'errors' => [
         'dashboard' => 'Instrumentbræt',

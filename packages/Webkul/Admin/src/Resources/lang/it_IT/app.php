@@ -503,6 +503,7 @@ return [
                 ],
                 'id'                           => 'ID',
                 'no-changes'                   => 'Nessuna modifica da salvare.',
+                'locked-cell'                  => 'Appartiene a un livello diverso – non modificabile qui.',
                 'invalid-datetime'             => 'Inserisci una data e un\'ora valide.',
                 'resize-column'                => 'Trascina per ridimensionare la colonna',
                 'success'                      => 'Operazione completata con successo.',
@@ -2970,6 +2971,7 @@ return [
         'bulk-edit'                => 'Modifica di massa',
         'quick-export'             => 'Esportazione rapida',
         'variant-structures'       => 'Strutture delle varianti',
+        'completeness'             => 'Completezza',
     ],
     'errors' => [
         'dashboard' => 'Dashboard',

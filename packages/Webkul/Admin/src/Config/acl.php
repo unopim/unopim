@@ -362,6 +362,11 @@ return [
         'sort'            => 4,
         'also_authorizes' => ['admin.catalog.families.edit'],
     ], [
+        'key'   => 'catalog.families.variant-structures.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => null,
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.families.variant-structures.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.catalog.families.variant-structures.edit',
@@ -377,20 +382,21 @@ return [
         'route' => 'admin.catalog.families.variant-structures.delete',
         'sort'  => 3,
     ], [
-        'key'   => 'catalog.families.edit',
-        'name'  => 'admin::app.acl.edit',
-        'route' => 'admin.catalog.families.completeness.edit',
-        'sort'  => 2,
+        'key'             => 'catalog.families.completeness',
+        'name'            => 'admin::app.acl.completeness',
+        'route'           => 'admin.catalog.families.completeness.edit',
+        'sort'            => 5,
+        'also_authorizes' => ['admin.catalog.families.edit'],
     ], [
-        'key'   => 'catalog.families.edit',
-        'name'  => 'admin::app.acl.edit',
+        'key'   => 'catalog.families.completeness',
+        'name'  => 'admin::app.acl.completeness',
         'route' => 'admin.catalog.families.completeness.update',
-        'sort'  => 2,
+        'sort'  => 5,
     ], [
-        'key'   => 'catalog.families.edit',
-        'name'  => 'admin::app.acl.edit',
+        'key'   => 'catalog.families.completeness',
+        'name'  => 'admin::app.acl.completeness',
         'route' => 'admin.catalog.families.completeness.mass_update',
-        'sort'  => 2,
+        'sort'  => 5,
     ], [
         'key'   => 'history',
         'name'  => 'admin::app.acl.history',
