@@ -433,9 +433,15 @@
 
                             this.available.searchPlaceholder = search_placeholder;
 
-                            const defaultFilterColumns = this.available.columns
-                                .filter(col => col.filterable && col.visible !== false && col.default_filter !== false)
-                                .map(col => col.index);
+                            const declaredFilters = this.available.meta?.default_filters;
+
+                            const defaultFilterColumns = Array.isArray(declaredFilters)
+                                ? declaredFilters.filter(
+                                    index => this.available.columns.some(col => col.index === index && col.filterable)
+                                )
+                                : this.available.columns
+                                    .filter(col => col.filterable && col.visible !== false && col.default_filter !== false)
+                                    .map(col => col.index);
 
                             // Initialize active filters on first load
                             if (this.activeFilterIndices.length === 0) {

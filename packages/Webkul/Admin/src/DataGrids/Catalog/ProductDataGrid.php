@@ -60,8 +60,25 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         'attribute_family',
         'status',
         'type',
-        'parent',
         'completeness',
+    ];
+
+    /**
+     * Filters active on first load. Deliberately independent of the displayed
+     * columns: a filter is about what you search by, not about what the grid
+     * happens to render. Every one of them is removable, and every other
+     * filterable property or attribute is reachable from "Add Filter".
+     *
+     * @var array<int, string>
+     */
+    protected $defaultFilters = [
+        'sku',
+        'parent',
+        'attribute_family',
+        'type',
+        'categories',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -196,10 +213,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'searchable' => false,
                 'filterable' => true,
                 'sortable'   => true,
-                // Opt-in from the "Add Filter" list, like completeness: variants are a
-                // minority of most catalogs, so it does not earn a slot in the default bar.
-                'default_filter'   => false,
-                'removable_filter' => true,
             ],
             'product_id' => [
                 'index'      => 'product_id',
@@ -285,42 +298,57 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            $this->addColumn($propertyColumns[$column]);
+            $this->addColumn($this->withFilterDefaults($propertyColumns[$column]));
         }
 
-        $this->addRequestedPropertyFilters($propertyColumns);
+        $this->addPropertyFilterColumns($propertyColumns);
 
         $this->addFilterableAttributes();
     }
 
     /**
-     * Register opt-in property filters (dates, completeness, categories) picked from the
-     * "Add Filter" list. They are not grid columns, so they are added hidden and only when
-     * the request actually filters on them.
+     * Expose every filterable property as a filter, whether or not it is a displayed column.
+     * Hidden entries are dropped by the table and by "Manage Columns", which both skip
+     * `visible === false`, so they only ever surface in the filter list.
      *
      * @param  array<string, array<string, mixed>>  $propertyColumns
      */
-    protected function addRequestedPropertyFilters(array $propertyColumns): void
+    protected function addPropertyFilterColumns(array $propertyColumns): void
     {
-        $requestedFilters = array_keys(request()->input('filters', []));
-
-        foreach ($requestedFilters as $index) {
-            if (! is_string($index)
-                || in_array($index, $this->defaultColumns, true)
-                || ! ProductPropertyFilters::has($index)
-                || ! isset($propertyColumns[$index])
-            ) {
+        foreach ($propertyColumns as $index => $column) {
+            if (in_array($index, $this->defaultColumns, true)) {
                 continue;
             }
 
-            $column = $propertyColumns[$index];
+            if (empty($column['filterable'])) {
+                continue;
+            }
 
             unset($column['closure']);
 
             $column['visible'] = false;
 
-            $this->addColumn($column);
+            $this->addColumn($this->withFilterDefaults($column));
         }
+    }
+
+    /**
+     * A filter is on by default only when listed in `$defaultFilters`, and is always
+     * removable so the "Add Filter" list stays the single way back to it.
+     *
+     * @param  array<string, mixed>  $column
+     * @return array<string, mixed>
+     */
+    protected function withFilterDefaults(array $column): array
+    {
+        if (empty($column['filterable'])) {
+            return $column;
+        }
+
+        $column['default_filter'] = in_array($column['index'], $this->defaultFilters, true);
+        $column['removable_filter'] = true;
+
+        return $column;
     }
 
     public function prepareAttributeColumns($column)
@@ -1098,6 +1126,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 'per_page'           => $paginator['per_page'],
                 'current_page'       => $paginator['current_page'],
                 'last_page'          => $paginator['last_page'],
+                'default_filters'    => $this->defaultFilters,
                 'managedColumn'      => [
                     'enabled' => $this->manageableColumn,
                     'columns' => $this->managedColumns,
