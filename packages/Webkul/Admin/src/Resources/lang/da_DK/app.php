@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => 'Masse redigering',
         'quick-export'             => 'Hurtig eksport',
         'variant-structures'       => 'Variantstrukturer',
+        'completeness'             => 'Fuldstændighed',
     ],
     'errors' => [
         'dashboard' => 'Instrumentbræt',

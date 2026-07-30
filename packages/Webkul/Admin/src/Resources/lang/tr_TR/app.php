@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Toplu Düzenleme',
         'quick-export'             => 'Hızlı dışa aktarma',
         'variant-structures'       => 'Varyant Yapıları',
+        'completeness'             => 'Bütünlük',
     ],
     'errors' => [
         'dashboard' => 'Gösterge Paneli',

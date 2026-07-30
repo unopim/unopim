@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Editare în masă',
         'quick-export'             => 'Export rapid',
         'variant-structures'       => 'Structuri de variante',
+        'completeness'             => 'Completitudine',
     ],
     'errors' => [
         'dashboard' => 'Tablou de Bord',

@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => 'Bulk Edit',
         'quick-export'             => 'Quick Export',
         'variant-structures'       => 'Variant Structures',
+        'completeness'             => 'Completeness',
     ],
     'errors' => [
         'dashboard' => 'Dashboard',

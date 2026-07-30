@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Maramihang Pag-edit',
         'quick-export'             => 'Mabilis na Pag-export',
         'variant-structures'       => 'Mga Istraktura ng Variant',
+        'completeness'             => 'Kumpleto',
     ],
     'errors' => [
         'dashboard' => 'Dashboard',

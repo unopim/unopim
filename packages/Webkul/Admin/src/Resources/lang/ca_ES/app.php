@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => 'Edició en massa',
         'quick-export'             => 'Exportació ràpida',
         'variant-structures'       => 'Estructures de variants',
+        'completeness'             => 'Completesa',
     ],
     'errors' => [
         'dashboard' => 'Tauler de control',

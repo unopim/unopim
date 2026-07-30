@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => 'Masovno uređivanje',
         'quick-export'             => 'Brzi izvoz',
         'variant-structures'       => 'Strukture varijanti',
+        'completeness'             => 'Potpunost',
     ],
     'errors' => [
         'dashboard' => 'Nadzorna ploča',

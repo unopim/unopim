@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => '批次編輯',
         'quick-export'             => '快速匯出',
         'variant-structures'       => '變體結構',
+        'completeness'             => '完整性',
     ],
     'errors' => [
         'dashboard' => '儀表板',

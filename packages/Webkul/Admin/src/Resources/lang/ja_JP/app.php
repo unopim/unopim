@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => '一括編集',
         'quick-export'             => 'クイックエクスポート',
         'variant-structures'       => 'バリアント構造',
+        'completeness'             => '完全性',
     ],
     'errors' => [
         'dashboard' => 'ダッシュボード',

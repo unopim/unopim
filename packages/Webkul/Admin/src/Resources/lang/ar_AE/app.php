@@ -2964,6 +2964,7 @@ return [
         'bulk-edit'                => 'تعديل جماعي',
         'quick-export'             => 'تصدير سريع',
         'variant-structures'       => 'هياكل المتغيرات',
+        'completeness'             => 'الاكتمال',
     ],
     'errors' => [
         'dashboard' => 'لوحة القيادة',

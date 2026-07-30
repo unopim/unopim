@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => 'Massamuokkaus',
         'quick-export'             => 'Pikavienti',
         'variant-structures'       => 'Varianttirakenteet',
+        'completeness'             => 'Täydellisyys',
     ],
     'errors' => [
         'dashboard' => 'Ohjauspaneeli',

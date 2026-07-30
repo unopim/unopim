@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Массовое редактирование',
         'quick-export'             => 'Быстрый экспорт',
         'variant-structures'       => 'Структуры вариантов',
+        'completeness'             => 'Полнота',
     ],
     'errors' => [
         'dashboard' => 'Панель приборов',

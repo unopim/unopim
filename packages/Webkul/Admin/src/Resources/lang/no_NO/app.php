@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Masse redigering',
         'quick-export'             => 'Hurtig eksport',
         'variant-structures'       => 'Variantstrukturer',
+        'completeness'             => 'Fullstendighet',
     ],
     'errors' => [
         'dashboard' => 'Instrumentbord',

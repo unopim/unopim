@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Масове редагування',
         'quick-export'             => 'Швидкий експорт',
         'variant-structures'       => 'Структури варіантів',
+        'completeness'             => 'Повнота',
     ],
     'errors' => [
         'dashboard' => 'Приборна панель',

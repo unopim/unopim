@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => 'Pengeditan massal',
         'quick-export'             => 'Ekspor cepat',
         'variant-structures'       => 'Struktur Varian',
+        'completeness'             => 'Kelengkapan',
     ],
     'errors' => [
         'dashboard' => 'Dasbor',

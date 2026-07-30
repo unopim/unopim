@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Chỉnh sửa hàng loạt',
         'quick-export'             => 'Xuất khẩu nhanh',
         'variant-structures'       => 'Cấu trúc biến thể',
+        'completeness'             => 'Độ hoàn chỉnh',
     ],
     'errors' => [
         'dashboard' => 'Bảng điều khiển',

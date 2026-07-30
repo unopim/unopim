@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => 'Багцаар засварлах',
         'quick-export'             => 'Хурдан экспорт',
         'variant-structures'       => 'Хувилбарын бүтэц',
+        'completeness'             => 'Бүрэн байдал',
     ],
     'errors' => [
         'dashboard' => 'Хотер самбар',

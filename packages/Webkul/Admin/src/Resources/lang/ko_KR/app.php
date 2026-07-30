@@ -2968,6 +2968,7 @@ return [
         'bulk-edit'                => '대량 편집',
         'quick-export'             => '빠른 내보내기',
         'variant-structures'       => '배리언트 구조',
+        'completeness'             => '완성도',
     ],
     'errors' => [
         'dashboard' => '대시보드',

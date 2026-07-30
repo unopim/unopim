@@ -2965,6 +2965,7 @@ return [
         'bulk-edit'                => 'सामूहिक संपादन',
         'quick-export'             => 'त्वरित निर्यात',
         'variant-structures'       => 'वेरिएंट संरचनाएं',
+        'completeness'             => 'पूर्णता',
     ],
     'errors' => [
         'dashboard' => 'चकरानेवाला',
