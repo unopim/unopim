@@ -86,9 +86,14 @@ class ProductRepository extends Repository
     {
         $product = $this->findOrFail($id);
 
-        $product->status = (int) $status;
+        /**
+         * The column is a native boolean, so PostgreSQL hydrates `true` while
+         * MySQL hydrates `1` — isDirty() against the int assignment would then
+         * report a change on PostgreSQL even when the status is unchanged.
+         */
+        $product->wasDirtyOnUpdate = ((bool) $product->status) !== $status;
 
-        $product->wasDirtyOnUpdate = $product->isDirty();
+        $product->status = (int) $status;
 
         if ($product->wasDirtyOnUpdate) {
             $product->save();

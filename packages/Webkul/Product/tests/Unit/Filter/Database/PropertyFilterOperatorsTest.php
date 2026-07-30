@@ -53,7 +53,9 @@ describe('CategoryFilter', function () {
 
         $sql = $queryBuilder->toSql();
 
-        expect(substr_count($sql, '$.categories'))->toBe(4)
+        $marker = DB::getDriverName() === 'pgsql' ? "->'categories'" : '$.categories';
+
+        expect(substr_count($sql, $marker))->toBe(4)
             ->and($sql)->toContain('parent_products')
             ->and($queryBuilder->getBindings())->toBe(['"men"', '"women"', '"men"', '"women"']);
     });

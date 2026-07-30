@@ -82,7 +82,7 @@ it('refuses to delete a product that still has an attested publication', functio
 
         $this->fail('Expected deleting a product with an attested publication to raise a QueryException.');
     } catch (QueryException $exception) {
-        expect($exception->getCode())->toBe('23000')
+        expect($exception->getCode())->toBeIn(['23000', '23503'])
             ->and($exception->getMessage())->toContain('publications_product_id_foreign');
     }
 
