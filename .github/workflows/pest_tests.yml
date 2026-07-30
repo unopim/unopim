@@ -262,10 +262,9 @@ jobs:
       - name: Set Passport OAuth key permissions
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
-      # Coverage recording peaks past the runner's 7 GB (exit 137); swap
-      # absorbs the spike and two workers keep it tolerable. The runner already
-      # holds /swapfile open, so the extra file goes on /mnt, which is both free
-      # and the larger disk.
+      # Coverage recording peaks past the runner's 7 GB (exit 137); swap absorbs
+      # the spike. The runner already holds /swapfile open, so the extra file
+      # goes on /mnt, which is both free and the larger disk.
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
@@ -275,7 +274,9 @@ jobs:
           sudo swapon /mnt/swapfile
           swapon --show
 
+      # A second worker doubles the resident coverage map and still gets killed
+      # with the swap in place, so this job trades its parallelism for headroom.
       - name: Running impacted Pest tests
         env:
           GH_TOKEN: ${{ github.token }}
-        run: vendor/bin/pest --parallel --processes=2 --tia --colors=always
+        run: vendor/bin/pest --parallel --processes=1 --tia --colors=always
