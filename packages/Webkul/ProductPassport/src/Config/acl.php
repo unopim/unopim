@@ -32,6 +32,16 @@ return [
         'route' => 'admin.catalog.passports.republish',
         'sort'  => 2,
     ], [
+        'key'   => 'catalog.passport.publish',
+        'name'  => 'passport::app.acl.passports.publish',
+        'route' => 'admin.catalog.passports.mass_publish',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.passport.publish',
+        'name'  => 'passport::app.acl.passports.publish',
+        'route' => 'admin.catalog.passports.bulk-publish',
+        'sort'  => 2,
+    ], [
         'key'   => 'catalog.passport.withdraw',
         'name'  => 'passport::app.acl.passports.withdraw',
         'route' => 'admin.catalog.passports.withdraw',
