@@ -233,8 +233,7 @@
                     }
 
                     this.fixedStyles = {
-                        {{-- Above the section drawer and the modal layer, both at 9999. --}}
-                        zIndex: 10003,
+                        zIndex: 10010,
                         minWidth: `${this.toggleBlockWidth}px`,
                         maxHeight: `${window.innerHeight - 2 * margin}px`,
                         overflowY: 'auto',
