@@ -37,6 +37,18 @@ enum JobType: string
     /**
      * Export permissions are grouped under the singular `data_transfer.export` key in acl.php.
      */
+    /**
+     * @return array<string, string>
+     */
+    public function trackerMessages(): array
+    {
+        return [
+            'pauseFailed'  => $this->trackerMessage('pause-failed'),
+            'resumeFailed' => $this->trackerMessage('resume-failed'),
+            'cancelFailed' => $this->trackerMessage('cancel-failed'),
+        ];
+    }
+
     public function executePermission(): string
     {
         return $this->isExport()

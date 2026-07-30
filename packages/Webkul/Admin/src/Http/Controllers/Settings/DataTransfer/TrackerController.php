@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\JobTrackerGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
@@ -67,7 +68,9 @@ class TrackerController extends Controller
 
         $batchState = $this->mapJobStateToBatchState($import->state);
 
-        if ($jobInstance['type'] == 'export') {
+        $jobType = JobType::fromTrack($import);
+
+        if ($jobType->isExport()) {
             $isValid = $this->exportHelper->setExport($import)->isValid();
             $stats = $this->exportHelper->stats($batchState);
         } else {
@@ -75,12 +78,16 @@ class TrackerController extends Controller
             $stats = $this->importHelper->stats($batchState);
         }
 
+        $messages = $jobType->trackerMessages();
+
         return view('admin::settings.data-transfer.tracker.import', compact(
             'import',
             'isValid',
             'stats',
             'jobInstance',
             'summary',
+            'jobType',
+            'messages',
         ));
     }
 
