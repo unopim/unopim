@@ -1164,9 +1164,9 @@ app.component('v-agenting-pim', {
 
         handleInternalLink(e) {
             const link = e.target.closest('a[data-internal-link]');
-            if (! link) return;
+            if (! link || e.defaultPrevented) return;
             e.preventDefault();
-            window.location.href = link.getAttribute('href');
+            this.$navigate(link.getAttribute('href'));
         },
 
         adjustLayout(open, instant = false) {
