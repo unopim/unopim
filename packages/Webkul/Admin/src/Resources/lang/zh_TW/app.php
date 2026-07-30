@@ -803,6 +803,7 @@ return [
                 'tree-view'           => '樹狀',
                 'list-view'           => '清單',
                 'add-root'            => '新增根類別',
+                'add-category'        => '新增類別',
                 'add-child'           => '新增子類別',
                 'search-placeholder'  => '搜尋類別',
                 'searching'           => '正在搜尋...',

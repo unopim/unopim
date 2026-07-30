@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Дерево',
                 'list-view'           => 'Список',
                 'add-root'            => 'Додати кореневу категорію',
+                'add-category'        => 'Додати категорію',
                 'add-child'           => 'Додати підкатегорію',
                 'search-placeholder'  => 'Пошук категорій',
                 'searching'           => 'Триває пошук...',

@@ -804,6 +804,7 @@ return [
                 'tree-view'           => 'Tre',
                 'list-view'           => 'Liste',
                 'add-root'            => 'Legg til rotkategori',
+                'add-category'        => 'Legg til kategori',
                 'add-child'           => 'Legg til underkategori',
                 'search-placeholder'  => 'Søk i kategorier',
                 'searching'           => 'Søker...',

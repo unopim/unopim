@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Stablo',
                 'list-view'           => 'Popis',
                 'add-root'            => 'Dodaj korijensku kategoriju',
+                'add-category'        => 'Dodaj kategoriju',
                 'add-child'           => 'Dodaj potkategoriju',
                 'search-placeholder'  => 'Pretraži kategorije',
                 'searching'           => 'Pretraživanje...',

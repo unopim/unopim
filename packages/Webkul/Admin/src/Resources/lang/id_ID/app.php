@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Pohon',
                 'list-view'           => 'Daftar',
                 'add-root'            => 'Tambah Kategori Induk',
+                'add-category'        => 'Tambah Kategori',
                 'add-child'           => 'Tambah Subkategori',
                 'search-placeholder'  => 'Cari kategori',
                 'searching'           => 'Mencari...',

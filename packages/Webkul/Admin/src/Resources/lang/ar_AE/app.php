@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'شجرة',
                 'list-view'           => 'قائمة',
                 'add-root'            => 'إضافة فئة جذرية',
+                'add-category'        => 'إضافة فئة',
                 'add-child'           => 'إضافة فئة فرعية',
                 'search-placeholder'  => 'ابحث في الفئات',
                 'searching'           => 'جارٍ البحث...',

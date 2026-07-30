@@ -804,6 +804,7 @@ return [
                 'tree-view'           => 'Мод',
                 'list-view'           => 'Жагсаалт',
                 'add-root'            => 'Үндсэн ангилал нэмэх',
+                'add-category'        => 'Ангилал нэмэх',
                 'add-child'           => 'Дэд ангилал нэмэх',
                 'search-placeholder'  => 'Ангилал хайх',
                 'searching'           => 'Хайж байна...',

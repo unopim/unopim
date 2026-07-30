@@ -804,6 +804,7 @@ return [
                 'tree-view'           => '트리',
                 'list-view'           => '목록',
                 'add-root'            => '루트 카테고리 추가',
+                'add-category'        => '카테고리 추가',
                 'add-child'           => '하위 카테고리 추가',
                 'search-placeholder'  => '카테고리 검색',
                 'searching'           => '검색 중...',

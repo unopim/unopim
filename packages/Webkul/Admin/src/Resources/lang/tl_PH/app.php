@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Puno',
                 'list-view'           => 'Listahan',
                 'add-root'            => 'Magdagdag ng pangunahing kategorya',
+                'add-category'        => 'Magdagdag ng kategorya',
                 'add-child'           => 'Magdagdag ng subkategorya',
                 'search-placeholder'  => 'Maghanap ng mga kategorya',
                 'searching'           => 'Naghahanap...',

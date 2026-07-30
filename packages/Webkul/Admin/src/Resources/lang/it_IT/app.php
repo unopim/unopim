@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Albero',
                 'list-view'           => 'Elenco',
                 'add-root'            => 'Aggiungi categoria radice',
+                'add-category'        => 'Aggiungi categoria',
                 'add-child'           => 'Aggiungi sottocategoria',
                 'search-placeholder'  => 'Cerca categorie',
                 'searching'           => 'Ricerca in corso...',

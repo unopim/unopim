@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'ट्री',
                 'list-view'           => 'सूची',
                 'add-root'            => 'मूल श्रेणी जोड़ें',
+                'add-category'        => 'श्रेणी जोड़ें',
                 'add-child'           => 'उपश्रेणी जोड़ें',
                 'search-placeholder'  => 'श्रेणियाँ खोजें',
                 'searching'           => 'खोजा जा रहा है...',

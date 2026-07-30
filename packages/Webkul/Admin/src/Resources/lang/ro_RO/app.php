@@ -804,6 +804,7 @@ return [
                 'tree-view'           => 'Arbore',
                 'list-view'           => 'Listă',
                 'add-root'            => 'Adaugă categorie rădăcină',
+                'add-category'        => 'Adaugă categorie',
                 'add-child'           => 'Adaugă subcategorie',
                 'search-placeholder'  => 'Caută categorii',
                 'searching'           => 'Se caută...',

@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'ツリー',
                 'list-view'           => 'リスト',
                 'add-root'            => 'ルートカテゴリを追加',
+                'add-category'        => 'カテゴリを追加',
                 'add-child'           => 'サブカテゴリを追加',
                 'search-placeholder'  => 'カテゴリを検索',
                 'searching'           => '検索中...',

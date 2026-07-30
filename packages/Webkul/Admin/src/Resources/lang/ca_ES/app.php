@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Arbre',
                 'list-view'           => 'Llista',
                 'add-root'            => 'Afegeix una categoria arrel',
+                'add-category'        => 'Afegeix una categoria',
                 'add-child'           => 'Afegeix una subcategoria',
                 'search-placeholder'  => 'Cerca categories',
                 'searching'           => 'Cercant...',

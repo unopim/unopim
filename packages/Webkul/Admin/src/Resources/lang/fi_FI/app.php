@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Puu',
                 'list-view'           => 'Luettelo',
                 'add-root'            => 'Lisää juurikategoria',
+                'add-category'        => 'Lisää kategoria',
                 'add-child'           => 'Lisää alakategoria',
                 'search-placeholder'  => 'Hae kategorioita',
                 'searching'           => 'Haetaan...',

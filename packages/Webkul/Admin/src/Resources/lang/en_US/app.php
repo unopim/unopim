@@ -859,6 +859,7 @@ return [
                 'tree-view'           => 'Tree',
                 'list-view'           => 'List',
                 'add-root'            => 'Add Root Category',
+                'add-category'        => 'Add Category',
                 'add-child'           => 'Add Subcategory',
                 'search-placeholder'  => 'Search categories',
                 'searching'           => 'Searching...',

@@ -804,6 +804,7 @@ return [
                 'tree-view'           => 'Boom',
                 'list-view'           => 'Lijst',
                 'add-root'            => 'Hoofdcategorie toevoegen',
+                'add-category'        => 'Categorie toevoegen',
                 'add-child'           => 'Subcategorie toevoegen',
                 'search-placeholder'  => 'Categorieën zoeken',
                 'searching'           => 'Bezig met zoeken...',

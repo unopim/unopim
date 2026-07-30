@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Cây',
                 'list-view'           => 'Danh sách',
                 'add-root'            => 'Thêm danh mục gốc',
+                'add-category'        => 'Thêm danh mục',
                 'add-child'           => 'Thêm danh mục con',
                 'search-placeholder'  => 'Tìm kiếm danh mục',
                 'searching'           => 'Đang tìm kiếm...',

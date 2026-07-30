@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Träd',
                 'list-view'           => 'Lista',
                 'add-root'            => 'Lägg till rotkategori',
+                'add-category'        => 'Lägg till kategori',
                 'add-child'           => 'Lägg till underkategori',
                 'search-placeholder'  => 'Sök kategorier',
                 'searching'           => 'Söker...',

@@ -36,9 +36,11 @@
             {!! view_render_event('unopim.admin.catalog.categories.index.create-button.before') !!}
 
             @if ($canCreate)
-                <a href="{{ route('admin.catalog.categories.index', ['panel' => 'create']) }}">
+                <a href="{{ $isTreeView
+                    ? route('admin.catalog.categories.index', ['panel' => 'create'])
+                    : route('admin.catalog.categories.create') }}">
                     <div class="primary-button">
-                        @lang('admin::app.catalog.categories.browse.add-root')
+                        @lang('admin::app.catalog.categories.browse.add-category')
                     </div>
                 </a>
             @endif

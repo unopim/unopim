@@ -803,6 +803,7 @@ return [
                 'tree-view'           => 'Ağaç',
                 'list-view'           => 'Liste',
                 'add-root'            => 'Kök kategori ekle',
+                'add-category'        => 'Kategori ekle',
                 'add-child'           => 'Alt kategori ekle',
                 'search-placeholder'  => 'Kategorilerde ara',
                 'searching'           => 'Aranıyor...',

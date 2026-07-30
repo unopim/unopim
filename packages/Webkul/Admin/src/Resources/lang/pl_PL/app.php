@@ -804,6 +804,7 @@ return [
                 'tree-view'           => 'Drzewo',
                 'list-view'           => 'Lista',
                 'add-root'            => 'Dodaj kategorię główną',
+                'add-category'        => 'Dodaj kategorię',
                 'add-child'           => 'Dodaj podkategorię',
                 'search-placeholder'  => 'Szukaj kategorii',
                 'searching'           => 'Wyszukiwanie...',
