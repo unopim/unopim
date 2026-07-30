@@ -282,6 +282,8 @@ it('should give validation errors when updating the user', function () {
     $response->assertStatus(302);
     $response->assertSessionHasErrors([
         'name',
+    ]);
+    $response->assertSessionDoesntHaveErrors([
         'timezone',
         'ui_locale_id',
     ]);
@@ -345,8 +347,8 @@ it('should not change the password without the current password', function () {
     ]);
 });
 
-it('should not update the user without ui-locale', function () {
-    $this->loginAsAdmin();
+it('should keep the current ui-locale when the field is cleared', function () {
+    $admin = $this->loginAsAdmin();
 
     $response = $this->put(route('admin.account.update'), [
         'name'             => 'John',
@@ -359,13 +361,15 @@ it('should not update the user without ui-locale', function () {
     ]);
 
     $response->assertStatus(302);
-    $response->assertSessionHasErrors([
-        'ui_locale_id',
-    ]);
+    $response->assertSessionDoesntHaveErrors(['ui_locale_id']);
+
+    expect($admin->fresh()->ui_locale_id)->toBe($admin->ui_locale_id);
 });
 
-it('should not update the user without timezone', function () {
-    $this->loginAsAdmin();
+it('should keep the current timezone when the field is cleared', function () {
+    $admin = $this->loginAsAdmin();
+
+    $admin->update(['timezone' => 'Asia/Kolkata']);
 
     $response = $this->put(route('admin.account.update'), [
         'name'             => 'John',
@@ -378,9 +382,9 @@ it('should not update the user without timezone', function () {
     ]);
 
     $response->assertStatus(302);
-    $response->assertSessionHasErrors([
-        'timezone',
-    ]);
+    $response->assertSessionDoesntHaveErrors(['timezone']);
+
+    expect($admin->fresh()->timezone)->toBe('Asia/Kolkata');
 });
 
 it('should update the user with all required data', function () {
