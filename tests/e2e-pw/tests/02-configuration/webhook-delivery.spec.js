@@ -73,7 +73,7 @@ async function configureWebhook(adminPage, url) {
 
   await Promise.all([
     adminPage.waitForURL(/\/webhook\/edit\/\d+/, { timeout: 20000 }).catch(() => {}),
-    adminPage.locator('form[ref="webhookCreateForm"], .modal').getByRole('button', { name: 'Save' }).last().click(),
+    adminPage.getByRole('button', { name: 'Save', exact: true }).last().click(),
   ]);
 }
 
