@@ -249,4 +249,6 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running impacted Pest tests
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: vendor/bin/pest --parallel --processes=4 --tia --colors=always
