@@ -29,7 +29,7 @@ class CategoryTableSeeder extends Seeder
             [
                 'id'         => '1',
                 '_lft'       => '1',
-                '_rgt'       => '14',
+                '_rgt'       => '2',
                 'code'       => 'root',
                 'parent_id'  => null,
                 'created_at' => $now,
