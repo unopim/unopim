@@ -68,6 +68,7 @@ it('queues nothing and says so when every selected passport is withdrawn', funct
     $withdrawn->update(['status' => PublicationStatus::Withdrawn]);
 
     $this->enablePassportPublishing($withdrawn->channel->code);
+    $this->enablePublicTier($withdrawn->channel->code);
 
     $this->loginWithPermissions('all');
 
