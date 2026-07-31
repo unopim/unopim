@@ -105,6 +105,11 @@
             <directory suffix=".php">app</directory>
             <directory suffix=".php">packages</directory>
         </include>
+        <!-- Instrumenting the suites themselves doubles the resident coverage
+             map for no signal: impact analysis needs test-to-source edges. -->
+        <exclude>
+            <directory suffix=".php">packages/Webkul/*/tests</directory>
+        </exclude>
     </source>
 
     <php>

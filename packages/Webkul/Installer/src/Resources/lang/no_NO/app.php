@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Tillatte valutaer',
                 'allowed-locales'     => 'Tillatte lokale innstillinger',
+                'app-key-missing'     => 'Ingen .env-fil ble funnet, og APP_KEY er ikke satt i servermiljøet. Installasjonsprogrammet skriver aldri miljøkonfigurasjon — opprett en .env manuelt (kopier .env.example), eller konfigurer variablene i hostingpanelet ditt, og prøv igjen.',
+                'env-readonly-note'   => 'Disse verdiene leses fra servermiljøet ditt (.env). Installasjonsprogrammet skriver aldri miljøkonfigurasjon — for å endre noe, rediger .env-filen (eller variablene i hostingpanelet) og last inn denne siden på nytt.',
                 'application-name'    => 'Applikasjonsnavn',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Kinesisk Yuan (CNY)',

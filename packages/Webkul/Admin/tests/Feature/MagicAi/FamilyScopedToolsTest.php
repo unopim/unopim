@@ -1,6 +1,7 @@
 <?php
 
 use Laravel\Ai\Tools\Request;
+use Webkul\Admin\Tests\Support\FakeEmbeddingSimilarityService;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Tools\FindSimilarProducts;
 use Webkul\AiAgent\Chat\Tools\ListAttributes;
@@ -9,23 +10,6 @@ use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\Product\Models\Product;
-
-/**
- * Deterministic ranking stand-in so similarity tests do not depend on a
- * configured embeddings provider: every candidate scores 1.0 in pool order.
- */
-class FakeEmbeddingSimilarityService extends EmbeddingSimilarityService
-{
-    public function rank(string $query, array $documents, ?int $limit = null): array
-    {
-        $scores = array_map(
-            fn (int $index) => ['index' => $index, 'score' => 1.0],
-            array_keys($documents),
-        );
-
-        return is_null($limit) ? $scores : array_slice($scores, 0, max(1, $limit));
-    }
-}
 
 it('scopes similar product candidates to the source product family by default', function () {
     $admin = $this->loginAsAdmin();

@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => '허용된 통화',
                 'allowed-locales'     => '허용된 로케일',
+                'app-key-missing'     => '.env 파일을 찾을 수 없고 서버 환경에 APP_KEY가 설정되어 있지 않습니다. 설치 프로그램은 환경 구성을 절대 기록하지 않습니다 — .env를 직접 만들거나(.env.example 복사) 호스팅 패널에서 변수를 구성한 후 다시 시도하세요.',
+                'env-readonly-note'   => '이 값들은 서버 환경(.env)에서 읽어옵니다. 설치 프로그램은 환경 구성을 절대 기록하지 않습니다 — 변경하려면 .env 파일(또는 호스팅 패널 변수)을 수정한 후 이 페이지를 새로고침하세요.',
                 'application-name'    => '애플리케이션 이름',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => '중국 위안화 (CNY)',

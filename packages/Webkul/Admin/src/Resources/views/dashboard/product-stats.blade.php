@@ -3,6 +3,11 @@
     <x-admin::shimmer.dashboard.total-catalogs />
 </v-dashboard-product-stats>
 
+@php
+    $productTypeLabels = collect(config('product_types'))
+        ->mapWithKeys(fn ($type) => [$type['key'] => trans($type['name'])]);
+@endphp
+
 @pushOnce('scripts')
     <script
         type="text/x-template"
@@ -64,8 +69,8 @@
                             :href="typeFilterUrl(type)"
                             class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full cursor-pointer"
                             :style="{ width: Math.max(getPercentage(count), 3) + '%', background: getTypeHex(type) }"
-                            :title="type + ': ' + count"
-                            :aria-label="type + ': ' + count"
+                            :title="typeLabel(type) + ': ' + count"
+                            :aria-label="typeLabel(type) + ': ' + count"
                         ></a>
                     </div>
 
@@ -78,7 +83,7 @@
                             class="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity"
                         >
                             <span class="w-3 h-3 rounded-sm flex-shrink-0" :style="{ background: getTypeHex(type) }"></span>
-                            <span class="text-xs text-zinc-700 dark:text-slate-300 capitalize">@{{ type }}</span>
+                            <span class="text-xs text-zinc-700 dark:text-slate-300 capitalize">@{{ typeLabel(type) }}</span>
                             <span class="text-xs font-bold text-zinc-800 dark:text-slate-200">@{{ count }}</span>
                             <span class="text-[10px] text-zinc-400 dark:text-slate-500">(@{{ getPercentage(count) }}%)</span>
                         </a>
@@ -152,6 +157,7 @@
 
             data() {
                 return {
+                    typeLabels: @json($productTypeLabels),
                     stats: {
                         typeDistribution: {},
                         statusBreakdown: {},
@@ -250,6 +256,10 @@
 
                 getTypeHex(type) {
                     return this.cssVar('--chart-' + (this.typeColorSlots[type] ?? 1));
+                },
+
+                typeLabel(type) {
+                    return this.typeLabels[type] ?? type.replace(/_/g, ' ');
                 },
 
                 getCompletenessColor(score) {

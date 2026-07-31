@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Toegestane valuta\'s',
                 'allowed-locales'     => 'Toegestane taalinstellingen',
+                'app-key-missing'     => 'Er is geen .env-bestand gevonden en APP_KEY is niet ingesteld in de serveromgeving. Het installatieprogramma schrijft nooit omgevingsconfiguratie — maak handmatig een .env aan (kopieer .env.example) of stel de variabelen in via uw hostingpaneel en probeer het daarna opnieuw.',
+                'env-readonly-note'   => 'Deze waarden worden gelezen uit uw serveromgeving (.env). Het installatieprogramma schrijft nooit omgevingsconfiguratie — om iets te wijzigen, bewerkt u het .env-bestand (of de variabelen in uw hostingpaneel) en laadt u deze pagina opnieuw.',
                 'application-name'    => 'Applicatienaam',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Chinese yuan (CNY)',

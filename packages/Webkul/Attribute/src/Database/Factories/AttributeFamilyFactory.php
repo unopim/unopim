@@ -28,7 +28,7 @@ class AttributeFamilyFactory extends Factory
     {
         return [
             'name'   => fake()->word(),
-            'code'   => fake()->word(),
+            'code'   => fake()->unique()->word().'_'.fake()->unique()->numerify('######'),
             'status' => 0,
         ];
     }

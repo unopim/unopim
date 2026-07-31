@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'İzin Verilen Para Birimleri',
                 'allowed-locales'     => 'İzin Verilen Dil Ayarları',
+                'app-key-missing'     => '.env dosyası bulunamadı ve sunucu ortamında APP_KEY ayarlanmamış. Kurulum programı ortam yapılandırmasını asla yazmaz — elle bir .env oluşturun (.env.example dosyasını kopyalayın) veya değişkenleri barındırma panelinizden yapılandırın, ardından tekrar deneyin.',
+                'env-readonly-note'   => 'Bu değerler sunucu ortamınızdan (.env) okunur. Kurulum programı ortam yapılandırmasını asla yazmaz — bir şeyi değiştirmek için .env dosyasını (veya barındırma paneli değişkenlerinizi) düzenleyin ve bu sayfayı yeniden yükleyin.',
                 'application-name'    => 'Uygulama Adı',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Çin Yuanı (CNY)',

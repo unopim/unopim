@@ -37,6 +37,7 @@ module.exports = {
                     800: 'rgb(var(--c-primary-800) / <alpha-value>)',
                     900: 'rgb(var(--c-primary-900) / <alpha-value>)',
                 },
+                warning: 'rgb(var(--c-warning) / <alpha-value>)',
                 'cloud-start': 'var(--c-cloud-start)',
                 'cloud-end': 'var(--c-cloud-end)',
             },
