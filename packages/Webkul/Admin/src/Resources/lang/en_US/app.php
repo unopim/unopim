@@ -536,8 +536,8 @@ return [
                     'edit-success'  => 'Bulk edit successful.',
                 ],
 
-                'id'              => 'ID',
-                'no-changes'      => 'No changes to save.',
+                'id'                           => 'ID',
+                'no-changes'                   => 'No changes to save.',
                 'locked-cell'                  => 'Belongs to a different level — not editable here.',
 
                 'invalid-datetime' => 'Please enter a valid date and time.',

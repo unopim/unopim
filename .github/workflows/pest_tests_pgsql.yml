@@ -56,6 +56,17 @@ jobs:
         with:
           composer-options: "--optimize-autoloader"
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Runtime front-end packages only; tests assert against the shipped
+      # vue-multiselect distribution.
+      - name: Install Node dependencies
+        run: npm ci --omit=dev --no-audit --no-fund
+
       - name: Setting Environment
         run: |
           cp .env.example .env
@@ -134,6 +145,17 @@ jobs:
         uses: ramsey/composer-install@v3
         with:
           composer-options: "--optimize-autoloader"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      # Runtime front-end packages only; tests assert against the shipped
+      # vue-multiselect distribution.
+      - name: Install Node dependencies
+        run: npm ci --omit=dev --no-audit --no-fund
 
       - name: Setting Environment
         run: |
