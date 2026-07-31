@@ -241,6 +241,7 @@ import Debounce from "./directives/debounce";
 import Code from "./directives/code";
 import CodeGenerator from "./directives/code-generator";
 import Focus from "./directives/focus";
+import NoValueAttr from "./directives/no-value-attr";
 import { generateCode, sanitizeCode } from "./utils/code";
 
 /**
@@ -293,6 +294,7 @@ function createAdminApp() {
     app.directive("code", Code);
     app.directive("code-generator", CodeGenerator);
     app.directive("focus", Focus);
+    app.directive("no-value-attr", NoValueAttr);
 
     app.config.globalProperties.$generateCode = generateCode;
     app.config.globalProperties.$sanitizeCode = sanitizeCode;

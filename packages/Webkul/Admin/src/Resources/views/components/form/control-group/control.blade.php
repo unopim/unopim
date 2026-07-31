@@ -35,6 +35,7 @@
                 type="{{ $type }}"
                 name="{{ $name }}"
                 v-bind="field"
+                @if ('password' === $type) v-no-value-attr @endif
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
                 {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
             />
