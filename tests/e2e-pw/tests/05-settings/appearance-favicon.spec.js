@@ -18,6 +18,8 @@ test.describe('Appearance — favicon', () => {
 
 
   async function dropFavicon(page, fileName, mimeType) {
+    await faviconControl(page).locator('label').first().waitFor({ state: 'visible', timeout: 15000 });
+
     await page.evaluate(
       ({ b64, fileName, mimeType }) => {
         const bin = atob(b64);
