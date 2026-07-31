@@ -31,8 +31,8 @@ return [
             'release_date'             => '2026-01-09',
             'weight'                   => ['value' => '0.31', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 42, 'EUR' => 39],
-        'prices' => ['USD' => 139, 'EUR' => 129],
+        'cost'    => ['USD' => 42, 'EUR' => 39],
+        'prices'  => ['USD' => 139, 'EUR' => 129],
         'locales' => [
             'en_US' => [
                 'name'              => 'Terra Merino Crew Sweater',
@@ -84,8 +84,8 @@ return [
             'release_date'             => '2025-04-22',
             'weight'                   => ['value' => '0.18', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 11, 'EUR' => 10],
-        'prices' => ['USD' => 45, 'EUR' => 42],
+        'cost'    => ['USD' => 11, 'EUR' => 10],
+        'prices'  => ['USD' => 45, 'EUR' => 42],
         'locales' => [
             'en_US' => [
                 'name'              => 'Coastline Organic Cotton T-Shirt',
@@ -130,8 +130,8 @@ return [
             'release_date'      => '2026-03-03',
             'weight'            => ['value' => '0.72', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 58, 'EUR' => 54],
-        'prices' => ['USD' => 185, 'EUR' => 175],
+        'cost'    => ['USD' => 58, 'EUR' => 54],
+        'prices'  => ['USD' => 185, 'EUR' => 175],
         'locales' => [
             'en_US' => [
                 'name'              => 'Harbour Waxed Overshirt',
@@ -178,8 +178,8 @@ return [
             'release_date'             => '2026-02-24',
             'weight'                   => ['value' => '0.41', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 71, 'EUR' => 66],
-        'prices' => ['USD' => 229, 'EUR' => 215],
+        'cost'    => ['USD' => 71, 'EUR' => 66],
+        'prices'  => ['USD' => 229, 'EUR' => 215],
         'locales' => [
             'en_US' => [
                 'name'              => 'Atlas 3-Layer Rain Jacket',
@@ -210,7 +210,7 @@ return [
         'family'     => 'apparel',
         'categories' => ['womens_tops', 'womens'],
         'media'      => 'apparel-05',
-        'common' => [
+        'common'     => [
             'brand'             => 'verano',
             'product_number'    => 'VR-LIN-SHT',
             'ean'               => '4012345000057',
@@ -222,8 +222,8 @@ return [
             'release_date'      => '2025-05-14',
             'weight'            => ['value' => '0.24', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 26, 'EUR' => 24],
-        'prices' => ['USD' => 95, 'EUR' => 89],
+        'cost'    => ['USD' => 26, 'EUR' => 24],
+        'prices'  => ['USD' => 95, 'EUR' => 89],
         'locales' => [
             'en_US' => [
                 'name'              => 'Isola Relaxed Shirt',
@@ -240,7 +240,7 @@ return [
         'family'     => 'apparel',
         'categories' => ['apparel_accessories'],
         'media'      => 'apparel-06',
-        'common' => [
+        'common'     => [
             'brand'             => 'verano',
             'product_number'    => 'VR-ALP-BNE',
             'ean'               => '4012345000064',
@@ -251,8 +251,8 @@ return [
             'color'             => 'moss_green',
             'weight'            => ['value' => '0.08', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 9, 'EUR' => 8],
-        'prices' => ['USD' => 39, 'EUR' => 36],
+        'cost'    => ['USD' => 9, 'EUR' => 8],
+        'prices'  => ['USD' => 39, 'EUR' => 36],
         'locales' => [
             'en_US' => [
                 'name'              => 'Alpine Ribbed Beanie',
@@ -269,7 +269,7 @@ return [
         'family'     => 'apparel',
         'categories' => ['apparel_accessories'],
         'media'      => 'apparel-07',
-        'common' => [
+        'common'     => [
             'brand'             => 'verano',
             'product_number'    => 'VR-CNV-BLT',
             'ean'               => '4012345000071',
@@ -280,8 +280,8 @@ return [
             'weight'            => ['value' => '0.12', 'unit' => 'KILOGRAM'],
             'length'            => ['value' => '120', 'unit' => 'CENTIMETER'],
         ],
-        'cost'   => ['USD' => 7, 'EUR' => 6],
-        'prices' => ['USD' => 29, 'EUR' => 27],
+        'cost'    => ['USD' => 7, 'EUR' => 6],
+        'prices'  => ['USD' => 29, 'EUR' => 27],
         'locales' => [
             'en_US' => [
                 'name'              => 'Cargo Canvas Belt',
@@ -297,7 +297,7 @@ return [
         'family'     => 'apparel',
         'categories' => ['apparel_accessories'],
         'media'      => 'apparel-08',
-        'common' => [
+        'common'     => [
             'brand'                    => 'verano',
             'product_number'           => 'VR-TRL-SCK',
             'ean'                      => '4012345000088',
@@ -309,8 +309,8 @@ return [
             'recycled_content_percent' => '18',
             'weight'                   => ['value' => '0.16', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 12, 'EUR' => 11],
-        'prices' => ['USD' => 42, 'EUR' => 39],
+        'cost'    => ['USD' => 12, 'EUR' => 11],
+        'prices'  => ['USD' => 42, 'EUR' => 39],
         'locales' => [
             'en_US' => [
                 'name'              => 'Trail Merino Socks, 3-Pack',
@@ -353,8 +353,8 @@ return [
             'release_date'             => '2025-09-16',
             'weight'                   => ['value' => '0.48', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 29, 'EUR' => 27],
-        'prices' => ['USD' => 109, 'EUR' => 99],
+        'cost'    => ['USD' => 29, 'EUR' => 27],
+        'prices'  => ['USD' => 109, 'EUR' => 99],
         'locales' => [
             'en_US' => [
                 'name'              => 'Workday Stretch Chino',
@@ -402,8 +402,8 @@ return [
             'release_date'      => '2025-10-14',
             'weight'            => ['value' => '0.54', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 62, 'EUR' => 58],
-        'prices' => ['USD' => 199, 'EUR' => 189],
+        'cost'    => ['USD' => 62, 'EUR' => 58],
+        'prices'  => ['USD' => 199, 'EUR' => 189],
         'locales' => [
             'en_US' => [
                 'name'              => 'Orkney Chunky Cardigan',
@@ -458,8 +458,8 @@ return [
             'release_date'             => '2025-09-30',
             'weight'                   => ['value' => '0.66', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 52, 'EUR' => 48],
-        'prices' => ['USD' => 169, 'EUR' => 159],
+        'cost'    => ['USD' => 52, 'EUR' => 48],
+        'prices'  => ['USD' => 169, 'EUR' => 159],
         'locales' => [
             'en_US' => [
                 'name'              => 'Marine Quilted Jacket',
@@ -498,8 +498,8 @@ return [
             'release_date'             => '2026-01-27',
             'weight'                   => ['value' => '0.39', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 34, 'EUR' => 31],
-        'prices' => ['USD' => 119, 'EUR' => 112],
+        'cost'    => ['USD' => 34, 'EUR' => 31],
+        'prices'  => ['USD' => 119, 'EUR' => 112],
         'locales' => [
             'en_US' => [
                 'name'              => 'Summit Grid Fleece',
@@ -523,7 +523,7 @@ return [
         'family'     => 'apparel',
         'categories' => ['apparel_accessories'],
         'media'      => 'apparel-13',
-        'common' => [
+        'common'     => [
             'brand'             => 'verano',
             'product_number'    => 'VR-DLY-SCF',
             'ean'               => '4012345000132',
@@ -538,8 +538,8 @@ return [
             'weight'            => ['value' => '0.19', 'unit' => 'KILOGRAM'],
             'length'            => ['value' => '190', 'unit' => 'CENTIMETER'],
         ],
-        'cost'   => ['USD' => 18, 'EUR' => 17],
-        'prices' => ['USD' => 69, 'EUR' => 65],
+        'cost'    => ['USD' => 18, 'EUR' => 17],
+        'prices'  => ['USD' => 69, 'EUR' => 65],
         'locales' => [
             'en_US' => [
                 'name'              => 'Daily Merino Scarf',
@@ -576,8 +576,8 @@ return [
             'lead_time_days'    => '4',
             'weight'            => ['value' => '0.05', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 8, 'EUR' => 7],
-        'prices' => ['USD' => 32, 'EUR' => 29],
+        'cost'    => ['USD' => 8, 'EUR' => 7],
+        'prices'  => ['USD' => 32, 'EUR' => 29],
         'locales' => [
             'en_US' => [
                 'name'              => 'Merino Liner Gloves',
@@ -594,7 +594,7 @@ return [
         'family'     => 'apparel',
         'categories' => ['apparel_accessories'],
         'media'      => 'apparel-15',
-        'common' => [
+        'common'     => [
             'brand'                    => 'verano',
             'product_number'           => 'VR-PCK-CAP',
             'ean'                      => '4012345000156',
@@ -609,8 +609,8 @@ return [
             'lead_time_days'           => '3',
             'weight'                   => ['value' => '0.07', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 6, 'EUR' => 6],
-        'prices' => ['USD' => 29, 'EUR' => 27],
+        'cost'    => ['USD' => 6, 'EUR' => 6],
+        'prices'  => ['USD' => 29, 'EUR' => 27],
         'locales' => [
             'en_US' => [
                 'name'              => 'Packable Five-Panel Cap',

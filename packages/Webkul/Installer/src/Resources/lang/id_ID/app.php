@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Lembar data produk',
+                'lede'              => 'Spesifikasi acuan untuk katalog demo. Nilai berlaku untuk semua produk dalam keluarga ini kecuali halaman produk menyatakan lain.',
+                'family-code'       => 'Kode keluarga',
+                'compliance'        => 'Kepatuhan',
+                'compliance-value'  => 'Bertanda CE; deklarasi RoHS dan REACH tersedia atas permintaan.',
+                'spare-parts'       => 'Suku cadang',
+                'spare-parts-value' => 'Komponen aus tersedia selama sepuluh tahun sejak tanggal produksi terakhir.',
+                'packaging'         => 'Kemasan',
+                'packaging-value'   => 'Kemasan bebas plastik, karton bersertifikat FSC, dicetak dengan tinta bebas minyak mineral.',
+                'footer'            => 'Dibuat oleh UnoPim untuk keperluan demonstrasi.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Bawaan',

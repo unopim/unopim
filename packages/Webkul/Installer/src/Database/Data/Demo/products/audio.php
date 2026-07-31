@@ -35,8 +35,8 @@ return [
             'width'                    => ['value' => '17.0', 'unit' => 'CENTIMETER'],
             'height'                   => ['value' => '8.2', 'unit' => 'CENTIMETER'],
         ],
-        'cost'   => ['USD' => 118, 'EUR' => 109],
-        'prices' => ['USD' => 329, 'EUR' => 309],
+        'cost'    => ['USD' => 118, 'EUR' => 109],
+        'prices'  => ['USD' => 329, 'EUR' => 309],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Halo Over-Ear Headphones',
@@ -64,7 +64,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['over_ear', 'headphones'],
         'media'      => 'audio-02',
-        'common' => [
+        'common'     => [
             'brand'              => 'aurex',
             'product_number'     => 'AX-HALO-STU',
             'ean'                => '4006381333948',
@@ -80,8 +80,8 @@ return [
             'power_output'       => ['value' => '2.0', 'unit' => 'WATT'],
             'weight'             => ['value' => '0.32', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 96, 'EUR' => 89],
-        'prices' => ['USD' => 279, 'EUR' => 259],
+        'cost'    => ['USD' => 96, 'EUR' => 89],
+        'prices'  => ['USD' => 279, 'EUR' => 259],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Halo Studio Monitor Headphones',
@@ -125,8 +125,8 @@ return [
             'release_date'             => '2026-04-08',
             'weight'                   => ['value' => '0.048', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 41, 'EUR' => 38],
-        'prices' => ['USD' => 149, 'EUR' => 139],
+        'cost'    => ['USD' => 41, 'EUR' => 38],
+        'prices'  => ['USD' => 149, 'EUR' => 139],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Nimbus True Wireless Earbuds',
@@ -175,8 +175,8 @@ return [
             'release_date'       => '2026-01-20',
             'weight'             => ['value' => '0.036', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 62, 'EUR' => 58],
-        'prices' => ['USD' => 199, 'EUR' => 189],
+        'cost'    => ['USD' => 62, 'EUR' => 58],
+        'prices'  => ['USD' => 199, 'EUR' => 189],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Orbit Smartwatch',
@@ -198,7 +198,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['portable_speakers', 'speakers'],
         'media'      => 'audio-05',
-        'common' => [
+        'common'     => [
             'brand'                    => 'aurex',
             'product_number'           => 'AX-PLS-120',
             'ean'                      => '4006381333979',
@@ -217,8 +217,8 @@ return [
             'power_output'             => ['value' => '30', 'unit' => 'WATT'],
             'weight'                   => ['value' => '0.68', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 44, 'EUR' => 41],
-        'prices' => ['USD' => 129, 'EUR' => 119],
+        'cost'    => ['USD' => 44, 'EUR' => 41],
+        'prices'  => ['USD' => 129, 'EUR' => 119],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Pulse Portable Speaker',
@@ -246,7 +246,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['home_speakers', 'speakers'],
         'media'      => 'audio-06',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-VTX-500',
             'ean'               => '4006381333986',
@@ -260,8 +260,8 @@ return [
             'power_output'      => ['value' => '80', 'unit' => 'WATT'],
             'weight'            => ['value' => '4.6', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 190, 'EUR' => 176],
-        'prices' => ['USD' => 549, 'EUR' => 519],
+        'cost'    => ['USD' => 190, 'EUR' => 176],
+        'prices'  => ['USD' => 549, 'EUR' => 519],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Vertex Bookshelf Speaker',
@@ -277,7 +277,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['home_speakers', 'speakers'],
         'media'      => 'audio-07',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-ECH-700',
             'ean'               => '4006381333993',
@@ -292,8 +292,8 @@ return [
             'power_output'      => ['value' => '160', 'unit' => 'WATT'],
             'weight'            => ['value' => '3.1', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 150, 'EUR' => 139],
-        'prices' => ['USD' => 429, 'EUR' => 399],
+        'cost'    => ['USD' => 150, 'EUR' => 139],
+        'prices'  => ['USD' => 429, 'EUR' => 399],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Echo Soundbar',
@@ -315,7 +315,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['audio_accessories'],
         'media'      => 'audio-08',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-HALO-PAD',
             'ean'               => '4006381334006',
@@ -325,8 +325,8 @@ return [
             'warranty_months'   => '12',
             'weight'            => ['value' => '0.06', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 8, 'EUR' => 7],
-        'prices' => ['USD' => 29, 'EUR' => 27],
+        'cost'    => ['USD' => 8, 'EUR' => 7],
+        'prices'  => ['USD' => 29, 'EUR' => 27],
         'locales' => [
             'en_US' => [
                 'name'              => 'Halo Replacement Ear Pads',
@@ -342,7 +342,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['audio_accessories'],
         'media'      => 'audio-09',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-CBL-USBC2',
             'ean'               => '4006381334013',
@@ -354,8 +354,8 @@ return [
             'weight'            => ['value' => '0.05', 'unit' => 'KILOGRAM'],
             'length'            => ['value' => '200', 'unit' => 'CENTIMETER'],
         ],
-        'cost'   => ['USD' => 3, 'EUR' => 3],
-        'prices' => ['USD' => 19, 'EUR' => 18],
+        'cost'    => ['USD' => 3, 'EUR' => 3],
+        'prices'  => ['USD' => 19, 'EUR' => 18],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Braided USB-C Cable 2 m',
@@ -371,7 +371,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['audio_accessories'],
         'media'      => 'audio-10',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-STD-010',
             'ean'               => '4006381334020',
@@ -382,8 +382,8 @@ return [
             'warranty_months'   => '24',
             'weight'            => ['value' => '0.42', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 12, 'EUR' => 11],
-        'prices' => ['USD' => 39, 'EUR' => 36],
+        'cost'    => ['USD' => 12, 'EUR' => 11],
+        'prices'  => ['USD' => 39, 'EUR' => 36],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Oak Headphone Stand',
@@ -399,7 +399,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['true_wireless', 'headphones'],
         'media'      => 'audio-11',
-        'common' => [
+        'common'     => [
             'brand'              => 'aurex',
             'product_number'     => 'AX-NIM-AIR',
             'ean'                => '4006381334037',
@@ -418,8 +418,8 @@ return [
             'release_date'       => '2025-08-19',
             'weight'             => ['value' => '0.041', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 22, 'EUR' => 20],
-        'prices' => ['USD' => 89, 'EUR' => 84],
+        'cost'    => ['USD' => 22, 'EUR' => 20],
+        'prices'  => ['USD' => 89, 'EUR' => 84],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Nimbus Air Earbuds',
@@ -441,7 +441,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['wearables'],
         'media'      => 'audio-12',
-        'common' => [
+        'common'     => [
             'brand'              => 'aurex',
             'product_number'     => 'AX-ORB-ACT',
             'ean'                => '4006381334044',
@@ -459,8 +459,8 @@ return [
             'release_date'       => '2026-06-02',
             'weight'             => ['value' => '0.029', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 38, 'EUR' => 35],
-        'prices' => ['USD' => 129, 'EUR' => 119],
+        'cost'    => ['USD' => 38, 'EUR' => 35],
+        'prices'  => ['USD' => 129, 'EUR' => 119],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Orbit Active Fitness Band',
@@ -476,7 +476,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['portable_speakers', 'speakers'],
         'media'      => 'audio-13',
-        'common' => [
+        'common'     => [
             'brand'                    => 'aurex',
             'product_number'           => 'AX-PLS-MIN',
             'ean'                      => '4006381334051',
@@ -497,8 +497,8 @@ return [
             'power_output'             => ['value' => '12', 'unit' => 'WATT'],
             'weight'                   => ['value' => '0.31', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 21, 'EUR' => 19],
-        'prices' => ['USD' => 69, 'EUR' => 65],
+        'cost'    => ['USD' => 21, 'EUR' => 19],
+        'prices'  => ['USD' => 69, 'EUR' => 65],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Pulse Mini Speaker',
@@ -520,7 +520,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['home_speakers', 'speakers'],
         'media'      => 'audio-14',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-VTX-SUB',
             'ean'               => '4006381334068',
@@ -538,8 +538,8 @@ return [
             'power_output'      => ['value' => '220', 'unit' => 'WATT'],
             'weight'            => ['value' => '11.4', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 205, 'EUR' => 190],
-        'prices' => ['USD' => 599, 'EUR' => 559],
+        'cost'    => ['USD' => 205, 'EUR' => 190],
+        'prices'  => ['USD' => 599, 'EUR' => 559],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Vertex Subwoofer',
@@ -561,7 +561,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['home_speakers', 'speakers'],
         'media'      => 'audio-15',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-ECH-RER',
             'ean'               => '4006381334075',
@@ -578,8 +578,8 @@ return [
             'power_output'      => ['value' => '60', 'unit' => 'WATT'],
             'weight'            => ['value' => '2.2', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 66, 'EUR' => 61],
-        'prices' => ['USD' => 199, 'EUR' => 189],
+        'cost'    => ['USD' => 66, 'EUR' => 61],
+        'prices'  => ['USD' => 199, 'EUR' => 189],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex Echo Wireless Rear Kit',
@@ -595,7 +595,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['audio_accessories'],
         'media'      => 'audio-16',
-        'common' => [
+        'common'     => [
             'brand'                    => 'aurex',
             'product_number'           => 'AX-HALO-CSE',
             'ean'                      => '4006381334082',
@@ -609,8 +609,8 @@ return [
             'lead_time_days'           => '3',
             'weight'                   => ['value' => '0.14', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 6, 'EUR' => 6],
-        'prices' => ['USD' => 34, 'EUR' => 32],
+        'cost'    => ['USD' => 6, 'EUR' => 6],
+        'prices'  => ['USD' => 34, 'EUR' => 32],
         'locales' => [
             'en_US' => [
                 'name'              => 'Halo Hard Carry Case',
@@ -626,7 +626,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['audio_accessories'],
         'media'      => 'audio-17',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-ADP-35',
             'ean'               => '4006381334099',
@@ -639,8 +639,8 @@ return [
             'lead_time_days'    => '3',
             'weight'            => ['value' => '0.012', 'unit' => 'KILOGRAM'],
         ],
-        'cost'   => ['USD' => 4, 'EUR' => 4],
-        'prices' => ['USD' => 25, 'EUR' => 23],
+        'cost'    => ['USD' => 4, 'EUR' => 4],
+        'prices'  => ['USD' => 25, 'EUR' => 23],
         'locales' => [
             'en_US' => [
                 'name'              => 'Aurex USB-C to 3.5 mm Adapter',
@@ -656,7 +656,7 @@ return [
         'family'     => 'audio_electronics',
         'categories' => ['audio_accessories'],
         'media'      => 'audio-18',
-        'common' => [
+        'common'     => [
             'brand'             => 'aurex',
             'product_number'    => 'AX-HALO-CBL',
             'ean'               => '4006381334105',
@@ -668,8 +668,8 @@ return [
             'weight'            => ['value' => '0.03', 'unit' => 'KILOGRAM'],
             'length'            => ['value' => '140', 'unit' => 'CENTIMETER'],
         ],
-        'cost'   => ['USD' => 3, 'EUR' => 3],
-        'prices' => ['USD' => 19, 'EUR' => 18],
+        'cost'    => ['USD' => 3, 'EUR' => 3],
+        'prices'  => ['USD' => 19, 'EUR' => 18],
         'locales' => [
             'en_US' => [
                 'name'              => 'Halo Replacement Audio Cable',

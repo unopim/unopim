@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Fitxa tècnica del producte',
+                'lede'              => 'Especificació de referència del catàleg de demostració. Els valors s’apliquen a tots els productes d’aquesta família, tret que la pàgina del producte indiqui el contrari.',
+                'family-code'       => 'Codi de família',
+                'compliance'        => 'Conformitat',
+                'compliance-value'  => 'Marcatge CE; declaracions RoHS i REACH disponibles a petició.',
+                'spare-parts'       => 'Peces de recanvi',
+                'spare-parts-value' => 'Peces de desgast en estoc durant deu anys des de l’última data de producció.',
+                'packaging'         => 'Embalatge',
+                'packaging-value'   => 'Embalatge sense plàstic, cartró certificat FSC, imprès amb tintes sense olis minerals.',
+                'footer'            => 'Generat per UnoPim amb finalitats de demostració.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Per defecte',

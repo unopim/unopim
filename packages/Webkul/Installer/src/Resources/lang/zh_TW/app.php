@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => '產品資料表',
+                'lede'              => '展示目錄的參考規格。除非產品頁面另有說明，否則數值適用於此產品系列的所有產品。',
+                'family-code'       => '系列代碼',
+                'compliance'        => '合規性',
+                'compliance-value'  => '已取得 CE 標示；RoHS 與 REACH 聲明可應要求提供。',
+                'spare-parts'       => '備品',
+                'spare-parts-value' => '耗損零件自最後生產日期起備貨十年。',
+                'packaging'         => '包裝',
+                'packaging-value'   => '無塑膠包裝，FSC 認證紙板，使用無礦物油油墨印製。',
+                'footer'            => '由 UnoPim 產生，僅供展示。',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => '預設',

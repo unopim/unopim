@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => '製品データシート',
+                'lede'              => 'デモカタログの基準仕様です。製品ページに別段の記載がない限り、この製品ファミリーのすべての製品に適用されます。',
+                'family-code'       => 'ファミリーコード',
+                'compliance'        => '法令適合',
+                'compliance-value'  => 'CEマーキング取得。RoHSおよびREACH宣言はご要望に応じて提供します。',
+                'spare-parts'       => '交換部品',
+                'spare-parts-value' => '消耗部品は最終生産日から10年間在庫を保有します。',
+                'packaging'         => '梱包',
+                'packaging-value'   => 'プラスチックを使わない梱包、FSC認証段ボール、鉱物油フリーインキで印刷。',
+                'footer'            => 'デモンストレーション目的でUnoPimが生成しました。',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'デフォルト',

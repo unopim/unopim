@@ -25,7 +25,7 @@ return [
      * ship without upload limits.
      */
     'media_limits' => [
-        'image' => ['allowed_extensions' => 'jpg,jpeg,png,webp', 'max_file_size' => 2048],
+        'image' => ['allowed_extensions' => ['jpg', 'jpeg', 'png', 'webp'], 'max_file_size' => 2048],
     ],
 
     /**
@@ -416,7 +416,7 @@ return [
             'code'               => 'assembly_manual',
             'type'               => 'file',
             'group'              => 'media',
-            'allowed_extensions' => 'pdf',
+            'allowed_extensions' => ['pdf'],
             'max_file_size'      => 5120,
             'labels'             => ['en_US' => 'Assembly manual', 'de_DE' => 'Montageanleitung', 'fr_FR' => 'Notice de montage'],
         ],
@@ -424,7 +424,7 @@ return [
             'code'               => 'gallery',
             'type'               => 'gallery',
             'group'              => 'media',
-            'allowed_extensions' => 'jpg,jpeg,png,webp',
+            'allowed_extensions' => ['jpg', 'jpeg', 'png', 'webp'],
             'max_file_size'      => 2048,
             'labels'             => ['en_US' => 'Gallery', 'de_DE' => 'Galerie', 'fr_FR' => 'Galerie'],
         ],
@@ -432,7 +432,7 @@ return [
             'code'               => 'spec_sheet',
             'type'               => 'file',
             'group'              => 'media',
-            'allowed_extensions' => 'pdf',
+            'allowed_extensions' => ['pdf'],
             'max_file_size'      => 5120,
             'labels'             => ['en_US' => 'Spec sheet', 'de_DE' => 'Datenblatt', 'fr_FR' => 'Fiche technique'],
         ],

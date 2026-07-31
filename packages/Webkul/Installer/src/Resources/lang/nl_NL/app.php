@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Productdatablad',
+                'lede'              => 'Referentiespecificatie voor de democatalogus. De waarden gelden voor elk product in deze familie, tenzij de productpagina anders vermeldt.',
+                'family-code'       => 'Familiecode',
+                'compliance'        => 'Conformiteit',
+                'compliance-value'  => 'CE-gemarkeerd; RoHS- en REACH-verklaringen op aanvraag beschikbaar.',
+                'spare-parts'       => 'Reserveonderdelen',
+                'spare-parts-value' => 'Slijtdelen tot tien jaar na de laatste productiedatum op voorraad.',
+                'packaging'         => 'Verpakking',
+                'packaging-value'   => 'Plasticvrije verpakking, FSC-gecertificeerd karton, gedrukt met minerale-olievrije inkt.',
+                'footer'            => 'Gegenereerd door UnoPim voor demonstratiedoeleinden.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standaard',

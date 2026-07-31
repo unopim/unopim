@@ -9,9 +9,15 @@ use Throwable;
 use Webkul\Completeness\Console\RecalculateCompletenessCommand;
 use Webkul\ElasticSearch\Console\Command\CategoryIndexer;
 use Webkul\ElasticSearch\Console\Command\ProductIndexer;
-use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
-use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
-use Webkul\Installer\Database\Seeders\ProductTableSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoAssociationSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoAttributeSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoCoreSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoMediaSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoPassportSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoWorkspaceSeeder;
 
 /**
  * Runs the demo extras, demo categories, and sample products seeders
@@ -47,14 +53,32 @@ class DemoDataInstaller
         }
 
         try {
-            $report('Seeding demo extras (channels, attributes, families, core config, ...)...');
-            resolve(DemoExtrasTableSeeder::class)->run();
+            $report('Seeding demo channels, locales and currencies...');
+            resolve(DemoCoreSeeder::class)->run();
+
+            $report('Seeding demo attributes...');
+            resolve(DemoAttributeSeeder::class)->run();
+
+            $report('Seeding demo attribute families...');
+            resolve(DemoFamilySeeder::class)->run();
 
             $report('Seeding demo categories...');
-            resolve(CategoryDemoTableSeeder::class)->run();
+            resolve(DemoCategorySeeder::class)->run();
 
-            $report('Seeding sample products...');
-            resolve(ProductTableSeeder::class)->run();
+            $report('Publishing demo media...');
+            resolve(DemoMediaSeeder::class)->run();
+
+            $report('Seeding demo catalog...');
+            resolve(DemoProductSeeder::class)->run();
+
+            $report('Seeding product associations...');
+            resolve(DemoAssociationSeeder::class)->run();
+
+            $report('Seeding passport templates and publications...');
+            resolve(DemoPassportSeeder::class)->run();
+
+            $report('Seeding saved grid views and sample webhook...');
+            resolve(DemoWorkspaceSeeder::class)->run();
 
             if (config('elasticsearch.enabled') == 'true') {
                 try {

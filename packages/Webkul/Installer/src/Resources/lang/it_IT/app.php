@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Scheda tecnica del prodotto',
+                'lede'              => 'Specifica di riferimento del catalogo dimostrativo. I valori si applicano a tutti i prodotti di questa famiglia, salvo diversa indicazione nella scheda prodotto.',
+                'family-code'       => 'Codice famiglia',
+                'compliance'        => 'Conformità',
+                'compliance-value'  => 'Marcatura CE; dichiarazioni RoHS e REACH disponibili su richiesta.',
+                'spare-parts'       => 'Ricambi',
+                'spare-parts-value' => 'Parti soggette a usura disponibili per dieci anni dall’ultima data di produzione.',
+                'packaging'         => 'Imballaggio',
+                'packaging-value'   => 'Imballaggio senza plastica, cartone certificato FSC, stampato con inchiostri privi di oli minerali.',
+                'footer'            => 'Generato da UnoPim a scopo dimostrativo.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Predefinito',

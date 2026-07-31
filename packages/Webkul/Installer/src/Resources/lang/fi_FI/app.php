@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Tuotteen tekninen tietolehti',
+                'lede'              => 'Demoluettelon viitemäärittely. Arvot koskevat kaikkia tämän perheen tuotteita, ellei tuotesivulla toisin mainita.',
+                'family-code'       => 'Perheen koodi',
+                'compliance'        => 'Vaatimustenmukaisuus',
+                'compliance-value'  => 'CE-merkitty; RoHS- ja REACH-ilmoitukset saatavilla pyynnöstä.',
+                'spare-parts'       => 'Varaosat',
+                'spare-parts-value' => 'Kuluvia osia pidetään varastossa kymmenen vuotta viimeisestä valmistuspäivästä.',
+                'packaging'         => 'Pakkaus',
+                'packaging-value'   => 'Muoviton pakkaus, FSC-sertifioitu kartonki, painettu mineraaliöljyttömällä värillä.',
+                'footer'            => 'UnoPimin luoma esittelytarkoituksiin.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Oletus',

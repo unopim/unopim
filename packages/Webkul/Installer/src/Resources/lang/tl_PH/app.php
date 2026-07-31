@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Datasheet ng produkto',
+                'lede'              => 'Sanggunian na espesipikasyon para sa demo catalog. Nalalapat ang mga halaga sa bawat produkto sa pamilyang ito maliban kung iba ang nakasaad sa pahina ng produkto.',
+                'family-code'       => 'Code ng pamilya',
+                'compliance'        => 'Pagsunod',
+                'compliance-value'  => 'May marka ng CE; makukuha ang mga deklarasyong RoHS at REACH kapag hiniling.',
+                'spare-parts'       => 'Mga ekstrang bahagi',
+                'spare-parts-value' => 'Nakastock ang mga nauubos na bahagi sa loob ng sampung taon mula sa huling petsa ng produksyon.',
+                'packaging'         => 'Pakete',
+                'packaging-value'   => 'Pakete na walang plastik, FSC-certified na karton, nakalimbag gamit ang tintang walang mineral oil.',
+                'footer'            => 'Nilikha ng UnoPim para sa layuning pagpapakita.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Default',

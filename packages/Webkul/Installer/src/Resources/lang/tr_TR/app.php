@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Ürün teknik föyü',
+                'lede'              => 'Demo kataloğu için referans şartname. Ürün sayfasında aksi belirtilmedikçe değerler bu ailedeki tüm ürünler için geçerlidir.',
+                'family-code'       => 'Aile kodu',
+                'compliance'        => 'Uygunluk',
+                'compliance-value'  => 'CE işaretli; RoHS ve REACH beyanları talep üzerine sunulur.',
+                'spare-parts'       => 'Yedek parçalar',
+                'spare-parts-value' => 'Aşınma parçaları son üretim tarihinden itibaren on yıl boyunca stokta tutulur.',
+                'packaging'         => 'Ambalaj',
+                'packaging-value'   => 'Plastiksiz ambalaj, FSC sertifikalı karton, mineral yağ içermeyen mürekkeple basılmıştır.',
+                'footer'            => 'Gösterim amacıyla UnoPim tarafından oluşturulmuştur.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Varsayılan',

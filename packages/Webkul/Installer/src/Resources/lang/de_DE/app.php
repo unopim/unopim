@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Produktdatenblatt',
+                'lede'              => 'Referenzspezifikation für den Demokatalog. Die Werte gelten für jedes Produkt dieser Familie, sofern die Produktseite nichts anderes angibt.',
+                'family-code'       => 'Familiencode',
+                'compliance'        => 'Konformität',
+                'compliance-value'  => 'CE-gekennzeichnet; RoHS- und REACH-Erklärungen auf Anfrage erhältlich.',
+                'spare-parts'       => 'Ersatzteile',
+                'spare-parts-value' => 'Verschleißteile werden zehn Jahre ab dem letzten Produktionsdatum bevorratet.',
+                'packaging'         => 'Verpackung',
+                'packaging-value'   => 'Plastikfreie Verpackung, FSC-zertifizierter Karton, mit mineralölfreier Farbe bedruckt.',
+                'footer'            => 'Von UnoPim zu Demonstrationszwecken erstellt.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standard',

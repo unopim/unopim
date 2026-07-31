@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Fișă tehnică de produs',
+                'lede'              => 'Specificație de referință pentru catalogul demonstrativ. Valorile se aplică tuturor produselor din această familie, cu excepția cazului în care pagina produsului indică altfel.',
+                'family-code'       => 'Cod familie',
+                'compliance'        => 'Conformitate',
+                'compliance-value'  => 'Marcaj CE; declarațiile RoHS și REACH sunt disponibile la cerere.',
+                'spare-parts'       => 'Piese de schimb',
+                'spare-parts-value' => 'Piesele de uzură sunt păstrate în stoc zece ani de la ultima dată de producție.',
+                'packaging'         => 'Ambalaj',
+                'packaging-value'   => 'Ambalaj fără plastic, carton certificat FSC, tipărit cu cerneluri fără uleiuri minerale.',
+                'footer'            => 'Generat de UnoPim în scop demonstrativ.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Implicit',

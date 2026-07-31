@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Tehnički list proizvoda',
+                'lede'              => 'Referentna specifikacija demo kataloga. Vrijednosti vrijede za sve proizvode ove obitelji, osim ako stranica proizvoda ne navodi drugačije.',
+                'family-code'       => 'Šifra obitelji',
+                'compliance'        => 'Sukladnost',
+                'compliance-value'  => 'CE oznaka; RoHS i REACH izjave dostupne na zahtjev.',
+                'spare-parts'       => 'Rezervni dijelovi',
+                'spare-parts-value' => 'Potrošni dijelovi na zalihi deset godina od posljednjeg datuma proizvodnje.',
+                'packaging'         => 'Pakiranje',
+                'packaging-value'   => 'Pakiranje bez plastike, karton s FSC certifikatom, tiskano bojama bez mineralnih ulja.',
+                'footer'            => 'Izradio UnoPim u demonstracijske svrhe.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Zadano',

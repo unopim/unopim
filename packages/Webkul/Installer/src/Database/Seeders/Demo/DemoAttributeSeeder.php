@@ -74,7 +74,7 @@ class DemoAttributeSeeder extends Seeder
                 'type'               => $attribute['type'],
                 'validation'         => $attribute['validation'] ?? null,
                 'regex_pattern'      => $attribute['regex_pattern'] ?? null,
-                'allowed_extensions' => $attribute['allowed_extensions'] ?? null,
+                'allowed_extensions' => $this->encodeExtensions($attribute['allowed_extensions'] ?? null),
                 'max_file_size'      => $attribute['max_file_size'] ?? null,
                 'position'           => $position,
                 'is_required'        => $attribute['is_required'] ?? false,
@@ -151,16 +151,26 @@ class DemoAttributeSeeder extends Seeder
     }
 
     /**
-     * @param  array<string, array{allowed_extensions: string, max_file_size: int}>  $limits
+     * @param  array<string, array{allowed_extensions: array<int, string>, max_file_size: int}>  $limits
      */
     protected function applyMediaLimits(array $limits): void
     {
         foreach ($limits as $code => $limit) {
             DB::table('attributes')->where('code', $code)->update([
-                'allowed_extensions' => $limit['allowed_extensions'],
+                'allowed_extensions' => $this->encodeExtensions($limit['allowed_extensions']),
                 'max_file_size'      => $limit['max_file_size'],
             ]);
         }
+    }
+
+    /**
+     * `allowed_extensions` is a JSON column the model casts to an array.
+     *
+     * @param  array<int, string>|null  $extensions
+     */
+    protected function encodeExtensions(?array $extensions): ?string
+    {
+        return $extensions === null ? null : json_encode($extensions, JSON_THROW_ON_ERROR);
     }
 
     /**

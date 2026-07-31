@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => '제품 데이터시트',
+                'lede'              => '데모 카탈로그의 기준 사양입니다. 제품 페이지에 다르게 명시되지 않는 한 이 패밀리의 모든 제품에 적용됩니다.',
+                'family-code'       => '패밀리 코드',
+                'compliance'        => '규정 준수',
+                'compliance-value'  => 'CE 마크 획득. RoHS 및 REACH 선언서는 요청 시 제공합니다.',
+                'spare-parts'       => '예비 부품',
+                'spare-parts-value' => '소모성 부품은 최종 생산일로부터 10년간 재고를 보유합니다.',
+                'packaging'         => '포장',
+                'packaging-value'   => '플라스틱을 사용하지 않은 포장, FSC 인증 판지, 광물유가 없는 잉크로 인쇄.',
+                'footer'            => '시연 목적으로 UnoPim이 생성했습니다.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => '기본값',

@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Phiếu thông số sản phẩm',
+                'lede'              => 'Thông số tham chiếu cho danh mục minh họa. Các giá trị áp dụng cho mọi sản phẩm trong họ này, trừ khi trang sản phẩm ghi khác.',
+                'family-code'       => 'Mã họ sản phẩm',
+                'compliance'        => 'Tuân thủ',
+                'compliance-value'  => 'Có dấu CE; bản công bố RoHS và REACH được cung cấp theo yêu cầu.',
+                'spare-parts'       => 'Phụ tùng thay thế',
+                'spare-parts-value' => 'Linh kiện hao mòn được lưu kho trong mười năm kể từ ngày sản xuất cuối cùng.',
+                'packaging'         => 'Bao bì',
+                'packaging-value'   => 'Bao bì không nhựa, bìa đạt chứng nhận FSC, in bằng mực không chứa dầu khoáng.',
+                'footer'            => 'Được UnoPim tạo ra cho mục đích trình diễn.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Mặc định',

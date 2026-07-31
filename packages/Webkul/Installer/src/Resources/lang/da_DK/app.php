@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Produktdatablad',
+                'lede'              => 'Referencespecifikation for demokataloget. Værdierne gælder for alle produkter i denne familie, medmindre produktsiden angiver andet.',
+                'family-code'       => 'Familiekode',
+                'compliance'        => 'Overensstemmelse',
+                'compliance-value'  => 'CE-mærket; RoHS- og REACH-erklæringer fås på forespørgsel.',
+                'spare-parts'       => 'Reservedele',
+                'spare-parts-value' => 'Sliddele på lager i ti år fra den seneste produktionsdato.',
+                'packaging'         => 'Emballage',
+                'packaging-value'   => 'Plastfri emballage, FSC-certificeret karton, trykt med mineraloliefri farve.',
+                'footer'            => 'Genereret af UnoPim til demonstrationsformål.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standard',
