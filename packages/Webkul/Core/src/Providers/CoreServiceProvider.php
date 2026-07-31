@@ -131,6 +131,11 @@ class CoreServiceProvider extends ServiceProvider
      * Override the mail transport with admin Configuration (Email settings) values
      * when present. Deferred until a mailer is resolved: reading the settings costs
      * a schema check and several config queries, and almost no request sends mail.
+     *
+     * The request is only marked as configured once the settings were actually
+     * readable. A mailer resolved before the connection is usable would otherwise
+     * claim the flag and leave the rest of the request on the unconfigured
+     * transport, so the admin's SMTP host applied only on some requests.
      */
     protected function overrideMailConfiguration(): void
     {
@@ -140,8 +145,6 @@ class CoreServiceProvider extends ServiceProvider
             return;
         }
 
-        $memo->set(self::MAIL_CONFIGURED_KEY, true);
-
         try {
             if (! Schema::hasTable('core_config')) {
                 return;
@@ -149,6 +152,8 @@ class CoreServiceProvider extends ServiceProvider
         } catch (\Throwable) {
             return;
         }
+
+        $memo->set(self::MAIL_CONFIGURED_KEY, true);
 
         $prefix = 'emails.configure.email_settings.';
 

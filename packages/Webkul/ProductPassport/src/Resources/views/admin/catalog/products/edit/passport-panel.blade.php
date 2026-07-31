@@ -101,7 +101,7 @@
                         value="passport-locales"
                         :is-selected="true"
                     >
-                        <div class="passport-locales-table overflow-x-auto">
+                        <div class="passport-locales-table min-w-0 max-w-full overflow-x-auto">
                             <x-admin::table class="min-w-0">
                                 <x-admin::table.thead>
                                     <x-admin::table.thead.tr>
