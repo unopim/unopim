@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
 
 /** Create a category field via UI. */
 async function createCategoryField(adminPage, code, name, type = 'Text') {
@@ -140,7 +140,7 @@ test.describe('UnoPim Category Field Tests', () => {
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Edit"]').first().click();
-    await adminPage.locator('input[name$="[name]"]').first().fill('After Update');
+    await fillLocalizedField(adminPage, 'After Update');
     await clickSaveAndExpect(adminPage, 'Save changes', /Category Field Updated Successfully/i);
 
     await deleteCategoryField(adminPage, code);
