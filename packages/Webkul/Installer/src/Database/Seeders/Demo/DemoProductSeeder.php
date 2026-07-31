@@ -7,8 +7,10 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 use Webkul\Installer\Database\Seeders\Demo\Concerns\LoadsDemoData;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Product\Services\VariantStructurePlanner;
 
 /**
@@ -53,6 +55,9 @@ class DemoProductSeeder extends Seeder
     /** @var array<string, array<string, array<string, string>>> */
     protected array $optionLabels = [];
 
+    /** @var array<string, Attribute> */
+    protected array $measurementAttributes = [];
+
     public function run(): void
     {
         $products = $this->catalog();
@@ -60,6 +65,11 @@ class DemoProductSeeder extends Seeder
         $this->familyIds = DB::table('attribute_families')->pluck('id', 'code')->all();
         $this->attributeIds = DB::table('attributes')->pluck('id', 'code')->all();
         $this->optionLabels = $this->loadOptionLabels();
+        $this->measurementAttributes = Attribute::query()
+            ->where('type', 'measurement')
+            ->get()
+            ->keyBy('code')
+            ->all();
 
         $channels = DB::table('channels')->pluck('code')->all();
 
@@ -345,6 +355,12 @@ class DemoProductSeeder extends Seeder
     }
 
     /**
+     * Insert one row below the configurable.
+     *
+     * The gallery stays at the level the variant structure assigns it to,
+     * while the main image goes on every row: the product grid renders rows
+     * independently and shows a placeholder for anything without one.
+     *
      * @param  array<string, mixed>  $product
      * @param  array<string, mixed>  $variant
      * @param  array<int, string>  $channels
@@ -366,9 +382,6 @@ class DemoProductSeeder extends Seeder
 
         $media = $this->mediaValues($product);
 
-        // The gallery belongs to the level the structure assigns it to, but the
-        // main image is written on every row: the product grid renders each row
-        // on its own and shows a placeholder for anything without one.
         $rowMedia = $type === 'variant_group' || count($product['axes'] ?? []) === 1
             ? $media
             : array_intersect_key($media, ['image' => true]);
@@ -502,13 +515,13 @@ class DemoProductSeeder extends Seeder
      */
     protected function buildValues(array $product, array $channels, array $channelLocales): array
     {
-        $common = array_merge(
+        $common = $this->normaliseMeasurements(array_merge(
             [
                 'sku'     => $product['sku'],
                 'url_key' => $product['sku'],
             ],
             $product['common'] ?? [],
-        );
+        ));
 
         $media = $this->mediaValues($product);
 
@@ -624,6 +637,34 @@ class DemoProductSeeder extends Seeder
 
         if ($disk->exists($sheet)) {
             $values['spec_sheet'] = $sheet;
+        }
+
+        return $values;
+    }
+
+    /**
+     * Rewrite the datasets' `{value, unit}` pairs into the structure the
+     * measurement package stores — amount, unit, family, base value and
+     * symbol. The product form reads `amount`, so an unconverted value
+     * renders as an empty field.
+     *
+     * @param  array<string, mixed>  $values
+     * @return array<string, mixed>
+     */
+    protected function normaliseMeasurements(array $values): array
+    {
+        foreach ($values as $code => $value) {
+            $attribute = $this->measurementAttributes[$code] ?? null;
+
+            if ($attribute === null || ! is_array($value) || ! isset($value['value'])) {
+                continue;
+            }
+
+            $values[$code] = resolve(MeasurementHelper::class)->getMeasurementValueStructure(
+                $value['value'],
+                $value['unit'] ?? null,
+                $attribute,
+            );
         }
 
         return $values;
