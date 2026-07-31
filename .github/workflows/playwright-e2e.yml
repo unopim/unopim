@@ -58,7 +58,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: tests/e2e-framework/package-lock.json
+          cache-dependency-path: tests/e2e-framework/package.json
 
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
@@ -104,7 +104,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('tests/e2e-framework/package-lock.json') }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/e2e-framework/package.json') }}
 
       - name: Install Playwright browser
         working-directory: tests/e2e-framework
@@ -119,7 +119,7 @@ jobs:
 
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: playwright-report
           path: tests/e2e-framework/reports
