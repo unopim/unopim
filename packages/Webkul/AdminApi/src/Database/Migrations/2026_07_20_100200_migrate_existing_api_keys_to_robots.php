@@ -29,6 +29,13 @@ return new class extends Migration
 
                     if ($key->oauth_client_id) {
                         Token::where('client_id', $key->oauth_client_id)->update(['revoked' => true]);
+
+                        DB::table('oauth_clients')
+                            ->where('id', $key->oauth_client_id)
+                            ->update([
+                                'user_id'  => $robot->id,
+                                'owner_id' => $robot->id,
+                            ]);
                     }
                 });
             }
