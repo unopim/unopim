@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\DataTransfer\Helpers\AbstractJob;
 use Webkul\Installer\Helpers\Upgrade\CheckStatus;
 use Webkul\Installer\Helpers\Upgrade\MigrationInspector;
 use Webkul\Installer\Helpers\Upgrade\PreflightChecker;
@@ -142,4 +143,19 @@ it('ignores tracked jobs whose heartbeat has gone stale', function () {
         app(PreflightChecker::class)->run(),
         trans('installer::app.upgrade.checks.active-jobs')
     )->status)->toBe(CheckStatus::Passed);
+});
+
+/**
+ * The configured job states are plain strings so the config file does not
+ * depend on another package at merge time. This keeps them honest: a rename in
+ * DataTransfer must fail here rather than silently disarm the gate.
+ */
+it('keeps the configured active job states in step with the job class', function () {
+    expect(config('upgrade.active_job_states'))->toBe([
+        AbstractJob::STATE_PENDING,
+        AbstractJob::STATE_VALIDATED,
+        AbstractJob::STATE_PROCESSING,
+        AbstractJob::STATE_LINKING,
+        AbstractJob::STATE_INDEXING,
+    ]);
 });

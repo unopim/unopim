@@ -1,7 +1,5 @@
 <?php
 
-use Webkul\DataTransfer\Helpers\AbstractJob;
-
 return [
     'minimum_php' => '8.4.1',
 
@@ -36,13 +34,18 @@ return [
     /**
      * Job states that mean work is still in flight. An upgrade started while
      * one of these is running would migrate the schema underneath it.
+     *
+     * Spelled out rather than referenced from
+     * `Webkul\DataTransfer\Helpers\AbstractJob`: config is merged during
+     * `register()`, and resolving another package's class that early couples
+     * the installer to a package that may not be present.
      */
     'active_job_states' => [
-        AbstractJob::STATE_PENDING,
-        AbstractJob::STATE_VALIDATED,
-        AbstractJob::STATE_PROCESSING,
-        AbstractJob::STATE_LINKING,
-        AbstractJob::STATE_INDEXING,
+        'pending',
+        'validated',
+        'processing',
+        'linking',
+        'indexing',
     ],
 
     /**
