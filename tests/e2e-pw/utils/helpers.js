@@ -86,7 +86,10 @@ async function clickDeleteOnRow(page, rowText) {
  * @param {import('@playwright/test').Page} page
  */
 async function confirmDelete(page) {
-  await page.getByRole('button', { name: 'Delete' }).click();
+  // Scoped to the confirm modal: the AI agent shell's suggestion cards can also
+  // carry "Delete" in their accessible name (e.g. "Delete Products Remove"),
+  // which turns an unscoped match ambiguous.
+  await page.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
   await page.waitForLoadState('networkidle');
 }
 

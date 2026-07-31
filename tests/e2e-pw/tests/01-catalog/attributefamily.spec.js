@@ -12,7 +12,7 @@ const { gotoIndex, createFamily, deleteFamilyByCode, saveFamilyEdit } = require(
  */
 async function searchAndEditFamily(page, code) {
   await gotoIndex(page);
-  await page.getByRole('textbox', { name: 'Search' }).fill(code);
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await page.keyboard.press('Enter');
   await page.waitForTimeout(1500);
   await page.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
@@ -38,7 +38,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
 
   test('should allow attribute family search', async ({ adminPage }) => {
     await gotoIndex(adminPage);
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill('default');
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('default');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForTimeout(1500);
     await expect(adminPage.locator('#app').getByText('default', { exact: true }).first()).toBeVisible();
@@ -60,13 +60,13 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await expect(adminPage).toHaveURL(/\/attribute-families\/edit/);
 
     await gotoIndex(adminPage);
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForTimeout(1500);
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible();
   });
 
@@ -89,12 +89,12 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await createFamily(adminPage, code);
 
     await gotoIndex(adminPage);
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForTimeout(1500);
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible();
   });
 });

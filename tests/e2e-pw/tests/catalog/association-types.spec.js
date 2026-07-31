@@ -105,7 +105,7 @@ async function ensureAssociationTypeAbsent(page, code) {
 
 	if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
 		await deleteBtn.click();
-		await page.getByRole('button', { name: 'Delete' }).click();
+		await page.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
 		await page.waitForLoadState('load');
 		await page.waitForTimeout(500);
 	}
@@ -210,7 +210,7 @@ test.describe('UnoPim Association Type Tests', () => {
 
 			const row = adminPage.locator('div', { hasText: 'bundle_kit' }).first();
 			await row.locator('span[title="Delete"]').first().click();
-			await adminPage.getByRole('button', { name: 'Delete' }).click();
+			await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
 
 			await expect(adminPage.locator('#app').getByText(/Association Type Deleted Successfully/i)).toBeVisible();
 		});

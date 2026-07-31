@@ -16,13 +16,13 @@ async function createCategoryField(adminPage, code, name, type = 'Text') {
 /** Delete a category field by code. */
 async function deleteCategoryField(adminPage, code) {
   await navigateTo(adminPage, 'categoryFields');
-  await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+  await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
   const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await deleteBtn.click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
   }
 }
@@ -75,7 +75,7 @@ test.describe('UnoPim Category Field Tests', () => {
   test('should allow category field search', async ({ adminPage }) => {
     // Seeded 'name' category field always exists.
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill('name');
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('name');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText('name', { exact: true }).first()).toBeVisible();
@@ -103,7 +103,7 @@ test.describe('UnoPim Category Field Tests', () => {
     await createCategoryField(adminPage, code, 'Actions Test');
 
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
@@ -111,14 +111,14 @@ test.describe('UnoPim Category Field Tests', () => {
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/category-fields\/edit/);
 
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row2 = adminPage.locator('div', { hasText: code });
     await row2.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Category Field Deleted Successfully/i)).toBeVisible();
   });
 
@@ -135,7 +135,7 @@ test.describe('UnoPim Category Field Tests', () => {
     await createCategoryField(adminPage, code, 'Before Update');
 
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
@@ -153,23 +153,23 @@ test.describe('UnoPim Category Field Tests', () => {
     await createCategoryField(adminPage, code, 'To Delete');
 
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Category Field Deleted Successfully/i)).toBeVisible();
   });
 
   test('delete default category field', async ({ adminPage }) => {
     // Seeded 'name' field should not be deletable.
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill('name');
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('name');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await adminPage.locator('div', { hasText: 'name' }).locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/This category field can not be deleted/i)).toBeVisible();
   });
 

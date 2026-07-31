@@ -56,7 +56,7 @@ async function createSelectSwatchAttribute(adminPage, code, name, swatchType = '
  * Helper: Search for an attribute by code on the attributes listing page.
  */
 async function searchAttribute(adminPage, code) {
-  await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+  await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
 }
@@ -82,7 +82,7 @@ async function deleteAttribute(adminPage, code) {
   const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await deleteBtn.click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
   }
 }
@@ -226,7 +226,7 @@ test.describe('UnoPim Attribute', () => {
     await itemRow2.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Attribute Deleted Successfully/i)).toBeVisible();
   });
 
@@ -261,7 +261,7 @@ test.describe('UnoPim Attribute', () => {
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Attribute Deleted Successfully/i)).toBeVisible();
   });
 });
@@ -342,7 +342,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
     await deleteAttribute(adminPage, code);
   });
@@ -374,7 +374,7 @@ test.describe('Checkbox Type Attribute Option Grid', () => {
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Deleted Successfully')).toBeVisible();
   });
 });
@@ -455,7 +455,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
     await deleteAttribute(adminPage, code);
   });
@@ -487,7 +487,7 @@ test.describe('Multiselect Type Attribute Options Grid', () => {
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Deleted Successfully')).toBeVisible();
   });
 });
@@ -568,7 +568,7 @@ test.describe('Select Type Attribute', () => {
     await adminPage.locator('span.icon-cancel.cursor-pointer').click();
     await itemRow1.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
     await deleteAttribute(adminPage, code);
   });
@@ -600,7 +600,7 @@ test.describe('Select Type Attribute', () => {
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Deleted Successfully')).toBeVisible();
   });
 });
@@ -673,7 +673,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await addTextSwatchOption(adminPage, optCode, 'Red');
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Red' });
     await itemRow1.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Option Deleted Successfully')).toBeVisible();
     await deleteAttribute(adminPage, code);
   });
@@ -733,7 +733,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await addColorSwatchOption(adminPage, optCode, 'Red', '#ff0000');
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Red' });
     await itemRow1.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Option Deleted Successfully')).toBeVisible();
     await deleteAttribute(adminPage, code);
   });
@@ -799,7 +799,7 @@ test.describe('Swatch Type Attribute Option', () => {
     await adminPage.waitForLoadState('networkidle');
     const itemRow1 = adminPage.locator('div', { hasText: optCode }).filter({ hasText: 'Dots Pattern' });
     await itemRow1.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Attribute Option Deleted Successfully')).toBeVisible();
     await deleteAttribute(adminPage, code);
   });
