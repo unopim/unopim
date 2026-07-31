@@ -99,6 +99,107 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim yükseltmesi',
+        'complete'              => 'Yükseltme tamamlandı. Uygulama yeniden çevrimiçi.',
+        'aborted'               => 'Yükseltme iptal edildi. Hiçbir şey değiştirilmedi.',
+        'confirm'               => 'Uygulama bakım moduna alınacak ve veritabanı taşınacak. Devam edilsin mi?',
+        'dry-run-complete'      => 'Deneme çalıştırması tamamlandı. Hiçbir şey değiştirilmedi.',
+        'preflight-failed'      => ':count denetim başarısız oldu. Yükseltme başlatılmadı ve hiçbir şey değiştirilmedi.',
+        'preflight-failed-hint' => 'Yukarıdaki maddeleri giderip komutu yeniden çalıştırın. Önceki sürüm trafiği karşılamaya devam ediyor.',
+        'verify-failed'         => ':count doğrulama başarısız oldu. Uygulama bakım modunda bırakıldı.',
+        'migrate-failed'        => 'Taşıma başarısız: :error',
+        'phase'                 => [
+            'preflight' => 'Aşama 1/5 — Ön denetimler',
+            'drift'     => 'Aşama 2/5 — Yapılandırma farkları',
+            'sizing'    => 'Aşama 3/5 — Tahmini bakım penceresi',
+            'execute'   => 'Aşama 4/5 — Taşıma',
+            'verify'    => 'Aşama 5/5 — Doğrulama',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP sürümü',
+            'php-version-detail'         => ':required gerekiyor, :found bulundu',
+            'php-version-remedy'         => 'Devam etmeden önce PHP\'yi :required veya daha yeni bir sürüme yükseltin.',
+            'extensions'                 => 'PHP eklentileri',
+            'extensions-remedy'          => 'Eksik eklentileri kurun ve PHP-FPM\'i yeniden başlatın.',
+            'database'                   => 'Veritabanı bağlantısı',
+            'database-detail'            => ':driver, veritabanı :database, önek :prefix',
+            'database-remedy'            => '.env dosyanızdaki veritabanı kimlik bilgilerini denetleyin.',
+            'source-version'             => 'Kurulu sürüm',
+            'source-version-detail'      => ':version veya daha yenisi',
+            'source-version-unsupported' => ':version sürümünden eski',
+            'source-version-remedy'      => 'Önce :version sürümüne yükseltin, ardından bu komutu yeniden çalıştırın.',
+            'pending-migrations'         => 'Bekleyen taşımalar',
+            'pending-migrations-detail'  => 'çalıştırılacak :count',
+            'pending-migrations-none'    => 'yok — veritabanı zaten güncel',
+            'pending-migrations-remedy'  => 'Taşıma tablosu okunamadı. Veritabanı izinlerini denetleyin.',
+            'active-jobs'                => 'İçe ve dışa aktarma işleri',
+            'active-jobs-detail'         => ':count hâlâ çalışıyor',
+            'active-jobs-remedy'         => 'Çalışan işlerin bitmesini bekleyin ya da kuyruk işçilerini durdurun, sonra komutu yeniden çalıştırın.',
+            'writable-paths'             => 'Yazılabilir dizinler',
+            'writable-paths-remedy'      => 'Yukarıda listelenen dizinler için web sunucusu kullanıcısına yazma izni verin.',
+            'disk-space'                 => 'Disk alanı',
+            'disk-space-detail'          => ':free boş, :required gerekli',
+            'disk-space-unknown'         => 'belirlenemedi',
+            'disk-space-remedy'          => 'Disk alanı boşaltın veya veritabanı başka bir yöntemle yedekleniyorsa --skip-backup kullanın.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Yapılandırma farkı bulunamadı.',
+            'no-previous' => 'Önceki sürüm dizini belirtilmediğinden yapılandırma dosyaları ve Composer bağımlılıkları karşılaştırılamıyor. Tam rapor için --from=/eski/surum/yolu kullanın.',
+            'env-missing' => 'Bu sürümün eklediği, .env dosyanızda bulunmayan ortam anahtarları:',
+            'env-removed' => 'Bu sürümün kaldırdığı, .env dosyanızda hâlâ tanımlı ortam anahtarları:',
+            'config'      => 'Önceki sürümünüzden farklı olan yapılandırma dosyaları. Yerel değişikliklerinizi yeniden uygulayın:',
+            'composer'    => 'Sizin eklediğiniz, bu sürümde bulunmayan Composer bağımlılıkları:',
+            'manual'      => 'Bu dosyalar size ait. Trafiği açmadan önce elle birleştirin — yükseltme bunların üzerine asla yazmaz.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tablo',
+            'rows'            => 'Satır',
+            'pending'         => ':count taşıma çalıştırılacak.',
+            'window'          => 'Tahmini bakım penceresi: yaklaşık :minutes dakika.',
+            'nothing-pending' => 'Bekleyen taşıma yok.',
+            'irreversible'    => 'Bu taşımalar veriyi yeniden yazar ve geri alınamaz. Geri dönmenin tek yolu veritabanı yedeğini geri yüklemektir:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Veritabanı yedeği :path konumuna yazıldı',
+            'skipped'            => 'Veritabanı yedeği atlandı. Devam etmeden önce geri yüklenebilir bir yedeğiniz olduğundan emin olun.',
+            'failed'             => 'Veritabanı yedeği alınamadı: :error',
+            'empty'              => 'Veritabanı yedeği boştu ve silindi.',
+            'abort'              => 'Doğrulanmış bir yedek bulunmadığı için yükseltme durduruldu. Hiçbir şey değiştirilmedi.',
+            'unsupported-driver' => ':driver sürücüsü için yedekleme komutu yok.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'atlandı, tablo mevcut değil',
+            'associations'           => 'Ürün ilişkileri',
+            'associations-none'      => 'taşınacak eski ilişki yok',
+            'associations-detail'    => ':legacy üründen :migrated tanesi taşındı',
+            'associations-remedy'    => 'Eski ilişki verisi bulundu ancak hiçbir şey taşınmadı. Yedeği geri yükleyin ve bu durumu bildirin.',
+            'robot-users'            => 'API entegrasyonlarının sahipleri',
+            'robot-users-detail'     => ':count entegrasyon hâlâ bir kişiye ait',
+            'robot-users-remedy'     => 'Taşımayı yeniden çalıştırın veya entegrasyonları yönetim panelinden yeniden atayın.',
+            'category-bounds'        => 'Kategori ağacı bütünlüğü',
+            'category-bounds-detail' => ':count kategori düğümünün sınır değerleri geçersiz',
+            'category-bounds-remedy' => 'Trafiği açmadan önce kategori ağacını yeniden oluşturun.',
+            'scrubbed-audits'        => 'Kimlik bilgisi temizliği',
+            'scrubbed-audits-detail' => ':count denetim kaydı hâlâ kimlik bilgisi içeriyor',
+            'scrubbed-audits-remedy' => 'Trafiği açmadan önce taşımayı yeniden çalıştırın. Bu kayıtlar saklanan kimlik bilgilerini açığa çıkarır.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Yükseltme tamamlanmadı. Uygulama bakım modunda.',
+            'body'    => 'Geri almak için: veritabanı yedeğini geri yükleyin, web sunucunuzu önceki sürüm dizinine geri yönlendirin ve orada «php artisan up» çalıştırın.',
+        ],
+
+        'reindex'               => [
+            'deferred' => 'Elasticsearch yeniden dizinlenmedi. :count ürünle bu işlem yükseltmenin kendisinden uzun sürer ve tamamlanana kadar arama veritabanına geri düşer. Site yeniden açıldığında şunları çalıştırın:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

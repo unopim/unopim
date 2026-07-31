@@ -99,6 +99,107 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Aggiornamento di UnoPim',
+        'complete'              => 'Aggiornamento completato. L\'applicazione è di nuovo online.',
+        'aborted'               => 'Aggiornamento interrotto. Non è stato modificato nulla.',
+        'confirm'               => 'L\'applicazione passerà in modalità manutenzione e il database verrà migrato. Continuare?',
+        'dry-run-complete'      => 'Simulazione completata. Non è stato modificato nulla.',
+        'preflight-failed'      => ':count controllo/i non superato/i. L\'aggiornamento non è stato avviato e non è stato modificato nulla.',
+        'preflight-failed-hint' => 'Risolvi i punti indicati sopra ed esegui di nuovo il comando. La versione precedente continua a servire il traffico.',
+        'verify-failed'         => ':count verifica/verifiche non superata/e. L\'applicazione è rimasta in modalità manutenzione.',
+        'migrate-failed'        => 'Migrazione non riuscita: :error',
+        'phase'                 => [
+            'preflight' => 'Fase 1 di 5 — Controlli preliminari',
+            'drift'     => 'Fase 2 di 5 — Differenze di configurazione',
+            'sizing'    => 'Fase 3 di 5 — Stima della finestra di manutenzione',
+            'execute'   => 'Fase 4 di 5 — Migrazione',
+            'verify'    => 'Fase 5 di 5 — Verifica',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Versione di PHP',
+            'php-version-detail'         => 'richiede :required, trovata :found',
+            'php-version-remedy'         => 'Aggiorna PHP a :required o versione successiva prima di continuare.',
+            'extensions'                 => 'Estensioni PHP',
+            'extensions-remedy'          => 'Installa le estensioni mancanti e riavvia PHP-FPM.',
+            'database'                   => 'Connessione al database',
+            'database-detail'            => ':driver, database :database, prefisso :prefix',
+            'database-remedy'            => 'Controlla le credenziali del database nel file .env.',
+            'source-version'             => 'Versione installata',
+            'source-version-detail'      => ':version o successiva',
+            'source-version-unsupported' => 'precedente a :version',
+            'source-version-remedy'      => 'Aggiorna prima a :version, poi esegui di nuovo questo comando.',
+            'pending-migrations'         => 'Migrazioni in sospeso',
+            'pending-migrations-detail'  => ':count da eseguire',
+            'pending-migrations-none'    => 'nessuna: il database è già aggiornato',
+            'pending-migrations-remedy'  => 'Non è stato possibile leggere la tabella delle migrazioni. Controlla i permessi sul database.',
+            'active-jobs'                => 'Processi di importazione ed esportazione',
+            'active-jobs-detail'         => ':count ancora in esecuzione',
+            'active-jobs-remedy'         => 'Attendi il completamento dei processi in corso oppure arresta i worker della coda, quindi esegui di nuovo il comando.',
+            'writable-paths'             => 'Directory scrivibili',
+            'writable-paths-remedy'      => 'Concedi all\'utente del server web i permessi di scrittura sulle directory elencate sopra.',
+            'disk-space'                 => 'Spazio su disco',
+            'disk-space-detail'          => ':free liberi, :required richiesti',
+            'disk-space-unknown'         => 'non è stato possibile determinarlo',
+            'disk-space-remedy'          => 'Libera spazio su disco oppure usa --skip-backup se il database viene salvato altrove.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Nessuna differenza di configurazione rilevata.',
+            'no-previous' => 'Nessuna directory della versione precedente indicata: i file di configurazione e le dipendenze Composer non possono essere confrontati. Usa --from=/percorso/alla/vecchia/versione per un report completo.',
+            'env-missing' => 'Chiavi di ambiente aggiunte da questa versione e assenti dal tuo .env:',
+            'env-removed' => 'Chiavi di ambiente rimosse da questa versione e ancora presenti nel tuo .env:',
+            'config'      => 'File di configurazione diversi rispetto alla versione precedente. Riapplica le tue modifiche locali:',
+            'composer'    => 'Dipendenze Composer che hai aggiunto e che mancano in questa versione:',
+            'manual'      => 'Questi file sono tuoi. Uniscili manualmente prima di riaprire il traffico: l\'aggiornamento non li riscrive mai.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabella',
+            'rows'            => 'Righe',
+            'pending'         => 'Verranno eseguite :count migrazione/i.',
+            'window'          => 'Finestra di manutenzione stimata: circa :minutes minuto/i.',
+            'nothing-pending' => 'Nessuna migrazione in sospeso.',
+            'irreversible'    => 'Queste migrazioni riscrivono i dati e non possono essere annullate. Solo il ripristino del backup del database consente di tornare indietro:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Backup del database salvato in :path',
+            'skipped'            => 'Backup del database saltato. Assicurati di avere un backup ripristinabile prima di continuare.',
+            'failed'             => 'Backup del database non riuscito: :error',
+            'empty'              => 'Il backup del database era vuoto ed è stato eliminato.',
+            'abort'              => 'L\'aggiornamento è stato interrotto perché non esiste un backup verificato. Non è stato modificato nulla.',
+            'unsupported-driver' => 'Non è disponibile alcun comando di backup per il driver :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'saltato, tabella non presente',
+            'associations'           => 'Associazioni di prodotto',
+            'associations-none'      => 'nessuna associazione precedente da migrare',
+            'associations-detail'    => ':migrated prodotto/i migrato/i su :legacy',
+            'associations-remedy'    => 'Sono stati trovati dati di associazione precedenti ma non è stato migrato nulla. Ripristina il backup e segnala il problema.',
+            'robot-users'            => 'Proprietari delle integrazioni API',
+            'robot-users-detail'     => ':count integrazione/i appartengono ancora a una persona',
+            'robot-users-remedy'     => 'Esegui di nuovo la migrazione oppure riassegna le integrazioni dal pannello di amministrazione.',
+            'category-bounds'        => 'Integrità dell\'albero delle categorie',
+            'category-bounds-detail' => ':count nodo/i categoria hanno limiti non validi',
+            'category-bounds-remedy' => 'Ricostruisci l\'albero delle categorie prima di riaprire il traffico.',
+            'scrubbed-audits'        => 'Pulizia delle credenziali',
+            'scrubbed-audits-detail' => ':count record di audit contengono ancora credenziali',
+            'scrubbed-audits-remedy' => 'Esegui di nuovo la migrazione prima di riaprire il traffico. Questi record espongono credenziali memorizzate.',
+        ],
+
+        'restore'               => [
+            'heading' => 'L\'aggiornamento non è stato completato. L\'applicazione è in modalità manutenzione.',
+            'body'    => 'Per tornare indietro: ripristina il backup del database, riporta il server web alla directory della versione precedente ed esegui lì «php artisan up».',
+        ],
+
+        'reindex'               => [
+            'deferred' => 'Elasticsearch non è stato reindicizzato. Con :count prodotto/i questa operazione dura più dell\'aggiornamento stesso e nel frattempo la ricerca ricade sul database. Esegui questi comandi quando il sito è di nuovo online:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

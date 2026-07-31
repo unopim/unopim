@@ -99,6 +99,107 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Aktualizacja UnoPim',
+        'complete'              => 'Aktualizacja zakończona. Aplikacja jest ponownie dostępna.',
+        'aborted'               => 'Aktualizacja przerwana. Nic nie zostało zmienione.',
+        'confirm'               => 'Aplikacja przejdzie w tryb konserwacji, a baza danych zostanie zmigrowana. Kontynuować?',
+        'dry-run-complete'      => 'Przebieg próbny zakończony. Nic nie zostało zmienione.',
+        'preflight-failed'      => 'Nieudane kontrole: :count. Aktualizacja nie została uruchomiona i nic nie zostało zmienione.',
+        'preflight-failed-hint' => 'Usuń powyższe problemy i uruchom polecenie ponownie. Poprzednia wersja nadal obsługuje ruch.',
+        'verify-failed'         => 'Nieudane weryfikacje: :count. Aplikacja pozostała w trybie konserwacji.',
+        'migrate-failed'        => 'Migracja nie powiodła się: :error',
+        'phase'                 => [
+            'preflight' => 'Etap 1 z 5 — Kontrole wstępne',
+            'drift'     => 'Etap 2 z 5 — Różnice w konfiguracji',
+            'sizing'    => 'Etap 3 z 5 — Szacowane okno konserwacji',
+            'execute'   => 'Etap 4 z 5 — Migracja',
+            'verify'    => 'Etap 5 z 5 — Weryfikacja',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Wersja PHP',
+            'php-version-detail'         => 'wymaga :required, znaleziono :found',
+            'php-version-remedy'         => 'Zaktualizuj PHP do wersji :required lub nowszej przed kontynuowaniem.',
+            'extensions'                 => 'Rozszerzenia PHP',
+            'extensions-remedy'          => 'Zainstaluj brakujące rozszerzenia i zrestartuj PHP-FPM.',
+            'database'                   => 'Połączenie z bazą danych',
+            'database-detail'            => ':driver, baza :database, prefiks :prefix',
+            'database-remedy'            => 'Sprawdź dane dostępowe do bazy danych w pliku .env.',
+            'source-version'             => 'Zainstalowana wersja',
+            'source-version-detail'      => ':version lub nowsza',
+            'source-version-unsupported' => 'starsza niż :version',
+            'source-version-remedy'      => 'Najpierw zaktualizuj do wersji :version, a następnie uruchom to polecenie ponownie.',
+            'pending-migrations'         => 'Oczekujące migracje',
+            'pending-migrations-detail'  => 'do wykonania: :count',
+            'pending-migrations-none'    => 'brak — baza danych jest już aktualna',
+            'pending-migrations-remedy'  => 'Nie udało się odczytać tabeli migracji. Sprawdź uprawnienia do bazy danych.',
+            'active-jobs'                => 'Zadania importu i eksportu',
+            'active-jobs-detail'         => 'wciąż uruchomionych: :count',
+            'active-jobs-remedy'         => 'Poczekaj na zakończenie trwających zadań lub zatrzymaj workery kolejki, a następnie uruchom polecenie ponownie.',
+            'writable-paths'             => 'Katalogi zapisywalne',
+            'writable-paths-remedy'      => 'Nadaj użytkownikowi serwera WWW prawa zapisu do katalogów wymienionych powyżej.',
+            'disk-space'                 => 'Miejsce na dysku',
+            'disk-space-detail'          => 'wolne :free, wymagane :required',
+            'disk-space-unknown'         => 'nie udało się ustalić',
+            'disk-space-remedy'          => 'Zwolnij miejsce na dysku lub użyj --skip-backup, jeśli kopia bazy danych powstaje w inny sposób.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Nie wykryto różnic w konfiguracji.',
+            'no-previous' => 'Nie podano katalogu poprzedniej wersji, więc nie można porównać plików konfiguracyjnych ani zależności Composera. Użyj --from=/sciezka/do/starej/wersji, aby uzyskać pełny raport.',
+            'env-missing' => 'Klucze środowiskowe dodane w tej wersji, których brakuje w Twoim .env:',
+            'env-removed' => 'Klucze środowiskowe usunięte w tej wersji, wciąż obecne w Twoim .env:',
+            'config'      => 'Pliki konfiguracyjne różniące się od poprzedniej wersji. Nanieś ponownie swoje lokalne zmiany:',
+            'composer'    => 'Dodane przez Ciebie zależności Composera, których brakuje w tej wersji:',
+            'manual'      => 'Te pliki należą do Ciebie. Scal je ręcznie przed wpuszczeniem ruchu — aktualizacja nigdy ich nie nadpisuje.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabela',
+            'rows'            => 'Wiersze',
+            'pending'         => 'Zostanie wykonanych migracji: :count.',
+            'window'          => 'Szacowane okno konserwacji: około :minutes min.',
+            'nothing-pending' => 'Brak oczekujących migracji.',
+            'irreversible'    => 'Te migracje przepisują dane i nie można ich cofnąć. Powrót umożliwia wyłącznie przywrócenie kopii zapasowej bazy danych:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Kopia zapasowa bazy danych zapisana w :path',
+            'skipped'            => 'Pominięto kopię zapasową bazy danych. Upewnij się, że masz kopię możliwą do przywrócenia, zanim przejdziesz dalej.',
+            'failed'             => 'Kopia zapasowa bazy danych nie powiodła się: :error',
+            'empty'              => 'Kopia zapasowa bazy danych była pusta i została odrzucona.',
+            'abort'              => 'Aktualizację zatrzymano, ponieważ nie istnieje zweryfikowana kopia zapasowa. Nic nie zostało zmienione.',
+            'unsupported-driver' => 'Dla sterownika :driver nie ma dostępnego polecenia kopii zapasowej.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'pominięto, brak tabeli',
+            'associations'           => 'Powiązania produktów',
+            'associations-none'      => 'brak starych powiązań do migracji',
+            'associations-detail'    => 'zmigrowano :migrated z :legacy produktu/ów',
+            'associations-remedy'    => 'Znaleziono stare dane powiązań, ale nic nie zostało zmigrowane. Przywróć kopię zapasową i zgłoś ten problem.',
+            'robot-users'            => 'Właściciele integracji API',
+            'robot-users-detail'     => 'integracji wciąż należy do osoby: :count',
+            'robot-users-remedy'     => 'Uruchom migrację ponownie lub przypisz integracje na nowo w panelu administracyjnym.',
+            'category-bounds'        => 'Spójność drzewa kategorii',
+            'category-bounds-detail' => 'węzłów kategorii ma nieprawidłowe granice: :count',
+            'category-bounds-remedy' => 'Odbuduj drzewo kategorii przed wpuszczeniem ruchu.',
+            'scrubbed-audits'        => 'Czyszczenie danych uwierzytelniających',
+            'scrubbed-audits-detail' => 'wpisów audytu wciąż zawiera dane uwierzytelniające: :count',
+            'scrubbed-audits-remedy' => 'Uruchom migrację ponownie przed wpuszczeniem ruchu. Te wpisy ujawniają zapisane dane uwierzytelniające.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Aktualizacja nie została ukończona. Aplikacja jest w trybie konserwacji.',
+            'body'    => 'Aby się wycofać: przywróć kopię zapasową bazy danych, przekieruj serwer WWW z powrotem na katalog poprzedniej wersji i uruchom tam «php artisan up».',
+        ],
+
+        'reindex'               => [
+            'deferred' => 'Elasticsearch nie został przeindeksowany. Przy :count produktach trwa to dłużej niż sama aktualizacja, a wyszukiwanie do tego czasu korzysta z bazy danych. Uruchom to, gdy witryna wróci do działania:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

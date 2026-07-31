@@ -99,6 +99,107 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Mise à niveau d\'UnoPim',
+        'complete'              => 'Mise à niveau terminée. L\'application est de nouveau en ligne.',
+        'aborted'               => 'Mise à niveau interrompue. Rien n\'a été modifié.',
+        'confirm'               => 'L\'application passera en mode maintenance et la base de données sera migrée. Continuer?',
+        'dry-run-complete'      => 'Simulation terminée. Rien n\'a été modifié.',
+        'preflight-failed'      => ':count vérification(s) en échec. La mise à niveau n\'a pas démarré et rien n\'a été modifié.',
+        'preflight-failed-hint' => 'Corrigez les points ci-dessus puis relancez la commande. La version précédente continue de servir le trafic.',
+        'verify-failed'         => ':count contrôle(s) en échec. L\'application a été laissée en mode maintenance.',
+        'migrate-failed'        => 'Échec de la migration : :error',
+        'phase'                 => [
+            'preflight' => 'Phase 1 sur 5 — Vérifications préalables',
+            'drift'     => 'Phase 2 sur 5 — Écarts de configuration',
+            'sizing'    => 'Phase 3 sur 5 — Estimation de la fenêtre de maintenance',
+            'execute'   => 'Phase 4 sur 5 — Migration',
+            'verify'    => 'Phase 5 sur 5 — Vérification',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Version de PHP',
+            'php-version-detail'         => 'exige :required, trouvé :found',
+            'php-version-remedy'         => 'Mettez PHP à niveau vers :required ou une version plus récente avant de continuer.',
+            'extensions'                 => 'Extensions PHP',
+            'extensions-remedy'          => 'Installez les extensions manquantes puis redémarrez PHP-FPM.',
+            'database'                   => 'Connexion à la base de données',
+            'database-detail'            => ':driver, base :database, préfixe :prefix',
+            'database-remedy'            => 'Vérifiez les identifiants de base de données dans votre fichier .env.',
+            'source-version'             => 'Version installée',
+            'source-version-detail'      => ':version ou plus récente',
+            'source-version-unsupported' => 'antérieure à :version',
+            'source-version-remedy'      => 'Effectuez d\'abord la mise à niveau vers :version, puis relancez cette commande.',
+            'pending-migrations'         => 'Migrations en attente',
+            'pending-migrations-detail'  => ':count à exécuter',
+            'pending-migrations-none'    => 'aucune — la base de données est déjà à jour',
+            'pending-migrations-remedy'  => 'La table des migrations n\'a pas pu être lue. Vérifiez les droits sur la base de données.',
+            'active-jobs'                => 'Tâches d\'importation et d\'exportation',
+            'active-jobs-detail'         => ':count toujours en cours',
+            'active-jobs-remedy'         => 'Attendez la fin des tâches en cours ou arrêtez les workers de file d\'attente, puis relancez la commande.',
+            'writable-paths'             => 'Répertoires accessibles en écriture',
+            'writable-paths-remedy'      => 'Accordez à l\'utilisateur du serveur web les droits d\'écriture sur les répertoires listés ci-dessus.',
+            'disk-space'                 => 'Espace disque',
+            'disk-space-detail'          => ':free disponible, :required requis',
+            'disk-space-unknown'         => 'impossible à déterminer',
+            'disk-space-remedy'          => 'Libérez de l\'espace disque ou utilisez --skip-backup si la base de données est sauvegardée ailleurs.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Aucun écart de configuration détecté.',
+            'no-previous' => 'Aucun répertoire de version précédente indiqué : les fichiers de configuration et les dépendances Composer ne peuvent pas être comparés. Utilisez --from=/chemin/vers/ancienne/version pour un rapport complet.',
+            'env-missing' => 'Clés d\'environnement ajoutées par cette version et absentes de votre .env :',
+            'env-removed' => 'Clés d\'environnement supprimées par cette version et encore définies dans votre .env :',
+            'config'      => 'Fichiers de configuration différents de votre version précédente. Réappliquez vos modifications locales :',
+            'composer'    => 'Dépendances Composer que vous avez ajoutées et qui sont absentes de cette version :',
+            'manual'      => 'Ces fichiers vous appartiennent. Fusionnez-les à la main avant de rouvrir le trafic — la mise à niveau ne les réécrit jamais.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Table',
+            'rows'            => 'Lignes',
+            'pending'         => ':count migration(s) seront exécutées.',
+            'window'          => 'Fenêtre de maintenance estimée : environ :minutes minute(s).',
+            'nothing-pending' => 'Aucune migration en attente.',
+            'irreversible'    => 'Ces migrations réécrivent les données et sont irréversibles. Seule la restauration de la sauvegarde de la base permet de revenir en arrière :',
+        ],
+
+        'backup'                => [
+            'created'            => 'Sauvegarde de la base de données écrite dans :path',
+            'skipped'            => 'Sauvegarde de la base de données ignorée. Assurez-vous de disposer d\'une sauvegarde restaurable avant de continuer.',
+            'failed'             => 'Échec de la sauvegarde de la base de données : :error',
+            'empty'              => 'La sauvegarde de la base de données était vide et a été supprimée.',
+            'abort'              => 'La mise à niveau a été interrompue faute de sauvegarde vérifiée. Rien n\'a été modifié.',
+            'unsupported-driver' => 'Aucune commande de sauvegarde n\'est disponible pour le pilote :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'ignoré, table absente',
+            'associations'           => 'Associations de produits',
+            'associations-none'      => 'aucune association héritée à migrer',
+            'associations-detail'    => ':migrated produit(s) migré(s) sur :legacy',
+            'associations-remedy'    => 'Des données d\'association héritées ont été trouvées mais rien n\'a été migré. Restaurez la sauvegarde et signalez ce problème.',
+            'robot-users'            => 'Propriétaires des intégrations API',
+            'robot-users-detail'     => ':count intégration(s) appartiennent encore à une personne',
+            'robot-users-remedy'     => 'Relancez la migration ou réattribuez les intégrations depuis le panneau d\'administration.',
+            'category-bounds'        => 'Intégrité de l\'arborescence des catégories',
+            'category-bounds-detail' => ':count nœud(s) de catégorie ont des bornes invalides',
+            'category-bounds-remedy' => 'Reconstruisez l\'arborescence des catégories avant de rouvrir le trafic.',
+            'scrubbed-audits'        => 'Nettoyage des identifiants',
+            'scrubbed-audits-detail' => ':count enregistrement(s) d\'audit contiennent encore des identifiants',
+            'scrubbed-audits-remedy' => 'Relancez la migration avant de rouvrir le trafic. Ces enregistrements exposent des identifiants stockés.',
+        ],
+
+        'restore'               => [
+            'heading' => 'La mise à niveau ne s\'est pas terminée. L\'application est en mode maintenance.',
+            'body'    => 'Pour revenir en arrière : restaurez la sauvegarde de la base de données, faites pointer votre serveur web vers le répertoire de la version précédente, puis exécutez-y « php artisan up ».',
+        ],
+
+        'reindex'               => [
+            'deferred' => 'Elasticsearch n\'a pas été réindexé. Avec :count produit(s), cette opération dure plus longtemps que la mise à niveau elle-même, et la recherche s\'appuie sur la base de données en attendant. Exécutez ceci une fois le site de nouveau en ligne :',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

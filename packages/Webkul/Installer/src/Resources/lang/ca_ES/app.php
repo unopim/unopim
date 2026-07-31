@@ -99,6 +99,107 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Actualització d\'UnoPim',
+        'complete'              => 'Actualització completada. L\'aplicació torna a estar en línia.',
+        'aborted'               => 'Actualització cancel·lada. No s\'ha modificat res.',
+        'confirm'               => 'L\'aplicació passarà a mode manteniment i es migrarà la base de dades. Voleu continuar?',
+        'dry-run-complete'      => 'Simulació completada. No s\'ha modificat res.',
+        'preflight-failed'      => ':count comprovació/ons han fallat. L\'actualització no s\'ha iniciat i no s\'ha modificat res.',
+        'preflight-failed-hint' => 'Resoleu els punts anteriors i torneu a executar l\'ordre. La versió anterior continua servint el trànsit.',
+        'verify-failed'         => ':count verificació/ons han fallat. L\'aplicació s\'ha deixat en mode manteniment.',
+        'migrate-failed'        => 'La migració ha fallat: :error',
+        'phase'                 => [
+            'preflight' => 'Fase 1 de 5 — Comprovacions prèvies',
+            'drift'     => 'Fase 2 de 5 — Diferències de configuració',
+            'sizing'    => 'Fase 3 de 5 — Estimació de la finestra de manteniment',
+            'execute'   => 'Fase 4 de 5 — Migració',
+            'verify'    => 'Fase 5 de 5 — Verificació',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Versió del PHP',
+            'php-version-detail'         => 'requereix :required, s\'ha trobat :found',
+            'php-version-remedy'         => 'Actualitzeu el PHP a :required o superior abans de continuar.',
+            'extensions'                 => 'Extensions del PHP',
+            'extensions-remedy'          => 'Instal·leu les extensions que falten i reinicieu el PHP-FPM.',
+            'database'                   => 'Connexió a la base de dades',
+            'database-detail'            => ':driver, base de dades :database, prefix :prefix',
+            'database-remedy'            => 'Reviseu les credencials de la base de dades al fitxer .env.',
+            'source-version'             => 'Versió instal·lada',
+            'source-version-detail'      => ':version o superior',
+            'source-version-unsupported' => 'anterior a :version',
+            'source-version-remedy'      => 'Actualitzeu primer a :version i torneu a executar aquesta ordre.',
+            'pending-migrations'         => 'Migracions pendents',
+            'pending-migrations-detail'  => ':count per executar',
+            'pending-migrations-none'    => 'cap: la base de dades ja està actualitzada',
+            'pending-migrations-remedy'  => 'No s\'ha pogut llegir la taula de migracions. Reviseu els permisos de la base de dades.',
+            'active-jobs'                => 'Tasques d\'importació i exportació',
+            'active-jobs-detail'         => ':count encara en execució',
+            'active-jobs-remedy'         => 'Espereu que acabin les tasques en curs o atureu els workers de la cua, i torneu a executar l\'ordre.',
+            'writable-paths'             => 'Directoris amb permís d\'escriptura',
+            'writable-paths-remedy'      => 'Doneu permisos d\'escriptura a l\'usuari del servidor web sobre els directoris indicats a dalt.',
+            'disk-space'                 => 'Espai de disc',
+            'disk-space-detail'          => ':free lliures, :required necessaris',
+            'disk-space-unknown'         => 'no s\'ha pogut determinar',
+            'disk-space-remedy'          => 'Allibereu espai de disc o feu servir --skip-backup si la base de dades es desa per altres mitjans.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'No s\'han detectat diferències de configuració.',
+            'no-previous' => 'No s\'ha indicat el directori de la versió anterior, de manera que no es poden comparar els fitxers de configuració ni les dependències del Composer. Feu servir --from=/ruta/a/versio/antiga per obtenir un informe complet.',
+            'env-missing' => 'Claus d\'entorn afegides per aquesta versió que falten al vostre .env:',
+            'env-removed' => 'Claus d\'entorn eliminades per aquesta versió que encara són al vostre .env:',
+            'config'      => 'Fitxers de configuració diferents dels de la versió anterior. Torneu a aplicar-hi els vostres canvis locals:',
+            'composer'    => 'Dependències del Composer que heu afegit i que falten en aquesta versió:',
+            'manual'      => 'Aquests fitxers són vostres. Combineu-los manualment abans de reobrir el trànsit: l\'actualització mai no els sobreescriu.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Taula',
+            'rows'            => 'Files',
+            'pending'         => 'S\'executaran :count migració/ons.',
+            'window'          => 'Finestra de manteniment estimada: uns :minutes minut(s).',
+            'nothing-pending' => 'No hi ha cap migració pendent.',
+            'irreversible'    => 'Aquestes migracions reescriuen dades i no es poden desfer. Només la restauració de la còpia de seguretat de la base de dades permet tornar enrere:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Còpia de seguretat de la base de dades desada a :path',
+            'skipped'            => 'S\'ha omès la còpia de seguretat de la base de dades. Assegureu-vos de tenir-ne una de restaurable abans de continuar.',
+            'failed'             => 'La còpia de seguretat de la base de dades ha fallat: :error',
+            'empty'              => 'La còpia de seguretat de la base de dades era buida i s\'ha descartat.',
+            'abort'              => 'L\'actualització s\'ha aturat perquè no hi ha cap còpia de seguretat verificada. No s\'ha modificat res.',
+            'unsupported-driver' => 'No hi ha cap ordre de còpia de seguretat disponible per al controlador :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'omès, la taula no existeix',
+            'associations'           => 'Associacions de productes',
+            'associations-none'      => 'cap associació antiga per migrar',
+            'associations-detail'    => ':migrated de :legacy producte(s) migrat(s)',
+            'associations-remedy'    => 'S\'han trobat dades d\'associació antigues, però no s\'ha migrat res. Restaureu la còpia de seguretat i informeu d\'aquest problema.',
+            'robot-users'            => 'Propietaris de les integracions d\'API',
+            'robot-users-detail'     => ':count integració/ons encara pertanyen a una persona',
+            'robot-users-remedy'     => 'Torneu a executar la migració o reassigneu les integracions des del tauler d\'administració.',
+            'category-bounds'        => 'Integritat de l\'arbre de categories',
+            'category-bounds-detail' => ':count node(s) de categoria tenen límits no vàlids',
+            'category-bounds-remedy' => 'Reconstruïu l\'arbre de categories abans de reobrir el trànsit.',
+            'scrubbed-audits'        => 'Neteja de credencials',
+            'scrubbed-audits-detail' => ':count registre(s) d\'auditoria encara contenen credencials',
+            'scrubbed-audits-remedy' => 'Torneu a executar la migració abans de reobrir el trànsit. Aquests registres exposen credencials desades.',
+        ],
+
+        'restore'               => [
+            'heading' => 'L\'actualització no s\'ha completat. L\'aplicació és en mode manteniment.',
+            'body'    => 'Per revertir: restaureu la còpia de seguretat de la base de dades, torneu a apuntar el servidor web al directori de la versió anterior i executeu-hi «php artisan up».',
+        ],
+
+        'reindex'               => [
+            'deferred' => 'L\'Elasticsearch no s\'ha reindexat. Amb :count producte(s) això triga més que la mateixa actualització, i mentrestant la cerca recorre a la base de dades. Executeu això quan el lloc torni a estar en línia:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

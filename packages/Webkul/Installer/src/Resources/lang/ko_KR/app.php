@@ -99,6 +99,107 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim 업그레이드',
+        'complete'              => '업그레이드가 완료되었습니다. 애플리케이션이 다시 온라인 상태입니다.',
+        'aborted'               => '업그레이드가 중단되었습니다. 변경된 내용은 없습니다.',
+        'confirm'               => '애플리케이션이 유지 관리 모드로 전환되고 데이터베이스가 마이그레이션됩니다. 계속할까요?',
+        'dry-run-complete'      => '시험 실행이 완료되었습니다. 변경된 내용은 없습니다.',
+        'preflight-failed'      => ':count개의 점검에 실패했습니다. 업그레이드가 시작되지 않았고 변경된 내용도 없습니다.',
+        'preflight-failed-hint' => '위 항목을 해결한 뒤 명령을 다시 실행하세요. 이전 릴리스가 계속 트래픽을 처리하고 있습니다.',
+        'verify-failed'         => ':count개의 검증에 실패했습니다. 애플리케이션은 유지 관리 모드로 남아 있습니다.',
+        'migrate-failed'        => '마이그레이션에 실패했습니다: :error',
+        'phase'                 => [
+            'preflight' => '1/5단계 — 사전 점검',
+            'drift'     => '2/5단계 — 설정 차이',
+            'sizing'    => '3/5단계 — 유지 관리 시간 예상',
+            'execute'   => '4/5단계 — 마이그레이션',
+            'verify'    => '5/5단계 — 검증',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP 버전',
+            'php-version-detail'         => ':required 이상이 필요하지만 :found 이(가) 확인되었습니다',
+            'php-version-remedy'         => '계속하기 전에 PHP를 :required 이상으로 업그레이드하세요.',
+            'extensions'                 => 'PHP 확장 모듈',
+            'extensions-remedy'          => '누락된 확장 모듈을 설치하고 PHP-FPM을 다시 시작하세요.',
+            'database'                   => '데이터베이스 연결',
+            'database-detail'            => ':driver, 데이터베이스 :database, 접두사 :prefix',
+            'database-remedy'            => '.env 파일의 데이터베이스 접속 정보를 확인하세요.',
+            'source-version'             => '설치된 릴리스',
+            'source-version-detail'      => ':version 이상',
+            'source-version-unsupported' => ':version 보다 이전',
+            'source-version-remedy'      => '먼저 :version 으로 업그레이드한 뒤 이 명령을 다시 실행하세요.',
+            'pending-migrations'         => '대기 중인 마이그레이션',
+            'pending-migrations-detail'  => '실행 예정 :count개',
+            'pending-migrations-none'    => '없음 — 데이터베이스가 이미 최신입니다',
+            'pending-migrations-remedy'  => '마이그레이션 테이블을 읽지 못했습니다. 데이터베이스 권한을 확인하세요.',
+            'active-jobs'                => '가져오기 및 내보내기 작업',
+            'active-jobs-detail'         => ':count개가 아직 실행 중',
+            'active-jobs-remedy'         => '실행 중인 작업이 끝날 때까지 기다리거나 큐 워커를 중지한 뒤 명령을 다시 실행하세요.',
+            'writable-paths'             => '쓰기 가능한 디렉터리',
+            'writable-paths-remedy'      => '위에 나열된 디렉터리에 대해 웹 서버 사용자에게 쓰기 권한을 부여하세요.',
+            'disk-space'                 => '디스크 공간',
+            'disk-space-detail'          => '여유 :free, 필요 :required',
+            'disk-space-unknown'         => '확인할 수 없음',
+            'disk-space-remedy'          => '디스크 공간을 확보하거나, 데이터베이스를 다른 방법으로 백업한다면 --skip-backup 을 사용하세요.',
+        ],
+
+        'drift'                 => [
+            'none'        => '설정 차이가 발견되지 않았습니다.',
+            'no-previous' => '이전 릴리스 디렉터리가 지정되지 않아 설정 파일과 Composer 의존성을 비교할 수 없습니다. 전체 보고서를 보려면 --from=/path/to/old/release 를 사용하세요.',
+            'env-missing' => '이번 릴리스에서 추가되었으나 사용 중인 .env 에 없는 환경 키:',
+            'env-removed' => '이번 릴리스에서 제거되었으나 사용 중인 .env 에 아직 설정된 환경 키:',
+            'config'      => '이전 릴리스와 다른 설정 파일입니다. 로컬 변경 사항을 다시 적용하세요:',
+            'composer'    => '직접 추가했으나 이번 릴리스에 없는 Composer 의존성:',
+            'manual'      => '이 파일들은 사용자의 것입니다. 트래픽을 다시 열기 전에 직접 병합하세요. 업그레이드는 이 파일들을 절대 덮어쓰지 않습니다.',
+        ],
+
+        'sizing'                => [
+            'table'           => '테이블',
+            'rows'            => '행 수',
+            'pending'         => ':count개의 마이그레이션이 실행됩니다.',
+            'window'          => '예상 유지 관리 시간: 약 :minutes분.',
+            'nothing-pending' => '대기 중인 마이그레이션이 없습니다.',
+            'irreversible'    => '다음 마이그레이션은 데이터를 다시 쓰며 되돌릴 수 없습니다. 데이터베이스 백업 복원만이 유일한 복구 방법입니다:',
+        ],
+
+        'backup'                => [
+            'created'            => '데이터베이스 백업을 :path 에 저장했습니다',
+            'skipped'            => '데이터베이스 백업을 건너뛰었습니다. 계속하기 전에 복원 가능한 백업이 있는지 확인하세요.',
+            'failed'             => '데이터베이스 백업에 실패했습니다: :error',
+            'empty'              => '데이터베이스 백업이 비어 있어 삭제했습니다.',
+            'abort'              => '검증된 백업이 없어 업그레이드를 중단했습니다. 변경된 내용은 없습니다.',
+            'unsupported-driver' => ':driver 드라이버용 백업 명령을 사용할 수 없습니다.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => '건너뜀, 테이블이 없습니다',
+            'associations'           => '상품 연관',
+            'associations-none'      => '마이그레이션할 이전 연관 데이터가 없습니다',
+            'associations-detail'    => ':legacy개 중 :migrated개 상품을 마이그레이션했습니다',
+            'associations-remedy'    => '이전 연관 데이터가 있었지만 아무것도 마이그레이션되지 않았습니다. 백업을 복원하고 이 문제를 알려주세요.',
+            'robot-users'            => 'API 연동 소유자',
+            'robot-users-detail'     => ':count개의 연동이 아직 개인 계정에 속해 있습니다',
+            'robot-users-remedy'     => '마이그레이션을 다시 실행하거나 관리자 화면에서 연동을 다시 할당하세요.',
+            'category-bounds'        => '카테고리 트리 무결성',
+            'category-bounds-detail' => ':count개의 카테고리 노드에 잘못된 경계값이 있습니다',
+            'category-bounds-remedy' => '트래픽을 다시 열기 전에 카테고리 트리를 재구성하세요.',
+            'scrubbed-audits'        => '자격 증명 정리',
+            'scrubbed-audits-detail' => ':count개의 감사 기록에 아직 자격 증명이 남아 있습니다',
+            'scrubbed-audits-remedy' => '트래픽을 다시 열기 전에 마이그레이션을 다시 실행하세요. 이 기록들은 저장된 자격 증명을 노출합니다.',
+        ],
+
+        'restore'               => [
+            'heading' => '업그레이드가 완료되지 않았습니다. 애플리케이션이 유지 관리 모드입니다.',
+            'body'    => '되돌리는 방법: 데이터베이스 백업을 복원하고, 웹 서버를 이전 릴리스 디렉터리로 되돌린 뒤 그곳에서 「php artisan up」을 실행하세요.',
+        ],
+
+        'reindex'               => [
+            'deferred' => 'Elasticsearch 색인을 다시 만들지 않았습니다. 상품 :count개 규모에서는 업그레이드 자체보다 오래 걸리며, 완료될 때까지 검색은 데이터베이스로 대체됩니다. 사이트가 복구되면 다음을 실행하세요:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
