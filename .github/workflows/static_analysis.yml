@@ -1,0 +1,64 @@
+name: Static Analysis
+
+# A branch push and its own pull request are the same commit, so pushes are
+# limited to the release lines and everything else arrives through the PR event.
+on:
+  push:
+    branches: [master, '2.1']
+  pull_request:
+
+# head_ref is the branch on a pull request and empty elsewhere, which keeps a
+# branch's runs in one group no matter which event opened them.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  phpstan:
+    runs-on: ubuntu-24.04
+    name: PHPStan (Larastan)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.37.1
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--prefer-dist --no-scripts"
+
+      - name: Run PHPStan
+        run: vendor/bin/phpstan analyse --memory-limit=2G --no-progress
+
+  rector:
+    runs-on: ubuntu-24.04
+    name: Rector (dry-run, advisory)
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.37.1
+        with:
+          php-version: '8.4'
+          coverage: none
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--prefer-dist --no-scripts"
+
+      # Advisory only: reports refactors Rector would apply without failing the build.
+      - name: Run Rector (dry-run)
+        continue-on-error: true
+        run: vendor/bin/rector process --dry-run --no-progress-bar

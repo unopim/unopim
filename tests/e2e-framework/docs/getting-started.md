@@ -6,7 +6,7 @@ This guide provides a professional and practical introduction to the Playwright-
 
 Before running the suite, make sure the following are available:
 
-- Node.js 20 or later
+- Node.js 22 or later (matches the CI runtime)
 - A running UnoPim application instance
 - A configured database and environment file
 - Chrome browser support for the default CI-compatible execution profile

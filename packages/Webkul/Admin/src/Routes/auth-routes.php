@@ -6,6 +6,7 @@ use Webkul\Admin\Http\Controllers\User\AvatarController;
 use Webkul\Admin\Http\Controllers\User\ForgetPasswordController;
 use Webkul\Admin\Http\Controllers\User\ResetPasswordController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
+use Webkul\Admin\Http\Controllers\User\SsoController;
 
 Route::get('/', [Controller::class, 'redirectToLogin']);
 
@@ -16,36 +17,41 @@ Route::group(['prefix' => config('app.admin_url')], function () {
     /**
      * Public avatar proxy route (no auth middleware).
      */
-    Route::get('avatar/u/{hash}.png', [AvatarController::class, 'gravatar'])
+    Route::get('avatar/u/{hash}', [AvatarController::class, 'gravatar'])
+        ->where('hash', '[a-f0-9]{32}')
         ->name('admin.avatar.public')
-        ->middleware('throttle:60,1');
+        ->middleware('throttle:120,1');
 
     /**
      * Redirect route.
      */
     Route::get('/', [Controller::class, 'redirectToLogin']);
 
-    Route::controller(SessionController::class)->prefix('login')->group(function () {
-        /**
-         * Login routes.
-         */
-        Route::get('', 'create')->name('admin.session.create');
+    Route::prefix('login')->group(function () {
+        Route::controller(SessionController::class)->group(function () {
+            /**
+             * Login routes.
+             */
+            Route::get('', 'create')->name('admin.session.create');
 
-        /**
-         * Login post route to admin auth controller.
-         */
-        Route::post('', 'store')->name('admin.session.store')->middleware('throttle:admin-login');
+            /**
+             * Login post route to admin auth controller.
+             */
+            Route::post('', 'store')->name('admin.session.store')->middleware('throttle:admin-login');
+        });
 
-        /**
-         * Microsoft SSO routes.
-         */
-        Route::get('microsoft', 'redirectToMicrosoft')
-            ->name('admin.session.microsoft.redirect')
-            ->middleware('throttle:admin-sso');
+        Route::controller(SsoController::class)->middleware('throttle:admin-sso')->group(function () {
+            /**
+             * SSO routes for registered drivers.
+             */
+            Route::get('sso/{provider}', 'redirect')
+                ->where('provider', '[a-z0-9_-]+')
+                ->name('admin.session.sso.redirect');
 
-        Route::get('microsoft/callback', 'handleMicrosoftCallback')
-            ->name('admin.session.microsoft.callback')
-            ->middleware('throttle:admin-sso');
+            Route::get('sso/{provider}/callback', 'callback')
+                ->where('provider', '[a-z0-9_-]+')
+                ->name('admin.session.sso.callback');
+        });
     });
 
     /**
@@ -65,6 +71,6 @@ Route::group(['prefix' => config('app.admin_url')], function () {
 
         Route::get('{token}', 'create')->name('admin.reset_password.create');
 
-        Route::post('', 'store')->name('admin.reset_password.store');
+        Route::post('', 'store')->name('admin.reset_password.store')->middleware('throttle:admin-reset-password');
     });
 });

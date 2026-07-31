@@ -6,12 +6,23 @@ import.meta.glob(["../images/**", "../fonts/**"]);
 /**
  * Main vue bundler.
  */
-import { createApp } from "vue/dist/vue.esm-bundler";
+import { createApp, reactive, ref, computed, watch } from "vue/dist/vue.esm-bundler";
+
+import DOMPurify from "dompurify";
+
+import { HEADERS, EMITTER_EVENTS, FORM_EVENTS } from "./constants";
+
+// Expose DOMPurify for inline component scripts (e.g. AI chat widget); no CDN.
+window.DOMPurify = DOMPurify;
+
+// Expose Vue reactivity primitives for inline blade component scripts (which have
+// no bundler import), mirroring the existing window.DOMPurify exposure.
+window.Vue = { reactive, ref, computed, watch };
 
 /**
  * Main root application registry.
  */
-window.app = createApp({
+const appOptions = {
     data() {
         return {};
     },
@@ -19,30 +30,195 @@ window.app = createApp({
     methods: {
         onSubmit() {},
 
-        onInvalidSubmit({ values, errors, results }) {
-            setTimeout(() => {
-                const errorKeys = Object.entries(errors)
-                    .map(([key, value]) => ({ key, value }))
-                    .filter(error => error["value"].length);
+        /**
+         * Bring an invalid field into view, loading its attribute group first
+         * when the editor has not scrolled that far yet.
+         */
+        revealInvalidField(element, name = null, groupId = null, message = null) {
+            if (! element && name && groupId) {
+                this.$emitter.emit("attribute-group:reveal-field", { name, groupId, message });
 
+                return;
+            }
+
+            window.revealInvalidField(element, message);
+        },
+
+        onInvalidSubmit({ values, errors, results, evt }) {
+            const errorKeys = Object.entries(errors)
+                .map(([key, value]) => ({ key, value }))
+                .filter(error => error["value"].length);
+
+            // The submit never reached the network, so anything watching the form
+            // for a response would otherwise wait forever and then guess wrong.
+            evt?.target?.dispatchEvent(new CustomEvent(FORM_EVENTS.INVALID, {
+                bubbles: true,
+                detail: {
+                    errors,
+                    message: errorKeys.length ? errorKeys[0]["value"] : null,
+                },
+            }));
+
+            setTimeout(() => {
                 if (! errorKeys.length) return;
 
-                let firstErrorElement = document.querySelector('[name="' + errorKeys[0]["key"] + '"]');
-
-                if (! firstErrorElement) return;
-
-                firstErrorElement.scrollIntoView({
-                    behavior: "smooth",
-                    block: "center"
-                });
-
-                setTimeout(() => {
-                    firstErrorElement.focus();
-                }, 500);
+                this.revealInvalidField(document.querySelector('[name="' + errorKeys[0]["key"] + '"]'));
             }, 100);
         },
+
+        /**
+         * Submit an `ajax`-flagged form without navigating away. Posts the raw
+         * FormData (so `_method` spoofing and file inputs are preserved), flashes
+         * the server message, and maps Laravel 422 errors back onto the fields.
+         */
+        onAjaxSubmit(values, { evt, setErrors, setFieldValue }) {
+            const form = evt?.target;
+
+            if (! form) return;
+
+            // Re-entrancy guard: a large payload keeps the request in flight long
+            // enough for the user to click Save again (or hit Enter). Every submit
+            // path funnels through here, so one flag on the form dedupes them all.
+            if (form.dataset.ajaxSubmitting === "true") {
+                return;
+            }
+
+            const submitSelector = 'button[type="submit"], button:not([type]), input[type="submit"]';
+
+            const buttonSet = new Set(form.querySelectorAll('button[type="submit"], button:not([type])'));
+
+            // On tracked forms the in-form save is removed and the real button is the
+            // unsaved-changes bar's "Save changes" (type=button, outside the form).
+            // Include it, plus any button associated via form="<id>", so the visible
+            // button also disables while the save is in flight.
+            const root = form.closest(".unsaved-root");
+
+            if (root) {
+                root.querySelectorAll("[data-unsaved-save]").forEach(el => buttonSet.add(el));
+            }
+
+            if (form.id) {
+                document.querySelectorAll('[form="' + CSS.escape(form.id) + '"]').forEach(el => {
+                    if (el.matches(submitSelector)) {
+                        buttonSet.add(el);
+                    }
+                });
+            }
+
+            const buttons = Array.from(buttonSet);
+
+            const setBusy = (busy) => {
+                form.dataset.ajaxSubmitting = busy ? "true" : "false";
+
+                buttons.forEach(button => {
+                    button.disabled = busy;
+                    button.classList.toggle("opacity-50", busy);
+                    button.classList.toggle("cursor-not-allowed", busy);
+                });
+            };
+
+            const settled = (ok) => form.dispatchEvent(new CustomEvent(FORM_EVENTS.SETTLED, {
+                bubbles: true,
+                detail: { ok },
+            }));
+
+            setBusy(true);
+
+            this.$axios.post(form.getAttribute("action") || form.action, new FormData(form), {
+                headers: {
+                    "Accept": "application/json",
+                    [HEADERS.AJAX_FORM]: "true",
+                },
+            })
+                .then(({ data }) => {
+                    if (data.message) {
+                        this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: data.type || "success", message: data.message });
+                    }
+
+                    this.$emitter.emit(EMITTER_EVENTS.FORM_SAVED, data);
+
+                    if (data.redirect_url) {
+                        settled(true);
+
+                        this.$navigate(data.redirect_url);
+
+                        return;
+                    }
+
+                    setBusy(false);
+
+                    settled(true);
+                })
+                .catch(error => {
+                    setBusy(false);
+
+                    settled(false);
+
+                    // No page reload on failure, so clear the password field instead of leaving the secret on screen.
+                    form.querySelectorAll('input[autocomplete="current-password"]').forEach(input => {
+                        if (input.name) {
+                            setFieldValue(input.name, "");
+                        }
+                    });
+
+                    const response = error.response;
+
+                    if (response && response.status === 422 && response.data.errors) {
+                        const errors = {};
+
+                        Object.keys(response.data.errors).forEach(key => {
+                            const name = key.replace(/\.([^.]+)/g, "[$1]");
+
+                            errors[name] = Array.isArray(response.data.errors[key])
+                                ? response.data.errors[key][0]
+                                : response.data.errors[key];
+                        });
+
+                        setErrors(errors);
+
+                        const firstField = Object.keys(errors)[0];
+
+                        Object.entries(errors).forEach(([field, message]) => {
+                            const control = form
+                                .querySelector('[name="' + CSS.escape(field) + '"]')
+                                ?.closest("[data-control-group]");
+
+                            if (control && ! control.querySelector('[data-error-slot="' + CSS.escape(field) + '"]')) {
+                                window.markFieldInvalid(control, message);
+                            }
+                        });
+
+                        if (firstField) {
+                            this.revealInvalidField(
+                                form.querySelector('[name="' + CSS.escape(firstField) + '"]'),
+                                firstField,
+                                (response.data.errorGroups || {})[firstField] || null,
+                                errors[firstField],
+                            );
+                        }
+
+                        // A custom 422 may carry `errors` without any `message`.
+                        const validationMessage = errors[firstField]
+                            || (response.data && response.data.message)
+                            || form.dataset.ajaxErrorMessage;
+
+                        if (validationMessage) {
+                            this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type: "error", message: validationMessage });
+                        }
+
+                        return;
+                    }
+
+                    const message = (response && response.data && response.data.message)
+                        || form.dataset.ajaxErrorMessage;
+
+                    const type = (response && response.data && response.data.type) || "error";
+
+                    this.$emitter.emit(EMITTER_EVENTS.ADD_FLASH, { type, message });
+                });
+        },
     },
-});
+};
 
 /**
  * Global plugins registration.
@@ -57,32 +233,177 @@ import Draggable from "./plugins/draggable";
 import Multiselect from './plugins/multiselect';
 import Tribute from "./plugins/tribute";
 
-[
-    Admin,
-    Axios,
-    CreateElement,
-    Emitter,
-    Flatpickr,
-    VeeValidate,
-    Draggable,
-    Multiselect,
-    Tribute,
-].forEach((plugin) => app.use(plugin));
-
-
-
 /**
  * Global directives.
  */
 import Slugify from "./directives/slugify";
-import SlugifyTarget from "./directives/slugify-target";
 import Debounce from "./directives/debounce";
 import Code from "./directives/code";
+import CodeGenerator from "./directives/code-generator";
+import Focus from "./directives/focus";
+import NoValueAttr from "./directives/no-value-attr";
+import { generateCode, sanitizeCode } from "./utils/code";
 
-app.directive("slugify", Slugify);
-app.directive("slugify-target", SlugifyTarget);
-app.directive("debounce", Debounce);
-app.directive("code", Code);
+/**
+ * Ajax navigation (progressive enhancement).
+ */
+import initAjaxNavigation from "./plugins/navigation";
+
+/**
+ * Build a fresh application instance with every global plugin and directive
+ * registered. It is exposed globally and left unmounted so that per-page
+ * component registration scripts (pushed after `#app`) can register against
+ * `window.app` before it is mounted. Ajax navigation re-invokes this on each
+ * visit to rebuild the app over the swapped-in page.
+ */
+function createAdminApp() {
+    const app = createApp(appOptions);
+
+    const registerComponent = app.component.bind(app);
+
+    app.component = (name, definition) => {
+        if (definition === undefined) {
+            return registerComponent(name);
+        }
+
+        if (typeof definition?.template === "string" && definition.template.startsWith("#")) {
+            const element = document.querySelector(definition.template);
+
+            if (element) {
+                definition = { ...definition, template: element.innerHTML };
+            }
+        }
+
+        return registerComponent(name, definition);
+    };
+
+    [
+        Admin,
+        Axios,
+        CreateElement,
+        Emitter,
+        Flatpickr,
+        VeeValidate,
+        Draggable,
+        Multiselect,
+        Tribute,
+    ].forEach((plugin) => app.use(plugin));
+
+    app.directive("slugify", Slugify);
+    app.directive("debounce", Debounce);
+    app.directive("code", Code);
+    app.directive("code-generator", CodeGenerator);
+    app.directive("focus", Focus);
+    app.directive("no-value-attr", NoValueAttr);
+
+    app.config.globalProperties.$generateCode = generateCode;
+    app.config.globalProperties.$sanitizeCode = sanitizeCode;
+
+    /**
+     * Canonical post-action navigation helper, available on every component as
+     * `this.$navigate(url)`. Prefers the SPA ajax-nav visit (no full reload);
+     * falls back to a hard navigation when the nav layer is unavailable (e.g.
+     * the anonymous login page). Every redirect-after-save should route through
+     * this instead of assigning `window.location.href` directly.
+     */
+    app.config.globalProperties.$navigate = (url) => {
+        if (window.unopim?.visit) {
+            window.unopim.visit(url);
+        } else {
+            window.location.href = url;
+        }
+    };
+
+    window.app = app;
+
+    return app;
+}
+
+window.createAdminApp = createAdminApp;
+
+/**
+ * Show a server-side error on a control the form's own validator cannot reach:
+ * a wysiwyg hides the field it validates, and a lazily appended attribute group
+ * is mounted by its own app instance, so neither picks up `setErrors`.
+ *
+ * The markup mirrors `x-admin::form.control-group.error`; the notice clears
+ * itself as soon as the editor touches the control again.
+ */
+window.markFieldInvalid = (controlGroup, message) => {
+    let notice = controlGroup.querySelector("[data-server-error]");
+
+    if (! notice) {
+        notice = document.createElement("p");
+        notice.dataset.serverError = "true";
+        notice.className = "mt-1 text-red-600 text-xs italic";
+
+        controlGroup.appendChild(notice);
+    }
+
+    notice.textContent = message;
+
+    const outlined = controlGroup.querySelector(
+        'input:not([type="hidden"]), textarea, select, .tox-tinymce, [contenteditable="true"]'
+    );
+
+    outlined?.classList.add("border", "!border-red-600");
+
+    const clear = () => {
+        notice.remove();
+
+        outlined?.classList.remove("border", "!border-red-600");
+    };
+
+    controlGroup.addEventListener("input", clear, { once: true });
+    controlGroup.addEventListener("change", clear, { once: true });
+};
+
+/**
+ * Bring an invalid field into view.
+ *
+ * A field inside a collapsed section cannot be scrolled to while it is hidden,
+ * so the section is asked to open first — the event bubbles up to whichever
+ * accordion wraps the field. A field a rich editor has taken over (wysiwyg,
+ * file uploader) has no box of its own either, so the surrounding control group
+ * stands in for it.
+ */
+window.revealInvalidField = (element, message = null) => {
+    if (! element) {
+        return;
+    }
+
+    element.dispatchEvent(new CustomEvent("accordion:open", { bubbles: true }));
+
+    const controlGroup = element.closest("[data-control-group]");
+
+    if (message && controlGroup && ! controlGroup.querySelector("[data-error-slot]")) {
+        window.markFieldInvalid(controlGroup, message);
+    }
+
+    // The section re-renders before the field has a box to scroll to.
+    setTimeout(() => {
+        const anchor = element.offsetParent ? element : (controlGroup || element);
+
+        anchor.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 80);
+};
+
+// Ref-counted body scroll lock so a closing overlay doesn't restore page scroll while another is still open.
+window.lockBodyScroll = () => {
+    window.__scrollLocks = (window.__scrollLocks || 0) + 1;
+
+    document.body.style.overflow = "hidden";
+};
+
+window.unlockBodyScroll = () => {
+    window.__scrollLocks = Math.max(0, (window.__scrollLocks || 1) - 1);
+
+    if (! window.__scrollLocks) {
+        document.body.style.overflow = "";
+    }
+};
+
+createAdminApp();
 
 /**
  * Load event, the purpose of using the event is to mount the application
@@ -91,5 +412,7 @@ app.directive("code", Code);
  * called in the last.
  */
 window.addEventListener("load", function (event) {
-    app.mount("#app");
+    window.app.mount("#app");
+
+    initAjaxNavigation();
 });

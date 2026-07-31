@@ -3,6 +3,11 @@
     <x-admin::shimmer.dashboard.total-catalogs />
 </v-dashboard-product-stats>
 
+@php
+    $productTypeLabels = collect(config('product_types'))
+        ->mapWithKeys(fn ($type) => [$type['key'] => trans($type['name'])]);
+@endphp
+
 @pushOnce('scripts')
     <script
         type="text/x-template"
@@ -20,37 +25,34 @@
                         <!-- Total Products Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}"
-                            class="flex-1 rounded-lg p-4 no-underline hover:opacity-90 transition-opacity"
-                            style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);"
+                            class="flex-1 rounded-lg p-4 no-underline hover:opacity-90 transition-opacity bg-gradient-to-br from-primary-600 to-primary-700"
                         >
-                            <p class="text-xs text-violet-200 mb-1">@lang('admin::app.dashboard.index.total-products')</p>
+                            <p class="text-xs text-primary-200 mb-1">@lang('admin::app.dashboard.index.total-products')</p>
                             <p class="text-3xl font-bold text-white leading-none">@{{ totalProducts }}</p>
                         </a>
 
                         <!-- Active Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}?filters[status][]=1"
-                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
-                            style="border-color: #d1fae5; background: #ecfdf5;"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-emerald-100 bg-emerald-50 dark:border-emerald-900/40 dark:bg-emerald-900/20"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 rounded-full" style="background: #10b981;"></span>
-                                <p class="text-xs" style="color: #065f46;">@lang('admin::app.dashboard.index.active')</p>
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <p class="text-xs text-emerald-800 dark:text-emerald-300">@lang('admin::app.dashboard.index.active')</p>
                             </div>
-                            <p class="text-2xl font-bold leading-none" style="color: #065f46;">@{{ stats.statusBreakdown.active || 0 }}</p>
+                            <p class="text-2xl font-bold leading-none text-emerald-800 dark:text-emerald-300">@{{ stats.statusBreakdown.active || 0 }}</p>
                         </a>
 
                         <!-- Inactive Card -->
                         <a
                             href="{{ route('admin.catalog.products.index') }}?filters[status][]=0"
-                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity"
-                            style="border-color: #fef3c7; background: #fffbeb;"
+                            class="flex-1 rounded-lg p-4 border no-underline hover:opacity-90 transition-opacity border-amber-100 bg-amber-50 dark:border-amber-900/40 dark:bg-amber-900/20"
                         >
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 rounded-full" style="background: #f59e0b;"></span>
-                                <p class="text-xs" style="color: #92400e;">@lang('admin::app.dashboard.index.inactive')</p>
+                                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                <p class="text-xs text-amber-800 dark:text-amber-300">@lang('admin::app.dashboard.index.inactive')</p>
                             </div>
-                            <p class="text-2xl font-bold leading-none" style="color: #92400e;">@{{ stats.statusBreakdown.inactive || 0 }}</p>
+                            <p class="text-2xl font-bold leading-none text-amber-800 dark:text-amber-300">@{{ stats.statusBreakdown.inactive || 0 }}</p>
                         </a>
                     </div>
 
@@ -67,8 +69,8 @@
                             :href="typeFilterUrl(type)"
                             class="transition-all duration-700 ease-out first:rounded-l-full last:rounded-r-full cursor-pointer"
                             :style="{ width: Math.max(getPercentage(count), 3) + '%', background: getTypeHex(type) }"
-                            :title="type + ': ' + count"
-                            :aria-label="type + ': ' + count"
+                            :title="typeLabel(type) + ': ' + count"
+                            :aria-label="typeLabel(type) + ': ' + count"
                         ></a>
                     </div>
 
@@ -81,7 +83,7 @@
                             class="flex items-center gap-2 no-underline hover:opacity-80 transition-opacity"
                         >
                             <span class="w-3 h-3 rounded-sm flex-shrink-0" :style="{ background: getTypeHex(type) }"></span>
-                            <span class="text-xs text-zinc-700 dark:text-slate-300 capitalize">@{{ type }}</span>
+                            <span class="text-xs text-zinc-700 dark:text-slate-300 capitalize">@{{ typeLabel(type) }}</span>
                             <span class="text-xs font-bold text-zinc-800 dark:text-slate-200">@{{ count }}</span>
                             <span class="text-[10px] text-zinc-400 dark:text-slate-500">(@{{ getPercentage(count) }}%)</span>
                         </a>
@@ -127,7 +129,7 @@
                                     <span
                                         v-if="stats.enrichedThisWeek !== stats.enrichedLastWeek"
                                         class="text-[10px] ml-0.5"
-                                        :style="{ color: stats.enrichedThisWeek >= stats.enrichedLastWeek ? '#10b981' : '#ef4444' }"
+                                        :class="stats.enrichedThisWeek >= stats.enrichedLastWeek ? 'text-success' : 'text-danger'"
                                     >
                                         @{{ stats.enrichedThisWeek >= stats.enrichedLastWeek ? '▲' : '▼' }}
                                     </span>
@@ -143,7 +145,7 @@
                 <!-- Empty State -->
                 <div v-else class="flex-1 flex flex-col items-center justify-center py-8">
                     <img src="{{ unopim_asset('images/icon-products.svg')}}" class="w-12 h-12 opacity-30 mb-3">
-                    <p class="text-sm text-zinc-400 dark:text-slate-500">No products yet.</p>
+                    <p class="text-sm text-zinc-400 dark:text-slate-500">@lang('admin::app.dashboard.index.no-products')</p>
                 </div>
             </div>
         </template>
@@ -155,6 +157,7 @@
 
             data() {
                 return {
+                    typeLabels: @json($productTypeLabels),
                     stats: {
                         typeDistribution: {},
                         statusBreakdown: {},
@@ -170,7 +173,39 @@
             computed: {
                 totalProducts() {
                     return this.stats.totalProducts || 0;
-                }
+                },
+
+                /**
+                 * Chart-token slot per product type. Built-in types keep their
+                 * fixed token; custom types take the unused tokens in order so
+                 * no two types share a colour until the palette is exhausted.
+                 */
+                typeColorSlots() {
+                    const fixed = {
+                        'simple': 1,
+                        'configurable': 2,
+                        'virtual': 3,
+                        'bundle': 4,
+                        'grouped': 5,
+                        'downloadable': 6,
+                    };
+
+                    const types = Object.keys(this.stats.typeDistribution || {});
+
+                    const used = types.map(type => fixed[type]).filter(Boolean);
+
+                    const free = [1, 2, 3, 4, 5, 6].filter(slot => ! used.includes(slot));
+
+                    const slots = {};
+
+                    let overflow = 0;
+
+                    types.forEach(type => {
+                        slots[type] = fixed[type] ?? (free.length ? free.shift() : (overflow++ % 6) + 1);
+                    });
+
+                    return slots;
+                },
             },
 
             mounted() {
@@ -192,6 +227,8 @@
                         })
                         .catch(error => {
                             this.isLoading = false;
+
+                            console.error(error);
                         });
                 },
 
@@ -207,25 +244,30 @@
                     return Math.round(((this.stats.statusBreakdown[status] || 0) / this.totalProducts) * 100);
                 },
 
-                getTypeHex(type) {
-                    const colors = {
-                        'simple': '#7c3aed',
-                        'configurable': '#0ea5e9',
-                        'virtual': '#14b8a6',
-                        'bundle': '#f97316',
-                        'grouped': '#ec4899',
-                        'downloadable': '#6366f1',
-                    };
+                /**
+                 * Read a live CSS custom property off :root so the theme and
+                 * dark-mode overrides drive chart colours from one place.
+                 * Called at render-time (not cached) so toggling dark-mode
+                 * reflects immediately.
+                 */
+                cssVar(name) {
+                    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                },
 
-                    return colors[type] || '#7c3aed';
+                getTypeHex(type) {
+                    return this.cssVar('--chart-' + (this.typeColorSlots[type] ?? 1));
+                },
+
+                typeLabel(type) {
+                    return this.typeLabels[type] ?? type.replace(/_/g, ' ');
                 },
 
                 getCompletenessColor(score) {
-                    if (score === null) return '#a1a1aa';
-                    if (score >= 80) return '#10b981';
-                    if (score >= 50) return '#f59e0b';
+                    if (score === null) return this.cssVar('--chart-muted');
+                    if (score >= 80) return this.cssVar('--chart-success');
+                    if (score >= 50) return this.cssVar('--chart-warning');
 
-                    return '#ef4444';
+                    return this.cssVar('--chart-danger');
                 },
 
                 /**

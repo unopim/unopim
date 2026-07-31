@@ -1,11 +1,7 @@
 <v-tinymce {{ $attributes }}></v-tinymce>
 
 @pushOnce('scripts')
-    <script
-        src="https://cdnjs.cloudflare.com/ajax/libs/tinymce/6.6.2/tinymce.min.js"
-        crossorigin="anonymous"
-        referrerpolicy="no-referrer"
-    ></script>
+    <script src="{{ asset('themes/admin/default/build/tinymce/tinymce.min.js') }}"></script>
 
     <script
         type="text/x-template"
@@ -21,7 +17,7 @@
                     <!-- Modal Header -->
                     <x-slot:header>
                         <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
-                            <span class="icon-magic text-2xl text-gray-800"></span>
+                            <span class="icon-magic text-2xl text-gray-800 dark:text-white"></span>
                             @lang('admin::app.components.tinymce.ai-generation.title')
                         </p>
                     </x-slot>
@@ -157,7 +153,7 @@
                                 </label>
 
                                 <label v-if="contentHasHtml" class="flex items-center gap-1.5 cursor-pointer text-xs text-gray-600 dark:text-gray-300">
-                                    <input type="checkbox" v-model="showRichPreview" class="rounded text-violet-600" />
+                                    <input type="checkbox" v-model="showRichPreview" class="rounded text-primary-600" />
                                     @lang('admin::app.components.tinymce.ai-generation.rich-preview')
                                 </label>
                             </div>
@@ -169,23 +165,7 @@
                                 v-html="ai.content"
                             ></div>
 
-                            <style>
-                                .rich-content-preview h1, .rich-content-preview h2, .rich-content-preview h3, .rich-content-preview h4 { font-weight: 700; margin: 0.5em 0 0.25em; }
-                                .rich-content-preview h1 { font-size: 1.5em; }
-                                .rich-content-preview h2 { font-size: 1.25em; }
-                                .rich-content-preview h3 { font-size: 1.1em; }
-                                .rich-content-preview p { margin: 0.4em 0; }
-                                .rich-content-preview strong, .rich-content-preview b { font-weight: 700; }
-                                .rich-content-preview em, .rich-content-preview i { font-style: italic; }
-                                .rich-content-preview ul, .rich-content-preview ol { padding-left: 1.5em; margin: 0.4em 0; }
-                                .rich-content-preview ul { list-style-type: disc; }
-                                .rich-content-preview ol { list-style-type: decimal; }
-                                .rich-content-preview li { margin: 0.2em 0; }
-                                .rich-content-preview a { color: #6d28d9; text-decoration: underline; }
-                                .rich-content-preview table { border-collapse: collapse; width: 100%; margin: 0.5em 0; }
-                                .rich-content-preview th, .rich-content-preview td { border: 1px solid #e5e7eb; padding: 0.4em 0.6em; text-align: left; }
-                                .rich-content-preview th { background: #f3f4f6; font-weight: 600; }
-                            </style>
+                            {{-- .rich-content-preview prose styles live in assets/css/app.css --}}
 
                             <!-- Plain text editor -->
                             <textarea
@@ -204,7 +184,14 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between w-full">
                             <!-- Platform & Model compact selectors (left side, copilot-style) -->
-                            <div class="flex items-center gap-2" v-if="!ai.content">
+                            <p
+                                v-if="! ai.content && platformsFetched && ! aiModels.length"
+                                class="text-xs text-danger max-w-[320px]"
+                            >
+                                @lang('admin::app.configuration.platform.message.no-platform-configured')
+                            </p>
+
+                            <div class="flex items-center gap-2" v-if="!ai.content && aiModels.length">
                                 <select
                                     v-model="ai.platform_id"
                                     @change="onPlatformChange()"
@@ -229,19 +216,19 @@
                                 <button
                                     type="submit"
                                     class="secondary-button"
-                                    :disabled="isLoading"
-                                    :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
+                                    :disabled="isLoading || ! aiModels.length"
+                                    :class="{ 'opacity-50 cursor-not-allowed': isLoading || ! aiModels.length }"
                                 >
                                     <template v-if="isLoading">
                                         <img
-                                            class="animate-spin h-5 w-5 text-violet-700"
+                                            class="animate-spin h-5 w-5 text-primary-700"
                                             src="{{ unopim_asset('images/spinner.svg') }}"
                                         />
                                         @lang('admin::app.components.tinymce.ai-generation.generating')
                                     </template>
 
                                     <template v-else>
-                                        <span class="icon-magic text-2xl text-violet-700"></span>
+                                        <span class="icon-magic text-2xl text-primary-700"></span>
                                         @lang('admin::app.components.tinymce.ai-generation.generate')
                                     </template>
                                 </button>
@@ -255,14 +242,14 @@
                                 >
                                     <template v-if="isLoading">
                                         <img
-                                            class="animate-spin h-5 w-5 text-violet-700"
+                                            class="animate-spin h-5 w-5 text-primary-700"
                                             src="{{ unopim_asset('images/spinner.svg') }}"
                                         />
                                         @lang('admin::app.components.media.images.ai-generation.regenerating')
                                     </template>
 
                                     <template v-else>
-                                        <span class="icon-magic text-2xl text-violet-700"></span>
+                                        <span class="icon-magic text-2xl text-primary-700"></span>
                                         @lang('admin::app.components.media.images.ai-generation.regenerate')
                                     </template>
                                 </button>
@@ -311,9 +298,10 @@
                     showRichPreview: true,
                     showSystemPrompt: false,
                     selectedSystemPrompt: null,
-                    systemPrompts: @json(app(\Webkul\MagicAI\Repository\MagicAISystemPromptRepository::class)->all()->toArray()),
+                    systemPrompts: [],
                     platforms: [],
                     aiModels: [],
+                    platformsFetched: false,
                     defaultPrompts: [],
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
@@ -329,13 +317,29 @@
             },
 
             mounted() {
+                this.initialContent = this.field?.value ?? '';
+
                 this.init();
-                this.$emitter.on('change-theme', (theme) => {
-                    tinymce.get(0).destroy();
+
+                this.changeThemeHandler = (theme) => {
+                    tinymce.get(this.selector.replace('textarea#', ''))?.destroy();
                     this.currentSkin = (theme === 'dark') ? 'oxide-dark' : 'oxide';
                     this.currentContentCSS = (theme === 'dark') ? 'dark' : 'default';
                     this.init();
-                });
+                };
+
+                this.$emitter.on('change-theme', this.changeThemeHandler);
+                this.$emitter.on('unsaved-changes:reset', this.resetContent);
+            },
+
+            beforeUnmount() {
+                window.tinymce?.get(this.selector.replace('textarea#', ''))?.destroy();
+
+                if (this.changeThemeHandler) {
+                    this.$emitter.off('change-theme', this.changeThemeHandler);
+                }
+
+                this.$emitter.off('unsaved-changes:reset', this.resetContent);
             },
 
             methods: {
@@ -347,6 +351,8 @@
                             let self2 = this;
 
                             let config = {
+                                base_url: '{{ asset('themes/admin/default/build/tinymce') }}',
+                                suffix: '.min',
                                 relative_urls: false,
                                 menubar: false,
                                 remove_script_host: false,
@@ -356,6 +362,9 @@
                                 ...extraConfiguration,
                                 skin: self.currentSkin,
                                 content_css: self.currentContentCSS,
+                                content_style: self.currentSkin === 'oxide-dark'
+                                    ? 'body{background-color:#1F1C30;color:#E5E7EB;} a{color:#A78BFA;}'
+                                    : '',
                             };
 
                             const image_upload_handler = (blobInfo, progress) => new Promise((resolve,reject) => {
@@ -483,6 +492,21 @@
 
                             editor.on('keyup change input', () => {
                                 this.field.onInput(editor.getContent());
+
+                                // TinyMCE lives in an iframe and only writes its hidden
+                                // <textarea> on blur, so the unsaved-changes tracker can't
+                                // see edits until then. Sync on every keystroke and notify
+                                // the tracker so the "unsaved" state matches other fields.
+                                editor.save();
+
+                                const el = editor.getElement();
+
+                                if (el && el.dispatchEvent) {
+                                    el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                        bubbles: true,
+                                        detail: { name: el.name },
+                                    }));
+                                }
                             });
                         },
                     });
@@ -509,8 +533,13 @@
                                 fillAttr: 'code',
                                 noMatchTemplate: "@lang('admin::app.common.no-match-found')",
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) =>
-                                    `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
+                                menuItemTemplate: (item) => {
+                                    const element = document.createElement('div');
+                                    element.className = 'p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center';
+                                    element.textContent = item.original.name || '[' + item.original.code + ']';
+
+                                    return element.outerHTML;
+                                },
                             });
 
                             tribute.attach(this.$refs.promptInput);
@@ -522,6 +551,7 @@
                     try {
                         const response = await axios.get("{{ route('admin.magic_ai.platforms') }}");
                         this.platforms = response.data.platforms || [];
+                        this.systemPrompts = response.data.system_prompts || [];
 
                         if (this.platforms.length) {
                             let defaultPlatform = this.platforms.find(p => p.is_default);
@@ -538,6 +568,8 @@
                         }
                     } catch (error) {
                         console.error("Failed to fetch platforms:", error);
+                    } finally {
+                        this.platformsFetched = true;
                     }
                 },
 
@@ -651,7 +683,15 @@
                             this.isLoading = false;
 
                             if (error.response.status == 422) {
-                                setErrors(error.response.data.errors);
+                                const errors = error.response.data.errors ?? {};
+
+                                setErrors(errors);
+
+                                const unboundError = errors.model?.[0] ?? errors.platform_id?.[0];
+
+                                if (unboundError) {
+                                    this.$emitter.emit('add-flash', { type: 'error', message: unboundError });
+                                }
                             } else {
                                 this.$emitter.emit('add-flash', {
                                     type: 'error',
@@ -680,6 +720,18 @@
                     this.field.onInput(this.ai.content.replace(/\r?\n/g, ''));
 
                     this.$refs.magicAIModal.close();
+                },
+
+                resetContent() {
+                    const content = this.initialContent ?? '';
+                    const editor = tinymce.get(this.selector.replace('textarea#', ''));
+
+                    if (editor) {
+                        editor.setContent(content);
+                        editor.save();
+                    }
+
+                    this.field.onInput(content);
                 },
             },
         })

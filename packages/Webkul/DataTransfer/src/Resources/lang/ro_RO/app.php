@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Fișier exemplu',
+        'variants'      => 'Exemplu de variante',
+        'multi-locale'  => 'Exemplu multilingv',
+        'delete'        => 'Exemplu de ștergere',
+        'custom-fields' => 'Exemplu de câmpuri personalizate',
+        'with-images'   => 'Exemplu cu imagini (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produse',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Valoarea :code trebuie să fie unică.',
                     'incorrect-family-for-variant'             => 'Familia trebuie să fie aceeași cu familia principală',
                     'parent-not-exist'                         => 'Părintele nu există.',
+                    'variant-structure-not-found'              => 'Structura de variante :code nu există pentru această familie de atribute.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Codul atributului :code este deja utilizat.',
                     'code_not_found_to_delete'             => 'Codul atributului nu a fost găsit pentru ștergere.',
                     'code_is_system_and_cannot_be_deleted' => 'Atributul de sistem nu poate fi șters.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Asocieri de produse',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Câmpul \'%s\' este obligatoriu.',
+                    'self-link-not-allowed'       => 'Produsul \'%s\' nu poate fi asociat cu el însuși.',
+                    'sku-not-found'               => 'Produsul cu SKU \'%s\' nu a fost găsit.',
+                    'related-sku-not-found'       => 'Produsul asociat cu SKU \'%s\' nu a fost găsit.',
+                    'association-type-not-found'  => 'Tipul de asociere \'%s\' nu există sau este inactiv.',
+                    'invalid-field-value'         => 'Valoare nevalidă furnizată pentru un câmp de asociere.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Acest export este prea mare pentru a fi rulat: aproximativ :rows rânduri × :columns coloane (~:estimated) depășesc spațiul disponibil (~:available). Restrângeți exportul selectând mai puține canale/limbi (și atribute) și încercați din nou.',
         'fields'           => [
-            'file-format'         => 'Format fișier',
-            'with-media'          => 'Cu media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format fișier',
+            'with-media'             => 'Cu media',
+            'with-associations'      => 'Cu asocieri',
+            'with-associations-info' => 'Include coloanele vechi cu liste de SKU-uri (up_sells, cross_sells și related_products) în export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Atribute',
         ],
+        'product-associations' => [
+            'title' => 'Asocieri de produse',
+        ],
         'attribute-groups' => [
             'title' => 'Grupuri de atribute',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'Start executie job',
         'completed' => 'Finalizare executie job',
+        'stalled'   => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
+        'reaped'    => 'Au fost marcate :count sarcini blocate ca eșuate.',
     ],
 ];

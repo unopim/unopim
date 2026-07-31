@@ -1,6 +1,29 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+	--c-primary-50: 245 243 255;
+	--c-primary-100: 237 233 254;
+	--c-primary-200: 221 214 254;
+	--c-primary-300: 196 181 253;
+	--c-primary-400: 167 139 250;
+	--c-primary-500: 139 92 246;
+	--c-primary-600: 124 58 237;
+	--c-primary-700: 109 40 217;
+	--c-primary-800: 91 33 182;
+	--c-primary-900: 76 29 149;
+	--c-warning: 245 158 11;
+	--c-cloud-start: #5B41D6;
+	--c-cloud-end: #8367F0;
+	--s-cloud-cta: 0 6px 16px rgba(0, 0, 0, 0.18);
+	--s-step-card: 0px 8px 24px 0px rgba(0, 0, 0, 0.06);
+}
 
 @layer components {
 

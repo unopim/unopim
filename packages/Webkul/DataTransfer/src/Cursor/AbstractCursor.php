@@ -60,7 +60,7 @@ abstract class AbstractCursor
             $this->rewind();
         }
 
-        return ! empty($this->items);
+        return $this->items !== null && $this->items !== [];
     }
 
     public function count(): int

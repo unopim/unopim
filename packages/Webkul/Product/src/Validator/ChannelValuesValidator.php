@@ -33,21 +33,17 @@ class ChannelValuesValidator
 
         $validator = Validator::make($data, $rules);
 
-        if ($validator->fails()) {
-            throw new ValidationException($validator);
-        }
+        throw_if($validator->fails(), ValidationException::class, $validator);
     }
 
     /**
      * Validation rules to be used on the data
      */
-    protected function generateRules(array $channels = [], array $data = [], ?string $productId = null)
+    protected function generateRules(array $channels = [], array $data = [], ?string $productId = null): array
     {
-        $rules = [
+        return [
             AbstractType::CHANNEL_VALUES_KEY.'.*'   => [new KeyExistsRule($channels, AbstractType::CHANNEL_VALUES_KEY.'.'), 'array'],
             AbstractType::CHANNEL_VALUES_KEY.'.*.*' => new AttributeValueRule(attributeService: $this->attributeService, isChannelBased: true, isLocaleBased: false, productId: $productId),
         ];
-
-        return $rules;
     }
 }

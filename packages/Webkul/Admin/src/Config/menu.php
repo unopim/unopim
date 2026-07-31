@@ -57,6 +57,12 @@ return [
         'route'      => 'admin.catalog.families.index',
         'sort'       => 6,
         'icon'       => '',
+    ], [
+        'key'        => 'catalog.association_types',
+        'name'       => 'admin::app.components.layouts.sidebar.association_types',
+        'route'      => 'admin.catalog.association_types.index',
+        'sort'       => 7,
+        'icon'       => '',
     ],
 
     /**
@@ -98,12 +104,6 @@ return [
         'sort'       => 8,
         'icon'       => 'icon-setting',
     ], [
-        'key'        => 'settings.appearance',
-        'name'       => 'admin::app.components.layouts.sidebar.appearance',
-        'route'      => 'admin.settings.appearance.index',
-        'sort'       => 1,
-        'icon'       => '',
-    ], [
         'key'        => 'settings.locales',
         'name'       => 'admin::app.components.layouts.sidebar.locales',
         'route'      => 'admin.settings.locales.index',
@@ -141,8 +141,20 @@ return [
         'key'    => 'configuration',
         'name'   => 'admin::app.components.layouts.sidebar.configure',
         'route'  => 'admin.configuration.integrations.index',
-        'sort'   => 9,
+        'sort'   => 10,
         'icon'   => 'icon-configuration',
+    ], [
+        'key'        => 'configuration.system_information',
+        'name'       => 'admin::app.components.layouts.sidebar.system-information',
+        'route'      => 'admin.configuration.system.information',
+        'sort'       => 3,
+        'icon'       => '',
+    ], [
+        'key'        => 'configuration.system_settings',
+        'name'       => 'admin::app.components.layouts.sidebar.system-settings',
+        'route'      => 'admin.settings.system.index',
+        'sort'       => 4,
+        'icon'       => '',
     ],
 
     /**
@@ -152,7 +164,6 @@ return [
         'key'   => 'help',
         'name'  => 'admin::app.components.layouts.sidebar.help',
         'route' => 'admin.help.index',
-        // Sentinel sort to keep Help pinned last, below any module-registered menu (core max is 9).
         'sort'  => 99999,
         'icon'  => 'icon-information',
     ],

@@ -2,6 +2,8 @@
 
 namespace Webkul\Category\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +13,12 @@ use Webkul\Core\Eloquent\TranslatableModel;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'code',
+    'sort_order',
+    'category_field_id',
+])]
+#[WithoutTimestamps]
 class CategoryFieldOption extends TranslatableModel implements CategoryFieldOptionProxy, HistoryContract
 {
     use HasFactory;
@@ -27,15 +35,7 @@ class CategoryFieldOption extends TranslatableModel implements CategoryFieldOpti
         'id',
     ];
 
-    public $timestamps = false;
-
     public $translatedAttributes = ['label'];
-
-    protected $fillable = [
-        'code',
-        'sort_order',
-        'category_field_id',
-    ];
 
     /**
      * Get the field that this option

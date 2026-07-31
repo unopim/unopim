@@ -6,6 +6,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
+use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 
 class WebhookLogsController
@@ -21,15 +22,24 @@ class WebhookLogsController
      */
     public function index()
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         if (request()->ajax()) {
-            return app(LogsDataGrid::class)->toJson();
+            return resolve(LogsDataGrid::class)->toJson();
         }
 
         return view('webhook::logs.index');
+    }
+
+    /**
+     * Delivery log feed for a single webhook. The id travels in the path so the
+     * scope survives whatever query string the datagrid rebuilds.
+     */
+    public function forWebhook(int $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
+
+        return resolve(LogsDataGrid::class)->forWebhook($id)->toJson();
     }
 
     /**
@@ -37,17 +47,22 @@ class WebhookLogsController
      */
     public function show(int $id): JsonResponse
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs.view')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.view'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         $log = $this->logsRepository->findOrFail($id);
 
+        $webhookName = $log->webhook_id
+            ? Webhook::query()->whereKey($log->webhook_id)->value('name')
+            : null;
+
         return new JsonResponse([
             'id'         => $log->id,
+            'webhook'    => $webhookName,
             'sku'        => $log->sku,
+            'event'      => $log->event,
             'user'       => $log->user,
             'status'     => (bool) $log->status,
+            'http_code'  => $log->http_code,
             'created_at' => $log->created_at?->toDateTimeString(),
             'payload'    => ($log->extra ?? [])['payload'] ?? null,
             'response'   => ($log->extra ?? [])['response'] ?? null,
@@ -59,9 +74,7 @@ class WebhookLogsController
      */
     public function destroy(int $id): JsonResponse
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs.delete')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         try {
             $this->logsRepository->delete($id);
@@ -83,9 +96,7 @@ class WebhookLogsController
      */
     public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        if (! bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
-            abort(403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
-        }
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.mass_delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
         $logIds = $massDestroyRequest->input('indices');
 

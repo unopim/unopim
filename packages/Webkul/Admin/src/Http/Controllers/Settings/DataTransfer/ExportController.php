@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -16,10 +17,15 @@ use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
+use Webkul\DataTransfer\Services\JobHealth;
 
 class ExportController extends Controller
 {
+    use Concerns\DownloadsSampleFile;
+
     const TYPE = 'export';
+
+    const EXPORTERS = 'exporters';
 
     /**
      * Create a new controller instance.
@@ -29,7 +35,8 @@ class ExportController extends Controller
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
-        protected Export $jobHelper
+        protected Export $jobHelper,
+        protected JobHealth $jobHealth,
     ) {}
 
     /**
@@ -66,7 +73,7 @@ class ExportController extends Controller
         $exporters = array_keys($exporterConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/', 'unique:job_instances,code'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
@@ -133,7 +140,7 @@ class ExportController extends Controller
         $export = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => 'required',
+            'code'                => ['required'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
@@ -149,7 +156,6 @@ class ExportController extends Controller
             ]),
             [
                 'action'               => 'fetch',
-                'validation_strategy'  => '',
                 'validation_strategy'  => '',
                 'allowed_errors'       => '',
                 'state'                => 'pending',
@@ -261,7 +267,7 @@ class ExportController extends Controller
                 'allowed_errors'      => $jobInstance->allowed_errors,
                 'field_separator'     => $jobInstance->field_separator,
                 'file_path'           => $jobInstance->file_path,
-                'meta'                => $jobInstance->toJson(),
+                'meta'                => $jobInstance->toArray(),
                 'job_instances_id'    => $jobInstance->id,
                 'user_id'             => $userId,
                 'created_at'          => now(),
@@ -270,6 +276,8 @@ class ExportController extends Controller
 
             // Dispatch the Export job
             ExportTrackBatch::dispatch($jobTrackInstance);
+
+            session()->flash('success', trans('admin::app.settings.data-transfer.exports.batch.title'));
 
             // Redirect to the tracker view
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
@@ -481,11 +489,24 @@ class ExportController extends Controller
     }
 
     /**
-     * Returns export stats
+     * Returns export stats for a run.
+     *
+     * The helper reads its counters off the job track `exportNow()` creates, so
+     * the id addresses a track rather than the saved export profile.
      */
     public function stats(int $id, string $state = Export::STATE_PROCESSED): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        if (! bouncer()->hasPermission('data_transfer.export')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $export = $this->jobTrackRepository->findOrFail($id);
+
+        if ($this->jobHealth->isStalled($export)) {
+            $this->jobHealth->fail($export);
+
+            $export->refresh();
+        }
 
         $stats = $this->jobHelper
             ->setExport($export)
@@ -498,13 +519,19 @@ class ExportController extends Controller
     }
 
     /**
-     * Download export error report
+     * Download the sample file shipped for an exporter type
      */
-    public function downloadSample(string $type)
+    public function downloadSample(?string $type = null, ?string $key = null): BinaryFileResponse
     {
-        $exporter = config('exporters.'.$type);
+        return $this->downloadSampleFile(self::EXPORTERS, $type, $key);
+    }
 
-        return Storage::download($exporter['sample_path']);
+    /**
+     * Download the sample images archive shipped for a type
+     */
+    public function downloadSampleImagesZip(?string $type = null, ?string $key = null): BinaryFileResponse
+    {
+        return $this->downloadSampleFile(self::EXPORTERS, $type, $key, images: true);
     }
 
     /**

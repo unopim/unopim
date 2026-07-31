@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Beispieldatei',
+        'variants'      => 'Beispiel mit Varianten',
+        'multi-locale'  => 'Mehrsprachiges Beispiel',
+        'delete'        => 'Beispiel zum Löschen',
+        'custom-fields' => 'Beispiel mit benutzerdefinierten Feldern',
+        'with-images'   => 'Beispiel mit Bildern (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produkte',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Der :code-Wert muss eindeutig sein.',
                     'incorrect-family-for-variant'             => 'Die Familie muss mit der Elternfamilie identisch sein',
                     'parent-not-exist'                         => 'Das übergeordnete Element existiert nicht.',
+                    'variant-structure-not-found'              => 'Die Variantenstruktur :code existiert für diese Attributfamilie nicht.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Attributcode :code wird bereits verwendet.',
                     'code_not_found_to_delete'             => 'Attributcode zum Löschen nicht gefunden.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kann nicht gelöscht werden.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Produktverknüpfungen',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Das Feld \'%s\' ist erforderlich.',
+                    'self-link-not-allowed'       => 'Das Produkt \'%s\' kann nicht mit sich selbst verknüpft werden.',
+                    'sku-not-found'               => 'Produkt mit der SKU \'%s\' wurde nicht gefunden.',
+                    'related-sku-not-found'       => 'Verknüpftes Produkt mit der SKU \'%s\' wurde nicht gefunden.',
+                    'association-type-not-found'  => 'Der Verknüpfungstyp \'%s\' existiert nicht oder ist inaktiv.',
+                    'invalid-field-value'         => 'Ungültiger Wert für ein Verknüpfungsfeld angegeben.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Dieser Export ist zu groß: geschätzte :rows Zeilen × :columns Spalten (~:estimated) überschreiten den verfügbaren Speicherplatz (~:available). Schränken Sie den Export ein, indem Sie weniger Kanäle/Sprachen (und Attribute) auswählen, und versuchen Sie es erneut.',
         'fields'           => [
-            'file-format'         => 'Dateiformat',
-            'with-media'          => 'Mit Medien',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Dateiformat',
+            'with-media'             => 'Mit Medien',
+            'with-associations'      => 'Mit Verknüpfungen',
+            'with-associations-info' => 'Die alten SKU-Listenspalten (up_sells, cross_sells und related_products) in den Export einschließen',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Attribute',
         ],
+        'product-associations' => [
+            'title' => 'Produktverknüpfungen',
+        ],
         'attribute-groups' => [
             'title' => 'Attributgruppen',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'Jobausführung gestartet',
         'completed' => 'Jobausführung abgeschlossen',
+        'stalled'   => 'Der Auftrag hat länger als :minutes Minuten nicht reagiert und wurde als fehlgeschlagen markiert. Der ausführende Worker wurde vermutlich beendet.',
+        'reaped'    => ':count hängengebliebene Aufträge wurden als fehlgeschlagen markiert.',
     ],
 ];

@@ -25,6 +25,7 @@ class ConfigurableProductDataSource extends ProductDataSource
             'IN',
             'NOT IN',
         ]);
+        $this->registerDateFilters();
 
         return $queryBuilder;
     }

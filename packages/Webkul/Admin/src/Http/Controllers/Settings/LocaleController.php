@@ -5,11 +5,12 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\LocalesDataGrid;
+use Webkul\Admin\Helpers\MassActionCounter;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\LocaleForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Core\Repositories\LocaleRepository;
-use Webkul\Core\Rules\Code;
 
 class LocaleController extends Controller
 {
@@ -37,12 +38,8 @@ class LocaleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(LocaleForm $request): JsonResponse
     {
-        $this->validate(request(), [
-            'code'        => ['required', 'unique:locales,code', new Code],
-        ]);
-
         $this->localeRepository->create(request()->only([
             'code',
             'status',
@@ -56,9 +53,13 @@ class LocaleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(int $id): JsonResponse
+    public function edit(int $id): View|JsonResponse
     {
         $locale = $this->localeRepository->findOrFail($id);
+
+        if (! request()->expectsJson()) {
+            return view('admin::settings.locales.edit', compact('locale'));
+        }
 
         return new JsonResponse([
             'data' => [
@@ -71,12 +72,8 @@ class LocaleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(): JsonResponse
+    public function update(LocaleForm $request): JsonResponse
     {
-        $this->validate(request(), [
-            'status' => 'boolean',
-        ]);
-
         if (! request()->status && $this->localeRepository->checkLocaleBeingUsed(request()->id)) {
             return new JsonResponse([
                 'errors' => [
@@ -90,7 +87,8 @@ class LocaleController extends Controller
         ]), request()->id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.locales.index.update-success'),
+            'message'      => trans('admin::app.settings.locales.index.update-success'),
+            'redirect_url' => route('admin.settings.locales.index'),
         ]);
     }
 
@@ -133,6 +131,8 @@ class LocaleController extends Controller
     {
         $localeIds = $massDestroyRequest->input('indices');
 
+        $counter = new MassActionCounter;
+
         foreach ($localeIds as $localeId) {
             $locale = $this->localeRepository->find($localeId);
 
@@ -147,11 +147,15 @@ class LocaleController extends Controller
             }
 
             if ($locale->isLocaleBeingUsed()) {
+                $counter->skipped();
+
                 continue;
             }
 
             try {
                 $this->localeRepository->delete($localeId);
+
+                $counter->succeeded();
             } catch (\Exception $e) {
                 report($e);
 
@@ -161,9 +165,13 @@ class LocaleController extends Controller
             }
         }
 
-        return new JsonResponse([
-            'message' => trans('admin::app.settings.locales.index.delete-success'),
-        ], JsonResponse::HTTP_OK);
+        return $this->respondMassAction(
+            $counter,
+            'admin::app.settings.locales.index.can-not-delete-error',
+            'admin::app.settings.locales.index.partial-delete-success',
+            'admin::app.settings.locales.index.delete-success',
+            JsonResponse::HTTP_BAD_REQUEST,
+        );
     }
 
     /**
@@ -173,7 +181,9 @@ class LocaleController extends Controller
     {
         $localeIds = $massUpdateRequest->input('indices');
 
-        $value = $massUpdateRequest->input('value');
+        $value = (int) $massUpdateRequest->input('value');
+
+        $counter = new MassActionCounter;
 
         foreach ($localeIds as $localeId) {
             $locale = $this->localeRepository->find($localeId);
@@ -183,6 +193,8 @@ class LocaleController extends Controller
             }
 
             if ($locale->isLocaleBeingUsed() && $value === 0) {
+                $counter->skipped();
+
                 continue;
             }
 
@@ -190,6 +202,8 @@ class LocaleController extends Controller
                 $locale->status = $value;
 
                 $locale->save();
+
+                $counter->succeeded();
             } catch (\Exception $e) {
                 report($e);
 
@@ -199,8 +213,11 @@ class LocaleController extends Controller
             }
         }
 
-        return new JsonResponse([
-            'message' => trans('admin::app.settings.locales.index.update-success'),
-        ]);
+        return $this->respondMassAction(
+            $counter,
+            'admin::app.settings.locales.index.can-not-disable-error',
+            'admin::app.settings.locales.index.partial-update-success',
+            'admin::app.settings.locales.index.update-success',
+        );
     }
 }

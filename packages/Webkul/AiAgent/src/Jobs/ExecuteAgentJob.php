@@ -2,11 +2,8 @@
 
 namespace Webkul\AiAgent\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Webkul\AiAgent\DTOs\AgentPayload;
 use Webkul\AiAgent\Repositories\AgentExecutionRepository;
 use Webkul\AiAgent\Services\AgentService;
@@ -16,7 +13,7 @@ use Webkul\AiAgent\Services\AgentService;
  */
 class ExecuteAgentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     /**
      * Number of times the job may be attempted.
@@ -65,7 +62,7 @@ class ExecuteAgentJob implements ShouldQueue
         $executionId = $payload->metadata['executionId'] ?? null;
 
         if ($executionId) {
-            app(AgentExecutionRepository::class)
+            resolve(AgentExecutionRepository::class)
                 ->markFailed($executionId, 'Job failed: '.$exception->getMessage());
         }
     }

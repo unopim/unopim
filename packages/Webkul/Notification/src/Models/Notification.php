@@ -2,33 +2,29 @@
 
 namespace Webkul\Notification\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Notification\Contracts\Notification as NotificationContract;
 
+#[Appends(['created_at_human'])]
+#[Fillable([
+    'type',
+    'route',
+    'route_params',
+    'title',
+    'description',
+    'context',
+])]
 class Notification extends Model implements NotificationContract
 {
-    protected $fillable = [
-        'type',
-        'route',
-        'route_params',
-        'title',
-        'description',
-        'context',
-    ];
-
-    protected $casts = [
-        'context'      => 'array',
-        'route_params' => 'array',
-    ];
-
-    protected $appends = ['created_at_human'];
-
     /**
      * Get the created_at field in a human-readable format.
      */
-    public function getCreatedAtHumanAttribute()
+    protected function createdAtHuman(): Attribute
     {
-        return $this->created_at->diffForHumans();
+        return Attribute::make(get: fn () => $this->created_at->diffForHumans());
     }
 
     /**
@@ -37,5 +33,13 @@ class Notification extends Model implements NotificationContract
     public function userNotifications()
     {
         return $this->hasMany(UserNotification::class);
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'context'      => 'array',
+            'route_params' => 'array',
+        ];
     }
 }

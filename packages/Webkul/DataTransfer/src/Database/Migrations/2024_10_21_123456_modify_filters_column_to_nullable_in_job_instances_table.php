@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('job_instances', function (Blueprint $table) {
+        Schema::table('job_instances', function (Blueprint $table): void {
             $table->json('filters')->nullable()->change();
         });
     }

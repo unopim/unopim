@@ -2,8 +2,8 @@
 
 namespace Webkul\Installer\Database\Seeders\Category;
 
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
@@ -18,19 +18,18 @@ class CategoryTableSeeder extends Seeder
      * Seed the application's database.
      *
      * @param  array  $parameters
-     * @return void
      */
-    public function run($parameters = [])
+    public function run($parameters = []): void
     {
         DB::table('categories')->delete();
 
-        $now = Carbon::now();
+        $now = Date::now();
 
         DB::table('categories')->insert([
             [
                 'id'         => '1',
                 '_lft'       => '1',
-                '_rgt'       => '14',
+                '_rgt'       => '2',
                 'code'       => 'root',
                 'parent_id'  => null,
                 'created_at' => $now,

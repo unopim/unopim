@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Halimbawang file',
+        'variants'      => 'Halimbawa ng mga variant',
+        'multi-locale'  => 'Halimbawang multi-locale',
+        'delete'        => 'Halimbawa ng pagtanggal',
+        'custom-fields' => 'Halimbawa ng custom na field',
+        'with-images'   => 'Halimbawa na may mga larawan (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Mga Produkto',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Ang halaga :code ay dapat na natatangi.',
                     'incorrect-family-for-variant'             => 'Ang pamilya ay dapat na parehong-pareho sa pangunahing pamilya',
                     'parent-not-exist'                         => 'Walang magulang.',
+                    'variant-structure-not-found'              => 'Walang variant structure na :code para sa attribute family na ito.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Ang code ng tampok na :code ay ginagamit na.',
                     'code_not_found_to_delete'             => 'Hindi natagpuan ang code ng tampok para burahin.',
                     'code_is_system_and_cannot_be_deleted' => 'Hindi maaaring burahin ang system feature.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Mga Asosasyon ng Produkto',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kinakailangan ang field na \'%s\'.',
+                    'self-link-not-allowed'       => 'Hindi maaaring iugnay ang produktong \'%s\' sa sarili nito.',
+                    'sku-not-found'               => 'Hindi natagpuan ang produktong may SKU na \'%s\'.',
+                    'related-sku-not-found'       => 'Hindi natagpuan ang kaugnay na produktong may SKU na \'%s\'.',
+                    'association-type-not-found'  => 'Ang uri ng asosasyon na \'%s\' ay hindi umiiral o hindi aktibo.',
+                    'invalid-field-value'         => 'May ibinigay na di-wastong halaga para sa field ng asosasyon.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Masyadong malaki ang export na ito para patakbuhin: tinatayang :rows na hilera × :columns na kolum (~:estimated) ay lumalampas sa magagamit na espasyo (~:available). Paliitin ang export sa pamamagitan ng pagpili ng mas kaunting channel/locale (at attribute) at subukang muli.',
         'fields'           => [
-            'file-format'         => 'Format ng File',
-            'with-media'          => 'May Media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format ng File',
+            'with-media'             => 'May Media',
+            'with-associations'      => 'May mga Asosasyon',
+            'with-associations-info' => 'Isama ang lumang mga hanay ng listahan ng SKU (up_sells, cross_sells, at related_products) sa export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Mga Tampok',
         ],
+        'product-associations' => [
+            'title' => 'Mga Asosasyon ng Produkto',
+        ],
         'attribute-groups' => [
             'title' => 'Mga Grupo ng Tampok',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'Nagsimula ang trabaho sa trabaho',
         'completed' => 'Nagtapos ang trabaho sa trabaho',
+        'stalled'   => 'Huminto sa pagtugon ang trabaho nang mahigit :minutes minuto at minarkahan itong nabigo. Malamang na natapos ang proseso na nagpapatakbo nito.',
+        'reaped'    => 'Minarkahang nabigo ang :count na na-stuck na trabaho.',
     ],
 ];

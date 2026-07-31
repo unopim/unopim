@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
 
 /**
  * Generate a random 3-letter uppercase currency code unlikely to collide with real ones.
@@ -15,7 +15,9 @@ function randomCurrencyCode() {
  * Helper: Fill the currency creation modal fields.
  */
 async function fillCurrencyModal(adminPage, { code = '', symbol = '', decimal = '2', enableStatus = true } = {}) {
-  await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill(code);
+  // The Code label now carries an ISO-4217 hint link, which pulls the anchor's
+  // title into the label's accessible name and breaks an exact-name match.
+  await adminPage.locator('input[name="code"]').fill(code);
   if (symbol) {
     await adminPage.getByRole('textbox', { name: 'Symbol' }).fill(symbol);
   }
@@ -62,7 +64,7 @@ test.describe('Currency Management', () => {
     await navigateTo(adminPage, 'currencies');
     await adminPage.getByRole('button', { name: 'Create Currency' }).click();
     await fillCurrencyModal(adminPage, { code: '', symbol: '$', decimal: '2' });
-    await adminPage.getByRole('button', { name: 'Save Currency' }).click();
+    await clickSave(adminPage, 'Save Currency');
     await expect(adminPage.locator('#app').getByText(/The Code field is required/i)).toBeVisible();
   });
 
@@ -70,7 +72,7 @@ test.describe('Currency Management', () => {
     await navigateTo(adminPage, 'currencies');
     await adminPage.getByRole('button', { name: 'Create Currency' }).click();
     await fillCurrencyModal(adminPage, { code: 'gh', symbol: '$', decimal: '2' });
-    await adminPage.getByRole('button', { name: 'Save Currency' }).click();
+    await clickSave(adminPage, 'Save Currency');
     await expect(adminPage.locator('#app').getByText(/The code must be at least 3 characters/i)).toBeVisible();
   });
 
@@ -78,7 +80,7 @@ test.describe('Currency Management', () => {
     await navigateTo(adminPage, 'currencies');
     await adminPage.getByRole('button', { name: 'Create Currency' }).click();
     await fillCurrencyModal(adminPage, { code: 'ghdn', symbol: '$', decimal: '2' });
-    await adminPage.getByRole('button', { name: 'Save Currency' }).click();
+    await clickSave(adminPage, 'Save Currency');
     await expect(adminPage.locator('#app').getByText(/The code may not be greater than 3 characters/i)).toBeVisible();
   });
 

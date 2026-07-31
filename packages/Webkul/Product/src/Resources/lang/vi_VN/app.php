@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Cấu trúc biến thể',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'sao-chep-:value',
         'copy-of'                       => 'Sao chép :value',
@@ -12,7 +16,9 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Cấu hình',
-        'simple'       => 'Đơn giản',
+        'configurable'  => 'Cấu hình',
+        'simple'        => 'Đơn giản',
+        'variant-group' => 'Nhóm biến thể',
+        'variant_group' => 'Nhóm biến thể',
     ],
 ];

@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Örnek dosya',
+        'variants'      => 'Varyant örneği',
+        'multi-locale'  => 'Çok dilli örnek',
+        'delete'        => 'Silme örneği',
+        'custom-fields' => 'Özel alan örneği',
+        'with-images'   => 'Görsellerle örnek (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Ürünler',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Değer :code benzersiz olmalıdır.',
                     'incorrect-family-for-variant'             => 'Aile ana aile ile aynı olmalıdır',
                     'parent-not-exist'                         => 'Baba yok.',
+                    'variant-structure-not-found'              => 'Bu öznitelik ailesi için :code varyant yapısı mevcut değil.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Nitelik kodu :code zaten kullanımda.',
                     'code_not_found_to_delete'             => 'Silinecek nitelik kodu bulunamadı.',
                     'code_is_system_and_cannot_be_deleted' => 'Sistem niteliği silinemez.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Ürün İlişkilendirmeleri',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' alanı zorunludur.',
+                    'self-link-not-allowed'       => '\'%s\' ürünü kendisiyle ilişkilendirilemez.',
+                    'sku-not-found'               => 'SKU \'%s\' olan ürün bulunamadı.',
+                    'related-sku-not-found'       => 'SKU \'%s\' olan ilişkili ürün bulunamadı.',
+                    'association-type-not-found'  => '\'%s\' ilişki türü mevcut değil veya pasif.',
+                    'invalid-field-value'         => 'İlişki alanı için geçersiz bir değer girildi.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Bu dışa aktarma çalıştırılamayacak kadar büyük: tahmini :rows satır × :columns sütun (~:estimated) kullanılabilir alanı (~:available) aşıyor. Daha az kanal/yerel (ve öznitelik) seçerek dışa aktarmayı daraltın ve tekrar deneyin.',
         'fields'           => [
-            'file-format'         => 'Dosya biçimi',
-            'with-media'          => 'Medya ile',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Dosya biçimi',
+            'with-media'             => 'Medya ile',
+            'with-associations'      => 'İlişkilendirmelerle',
+            'with-associations-info' => 'Eski up_sells, cross_sells ve related_products SKU liste sütunlarını dışa aktarıma dahil et',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Nitelikler',
         ],
+        'product-associations' => [
+            'title' => 'Ürün İlişkilendirmeleri',
+        ],
         'attribute-groups' => [
             'title' => 'Nitelik Grupları',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'İş yürütme başlatıldı',
         'completed' => 'İş yürütme tamamlandı',
+        'stalled'   => 'İş :minutes dakikadan uzun süre yanıt vermedi ve başarısız olarak işaretlendi. Onu çalıştıran işlem büyük olasılıkla sonlandırıldı.',
+        'reaped'    => ':count takılı kalan iş başarısız olarak işaretlendi.',
     ],
 ];

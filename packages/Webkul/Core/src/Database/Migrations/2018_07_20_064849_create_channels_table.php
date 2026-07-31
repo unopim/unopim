@@ -8,12 +8,10 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
-     *
-     * @return void
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('channels', function (Blueprint $table) {
+        Schema::create('channels', function (Blueprint $table): void {
             $table->increments('id');
             $table->string('code');
             $table->integer('root_category_id')->nullable()->unsigned();
@@ -22,7 +20,7 @@ return new class extends Migration
             $table->foreign('root_category_id')->references('id')->on('categories')->onDelete('set null');
         });
 
-        Schema::create('channel_locales', function (Blueprint $table) {
+        Schema::create('channel_locales', function (Blueprint $table): void {
             $table->integer('channel_id')->unsigned();
             $table->integer('locale_id')->unsigned();
 
@@ -31,7 +29,7 @@ return new class extends Migration
             $table->foreign('locale_id')->references('id')->on('locales')->onDelete('cascade');
         });
 
-        Schema::create('channel_currencies', function (Blueprint $table) {
+        Schema::create('channel_currencies', function (Blueprint $table): void {
             $table->integer('channel_id')->unsigned();
             $table->integer('currency_id')->unsigned();
 
@@ -43,10 +41,8 @@ return new class extends Migration
 
     /**
      * Reverse the migrations.
-     *
-     * @return void
      */
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('channel_currencies');
 

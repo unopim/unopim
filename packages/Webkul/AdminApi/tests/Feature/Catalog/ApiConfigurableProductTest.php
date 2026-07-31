@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -80,6 +81,7 @@ it('should return the configurable product by code', function () {
         'values'           => $product->values,
         'super_attributes' => $product->super_attributes()->pluck('code')->toArray(),
         'variants'         => [],
+        'associations'     => [],
     ];
 
     foreach ($product->variants as $variant) {
@@ -109,6 +111,7 @@ it('should return the configurable product by code', function () {
             'values',
             'super_attributes',
             'variants',
+            'associations',
         ])
         ->json();
 
@@ -342,6 +345,36 @@ it('should store the price attribute value when updating configurable product', 
     $product->refresh();
 
     $this->assertEquals($value, $product->values['common'][$attributeCode] ?? '');
+});
+
+it('fires catalog.product.update.after exactly once when updating a configurable product', function () {
+    $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
+
+    $product = Product::factory()->configurable()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id)->first();
+
+    $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    Event::fake(['catalog.product.update.after']);
+
+    $updatedproduct = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->code,
+        'values' => [
+            'common' => [
+                'sku'            => $product->sku,
+                $attribute->code => 'changed-value',
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.configrable_products.update', ['code' => $updatedproduct['sku']]), $updatedproduct)
+        ->assertStatus(200);
+
+    Event::assertDispatchedTimes('catalog.product.update.after', 1);
 });
 
 it('should store the boolean attribute value when updating configurable product', function () {

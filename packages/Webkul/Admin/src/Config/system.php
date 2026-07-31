@@ -1,5 +1,7 @@
 <?php
 
+use Webkul\Core\Rules\IpPatternRule;
+
 return [
     /**
      * General.
@@ -181,6 +183,142 @@ return [
                     ['title' => 'Confirm & apply (propose values, ask to confirm, then execute)', 'value' => 'auto'],
                     ['title' => 'Strict confirm (always confirm + verify after every change)', 'value' => 'review'],
                     ['title' => 'Suggest only (describe changes but never execute)', 'value' => 'suggest'],
+                ],
+            ], [
+                'name'  => 'custom_instructions',
+                'title' => 'admin::app.configuration.index.general.magic-ai.agentic-pim.custom-instructions',
+                'type'  => 'textarea',
+                'info'  => 'admin::app.configuration.index.general.magic-ai.agentic-pim.custom-instructions-info',
+            ],
+        ],
+    ], [
+        'key'  => 'general.debug',
+        'name' => 'admin::app.configuration.index.general.debug.title',
+        'info' => 'admin::app.configuration.index.general.debug.info',
+        'sort' => 4,
+    ], [
+        'key'    => 'general.debug.settings',
+        'name'   => 'admin::app.configuration.index.general.debug.settings.title',
+        'info'   => 'admin::app.configuration.index.general.debug.settings.info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'  => 'enabled',
+                'title' => 'admin::app.configuration.index.general.debug.settings.enabled',
+                'type'  => 'boolean',
+            ], [
+                'name'       => 'allowed_ips',
+                'title'      => 'admin::app.configuration.index.general.debug.settings.allowed-ips',
+                'type'       => 'text',
+                'validation' => ['nullable', IpPatternRule::class],
+            ],
+        ],
+    ], [
+        'key'  => 'general.microsoft_sso',
+        'name' => 'admin::app.configuration.index.general.microsoft-sso.title',
+        'info' => 'admin::app.configuration.index.general.microsoft-sso.info',
+        'sort' => 5,
+    ], [
+        'key'    => 'general.microsoft_sso.settings',
+        'name'   => 'admin::app.configuration.index.general.microsoft-sso.settings.title',
+        'info'   => 'admin::app.configuration.index.general.microsoft-sso.settings.info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'          => 'enabled',
+                'title'         => 'admin::app.configuration.index.general.microsoft-sso.settings.enabled',
+                'type'          => 'boolean',
+                'default_value' => env('MICROSOFT_SSO_ENABLED', false) ? '1' : '0',
+            ], [
+                'name'  => 'redirect_uri',
+                'title' => 'admin::app.configuration.index.general.microsoft-sso.settings.redirect-uri',
+                'type'  => 'blade',
+                'path'  => 'admin::configuration.microsoft-sso-callback',
+            ], [
+                'name'          => 'tenant',
+                'title'         => 'admin::app.configuration.index.general.microsoft-sso.settings.tenant',
+                'type'          => 'text',
+                'default_value' => env('MICROSOFT_SSO_TENANT', ''),
+                'placeholder'   => 'common',
+            ], [
+                'name'          => 'client_id',
+                'title'         => 'admin::app.configuration.index.general.microsoft-sso.settings.client-id',
+                'type'          => 'text',
+                'default_value' => env('MICROSOFT_SSO_CLIENT_ID', ''),
+            ], [
+                'name'        => 'client_secret',
+                'title'       => 'admin::app.configuration.index.general.microsoft-sso.settings.client-secret',
+                'type'        => 'password',
+                'placeholder' => '••••••••',
+            ],
+        ],
+    ], [
+        'key'  => 'emails',
+        'name' => 'admin::app.configuration.index.emails.title',
+        'info' => 'admin::app.configuration.index.emails.info',
+        'sort' => 2,
+    ], [
+        'key'  => 'emails.configure',
+        'name' => 'admin::app.configuration.index.emails.configure.title',
+        'info' => 'admin::app.configuration.index.emails.configure.info',
+        'sort' => 1,
+    ], [
+        'key'    => 'emails.configure.email_settings',
+        'name'   => 'admin::app.configuration.index.emails.configure.email-settings.title',
+        'info'   => 'admin::app.configuration.index.emails.configure.email-settings.info',
+        'sort'   => 1,
+        'fields' => [
+            [
+                'name'          => 'sender_name',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.sender-name',
+                'type'          => 'text',
+                'default_value' => env('MAIL_FROM_NAME') ?: env('APP_NAME', 'UnoPim'),
+            ], [
+                'name'          => 'shop_email_from',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.sender-email',
+                'type'          => 'text',
+                'validation'    => 'email',
+                'default_value' => env('MAIL_FROM_ADDRESS'),
+            ], [
+                'name'          => 'admin_name',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.admin-name',
+                'type'          => 'text',
+                'default_value' => env('MAIL_FROM_NAME') ?: env('APP_NAME', 'UnoPim'),
+            ], [
+                'name'          => 'admin_email',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.admin-email',
+                'type'          => 'text',
+                'validation'    => 'email',
+                'default_value' => env('MAIL_FROM_ADDRESS'),
+            ], [
+                'name'          => 'mail_host',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-host',
+                'type'          => 'text',
+                'default_value' => env('MAIL_HOST'),
+            ], [
+                'name'          => 'mail_port',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-port',
+                'type'          => 'text',
+                'default_value' => env('MAIL_PORT'),
+            ], [
+                'name'          => 'mail_username',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-username',
+                'type'          => 'text',
+                'default_value' => env('MAIL_USERNAME'),
+            ], [
+                'name'        => 'mail_password',
+                'title'       => 'admin::app.configuration.index.emails.configure.email-settings.smtp-password',
+                'type'        => 'password',
+                'placeholder' => '••••••••',
+            ], [
+                'name'          => 'mail_encryption',
+                'title'         => 'admin::app.configuration.index.emails.configure.email-settings.smtp-encryption',
+                'type'          => 'select',
+                'default_value' => env('MAIL_ENCRYPTION', 'tls'),
+                'options'       => [
+                    ['title' => 'None', 'value' => 'none'],
+                    ['title' => 'TLS', 'value' => 'tls'],
+                    ['title' => 'SSL', 'value' => 'ssl'],
                 ],
             ],
         ],

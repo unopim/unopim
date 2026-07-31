@@ -38,6 +38,10 @@ class PromoBanner
                 continue;
             }
 
+            if (! empty($banner['hide_on_cloud']) && config('help.is_cloud')) {
+                continue;
+            }
+
             $version = $banner['key'] === 'upgrade'
                 ? (string) $this->versionCheck->latestVersion()
                 : '';

@@ -6,15 +6,13 @@ UnoPim follows Laravel's release cadence. Each minor receives bug
 fixes and security fixes from its release date until the underlying
 Laravel version reaches End of Life.
 
-| Version | PHP (*)   | Laravel | Release             | Bug Fixes Until      | Security Fixes Until |
-| ------- | --------- | ------- | ------------------- | -------------------- | -------------------- |
-| 2.1     | 8.3 - 8.5 | 12.x    | May 13th, 2026      | August 13th, 2026    | February 24th, 2027  |
-| 2.0     | 8.3 - 8.5 | 12.x    | March 27th, 2026    | August 13th, 2026    | February 24th, 2027  |
+| Version | PHP required | PHP tested | Laravel | Release             | Bug Fixes Until      | Security Fixes Until |
+| ------- | ------------ | ---------- | ------- | ------------------- | -------------------- | -------------------- |
+| 3.0.0   | 8.4.1+       | 8.4        | 13.x    | July 31st, 2026     | TBD                  | TBD                  |
+| 2.1     | 8.3+         | 8.3        | 12.x    | May 13th, 2026      | August 13th, 2026    | February 24th, 2027  |
+| 2.0     | 8.3+         | 8.3        | 12.x    | March 27th, 2026    | August 13th, 2026    | February 24th, 2027  |
 
-**Current:** 2.1.x
-
-> (*) PHP range covers the minimum required version and the highest
-> stable version verified against the branch's CI matrix.
+**Current:** 3.0.x
 
 ## End of Life
 
@@ -38,7 +36,7 @@ Please include:
 
 - A description of the issue
 - Steps to reproduce (and a PoC, if available)
-- Impact assessment (CVSS 3.1 vector welcome)
+- Impact assessment (CVSS 4.0 or 3.1 vector welcome)
 - Affected version(s)
 - A suggested fix, if any
 
@@ -52,7 +50,7 @@ For every **supported** line (any row in the Supported Versions table
 whose Security Fixes Until date is in the future), the flow is:
 
 1. **Acknowledgement** within 72 hours
-2. **Triage** — reproduction and CVSS 3.1 severity assessment
+2. **Triage** — reproduction and severity assessment
 3. **Fix development** on `master`, then backport to every supported
    line
 4. **Coordinated patched releases** for each supported line, published

@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Fitxa tècnica del producte',
+                'lede'              => 'Especificació de referència del catàleg de demostració. Els valors s’apliquen a tots els productes d’aquesta família, tret que la pàgina del producte indiqui el contrari.',
+                'family-code'       => 'Codi de família',
+                'compliance'        => 'Conformitat',
+                'compliance-value'  => 'Marcatge CE; declaracions RoHS i REACH disponibles a petició.',
+                'spare-parts'       => 'Peces de recanvi',
+                'spare-parts-value' => 'Peces de desgast en estoc durant deu anys des de l’última data de producció.',
+                'packaging'         => 'Embalatge',
+                'packaging-value'   => 'Embalatge sense plàstic, cartró certificat FSC, imprès amb tintes sense olis minerals.',
+                'footer'            => 'Generat per UnoPim amb finalitats de demostració.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Per defecte',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Actualització d\'UnoPim',
+        'complete'              => 'Actualització completada. L\'aplicació torna a estar en línia.',
+        'aborted'               => 'Actualització cancel·lada. No s\'ha modificat res.',
+        'confirm'               => 'L\'aplicació passarà a mode manteniment i es migrarà la base de dades. Voleu continuar?',
+        'dry-run-complete'      => 'Simulació completada. No s\'ha modificat res.',
+        'preflight-failed'      => ':count comprovació/ons han fallat. L\'actualització no s\'ha iniciat i no s\'ha modificat res.',
+        'preflight-failed-hint' => 'Resoleu els punts anteriors i torneu a executar l\'ordre. La versió anterior continua servint el trànsit.',
+        'verify-failed'         => ':count verificació/ons han fallat. L\'aplicació s\'ha deixat en mode manteniment.',
+        'migrate-failed'        => 'La migració ha fallat: :error',
+        'step-failed'           => 'El pas :command ha fallat amb el codi de sortida :code.',
+        'phase'                 => [
+            'preflight' => 'Fase 1 de 5 — Comprovacions prèvies',
+            'drift'     => 'Fase 2 de 5 — Diferències de configuració',
+            'sizing'    => 'Fase 3 de 5 — Estimació de la finestra de manteniment',
+            'execute'   => 'Fase 4 de 5 — Migració',
+            'verify'    => 'Fase 5 de 5 — Verificació',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Versió del PHP',
+            'php-version-detail'         => 'requereix :required, s\'ha trobat :found',
+            'php-version-remedy'         => 'Actualitzeu el PHP a :required o superior abans de continuar.',
+            'extensions'                 => 'Extensions del PHP',
+            'extensions-remedy'          => 'Instal·leu les extensions que falten i reinicieu el PHP-FPM.',
+            'database'                   => 'Connexió a la base de dades',
+            'database-detail'            => ':driver, base de dades :database, prefix :prefix',
+            'database-remedy'            => 'Reviseu les credencials de la base de dades al fitxer .env.',
+            'source-version'             => 'Versió instal·lada',
+            'source-version-detail'      => ':version o superior',
+            'source-version-unsupported' => 'anterior a :version',
+            'source-version-remedy'      => 'Actualitzeu primer a :version i torneu a executar aquesta ordre.',
+            'pending-migrations'         => 'Migracions pendents',
+            'pending-migrations-detail'  => ':count per executar',
+            'pending-migrations-none'    => 'cap: la base de dades ja està actualitzada',
+            'pending-migrations-remedy'  => 'No s\'ha pogut llegir la taula de migracions. Reviseu els permisos de la base de dades.',
+            'active-jobs'                => 'Tasques d\'importació i exportació',
+            'active-jobs-detail'         => ':count encara en execució',
+            'active-jobs-remedy'         => 'Espereu que acabin les tasques en curs o atureu els workers de la cua, i torneu a executar l\'ordre.',
+            'writable-paths'             => 'Directoris amb permís d\'escriptura',
+            'writable-paths-remedy'      => 'Doneu permisos d\'escriptura a l\'usuari del servidor web sobre els directoris indicats a dalt.',
+            'disk-space'                 => 'Espai de disc',
+            'disk-space-detail'          => ':free lliures, :required necessaris',
+            'disk-space-unknown'         => 'no s\'ha pogut determinar',
+            'disk-space-remedy'          => 'Allibereu espai de disc o feu servir --skip-backup si la base de dades es desa per altres mitjans.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'No s\'han detectat diferències de configuració.',
+            'no-previous' => 'No s\'ha indicat el directori de la versió anterior, de manera que no es poden comparar els fitxers de configuració ni les dependències del Composer. Feu servir --from=/ruta/a/versio/antiga per obtenir un informe complet.',
+            'env-missing' => 'Claus d\'entorn afegides per aquesta versió que falten al vostre .env:',
+            'env-removed' => 'Claus d\'entorn eliminades per aquesta versió que encara són al vostre .env:',
+            'config'      => 'Fitxers de configuració diferents dels de la versió anterior. Torneu a aplicar-hi els vostres canvis locals:',
+            'composer'    => 'Dependències del Composer que heu afegit i que falten en aquesta versió:',
+            'manual'      => 'Aquests fitxers són vostres. Combineu-los manualment abans de reobrir el trànsit: l\'actualització mai no els sobreescriu.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Taula',
+            'rows'            => 'Files',
+            'pending'         => 'S\'executaran :count migració/ons.',
+            'window'          => 'Finestra de manteniment estimada: uns :minutes minut(s).',
+            'nothing-pending' => 'No hi ha cap migració pendent.',
+            'irreversible'    => 'Aquestes migracions reescriuen dades i no es poden desfer. Només la restauració de la còpia de seguretat de la base de dades permet tornar enrere:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Còpia de seguretat de la base de dades desada a :path',
+            'skipped'            => 'S\'ha omès la còpia de seguretat de la base de dades. Assegureu-vos de tenir-ne una de restaurable abans de continuar.',
+            'failed'             => 'La còpia de seguretat de la base de dades ha fallat: :error',
+            'empty'              => 'La còpia de seguretat de la base de dades era buida i s\'ha descartat.',
+            'abort'              => 'L\'actualització s\'ha aturat perquè no hi ha cap còpia de seguretat verificada. No s\'ha modificat res.',
+            'unsupported-driver' => 'No hi ha cap ordre de còpia de seguretat disponible per al controlador :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'omès, la taula no existeix',
+            'associations'           => 'Associacions de productes',
+            'associations-none'      => 'cap associació antiga per migrar',
+            'associations-detail'    => ':migrated de :legacy producte(s) migrat(s)',
+            'associations-remedy'    => 'S\'han trobat dades d\'associació antigues, però no s\'ha migrat res. Restaureu la còpia de seguretat i informeu d\'aquest problema.',
+            'robot-users'            => 'Propietaris de les integracions d\'API',
+            'robot-users-detail'     => ':count integració/ons encara pertanyen a una persona',
+            'robot-users-remedy'     => 'Torneu a executar la migració o reassigneu les integracions des del tauler d\'administració.',
+            'category-bounds'        => 'Integritat de l\'arbre de categories',
+            'category-bounds-detail' => ':count node(s) de categoria tenen límits no vàlids',
+            'category-bounds-remedy' => 'Reconstruïu l\'arbre de categories abans de reobrir el trànsit.',
+            'scrubbed-audits'        => 'Neteja de credencials',
+            'scrubbed-audits-detail' => ':count registre(s) d\'auditoria encara contenen credencials',
+            'scrubbed-audits-remedy' => 'Torneu a executar la migració abans de reobrir el trànsit. Aquests registres exposen credencials desades.',
+        ],
+
+        'restore'               => [
+            'heading' => 'L\'actualització no s\'ha completat. L\'aplicació és en mode manteniment.',
+            'body'    => 'Per revertir: restaureu la còpia de seguretat de la base de dades, torneu a apuntar el servidor web al directori de la versió anterior i executeu-hi «php artisan up».',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'S\'ignora --with-reindex: :count producte(s) supera el límit de :limit productes per a una reconstrucció en línia.',
+            'deferred'  => 'L\'Elasticsearch no s\'ha reindexat. Amb :count producte(s) això triga més que la mateixa actualització, i mentrestant la cerca recorre a la base de dades. Executeu això quan el lloc torni a estar en línia:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -145,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Monedes permeses',
                 'allowed-locales'     => 'Idiomes permesos',
+                'app-key-missing'     => 'No s\'ha trobat cap fitxer .env i APP_KEY no està definit a l\'entorn del servidor. L\'instal·lador mai escriu la configuració de l\'entorn — creeu un .env manualment (copieu .env.example) o configureu les variables al vostre panell d\'allotjament i torneu-ho a provar.',
+                'env-readonly-note'   => 'Aquests valors es llegeixen de l\'entorn del vostre servidor (.env). L\'instal·lador mai escriu la configuració de l\'entorn — per canviar qualsevol cosa, editeu el fitxer .env (o les variables del panell d\'allotjament) i torneu a carregar aquesta pàgina.',
                 'application-name'    => 'Nom de l’aplicació',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Iuan xinès (CNY)',
@@ -197,7 +318,7 @@ return [
                 'turkish-lira'        => 'Lira turca (TRY)',
                 'ukrainian-hryvnia'   => 'Hrívnia ucraïnesa (UAH)',
                 'usd'                 => 'Dòlar estatunidenc (USD)',
-                'warning-message'     => 'Atenció! Els ajustos per als idiomes predeterminats i la moneda són permanents i no es poden canviar mai més.',
+                'warning-message'     => 'La configuració regional i la moneda que trieu aquí es converteixen en els valors predeterminats inicials per al canal i el compte d\'administrador. Podeu activar més configuracions regionals i monedes, o canviar aquests valors predeterminats, en qualsevol moment des de la configuració d\'administració.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instal·lació d’UnoPim',
@@ -221,6 +342,8 @@ return [
                 'package-installed'  => '✓ :label instal·lat',
                 'package-failed'     => '✗ :label ha fallat: :message',
                 'package-manual'     => '! :label no es pot instal·lar automàticament en aquest servidor (sense accés a la consola). Executa això des d’una màquina amb accés a la consola:',
+                'install-failed'     => '✗ La instal·lació ha fallat. Consulteu storage/logs/laravel.log per a més detalls.',
+                'stream-interrupted' => '! S\'ha perdut la connexió amb l\'instal·lador. És possible que la instal·lació encara s\'estigui completant — espereu un moment i torneu a carregar aquesta pàgina.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panell d’administració',

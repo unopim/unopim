@@ -4,7 +4,6 @@ namespace Webkul\Product;
 
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Local\LocalFilesystemAdapter;
-use Webkul\Customer\Contracts\Wishlist;
 use Webkul\Product\Contracts\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -12,8 +11,6 @@ class ProductImage
 {
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected ProductRepository $productRepository) {}
 
@@ -52,32 +49,11 @@ class ProductImage
          * parent is available. So recursing the method for getting the parent image if
          * images of the child are not found.
          */
-        if (empty($images)) {
-            $images = $this->getGalleryImages($product->parent);
+        if ($images === []) {
+            return $this->getGalleryImages($product->parent);
         }
 
         return $images;
-    }
-
-    /**
-     * Get product variant image if available otherwise product base image.
-     *
-     * @param  Wishlist  $item
-     * @return array
-     */
-    public function getProductImage($item)
-    {
-        if ($item instanceof Wishlist) {
-            if (isset($item->additional['selected_configurable_option'])) {
-                $product = $this->productRepository->find($item->additional['selected_configurable_option']);
-            } else {
-                $product = $item->product;
-            }
-        } else {
-            $product = $item->product;
-        }
-
-        return $this->getProductBaseImage($product);
     }
 
     /**
@@ -85,8 +61,7 @@ class ProductImage
      * present or not. If not then it will load from the product.
      *
      * @param  Product  $product
-     * @param  array
-     * @return array
+     * @return array|void
      */
     public function getProductBaseImage($product, ?array $galleryImages = null)
     {
@@ -103,9 +78,8 @@ class ProductImage
      * Load product's base image.
      *
      * @param  Product  $product
-     * @return array
      */
-    protected function otherwiseLoadFromProduct($product)
+    protected function otherwiseLoadFromProduct($product): array
     {
         $images = $product?->images;
 

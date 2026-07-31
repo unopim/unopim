@@ -1,0 +1,4 @@
+channel,locale,sku,status,type,parent,variant_structure,attribute_family,categories,name,description,short_description,price (USD),cost (USD),weight,meta_title,meta_keywords,meta_description,url_key,configurable_attributes
+default,en_US,multi-locale-product,true,simple,,,default,root,"Multi Locale Product","<p>Described in English.</p>","<p>English summary.</p>",50,25,0.4,"Multi Locale Product","Multi|Locale","English meta description.",multi-locale-product,
+default,fr_FR,multi-locale-product,true,simple,,,default,root,"Produit multilingue","<p>Décrit en français.</p>","<p>Résumé en français.</p>",50,25,0.4,"Produit multilingue","Multi|Langue","Description meta en français.",multi-locale-product,
+default,de_DE,multi-locale-product,true,simple,,,default,root,"Mehrsprachiges Produkt","<p>Auf Deutsch beschrieben.</p>","<p>Deutsche Zusammenfassung.</p>",50,25,0.4,"Mehrsprachiges Produkt","Mehr|Sprache","Deutsche Meta-Beschreibung.",multi-locale-product,

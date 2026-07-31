@@ -2,24 +2,29 @@
 
 namespace Webkul\DataTransfer\Helpers\Exporters;
 
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Storage;
 use Psr\Log\LoggerInterface;
+use Webkul\Core\Eloquent\Repository as SourceRepository;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as ExportJobTrackContract;
+use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Error;
-use Webkul\DataTransfer\Helpers\Source;
 use Webkul\DataTransfer\Jobs\Export\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Export\ExportBatch as ExportBatchJob;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\User\Models\AdminProxy;
 
 abstract class AbstractExporter
 {
+    use TracksJobHeartbeat;
+
     /**
      * Error code for system exception.
      */
@@ -97,9 +102,9 @@ abstract class AbstractExporter
     protected ExportJobTrackContract $export;
 
     /**
-     * Source instance.
+     * Source repository instance.
      *
-     * @var Source
+     * @var SourceRepository
      */
     protected $source;
 
@@ -159,8 +164,6 @@ abstract class AbstractExporter
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -228,7 +231,7 @@ abstract class AbstractExporter
 
         return [
             'fieldDelimiter' => $this->export->jobInstance['field_separator'] ?? ',',
-            'filedEnclosure' => '"',
+            'fieldEnclosure' => '"',
             'shouldAddBOM'   => false,
             'type'           => $filters['file_format'] ?? SpoutWriterFactory::CSV,
             'writeHeaders'   => ($filters['header_row'] ?? '1') !== '0',
@@ -260,9 +263,9 @@ abstract class AbstractExporter
     }
 
     /**
-     * export instance.
+     * Source repository instance.
      *
-     * @param  Source  $errorHelper
+     * @param  SourceRepository  $source
      */
     public function setSource($source)
     {
@@ -286,9 +289,9 @@ abstract class AbstractExporter
     }
 
     /**
-     * export instance.
+     * Source repository instance.
      *
-     * @return Source
+     * @return SourceRepository
      */
     public function getSource()
     {
@@ -297,7 +300,7 @@ abstract class AbstractExporter
 
     public function getFilters()
     {
-        if (empty($this->filters)) {
+        if ($this->filters === []) {
             $this->filters = $this->export->jobInstance->filters ?? [];
         }
 
@@ -329,16 +332,20 @@ abstract class AbstractExporter
 
     protected function resolveFileNamePattern(?string $pattern): string
     {
-        if (empty($pattern)) {
+        if (in_array($pattern, [null, '', '0'], true)) {
             return '';
         }
 
-        $now = Carbon::now();
+        $filters = $this->getFilters();
+
+        $timezone = AdminProxy::find($this->export->user_id)?->timezone ?? config('app.timezone', 'UTC');
+
+        $now = Date::now()->setTimezone($timezone);
 
         $tokens = [
             'code'        => (string) $this->export->jobInstance->code,
             'entity_type' => (string) $this->export->jobInstance->entity_type,
-            'date'        => $now->format('Y-m-d'),
+            'date'        => str_replace('/', '-', $now->format($filters['date_format'] ?? 'Y-m-d')),
             'time'        => $now->format('His'),
         ];
 
@@ -353,7 +360,7 @@ abstract class AbstractExporter
 
         $expanded = preg_replace('/\.(csv|xls|xlsx)$/i', '', $expanded);
 
-        return preg_replace('/[^A-Za-z0-9_-]/', '', $expanded) ?? '';
+        return preg_replace('/[^A-Za-z0-9_-]/', '', (string) $expanded) ?? '';
     }
 
     public function initializeFileBuffer()
@@ -385,7 +392,7 @@ abstract class AbstractExporter
             $filePath = $fileBuffer->getFilePath();
         }
 
-        if ($exportBatch) {
+        if ($exportBatch instanceof JobTrackBatch) {
             $this->exportBatch($exportBatch, $filePath);
 
             return true;
@@ -484,6 +491,11 @@ abstract class AbstractExporter
 
     protected function assertExportIsFeasible($results): void {}
 
+    protected function getHeartbeatTrack(): mixed
+    {
+        return $this->export ?? null;
+    }
+
     protected function guardAgainstOversizedExport(int $rows, int $columns): void
     {
         $freeBytes = @disk_free_space(sys_get_temp_dir());
@@ -523,20 +535,19 @@ abstract class AbstractExporter
 
     /**
      * Updates the state of a batch in the export process.
-     *
-     *
-     * @return void
      */
-    public function updateBatchState(int $id, string $state)
+    public function updateBatchState(int $id, string $state): void
     {
+        $this->heartbeat(force: true);
+
         $processed = $this->getCreatedItemsCount() - $this->getskippedtemsCount();
         /**
          * Update import batch summary
          */
-        $batch = $this->exportBatchRepository->update([
+        $this->exportBatchRepository->update([
             'state'   => $state,
             'summary' => [
-                'processed' => $processed < 0 ? 0 : $processed,
+                'processed' => max(0, $processed),
                 'created'   => $this->getCreatedItemsCount(),
                 'skipped'   => $this->getskippedtemsCount(),
             ],
@@ -546,7 +557,7 @@ abstract class AbstractExporter
     /**
      * Update summary
      */
-    public function updateSummary(array $summaryData)
+    public function updateSummary(array $summaryData): void
     {
         $summary = $this->export->summary;
         foreach ($summaryData as $key => $value) {
@@ -563,13 +574,8 @@ abstract class AbstractExporter
 
     /**
      * Add row as skipped
-     *
-     * @param  int|null  $rowNumber
-     * @param  string|null  $columnName
-     * @param  string|null  $errorMessage
-     * @return $this
      */
-    protected function skipRow($rowNumber, string $errorCode, $columnName = null, $errorMessage = null): self
+    protected function skipRow(?int $rowNumber, string $errorCode, ?string $columnName = null, ?string $errorMessage = null): self
     {
         $this->errorHelper->addError(
             $errorCode,
@@ -629,9 +635,8 @@ abstract class AbstractExporter
      *
      * @param  string  $sourcePath  The path of the source media file.
      * @param  string  $destinationPath  The path where the media file will be copied.
-     * @return void
      */
-    public function copyMedia(string $sourcePath, string $destinationPath)
+    public function copyMedia(string $sourcePath, string $destinationPath): void
     {
         if (Storage::exists($sourcePath)) {
             // Copy the file

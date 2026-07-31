@@ -275,7 +275,7 @@ it('should return 401 if user is unauthorized', function () {
             'parent' => 'null',
         ]);
     $response->assertStatus(401)
-        ->assertJsonFragment(['message' => 'Unauthenticated.']);
+        ->assertJsonFragment(['error' => trans('admin::app.errors.401.message')]);
 });
 
 it('should patch the data for all locales for category patch', function () {

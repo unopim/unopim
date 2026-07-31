@@ -54,18 +54,18 @@
                                 <!-- Step Indicator -->
                                 <div class="flex items-center justify-center mb-6">
                                     <div class="flex items-center">
-                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold text-white bg-violet-700 shrink-0">1</span>
-                                        <span class="inline-block w-20 h-0.5 mx-1" :class="currentStep >= 2 ? 'bg-violet-700' : 'bg-gray-200 dark:bg-gray-600'"></span>
-                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold shrink-0" :class="currentStep >= 2 ? 'bg-violet-700 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400'">2</span>
+                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold text-white bg-primary-700 shrink-0">1</span>
+                                        <span class="inline-block w-20 h-0.5 mx-1" :class="currentStep >= 2 ? 'bg-primary-700' : 'bg-gray-200 dark:bg-gray-600'"></span>
+                                        <span class="inline-flex items-center justify-center min-w-[28px] min-h-[28px] w-7 h-7 rounded-full text-xs font-bold shrink-0" :class="currentStep >= 2 ? 'bg-primary-700 text-white' : 'bg-gray-200 dark:bg-gray-600 text-gray-500 dark:text-gray-400'">2</span>
                                     </div>
                                 </div>
                                 <div class="flex justify-center gap-10 mb-6 text-xs text-gray-500 dark:text-gray-400">
-                                    <span :class="currentStep === 1 ? 'text-violet-700 dark:text-violet-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-source')</span>
-                                    <span :class="currentStep === 2 ? 'text-violet-700 dark:text-violet-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-target')</span>
+                                    <span :class="currentStep === 1 ? 'text-primary-700 dark:text-primary-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-source')</span>
+                                    <span :class="currentStep === 2 ? 'text-primary-700 dark:text-primary-400 font-semibold' : ''">@lang('admin::app.catalog.products.edit.translate.select-target')</span>
                                 </div>
 
                                 <!-- Source Content Card -->
-                                <div class="bg-violet-50 dark:bg-cherry-800 rounded-lg p-4 mb-4">
+                                <div class="bg-primary-50 dark:bg-cherry-800 rounded-lg p-4 mb-4">
                                     <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-3">
                                         @lang('admin::app.catalog.products.edit.translate.source-content')
                                     </h3>
@@ -136,7 +136,7 @@
 
                                 <!-- Target Content Card (Step 2) -->
                                 <template v-if="currentStep > 1">
-                                    <div class="bg-violet-50 dark:bg-cherry-800 rounded-lg p-4">
+                                    <div class="bg-primary-50 dark:bg-cherry-800 rounded-lg p-4">
                                         <h3 class="text-sm font-semibold text-gray-800 dark:text-white mb-3">
                                             @lang('admin::app.catalog.products.edit.translate.target-content')
                                         </h3>
@@ -184,7 +184,7 @@
                         <template v-if="translatedValues">
                             <div class="w-full px-4 py-4">
                                 <!-- Summary Banner -->
-                                <div class="flex items-center gap-3 bg-violet-50 dark:bg-cherry-800 rounded-lg px-4 py-3 mb-4">
+                                <div class="flex items-center gap-3 bg-primary-50 dark:bg-cherry-800 rounded-lg px-4 py-3 mb-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" class="shrink-0">
                                         <g clip-path="url(#clip0_bulk_preview)">
                                             <path fill-rule="evenodd" clip-rule="evenodd" d="M12.1484 9.31989L9.31995 12.1483L19.9265 22.7549L22.755 19.9265L12.1484 9.31989ZM12.1484 10.7341L10.7342 12.1483L13.5626 14.9767L14.9768 13.5625L12.1484 10.7341Z" fill="#6d28d9"/>
@@ -214,7 +214,7 @@
                                         <!-- Locale Header -->
                                         <div class="flex items-center bg-gray-50 dark:bg-cherry-800 px-4 py-2.5 border-b border-gray-200 dark:border-cherry-700">
                                             <span class="inline-flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-gray-300">
-                                                <span class="inline-block w-2 h-2 rounded-full bg-violet-500"></span>
+                                                <span class="inline-block w-2 h-2 rounded-full bg-primary-500"></span>
                                                 @{{ locale }}
                                             </span>
                                         </div>
@@ -234,14 +234,14 @@
                                                     v-model="translatedField.content"
                                                     :name="translatedField.field + '_' + locale"
                                                     rows="3"
-                                                    class="w-full text-sm text-gray-700 dark:text-gray-300 bg-transparent border border-gray-200 dark:border-cherry-700 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500 resize-y"
+                                                    class="w-full text-sm text-gray-700 dark:text-gray-300 bg-transparent border border-gray-200 dark:border-cherry-700 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 resize-y"
                                                 ></textarea>
                                                 <input
                                                     v-else
                                                     v-model="translatedField.content"
                                                     type="text"
                                                     :name="translatedField.field + '_' + locale"
-                                                    class="w-full text-sm text-gray-700 dark:text-gray-300 bg-transparent border border-gray-200 dark:border-cherry-700 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-violet-500 focus:border-violet-500"
+                                                    class="w-full text-sm text-gray-700 dark:text-gray-300 bg-transparent border border-gray-200 dark:border-cherry-700 rounded-md p-2 focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500"
                                                 />
                                             </div>
                                         </div>

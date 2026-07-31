@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Produktdatablad',
+                'lede'              => 'Referansespesifikasjon for demokatalogen. Verdiene gjelder alle produkter i denne familien med mindre produktsiden sier noe annet.',
+                'family-code'       => 'Familiekode',
+                'compliance'        => 'Samsvar',
+                'compliance-value'  => 'CE-merket; RoHS- og REACH-erklæringer er tilgjengelige på forespørsel.',
+                'spare-parts'       => 'Reservedeler',
+                'spare-parts-value' => 'Slitedeler på lager i ti år fra siste produksjonsdato.',
+                'packaging'         => 'Emballasje',
+                'packaging-value'   => 'Plastfri emballasje, FSC-sertifisert kartong, trykt med mineraloljefri farge.',
+                'footer'            => 'Generert av UnoPim for demonstrasjonsformål.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standard',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim-oppgradering',
+        'complete'              => 'Oppgraderingen er fullført. Applikasjonen er tilbake på nett.',
+        'aborted'               => 'Oppgraderingen ble avbrutt. Ingenting ble endret.',
+        'confirm'               => 'Applikasjonen settes i vedlikeholdsmodus og databasen migreres. Fortsette?',
+        'dry-run-complete'      => 'Prøvekjøringen er fullført. Ingenting ble endret.',
+        'preflight-failed'      => ':count kontroll(er) mislyktes. Oppgraderingen ble ikke startet, og ingenting ble endret.',
+        'preflight-failed-hint' => 'Løs punktene ovenfor og kjør kommandoen på nytt. Den forrige utgivelsen betjener fortsatt trafikken.',
+        'verify-failed'         => ':count verifisering(er) mislyktes. Applikasjonen er satt i vedlikeholdsmodus.',
+        'migrate-failed'        => 'Migreringen mislyktes: :error',
+        'step-failed'           => 'Trinnet :command mislyktes med avslutningskode :code.',
+        'phase'                 => [
+            'preflight' => 'Fase 1 av 5 — Forhåndskontroller',
+            'drift'     => 'Fase 2 av 5 — Konfigurasjonsavvik',
+            'sizing'    => 'Fase 3 av 5 — Estimert vedlikeholdsvindu',
+            'execute'   => 'Fase 4 av 5 — Migrering',
+            'verify'    => 'Fase 5 av 5 — Verifisering',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP-versjon',
+            'php-version-detail'         => 'krever :required, fant :found',
+            'php-version-remedy'         => 'Oppgrader PHP til :required eller nyere før du fortsetter.',
+            'extensions'                 => 'PHP-utvidelser',
+            'extensions-remedy'          => 'Installer de manglende utvidelsene og start PHP-FPM på nytt.',
+            'database'                   => 'Databasetilkobling',
+            'database-detail'            => ':driver, database :database, prefiks :prefix',
+            'database-remedy'            => 'Kontroller databaseopplysningene i .env-filen din.',
+            'source-version'             => 'Installert utgivelse',
+            'source-version-detail'      => ':version eller nyere',
+            'source-version-unsupported' => 'eldre enn :version',
+            'source-version-remedy'      => 'Oppgrader først til :version, og kjør deretter denne kommandoen på nytt.',
+            'pending-migrations'         => 'Ventende migreringer',
+            'pending-migrations-detail'  => ':count skal kjøres',
+            'pending-migrations-none'    => 'ingen — databasen er allerede oppdatert',
+            'pending-migrations-remedy'  => 'Migreringstabellen kunne ikke leses. Kontroller databaserettighetene.',
+            'active-jobs'                => 'Import- og eksportjobber',
+            'active-jobs-detail'         => ':count kjører fortsatt',
+            'active-jobs-remedy'         => 'Vent til jobbene som kjører er ferdige, eller stopp køarbeiderne, og kjør deretter kommandoen på nytt.',
+            'writable-paths'             => 'Skrivbare mapper',
+            'writable-paths-remedy'      => 'Gi webserverbrukeren skrivetilgang til mappene ovenfor.',
+            'disk-space'                 => 'Diskplass',
+            'disk-space-detail'          => ':free ledig, :required påkrevd',
+            'disk-space-unknown'         => 'kunne ikke fastslås',
+            'disk-space-remedy'          => 'Frigjør diskplass, eller bruk --skip-backup hvis databasen sikkerhetskopieres et annet sted.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Ingen konfigurasjonsavvik funnet.',
+            'no-previous' => 'Ingen tidligere utgivelsesmappe oppgitt, så konfigurasjonsfiler og Composer-avhengigheter kan ikke sammenlignes. Bruk --from=/sti/til/gammel/utgivelse for en fullstendig rapport.',
+            'env-missing' => 'Miljønøkler denne utgivelsen legger til, som mangler i .env-filen din:',
+            'env-removed' => 'Miljønøkler denne utgivelsen fjerner, som fortsatt er satt i .env-filen din:',
+            'config'      => 'Konfigurasjonsfiler som skiller seg fra den forrige utgivelsen din. Legg inn dine lokale endringer på nytt:',
+            'composer'    => 'Composer-avhengigheter du har lagt til, som mangler i denne utgivelsen:',
+            'manual'      => 'Disse filene er dine. Slå dem sammen manuelt før du slipper på trafikk — oppgraderingen overskriver dem aldri.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabell',
+            'rows'            => 'Rader',
+            'pending'         => ':count migrering(er) vil bli kjørt.',
+            'window'          => 'Estimert vedlikeholdsvindu: omtrent :minutes minutt(er).',
+            'nothing-pending' => 'Ingen migreringer venter.',
+            'irreversible'    => 'Disse migreringene skriver om data og kan ikke angres. Bare gjenoppretting av databasesikkerhetskopien fører tilbake:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Databasesikkerhetskopi skrevet til :path',
+            'skipped'            => 'Databasesikkerhetskopi ble hoppet over. Sørg for å ha en sikkerhetskopi som kan gjenopprettes før du fortsetter.',
+            'failed'             => 'Databasesikkerhetskopien mislyktes: :error',
+            'empty'              => 'Databasesikkerhetskopien var tom og er forkastet.',
+            'abort'              => 'Oppgraderingen ble stoppet fordi det ikke finnes en verifisert sikkerhetskopi. Ingenting ble endret.',
+            'unsupported-driver' => 'Det finnes ingen sikkerhetskopieringskommando for driveren :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'hoppet over, tabellen finnes ikke',
+            'associations'           => 'Produktkoblinger',
+            'associations-none'      => 'ingen eldre koblinger å migrere',
+            'associations-detail'    => ':migrated av :legacy produkt(er) migrert',
+            'associations-remedy'    => 'Eldre koblingsdata ble funnet, men ingenting ble migrert. Gjenopprett sikkerhetskopien og rapporter dette.',
+            'robot-users'            => 'Eiere av API-integrasjoner',
+            'robot-users-detail'     => ':count integrasjon(er) eies fortsatt av en person',
+            'robot-users-remedy'     => 'Kjør migreringen på nytt, eller tildel integrasjonene på nytt fra administrasjonspanelet.',
+            'category-bounds'        => 'Integriteten til kategoritreet',
+            'category-bounds-detail' => ':count kategorinode(r) har ugyldige grenser',
+            'category-bounds-remedy' => 'Bygg opp kategoritreet på nytt før du slipper på trafikk.',
+            'scrubbed-audits'        => 'Fjerning av påloggingsdetaljer',
+            'scrubbed-audits-detail' => ':count revisjonspost(er) inneholder fortsatt påloggingsdetaljer',
+            'scrubbed-audits-remedy' => 'Kjør migreringen på nytt før du slipper på trafikk. Disse postene eksponerer lagrede påloggingsdetaljer.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Oppgraderingen ble ikke fullført. Applikasjonen er i vedlikeholdsmodus.',
+            'body'    => 'Slik ruller du tilbake: gjenopprett databasesikkerhetskopien, pek webserveren tilbake til den forrige utgivelsesmappen, og kjør "php artisan up" der.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Ignorerer --with-reindex: :count produkt(er) overstiger grensen på :limit produkter for en umiddelbar gjenoppbygging.',
+            'deferred'  => 'Elasticsearch ble ikke reindeksert. Med :count produkt(er) tar dette lengre tid enn selve oppgraderingen, og søk faller tilbake på databasen til det er ferdig. Kjør dette når nettstedet er tilbake på nett:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -145,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Tillatte valutaer',
                 'allowed-locales'     => 'Tillatte lokale innstillinger',
+                'app-key-missing'     => 'Ingen .env-fil ble funnet, og APP_KEY er ikke satt i servermiljøet. Installasjonsprogrammet skriver aldri miljøkonfigurasjon — opprett en .env manuelt (kopier .env.example), eller konfigurer variablene i hostingpanelet ditt, og prøv igjen.',
+                'env-readonly-note'   => 'Disse verdiene leses fra servermiljøet ditt (.env). Installasjonsprogrammet skriver aldri miljøkonfigurasjon — for å endre noe, rediger .env-filen (eller variablene i hostingpanelet) og last inn denne siden på nytt.',
                 'application-name'    => 'Applikasjonsnavn',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Kinesisk Yuan (CNY)',
@@ -197,7 +318,7 @@ return [
                 'turkish-lira'        => 'Tyrkisk Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainsk Hryvnia (UAH)',
                 'usd'                 => 'Amerikansk Dollar (USD)',
-                'warning-message'     => 'Advarsel! Standard lokalitet og valuta kan ikke endres senere.',
+                'warning-message'     => 'Lokaliteten og valutaen du velger her, blir de innledende standardverdiene for kanalen og administratorkontoen. Du kan når som helst aktivere flere lokaliteter og valutaer, eller endre disse standardverdiene, fra administrasjonsinnstillingene.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Installerer UnoPim',
@@ -221,6 +342,8 @@ return [
                 'package-installed'  => '✓ :label installert',
                 'package-failed'     => '✗ :label mislyktes: :message',
                 'package-manual'     => '! :label kan ikke installeres automatisk på denne serveren (ingen shell-tilgang). Kjør dette fra en maskin med shell-tilgang:',
+                'install-failed'     => '✗ Installasjonen mislyktes. Se storage/logs/laravel.log for detaljer.',
+                'stream-interrupted' => '! Forbindelsen til installasjonsprogrammet ble brutt. Installasjonen kan fortsatt være i ferd med å fullføres — vent et øyeblikk, og last deretter inn denne siden på nytt.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Administratorpanel',

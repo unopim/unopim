@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Eksempelfil',
+        'variants'      => 'Eksempel med varianter',
+        'multi-locale'  => 'Eksempel med flere sprog',
+        'delete'        => 'Eksempel på sletning',
+        'custom-fields' => 'Eksempel med brugerdefinerede felter',
+        'with-images'   => 'Eksempel med billeder (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produkter',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Værdien :code skal være unik.',
                     'incorrect-family-for-variant'             => 'Familien skal være den samme som forældrefamilien',
                     'parent-not-exist'                         => 'Forælderen findes ikke.',
+                    'variant-structure-not-found'              => 'Variantstrukturen :code findes ikke for denne attributfamilie.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Attributkoden :code er allerede i brug.',
                     'code_not_found_to_delete'             => 'Attributkode blev ikke fundet til sletning.',
                     'code_is_system_and_cannot_be_deleted' => 'Systemattribut kan ikke slettes.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Produktassociationer',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Feltet \'%s\' er påkrævet.',
+                    'self-link-not-allowed'       => 'Produktet \'%s\' kan ikke tilknyttes sig selv.',
+                    'sku-not-found'               => 'Produkt med SKU \'%s\' blev ikke fundet.',
+                    'related-sku-not-found'       => 'Relateret produkt med SKU \'%s\' blev ikke fundet.',
+                    'association-type-not-found'  => 'Associationstypen \'%s\' findes ikke eller er inaktiv.',
+                    'invalid-field-value'         => 'Ugyldig værdi angivet for et associationsfelt.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Denne eksport er for stor til at køre: anslået :rows rækker × :columns kolonner (~:estimated) overstiger den tilgængelige plads (~:available). Indsnævr eksporten ved at vælge færre kanaler/sprog (og attributter), og prøv igen.',
         'fields'           => [
-            'file-format'         => 'Filformat',
-            'with-media'          => 'Med medier',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Filformat',
+            'with-media'             => 'Med medier',
+            'with-associations'      => 'Med tilknytninger',
+            'with-associations-info' => 'Inkluder de gamle SKU-listekolonner (up_sells, cross_sells og related_products) i eksporten',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Attributter',
         ],
+        'product-associations' => [
+            'title' => 'Produktassociationer',
+        ],
         'attribute-groups' => [
             'title' => 'Attributgrupper',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'Job udførelsen startet',
         'completed' => 'Job udførelsen afsluttet',
+        'stalled'   => 'Jobbet holdt op med at svare i mere end :minutes minutter og blev markeret som mislykket. Arbejdsprocessen blev sandsynligvis afbrudt.',
+        'reaped'    => ':count fastlåste job blev markeret som mislykkede.',
     ],
 ];

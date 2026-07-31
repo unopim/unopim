@@ -9,11 +9,10 @@ use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\CategoryFieldDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryFieldRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateCategoryFieldRequest;
 use Webkul\Category\Repositories\CategoryFieldOptionRepository;
 use Webkul\Category\Repositories\CategoryFieldRepository;
-use Webkul\Category\Rules\FieldTypes;
-use Webkul\Category\Rules\NotSupportedFields;
-use Webkul\Category\Rules\ValidationTypes;
 use Webkul\Core\Rules\Code;
 
 class CategoryFieldController extends ApiController
@@ -55,35 +54,9 @@ class CategoryFieldController extends ApiController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(StoreCategoryFieldRequest $request): JsonResponse
     {
-        $requestData = request()->all();
-
-        $rules = [
-            'type' => [
-                'required',
-                new FieldTypes,
-            ],
-            'code' => [
-                'required',
-                sprintf('unique:%s,code', 'category_fields'),
-                new Code,
-                new NotSupportedFields,
-            ],
-        ];
-
-        if (isset($requestData['validation']) && $requestData['validation']) {
-            $rules['validation'] = [new ValidationTypes];
-        }
-
-        $validator = $this->codeRequireWithUniqueValidator(
-            'category_fields',
-            $rules
-        );
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
+        $requestData = $request->all();
 
         $requestData = $this->setLabels($requestData);
         $requestData = $this->setDefaultValues($requestData);
@@ -107,21 +80,21 @@ class CategoryFieldController extends ApiController
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $code): JsonResponse
+    public function update(UpdateCategoryFieldRequest $request, string $code): JsonResponse
     {
         $categoryField = $this->categoryFieldRepository->findOneByField('code', $code);
         if (! $categoryField) {
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $code]));
         }
 
-        $immutable = array_intersect(['code', 'type', 'value_per_locale', 'is_unique'], array_keys(request()->all()));
+        $immutable = array_intersect(['code', 'type'], array_keys(request()->all()));
         if (! empty($immutable)) {
             return $this->validateErrorResponse([
                 'immutable' => [trans('admin::app.catalog.category_fields.immutable-fields', ['fields' => implode(', ', $immutable)])],
             ]);
         }
 
-        $requestData = request()->except(['code', 'type', 'value_per_locale', 'is_unique']);
+        $requestData = request()->except(['code', 'type']);
         $requestData = $this->setLabels($requestData);
         $requestData['enable_wysiwyg'] = $categoryField->type == 'textarea' ? $requestData['enable_wysiwyg'] : 0;
         $id = $categoryField->id;
@@ -135,6 +108,42 @@ class CategoryFieldController extends ApiController
                 trans('admin::app.catalog.category_fields.update-success'),
                 Response::HTTP_OK
             );
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
+     * Partially update the specified resource.
+     */
+    public function partialUpdate(UpdateCategoryFieldRequest $request, string $code): JsonResponse
+    {
+        return $this->update($request, $code);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $categoryField = $this->categoryFieldRepository->findOneByField('code', $code);
+        if (! $categoryField) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $code]));
+        }
+
+        if (! $categoryField->canBeDeleted()) {
+            return $this->validateErrorResponse(
+                ['code' => [trans('admin::app.catalog.category_fields.index.datagrid.delete-failed')]],
+                trans('admin::app.catalog.category_fields.index.datagrid.delete-failed')
+            );
+        }
+
+        try {
+            Event::dispatch('catalog.category_field.delete.before', $categoryField->id);
+            $this->categoryFieldRepository->delete($categoryField->id);
+            Event::dispatch('catalog.category_field.delete.after', $categoryField->id);
+
+            return $this->successResponse(trans('admin::app.catalog.category_fields.delete-success'));
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
@@ -182,7 +191,7 @@ class CategoryFieldController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $fieldCode]));
         }
 
-        $requestData = request()->all();
+        $requestData = $this->normalizeOptionsPayload(request()->all());
 
         try {
             $errors = [];
@@ -225,7 +234,7 @@ class CategoryFieldController extends ApiController
             return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $fieldCode]));
         }
 
-        $requestData = request()->all();
+        $requestData = $this->normalizeOptionsPayload(request()->all());
 
         try {
             $errors = [];
@@ -257,6 +266,51 @@ class CategoryFieldController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Delete a single option of the category field, identified by its code.
+     */
+    public function deleteOption(string $fieldCode, string $optionCode): JsonResponse
+    {
+        $categoryField = $this->categoryFieldRepository->findOneByField('code', $fieldCode);
+        if (! $categoryField) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.category_fields.not-found', ['code' => $fieldCode]));
+        }
+
+        $option = $this->categoryFieldOptionRepository->findOneWhere([
+            'code'              => $optionCode,
+            'category_field_id' => $categoryField->id,
+        ]);
+        if (! $option) {
+            return $this->modelNotFoundResponse(
+                trans('admin::app.catalog.category-fields-options.update-unknown-code', ['code' => $optionCode])
+            );
+        }
+
+        try {
+            $this->categoryFieldOptionRepository->delete($option->id);
+
+            return $this->successResponse(trans('admin::app.catalog.category-fields-options.delete-success'));
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
+     * Normalizes the options payload so a single option object is treated the
+     * same as a list containing one option.
+     *
+     * @param  array<mixed>  $requestData
+     * @return array<int, array<string, mixed>>
+     */
+    private function normalizeOptionsPayload(array $requestData): array
+    {
+        if (empty($requestData) || array_is_list($requestData)) {
+            return $requestData;
+        }
+
+        return [$requestData];
     }
 
     /**

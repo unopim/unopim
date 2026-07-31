@@ -4,18 +4,16 @@
     </x-slot>
 
     <div class="max-w-[1240px]">
-        <div class="grid gap-1.5 mb-5">
-            <p class="text-xl font-bold !leading-normal text-zinc-800 dark:text-slate-50">
-                {{ trans('admin::app.help.index.title') }}
-            </p>
-
-            <p class="max-w-[620px] text-sm !leading-normal text-zinc-600 dark:text-slate-300">
-                {{ trans('admin::app.help.index.subtitle') }}
-            </p>
-        </div>
+        <x-admin::heading
+            :title="trans('admin::app.help.index.title')"
+            :subtitle="trans('admin::app.help.index.subtitle')"
+            as="h1"
+            size="xl"
+            class="mb-5"
+        />
 
         @foreach (config('help.sections') as $section)
-            <p class="{{ $loop->first ? 'mt-0' : 'mt-[34px]' }} mb-[14px] text-[12px] font-bold uppercase tracking-[0.08em] text-[#908BA6]">
+            <p class="{{ $loop->first ? 'mt-0' : 'mt-[34px]' }} mb-[14px] text-[12px] font-bold uppercase tracking-[0.08em] text-gray-500">
                 {{ trans($section['title']) }}
             </p>
 
@@ -36,7 +34,7 @@
 
         @php($cta = config('help.cta'))
 
-        <div class="flex flex-wrap items-center gap-[18px] mt-8 px-[26px] py-[22px] rounded-2xl text-white bg-gradient-to-r from-[#5B41D6] to-[#8367F0]">
+        <div class="flex flex-wrap items-center gap-[18px] mt-8 px-[26px] py-[22px] rounded-2xl text-white bg-gradient-to-r from-primary-700 to-primary-500">
             <span class="flex items-center justify-center w-[46px] h-[46px] rounded-xl bg-white/[0.16] shrink-0">
                 {!! $cta['icon'] !!}
             </span>
@@ -55,7 +53,7 @@
                 href="{{ $cta['url'] }}"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="shrink-0 inline-flex items-center gap-2 h-[42px] px-5 rounded-[10px] bg-white text-[#5B41D6] text-[14px] font-bold no-underline transition-all hover:-translate-y-px hover:shadow-[0_8px_22px_rgba(0,0,0,0.18)]"
+                class="shrink-0 inline-flex items-center gap-2 h-[42px] px-5 rounded-[10px] bg-white text-primary-700 text-[14px] font-bold no-underline transition-all hover:-translate-y-px hover:shadow-lg"
             >
                 {{ trans($cta['label']) }}
 

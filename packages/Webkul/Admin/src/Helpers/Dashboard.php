@@ -58,6 +58,25 @@ class Dashboard
     }
 
     /**
+     * Invalidate the catalog totals cache (categories + products) so the
+     * dashboard reflects a category create/update/delete immediately.
+     */
+    public static function invalidateCatalogCache(): void
+    {
+        Cache::forget('dashboard.total_catalogs');
+    }
+
+    /**
+     * Invalidate the configuration totals cache (attributes, attribute groups,
+     * attribute families, locales, channels, currencies) so the dashboard
+     * reflects a change to any of those immediately.
+     */
+    public static function invalidateConfigurationCache(): void
+    {
+        Cache::forget('dashboard.total_configurations');
+    }
+
+    /**
      * This method calculates and returns the total number of various catalog entities.
      *
      * @return array An associative array containing the total count of each catalog entity.
@@ -131,14 +150,12 @@ class Dashboard
                 ->where('updated_at', '>=', $startDate)
                 ->whereColumn('updated_at', '!=', 'created_at')
                 ->groupBy(DB::raw('DATE(updated_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
             $creationRaw = DB::table('products')
                 ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
                 ->where('created_at', '>=', $startDate)
                 ->groupBy(DB::raw('DATE(created_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
             // Fill missing days with 0
@@ -351,7 +368,6 @@ class Dashboard
         $jobSummary = DB::table('job_track')
             ->select('state', DB::raw('COUNT(*) as count'))
             ->groupBy('state')
-            ->get()
             ->pluck('count', 'state')
             ->toArray();
 

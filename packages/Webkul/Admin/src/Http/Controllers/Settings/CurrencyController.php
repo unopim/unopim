@@ -5,11 +5,12 @@ namespace Webkul\Admin\Http\Controllers\Settings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\CurrencyDataGrid;
+use Webkul\Admin\Helpers\MassActionCounter;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\CurrencyForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
 use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Core\Repositories\CurrencyRepository;
-use Webkul\Core\Rules\Code;
 
 class CurrencyController extends Controller
 {
@@ -37,17 +38,8 @@ class CurrencyController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(CurrencyForm $request): JsonResponse
     {
-        $messages = [
-            'code.required' => 'The code field is required.',
-            'code.unique'   => 'The code must be unique.',
-        ];
-
-        $this->validate(request(), [
-            'code' => 'required|min:3|max:3|unique:currencies,code',
-        ], $messages);
-
         $this->currencyRepository->create(request()->only([
             'code',
             'symbol',
@@ -63,9 +55,13 @@ class CurrencyController extends Controller
     /**
      * Currency Details
      */
-    public function edit(int $id): JsonResponse
+    public function edit(int $id): View|JsonResponse
     {
         $currency = $this->currencyRepository->findOrFail($id);
+
+        if (! request()->expectsJson()) {
+            return view('admin::settings.currencies.edit', compact('currency'));
+        }
 
         return new JsonResponse($currency);
     }
@@ -73,14 +69,9 @@ class CurrencyController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(): JsonResponse
+    public function update(CurrencyForm $request): JsonResponse
     {
         $id = request('id');
-
-        $this->validate(request(), [
-            'code'      => ['required', 'unique:currencies,code,'.$id, new Code],
-            'status'    => 'boolean',
-        ]);
 
         if (! request()->status && $this->currencyRepository->checkCurrencyBeingUsed($id)) {
             return new JsonResponse([
@@ -97,7 +88,8 @@ class CurrencyController extends Controller
         ]), $id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.currencies.index.update-success'),
+            'message'      => trans('admin::app.settings.currencies.index.update-success'),
+            'redirect_url' => route('admin.settings.currencies.index'),
         ]);
     }
 
@@ -191,7 +183,9 @@ class CurrencyController extends Controller
     {
         $currencyIds = $massUpdateRequest->input('indices');
 
-        $value = $massUpdateRequest->input('value');
+        $value = (int) $massUpdateRequest->input('value');
+
+        $counter = new MassActionCounter;
 
         foreach ($currencyIds as $currencyId) {
             $currency = $this->currencyRepository->find($currencyId);
@@ -201,6 +195,8 @@ class CurrencyController extends Controller
             }
 
             if ($currency->isCurrencyBeingUsed() && $value === 0) {
+                $counter->skipped();
+
                 continue;
             }
 
@@ -208,6 +204,8 @@ class CurrencyController extends Controller
                 $currency->status = $value;
 
                 $currency->save();
+
+                $counter->succeeded();
             } catch (\Exception $e) {
                 report($e);
 
@@ -217,8 +215,11 @@ class CurrencyController extends Controller
             }
         }
 
-        return new JsonResponse([
-            'message' => trans('admin::app.settings.currencies.index.update-success'),
-        ]);
+        return $this->respondMassAction(
+            $counter,
+            'admin::app.settings.currencies.index.can-not-disable-error',
+            'admin::app.settings.currencies.index.partial-update-success',
+            'admin::app.settings.currencies.index.update-success',
+        );
     }
 }

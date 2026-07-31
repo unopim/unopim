@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -34,10 +35,93 @@ class ProductController extends ApiController
     ) {}
 
     /**
+     * Resolves + validates the optional rich, unified `associations` payload
+     * (same shape `AbstractType::prepareRichAssociations()` consumes: `{
+     * <typeCode>: [ {sku, additional_data?} ] }`) via the product's type
+     * instance, BEFORE any product row is written by the caller. An invalid
+     * link's `additional_data` throws a `ValidationException` right here --
+     * caught by the caller's existing `catch (\Exception $e) {
+     * storeExceptionLog($e) }` as a 422, with nothing persisted -- mirroring
+     * `AbstractType::update()`'s "validate before save" guarantee for this
+     * write path, which persists product data directly on the model instead
+     * of going through that method.
+     *
+     * Returns null when the payload carries no non-empty rich `associations`
+     * key: callers keep relying on the legacy ValueSetter +
+     * `syncAssociationLinks()` path, byte-unchanged.
+     *
+     * @return array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}|null
+     */
+    protected function resolveRichAssociations(array $data, Product $product): ?array
+    {
+        $associations = $data[ProductAbstractType::ASSOCIATION_VALUES_KEY] ?? null;
+
+        if (! is_array($associations) || empty($associations)) {
+            return null;
+        }
+
+        return $product->getTypeInstance()->prepareRichAssociations($associations, $product);
+    }
+
+    /**
+     * Validates the rich `associations` payload BEFORE any product row is
+     * written by a CREATE-path caller (`SimpleProductController::store()`
+     * -- both its plain-create branch and its `parent`-variant branch that
+     * persists via `createOrUpdateVariant()` -- and
+     * `ConfigurableProductController::store()`). Without this, an invalid
+     * link's `additional_data` would only be caught later, inside
+     * `updateProduct()`'s own `resolveRichAssociations()` call, by which
+     * point `$this->productRepository->create($data)` (or the variant
+     * create) has already committed a bare sku/type/family row -- and
+     * since `StoreSimpleProductRequest`/`StoreConfigurableProductRequest`
+     * enforce `values.common.sku` unique, the client can't even retry the
+     * same sku, permanently locking it.
+     *
+     * Reuses the existing `resolveRichAssociations()` (and therefore
+     * `AbstractType::prepareRichAssociations()`) against a throwaway,
+     * unsaved `Product` -- with only `type` set, which is all
+     * `getTypeInstance()` needs to resolve the type class. Safe because
+     * `prepareRichAssociations()` only dereferences `$product->id` for
+     * self-link exclusion (`$relatedProductId === (int) $product->id`),
+     * a harmless no-op when `id` is null. When the payload carries no
+     * non-empty rich `associations` key, `resolveRichAssociations()`
+     * short-circuits before ever touching `$product`, so this is a no-op
+     * for the legacy create path -- byte-unchanged.
+     *
+     * @throws ValidationException
+     */
+    protected function validateRichAssociationsBeforeCreate(array $data): void
+    {
+        $this->resolveRichAssociations($data, new Product(['type' => $data['type'] ?? null]));
+    }
+
+    /**
+     * Rich-syncs the resolved unified `associations` payload (from
+     * `resolveRichAssociations()`) to `product_associations` AFTER the
+     * product row has been saved. The caller must pass the SAME sections
+     * (`array_keys($data['associations'])`) to `syncAssociationLinks()`'s
+     * `$excludeSections` so a type is never synced twice for the same
+     * request -- mirroring `AbstractType::update()`'s `$excludeSections`
+     * handling.
+     *
+     * @param  array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}|null  $richAssociations
+     */
+    protected function applyRichAssociations(Product $product, ?array $richAssociations): void
+    {
+        if (! $richAssociations || ! $product->id) {
+            return;
+        }
+
+        [, $resolvedRichAssociations] = $richAssociations;
+
+        $product->getTypeInstance()->syncRichAssociations($product->id, $resolvedRichAssociations);
+    }
+
+    /**
      * Updates a product in the system using the provided data and ID.
      *
      * @param  array  $data  The data to be used for updating the product.
-     * @param  Product  $id  The unique identifier of the product to be updated.
+     * @param  Product  $product  The product to be updated.
      * @return Product The updated product model.
      */
     protected function updateProduct(array $data, Product $product): Product
@@ -88,6 +172,11 @@ class ProductController extends ApiController
             $product->status = (int) $data['status'];
         }
 
+        // Resolved + validated BEFORE the product row is touched below, so an
+        // invalid link's `additional_data` aborts here with nothing
+        // persisted (see `resolveRichAssociations()`).
+        $richAssociations = $this->resolveRichAssociations($data, $product);
+
         $wasDirty = $product->isDirty();
 
         if ($wasDirty) {
@@ -99,6 +188,14 @@ class ProductController extends ApiController
         }
 
         $product->refresh();
+
+        if ($product->id) {
+            $excludedSections = $richAssociations ? array_keys($data[ProductAbstractType::ASSOCIATION_VALUES_KEY]) : [];
+
+            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
+
+            $this->applyRichAssociations($product, $richAssociations);
+        }
 
         if ($wasDirty) {
             Event::dispatch('catalog.product.update.after', $product);
@@ -170,9 +267,22 @@ class ProductController extends ApiController
             $product->values = $updatedValues;
         }
 
+        // Resolved + validated BEFORE `saveOrFail()` below, so an invalid
+        // link's `additional_data` aborts here with nothing persisted (see
+        // `resolveRichAssociations()`).
+        $richAssociations = $this->resolveRichAssociations($data, $product);
+
         $wasDirty = $product->isDirty();
 
         $product->saveOrFail();
+
+        if ($product->id) {
+            $excludedSections = $richAssociations ? array_keys($data[ProductAbstractType::ASSOCIATION_VALUES_KEY]) : [];
+
+            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
+
+            $this->applyRichAssociations($product, $richAssociations);
+        }
 
         if ($wasDirty) {
             Event::dispatch('catalog.product.update.after', $product);
@@ -217,7 +327,11 @@ class ProductController extends ApiController
         if (isset($data['variants'])) {
             foreach ($data['variants'] as $variantId => $variantData) {
                 if (Str::contains($variantId, 'variant_')) {
-                    $productInstance->createVariant($product, $productSuperAttributes, $variantData);
+                    $variant = $productInstance->createVariant($product, $productSuperAttributes, $variantData);
+
+                    if ($variant) {
+                        Event::dispatch('catalog.product.create.after', $variant);
+                    }
                 } else {
                     if (is_numeric($index = $previousVariantIds->search($variantId))) {
                         $previousVariantIds->forget($index);
@@ -296,7 +410,7 @@ class ProductController extends ApiController
     /**
      * Prepares variant data for product update.
      *
-     * @param  Model  $product  The parent product model.
+     * @param  Product  $product  The parent product model.
      * @param  array  $data  The input data containing variant and super attribute information.
      * @param  string  $sku  The SKU of the product.
      * @return array The prepared variant data array.
@@ -316,7 +430,7 @@ class ProductController extends ApiController
             ];
         }
 
-        $existVariants = $product->variants()->get()?->toArray();
+        $existVariants = $product->variants()->lazyById();
         foreach ($existVariants as $variant) {
             $commonValue = ['sku' => $variant['sku']];
             foreach ($data['super_attributes'] as $key => $attrCode) {

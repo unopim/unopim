@@ -50,7 +50,7 @@ class ManageRoles implements PimTool
                         ->select('id', 'name', 'description', 'permission_type')
                         ->get();
 
-                    $rolesWithCount = $roles->map(function ($role) {
+                    $rolesWithCount = $roles->map(function ($role): array {
                         $userCount = DB::table('admins')->where('role_id', $role->id)->count();
 
                         return [
@@ -71,7 +71,7 @@ class ManageRoles implements PimTool
                         return json_encode(['error' => "Role '{$name}' not found"]);
                     }
 
-                    $permissions = json_decode($role->permissions, true) ?? [];
+                    $permissions = json_decode((string) $role->permissions, true) ?? [];
 
                     return json_encode([
                         'role' => [

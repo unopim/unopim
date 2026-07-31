@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Tệp mẫu',
+        'variants'      => 'Ví dụ biến thể',
+        'multi-locale'  => 'Ví dụ đa ngôn ngữ',
+        'delete'        => 'Ví dụ xóa',
+        'custom-fields' => 'Ví dụ trường tùy chỉnh',
+        'with-images'   => 'Mẫu kèm hình ảnh (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Các sản phẩm',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Giá trị :code phải duy nhất.',
                     'incorrect-family-for-variant'             => 'Gia đình phải giống như gia đình chính',
                     'parent-not-exist'                         => 'Cha mẹ không tồn tại.',
+                    'variant-structure-not-found'              => 'Cấu trúc biến thể :code không tồn tại cho họ thuộc tính này.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
                     'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
                     'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Liên kết sản phẩm',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Trường \'%s\' là bắt buộc.',
+                    'self-link-not-allowed'       => 'Sản phẩm \'%s\' không thể tự liên kết với chính nó.',
+                    'sku-not-found'               => 'Không tìm thấy sản phẩm có SKU \'%s\'.',
+                    'related-sku-not-found'       => 'Không tìm thấy sản phẩm liên kết có SKU \'%s\'.',
+                    'association-type-not-found'  => 'Loại liên kết \'%s\' không tồn tại hoặc không hoạt động.',
+                    'invalid-field-value'         => 'Giá trị không hợp lệ được cung cấp cho trường liên kết.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
         'fields'           => [
-            'file-format'         => 'Định dạng tệp',
-            'with-media'          => 'Kèm phương tiện',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Định dạng tệp',
+            'with-media'             => 'Kèm phương tiện',
+            'with-associations'      => 'Kèm liên kết',
+            'with-associations-info' => 'Bao gồm các cột danh sách SKU cũ (up_sells, cross_sells và related_products) trong tệp xuất',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Thuộc tính',
         ],
+        'product-associations' => [
+            'title' => 'Liên kết sản phẩm',
+        ],
         'attribute-groups' => [
             'title' => 'Nhóm thuộc tính',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'Bắt đầu công việc',
         'completed' => 'Công việc đã hoàn thành',
+        'stalled'   => 'Tác vụ đã ngừng phản hồi hơn :minutes phút và được đánh dấu là thất bại. Tiến trình chạy nó nhiều khả năng đã bị dừng.',
+        'reaped'    => 'Đã đánh dấu :count tác vụ bị treo là thất bại.',
     ],
 ];

@@ -23,11 +23,9 @@ class IdFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         if (! in_array($property, $this->supportedProperties)) {
             throw new \InvalidArgumentException(
@@ -47,7 +45,7 @@ class IdFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::NOT_IN:
@@ -57,7 +55,7 @@ class IdFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::whereNot($clause);
+                $this->queryBuilder->whereNot($clause);
                 break;
 
             case FilterOperators::NOT_EQUAL:
@@ -67,7 +65,7 @@ class IdFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::whereNot($clause);
+                $this->queryBuilder->whereNot($clause);
                 break;
         }
 

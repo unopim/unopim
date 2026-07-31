@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeOption;
 
+/**
+ * @extends Factory<Attribute>
+ */
 class AttributeFactory extends Factory
 {
     /**
@@ -49,10 +52,10 @@ class AttributeFactory extends Factory
         ];
 
         return [
-            'code'              => 'attr_'.$this->faker->unique()->regexify('[a-z]{5}[0-9]{3}'),
+            'code'              => 'attr_'.fake()->unique()->regexify('[a-z]{5}[0-9]{3}'),
             'type'              => array_rand($types),
             'validation'        => '',
-            'position'          => $this->faker->randomDigit,
+            'position'          => fake()->randomDigit,
             'is_required'       => false,
             'is_unique'         => false,
             'value_per_locale'  => false,
@@ -63,56 +66,44 @@ class AttributeFactory extends Factory
 
     public function validation_numeric(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'numeric',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'numeric',
+        ]);
     }
 
     public function validation_email(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'email',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'email',
+        ]);
     }
 
     public function validation_decimal(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'decimal',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'decimal',
+        ]);
     }
 
     public function validation_url(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'validation' => 'url',
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'validation' => 'url',
+        ]);
     }
 
     public function required(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_required' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'is_required' => true,
+        ]);
     }
 
     public function unique(): AttributeFactory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'is_unique' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes): array => [
+            'is_unique' => true,
+        ]);
     }
 
     /**
@@ -120,7 +111,7 @@ class AttributeFactory extends Factory
      */
     public function configure()
     {
-        return $this->afterCreating(function (Attribute $attribute) {
+        return $this->afterCreating(function (Attribute $attribute): void {
             if (in_array($attribute->type, ['select', 'multiselect', 'checkbox'])) {
                 AttributeOption::factory()->count(3)->create(['attribute_id' => $attribute->id]);
             }

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webkul\Core\Console\Commands;
 
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
@@ -17,9 +19,8 @@ use Throwable;
  * Ensures every locale directory mirrors the canonical (en_US) structure:
  * same files, same nested keys, consistent placeholders, no orphans.
  */
-class TranslationsChecker extends Command
-{
-    protected $signature = 'unopim:translations:check
+#[Description('Audit translation file integrity across all UnoPim packages (en_US is canonical).')]
+#[Signature('unopim:translations:check
         {--locale= : Audit a single locale against the canonical locale.}
         {--package= : Restrict audit to one package.}
         {--missing-in-code : Detect translation keys referenced in code but absent from lang files.}
@@ -36,25 +37,24 @@ class TranslationsChecker extends Command
         {--strict : Enable all quality checks (placeholder, empty, untranslated, sort, html).}
         {--translate : Use AI to translate absent keys instead of copying English values (requires --fix).}
         {--fix-untranslated : Re-translate keys where locale value is identical to en_US (requires --fix --translate).}
-        {--fallback : When AI translation is unavailable, fall back to copying English values instead of aborting.}';
+        {--fallback : When AI translation is unavailable, fall back to copying English values instead of aborting.}')]
+class TranslationsChecker extends Command
+{
+    private const string CANONICAL_LOCALE = 'en_US';
 
-    protected $description = 'Audit translation file integrity across all UnoPim packages (en_US is canonical).';
+    private const int DIAGNOSTIC_CAP = 10;
 
-    private const CANONICAL_LOCALE = 'en_US';
+    private const array PACKAGE_ROOTS = ['packages/Webkul'];
 
-    private const DIAGNOSTIC_CAP = 10;
+    private const array LANG_CANDIDATES = ['/src/Resources/lang', '/resources/lang'];
 
-    private const PACKAGE_ROOTS = ['packages/Webkul'];
-
-    private const LANG_CANDIDATES = ['/src/Resources/lang', '/resources/lang'];
-
-    private const SOURCE_DIRS = ['/src', '/resources', '/Config', '/Routes'];
+    private const array SOURCE_DIRS = ['/src', '/resources', '/Config', '/Routes'];
 
     /** Minimum character length to flag as untranslated (skip "ID", "OK", etc.). */
-    private const UNTRANSLATED_MIN_LENGTH = 3;
+    private const int UNTRANSLATED_MIN_LENGTH = 3;
 
     /** Single-word values and technical terms are often legitimately identical across languages. */
-    private const UNTRANSLATED_SKIP_PATTERNS = [
+    private const array UNTRANSLATED_SKIP_PATTERNS = [
         '/^[A-Z][a-z]*$/',                // Single capitalized word (e.g., "Type", "Image", "Simple")
         '/^[A-Z]+$/',                      // Acronyms (e.g., "SKU", "API", "URL", "CSV")
         '/^[A-Z][\w]* [A-Z][\w]*$/',      // Two capitalized words (e.g., "Magic AI", "Data Grid")
@@ -68,7 +68,7 @@ class TranslationsChecker extends Command
     ];
 
     /** Map locale codes to human-readable language names for AI translation prompts. */
-    private const LOCALE_NAMES = [
+    private const array LOCALE_NAMES = [
         'ar_AE' => 'Arabic',
         'ca_ES' => 'Catalan',
         'da_DK' => 'Danish',
@@ -103,28 +103,28 @@ class TranslationsChecker extends Command
         'zh_TW' => 'Traditional Chinese',
     ];
 
-    private const KEY_PATTERNS = [
+    private const array KEY_PATTERNS = [
         '/@lang\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)/',
         '/(?<!\w)trans\s*\(\s*[\'"]([^\'"]+)[\'"]\s*[,\)]/',
         '/(?<!\w)__\s*\(\s*[\'"]([^\'"]+)[\'"]\s*[,\)]/',
     ];
 
     /** Finding kinds that cause the audit to fail (exit code 1). */
-    private const ERROR_KINDS = [
+    private const array ERROR_KINDS = [
         'absent_files', 'orphan_files', 'absent_keys', 'orphan_keys',
         'parse_failures', 'placeholder_mismatches', 'html_mismatches',
     ];
 
     /** Finding kinds that are informational warnings (do not fail the audit). */
-    private const WARNING_KINDS = [
+    private const array WARNING_KINDS = [
         'empty_values', 'untranslated', 'sort_violations',
     ];
 
     private bool $auditFailed = false;
 
-    private Collection $auditRows;
+    private readonly Collection $auditRows;
 
-    private Collection $diagnostics;
+    private readonly Collection $diagnostics;
 
     public function __construct()
     {
@@ -233,7 +233,7 @@ class TranslationsChecker extends Command
 
     private function auditAllPackages(?string $onlyPkg, ?string $onlyLocale, array $checks): void
     {
-        $this->discoverPackages($onlyPkg)->each(function (string $dir) use ($onlyLocale, $checks) {
+        $this->discoverPackages($onlyPkg)->each(function (string $dir) use ($onlyLocale, $checks): void {
             $langDir = $this->detectLangDir($dir);
 
             if ($langDir === null) {
@@ -256,7 +256,7 @@ class TranslationsChecker extends Command
             $canonicalRel = $canonicalFiles->map(fn (string $f) => Str::after($f, $canonicalDir.'/'));
 
             $this->listNonCanonicalLocales($langDir, $onlyLocale)
-                ->each(function (string $locale) use ($pkg, $langDir, $canonicalDir, $canonicalRel, $checks) {
+                ->each(function (string $locale) use ($pkg, $langDir, $canonicalDir, $canonicalRel, $checks): void {
                     $row = $this->auditLocale($pkg, $langDir, $canonicalDir, $canonicalRel, $locale, $checks);
                     $this->auditRows->push($row);
 
@@ -284,7 +284,7 @@ class TranslationsChecker extends Command
         $langDirRel = Str::after($langDir, base_path().'/');
 
         // ── File-level ───────────────────────────────────────
-        $absentFiles = $canonicalRel->filter(fn (string $r) => ! File::exists("{$localeDir}/{$r}"))->values();
+        $absentFiles = $canonicalRel->filter(fn (string $r): bool => ! File::exists("{$localeDir}/{$r}"))->values();
 
         if ($absentFiles->isNotEmpty()) {
             $findings['absent_files'] = $absentFiles->all();
@@ -300,7 +300,7 @@ class TranslationsChecker extends Command
         }
 
         // ── Per-file analysis ────────────────────────────────
-        $canonicalRel->each(function (string $rel) use ($pkg, $locale, $canonicalDir, $localeDir, $langDirRel, $checks, &$findings, &$totalKeys, &$presentKeys) {
+        $canonicalRel->each(function (string $rel) use ($pkg, $locale, $canonicalDir, $localeDir, $langDirRel, $checks, &$findings, &$totalKeys, &$presentKeys): void {
             $cFile = "{$canonicalDir}/{$rel}";
             $lFile = "{$localeDir}/{$rel}";
 
@@ -345,7 +345,7 @@ class TranslationsChecker extends Command
             }
 
             if (in_array('sort_order', $checks)) {
-                $this->checkSortOrder($pkg, $locale, $rel, $cFile, $lFile, $langDirRel, $findings);
+                $this->checkSortOrder($pkg, $locale, $rel, $cFile, $lFile, $findings);
             }
 
             if (in_array('html_tags', $checks)) {
@@ -391,13 +391,13 @@ class TranslationsChecker extends Command
         $orphan = $lKeys->diff($cKeys);
 
         if ($absent->isNotEmpty()) {
-            $data = $absent->mapWithKeys(fn (string $k) => [$k => $cMap[$k] ?? null])->all();
+            $data = $absent->mapWithKeys(fn (string $k): array => [$k => $cMap[$k] ?? null])->all();
             $findings['absent_keys'][$rel] = $data;
             $this->diagnostics->push(['package' => $pkg, 'locale' => $locale, 'kind' => 'absent_keys', 'lang_dir' => $langDirRel, 'file' => $rel, 'data' => $data]);
         }
 
         if ($orphan->isNotEmpty()) {
-            $data = $orphan->mapWithKeys(fn (string $k) => [$k => $lMap[$k] ?? null])->all();
+            $data = $orphan->mapWithKeys(fn (string $k): array => [$k => $lMap[$k] ?? null])->all();
             $findings['orphan_keys'][$rel] = $data;
             $this->diagnostics->push(['package' => $pkg, 'locale' => $locale, 'kind' => 'orphan_keys', 'lang_dir' => $langDirRel, 'file' => $rel, 'data' => $data]);
         }
@@ -437,21 +437,21 @@ class TranslationsChecker extends Command
             $this->diagnostics->push([
                 'package'  => $pkg, 'locale' => $locale, 'kind' => 'placeholder_mismatch',
                 'lang_dir' => $langDirRel, 'file' => $rel, 'key' => $key, 'line' => $lLines[$key] ?? null,
-                'detail'   => 'missing: '.implode(', ', $missing).($extra ? ' | extra: '.implode(', ', $extra) : ''),
+                'detail'   => 'missing: '.implode(', ', $missing).($extra !== [] ? ' | extra: '.implode(', ', $extra) : ''),
             ]);
         }
     }
 
     private function extractPlaceholders(string $value): array
     {
-        if (! preg_match_all('/:([a-zA-Z_][a-zA-Z0-9_]*)/', $value, $m)) {
+        if (! preg_match_all('/:([a-zA-Z_]\w*)/', $value, $m)) {
             return [];
         }
 
         // Filter out short matches (< 4 chars) that are likely false positives
         // in languages where colons appear mid-word (e.g. Finnish "palvelu:lla").
         // Real Laravel placeholders are descriptive: :attribute, :code, :email, etc.
-        $p = array_filter($m[1], fn (string $name) => strlen($name) >= 4);
+        $p = array_filter($m[1], fn (string $name): bool => strlen($name) >= 4);
         $p = array_unique($p);
         sort($p);
 
@@ -467,11 +467,13 @@ class TranslationsChecker extends Command
         $lLines = $this->dotKeysWithLines($lFile);
 
         foreach ($lVals as $key => $val) {
-            if (! isset($cVals[$key]) || trim($cVals[$key]) === '') {
+            if (! isset($cVals[$key])) {
                 continue;
             }
-
-            if (trim($val) === '') {
+            if (trim($cVals[$key]) === '') {
+                continue;
+            }
+            if (trim((string) $val) === '') {
                 $findings['empty_values'][] = ['file' => $rel, 'key' => $key, 'line' => $lLines[$key] ?? null];
                 $this->diagnostics->push([
                     'package'  => $pkg, 'locale' => $locale, 'kind' => 'empty_value',
@@ -511,14 +513,14 @@ class TranslationsChecker extends Command
 
     // ─── Sort Order Check ────────────────────────────────────────
 
-    private function checkSortOrder(string $pkg, string $locale, string $rel, string $cFile, string $lFile, string $langDirRel, array &$findings): void
+    private function checkSortOrder(string $pkg, string $locale, string $rel, string $cFile, string $lFile, array &$findings): void
     {
         $cOrder = array_keys($this->dotKeysWithLines($cFile));
         $lOrder = array_keys($this->dotKeysWithLines($lFile));
 
         $cSet = array_flip($cOrder);
-        $sharedL = array_values(array_filter($lOrder, fn (string $k) => isset($cSet[$k])));
-        $sharedC = array_values(array_filter($cOrder, fn (string $k) => in_array($k, $sharedL, true)));
+        $sharedL = array_values(array_filter($lOrder, fn (string $k): bool => isset($cSet[$k])));
+        $sharedC = array_values(array_filter($cOrder, fn (string $k): bool => in_array($k, $sharedL, true)));
 
         $violations = 0;
 
@@ -553,7 +555,7 @@ class TranslationsChecker extends Command
 
             $cTags = $this->extractHtmlTags($cVal);
 
-            if (empty($cTags)) {
+            if ($cTags === []) {
                 continue;
             }
 
@@ -617,11 +619,11 @@ class TranslationsChecker extends Command
         $warn = 0;
         $fault = 0;
 
-        $this->auditRows->groupBy('package')->each(function (Collection $rows, string $pkg) use (&$ok, &$warn, &$fault, $verbose) {
+        $this->auditRows->groupBy('package')->each(function (Collection $rows, string $pkg) use (&$ok, &$warn, &$fault, $verbose): void {
             $this->newLine();
             $this->line("  <fg=white;options=bold>{$pkg}</>");
 
-            $rows->each(function (array $r) use ($pkg, &$ok, &$warn, &$fault, $verbose) {
+            $rows->each(function (array $r) use ($pkg, &$ok, &$warn, &$fault, $verbose): void {
                 // Pest-style one-liner per locale
                 $badge = match ($r['verdict']) {
                     'ok'    => '  <fg=green> PASS </> ',
@@ -654,22 +656,22 @@ class TranslationsChecker extends Command
 
                 // Show error diagnostics inline (always for errors)
                 $errorDiags = $this->diagnostics->filter(
-                    fn (array $d) => $d['package'] === $pkg
+                    fn (array $d): bool => $d['package'] === $pkg
                         && $d['locale'] === $r['locale']
                         && in_array($d['kind'], ['absent_files', 'absent_keys', 'orphan_files', 'orphan_keys', 'placeholder_mismatch', 'html_mismatch', 'parse_failure'])
                 );
 
-                $errorDiags->groupBy('kind')->each(fn (Collection $g, string $k) => $this->renderDiagnosticItems($g, $k));
+                $errorDiags->groupBy('kind')->each(fn (Collection $g, string $k) => $this->renderDiagnosticItems($g));
 
                 // Show warning diagnostics only with --details
                 if ($verbose) {
                     $warnDiags = $this->diagnostics->filter(
-                        fn (array $d) => $d['package'] === $pkg
+                        fn (array $d): bool => $d['package'] === $pkg
                             && $d['locale'] === $r['locale']
                             && in_array($d['kind'], ['empty_value', 'untranslated', 'sort_violation'])
                     );
 
-                    $warnDiags->groupBy('kind')->each(fn (Collection $g, string $k) => $this->renderDiagnosticItems($g, $k));
+                    $warnDiags->groupBy('kind')->each(fn (Collection $g, string $k) => $this->renderDiagnosticItems($g));
                 }
             });
         });
@@ -680,7 +682,7 @@ class TranslationsChecker extends Command
     /**
      * Render diagnostic items Pest-style with full file paths.
      */
-    private function renderDiagnosticItems(Collection $group, string $kind): void
+    private function renderDiagnosticItems(Collection $group): void
     {
         $shown = 0;
 
@@ -698,7 +700,7 @@ class TranslationsChecker extends Command
             $locale = $d['locale'] ?? '';
 
             if (isset($d['files'])) {
-                collect($d['files'])->take(self::DIAGNOSTIC_CAP - $shown)->each(function (string $f) use ($langDir, $locale) {
+                collect($d['files'])->take(self::DIAGNOSTIC_CAP - $shown)->each(function (string $f) use ($langDir, $locale): void {
                     $fullPath = "{$langDir}/{$locale}/{$f}";
                     $this->line("         <fg=gray>at</> <fg=cyan>{$fullPath}</>");
                 });
@@ -793,10 +795,10 @@ class TranslationsChecker extends Command
         $this->line('  <fg=gray>Keys: structural presence │ Translated: actual translation rate</>');
         $this->newLine();
 
-        $this->auditRows->groupBy('package')->each(function (Collection $rows, string $pkg) {
+        $this->auditRows->groupBy('package')->each(function (Collection $rows, string $pkg): void {
             $this->line("  <fg=white>{$pkg}</>");
 
-            $rows->each(function (array $r) {
+            $rows->each(function (array $r): void {
                 $keyPct = $r['coverage'];
                 $keyColor = $keyPct >= 100 ? 'green' : ($keyPct >= 90 ? 'yellow' : 'red');
 
@@ -852,7 +854,7 @@ class TranslationsChecker extends Command
         $this->info('Source-Code Analysis');
         $this->newLine();
 
-        $this->discoverPackages($onlyPkg)->each(function (string $dir) use ($wantMissing, $wantUnused, $verbose) {
+        $this->discoverPackages($onlyPkg)->each(function (string $dir) use ($wantMissing, $wantUnused, $verbose): void {
             $pkg = basename($dir);
             $langDir = $this->detectLangDir($dir);
 
@@ -928,7 +930,7 @@ class TranslationsChecker extends Command
     {
         $keys = collect();
 
-        $this->collectPhpFiles($canonicalDir)->each(function (string $file) use ($canonicalDir, $ns, &$keys) {
+        $this->collectPhpFiles($canonicalDir)->each(function (string $file) use ($canonicalDir, $ns, &$keys): void {
             try {
                 $tree = $this->loadLangArray($file);
                 $group = Str::before(Str::after($file, $canonicalDir.'/'), '.php');
@@ -948,14 +950,16 @@ class TranslationsChecker extends Command
         $refs = collect();
 
         collect(self::SOURCE_DIRS)
-            ->map(fn (string $r) => $packageDir.$r)
+            ->map(fn (string $r): string => $packageDir.$r)
             ->filter(fn (string $p) => File::isDirectory($p))
-            ->each(function (string $scanDir) use ($ns, &$refs) {
+            ->each(function (string $scanDir) use ($ns, &$refs): void {
                 foreach (File::allFiles($scanDir) as $file) {
-                    if ($file->getExtension() !== 'php' || Str::contains($file->getPathname(), '/Resources/lang/')) {
+                    if ($file->getExtension() !== 'php') {
                         continue;
                     }
-
+                    if (Str::contains($file->getPathname(), '/Resources/lang/')) {
+                        continue;
+                    }
                     $src = File::get($file->getPathname());
 
                     foreach (self::KEY_PATTERNS as $rx) {
@@ -1052,9 +1056,9 @@ class TranslationsChecker extends Command
                 continue;
             }
 
-            $this->info('Package: '.basename($dir));
+            $this->info('Package: '.basename((string) $dir));
 
-            $canonicalFiles->each(function (string $cFile) use ($canonicalDir, $langDir, $locales, $translate, $fixUntranslated, $fallback, &$stats) {
+            $canonicalFiles->each(function (string $cFile) use ($canonicalDir, $langDir, $locales, $translate, $fixUntranslated, $fallback, &$stats): void {
                 $rel = Str::after($cFile, $canonicalDir.'/');
 
                 try {
@@ -1067,7 +1071,7 @@ class TranslationsChecker extends Command
 
                 $cFlat = $this->dotKeys($cTree);
 
-                $locales->each(function (string $loc) use ($langDir, $rel, $cTree, $cFlat, $translate, $fixUntranslated, $fallback, &$stats) {
+                $locales->each(function (string $loc) use ($langDir, $rel, $cTree, $cFlat, $translate, $fixUntranslated, $fallback, &$stats): void {
                     $target = "{$langDir}/{$loc}/{$rel}";
                     $lTree = [];
 
@@ -1316,13 +1320,7 @@ class TranslationsChecker extends Command
             return true;
         }
 
-        foreach (self::UNTRANSLATED_SKIP_PATTERNS as $pattern) {
-            if (preg_match($pattern, $value)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any(self::UNTRANSLATED_SKIP_PATTERNS, fn (string $pattern): int|false => preg_match($pattern, $value));
     }
 
     private function extractJsonFromResponse(string $response): string
@@ -1353,15 +1351,13 @@ class TranslationsChecker extends Command
             if (is_array($cVal)) {
                 $lVal = isset($locale[$key]) && is_array($locale[$key]) ? $locale[$key] : [];
                 $merged[$key] = $this->overlayOnCanonical($cVal, $lVal, $translations, $dotKey);
+            } elseif (isset($translations[$dotKey])) {
+                // AI translation takes priority (covers both absent and untranslated keys)
+                $merged[$key] = $translations[$dotKey];
+            } elseif (array_key_exists($key, $locale) && ! is_array($locale[$key])) {
+                $merged[$key] = $locale[$key];
             } else {
-                if (isset($translations[$dotKey])) {
-                    // AI translation takes priority (covers both absent and untranslated keys)
-                    $merged[$key] = $translations[$dotKey];
-                } elseif (array_key_exists($key, $locale) && ! is_array($locale[$key])) {
-                    $merged[$key] = $locale[$key];
-                } else {
-                    $merged[$key] = $cVal;
-                }
+                $merged[$key] = $cVal;
             }
         }
 
@@ -1373,11 +1369,11 @@ class TranslationsChecker extends Command
     private function discoverPackages(?string $only = null): Collection
     {
         return collect(self::PACKAGE_ROOTS)
-            ->map(fn (string $r) => base_path($r))
+            ->map(fn (string $r): string => base_path($r))
             ->filter(fn (string $p) => File::isDirectory($p))
             ->flatMap(fn (string $p) => File::directories($p))
             ->when($only, fn (Collection $c) => $c->filter(
-                fn (string $p) => Str::lower(basename($p)) === Str::lower($only)
+                fn (string $p): bool => Str::lower(basename($p)) === Str::lower($only)
             ))
             ->sort()
             ->values();
@@ -1399,10 +1395,10 @@ class TranslationsChecker extends Command
     private function listNonCanonicalLocales(string $langDir, ?string $onlyLocale): Collection
     {
         return collect(File::directories($langDir))
-            ->map(fn (string $d) => basename($d))
-            ->reject(fn (string $d) => $d === self::CANONICAL_LOCALE)
+            ->map(fn (string $d): string => basename($d))
+            ->reject(fn (string $d): bool => $d === self::CANONICAL_LOCALE)
             ->when($onlyLocale, fn (Collection $c) => $c->filter(
-                fn (string $l) => Str::lower($l) === Str::lower($onlyLocale)
+                fn (string $l): bool => Str::lower($l) === Str::lower($onlyLocale)
             ))
             ->sort()
             ->values();
@@ -1417,7 +1413,7 @@ class TranslationsChecker extends Command
         }
 
         return collect(File::allFiles($dir))
-            ->filter(fn ($f) => $f->getExtension() === 'php')
+            ->filter(fn ($f): bool => $f->getExtension() === 'php')
             ->map(fn ($f) => $f->getPathname())
             ->sort()
             ->values();
@@ -1432,21 +1428,19 @@ class TranslationsChecker extends Command
         } catch (Throwable $e) {
             ob_end_clean();
 
-            throw new RuntimeException("Cannot include {$path}: ".$e->getMessage());
+            throw new RuntimeException("Cannot include {$path}: ".$e->getMessage(), $e->getCode(), $e);
         }
 
         ob_end_clean();
 
-        if (! is_array($data)) {
-            throw new RuntimeException("File does not yield an array: {$path}");
-        }
+        throw_unless(is_array($data), RuntimeException::class, "File does not yield an array: {$path}");
 
         return $data;
     }
 
     private function dotKeys(array $tree, string $prefix = ''): array
     {
-        return collect($tree)->flatMap(function ($value, $key) use ($prefix) {
+        return collect($tree)->flatMap(function ($value, $key) use ($prefix): array {
             $dot = $prefix === '' ? (string) $key : "{$prefix}.{$key}";
 
             return is_array($value) ? $this->dotKeys($value, $dot) : [$dot => true];
@@ -1455,7 +1449,7 @@ class TranslationsChecker extends Command
 
     private function dotKeysWithValues(array $tree, string $prefix = ''): array
     {
-        return collect($tree)->flatMap(function ($value, $key) use ($prefix) {
+        return collect($tree)->flatMap(function ($value, $key) use ($prefix): array {
             $dot = $prefix === '' ? (string) $key : "{$prefix}.{$key}";
 
             return is_array($value) ? $this->dotKeysWithValues($value, $dot) : [$dot => (string) $value];
@@ -1497,7 +1491,7 @@ class TranslationsChecker extends Command
 
     private function renderPhpArray(array $items, int $depth): string
     {
-        if (empty($items)) {
+        if ($items === []) {
             return '[]';
         }
 
@@ -1543,7 +1537,7 @@ class TranslationsChecker extends Command
 
             if ($label === null) {
                 // Nested key arrays: sum up counts
-                $n = collect($findings[$key])->map(fn ($v) => count($v))->sum();
+                $n = collect($findings[$key])->map(fn ($v): int => count($v))->sum();
                 $label = str_replace('_', ' ', $key);
             } else {
                 $n = count($findings[$key]);

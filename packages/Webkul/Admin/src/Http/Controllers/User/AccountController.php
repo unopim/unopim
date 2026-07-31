@@ -2,12 +2,13 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
-use Hash;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\AccountForm;
 use Webkul\Core\Filesystem\FileStorer;
 
 class AccountController extends Controller
@@ -26,46 +27,39 @@ class AccountController extends Controller
     {
         $user = auth()->guard('admin')->user();
 
-        return view('admin::account.edit', compact('user'));
+        return view('admin::settings.users.edit', [
+            'user'                    => $user,
+            'roles'                   => collect(),
+            'canManage'               => false,
+            'isSelf'                  => true,
+            'requiresCurrentPassword' => true,
+            'formId'                  => 'account-edit-form',
+            'formAction'              => route('admin.account.update'),
+            'pageTitle'               => trans('admin::app.account.edit.title'),
+            'backUrl'                 => route('admin.dashboard.index'),
+            'backLabel'               => trans('admin::app.account.edit.back-btn'),
+            'saveLabel'               => trans('admin::app.account.edit.save-btn'),
+        ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the signed-in admin's own profile.
+     *
+     * The reload the redirect forces is what re-renders the whole panel in a
+     * freshly saved UI locale — a bare success would leave the old language
+     * on screen until the user reloads by hand.
      */
-    public function update(): RedirectResponse
+    public function update(AccountForm $request): JsonResponse
     {
         $user = auth()->guard('admin')->user();
 
-        $this->validate(request(), [
-            'name'             => 'required',
-            'email'            => 'email|unique:admins,email,'.$user->id,
-            'password'         => 'nullable|min:6|confirmed',
-            'current_password' => 'required|min:6',
-            'image.*'          => 'nullable|mimes:bmp,jpeg,jpg,png,webp,svg',
-            'timezone'         => 'required',
-            'ui_locale_id'     => 'required',
-        ]);
+        $data = $request->safe()->except(['current_password', 'password_confirmation']);
 
-        $data = request()->only([
-            'name',
-            'email',
-            'password',
-            'password_confirmation',
-            'current_password',
-            'image',
-            'timezone',
-            'ui_locale_id',
-        ]);
-
-        if (! Hash::check($data['current_password'], $user->password)) {
-            session()->flash('warning', trans('admin::app.account.edit.invalid-password'));
-
-            return redirect()->back();
-        }
+        $data['use_gravatar'] = $request->boolean('use_gravatar');
 
         $isPasswordChanged = false;
 
-        if (! $data['password']) {
+        if (empty($data['password'])) {
             unset($data['password']);
         } else {
             $isPasswordChanged = true;
@@ -73,10 +67,15 @@ class AccountController extends Controller
             $data['password'] = bcrypt($data['password']);
         }
 
-        if (request()->hasFile('image')) {
-            $data['image'] = $this->fileStorer->store(
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $image = is_array($image) ? current($image) : $image;
+            $extension = $image->guessExtension() ?: strtolower($image->getClientOriginalExtension());
+
+            $data['image'] = $this->fileStorer->storeAs(
                 path: 'admins'.DIRECTORY_SEPARATOR.$user->id,
-                file: current(request()->file('image'))
+                name: Str::random(40).'.'.$extension,
+                file: $image,
             );
         } else {
             if (! isset($data['image'])) {
@@ -93,15 +92,14 @@ class AccountController extends Controller
         $user->update($data);
 
         if ($isPasswordChanged) {
-            // Revoke all Passport access tokens issued to this admin so previously-issued API
-            // credentials stop working after a password change (security best practice).
             $user->tokens()->update(['revoked' => true]);
 
             Event::dispatch('admin.password.update.after', $user);
         }
 
-        session()->flash('success', trans('admin::app.account.edit.update-success'));
-
-        return back();
+        return new JsonResponse([
+            'message'      => trans('admin::app.account.edit.update-success'),
+            'redirect_url' => route('admin.account.edit'),
+        ]);
     }
 }

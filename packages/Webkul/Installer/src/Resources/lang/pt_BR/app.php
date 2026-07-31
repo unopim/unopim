@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Ficha técnica do produto',
+                'lede'              => 'Especificação de referência do catálogo de demonstração. Os valores se aplicam a todos os produtos desta família, salvo indicação em contrário na página do produto.',
+                'family-code'       => 'Código da família',
+                'compliance'        => 'Conformidade',
+                'compliance-value'  => 'Marcação CE; declarações RoHS e REACH disponíveis mediante solicitação.',
+                'spare-parts'       => 'Peças de reposição',
+                'spare-parts-value' => 'Peças de desgaste mantidas em estoque por dez anos a partir da última data de produção.',
+                'packaging'         => 'Embalagem',
+                'packaging-value'   => 'Embalagem sem plástico, papelão certificado FSC, impresso com tintas sem óleo mineral.',
+                'footer'            => 'Gerado pelo UnoPim para fins de demonstração.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Padrão',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Atualização do UnoPim',
+        'complete'              => 'Atualização concluída. O aplicativo está online novamente.',
+        'aborted'               => 'Atualização cancelada. Nada foi alterado.',
+        'confirm'               => 'O aplicativo entrará em modo de manutenção e o banco de dados será migrado. Continuar?',
+        'dry-run-complete'      => 'Simulação concluída. Nada foi alterado.',
+        'preflight-failed'      => ':count verificação(ões) falharam. A atualização não foi iniciada e nada foi alterado.',
+        'preflight-failed-hint' => 'Resolva os itens acima e execute o comando novamente. A versão anterior continua atendendo ao tráfego.',
+        'verify-failed'         => ':count conferência(s) falharam. O aplicativo foi mantido em modo de manutenção.',
+        'migrate-failed'        => 'Falha na migração: :error',
+        'step-failed'           => 'A etapa :command falhou com o código de saída :code.',
+        'phase'                 => [
+            'preflight' => 'Fase 1 de 5 — Verificações preliminares',
+            'drift'     => 'Fase 2 de 5 — Divergências de configuração',
+            'sizing'    => 'Fase 3 de 5 — Estimativa da janela de manutenção',
+            'execute'   => 'Fase 4 de 5 — Migração',
+            'verify'    => 'Fase 5 de 5 — Conferência',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Versão do PHP',
+            'php-version-detail'         => 'requer :required, encontrado :found',
+            'php-version-remedy'         => 'Atualize o PHP para :required ou superior antes de continuar.',
+            'extensions'                 => 'Extensões do PHP',
+            'extensions-remedy'          => 'Instale as extensões ausentes e reinicie o PHP-FPM.',
+            'database'                   => 'Conexão com o banco de dados',
+            'database-detail'            => ':driver, banco :database, prefixo :prefix',
+            'database-remedy'            => 'Confira as credenciais do banco de dados no seu arquivo .env.',
+            'source-version'             => 'Versão instalada',
+            'source-version-detail'      => ':version ou superior',
+            'source-version-unsupported' => 'anterior a :version',
+            'source-version-remedy'      => 'Atualize primeiro para :version e depois execute este comando novamente.',
+            'pending-migrations'         => 'Migrações pendentes',
+            'pending-migrations-detail'  => ':count a executar',
+            'pending-migrations-none'    => 'nenhuma — o banco de dados já está atualizado',
+            'pending-migrations-remedy'  => 'Não foi possível ler a tabela de migrações. Verifique as permissões do banco de dados.',
+            'active-jobs'                => 'Trabalhos de importação e exportação',
+            'active-jobs-detail'         => ':count ainda em execução',
+            'active-jobs-remedy'         => 'Aguarde os trabalhos em andamento terminarem ou pare os workers da fila e execute o comando novamente.',
+            'writable-paths'             => 'Diretórios graváveis',
+            'writable-paths-remedy'      => 'Conceda permissão de escrita ao usuário do servidor web nos diretórios listados acima.',
+            'disk-space'                 => 'Espaço em disco',
+            'disk-space-detail'          => ':free livres, :required necessários',
+            'disk-space-unknown'         => 'não foi possível determinar',
+            'disk-space-remedy'          => 'Libere espaço em disco ou use --skip-backup se o banco de dados for salvo por outro meio.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Nenhuma divergência de configuração detectada.',
+            'no-previous' => 'Nenhum diretório da versão anterior informado, portanto os arquivos de configuração e as dependências do Composer não podem ser comparados. Use --from=/caminho/para/versao/antiga para um relatório completo.',
+            'env-missing' => 'Chaves de ambiente adicionadas por esta versão e ausentes no seu .env:',
+            'env-removed' => 'Chaves de ambiente removidas por esta versão e ainda definidas no seu .env:',
+            'config'      => 'Arquivos de configuração diferentes da sua versão anterior. Reaplique suas alterações locais:',
+            'composer'    => 'Dependências do Composer que você adicionou e que faltam nesta versão:',
+            'manual'      => 'Estes arquivos são seus. Combine-os manualmente antes de liberar o tráfego — a atualização nunca os sobrescreve.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabela',
+            'rows'            => 'Linhas',
+            'pending'         => ':count migração(ões) serão executadas.',
+            'window'          => 'Janela de manutenção estimada: cerca de :minutes minuto(s).',
+            'nothing-pending' => 'Não há migrações pendentes.',
+            'irreversible'    => 'Estas migrações reescrevem dados e não podem ser revertidas. Somente restaurar o backup do banco de dados permite voltar atrás:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Backup do banco de dados gravado em :path',
+            'skipped'            => 'Backup do banco de dados ignorado. Certifique-se de ter um backup restaurável antes de continuar.',
+            'failed'             => 'Falha no backup do banco de dados: :error',
+            'empty'              => 'O backup do banco de dados estava vazio e foi descartado.',
+            'abort'              => 'A atualização foi interrompida porque não existe um backup verificado. Nada foi alterado.',
+            'unsupported-driver' => 'Não há comando de backup disponível para o driver :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'ignorado, tabela não existe',
+            'associations'           => 'Associações de produtos',
+            'associations-none'      => 'nenhuma associação antiga para migrar',
+            'associations-detail'    => ':migrated de :legacy produto(s) migrado(s)',
+            'associations-remedy'    => 'Foram encontrados dados de associação antigos, mas nada foi migrado. Restaure o backup e relate este problema.',
+            'robot-users'            => 'Proprietários das integrações de API',
+            'robot-users-detail'     => ':count integração(ões) ainda pertencem a uma pessoa',
+            'robot-users-remedy'     => 'Execute a migração novamente ou reatribua as integrações pelo painel administrativo.',
+            'category-bounds'        => 'Integridade da árvore de categorias',
+            'category-bounds-detail' => ':count nó(s) de categoria têm limites inválidos',
+            'category-bounds-remedy' => 'Reconstrua a árvore de categorias antes de liberar o tráfego.',
+            'scrubbed-audits'        => 'Limpeza de credenciais',
+            'scrubbed-audits-detail' => ':count registro(s) de auditoria ainda contêm credenciais',
+            'scrubbed-audits-remedy' => 'Execute a migração novamente antes de liberar o tráfego. Esses registros expõem credenciais armazenadas.',
+        ],
+
+        'restore'               => [
+            'heading' => 'A atualização não foi concluída. O aplicativo está em modo de manutenção.',
+            'body'    => 'Para reverter: restaure o backup do banco de dados, aponte o servidor web de volta para o diretório da versão anterior e execute «php artisan up» lá.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Ignorando --with-reindex: :count produto(s) ultrapassa o limite de :limit produtos para uma reconstrução imediata.',
+            'deferred'  => 'O Elasticsearch não foi reindexado. Com :count produto(s) isso demora mais do que a própria atualização, e a busca recorre ao banco de dados até terminar. Execute isto assim que o site voltar ao ar:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -146,6 +265,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Moedas permitidas',
                 'allowed-locales'     => 'Locais permitidos',
+                'app-key-missing'     => 'Nenhum arquivo .env foi encontrado e APP_KEY não está definido no ambiente do servidor. O instalador nunca grava a configuração de ambiente — crie um .env manualmente (copie .env.example) ou configure as variáveis no painel da sua hospedagem e tente novamente.',
+                'env-readonly-note'   => 'Esses valores são lidos do ambiente do seu servidor (.env). O instalador nunca grava a configuração de ambiente — para alterar algo, edite o arquivo .env (ou as variáveis do painel da sua hospedagem) e recarregue esta página.',
                 'application-name'    => 'Nome do aplicativo',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan Chinês (CNY)',
@@ -198,7 +319,7 @@ return [
                 'turkish-lira'        => 'Lira Turca (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ucraniana (UAH)',
                 'usd'                 => 'Dólar americano (USD)',
-                'warning-message'     => 'Cuidado! As configurações dos idiomas padrão do sistema, bem como a moeda padrão, são permanentes e não podem ser alteradas novamente.',
+                'warning-message'     => 'O idioma e a moeda que você escolher aqui se tornam os padrões iniciais do canal e da conta de administrador. Você pode ativar mais idiomas e moedas, ou alterar esses padrões, a qualquer momento nas configurações de administração.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalação UnoPim',
@@ -222,6 +343,8 @@ return [
                 'package-installed'  => '✓ :label instalado',
                 'package-failed'     => '✗ :label falhou: :message',
                 'package-manual'     => '! :label não pode ser instalado automaticamente neste servidor (sem acesso ao shell). Execute isto a partir de uma máquina com acesso ao shell:',
+                'install-failed'     => '✗ A instalação falhou. Verifique storage/logs/laravel.log para mais detalhes.',
+                'stream-interrupted' => '! A conexão com o instalador foi perdida. A instalação ainda pode estar sendo concluída — aguarde um momento e recarregue esta página.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Painel de administração',

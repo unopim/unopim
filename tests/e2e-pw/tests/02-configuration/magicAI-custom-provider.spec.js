@@ -1,6 +1,6 @@
 const { test, expect } = require('../../utils/fixtures');
 
-const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platform';
+const MAGIC_AI_PLATFORM_URL = '/admin/magic-ai/platforms';
 
 test.describe('UnoPim Magic AI — Custom (OpenAI-compatible) provider', () => {
 

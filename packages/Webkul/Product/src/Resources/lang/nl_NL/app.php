@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Variantstructuren',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'kopie-van-:value',
@@ -13,7 +16,9 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Configureerbaar',
-        'simple'       => 'Standaard',
+        'configurable'  => 'Configureerbaar',
+        'simple'        => 'Standaard',
+        'variant-group' => 'Variantgroep',
+        'variant_group' => 'Variantgroep',
     ],
 ];

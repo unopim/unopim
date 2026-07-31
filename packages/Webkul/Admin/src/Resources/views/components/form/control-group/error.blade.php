@@ -4,6 +4,11 @@
 ])
 
 @if (! empty($controlName))
+    <span
+        class="contents"
+        data-error-slot="{{ $name ?? $controlName }}"
+    ></span>
+
     <v-error-message
         {{ $attributes }}
         name="{{ $name ?? $controlName }}"

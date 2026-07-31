@@ -3,7 +3,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_PATH = path.resolve(__dirname, '../.api-config.json');
+const CONFIG_PATH = path.resolve(__dirname, '..', process.env.PW_API_CONFIG || '.api-config.json');
 
 function loadConfigFile() {
   if (!fs.existsSync(CONFIG_PATH)) {

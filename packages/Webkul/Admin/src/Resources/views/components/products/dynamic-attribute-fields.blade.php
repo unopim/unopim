@@ -6,7 +6,9 @@
     'fieldValues'            => [],
     'channelCurrencies'      => [],
     'variantFields'          => [],
-    'completenessAttributes' => []
+    'completenessAttributes' => [],
+    'lockedFields'           => [],
+    'requirementIndicators'  => [],
 ])
 
 @php
@@ -20,6 +22,47 @@
         $targetlocales = json_encode(is_array($targetlocales) ? $targetlocales : explode(',', $targetlocales ?? ''));
         $model = core()->getConfigData('general.magic_ai.translation.ai_model');
     }
+@endphp
+
+@php
+    // Batch selected-option labels for all select/multiselect fields into one query (only pre-selected codes, not the full set).
+    $selectedCodesByAttribute = [];
+
+    foreach ($fields as $selectField) {
+        if (! in_array($selectField->type, ['select', 'multiselect'])) {
+            continue;
+        }
+
+        $selected = $fieldValues
+            ? $selectField->getValueFromProductValues($fieldValues, $currentChannelCode, $currentLocaleCode)
+            : null;
+
+        $selected = old($fieldsWrapper.$selectField->getFlatAttributeName($currentChannelCode, $currentLocaleCode)) ?? $selected;
+
+        if (isset($lockedFields[$selectField->code])) {
+            $selected = $lockedFields[$selectField->code]['value'] ?? null;
+        }
+
+        // Multiselect values are stored comma-joined; split them so each code matches.
+        if (is_string($selected) && str_contains($selected, ',')) {
+            $selected = explode(',', $selected);
+        }
+
+        $codes = array_filter((array) $selected, static fn ($code): bool => $code !== '' && $code !== null);
+
+        if (! empty($codes)) {
+            $selectedCodesByAttribute[$selectField->id] = $codes;
+        }
+    }
+
+    $preloadedSelectedOptions = ! empty($selectedCodesByAttribute)
+        ? \Webkul\Attribute\Models\AttributeOption::query()
+            ->whereIn('attribute_id', array_keys($selectedCodesByAttribute))
+            ->whereIn('code', collect($selectedCodesByAttribute)->flatten()->unique()->values()->all())
+            ->with('translations')
+            ->get()
+            ->groupBy('attribute_id')
+        : collect();
 @endphp
 
 @foreach($fields as $field)
@@ -48,18 +91,59 @@
 
         $value = old($flatFieldName) ?? $value;
 
+        $isLocked = isset($lockedFields[$field->code]);
+
+        $lockLevel = $isLocked ? ($lockedFields[$field->code]['level'] ?? null) : null;
+
+        $isAxisLock = $isLocked && ! empty($lockedFields[$field->code]['axis']);
+
+        $lockLevelLabel = $lockLevel
+            ? trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.level-'.$lockLevel)
+            : null;
+
+        $lockLabel = $isAxisLock
+            ? trans('admin::app.catalog.families.edit.axis-badge').($lockLevelLabel ? ' · '.$lockLevelLabel : '')
+            : $lockLevelLabel;
+
+        $lockTitle = $isAxisLock
+            ? trans('admin::app.catalog.families.edit.axis-locked-info')
+            : trans('admin::app.catalog.products.edit.types.configurable.variant-inheritance.locked', ['level' => $lockLabel]);
+
+        $lockOwnerId = $isLocked ? ($lockedFields[$field->code]['ownerId'] ?? null) : null;
+
+        if ($isLocked) {
+            $value = $lockedFields[$field->code]['value'] ?? null;
+        }
+
         $fieldLabel = $field->translate($currentLocaleCode)['name'] ?? '';
 
         $fieldLabel = empty($fieldLabel) ? '['.$field->code.']' : $fieldLabel;
+
+        $fieldInstructions = $field->translate($currentLocaleCode)['instructions'] ?? '';
+
+        $imageExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS;
+
+        $galleryExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : array_merge(\Webkul\Core\Rules\FileOrImageValidValue::IMAGE_ALLOWED_EXTENSIONS, \Webkul\Core\Rules\FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+
+        $fileExtensions = ! empty($field->allowed_extensions)
+            ? $field->allowed_extensions
+            : \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION;
 
         $fieldType = $field->type;
     @endphp
 
     {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.field.before', ['field' => $field]) !!}
 
-    <x-admin::form.control-group>
+    <x-admin::form.control-group
+        id="attribute-{{ $field->id }}"
+        data-attribute-id="{{ $field->id }}"
+    >
         <div class="inline-flex justify-between w-full">
-            <x-admin::form.control-group.label :for="$fieldName">
+            <x-admin::form.control-group.label :for="form_control_id($fieldName)">
                 {{ $fieldLabel }}
 
                 @if ($field->is_required || $isConfigurableAttribute)
@@ -72,6 +156,24 @@
             </x-admin::form.control-group.label>
 
             <div class="self-end mb-2 text-xs flex gap-1 items-center">
+                <x-admin::products.attribute-requirements
+                    :requirements="$requirementIndicators[$field->id] ?? []"
+                />
+
+                @if ($isLocked && $lockLabel)
+                    <a
+                        @if ($lockOwnerId) href="{{ route('admin.catalog.products.edit', $lockOwnerId) }}" @endif
+                        class="inline-flex items-center gap-1 uppercase p-1 px-2 h-5 rounded-full bg-primary-50 dark:bg-cherry-800 border border-primary-200 dark:border-cherry-700 text-primary-600 dark:text-primary-400 {{ $lockOwnerId ? 'hover:bg-primary-100 dark:hover:bg-cherry-700 cursor-pointer' : 'cursor-default' }}"
+                        title="{{ $lockTitle }}"
+                    >
+                        <svg class="w-2.5 h-2.5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                        {{ $lockLabel }}
+                    </a>
+                @endif
+
                 @if (
                     $globaltranslationEnabled == 1
                     && ($fieldType == 'text' || $fieldType == 'textarea')
@@ -105,6 +207,10 @@
 
         {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.control.'.$fieldType.'.before', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
 
+        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-60 cursor-not-allowed' : '' }}">
+        @if ($isLocked)
+            <div class="pointer-events-none">
+        @endif
         @switch ($fieldType)
             @case ('checkbox')
                 @if (! empty($value))
@@ -169,18 +275,21 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
-                <x-admin::media.images
+                <x-admin::media.image
                     name="{{ $fieldName }}"
-                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? [$savedImage] : []"
-                    :responsive="true"
+                    :accepted-extensions="$imageExtensions"
+                    :instructions="$fieldInstructions"
+                    width="270px"
+                    height="140px"
                     :has-context="true"
+                    :full-preview="true"
                 />
                 @break
             @case('gallery')
@@ -200,18 +309,20 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!-- Empty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
                 <x-admin::media.gallery
                     name="{{ $fieldName }}"
-                    ::class="[errors && errors['{{ $fieldName }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
                     :id="$field->code"
                     ::rules="{{ $field->getValidationsField() }}"
                     :uploaded-images="! empty($value) ? $savedData : []"
+                    :accepted-extensions="$galleryExtensions"
+                    :instructions="$fieldInstructions"
                     :allow-multiple=true
-                    width='210px'
+                    width="270px"
+                    height="140px"
                 />
                 @break
             @case('file')
@@ -228,19 +339,20 @@
                 @endphp
 
                 @if (! empty($value))
-                    <!--  Emoty value sent when value is deleted need to send empty value for this field -->
+                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
                 <x-admin::media.files
-                    type="video"
                     :id="$field->code"
                     :name="$fieldName"
                     ::rules="{{ $field->getValidationsField() }}"
                     :label="$fieldLabel"
                     :uploaded-files="! empty($value) ? [$savedFile] : []"
+                    :accepted-extensions="$fileExtensions"
+                    :instructions="$fieldInstructions"
                     value="{{$value}}"
-                    class="mt-3" 
+                    class="mt-3"
                 />
                 @break
             @case('price')
@@ -253,7 +365,7 @@
                         <div class="grid w-full">
                             <x-admin::form.control-group.control
                                 type="price"
-                                :id="$field->code"
+                                :id="$field->code . '_' . $currency->code"
                                 :name="$fieldName . '[' . $currency->code . ']'"
                                 ::rules="{{ $field->getValidationsField() }}"
                                 :value="$currencyValue"
@@ -269,7 +381,7 @@
                 </div>
             @break
             @case('multiselect')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     if (! is_array($value)) {
                         $value = str_contains((string) $value, ',')
@@ -278,10 +390,17 @@
                     }
                 @endphp
             @case('select')
-                <!-- NO BREAK -->
+                {{-- NO BREAK --}}
                 @php
                     $selectedValue = [];
-                    foreach ($field->options->whereIn('code', $value) as $option) {
+
+                    $selectedCodes = array_filter((array) $value, static fn ($code): bool => $code !== '' && $code !== null);
+
+                    $selectedOptions = ! empty($selectedCodes)
+                        ? $preloadedSelectedOptions->get($field->id, collect())->whereIn('code', $selectedCodes)
+                        : collect();
+
+                    foreach ($selectedOptions as $option) {
                         $translatedOptionLabel = $option->translate($currentLocaleCode)?->label;
 
                         $selectedValue[] = [
@@ -318,7 +437,6 @@
 
                 <x-slot:option>
                     <div class="flex items-center space-x-2">
-                        <!-- Image swatch -->
                         <div
                             v-if="option.attribute.swatch_type == 'image'"
                             class="justify-items-center border rounded relative overflow-hidden group w-12 h-12"
@@ -329,19 +447,17 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @click.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Color swatch -->
                         <div v-if="option.swatch_value && option.attribute.swatch_type == 'color'"
                             :style="{ backgroundColor: option.swatch_value }"
                             class="w-6 h-6 rounded border"></div>
 
-                        <!-- Label -->
                         <span>@{{ option[labelBy] }}</span>
                     </div>
                 </x-slot:option>
@@ -358,7 +474,7 @@
                             <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                 <div class="flex justify-between">
                                     <span
-                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                         @mousedown.stop.prevent="previewImage(option)"
                                     ></span>
                                 </div>
@@ -385,7 +501,7 @@
                                 <div class="flex items-center justify-center invisible w-full bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 group-hover:visible">
                                     <div class="flex justify-between">
                                         <span
-                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                             @mousedown.stop.prevent="previewImage(option)"
                                         ></span>
                                     </div>
@@ -417,6 +533,10 @@
                 </x-admin::form.control-group.control>
 
         @endswitch
+        @if ($isLocked)
+            </div>
+        @endif
+        </fieldset>
 
         @php
             if ($isConfigurableAttribute) {

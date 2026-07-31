@@ -128,6 +128,7 @@ class MagicAISystemPromptGrid extends DataGrid
     {
         if (bouncer()->hasPermission('ai-agent.system-prompt.edit')) {
             $this->addAction([
+                'index'  => 'edit',
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.configuration.system-prompt.datagrid.edit'),
                 'method' => 'GET',
@@ -137,6 +138,7 @@ class MagicAISystemPromptGrid extends DataGrid
 
         if (bouncer()->hasPermission('ai-agent.system-prompt.delete')) {
             $this->addAction([
+                'index'  => 'delete',
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.configuration.system-prompt.datagrid.delete'),
                 'method' => 'DELETE',

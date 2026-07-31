@@ -14,8 +14,6 @@ class CategoryValidator extends FieldValidator
 {
     /**
      * Create a new controller instance.
-     *
-     * @return void
      */
     public function __construct(
         protected CategoryRepository $categoryRepository,
@@ -28,7 +26,6 @@ class CategoryValidator extends FieldValidator
      *
      * @param  array  $requestData  The request data containing category information.
      * @param  int|null  $id  The optional category ID. If provided, the method will perform additional checks.
-     * @return array|\Illuminate\Validation\Validator
      *
      * @example
      * [
@@ -55,22 +52,22 @@ class CategoryValidator extends FieldValidator
      *     ],
      *  ]
      */
-    public function validate(array $requestData, ?int $id = null)
+    public function validate(array $requestData, ?int $id = null): \Illuminate\Contracts\Validation\Validator|array
     {
         if ($id) {
             $isUpdateCategory = $this->isUpdateCategory($requestData, $id);
-            if ($isUpdateCategory instanceof \Illuminate\Validation\Validator) {
+            if ($isUpdateCategory instanceof \Illuminate\Contracts\Validation\Validator) {
                 return $isUpdateCategory;
             }
         }
 
         $unknownFieldsValidate = $this->unknownFieldsValidate($requestData);
-        if ($unknownFieldsValidate instanceof \Illuminate\Validation\Validator && $unknownFieldsValidate->fails()) {
+        if ($unknownFieldsValidate instanceof \Illuminate\Contracts\Validation\Validator && $unknownFieldsValidate->fails()) {
             return $unknownFieldsValidate;
         }
 
         $inputFieldsValidate = $this->inputFieldValidate($requestData, $id);
-        if ($inputFieldsValidate instanceof \Illuminate\Validation\Validator && $inputFieldsValidate->fails()) {
+        if ($inputFieldsValidate instanceof \Illuminate\Contracts\Validation\Validator && $inputFieldsValidate->fails()) {
             return $inputFieldsValidate;
         }
 
@@ -82,13 +79,13 @@ class CategoryValidator extends FieldValidator
      *
      * @param  array  $requestData  The request data containing category information.
      * @param  int  $id  The category ID to be updated.
-     * @return array|\Illuminate\Validation\Validator
+     * @return array|\Illuminate\Contracts\Validation\Validator
      */
     protected function isUpdateCategory(array $requestData, int $id)
     {
         if (! empty($requestData['parent_id']) && $this->isRelatedToChannel($id)) {
             $validator = Validator::make([], []);
-            $validator->after(function ($validator) {
+            $validator->after(function ($validator): void {
                 $validator->errors()->add('error', trans('admin::app.catalog.categories.can-not-update'));
             });
 
@@ -102,7 +99,7 @@ class CategoryValidator extends FieldValidator
      * It checks for unknown fields and returns a validator instance if any unknown fields are found.
      *
      * @param  array  $requestData  The request data containing category information.
-     * @return array|\Illuminate\Validation\Validator
+     * @return array|\Illuminate\Contracts\Validation\Validator
      */
     protected function unknownFieldsValidate(array $requestData)
     {
@@ -116,9 +113,9 @@ class CategoryValidator extends FieldValidator
 
         $unknownFields = array_diff($requestedFields, $existsFields);
 
-        if (! empty($unknownFields)) {
+        if ($unknownFields !== []) {
             $validator = Validator::make([], []);
-            $validator->after(function ($validator) use ($unknownFields) {
+            $validator->after(function ($validator) use ($unknownFields): void {
                 $validator->errors()->add('additional_data', trans('admin::app.catalog.categories.unknown-fields', ['fields' => implode(', ', $unknownFields)]));
             });
 
@@ -133,7 +130,7 @@ class CategoryValidator extends FieldValidator
      *
      * @param  array  $requestData  The request data containing category information.
      * @param  int|null  $id  The category ID to be validated. If null, it indicates a new category.
-     * @return array|\Illuminate\Validation\Validator
+     * @return array|\Illuminate\Contracts\Validation\Validator
      */
     protected function inputFieldValidate(array $requestData, ?int $id)
     {

@@ -9,7 +9,7 @@ abstract class AbstractFilter extends BaseAbstractFilter
     /**
      * {@inheritdoc}
      */
-    public function setQueryManager($queryBuilder)
+    public function setQueryManager($queryBuilder): void
     {
         if (config('elasticsearch.enabled')) {
             parent::setQueryManager($queryBuilder);

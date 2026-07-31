@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Primjer datoteke',
+        'variants'      => 'Primjer varijanti',
+        'multi-locale'  => 'Višejezični primjer',
+        'delete'        => 'Primjer brisanja',
+        'custom-fields' => 'Primjer prilagođenih polja',
+        'with-images'   => 'Primjer sa slikama (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Proizvodi',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Vrijednost :code mora biti jedinstvena.',
                     'incorrect-family-for-variant'             => 'Obitelj mora biti ista kao obitelj roditelja',
                     'parent-not-exist'                         => 'Roditelj ne postoji.',
+                    'variant-structure-not-found'              => 'Struktura varijanti :code ne postoji za ovu obitelj atributa.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Kod značajke :code već se koristi.',
                     'code_not_found_to_delete'             => 'Kod značajke nije pronađen za brisanje.',
                     'code_is_system_and_cannot_be_deleted' => 'Značajka sustava ne može se izbrisati.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Povezanosti proizvoda',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Polje \'%s\' je obavezno.',
+                    'self-link-not-allowed'       => 'Proizvod \'%s\' ne može biti povezan sam sa sobom.',
+                    'sku-not-found'               => 'Proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'related-sku-not-found'       => 'Povezani proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'association-type-not-found'  => 'Vrsta povezanosti \'%s\' ne postoji ili nije aktivna.',
+                    'invalid-field-value'         => 'Navedena je nevažeća vrijednost za polje povezanosti.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
         'fields'           => [
-            'file-format'         => 'Format datoteke',
-            'with-media'          => 'S medijima',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format datoteke',
+            'with-media'             => 'S medijima',
+            'with-associations'      => 'S povezivanjima',
+            'with-associations-info' => 'Uključi zastarjele SKU-popis stupce (up_sells, cross_sells i related_products) u izvoz',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Značajke',
         ],
+        'product-associations' => [
+            'title' => 'Povezanosti proizvoda',
+        ],
         'attribute-groups' => [
             'title' => 'Grupe značajki',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'Izvršenje posla je započelo',
         'completed' => 'Izvršenje posla je završeno',
+        'stalled'   => 'Zadatak nije odgovarao više od :minutes minuta i označen je kao neuspješan. Proces koji ga je izvršavao vjerojatno je prekinut.',
+        'reaped'    => 'Označeno je :count zaustavljenih zadataka kao neuspješnih.',
     ],
 ];

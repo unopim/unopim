@@ -17,11 +17,23 @@ use Webkul\DataGrid\Enums\ColumnTypeEnum;
 abstract class DataGrid
 {
     /**
+     * Upper bound on the number of ids a single "select all matching" request will resolve.
+     * Guards against unbounded payloads and stays within Elasticsearch's default result window.
+     */
+    const MASS_ACTION_ID_LIMIT = 10000;
+
+    /**
      * Primary column.
      *
      * @var string
      */
     protected $primaryColumn = 'id';
+
+    /**
+     * Whether the grid offers the "select all matching records across pages" option.
+     * Grids where a whole-result-set mass action is unsafe or meaningless can disable it.
+     */
+    protected bool $enableSelectAll = true;
 
     /**
      * Default sort column of datagrid.
@@ -90,6 +102,16 @@ abstract class DataGrid
     protected bool $exportable = false;
 
     /**
+     * Every matching primary-key value for the current filter/search context.
+     *
+     * Populated only when the request asks for a "select all matching" id list,
+     * so mass actions can act on the whole filtered set rather than one page.
+     *
+     * @var ?array<int, mixed>
+     */
+    protected ?array $massActionIds = null;
+
+    /**
      * Export meta information.
      */
     protected mixed $exportFile = null;
@@ -153,6 +175,11 @@ abstract class DataGrid
             sortable: $column['sortable'],
             closure: $column['closure'] ?? null,
             visible: $column['visible'] ?? true,
+            attribute_type: isset($column['attribute_type']) && is_string($column['attribute_type']) ? $column['attribute_type'] : null,
+            operators: isset($column['operators']) && is_array($column['operators']) ? array_values($column['operators']) : null,
+            filter_label: isset($column['filter_label']) && is_string($column['filter_label']) ? $column['filter_label'] : null,
+            default_filter: (bool) ($column['default_filter'] ?? true),
+            removable_filter: (bool) ($column['removable_filter'] ?? false),
         );
     }
 
@@ -216,15 +243,16 @@ abstract class DataGrid
     public function validatedRequest(): array
     {
         request()->validate([
-            'filters'     => ['sometimes', 'required', 'array'],
-            'sort'        => ['sometimes', 'required', 'array'],
-            'pagination'  => ['sometimes', 'required', 'array'],
-            'export'      => ['sometimes', 'required', 'boolean'],
-            'format'      => ['sometimes', 'required', 'in:csv,xls,xlsx'],
-            'productIds'  => ['sometimes', 'array'],
+            'filters'         => ['sometimes', 'required', 'array'],
+            'sort'            => ['sometimes', 'required', 'array'],
+            'pagination'      => ['sometimes', 'required', 'array'],
+            'export'          => ['sometimes', 'required', 'boolean'],
+            'format'          => ['sometimes', 'required', 'in:csv,xls,xlsx'],
+            'productIds'      => ['sometimes', 'array'],
+            'mass_action_ids' => ['sometimes', 'required', 'boolean'],
         ]);
 
-        return request()->only(['filters', 'sort', 'pagination', 'export', 'format', 'productIds']);
+        return request()->only(['filters', 'sort', 'pagination', 'export', 'format', 'productIds', 'mass_action_ids']);
     }
 
     /**
@@ -236,77 +264,66 @@ abstract class DataGrid
     {
         foreach ($requestedFilters as $requestedColumn => $requestedValues) {
             if ($requestedColumn === 'all') {
-                $this->queryBuilder->where(function ($scopeQueryBuilder) use ($requestedValues) {
+                $this->queryBuilder->where(function ($scopeQueryBuilder) use ($requestedValues): void {
                     foreach ($requestedValues as $value) {
                         collect($this->columns)
-                            ->filter(fn ($column) => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
-                            ->each(fn ($column) => $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%'));
+                            ->filter(fn ($column): bool => $column->searchable && $column->type !== ColumnTypeEnum::BOOLEAN->value)
+                            ->each(fn ($column) => $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false));
                     }
                 });
             } else {
-                $column = collect($this->columns)->first(fn ($c) => $c->index === $requestedColumn);
+                $column = collect($this->columns)->first(fn ($c): bool => $c->index === $requestedColumn);
 
-                switch ($column->type) {
-                    case ColumnTypeEnum::STRING->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::INTEGER->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::DROPDOWN->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::DATE_RANGE->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [
-                                    ($value[0] ?? '').' 00:00:01',
-                                    ($value[1] ?? '').' 23:59:59',
-                                ]);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::DATE_TIME_RANGE->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [$value[0] ?? '', $value[1] ?? '']);
-                            }
-                        });
-                        break;
-
-                    case ColumnTypeEnum::BOOLEAN->value:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.DB::rawQueryGrammar()->getBooleanValue($value).'%');
-                            }
-                        });
-
-                        break;
-                    default:
-                        $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues) {
-                            foreach ($requestedValues as $value) {
-                                $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.$value.'%');
-                            }
-                        });
-
-                        break;
+                if (! $column) {
+                    continue;
                 }
+
+                if ($condition = $this->extractRequestedCondition($requestedValues)) {
+                    $this->applyConditionFilter($column, $condition);
+
+                    continue;
+                }
+
+                match ($column->type) {
+                    ColumnTypeEnum::STRING->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false);
+                        }
+                    }),
+                    ColumnTypeEnum::INTEGER->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
+                        }
+                    }),
+                    ColumnTypeEnum::DROPDOWN->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), $value);
+                        }
+                    }),
+                    ColumnTypeEnum::DATE_RANGE->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [
+                                ($value[0] ?? '').' 00:00:01',
+                                ($value[1] ?? '').' 23:59:59',
+                            ]);
+                        }
+                    }),
+                    ColumnTypeEnum::DATE_TIME_RANGE->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->whereBetween($column->getDatabaseColumnName(), [$value[0] ?? '', $value[1] ?? '']);
+                        }
+                    }),
+                    ColumnTypeEnum::BOOLEAN->value => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhere($column->getDatabaseColumnName(), 'LIKE', '%'.DB::rawQueryGrammar()->getBooleanValue($value).'%');
+                        }
+                    }),
+                    default => $this->queryBuilder->where(function ($scopeQueryBuilder) use ($column, $requestedValues): void {
+                        foreach ($requestedValues as $value) {
+                            $scopeQueryBuilder->orWhereLike($column->getDatabaseColumnName(), '%'.$value.'%', false);
+                        }
+                    }),
+                };
             }
         }
 
@@ -314,11 +331,52 @@ abstract class DataGrid
     }
 
     /**
+     * Filters carrying an operator arrive as a single {operator, value, value2}
+     * payload rather than a list of plain values.
+     *
+     * @param  array<array-key, mixed>  $requestedValues
+     * @return array<string, mixed>|null
+     */
+    protected function extractRequestedCondition(array $requestedValues): ?array
+    {
+        $condition = reset($requestedValues);
+
+        return is_array($condition) && ! empty($condition['operator']) ? $condition : null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $condition
+     */
+    protected function applyConditionFilter(Column $column, array $condition): void
+    {
+        $name = $column->getDatabaseColumnName();
+        $value = $condition['value'] ?? '';
+        $value2 = $condition['value2'] ?? '';
+
+        match ($condition['operator']) {
+            'eq'             => $this->queryBuilder->where($name, $value),
+            'neq'            => $this->queryBuilder->where($name, '!=', $value),
+            'gt'             => $this->queryBuilder->where($name, '>', $value),
+            'gte'            => $this->queryBuilder->where($name, '>=', $value),
+            'lt'             => $this->queryBuilder->where($name, '<', $value),
+            'lte'            => $this->queryBuilder->where($name, '<=', $value),
+            'in_list'        => $this->queryBuilder->whereIn($name, (array) $value),
+            'not_in_list'    => $this->queryBuilder->whereNotIn($name, (array) $value),
+            'within_range'   => $this->queryBuilder->whereBetween($name, [$value, $value2]),
+            'outside_range'  => $this->queryBuilder->whereNotBetween($name, [$value, $value2]),
+            'blank'          => $this->queryBuilder->where(fn ($query) => $query->whereNull($name)->orWhere($name, '')),
+            'not_blank'      => $this->queryBuilder->whereNotNull($name)->where($name, '!=', ''),
+            'missing'        => $this->queryBuilder->where(fn ($query) => $query->whereNull($name)->orWhere($name, 'NOT LIKE', '%'.$value.'%')),
+            default          => $this->queryBuilder->where($name, 'LIKE', '%'.$value.'%'),
+        };
+    }
+
+    /**
      * Process requested sorting.
      *
      * @return Builder
      */
-    public function processRequestedSorting($requestedSort)
+    public function processRequestedSorting(array $requestedSort)
     {
         if (! $this->sortColumn) {
             $this->sortColumn = $this->primaryColumn;
@@ -330,7 +388,7 @@ abstract class DataGrid
     /**
      * Process requested pagination.
      */
-    public function processRequestedPagination($requestedPagination): LengthAwarePaginator
+    public function processRequestedPagination(array $requestedPagination): LengthAwarePaginator
     {
         return $this->queryBuilder->paginate(
             $requestedPagination['per_page'] ?? $this->itemsPerPage,
@@ -371,6 +429,22 @@ abstract class DataGrid
             return;
         }
 
+        /**
+         * A "select all matching" request only needs the primary-key values of the whole
+         * filtered set, not the paginated, formatted rows. `pluck` on the builder would drop
+         * the grid's aliased primary column (e.g. `products.id as product_id`), so resolve the
+         * ids from the executed result set instead.
+         */
+        if (isset($requestedParams['mass_action_ids']) && (bool) $requestedParams['mass_action_ids']) {
+            $this->massActionIds = $this->queryBuilder
+                ->limit(self::MASS_ACTION_ID_LIMIT)
+                ->get()
+                ->pluck($this->primaryColumn)
+                ->all();
+
+            return;
+        }
+
         $this->paginator = $this->processRequestedPagination($requestedParams['pagination'] ?? []);
     }
 
@@ -379,9 +453,8 @@ abstract class DataGrid
      *
      * @param  Collection  $records
      * @param  string  $format
-     * @return void
      */
-    public function setExportFile($records, $format = 'csv')
+    public function setExportFile($records, $format = 'csv'): void
     {
         $this->exportFile = Excel::download(new DataGridExport($records), $this->getExportFileName().'.'.$format);
     }
@@ -433,7 +506,7 @@ abstract class DataGrid
                 $getUrl = $action->url;
 
                 $record->actions[] = [
-                    'index'         => ! empty($action->index) ? $action->index : 'action_'.$index + 1,
+                    'index'         => empty($action->index) ? 'action_'.$index + 1 : $action->index,
                     'icon'          => $action->icon,
                     'title'         => $action->title,
                     'method'        => $action->method,
@@ -444,21 +517,22 @@ abstract class DataGrid
         }
 
         return [
-            'id'                 => Crypt::encryptString(get_called_class()),
+            'id'                 => Crypt::encryptString(static::class),
             'columns'            => $this->columns,
             'actions'            => $this->actions,
             'mass_actions'       => $this->massActions,
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'   => $this->primaryColumn,
-                'from'             => $paginator['from'],
-                'to'               => $paginator['to'],
-                'total'            => $paginator['total'],
-                'per_page_options' => [10, 20, 30, 40, 50],
-                'per_page'         => $paginator['per_page'],
-                'current_page'     => $paginator['current_page'],
-                'last_page'        => $paginator['last_page'],
+                'primary_column'     => $this->primaryColumn,
+                'select_all_enabled' => $this->enableSelectAll,
+                'from'               => $paginator['from'],
+                'to'                 => $paginator['to'],
+                'total'              => $paginator['total'],
+                'per_page_options'   => [10, 20, 30, 40, 50],
+                'per_page'           => $paginator['per_page'],
+                'current_page'       => $paginator['current_page'],
+                'last_page'          => $paginator['last_page'],
             ],
         ];
     }
@@ -496,9 +570,8 @@ abstract class DataGrid
 
             if (is_array($value)) {
                 return $this->sanitizeRow($tempRow[$column]);
-            } else {
-                $row->{$column} = strip_tags($value);
             }
+            $row->{$column} = strip_tags((string) $value);
         }
 
         return $row;
@@ -513,6 +586,10 @@ abstract class DataGrid
 
         if ($this->exportable) {
             return $this->downloadExportFile();
+        }
+
+        if (! is_null($this->massActionIds)) {
+            return response()->json(['ids' => $this->massActionIds]);
         }
 
         return response()->json($this->formatData());

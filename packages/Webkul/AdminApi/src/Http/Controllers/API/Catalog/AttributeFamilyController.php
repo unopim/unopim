@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\AttributeFamilyDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreAttributeFamilyRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateAttributeFamilyRequest;
 use Webkul\Attribute\Repositories\AttributeFamilyGroupMappingRepository;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
@@ -52,17 +54,9 @@ class AttributeFamilyController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(): JsonResponse
+    public function store(StoreAttributeFamilyRequest $request): JsonResponse
     {
-        $validator = $this->codeRequireWithUniqueValidator('attribute_families');
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
         $requestData = request()->all();
         $requestData = $this->setLabels($requestData);
         $errors = [];
@@ -87,11 +81,9 @@ class AttributeFamilyController extends ApiController
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
+     * Update the specified resource in storage.
      */
-    public function update(string $code): JsonResponse
+    public function update(UpdateAttributeFamilyRequest $request, string $code): JsonResponse
     {
         $attributeFamily = $this->attributeFamilyRepository->findOneByField('code', $code);
         if (! $attributeFamily) {
@@ -123,12 +115,54 @@ class AttributeFamilyController extends ApiController
     }
 
     /**
+     * Partially update the specified resource.
+     */
+    public function partialUpdate(UpdateAttributeFamilyRequest $request, string $code): JsonResponse
+    {
+        return $this->update($request, $code);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $attributeFamily = $this->attributeFamilyRepository->findOneByField('code', $code);
+        if (! $attributeFamily) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.families.not-found', ['code' => $code]));
+        }
+
+        if ($attributeFamily->products()->count()) {
+            return $this->validateErrorResponse(
+                ['code' => [trans('admin::app.catalog.families.attribute-product-error')]],
+                trans('admin::app.catalog.families.attribute-product-error')
+            );
+        }
+
+        try {
+            Event::dispatch('catalog.attribute_family.delete.before', $attributeFamily->id);
+            $this->attributeFamilyRepository->delete($attributeFamily->id);
+            Event::dispatch('catalog.attribute_family.delete.after', $attributeFamily->id);
+
+            return $this->successResponse(trans('admin::app.catalog.families.delete-success'));
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
      * Normalize custom attributes, and custom attribute groups data.
      *
      * @return array
      */
     private function normalize(array $requestData, &$errors, ?int $familyId = null)
     {
+        if (empty($requestData['attribute_groups']) || ! is_array($requestData['attribute_groups'])) {
+            $requestData['attribute_groups'] = [];
+
+            return $requestData;
+        }
+
         $attributeGroup = [];
         foreach ($requestData['attribute_groups'] as $key => $value) {
             $groupId = $this->attributeGroupRepository->findOneByField('code', $value['code'])?->id;
@@ -166,6 +200,10 @@ class AttributeFamilyController extends ApiController
      */
     private function setAttributeAndPosition(array $data, &$errors)
     {
+        if (empty($data['custom_attributes']) || ! is_array($data['custom_attributes'])) {
+            return $data;
+        }
+
         foreach ($data['custom_attributes'] as $key => $value) {
             $data['custom_attributes'][$key]['position'] = $value['position'];
             $attributeId = $this->attributeRepository->findOneByField('code', $value['code'])?->id;

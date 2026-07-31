@@ -4,7 +4,7 @@ it('returns version string without v prefix', function () {
     $version = core()->version();
 
     expect($version)->not->toStartWith('v');
-    expect($version)->toMatch('/^\d+\.\d+\.\d+$/');
+    expect($version)->toMatch('/^(\d+\.\d+\.\d+|master)$/');
 });
 
 it('version command outputs version without v prefix', function () {

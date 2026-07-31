@@ -5,6 +5,7 @@ namespace Webkul\AiAgent\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Repositories\ProductRepository;
 
 /**
  * AI Agent analytics dashboard and audit trail.
@@ -14,9 +15,7 @@ class DashboardController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            if (! bouncer()->hasPermission('ai-agent.dashboard')) {
-                abort(403, trans('ai-agent::app.common.unauthorized'));
-            }
+            abort_unless(bouncer()->hasPermission('ai-agent.dashboard'), 403, trans('ai-agent::app.common.unauthorized'));
 
             return $next($request);
         });
@@ -47,12 +46,11 @@ class DashboardController extends Controller
             ->where('usage_date', '>=', $weekAgo)
             ->selectRaw('usage_date, SUM(tokens_used) as tokens, SUM(request_count) as requests')
             ->groupBy('usage_date')
-            ->orderBy('usage_date')
+            ->oldest('usage_date')
             ->get();
 
         // Recent tasks
-        $recentTasks = DB::table('ai_agent_tasks')
-            ->orderByDesc('created_at')
+        $recentTasks = DB::table('ai_agent_tasks')->latest()
             ->limit(10)
             ->get(['id', 'type', 'status', 'progress', 'created_at', 'completed_at']);
 
@@ -87,7 +85,7 @@ class DashboardController extends Controller
                 'c.applied_at', 'c.rolled_back_at', 'c.created_at',
                 'a.name as user_name',
             )
-            ->orderByDesc('c.created_at')
+            ->latest('c.created_at')
             ->limit(50)
             ->get();
 
@@ -108,12 +106,12 @@ class DashboardController extends Controller
             return new JsonResponse(['error' => 'Changeset not found or already rolled back'], 404);
         }
 
-        $changes = json_decode($changeset->changes, true) ?? [];
+        $changes = json_decode((string) $changeset->changes, true) ?? [];
 
         // Attempt to rollback product changes
         $rolledBack = 0;
         if (! empty($changes['product_id']) && ! empty($changes['previous_values'])) {
-            $repo = app('Webkul\Product\Repositories\ProductRepository');
+            $repo = resolve(ProductRepository::class);
             $repo->updateWithValues(['values' => $changes['previous_values']], $changes['product_id']);
             $rolledBack++;
         }
@@ -139,12 +137,11 @@ class DashboardController extends Controller
     {
         $notifications = DB::table('ai_agent_tasks')
             ->where('type', 'notification')
-            ->where('status', 'pending')
-            ->orderByDesc('created_at')
+            ->where('status', 'pending')->latest()
             ->limit(20)
             ->get(['id', 'config', 'result', 'priority', 'created_at'])
-            ->map(function ($n) {
-                $config = json_decode($n->config, true) ?? [];
+            ->map(function ($n): array {
+                $config = json_decode((string) $n->config, true) ?? [];
 
                 return [
                     'id'       => $n->id,

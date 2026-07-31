@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -8,19 +9,16 @@ use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Services\WebhookService;
 
 beforeEach(function () {
-    DB::table('webhook_settings')->updateOrInsert(
-        ['field' => 'webhook_url'],
-        ['value' => 'https://1.1.1.1/hook', 'updated_at' => now(), 'created_at' => now()]
-    );
-
-    DB::table('webhook_settings')->updateOrInsert(
-        ['field' => 'webhook_active'],
-        ['value' => '1', 'updated_at' => now(), 'created_at' => now()]
-    );
-});
-
-afterEach(function () {
-    DB::table('webhook_settings')->whereIn('field', ['webhook_url', 'webhook_active'])->delete();
+    $this->withoutMiddleware(PreventRequestForgery::class);
+    DB::table('webhooks')->delete();
+    DB::table('webhooks')->insert([
+        'name'       => 'Create Test',
+        'url'        => 'https://1.1.1.1/hook',
+        'is_active'  => 1,
+        'events'     => json_encode(['product.created', 'product.updated']),
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 });
 
 it('dispatches SendProductWebhook with the created event and the new product sku in changes.added', function () {
@@ -60,9 +58,7 @@ it('dispatches SendProductWebhook with the created event and the new product sku
 it('does not dispatch SendProductWebhook when the webhook is inactive', function () {
     $this->loginAsAdmin();
 
-    DB::table('webhook_settings')
-        ->where('field', 'webhook_active')
-        ->update(['value' => '0']);
+    DB::table('webhooks')->update(['is_active' => 0]);
 
     Bus::fake([SendProductWebhook::class]);
 

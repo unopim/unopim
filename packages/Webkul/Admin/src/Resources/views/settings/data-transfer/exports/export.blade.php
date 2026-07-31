@@ -8,7 +8,7 @@
         <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
             <a
                 href="{{ route('admin.settings.data_transfer.exports.index') }}"
-                class="text-gray-600 hover:bg-violet-100 dark:hover:bg-gray-800 dark:text-white"
+                class="text-gray-600 hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
             >
                 @lang('admin::app.settings.data-transfer.exports.export.title')
             </a>
@@ -26,12 +26,14 @@
             </a>
 
             <!-- Save Button -->
-            <a
-                href="{{ route('admin.settings.data_transfer.exports.edit', $export->id) }}"
-                class="primary-button"
-            >
-                @lang('admin::app.settings.data-transfer.exports.export.edit-btn')
-            </a>
+            @if (bouncer()->hasPermission('data_transfer.export.edit'))
+                <a
+                    href="{{ route('admin.settings.data_transfer.exports.edit', $export->id) }}"
+                    class="primary-button"
+                >
+                    @lang('admin::app.settings.data-transfer.exports.export.edit-btn')
+                </a>
+            @endif
         </div>
     </div>
 
@@ -91,20 +93,22 @@
 
                 </div>
                 @if (bouncer()->hasPermission('data_transfer.export.execute'))
-                    <x-admin::form  
+                    <x-admin::form
                             :action="route('admin.settings.data_transfer.exports.export_now', ['id' => $export->id])"
+                            ajax="true"
+                            :track-dirty="false"
                         >
                         @method('PUT')
 
-                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
+                        {!! view_render_event('unopim.admin.settings.data-transfer.exports.export.export_form_controls.before') !!}
                             <button
-                                type="submit" 
+                                type="submit"
                                 class="primary-button place-self-start"
-                                aria-lebel="Submit"
+                                aria-label="{{ trans('admin::app.settings.data-transfer.exports.export.export-now') }}"
                             >
                                 @lang('admin::app.settings.data-transfer.exports.export.export-now')
                             </button>
-                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.after') !!}
+                        {!! view_render_event('unopim.admin.settings.data-transfer.exports.export.export_form_controls.after') !!}
 
                     </x-admin::form>
                 @endif
@@ -116,9 +120,7 @@
                 template: '#v-export-now-template',
 
                 data() {
-                    return {
-                        exportResource: @json($export), 
-                    };
+                    return {};
                 },
             })
         </script>

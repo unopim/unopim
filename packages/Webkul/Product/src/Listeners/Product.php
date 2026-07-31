@@ -8,8 +8,6 @@ class Product
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(
         protected ProductRepository $productRepository,
@@ -19,9 +17,8 @@ class Product
      * Returns parents bundle product ids associated with simple product
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @return array
      */
-    public function getAllRelatedProductIds($product)
+    public function getAllRelatedProductIds($product): array
     {
         $productIds = [$product->id];
 

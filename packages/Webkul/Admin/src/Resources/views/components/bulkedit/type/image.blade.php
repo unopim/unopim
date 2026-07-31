@@ -1,7 +1,6 @@
 @pushOnce('scripts')
   <script type="text/x-template" id="v-spreadsheet-image-template">
     <div class="w-full h-full flex items-center gap-1.5 px-1">
-      <!-- Thumbnail preview -->
       <div v-if="modelValue" class="flex-shrink-0 w-6 h-6 rounded overflow-hidden border border-gray-200 dark:border-cherry-700">
         <img
           :src="imageUrl"
@@ -14,7 +13,6 @@
         ref="input"
         type="text"
         :name="`${entityId}_${column.code}`"
-        v-bind="field"
         class="flex-1 min-w-0 text-xs text-gray-600 dark:text-gray-300 bg-transparent truncate focus:outline-none"
         readonly
       />
@@ -23,12 +21,12 @@
         <span
           v-if="modelValue"
           @click="preview"
-          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-view"
+          class="cursor-pointer text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-base icon-view"
         ></span>
 
         <span
           @click="triggerUpload"
-          class="cursor-pointer text-gray-400 hover:text-violet-600 dark:hover:text-violet-400 text-base icon-edit"
+          class="cursor-pointer text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 text-base icon-edit"
         ></span>
 
         <span
@@ -42,16 +40,15 @@
         type="file"
         ref="fileInput"
         class="hidden"
-        accept="image/*"
+        :accept="acceptedTypes"
         @change="onFileChange"
       />
 
-      <!-- Preview handled by editor-level overlay via emitter -->
     </div>
   </script>
 
   <script type="module">
-    app.component('v-spreadsheet-image', {
+    const mediaCell = {
       template: '#v-spreadsheet-image-template',
 
       props: {
@@ -72,6 +69,18 @@
       computed: {
         imageUrl() {
           return this.modelValue ? this.baseUrl + this.modelValue : '';
+        },
+
+        acceptedTypes() {
+          const extensions = this.attribute?.allowed_extensions;
+
+          if (extensions) {
+            return extensions.split(',')
+              .map(extension => '.' + extension.trim().replace(/^\./, ''))
+              .join(',');
+          }
+
+          return this.column?.type === 'image' ? 'image/*' : '';
         },
       },
 
@@ -127,7 +136,10 @@
               }
             })
             .catch(error => {
-              this.$emitter.emit('add-flash', { type: 'warning', message: error });
+              this.$emitter.emit('add-flash', {
+                type: 'warning',
+                message: error?.response?.data?.message || @json(trans('admin::app.catalog.products.bulk-edit.img-fail')),
+              });
             });
         },
 
@@ -137,7 +149,10 @@
 
         preview() {
           if (this.imageUrl) {
-            this.$emitter.emit('preview-image', this.imageUrl);
+            this.$emitter.emit('preview-image', {
+              url: this.imageUrl,
+              fileName: this.getFileName(this.modelValue),
+            });
           }
         },
 
@@ -155,6 +170,9 @@
           this.emitUpdate(val);
         },
       },
-    });
+    };
+
+    app.component('v-spreadsheet-image', mediaCell);
+    app.component('v-spreadsheet-file', mediaCell);
   </script>
 @endPushOnce

@@ -3,6 +3,7 @@
 namespace Webkul\User\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
+use Webkul\User\Contracts\Role;
 
 class RoleRepository extends Repository
 {
@@ -11,6 +12,6 @@ class RoleRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\User\Contracts\Role';
+        return Role::class;
     }
 }

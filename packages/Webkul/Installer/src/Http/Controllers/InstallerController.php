@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 use Webkul\Installer\Console\Commands\Installer;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
@@ -25,7 +27,7 @@ class InstallerController extends Controller
      *
      * @var string
      */
-    const MIN_PHP_VERSION = '8.2.0';
+    const MIN_PHP_VERSION = '8.4.1';
 
     /**
      * Const Variable for Static Customer Id
@@ -35,6 +37,15 @@ class InstallerController extends Controller
     const USER_ID = 1;
 
     /**
+     * Max age (seconds) of the seeded default admin (id 1) for adminConfigSetup
+     * to still promote it — distinguishes an in-progress install from an
+     * established live admin whose install seals were lost.
+     *
+     * @var int
+     */
+    const ADMIN_SEED_PROMOTION_WINDOW = 86400;
+
+    /**
      * Cloud hosting promo URL shown in the installer top bar.
      *
      * @var string
@@ -42,38 +53,26 @@ class InstallerController extends Controller
     const CLOUD_HOSTING_URL = 'https://unopim.com/cloud-hosting/';
 
     /**
-     * Optional open-source add-on packages surfaced in the web installer.
+     * Optional add-on packages on offer, keyed by the whitelisted key the
+     * client may send, or an empty list while the feature is switched off in
+     * `installer.optional_packages`.
      *
-     * Mirrors {@see Installer::$optionalPackages}
-     * 1:1 so the labels and install commands stay in sync with the CLI. The web
-     * installer installs the selected packages server-side during the streaming
-     * install (see {@see installPackageStreamed()}); the client only sends the
-     * whitelisted keys, never the composer/artisan arguments.
+     * Display labels live in the `installer::app.installer.index.add-ons.packages.*`
+     * lang files and are rendered client-side; only machine values are read here.
      *
-     * @var array<string, array{composer: string, label: string, install: string}>
+     * @return array<string, array{composer: string, install: string}>
      */
-    protected $optionalPackages = [
-        'dam' => [
-            'composer' => 'unopim/dam',
-            'label'    => 'Digital Asset Management (DAM)',
-            'install'  => 'dam-package:install',
-        ],
-        'shopify' => [
-            'composer' => 'unopim/shopify-connector',
-            'label'    => 'Shopify Connector',
-            'install'  => 'shopify-package:install',
-        ],
-        'bagisto' => [
-            'composer' => 'unopim/bagisto-connector',
-            'label'    => 'Bagisto Connector',
-            'install'  => 'bagisto-package:install',
-        ],
-    ];
+    protected function optionalPackages(): array
+    {
+        if (! config('installer.optional_packages.enabled', false)) {
+            return [];
+        }
+
+        return config('installer.optional_packages.packages', []);
+    }
 
     /**
      * Create a new controller instance
-     *
-     * @return void
      */
     public function __construct(
         protected ServerRequirements $serverRequirements,
@@ -90,10 +89,8 @@ class InstallerController extends Controller
      * again on a live instance. The `storage/installed` marker is written only
      * at the end of the install flow (after admin creation, and after demo data
      * when opted in), so this never blocks a genuine install.
-     *
-     * @return void
      */
-    protected function abortIfInstalled()
+    protected function abortIfInstalled(): void
     {
         abort_if(
             file_exists(storage_path('installed'))
@@ -106,30 +103,98 @@ class InstallerController extends Controller
      * Abort with 403 when the database is already populated. Guards the
      * destructive pre-admin steps (migration/seed/env) against being replayed
      * on an installed instance whose storage marker was lost.
-     *
-     * @return void
      */
-    protected function abortIfDatabasePopulated()
+    protected function abortIfDatabasePopulated(): void
     {
         abort_if($this->databaseManager->isInstalled(), 403);
     }
 
     /**
-     * Apply the database credentials from the freshly written .env to the live
+     * Allow the admin-promotion step to overwrite only the seeder's freshly
+     * created default admin (id 1), never an established live admin.
+     *
+     * abortIfDatabasePopulated() cannot be used here (the base seeder populates
+     * id 1 before this step) and the persistent flag is insufficient for a DB
+     * restored between the backfill migration and the flag write. created_at
+     * age is the reliable distinguisher; any error or stale timestamp fails
+     * closed.
+     */
+    protected function abortUnlessAdminIsFreshlySeeded(): void
+    {
+        try {
+            $existing = DB::table('admins')->where('id', self::USER_ID)->first();
+        } catch (\Throwable $e) {
+            report($e);
+
+            abort(403);
+        }
+
+        if ($existing === null) {
+            return;
+        }
+
+        $createdAt = isset($existing->created_at)
+            ? strtotime((string) $existing->created_at)
+            : false;
+
+        abort_if(
+            $createdAt === false
+                || (time() - $createdAt) > self::ADMIN_SEED_PROMOTION_WINDOW,
+            403
+        );
+    }
+
+    /**
+     * Reject an admin password that opens or closes with whitespace, before
+     * any install state is written.
+     *
+     * Every other password entry point (user forms, account settings, reset)
+     * applies the same rule, and the login page strips a leading space on the
+     * assumption that no stored password starts with one — so the installer
+     * must never mint the account that breaks that assumption.
+     */
+    protected function validateAdminPassword(array $payload, string $attribute): ?JsonResponse
+    {
+        $validator = Validator::make($payload, [
+            $attribute => ['nullable', 'string', new PasswordWithoutSurroundingWhitespace],
+        ], [], [
+            $attribute => trans('installer::app.installer.index.create-administrator.password'),
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error'  => $validator->errors()->first($attribute),
+                'errors' => $validator->errors()->toArray(),
+            ], 422);
+        }
+
+        return null;
+    }
+
+    /**
+     * Apply the database credentials from the operator's .env to the live
      * runtime config.
      *
-     * The .env is written by an earlier request (env-file-setup), but the
-     * process handling migration/seeding may have already booted with the old
-     * config (persistent `php artisan serve` workers, php-fpm, Octane, etc.),
+     * The serving process may have booted before the operator authored the
+     * .env (persistent `php artisan serve` workers, php-fpm, Octane, etc.),
      * so it would otherwise migrate the wrong database. Re-reading the .env and
      * purging the connection makes the install work on any server, mirroring
      * the CLI installer's loadEnvConfigAtRuntime().
+     *
+     * Inert under the test runner: DB::purge() would silently discard the
+     * suite's DatabaseTransactions rollback and reconnect every subsequent
+     * write to the workspace's real .env database — installer tests once wiped
+     * a live admin exactly this way.
      */
     protected function reloadDatabaseConfigFromEnv(): void
     {
+        if (app()->runningUnitTests()) {
+            return;
+        }
+
         $env = $this->readEnvFile();
 
-        if (empty($env)) {
+        if ($env === []) {
             return;
         }
 
@@ -165,8 +230,13 @@ class InstallerController extends Controller
 
         foreach (file($path, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) as $line) {
             $line = trim($line);
-
-            if ($line === '' || str_starts_with($line, '#') || ! str_contains($line, '=')) {
+            if ($line === '') {
+                continue;
+            }
+            if (str_starts_with($line, '#')) {
+                continue;
+            }
+            if (! str_contains($line, '=')) {
                 continue;
             }
 
@@ -187,10 +257,8 @@ class InstallerController extends Controller
      * created, and after demo data when the operator opts into it. Guarded so
      * the marker is written, and `unopim.installed` dispatched, exactly once
      * even if two end-of-flow requests race.
-     *
-     * @return void
      */
-    protected function markInstalled()
+    protected function markInstalled(): void
     {
         $this->databaseManager->markInstalled();
 
@@ -215,52 +283,51 @@ class InstallerController extends Controller
         $requirements = $this->serverRequirements->validate();
 
         if (request()->has('locale')) {
-            return redirect()->route('installer.index');
+            return to_route('installer.index');
         }
 
-        $optionalPackages = $this->optionalPackages;
+        $optionalPackages = $this->optionalPackages();
 
         $cloudHostingUrl = self::CLOUD_HOSTING_URL;
 
-        return view('installer::installer.index', compact('requirements', 'phpVersion', 'optionalPackages', 'cloudHostingUrl'));
+        $this->reloadDatabaseConfigFromEnv();
+
+        $connection = (string) config('database.default');
+
+        $environmentSummary = [
+            'app_url'    => (string) config('app.url'),
+            'connection' => $connection,
+            'host'       => (string) config("database.connections.{$connection}.host"),
+            'port'       => (string) config("database.connections.{$connection}.port"),
+            'database'   => (string) config("database.connections.{$connection}.database"),
+            'username'   => (string) config("database.connections.{$connection}.username"),
+            'prefix'     => (string) config("database.connections.{$connection}.prefix"),
+        ];
+
+        return view('installer::installer.index', ['requirements' => $requirements, 'phpVersion' => $phpVersion, 'optionalPackages' => $optionalPackages, 'cloudHostingUrl' => $cloudHostingUrl, 'environmentSummary' => $environmentSummary]);
     }
 
     /**
-     * ENV File Setup
+     * Confirm the operator-authored .env is present and keyed.
+     *
+     * The installer no longer writes the .env file from wizard input — an
+     * unauthenticated endpoint that rewrites the runtime configuration is a
+     * backdoor on any exposed pre-install instance. The environment step only
+     * verifies the file exists and generates APP_KEY when it is still empty.
      */
-    public function envFileSetup(Request $request): JsonResponse
+    public function envFileSetup(): JsonResponse
     {
         $this->abortIfInstalled();
 
-        $request = $request->all();
+        $this->abortIfDatabasePopulated();
 
-        if (isset($request['db_prefix'])) {
-            $request['db_prefix'] = trim((string) $request['db_prefix']);
+        $result = $this->environmentManager->generateEnv([]);
+
+        if ($result instanceof \Exception) {
+            return response()->json(['error' => $result->getMessage()], 422);
         }
 
-        $request = array_map(function ($input) {
-            return strip_tags((string) $input);
-        }, $request);
-
-        // Match the CLI installer's prefix validation 1:1 so both install
-        // paths surface the same migration-blocking errors up-front.
-        $validator = Validator::make($request, [
-            'db_prefix' => ['nullable', 'string', 'max:4', 'regex:/^[A-Za-z0-9_]*$/'],
-        ], [
-            'db_prefix.max'   => 'The database prefix should not exceed 4 characters.',
-            'db_prefix.regex' => 'The database prefix can only contain letters, numbers, and underscores.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error'  => $validator->errors()->first('db_prefix') ?: 'Failed to parse dotenv file due to some invalid values',
-                'errors' => $validator->errors()->toArray(),
-            ], 422);
-        }
-
-        $message = $this->environmentManager->generateEnv($request);
-
-        return new JsonResponse(['data' => $message]);
+        return new JsonResponse(['data' => true]);
     }
 
     /**
@@ -281,17 +348,13 @@ class InstallerController extends Controller
             return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
 
-        $migration = $this->databaseManager->migration();
-
-        return $migration;
+        return $this->databaseManager->migration();
     }
 
     /**
      * Run Seeder
-     *
-     * @return void|string
      */
-    public function runSeeder()
+    public function runSeeder(): ?string
     {
         $this->abortIfInstalled();
         $this->abortIfDatabasePopulated();
@@ -323,13 +386,7 @@ class InstallerController extends Controller
             ],
         ];
 
-        $response = $this->environmentManager->setEnvConfiguration(request()->allParameters);
-
-        if ($response) {
-            $seeder = $this->databaseManager->seeder($parameter);
-
-            return $seeder;
-        }
+        return $this->databaseManager->seeder($parameter);
     }
 
     /**
@@ -341,9 +398,19 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
+        // Fail closed if the install state cannot be positively confirmed.
+        abort_unless($this->databaseManager->canConfirmNotInstalled(), 403);
+
+        // Only ever promote the seeder's freshly-created default admin.
+        $this->abortUnlessAdminIsFreshlySeeded();
+
+        if (($invalid = $this->validateAdminPassword(request()->all(), 'password')) instanceof JsonResponse) {
+            return $invalid;
+        }
+
         $this->reloadDatabaseConfigFromEnv();
 
-        $password = password_hash(request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
+        $password = password_hash((string) request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
         $uiLocaleId = DB::table('locales')->where('code', request()->input('locale'))->where('status', 1)->first()?->id ?? 58;
 
         try {
@@ -405,23 +472,29 @@ class InstallerController extends Controller
     /**
      * Persist the install configuration server-side ahead of the streaming run.
      *
-     * Writes the app/locale/currency/Elasticsearch settings to the .env via
-     * {@see EnvironmentManager::setEnvConfiguration()} and stashes the admin
-     * credentials, sample-data flag, allowed locales/currencies and the
-     * (whitelisted) optional-package keys in the session. The actual install is
-     * driven by {@see processInstall()} over a GET EventSource, which cannot
-     * carry a body — so the admin password never travels in a query string; it
-     * is read back from the session inside the SSE stream.
+     * Stashes the admin credentials, sample-data flag, allowed
+     * locales/currencies and the (whitelisted) optional-package keys in a temp
+     * state file — never the .env, which the installer does not write. The
+     * actual install is driven by {@see processInstall()} over a GET
+     * EventSource, which cannot carry a body — so the admin password never
+     * travels in a query string; it is read back from the state file inside
+     * the SSE stream.
      */
     public function prepareInstall(Request $request): JsonResponse
     {
         $this->abortIfInstalled();
 
+        // Precedes migration/seeding; refuse on a populated DB so a marker-lost
+        // instance cannot have its .env repointed by an unauthenticated request.
+        $this->abortIfDatabasePopulated();
+
         $this->reloadDatabaseConfigFromEnv();
 
         $payload = $request->all();
 
-        $this->environmentManager->setEnvConfiguration($payload);
+        if (($invalid = $this->validateAdminPassword($payload, 'admin.password')) instanceof JsonResponse) {
+            return $invalid;
+        }
 
         $admin = $request->input('admin', []);
 
@@ -433,8 +506,8 @@ class InstallerController extends Controller
         // Whitelist package keys against the server-side map — never trust the
         // client with composer/artisan arguments. Unknown keys are dropped.
         $packages = array_values(array_filter(
-            array_map('strval', $requestedPackages),
-            fn ($key) => isset($this->optionalPackages[$key])
+            array_map(strval(...), $requestedPackages),
+            fn (string $key): bool => isset($this->optionalPackages()[$key])
         ));
 
         // Persist to a temp state file rather than the session: the SSE stream is
@@ -455,10 +528,14 @@ class InstallerController extends Controller
                 'packages'           => $packages,
                 'app_locale'         => strip_tags((string) $request->input('app_locale', 'en_US')),
                 'app_currency'       => strip_tags((string) $request->input('app_currency', 'USD')),
-                'allowed_locales'    => array_map(fn ($v) => strip_tags((string) $v), $allowedLocales),
-                'allowed_currencies' => array_map(fn ($v) => strip_tags((string) $v), $allowedCurrencies),
+                'allowed_locales'    => array_map(fn ($v): string => strip_tags((string) $v), $allowedLocales),
+                'allowed_currencies' => array_map(fn ($v): string => strip_tags((string) $v), $allowedCurrencies),
             ])
         );
+
+        // The state file holds the admin password until processInstall consumes it,
+        // so restrict it to the owner only (never group/world readable).
+        @chmod($this->installerStatePath(), 0600);
 
         return new JsonResponse(['success' => true]);
     }
@@ -487,6 +564,12 @@ class InstallerController extends Controller
     {
         $this->abortIfInstalled();
 
+        // processInstall runs `migrate:fresh` (drops every table). Guard it the
+        // same way runMigration() does: if the DB is already populated (an
+        // installed instance whose storage marker was lost), refuse — otherwise a
+        // reachable install endpoint would wipe the live database.
+        $this->abortIfDatabasePopulated();
+
         $statePath = $this->installerStatePath();
         $state = file_exists($statePath) ? (json_decode(File::get($statePath), true) ?: []) : [];
 
@@ -507,7 +590,7 @@ class InstallerController extends Controller
             $appCurrency,
             $allowedLocales,
             $allowedCurrencies
-        ) {
+        ): void {
             $emit = function (string $text): void {
                 echo 'data: '.json_encode(['line' => $text]).PHP_EOL.PHP_EOL;
 
@@ -536,6 +619,10 @@ class InstallerController extends Controller
                 @ob_end_flush();
             }
             @ob_implicit_flush(true);
+
+            // Once the admin is committed, a later failure must still seal the
+            // installer so the half-completed install cannot be re-driven.
+            $administratorCreated = false;
 
             try {
                 // a. Database
@@ -580,13 +667,14 @@ class InstallerController extends Controller
                 // d. Administrator
                 $emit(trans('installer::app.installer.index.terminal.creating-admin'));
                 $this->createAdminFromSession($admin);
+                $administratorCreated = true;
                 $emit(trans('installer::app.installer.index.terminal.admin-created'));
 
                 // e. Sample data (optional)
                 if ($sample) {
                     $emit(trans('installer::app.installer.index.terminal.installing-sample'));
 
-                    $result = app(DemoDataInstaller::class)->seed();
+                    $result = resolve(DemoDataInstaller::class)->seed();
 
                     if (! ($result['success'] ?? false)) {
                         $emit(trans('installer::app.installer.index.terminal.sample-failed', [
@@ -599,11 +687,11 @@ class InstallerController extends Controller
 
                 // f. Optional add-on packages
                 foreach ($packages as $key) {
-                    if (! isset($this->optionalPackages[$key])) {
+                    if (! isset($this->optionalPackages()[$key])) {
                         continue;
                     }
 
-                    $package = $this->optionalPackages[$key];
+                    $package = $this->optionalPackages()[$key];
 
                     $this->installPackageStreamed($package, $emit, $emitLines);
                 }
@@ -619,7 +707,13 @@ class InstallerController extends Controller
             } catch (\Throwable $e) {
                 report($e);
 
-                echo 'event: error'.PHP_EOL;
+                // Seal if the admin was already created, so the reachable
+                // endpoints cannot be replayed to overwrite it.
+                if ($administratorCreated) {
+                    $this->markInstalled();
+                }
+
+                echo 'event: install-error'.PHP_EOL;
                 echo 'data: '.json_encode(['message' => $e->getMessage()]).PHP_EOL.PHP_EOL;
 
                 @ob_flush();
@@ -731,7 +825,7 @@ class InstallerController extends Controller
             }
 
             $artisan = new Process(
-                [PHP_BINARY, base_path('artisan'), $package['install'], '--no-interaction'],
+                [$this->resolvePhpBinary(), base_path('artisan'), $package['install'], '--no-interaction'],
                 base_path(),
                 $this->resolvedDatabaseEnv() + $env,
                 null,
@@ -768,7 +862,7 @@ class InstallerController extends Controller
             return false;
         }
 
-        $disabled = array_map('trim', explode(',', strtolower((string) ini_get('disable_functions'))));
+        $disabled = array_map(trim(...), explode(',', strtolower((string) ini_get('disable_functions'))));
 
         return ! in_array('proc_open', $disabled, true);
     }
@@ -789,6 +883,22 @@ class InstallerController extends Controller
     }
 
     /**
+     * Resolve the PHP executable used to spawn child processes.
+     *
+     * `PHP_BINARY` is empty on some web SAPIs, which spawns a command whose
+     * first argument is an empty string — the shell reports "Permission
+     * denied" and exit 127, and the install fails with nothing to act on.
+     */
+    protected function resolvePhpBinary(): string
+    {
+        if (PHP_BINARY !== '' && is_executable(PHP_BINARY) && ! str_contains(basename(PHP_BINARY), 'fpm')) {
+            return PHP_BINARY;
+        }
+
+        return (new PhpExecutableFinder)->find(false) ?: 'php';
+    }
+
+    /**
      * Resolve the composer executable as a process-argument prefix.
      *
      * A web process PATH may not include composer, so probe common locations
@@ -801,7 +911,7 @@ class InstallerController extends Controller
     {
         foreach ($this->composerProbePaths() as $path) {
             if (is_file($path)) {
-                return str_ends_with($path, '.phar') ? [PHP_BINARY, $path] : [$path];
+                return str_ends_with($path, '.phar') ? [$this->resolvePhpBinary(), $path] : [$path];
             }
         }
 
@@ -827,23 +937,5 @@ class InstallerController extends Controller
             'DB_PASSWORD'   => (string) config("database.connections.{$connection}.password"),
             'DB_PREFIX'     => (string) config("database.connections.{$connection}.prefix"),
         ];
-    }
-
-    /**
-     * SMTP connection setup for Mail
-     */
-    public function smtpConfigSetup()
-    {
-        $this->abortIfInstalled();
-
-        $this->environmentManager->setEnvConfiguration(request()->input());
-
-        $filePath = storage_path('installed');
-
-        File::put($filePath, 'Your UnoPim App is Successfully Installed');
-
-        Event::dispatch('unopim.installed');
-
-        return $filePath;
     }
 }

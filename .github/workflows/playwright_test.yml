@@ -1,9 +1,16 @@
 name: Playwright Tests
 
-on: [push, pull_request]
+# A branch push and its own pull request are the same commit, so pushes are
+# limited to the release lines and everything else arrives through the PR event.
+on:
+  push:
+    branches: [master, '2.1']
+  pull_request:
 
+# head_ref is the branch on a pull request and empty elsewhere, which keeps a
+# branch's runs in one group no matter which event opened them.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -66,24 +73,16 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@2.37.1
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
-
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
         with:
-          path: |
-            vendor
-            ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+          composer-options: "--optimize-autoloader"
 
       - name: Cache npm dependencies
         uses: actions/cache@v5
@@ -104,9 +103,6 @@ jobs:
           npm install --no-progress --prefer-offline
           npx playwright install --with-deps chromium
 
-      - name: Install Composer dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
-
       - name: Setting Environment
         run: |
           cp .env.example .env
@@ -118,6 +114,22 @@ jobs:
           sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
           sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
           sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          # The API E2E specs fire many requests back-to-back; lift the REST rate
+          # limit for the test server so they don't trip the 120/min throttle (429).
+          echo "REST_API_RATE_LIMIT=100000" >> .env
+          # Login-heavy shards (loginpage, notifications re-auth, ajax-nav, security)
+          # sign in as the same admin many times within a minute; raise the admin
+          # login throttle so those legitimate logins don't cascade into 429s. The
+          # rate-limit security spec reads this same value to still assert throttling.
+          echo "ADMIN_LOGIN_RATE_LIMIT=20" >> .env
+          # The oauth spec requests well over a dozen tokens as the same admin from
+          # the same address, and that limiter keys on `username|ip`, so the 10/min
+          # production default throttles the suite against itself.
+          echo "OAUTH_TOKEN_RATE_LIMIT=100000" >> .env
+
+          # The webhook-delivery spec's catcher listens on the runner's loopback;
+          # SafeWebhookUrl blocks loopback unless this opt-in is set.
+          echo "WEBHOOK_ALLOW_LOOPBACK=true" >> .env
 
       - name: Running UnoPim Installer & Start Server
         env:
@@ -131,12 +143,17 @@ jobs:
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
           chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
+          php artisan unopim:passport:install-preset
+          php artisan db:seed --class=DiscardQaFixtureSeeder
+          php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
           php artisan serve --host=0.0.0.0 --port=8000 > /tmp/server.log 2>&1 &
-          php artisan queue:work --queue=webhooks,default,system,completeness > /tmp/queue.log 2>&1 &
+          php artisan queue:work --queue=webhooks,default,system,completeness,publication > /tmp/queue.log 2>&1 &
           echo "Waiting for server..."
           timeout 30 bash -c 'until curl -s http://127.0.0.1:8000 > /dev/null; do sleep 1; done' || (cat /tmp/server.log && exit 1)
 
       - name: Run Playwright tests
+        env:
+          PASSPORT_E2E_LOCAL: '1'
         run: |
           cd tests/e2e-pw
           npx playwright test --reporter=list,html --shard=${{ matrix.shard-index }}/${{ matrix.shard-total }}

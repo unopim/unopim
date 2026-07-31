@@ -2,18 +2,18 @@
 
 namespace Webkul\Category\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\WithoutTimestamps;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Category\Contracts\CategoryFieldOptionTranslation as CategoryFieldOptionTranslationContract;
 use Webkul\HistoryControl\Contracts\HistoryAuditable as HistoryContract;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable(['label'])]
+#[WithoutTimestamps]
 class CategoryFieldOptionTranslation extends Model implements CategoryFieldOptionTranslationContract, HistoryContract
 {
     use HistoryTrait;
-
-    public $timestamps = false;
-
-    protected $fillable = ['label'];
 
     /** Tags for History */
     protected $historyTags = ['category_field'];

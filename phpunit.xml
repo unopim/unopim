@@ -2,7 +2,7 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    bootstrap="vendor/autoload.php"
+    bootstrap="tests/bootstrap.php"
     colors="true"
     cacheDirectory=".phpunit.cache"
     executionOrder="depends,defects"
@@ -21,6 +21,10 @@
 
         <testsuite name="DataTransfer Unit Test">
             <directory suffix="Test.php">packages/Webkul/DataTransfer/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="DataTransfer Feature Test">
+            <directory suffix="Test.php">packages/Webkul/DataTransfer/tests/Feature</directory>
         </testsuite>
 
         <testsuite name="User Feature Test">
@@ -47,12 +51,20 @@
             <directory suffix="Test.php">packages/Webkul/Product/tests/Unit</directory>
         </testsuite>
 
+        <testsuite name="Product Feature Test">
+            <directory suffix="Test.php">packages/Webkul/Product/tests/Feature</directory>
+        </testsuite>
+
         <testsuite name="Attribute Unit Test">
             <directory suffix="Test.php">packages/Webkul/Attribute/tests/Unit</directory>
         </testsuite>
 
         <testsuite name="Category Unit Test">
             <directory suffix="Test.php">packages/Webkul/Category/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Measurement Feature Test">
+            <directory suffix="Test.php">packages/Webkul/Measurement/tests/Feature</directory>
         </testsuite>
 
         <testsuite name="AiAgent Unit Test">
@@ -63,10 +75,29 @@
             <directory suffix="Test.php">packages/Webkul/AppUrlGuard/tests/Unit</directory>
         </testsuite>
 
+        <testsuite name="Webhook Unit Test">
+            <directory suffix="Test.php">packages/Webkul/Webhook/tests/Unit</directory>
+        </testsuite>
+
         <testsuite name="AppUrlGuard Feature Test">
             <directory suffix="Test.php">packages/Webkul/AppUrlGuard/tests/Feature</directory>
         </testsuite>
 
+        <testsuite name="Resource Unit Test">
+            <directory suffix="Test.php">packages/Webkul/Resource/tests/Unit</directory>
+        </testsuite>
+
+        <testsuite name="Resource Feature Test">
+            <directory suffix="Test.php">packages/Webkul/Resource/tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="Publication Feature Test">
+            <directory suffix="Test.php">packages/Webkul/Publication/tests/Feature</directory>
+        </testsuite>
+
+        <testsuite name="ProductPassport Feature Test">
+            <directory suffix="Test.php">packages/Webkul/ProductPassport/tests/Feature</directory>
+        </testsuite>
     </testsuites>
 
     <source>
@@ -74,17 +105,26 @@
             <directory suffix=".php">app</directory>
             <directory suffix=".php">packages</directory>
         </include>
+        <!-- Instrumenting the suites themselves doubles the resident coverage
+             map for no signal: impact analysis needs test-to-source edges. -->
+        <exclude>
+            <directory suffix=".php">packages/Webkul/*/tests</directory>
+        </exclude>
     </source>
 
     <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_DEBUG" value="true"/>
+        <env name="APP_ENV" value="testing" force="true"/>
+        <env name="APP_DEBUG" value="true" force="true"/>
 
+        <!-- Forced so container environments (docker-compose env_file) cannot pull
+             tests onto the real Redis, queue or mail transports. -->
         <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
+        <env name="CACHE_DRIVER" value="array" force="true"/>
+        <env name="CACHE_STORE" value="array" force="true"/>
+        <env name="MAIL_MAILER" value="array" force="true"/>
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <env name="SESSION_DRIVER" value="array" force="true"/>
+        <env name="BROADCAST_CONNECTION" value="null" force="true"/>
 
         <env name="TELESCOPE_ENABLED" value="false"/>
     </php>

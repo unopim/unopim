@@ -6,10 +6,11 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as ImportJobTrackContract;
+use Webkul\DataTransfer\Contracts\JobTrackBatch;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as ImportJobBatchContract;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Import;
-use Webkul\DataTransfer\Helpers\Source;
+use Webkul\DataTransfer\Helpers\Sources\AbstractSource;
 use Webkul\DataTransfer\Jobs\Import\Completed as CompletedJob;
 use Webkul\DataTransfer\Jobs\Import\ImportBatch as ImportBatchJob;
 use Webkul\DataTransfer\Jobs\Import\IndexBatch as IndexBatchJob;
@@ -100,7 +101,7 @@ abstract class AbstractImporter
     /**
      * Source instance.
      *
-     * @var Source
+     * @var AbstractSource
      */
     protected $source;
 
@@ -148,8 +149,6 @@ abstract class AbstractImporter
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected ImportJobBatchRepository $importBatchRepository) {}
 
@@ -184,9 +183,9 @@ abstract class AbstractImporter
     }
 
     /**
-     * Import instance.
+     * Source instance.
      *
-     * @param  Source  $errorHelper
+     * @param  AbstractSource  $source
      */
     public function setSource($source)
     {
@@ -228,9 +227,9 @@ abstract class AbstractImporter
     }
 
     /**
-     * Import instance.
+     * Source instance.
      *
-     * @return Source
+     * @return AbstractSource
      */
     public function getSource()
     {
@@ -256,7 +255,7 @@ abstract class AbstractImporter
 
         $absentColumns = array_diff($this->permanentAttributes, $this->getSource()->getColumnNames());
 
-        if (! empty($absentColumns)) {
+        if ($absentColumns !== []) {
             $errors[self::ERROR_CODE_COLUMN_NOT_FOUND] = $absentColumns;
         }
 
@@ -264,12 +263,12 @@ abstract class AbstractImporter
 
         // Trim trailing empty columns — XLSX readers often report thousands of blank
         // trailing columns when a file has been opened in Excel.
-        while (! empty($columnNames) && empty(trim((string) end($columnNames)))) {
+        while (! empty($columnNames) && in_array(trim((string) end($columnNames)), ['', '0'], true)) {
             array_pop($columnNames);
         }
 
         foreach ($columnNames as $columnNumber => $columnName) {
-            if (empty(trim((string) $columnName))) {
+            if (in_array(trim((string) $columnName), ['', '0'], true)) {
                 $errors[self::ERROR_CODE_COLUMN_EMPTY_HEADER][] = $columnNumber + 1;
             } elseif (! in_array($columnName, $this->getValidColumnNames())) {
                 $errors[self::ERROR_CODE_INVALID_ATTRIBUTE][] = $columnName;
@@ -296,7 +295,7 @@ abstract class AbstractImporter
      */
     protected function getEffectiveBatchSize(): int
     {
-        return (int) (config('import.batch_size') ?? self::BATCH_SIZE);
+        return (int) (config('import.batch_size', self::BATCH_SIZE));
     }
 
     /**
@@ -324,7 +323,7 @@ abstract class AbstractImporter
             || count($batchRows)
         ) {
             if (
-                count($batchRows) == $batchSize
+                count($batchRows) === $batchSize
                 || ! $source->valid()
             ) {
                 $this->importBatchRepository->create([
@@ -356,7 +355,7 @@ abstract class AbstractImporter
      */
     public function importData(?ImportJobBatchContract $importBatch = null): bool
     {
-        if ($importBatch) {
+        if ($importBatch instanceof JobTrackBatch) {
             $this->importBatch($importBatch);
 
             return true;
@@ -364,7 +363,7 @@ abstract class AbstractImporter
 
         $typeBatches = [];
 
-        $this->import->batches()->chunk(100, function ($batches) use (&$typeBatches) {
+        $this->import->batches()->chunk(100, function ($batches) use (&$typeBatches): void {
             foreach ($batches as $batch) {
                 if ($batch->state === Import::STATE_PENDING) {
                     $typeBatches['import'][] = new ImportBatchJob($batch, $this->import->id);
@@ -382,17 +381,17 @@ abstract class AbstractImporter
 
         $chain = [];
 
-        if (! empty($typeBatches['import'])) {
+        if (isset($typeBatches['import']) && $typeBatches['import'] !== []) {
             $chain[] = Bus::batch($typeBatches['import']);
         }
 
-        if (! empty($typeBatches['link'])) {
+        if (isset($typeBatches['link']) && $typeBatches['link'] !== []) {
             $chain[] = new LinkingJob($this->import);
 
             $chain[] = Bus::batch($typeBatches['link']);
         }
 
-        if (! empty($typeBatches['index'])) {
+        if (isset($typeBatches['index']) && $typeBatches['index'] !== []) {
             $chain[] = new IndexingJob($this->import);
 
             $chain[] = Bus::batch($typeBatches['index']);
@@ -453,13 +452,8 @@ abstract class AbstractImporter
 
     /**
      * Add row as skipped
-     *
-     * @param  int|null  $rowNumber
-     * @param  string|null  $columnName
-     * @param  string|null  $errorMessage
-     * @return $this
      */
-    protected function skipRow($rowNumber, string $errorCode, $columnName = null, $errorMessage = null): self
+    protected function skipRow(?int $rowNumber, string $errorCode, ?string $columnName = null, ?string $errorMessage = null): self
     {
         $this->errorHelper->addError(
             $errorCode,
@@ -478,11 +472,7 @@ abstract class AbstractImporter
      */
     protected function prepareRowForDb(array $rowData): array
     {
-        $rowData = array_map(function ($value) {
-            return $value === '' ? null : $value;
-        }, $rowData);
-
-        return $rowData;
+        return array_map(fn ($value) => $value === '' ? null : $value, $rowData);
     }
 
     /**

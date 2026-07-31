@@ -110,6 +110,22 @@ it('should return 401 with invalid bearer token', function () {
         ->assertUnauthorized();
 });
 
+it('should return 401 json when no token and no Accept header', function () {
+    $response = $this->call('GET', route('admin.api.locales.index'));
+
+    $response->assertStatus(401);
+    expect($response->json('error'))->not->toBeNull();
+});
+
+it('should return 401 json for invalid token without Accept header', function () {
+    $response = $this->call('GET', route('admin.api.locales.index'), [], [], [], [
+        'HTTP_AUTHORIZATION' => 'Bearer invalid-token-string',
+    ]);
+
+    $response->assertStatus(401);
+    expect($response->json('error'))->not->toBeNull();
+});
+
 it('should return 406 when Accept header is not application/json', function () {
     $headers = $this->getAuthenticationHeaders();
 

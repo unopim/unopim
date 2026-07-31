@@ -8,10 +8,8 @@ class ComposerEvents
 {
     /**
      * Post create project.
-     *
-     * @return void
      */
-    public static function postCreateProject()
+    public static function postCreateProject(): void
     {
         $output = new ConsoleOutput;
 

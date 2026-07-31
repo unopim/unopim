@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Validator;
 
+use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -9,8 +10,6 @@ use Webkul\Product\Type\AbstractType;
 
 class ProductValuesValidator
 {
-    private array $savedRules;
-
     protected $channelLocaleValuesValidator;
 
     protected $channelValuesValidator;
@@ -39,7 +38,7 @@ class ProductValuesValidator
     /**
      * Validate different sections data in product values json
      *
-     * @throws Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function validate(mixed $data, array $options = [], ?int $productId = null): void
     {
@@ -77,7 +76,7 @@ class ProductValuesValidator
     /**
      * Validate different sections data in product values json
      *
-     * @throws Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function validateOnlyExistingSectionData(mixed $data, array $options = [], ?int $productId = null): void
     {

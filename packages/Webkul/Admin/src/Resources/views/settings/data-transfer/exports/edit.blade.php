@@ -3,9 +3,28 @@
         job_instance
     </x-slot>
 
-    <!-- Page Title -->
     <x-slot:title>
         @lang('admin::app.settings.data-transfer.exports.edit.title')
+    </x-slot>
+
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.data-transfer.exports.edit.title')"
+            :back-url="route('admin.settings.data_transfer.exports.index')"
+            :back-label="trans('admin::app.settings.data-transfer.exports.edit.back-btn')"
+            :save-label="trans('admin::app.settings.data-transfer.exports.edit.save-btn')"
+            form="export-profile-edit-form"
+            :sticky="false"
+        >
+            <x-slot:actions>
+                <a
+                    href="{{ route('admin.settings.data_transfer.exports.export-view', $export->id) }}"
+                    class="secondary-button"
+                >
+                    @lang('admin::app.settings.data-transfer.exports.index.datagrid.export')
+                </a>
+            </x-slot>
+        </x-admin::layouts.edit-page-header>
     </x-slot>
 
     {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.before') !!}
@@ -13,8 +32,10 @@
     <v-export-profile-edit></v-export-profile-edit>
 
     @pushOnce('scripts')
-        <script type="text/x-template" id="v-export-profile-edit-template">
+        <script type="text/x-template" id="v-export-profile-edit-template-{{ $export->id }}">
             <x-admin::form
+                id="export-profile-edit-form"
+                ajax
                 :action="route('admin.settings.data_transfer.exports.update', $export->id)"
                 method="PUT"
                 enctype="multipart/form-data"
@@ -27,49 +48,21 @@
                     $fieldNames = collect($exporterConfig[$export->entity_type]['filters']['fields'] ?? [])->pluck('name');
                     $scopeFields = $fieldNames->intersect(['channels', 'locales', 'currencies', 'attributes']);
                     $productFilterFields = $fieldNames->intersect(['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku']);
-                    $supportsConditions = $fieldNames->contains('attributes');
+                    $supportsConditions = $fieldNames->contains('custom_attributes');
                     $supportsCategories = $fieldNames->contains('categories');
-
-                    $savedCustomAttributes = $exportFilters['custom_attributes'] ?? [];
-                    $savedCustomAttributes = is_string($savedCustomAttributes)
-                        ? (json_decode($savedCustomAttributes, true) ?? [])
-                        : $savedCustomAttributes;
                 @endphp
-
-                <!-- Page Header -->
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.settings.data-transfer.exports.edit.title')
-                    </p>
-
-                    <div class="flex gap-x-2.5 items-center">
-                        <a
-                            href="{{ route('admin.settings.data_transfer.exports.index') }}"
-                            class="transparent-button"
-                        >
-                            @lang('admin::app.settings.data-transfer.exports.edit.back-btn')
-                        </a>
-
-                        <button type="submit" class="primary-button">
-                            @lang('admin::app.settings.data-transfer.exports.edit.save-btn')
-                        </button>
-                    </div>
-                </div>
 
                 <!-- Body Content -->
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
-                    <!-- Left Container -->
                     <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.general.before') !!}
 
-                        <!-- General -->
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.edit.general')
                             </p>
 
                             <div class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5">
-                                <!-- Code -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.data-transfer.exports.create.code')
@@ -94,7 +87,6 @@
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
 
-                                <!-- Type -->
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.data-transfer.exports.edit.type')
@@ -132,7 +124,6 @@
                         @if ($scopeFields->isNotEmpty())
                             {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.scope.before') !!}
 
-                            <!-- Data to export -->
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.scope-filters')
@@ -141,7 +132,7 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="channels,locales,currencies,attributes"
                                     grid-class="grid grid-cols-1"
                                 />
@@ -151,7 +142,6 @@
                         @endif
 
                         @if ($productFilterFields->isNotEmpty())
-                            <!-- Product filters -->
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.product-filters')
@@ -160,7 +150,7 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="attribute_families,status"
                                     grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                                 />
@@ -168,13 +158,12 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="completeness,time_condition,time_value,time_date,time_date_end"
                                     grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
                                 />
 
                                 @if ($supportsCategories)
-                                    <!-- Category (tree) -->
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
                                             @lang('data_transfer::app.exporters.products.filters.categories')
@@ -189,7 +178,7 @@
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
-                                    :exporter-config="json_encode($exporterConfig)"
+                                    :exporter-config="$exporterConfig"
                                     only="sku"
                                     grid-class="grid grid-cols-1"
                                 />
@@ -198,28 +187,25 @@
                         @endif
 
                         @if ($supportsConditions)
-                            <!-- Attribute Conditions -->
                             <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.attribute-conditions')
                                 </p>
 
-                                <x-admin::data-transfer.attribute-conditions
-                                    :values="$savedCustomAttributes"
-                                    :attribute-route="route('admin.settings.data_transfer.exports.filters.attributes')"
-                                    :exclude-attributes="[\Webkul\DataTransfer\Enums\ProductFilter::SKU->value]"
-                                    :operators="\Webkul\DataTransfer\Helpers\Sources\Export\Filters\AttributeConditionOperators::frontendMap()"
-                                >
-                                </x-admin::data-transfer.attribute-conditions>
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="custom_attributes"
+                                    grid-class="grid grid-cols-1"
+                                />
                             </div>
                         @endif
                     </div>
 
-                    <!-- Right Container -->
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.befor') !!}
 
-                        <!-- Output -->
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.create.output')
@@ -228,8 +214,8 @@
                             <x-admin::data-transfer.filter-fields
                                 :entity-type="$export->entity_type"
                                 :values="$exportFilters"
-                                :exporter-config="json_encode($exporterConfig)"
-                                only="file_format,with_media,header_row,use_labels,date_format,file_path"
+                                :exporter-config="$exporterConfig"
+                                only="file_format,with_media,with_associations,header_row,use_labels,date_format,file_path"
                             />
                         </div>
 
@@ -237,7 +223,6 @@
 
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.settings.before') !!}
 
-                        <!-- Format settings -->
                         <div
                             v-if="selectedFileFormat == 'Csv'"
                             class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
@@ -274,7 +259,7 @@
 
         <script type="module">
             app.component('v-export-profile-edit', {
-                template: '#v-export-profile-edit-template',
+                template: '#v-export-profile-edit-template-{{ $export->id }}',
 
                 data() {
                     return {
@@ -287,17 +272,19 @@
                     this.$emitter.on('filter-value-changed', this.handleFilterValues);
                 },
 
-                watch: {
-                    fileFormat(value) {
-                        this.selectedFileFormat = JSON.parse(value).value;
-                    },
-                },
-
                 methods: {
                     handleFilterValues(changed) {
                         if ('file_format' == changed.filterName) {
                             this.selectedFileFormat = changed.value;
                         }
+                    },
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
                     },
                 },
             })

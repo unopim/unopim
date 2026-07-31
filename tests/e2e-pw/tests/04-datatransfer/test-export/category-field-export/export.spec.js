@@ -5,9 +5,10 @@ test.describe('UnoPim Export Jobs', () => {
 
   test('create attribute options export with CSV, switch to XLS, then delete', async ({ adminPage }) => {
 
-    const uniqueCode = 'Category Field Options Export CSV ' + Math.random().toString(36).slice(2, 6);
+    const uniqueCode = 'Category_Field_Options_Export_CSV_' + Math.random().toString(36).slice(2, 6);
 
-    await adminPage.goto('/admin/settings/data-transfer/exports/create', { waitUntil: 'networkidle' });
+    await adminPage.goto('/admin/data-transfer/exports/create', { waitUntil: 'domcontentloaded' });
+    await adminPage.waitForTimeout(1000);
 
     // Fill Code
     await adminPage.getByRole('textbox', { name: 'Code' }).fill(uniqueCode);
@@ -39,8 +40,10 @@ test.describe('UnoPim Export Jobs', () => {
       .first()
       .click();
 
-    // Save Export
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    // Save Export via global unsaved-changes bar
+    const saveCreate = adminPage.getByRole('button', { name: 'Save changes' });
+    await saveCreate.waitFor({ state: 'visible', timeout: 15000 });
+    await saveCreate.click();
 
     await expect(
       adminPage.locator('#app').getByText(/Export created successfully/i)
@@ -48,6 +51,8 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Run Export
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
+
+    await adminPage.getByRole('link', { name: 'Download Exported Files' }).waitFor({ state: 'visible', timeout: 60000 });
 
     const [csvDownload] = await Promise.all([
       adminPage.waitForEvent('download'),
@@ -70,7 +75,9 @@ test.describe('UnoPim Export Jobs', () => {
       .first()
       .click();
 
-    await adminPage.getByRole('button', { name: 'Save Export' }).click();
+    const saveUpdate = adminPage.getByRole('button', { name: 'Save changes' });
+    await saveUpdate.waitFor({ state: 'visible', timeout: 15000 });
+    await saveUpdate.click();
 
     await expect(
       adminPage.locator('#app').getByText(/Export updated successfully/i)
@@ -78,6 +85,8 @@ test.describe('UnoPim Export Jobs', () => {
 
     // Export Again
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
+
+    await adminPage.getByRole('link', { name: 'Download Exported Files' }).waitFor({ state: 'visible', timeout: 60000 });
 
     const [xlsDownload] = await Promise.all([
       adminPage.waitForEvent('download'),

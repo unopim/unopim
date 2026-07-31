@@ -76,7 +76,7 @@ it('should translate the field successfully', function () {
         ->andReturnSelf();
     MagicAI::shouldReceive('setPrompt')
         ->andReturnSelf();
-    MagicAI::shouldReceive('ask')
+    MagicAI::shouldReceive('translate')
         ->andReturn('<p>translated_content</p>');
 
     $this->post(route('admin.magic_ai.translate', [
@@ -204,7 +204,7 @@ it('should translate all attributes successfully', function () {
     MagicAI::shouldReceive('setPlatformId')->andReturnSelf();
     MagicAI::shouldReceive('setModel')->with($model)->andReturnSelf();
     MagicAI::shouldReceive('setPrompt')->andReturnSelf();
-    MagicAI::shouldReceive('ask')->andReturn('<p>test</p>');
+    MagicAI::shouldReceive('translate')->andReturn('<p>test</p>');
 
     $this->post(route('admin.magic_ai.translate.all.attribute', [
         'resource_id'   => $productId,

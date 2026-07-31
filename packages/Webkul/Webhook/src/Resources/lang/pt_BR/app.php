@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhooks',
                     ],
                 ],
             ],
@@ -18,11 +18,10 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
-        ],
-        'settings' => [
-            'index'  => 'Configurações',
-            'update' => 'Atualizar configurações',
+            'index'  => 'Webhook',
+            'create' => 'Criar',
+            'edit'   => 'Editar',
+            'delete' => 'Excluir',
         ],
         'logs' => [
             'index'       => 'Registros',
@@ -31,34 +30,93 @@ return [
             'mass-delete' => 'Exclusão em massa',
         ],
     ],
+
+    'events' => [
+        'product' => [
+            'created' => 'Produto criado',
+            'updated' => 'Produto atualizado',
+        ],
+    ],
+
+    'webhooks' => [
+        'index' => [
+            'title'        => 'Webhooks',
+            'create-btn'   => 'Criar Webhook',
+            'logs-btn'     => 'Registros',
+            'back-btn'     => 'Voltar aos Webhooks',
+            'default-name' => 'Padrão',
+            'datagrid'     => [
+                'id'         => 'ID',
+                'name'       => 'Nome',
+                'url'        => 'URL',
+                'events'     => 'Eventos',
+                'status'     => 'Status',
+                'active'     => 'Ativo',
+                'inactive'   => 'Inativo',
+                'created_at' => 'Criado em',
+                'edit'       => 'Editar',
+                'delete'     => 'Excluir',
+            ],
+        ],
+        'create' => [
+            'title'    => 'Criar Webhook',
+            'save-btn' => 'Salvar',
+        ],
+        'edit' => [
+            'title'    => 'Editar Webhook',
+            'save-btn' => 'Salvar',
+        ],
+        'form' => [
+            'general'       => 'Geral',
+            'name'          => 'Nome',
+            'url'           => 'URL',
+            'events'        => 'Eventos',
+            'select-events' => 'Selecionar eventos',
+            'secret'        => 'Segredo de assinatura',
+            'secret-set'    => 'Um segredo já está definido',
+            'secret-hint'   => 'Usado para assinar cada payload com uma assinatura HMAC SHA-256. Deixe em branco para manter o segredo atual.',
+            'settings'      => 'Configurações',
+            'active'        => 'Ativo',
+            'test'          => 'Testar conexão',
+            'test-hint'     => 'Envie uma requisição de teste para a URL acima.',
+            'test-btn'      => 'Enviar teste',
+            'test-no-url'   => 'Por favor, insira uma URL primeiro.',
+            'test-failed'   => 'A requisição de teste falhou.',
+            'headers'       => 'Cabeçalhos personalizados',
+            'add-header'    => 'Adicionar cabeçalho',
+            'no-headers'    => 'Nenhum cabeçalho personalizado adicionado.',
+            'header-key'    => 'Cabeçalho',
+            'header-value'  => 'Valor',
+        ],
+        'create-success' => 'Webhook criado com sucesso',
+        'update-success' => 'Webhook atualizado com sucesso',
+        'delete-success' => 'Webhook excluído com sucesso',
+        'delete-failed'  => 'Falha ao excluir o Webhook',
+        'validation'     => [
+            'unsafe-url' => 'A URL aponta para um endereço privado, de loopback ou interno e não é permitida.',
+            'scheme'     => 'A URL deve começar com http:// ou https://.',
+        ],
+        'test' => [
+            'payload-message'   => 'Requisição de teste do webhook Unopim',
+            'connection-failed' => 'Não foi possível acessar a URL. Verifique a URL.',
+            'unreachable'       => 'A URL não está acessível (HTTP :code).',
+            'reachable'         => 'A URL está acessível.',
+        ],
+        'prune' => [
+            'disabled' => 'A retenção de registros do webhook está desativada; nada foi removido.',
+            'done'     => ':count registro(s) de webhook mais antigo(s) que :days dia(s) removido(s).',
+        ],
+    ],
+
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Configurações',
-                    'title'   => 'Configurações do Webhook',
-                    'save'    => 'Salvar',
-                    'general' => 'Geral',
-                    'active'  => [
-                        'label' => 'Webhook ativo',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'URL do Webhook',
-                        'required'          => 'Uma URL do Webhook é necessária quando o Webhook está ativo.',
-                        'scheme'            => 'A URL do Webhook deve começar com http:// ou https://.',
-                        'connection_failed' => 'Não foi possível acessar a URL do Webhook. Verifique a URL.',
-                        'unreachable'       => 'A URL do Webhook não é válida (HTTP :code).',
-                        'unsafe'            => 'A URL do webhook aponta para um endereço privado, de loopback ou interno e não é permitida.',
-                    ],
-                    'success'    => 'Configurações do Webhook salvas com sucesso',
-                    'logs-title' => 'Registros',
-                ],
-            ],
             'logs' => [
                 'index' => [
                     'datagrid' => [
                         'id'               => 'ID',
+                        'webhook'          => 'Webhook',
                         'sku'              => 'SKU',
+                        'event'            => 'Evento',
                         'created_at'       => 'Data/Hora',
                         'user'             => 'Usuário',
                         'status'           => 'Status',
@@ -75,6 +133,7 @@ return [
                     'response'       => 'Resposta',
                     'back'           => 'Back to Logs',
                     'no-payload'     => 'Nenhum payload registrado para este log.',
+                    'load-failed'    => 'Falha ao carregar os detalhes do log.',
                     'delete-success' => 'Registros do Webhook excluídos com sucesso',
                     'delete-failed'  => 'A exclusão dos registros do Webhook falhou inesperadamente',
                     'unauthorized'   => 'Esta ação não está autorizada',

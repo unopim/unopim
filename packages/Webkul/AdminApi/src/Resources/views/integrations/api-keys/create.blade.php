@@ -17,7 +17,7 @@
             id="v-create-user-role-template"
         >
             <div>
-                <x-admin::form :action="route('admin.configuration.integrations.store')">
+                <x-admin::form ajax :action="route('admin.configuration.integrations.store')">
                     {!! view_render_event('unopim.admin.configuration.integrations.create.create_form_controls.before') !!}
 
                     <div class="flex justify-between items-center">
@@ -98,14 +98,7 @@
 
                             {!! view_render_event('unopim.admin.configuration.integrations.create.card.accordion.general.before') !!}
 
-                            <x-admin::accordion>
-                                <x-slot:header>
-                                    <div class="flex items-center justify-between">
-                                        <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                            @lang('admin::app.configuration.integrations.create.general')
-                                        </p>
-                                    </div>
-                                </x-slot>
+                            <x-admin::accordion :title="trans('admin::app.configuration.integrations.create.general')">
 
                                 <x-slot:content>
                                     <!-- Name -->
@@ -125,30 +118,6 @@
                                         />
 
                                         <x-admin::form.control-group.error control-name="name" />
-                                    </x-admin::form.control-group>
-
-                                    <!-- User -->
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.configuration.integrations.create.assign-user')
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            id="admin_id"
-                                            class="cursor-pointer"
-                                            name="admin_id"
-                                            rules="required"
-                                            :value="old('admin_id')"
-                                            v-model="attributeType"
-                                            :label="trans('admin::app.configuration.integrations.create.assign-user')"
-                                            :options="$adminUsers"
-                                            track-by="id"
-                                            label-by="name"
-                                        >
-                                        </x-admin::form.control-group.control>
-
-                                        <x-admin::form.control-group.error control-name="admin_id" />
                                     </x-admin::form.control-group>
                                 </x-slot>
                             </x-admin::accordion>
@@ -181,13 +150,21 @@
                     },
                 },
                 methods: {
-                    parseValue(value) {  
+                    parseValue(value) {
                         try {
                             return value ? JSON.parse(value) : null;
                         } catch (error) {
                             return value;
                         }
-                    }
+                    },
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
                 }
 
             })

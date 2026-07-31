@@ -20,12 +20,15 @@ class CategoryRequest extends FormRequest
             $uniqueRule .= ','.$this->id;
         }
 
+        $parentRule = ['nullable', 'integer', 'exists:categories,id'];
+
         if ($this->id) {
             return [
                 'code' => [
                     $uniqueRule,
                     new Code,
                 ],
+                'parent_id' => $parentRule,
             ];
         }
 
@@ -35,6 +38,7 @@ class CategoryRequest extends FormRequest
                 $uniqueRule,
                 new Code,
             ],
+            'parent_id' => $parentRule,
         ];
     }
 }

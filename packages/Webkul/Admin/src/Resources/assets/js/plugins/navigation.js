@@ -1,0 +1,368 @@
+import { HEADERS, META, NAV_EVENTS } from '../constants';
+
+export default function initAjaxNavigation() {
+    if (window.__ajaxNavInitialised) {
+        return;
+    }
+
+    window.__ajaxNavInitialised = true;
+
+    const navigationGuards = [];
+
+    let navigating = false;
+
+    let navToken = 0;
+
+    window.unopim = window.unopim || {};
+    window.unopim.visit = (url) => visit(url, true);
+
+    window.unopim.registerNavigationGuard = (guard) => {
+        if (typeof guard === 'function' && ! navigationGuards.includes(guard)) {
+            navigationGuards.push(guard);
+        }
+    };
+
+    document.addEventListener('click', onDocumentClick, true);
+
+    window.addEventListener('popstate', () => visit(window.location.href, false));
+
+    function onDocumentClick(event) {
+        if (
+            event.defaultPrevented
+            || event.button !== 0
+            || event.metaKey
+            || event.ctrlKey
+            || event.shiftKey
+            || event.altKey
+        ) {
+            return;
+        }
+
+        const link = event.target.closest ? event.target.closest('a[href]') : null;
+
+        if (! link || ! isEligible(link)) {
+            return;
+        }
+
+        event.preventDefault();
+
+        visit(link.href, true);
+    }
+
+    function isEligible(link) {
+        if (link.target && link.target !== '' && link.target !== '_self') {
+            return false;
+        }
+
+        if (link.hasAttribute('download') || link.dataset.noAjaxNav !== undefined) {
+            return false;
+        }
+
+        const url = new URL(link.href, window.location.origin);
+
+        if (url.origin !== window.location.origin) {
+            return false;
+        }
+
+        if (url.pathname === window.location.pathname && url.hash) {
+            return false;
+        }
+
+        return url.pathname.startsWith(adminPrefix());
+    }
+
+    function adminPrefix() {
+        const meta = document.querySelector('meta[name="' + META.ADMIN_URL + '"]');
+
+        const path = new URL((meta && meta.getAttribute('content')) || 'admin', window.location.origin).pathname;
+
+        const marker = '/' + (path.split('/').filter(Boolean).pop() || 'admin') + '/';
+
+        const here = window.location.pathname + '/';
+
+        const at = here.indexOf(marker);
+
+        return at !== -1 ? here.slice(0, at + marker.length) : '/' + path.replace(/^\/+|\/+$/g, '') + '/';
+    }
+
+    async function visit(url, push) {
+        if (navigating) {
+            return;
+        }
+
+        navigating = true;
+
+        try {
+            if (! (await guardsAllow(url))) {
+                return;
+            }
+
+            await performVisit(url, push);
+        } finally {
+            navigating = false;
+        }
+    }
+
+    async function guardsAllow(url) {
+        for (const guard of navigationGuards) {
+            try {
+                if ((await guard(url)) === false) {
+                    return false;
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * The history entry is pushed right after the #app swap — before the
+     * page's scripts run and the app mounts — so anything reading
+     * window.location during boot (e.g. datagrid URL filters) sees the
+     * destination URL, not the page being left.
+     */
+    async function performVisit(url, push) {
+        const before = dispatch(NAV_EVENTS.BEFORE, { url }, true);
+
+        if (before.defaultPrevented) {
+            window.location.assign(url);
+
+            return;
+        }
+
+        toggleProgress(true);
+
+        try {
+            const response = await fetch(url, {
+                headers: { [HEADERS.AJAX_NAV]: 'true' },
+                credentials: 'same-origin',
+                redirect: 'follow',
+            });
+
+            if (! response.ok) {
+                throw new Error('Request failed with status ' + response.status);
+            }
+
+            const finalUrl = response.url || url;
+
+            const html = await response.text();
+
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+
+            const nextApp = doc.querySelector('#app');
+
+            if (! nextApp) {
+                throw new Error('Missing #app in response');
+            }
+
+            const scripts = collectPageScripts(doc);
+
+            const styles = [...doc.body.querySelectorAll('style')];
+
+            if (window.app && typeof window.app.unmount === 'function') {
+                window.app.unmount();
+            }
+
+            document.querySelector('#app').replaceWith(nextApp);
+
+            if (push) {
+                window.history.pushState({ ajaxNav: true }, '', finalUrl);
+            }
+
+            removePageScripts();
+
+            replaceInjectedStyles(styles);
+
+            window.createAdminApp();
+
+            await injectScripts(scripts);
+
+            window.app.mount('#app');
+
+            document.title = doc.title;
+
+            syncDocumentLocale(doc);
+
+            (document.getElementById('main-content') ?? window).scrollTo(0, 0);
+
+            dispatch(NAV_EVENTS.SUCCESS, { url });
+        } catch (error) {
+            dispatch(NAV_EVENTS.ERROR, { url, error });
+
+            window.location.assign(url);
+
+            return;
+        } finally {
+            toggleProgress(false);
+        }
+    }
+
+    /**
+     * Carry the swapped page's language and writing direction onto the live
+     * document. They live on <html>, outside the #app subtree a visit replaces,
+     * so a locale change would otherwise keep the previous lang and direction
+     * until the user reloaded by hand.
+     */
+    function syncDocumentLocale(doc) {
+        const next = doc.documentElement;
+
+        if (! next) {
+            return;
+        }
+
+        if (next.lang && next.lang !== document.documentElement.lang) {
+            document.documentElement.lang = next.lang;
+        }
+
+        const dir = next.getAttribute('dir');
+
+        if (dir && dir !== document.documentElement.getAttribute('dir')) {
+            document.documentElement.setAttribute('dir', dir);
+        }
+    }
+
+    function dispatch(name, detail, cancelable = false) {
+        const event = new CustomEvent(name, { detail, cancelable, bubbles: true });
+
+        document.dispatchEvent(event);
+
+        return event;
+    }
+
+    function collectPageScripts(doc) {
+        return [...doc.body.querySelectorAll('script')].filter((script) => {
+            return ! script.src || ! /assets\/app-.*\.js/.test(script.src);
+        });
+    }
+
+    function isExecutableType(type) {
+        return type === ''
+            || type === 'text/javascript'
+            || type === 'application/javascript'
+            || type === 'module';
+    }
+
+    function replaceInjectedStyles(styles) {
+        document.querySelectorAll('style[data-ajax-nav-style]').forEach((node) => node.remove());
+
+        styles.forEach((original) => {
+            const style = original.cloneNode(true);
+
+            style.setAttribute('data-ajax-nav-style', '');
+
+            document.head.appendChild(style);
+        });
+    }
+
+    function removePageScripts() {
+        [...document.body.querySelectorAll('script')].forEach((node) => {
+            if (node.closest('#app') || node.src) {
+                return;
+            }
+
+            node.remove();
+        });
+    }
+
+    async function injectScripts(scripts) {
+        const pending = [];
+
+        const token = 'nav' + (++navToken);
+
+        const idMap = {};
+
+        scripts.forEach((original) => {
+            const type = (original.getAttribute('type') || '').toLowerCase();
+
+            if (! isExecutableType(type) && original.id) {
+                idMap[original.id] = original.id + '-' + token;
+            }
+        });
+
+        const remapReferences = (text) => {
+            return Object.keys(idMap)
+                .sort((a, b) => b.length - a.length)
+                .reduce((out, oldId) => {
+                    const escaped = oldId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+                    return out
+                        .replace(new RegExp('#' + escaped + '(?![\\w-])', 'g'), '#' + idMap[oldId])
+                        .replace(new RegExp('(getElementById\\(\\s*[\'"])' + escaped + '([\'"])', 'g'), '$1' + idMap[oldId] + '$2');
+                }, text);
+        };
+
+        scripts.forEach((original) => {
+            const type = (original.getAttribute('type') || '').toLowerCase();
+
+            if (! isExecutableType(type)) {
+                const clone = original.cloneNode(true);
+
+                if (clone.id && idMap[clone.id]) {
+                    clone.id = idMap[clone.id];
+                }
+
+                document.body.appendChild(clone);
+
+                return;
+            }
+
+            if (original.src) {
+                if (document.querySelector('script[src="' + original.src + '"]')) {
+                    return;
+                }
+
+                pending.push(new Promise((resolve) => {
+                    const script = document.createElement('script');
+                    script.src = original.src;
+
+                    if (type) {
+                        script.type = type;
+                    }
+
+                    script.onload = resolve;
+                    script.onerror = resolve;
+
+                    document.body.appendChild(script);
+                }));
+            }
+        });
+
+        await Promise.all(pending);
+
+        scripts.forEach((original) => {
+            const type = (original.getAttribute('type') || '').toLowerCase();
+
+            if (! isExecutableType(type) || original.src) {
+                return;
+            }
+
+            try {
+                new Function(remapReferences(original.textContent))();
+            } catch (error) {
+                console.error('Ajax navigation: a page script failed to run', error);
+            }
+        });
+    }
+
+    function toggleProgress(active) {
+        let bar = document.getElementById('ajax-nav-progress');
+
+        if (active) {
+            if (! bar) {
+                bar = document.createElement('div');
+                bar.id = 'ajax-nav-progress';
+                bar.style.cssText = 'position:fixed;top:0;left:0;height:3px;width:0;'
+                    + 'background:#7c3aed;z-index:100000;transition:width .2s ease,opacity .3s ease;';
+                document.body.appendChild(bar);
+            }
+
+            bar.style.opacity = '1';
+            bar.style.width = '80%';
+        } else if (bar) {
+            bar.style.width = '100%';
+            bar.style.opacity = '0';
+        }
+    }
+}

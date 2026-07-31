@@ -39,20 +39,20 @@ class Product
     /**
      * Handle the Product "created" event.
      */
-    public function created(Products $product)
+    public function created(Products $product): void
     {
         if (self::$isEnabled) {
-            ProductCompletenessJob::dispatch([$product->id]);
+            dispatch(new ProductCompletenessJob([$product->id]));
         }
     }
 
     /**
      * Handle the Product "updated" event.
      */
-    public function updated(Products $product)
+    public function updated(Products $product): void
     {
         if (self::$isEnabled) {
-            ProductCompletenessJob::dispatch([$product->id]);
+            dispatch(new ProductCompletenessJob([$product->id]));
         }
     }
 }

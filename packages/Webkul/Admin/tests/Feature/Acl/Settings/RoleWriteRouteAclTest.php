@@ -67,7 +67,8 @@ it('should allow PUT roles.update when user has roles.edit permission', function
         'permissions'     => ['dashboard'],
     ]);
 
-    $response->assertStatus(200);
+    $response->assertRedirect();
+    $response->assertSessionHas('success');
 
     $this->assertDatabaseHas($this->getFullTableName(Role::class), [
         'id'   => $role->id,

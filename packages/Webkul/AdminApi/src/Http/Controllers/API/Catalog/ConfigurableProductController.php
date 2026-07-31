@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\ConfigurableProductDataSource;
+use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateConfigurableProductRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreConfigurableProductRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateConfigurableProductRequest;
 use Webkul\Product\Type\AbstractType;
 
 class ConfigurableProductController extends ProductController
@@ -39,25 +42,9 @@ class ConfigurableProductController extends ProductController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(StoreConfigurableProductRequest $request): JsonResponse
     {
-        $validator = Validator::make(request()->all(), [
-            'status'            => ['nullable', 'boolean'],
-            'parent'            => ['nullable', 'string'],
-            'channel'           => ['nullable', 'string'],
-            'locale'            => ['nullable', 'string'],
-            'family'            => ['required', 'string'],
-            'additional'        => ['nullable', 'array'],
-            'values'            => ['required', 'array'],
-            'values.common.sku' => ['required'],
-            'super_attributes'  => ['required', 'array'],
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $data = request()->only([
+        $data = $request->only([
             'status',
             'parent',
             'family',
@@ -65,6 +52,7 @@ class ConfigurableProductController extends ProductController
             'values',
             'super_attributes',
             'variants',
+            'associations',
         ]);
 
         try {
@@ -91,6 +79,11 @@ class ConfigurableProductController extends ProductController
                 }
             }
 
+            // Validated BEFORE the product row is created below, so an
+            // invalid link's `additional_data` aborts here with nothing
+            // persisted -- see `validateRichAssociationsBeforeCreate()`.
+            $this->validateRichAssociationsBeforeCreate($data);
+
             Event::dispatch('catalog.product.create.before');
             $product = $this->productRepository->create($data);
             Event::dispatch('catalog.product.create.after', $product);
@@ -109,29 +102,15 @@ class ConfigurableProductController extends ProductController
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $sku): JsonResponse
+    public function update(UpdateConfigurableProductRequest $request, string $sku): JsonResponse
     {
-        $validator = Validator::make(request()->all(), [
-            'status'            => ['nullable', 'boolean'],
-            'parent'            => ['nullable', 'string'],
-            'channel'           => ['nullable', 'string'],
-            'locale'            => ['nullable', 'string'],
-            'family'            => ['required', 'string'],
-            'additional'        => ['nullable', 'array'],
-            'values'            => ['required', 'array'],
-            'values.common.sku' => ['required'],
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $data = request()->only([
+        $data = $request->only([
             'status',
             'parent',
             'additional',
             'values',
             'variants',
+            'associations',
         ]);
 
         try {
@@ -150,9 +129,7 @@ class ConfigurableProductController extends ProductController
 
             Event::dispatch('catalog.product.update.before', $id);
 
-            $product = $this->updateProduct($data, $product);
-
-            Event::dispatch('catalog.product.update.after', $product);
+            $this->updateProduct($data, $product);
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),
@@ -166,22 +143,13 @@ class ConfigurableProductController extends ProductController
     /**
      * Patch the specified resource in storage.
      */
-    public function partialUpdate(string $sku): JsonResponse
+    public function partialUpdate(PartialUpdateConfigurableProductRequest $request, string $sku): JsonResponse
     {
-        $validator = Validator::make(request()->all(), [
-            'status'     => ['nullable', 'boolean'],
-            'additional' => ['nullable', 'array'],
-            'values'     => ['nullable', 'array'],
-        ]);
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $data = request()->only([
+        $data = $request->only([
             'status',
             'additional',
             'values',
+            'associations',
         ]);
 
         try {
@@ -193,9 +161,7 @@ class ConfigurableProductController extends ProductController
 
             Event::dispatch('catalog.product.update.before', $product->id);
 
-            $product = $this->patchProduct($product, $data);
-
-            Event::dispatch('catalog.product.update.after', $product);
+            $this->patchProduct($product, $data);
 
             return $this->successResponse(
                 trans('admin::app.catalog.products.update-success'),

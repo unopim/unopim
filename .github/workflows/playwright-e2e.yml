@@ -36,6 +36,10 @@ jobs:
       BASE_URL: http://127.0.0.1:8000
       ADMIN_USERNAME: admin@example.com
       ADMIN_PASSWORD: admin123
+      # Force deterministic seeded admin credentials so Playwright can log in.
+      # Without these, AdminsTableSeeder generates a random password.
+      INSTALLER_ADMIN_EMAIL: admin@example.com
+      INSTALLER_ADMIN_PASSWORD: admin123
 
     steps:
       - name: Checkout
@@ -92,12 +96,25 @@ jobs:
         working-directory: tests/e2e-framework
         run: npm ci
 
+      - name: Type-check framework
+        working-directory: tests/e2e-framework
+        run: npm run typecheck
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/e2e-framework/package-lock.json') }}
+
       - name: Install Playwright browser
         working-directory: tests/e2e-framework
         run: npx playwright install --with-deps chrome
 
       - name: Run Playwright tests
         working-directory: tests/e2e-framework
+        # Accessibility specs are report-only by default (they attach axe
+        # findings without failing); set A11Y_STRICT=true to gate on them once
+        # the admin UI has been triaged.
         run: npm test
 
       - name: Upload Playwright report

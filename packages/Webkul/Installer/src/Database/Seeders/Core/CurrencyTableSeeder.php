@@ -107,17 +107,14 @@ class CurrencyTableSeeder extends Seeder
 
     /**
      * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
      */
-    public function run($parameters = [])
+    public function run(array $parameters = []): void
     {
         DB::table('channels')->delete();
 
         DB::table('currencies')->delete();
 
-        $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
+        $parameters['default_locale'] ?? config('app.locale');
 
         $defaultCurrency = $parameters['default_currency'] ?? config('app.currency');
 
@@ -128,7 +125,7 @@ class CurrencyTableSeeder extends Seeder
                 [
                     'code'   => $currency,
                     'symbol' => $currencySymbol,
-                    'status' => in_array($currency, $enableCurrencies) ? true : false,
+                    'status' => in_array($currency, $enableCurrencies),
                 ],
             ]);
         }

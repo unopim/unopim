@@ -21,8 +21,6 @@ class Storage
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected AttributeOptionRepository $attributeOptionRepository) {}
 
@@ -44,7 +42,7 @@ class Storage
         $query = $this->attributeOptionRepository->query()
             ->select($this->selectColumns);
 
-        if (! empty($codes)) {
+        if ($codes !== []) {
             $query->whereIn('attribute_options.code', $codes);
         }
 
@@ -90,6 +88,6 @@ class Storage
      */
     public function isEmpty(): int
     {
-        return empty($this->items);
+        return $this->items === [];
     }
 }

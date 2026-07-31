@@ -12,14 +12,14 @@ async function createUserImport(adminPage, code, filePath = 'assets/users.csv') 
   const fileInput = adminPage.locator('input[type="file"]').first();
   await fileInput.setInputFiles(filePath);
   
-  await clickSaveAndExpect(adminPage, 'Save Import', /Import created successfully/i);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Import created successfully/i);
 }
 
 async function deleteImport(adminPage, code) {
   await navigateTo(adminPage, 'imports');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
   await adminPage.keyboard.press('Enter');
-  await adminPage.waitForLoadState('networkidle');
+  await adminPage.waitForLoadState('domcontentloaded');
   const deleteBtn = adminPage.locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
     await deleteBtn.click();
@@ -43,7 +43,7 @@ test.describe('User Import Jobs', () => {
     await createUserImport(adminPage, code);
 
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
-    await expect(adminPage.locator('#app').getByText('Job queued')).toBeVisible();
+    await expect(adminPage.locator('.overflow-hidden.box-shadow').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
 
     await deleteImport(adminPage, code);
   });

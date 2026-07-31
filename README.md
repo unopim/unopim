@@ -12,7 +12,8 @@
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/v/stable.svg" alt="Latest Stable Version"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
-  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=master&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=lint" alt="Lint"></a>
 </p>
 
 <p align="center">
@@ -31,20 +32,20 @@
   &nbsp;·&nbsp;
   <a href="https://devdocs.unopim.com/">📘&nbsp;Documentation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.0.x/introduction/installation.html">🚀&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html">🚀&nbsp;Installation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.0.x/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
   &nbsp;·&nbsp;
   <a href="https://demo.unopim.com/">🎯&nbsp;Live&nbsp;Demo</a>
 </p>
 
 <p align="center">
-  <!-- 33 locales shipped in packages/Webkul/Admin/src/Resources/lang (ca_ES + es_ES share the Spain flag) -->
-  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇳🇿 🇺🇸 🇻🇪 🇫🇮 🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵
-  🇰🇷 🇲🇳 🇳🇱 🇳🇴 🇵🇱 🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇵🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳 🇹🇼
+  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇳🇿 🇺🇸 🇪🇸 🇻🇪 🇫🇮
+  🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇳 🇳🇱 🇳🇴 🇵🇱
+  🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇵🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳 🇹🇼
 </p>
 
-UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
+UnoPim is an open-source Product Information Management (PIM) system built on Laravel 13. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
 
 ---
 
@@ -154,11 +155,33 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 
   <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/version-control.png" alt="Version Control Interface" width="720"></p>
 
+- **Digital Product Passport**
+  Build DPP templates, attach QR carriers, and publish per-product passports to a public tier — with the publish path gated behind its own permission and queue.
+
+- **Publication Channels**
+  Push enriched product payloads to downstream destinations on a queue, with per-channel payloads and delivery records.
+
+- **Product Completeness**
+  Score every product against the attributes a family marks required per channel, and surface what is missing before it ships.
+
+- **Measurement Families**
+  Define units and conversions once, then let measurement attributes capture an amount and a unit together.
+
+- **Configurable Products & Associations**
+  Model variant structures with multi-level axes, and relate products through configurable association types.
+
+- **Webhooks**
+  Notify external systems on product events over an asynchronous `webhooks` queue, so subscriber HTTP calls never block a save.
+
 ## 🚀 Installation
 
-> **Requirements:** Nginx/Apache2, PHP 8.3+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 14+ *(recommended)*.
+> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 16+.
+>
+> **PHP extensions:** `calendar`, `curl`, `intl`, `mbstring`, `openssl`, `pdo`, `pdo_mysql`, `tokenizer` — these are hard `composer.json` requirements and `composer install` fails without them. The upgrade preflight additionally checks `json`, `xml`, `gd`, `zip` and `fileinfo`.
+>
+> **On PostgreSQL:** `ext-pdo_mysql` is currently required by `composer.json` regardless of the database you run, so it must be installed even on a PostgreSQL-only host. Install `ext-pdo_pgsql` as well and set `DB_CONNECTION=pgsql`.
 
-Full [Installation Guide](https://devdocs.unopim.com/2.0.x/introduction/installation.html) on devdocs — or pick a quick path below.
+Full [Installation Guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html) on devdocs — or pick a quick path below.
 
 ### Composer
 
@@ -169,34 +192,65 @@ php artisan unopim:install
 php artisan serve
 ```
 
-Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, and webhook deliveries, start the queue worker:
+Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, webhook deliveries, and Digital Product Passport publishing, start the queue worker:
 
 ```bash
-php artisan queue:work --queue=webhooks,system,default,completeness
+php artisan queue:work --queue=webhooks,system,default,completeness,publication
 ```
 
 > **Note:** The `webhooks` queue is required for outgoing webhook delivery. The `Webkul\Webhook\Listeners\Product` listener is dispatched asynchronously to this queue so product save/update requests are not blocked by HTTP calls to subscribers. If you omit `webhooks` from the `--queue` list, webhook events will queue up but never be processed.
 
+> **Note:** The `publication` queue processes Digital Product Passport publish jobs (single and bulk). Omit it and passports will queue but never publish. If you run a process manager such as Supervisor, add `publication` to your worker's `--queue=` list and restart it (e.g. `sudo supervisorctl restart unopim-worker`).
+
 ### Docker
 
-Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/2.0.x/introduction/installation.html#install-using-docker) for advanced configuration.
+Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker) for advanced configuration.
+
+**Run UnoPim** — pre-built images, no checkout, no configuration:
+
+```bash
+curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.yaml
+docker compose up -d
+```
+
+Open `http://localhost:8000/admin`. Set the admin credentials **before** the first `docker compose up`, in a `.env` file next to `compose.yaml`:
+
+```bash
+INSTALLER_ADMIN_EMAIL=you@example.com
+INSTALLER_ADMIN_PASSWORD=<a password you choose>
+```
+
+If you leave them blank, the seeder generates a random 20-character password and writes it to `storage/app/admin-credentials.txt` inside the container:
+
+```bash
+docker compose exec unopim cat storage/app/admin-credentials.txt
+```
+
+Change it after the first login. Every other setting has a working default; override any of them by exporting it or putting it in that same `.env` file.
+
+**MySQL instead of PostgreSQL:**
+
+```bash
+curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.mysql.yaml
+docker compose -f compose.yaml -f compose.mysql.yaml up -d
+```
+
+> Switching engines on an existing install needs a fresh database — data is not migrated between them.
+
+**Develop UnoPim** — builds from your checkout and bind-mounts it, so edits are live:
 
 ```bash
 git clone https://github.com/unopim/unopim.git
 cd unopim
 cp .env.docker .env
-docker compose up -d
+docker compose -f compose.dev.yaml up -d
 ```
 
-Wait ~90 seconds for first-time migrations/seeding, then open `http://localhost:8000/admin` and log in with `admin@example.com` / `admin123`.
-
-**Apache alternative** (instead of Nginx):
-
-```bash
-docker compose -f docker-compose.yml -f docker-compose.apache.yml up -d
-```
+First boot installs Composer dependencies into `./vendor`. The stack defaults to **Nginx + PHP-FPM** and **PostgreSQL 16**; for Apache use `-f compose.dev.yaml -f compose.dev.apache.yaml`, and for MySQL set `COMPOSE_PROFILES=mysql`, `DB_CONNECTION=mysql`, `DB_HOST=unopim-mysql`, `DB_PORT=3306` in `.env` before the first `up`.
 
 > **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
+
+**Deploying?** Inject `APP_KEY` as a secret rather than letting the container generate one, and set `UNOPIM_SKIP_MIGRATIONS=true` where the schema is managed by the deployment itself — a Kubernetes Job or a release step — so scaled replicas do not race each other.
 
 ### ☁️ Cloud Hosting (Managed — no setup)
 <p>

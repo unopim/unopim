@@ -228,7 +228,7 @@ class Importer extends AbstractImporter
     {
         $missing = array_diff($codes, array_keys($this->existingLocales));
 
-        if (empty($missing)) {
+        if ($missing === []) {
             return;
         }
 
@@ -236,7 +236,7 @@ class Importer extends AbstractImporter
             ->whereIn('code', $missing)
             ->select('code', 'id')
             ->get()
-            ->each(function ($row) {
+            ->each(function ($row): void {
                 $this->existingLocales[$row->code] = $row->id;
             });
     }

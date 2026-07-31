@@ -1,0 +1,4 @@
+name,description,permission_type,permissions
+"Catalog Manager","Manages products, categories and attributes",custom,"dashboard,catalog,catalog.products,catalog.categories,catalog.attributes"
+"Data Operator","Runs imports and exports only",custom,"dashboard,data_transfer,data_transfer.imports,data_transfer.export"
+"Full Access","Unrestricted access",all,

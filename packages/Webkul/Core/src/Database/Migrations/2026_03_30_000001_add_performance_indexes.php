@@ -12,25 +12,25 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasTable('channels')) {
-            Schema::table('channels', function (Blueprint $table) {
+            Schema::table('channels', function (Blueprint $table): void {
                 $table->index('code', 'channels_code_idx');
             });
         }
 
         if (Schema::hasTable('locales')) {
-            Schema::table('locales', function (Blueprint $table) {
+            Schema::table('locales', function (Blueprint $table): void {
                 $table->index('status', 'locales_status_idx');
             });
         }
 
         if (Schema::hasTable('currencies')) {
-            Schema::table('currencies', function (Blueprint $table) {
+            Schema::table('currencies', function (Blueprint $table): void {
                 $table->index('status', 'currencies_status_idx');
             });
         }
 
         if (Schema::hasTable('core_config')) {
-            Schema::table('core_config', function (Blueprint $table) {
+            Schema::table('core_config', function (Blueprint $table): void {
                 $table->index(['code', 'channel_code', 'locale_code'], 'core_config_lookup_idx');
             });
         }
@@ -42,25 +42,25 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('channels')) {
-            Schema::table('channels', function (Blueprint $table) {
+            Schema::table('channels', function (Blueprint $table): void {
                 $table->dropIndex('channels_code_idx');
             });
         }
 
         if (Schema::hasTable('locales')) {
-            Schema::table('locales', function (Blueprint $table) {
+            Schema::table('locales', function (Blueprint $table): void {
                 $table->dropIndex('locales_status_idx');
             });
         }
 
         if (Schema::hasTable('currencies')) {
-            Schema::table('currencies', function (Blueprint $table) {
+            Schema::table('currencies', function (Blueprint $table): void {
                 $table->dropIndex('currencies_status_idx');
             });
         }
 
         if (Schema::hasTable('core_config')) {
-            Schema::table('core_config', function (Blueprint $table) {
+            Schema::table('core_config', function (Blueprint $table): void {
                 $table->dropIndex('core_config_lookup_idx');
             });
         }

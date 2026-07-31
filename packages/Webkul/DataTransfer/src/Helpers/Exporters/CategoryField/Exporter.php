@@ -14,8 +14,6 @@ class Exporter extends AbstractExporter
 {
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -27,10 +25,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the file buffer for the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
     }
@@ -64,8 +60,10 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare category fields from current batch.
+     *
+     * @return array{code: mixed, type: mixed, locale: mixed, name: mixed, enable_wysiwyg: mixed, section: mixed, position: mixed, status: mixed, is_required: mixed, is_unique: mixed, validation: mixed, regex_pattern: mixed, value_per_locale: mixed}[]
      */
-    public function prepareCategoryFields(JobTrackBatchContract $batch, mixed $filePath)
+    public function prepareCategoryFields(JobTrackBatchContract $batch, mixed $filePath): array
     {
         $locales = core()->getAllActiveLocales()->pluck('code');
         $categoryFields = [];

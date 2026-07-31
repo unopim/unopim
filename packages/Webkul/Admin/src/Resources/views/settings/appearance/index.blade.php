@@ -1,96 +1,72 @@
-<x-admin::layouts>
-    <x-slot:title>
-        @lang('admin::app.settings.appearance.title')
+@php
+    $logo = core()->getConfigData('general.design.admin_logo.logo_image');
+
+    $favicon = core()->getConfigData('general.design.admin_logo.favicon');
+@endphp
+
+<x-admin::page
+    :title="trans('admin::app.settings.appearance.title')"
+    :subtitle="trans('admin::app.settings.appearance.section-info')"
+    :back="route('admin.settings.system.index')"
+    :action="route('admin.settings.appearance.update')"
+    method="PUT"
+    enctype="multipart/form-data"
+>
+    <x-slot:actions>
+        <button type="submit" class="primary-button">
+            @lang('admin::app.settings.appearance.save-btn')
+        </button>
     </x-slot>
 
-    <x-admin::form
-        :action="route('admin.settings.appearance.update')"
-        enctype="multipart/form-data"
-        method="PUT"
-    >
-        <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.appearance.title')
-            </p>
+    <div class="mt-6 grid grid-cols-1 gap-6 p-4 bg-white dark:bg-cherry-900 box-shadow rounded sm:grid-cols-2">
+        {{-- Logo --}}
+        <div class="flex gap-4 flex-col">
+            <x-admin::form.control-group class="!mb-0 shrink-0">
+                <x-admin::form.control-group.label>
+                    @lang('admin::app.settings.appearance.logo')
+                </x-admin::form.control-group.label>
 
-            <button
-                type="submit"
-                class="primary-button"
-            >
-                @lang('admin::app.settings.appearance.save-btn')
-            </button>
+                <x-admin::media.image
+                    name="logo_image"
+                    :show-suggestions="false"
+                    :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::LOGO_EXTENSIONS"
+                    width="240px"
+                    height="120px"
+                    object-fit="contain"
+                    :uploaded-images="$logo ? [['id' => 'logo_image', 'url' => Storage::url($logo), 'value' => $logo]] : []"
+                />
+
+                <x-admin::form.control-group.error control-name="logo_image" />
+            </x-admin::form.control-group>
+
+            <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
+                @lang('admin::app.settings.appearance.logo-size')
+            </p>
         </div>
 
-        <div class="mt-4 p-4 bg-white dark:bg-cherry-900 box-shadow rounded">
-            <p class="mb-4 text-base text-gray-800 dark:text-white font-semibold">
-                @lang('admin::app.settings.appearance.section-title')
+        {{-- Favicon --}}
+        <div class="flex gap-4 flex-col">
+            <x-admin::form.control-group class="!mb-0 shrink-0">
+                <x-admin::form.control-group.label>
+                    @lang('admin::app.settings.appearance.favicon')
+                </x-admin::form.control-group.label>
+
+                <x-admin::media.image
+                    name="favicon"
+                    :show-suggestions="false"
+                    :accepted-extensions="\Webkul\Admin\Http\Requests\AppearanceForm::FAVICON_EXTENSIONS"
+                    width="120px"
+                    height="120px"
+                    object-fit="contain"
+                    :uploaded-images="$favicon ? [['id' => 'favicon', 'url' => Storage::url($favicon), 'value' => $favicon]] : []"
+                />
+
+                <x-admin::form.control-group.error control-name="favicon" />
+            </x-admin::form.control-group>
+
+            <p class="text-xs text-gray-600 dark:text-gray-300 leading-[140%]">
+                @lang('admin::app.settings.appearance.favicon-size')
             </p>
-
-            <div class="grid gap-6 md:grid-cols-2">
-                <div>
-                    <p class="mb-2 text-sm text-gray-700 dark:text-gray-200 font-medium">
-                        @lang('admin::app.settings.appearance.logo')
-                    </p>
-
-                    <div class="mb-3 p-3 border rounded bg-gray-50 dark:bg-cherry-800 dark:border-gray-700 min-h-[72px] flex items-center">
-                        @if ($logo = core()->getConfigData('general.design.admin_logo.logo_image'))
-                            <img
-                                src="{{ Storage::url($logo) }}"
-                                alt="Admin Logo"
-                                class="max-h-12 object-contain"
-                            />
-                        @else
-                            <span class="text-sm text-gray-500">@lang('admin::app.settings.appearance.no-logo')</span>
-                        @endif
-                    </div>
-
-                    <x-admin::form.control-group>
-                        <x-admin::form.control-group.control
-                            type="file"
-                            name="logo_image"
-                            accept="image/*"
-                            :label="trans('admin::app.settings.appearance.logo')"
-                        />
-                        <x-admin::form.control-group.error control-name="logo_image" />
-                    </x-admin::form.control-group>
-
-                    <p class="mt-2 text-xs text-gray-500">
-                        @lang('admin::app.settings.appearance.logo-size')
-                    </p>
-                </div>
-
-                <div>
-                    <p class="mb-2 text-sm text-gray-700 dark:text-gray-200 font-medium">
-                        @lang('admin::app.settings.appearance.favicon')
-                    </p>
-
-                    <div class="mb-3 p-3 border rounded bg-gray-50 dark:bg-cherry-800 dark:border-gray-700 min-h-[72px] flex items-center">
-                        @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
-                            <img
-                                src="{{ Storage::url($favicon) }}"
-                                alt="Favicon"
-                                class="w-8 h-8 object-contain"
-                            />
-                        @else
-                            <span class="text-sm text-gray-500">@lang('admin::app.settings.appearance.no-favicon')</span>
-                        @endif
-                    </div>
-
-                    <x-admin::form.control-group>
-                        <x-admin::form.control-group.control
-                            type="file"
-                            name="favicon"
-                            accept=".ico,image/png,image/svg+xml,image/webp"
-                            :label="trans('admin::app.settings.appearance.favicon')"
-                        />
-                        <x-admin::form.control-group.error control-name="favicon" />
-                    </x-admin::form.control-group>
-
-                    <p class="mt-2 text-xs text-gray-500">
-                        @lang('admin::app.settings.appearance.favicon-size')
-                    </p>
-                </div>
-            </div>
         </div>
-    </x-admin::form>
-</x-admin::layouts>
+    </div>
+</x-admin::page>

@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Fichier d\'exemple',
+        'variants'      => 'Exemple de variantes',
+        'multi-locale'  => 'Exemple multilingue',
+        'delete'        => 'Exemple de suppression',
+        'custom-fields' => 'Exemple de champs personnalisés',
+        'with-images'   => 'Exemple avec images (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produits',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'Der :code-Wert muss eindeutig sein.',
                     'incorrect-family-for-variant'             => 'Die Familie muss mit der Elternfamilie identisch sein',
                     'parent-not-exist'                         => 'Das übergeordnete Element existiert nicht.',
+                    'variant-structure-not-found'              => 'La structure de variantes :code n\'existe pas pour cette famille d\'attributs.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'Le code d\'attribut :code est déjà utilisé.',
                     'code_not_found_to_delete'             => 'Code d\'attribut introuvable pour la suppression.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'attribut système ne peut pas être supprimé.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Associations de produits',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Le champ \'%s\' est obligatoire.',
+                    'self-link-not-allowed'       => 'Le produit \'%s\' ne peut pas être associé à lui-même.',
+                    'sku-not-found'               => 'Produit avec le SKU \'%s\' introuvable.',
+                    'related-sku-not-found'       => 'Produit associé avec le SKU \'%s\' introuvable.',
+                    'association-type-not-found'  => 'Le type d\'association \'%s\' n\'existe pas ou est inactif.',
+                    'invalid-field-value'         => 'Valeur invalide fournie pour un champ d\'association.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Cet export est trop volumineux pour être exécuté : environ :rows lignes × :columns colonnes (~:estimated) dépassent l\'espace disponible (~:available). Réduisez l\'export en sélectionnant moins de canaux/locales (et d\'attributs), puis réessayez.',
         'fields'           => [
-            'file-format'         => 'Format de fichier',
-            'with-media'          => 'Avec médias',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format de fichier',
+            'with-media'             => 'Avec médias',
+            'with-associations'      => 'Avec associations',
+            'with-associations-info' => 'Inclure les anciennes colonnes de listes de SKU (up_sells, cross_sells et related_products) dans l\'export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Attributs',
         ],
+        'product-associations' => [
+            'title' => 'Associations de produits',
+        ],
         'attribute-groups' => [
             'title' => 'Groupes d\'attributs',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'L\'exécution du travail a commencé',
         'completed' => 'Exécution du travail terminée',
+        'stalled'   => 'La tâche n\'a plus répondu pendant plus de :minutes minutes et a été marquée comme échouée. Le processus qui l\'exécutait a probablement été interrompu.',
+        'reaped'    => ':count tâches bloquées ont été marquées comme échouées.',
     ],
 ];

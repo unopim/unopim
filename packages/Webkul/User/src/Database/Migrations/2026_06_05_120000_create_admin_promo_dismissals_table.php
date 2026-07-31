@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up()
+    public function up(): void
     {
-        Schema::create('admin_promo_dismissals', function (Blueprint $table) {
+        Schema::create('admin_promo_dismissals', function (Blueprint $table): void {
             $table->increments('id');
             $table->integer('admin_id')->unsigned();
             $table->string('banner');
@@ -20,7 +20,7 @@ return new class extends Migration
         });
     }
 
-    public function down()
+    public function down(): void
     {
         Schema::dropIfExists('admin_promo_dismissals');
     }

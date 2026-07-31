@@ -3,179 +3,90 @@
         @lang('admin::app.catalog.categories.index.title')
     </x-slot>
 
-    <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-        <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-            @lang('admin::app.catalog.categories.index.title')
-        </p>
+    @php
+        $isTreeView = $viewMode === 'tree';
 
-        <div class="flex gap-x-2.5 items-center">
+        $canCreate = bouncer()->hasPermission('catalog.categories.create');
+    @endphp
+
+    <x-admin::page-header :title="trans('admin::app.catalog.categories.index.title')">
+        <x-slot:actions>
+            @php
+                $activeToggle = 'px-3 py-1.5 text-sm rounded-md bg-white dark:bg-cherry-900 shadow-sm text-gray-800 dark:text-white font-semibold';
+
+                $idleToggle = 'px-3 py-1.5 text-sm rounded-md text-gray-500 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white';
+            @endphp
+
+            <div class="flex gap-0.5 p-0.5 bg-gray-100 dark:bg-cherry-800 border border-gray-200 dark:border-cherry-800 rounded-md">
+                <a
+                    href="{{ route('admin.catalog.categories.index', ['view' => 'tree']) }}"
+                    class="{{ $isTreeView ? $activeToggle : $idleToggle }}"
+                >
+                    @lang('admin::app.catalog.categories.browse.tree-view')
+                </a>
+
+                <a
+                    href="{{ route('admin.catalog.categories.index', ['view' => 'list']) }}"
+                    class="{{ $isTreeView ? $idleToggle : $activeToggle }}"
+                >
+                    @lang('admin::app.catalog.categories.browse.list-view')
+                </a>
+            </div>
+
             {!! view_render_event('unopim.admin.catalog.categories.index.create-button.before') !!}
 
-            @if (bouncer()->hasPermission('catalog.categories.create'))
-                <a href="{{ route('admin.catalog.categories.create') }}">
+            @if ($canCreate)
+                <a href="{{ $isTreeView
+                    ? route('admin.catalog.categories.index', ['panel' => 'create'])
+                    : route('admin.catalog.categories.create') }}">
                     <div class="primary-button">
-                        @lang('admin::app.catalog.categories.index.add-btn')
+                        @lang('admin::app.catalog.categories.browse.add-category')
                     </div>
                 </a>
             @endif
 
             {!! view_render_event('unopim.admin.catalog.categories.index.create-button.after') !!}
-        </div>        
-    </div>
+        </x-slot>
+    </x-admin::page-header>
 
-    {!! view_render_event('unopim.admin.catalog.categories.list.before') !!}
+    @if (! $isTreeView)
+        @include('admin::catalog.categories.partials.list')
+    @else
+        {!! view_render_event('unopim.admin.catalog.categories.browse.before') !!}
 
-    <x-admin::datagrid
-        src="{{ route('admin.catalog.categories.index') }}" 
-    >
-        @php
-            $hasPermission = bouncer()->hasPermission('catalog.categories.edit') || bouncer()->hasPermission('catalog.categories.delete');
-
-            $hasMassActionPermission = bouncer()->hasPermission('catalog.categories.mass_delete');
-        @endphp
-        
-        <template #header="{ columns, records, sortPage, selectAllRecords, applied, isLoading, actions}">
-            <template v-if="! isLoading">
-                <div
-                    class="row grid grid-rows-1 gap-2.5 items-center px-4 py-2.5 border-b bg-violet-50 dark:border-cherry-800 dark:bg-cherry-900 font-semibold"
-                    :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
-                >
-                    <div
-                        class="flex items-center select-none"
-                        v-for="(columnGroup, index) in ['display_name', 'category_name', 'code']"
-                    >
-                        @if ($hasMassActionPermission)
-                            <label
-                                class="flex mr-2 gap-1 items-center w-max cursor-pointer select-none"
-                                for="mass_action_select_all_records"
-                                v-if="! index"
-                            >
-                                <input
-                                    type="checkbox"
-                                    name="mass_action_select_all_records"
-                                    id="mass_action_select_all_records"
-                                    class="hidden peer"
-                                    :checked="['all', 'partial'].includes(applied.massActions.meta.mode)"
-                                    @change="selectAllRecords"
-                                >
-
-                                <span
-                                    class="icon-checkbox-normal cursor-pointer rounded-md text-2xl"
-                                    :class="[
-                                        applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-violet-700' : (
-                                            applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-violet-700' : ''
-                                        ),
-                                    ]"
-                                >
-                                </span>
-                            </label>
-                        @endif
-
-                        <p class="text-gray-600 dark:text-gray-300">
-                            <span class="[&>*]:after:content-['_/_']">
-                                <span
-                                    class="after:content-['/'] last:after:content-['']"
-                                    :class="{
-                                        'text-gray-800 dark:text-white font-medium': applied.sort.column == columnGroup,
-                                        'cursor-pointer hover:text-gray-800 dark:hover:text-white': columns.find(columnTemp => columnTemp.index === columnGroup)?.sortable,
-                                    }"
-                                    @click="
-                                        columns.find(columnTemp => columnTemp.index === columnGroup)?.sortable ? sortPage(columns.find(columnTemp => columnTemp.index === columnGroup)): {}
-                                    "
-                                >
-                                    @{{ columns.find(columnTemp => columnTemp.index === columnGroup)?.label }}
-                                </span>
-                            </span>
-
-                            <!-- Filter Arrow Icon -->
-                            <i
-                                class="ltr:ml-1.5 rtl:mr-1.5 text-base  text-gray-800 dark:text-white align-text-bottom"
-                                :class="[applied.sort.order === 'asc' ? 'icon-down-stat': 'icon-up-stat']"
-                                v-if="columnGroup.includes(applied.sort.column)"
-                            ></i>
-                        </p>
-                    </div>
-
-                    @if ($hasPermission)
-                        <!-- Actions -->
-                        <div
-                            class="flex gap-2.5 items-center justify-end select-none"
-                        >
-                            <p
-                                class="text-gray-600 dark:text-gray-300"
-                                v-if="actions?.length"
-                            >
-                                @lang('admin::app.components.datagrid.table.actions')
-                            </p>
-                        </div>
-                    @endif
+        <div class="flex gap-2.5 mt-3.5 flex-wrap">
+            <div class="flex flex-col shrink-0 w-[360px] max-w-full p-4 h-[calc(100vh-170px)] bg-white dark:bg-cherry-900 rounded box-shadow">
+                <div class="flex flex-col h-full min-h-0">
+                    <x-admin::tree.category.view
+                        input-type="radio"
+                        name-field="browse_category"
+                        ::fill-height="true"
+                        label-field="name"
+                        value-field="id"
+                        id-field="id"
+                        children-page-size="100"
+                        ::show-toolbar="true"
+                        ::show-search="true"
+                        ::navigate-on-select="true"
+                        ::allow-create="{{ $canCreate ? 'true' : 'false' }}"
+                        ::allow-delete="{{ bouncer()->hasPermission('catalog.categories.delete') ? 'true' : 'false' }}"
+                        :expanded-branch="json_encode($branchToParent)"
+                        :items="json_encode($treeItems)"
+                        :value="json_encode($selectedId)"
+                        :fallback-locale="config('app.fallback_locale')"
+                    />
                 </div>
-            </template>
+            </div>
 
-            <!-- Datagrid Head Shimmer -->
-            <template v-else>
-                <x-admin::shimmer.datagrid.table.head :isMultiRow="true" />
-            </template>
-        </template>
+            <div class="flex-1 min-w-0">
+                @if ($panelMode)
+                    @include('admin::catalog.categories.partials.panel')
+                @else
+                    @include('admin::catalog.categories.partials.overview')
+                @endif
+            </div>
+        </div>
 
-        <!-- DataGrid Body -->
-        <template #body="{ columns, records, performAction, handleRowClick, applied, actions, isLoading }">
-            <template v-if="! isLoading">
-                <div
-                    v-for="record in records"
-                    class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
-                    :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
-                    @click="handleRowClick($event, record)"
-                >
-                    <div class="flex items-center gap-2.5 overflow-hidden">
-                        @if ($hasMassActionPermission)
-                            <div class="mass-action-input" @click.stop>
-                                <input
-                                    type="checkbox"
-                                    :name="`mass_action_select_record_${record.category_id}`"
-                                    :id="`mass_action_select_record_${record.category_id}`"
-                                    :value="record.category_id"
-                                    class="hidden peer"
-                                    v-model="applied.massActions.indices"
-                                    @change="setCurrentSelectionMode"
-                                >
-                                <label
-                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
-                                    :for="`mass_action_select_record_${record.category_id}`"
-                                >
-                                </label>
-                            </div>
-                        @endif
-
-                        <p v-text="record.display_name" class="truncate" :title="record.display_name"></p>
-                    </div>
-
-                    <p v-text="record.category_name" class="truncate" :title="record.category_name"></p>
-
-                    <p v-text="record.code" class="truncate" :title="record.code"></p>
-
-                    <!-- Actions -->
-                    <div class="flex justify-end" @click.stop>
-                        <span
-                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
-                            :class="action.icon"
-                            v-text="!action.icon ? action.title : ''"
-                            v-for="action in record.actions"
-                            :title="action.title ?? ''"
-                            @click="performAction(action)"
-                        >
-                        </span>
-                    </div>
-                </div>
-            </template>
-
-            <!-- Datagrid Shimmer for body when loading data  -->
-            <template v-else>
-                <x-admin::shimmer.datagrid.table.body :isMultiRow="true" />
-            </template>
-        </template>
-    </x-admin::datagrid>
-
-    {!! view_render_event('unopim.admin.catalog.categories.list.after') !!}
-
+        {!! view_render_event('unopim.admin.catalog.categories.browse.after') !!}
+    @endif
 </x-admin::layouts>

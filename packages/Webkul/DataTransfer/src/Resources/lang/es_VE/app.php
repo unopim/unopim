@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Archivo de ejemplo',
+        'variants'      => 'Ejemplo de variantes',
+        'multi-locale'  => 'Ejemplo multiidioma',
+        'delete'        => 'Ejemplo de eliminación',
+        'custom-fields' => 'Ejemplo de campos personalizados',
+        'with-images'   => 'Ejemplo con imágenes (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Productos',
@@ -21,6 +30,7 @@ return [
                     'not-unique-value'                         => 'El valor :code debe ser único.',
                     'incorrect-family-for-variant'             => 'La familia debe ser la misma que la familia principal',
                     'parent-not-exist'                         => 'El producto padre no existe.',
+                    'variant-structure-not-found'              => 'La estructura de variantes :code no existe para esta familia de atributos.',
                 ],
             ],
         ],
@@ -48,6 +58,19 @@ return [
                     'duplicate-code'                       => 'El código de atributo :code ya está en uso.',
                     'code_not_found_to_delete'             => 'Código de atributo no encontrado para eliminación.',
                     'code_is_system_and_cannot_be_deleted' => 'El atributo del sistema no se puede eliminar.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Asociaciones de productos',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'El campo \'%s\' es obligatorio.',
+                    'self-link-not-allowed'       => 'El producto \'%s\' no se puede asociar consigo mismo.',
+                    'sku-not-found'               => 'No se encontró ningún producto con el SKU \'%s\'.',
+                    'related-sku-not-found'       => 'No se encontró el producto relacionado con el SKU \'%s\'.',
+                    'association-type-not-found'  => 'El tipo de asociación \'%s\' no existe o está inactivo.',
+                    'invalid-field-value'         => 'Valor no válido proporcionado para un campo de asociación.',
                 ],
             ],
         ],
@@ -151,14 +174,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Esta exportación es demasiado grande para ejecutarse: se estiman :rows filas × :columns columnas (~:estimated), que superan el espacio disponible (~:available). Reduzca la exportación seleccionando menos canales/idiomas (y atributos) e inténtelo de nuevo.',
         'fields'           => [
-            'file-format'         => 'Formato de archivo',
-            'with-media'          => 'Con medios',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Formato de archivo',
+            'with-media'             => 'Con medios',
+            'with-associations'      => 'Con asociaciones',
+            'with-associations-info' => 'Incluir las columnas heredadas de listas de SKU (up_sells, cross_sells y related_products) en la exportación',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +256,9 @@ return [
         'attributes' => [
             'title' => 'Atributos',
         ],
+        'product-associations' => [
+            'title' => 'Asociaciones de productos',
+        ],
         'attribute-groups' => [
             'title' => 'Grupos de atributos',
         ],
@@ -276,5 +304,7 @@ return [
     'job' => [
         'started'   => 'Trabajo iniciado',
         'completed' => 'Trabajo completado',
+        'stalled'   => 'La tarea dejó de responder por más de :minutes minutos y se marcó como fallida. Es probable que el proceso que la ejecutaba se detuviera.',
+        'reaped'    => 'Se marcaron :count tareas detenidas como fallidas.',
     ],
 ];

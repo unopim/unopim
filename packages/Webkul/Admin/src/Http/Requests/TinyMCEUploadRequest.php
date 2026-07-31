@@ -12,7 +12,19 @@ class TinyMCEUploadRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        foreach ([
+            'catalog.products.create',
+            'catalog.products.edit',
+            'catalog.categories.create',
+            'catalog.categories.edit',
+            'ai-agent.prompt.edit',
+        ] as $permission) {
+            if (bouncer()->hasPermission($permission)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

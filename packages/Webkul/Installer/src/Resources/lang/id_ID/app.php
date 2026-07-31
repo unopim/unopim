@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Lembar data produk',
+                'lede'              => 'Spesifikasi acuan untuk katalog demo. Nilai berlaku untuk semua produk dalam keluarga ini kecuali halaman produk menyatakan lain.',
+                'family-code'       => 'Kode keluarga',
+                'compliance'        => 'Kepatuhan',
+                'compliance-value'  => 'Bertanda CE; deklarasi RoHS dan REACH tersedia atas permintaan.',
+                'spare-parts'       => 'Suku cadang',
+                'spare-parts-value' => 'Komponen aus tersedia selama sepuluh tahun sejak tanggal produksi terakhir.',
+                'packaging'         => 'Kemasan',
+                'packaging-value'   => 'Kemasan bebas plastik, karton bersertifikat FSC, dicetak dengan tinta bebas minyak mineral.',
+                'footer'            => 'Dibuat oleh UnoPim untuk keperluan demonstrasi.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Bawaan',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Peningkatan UnoPim',
+        'complete'              => 'Peningkatan selesai. Aplikasi kembali daring.',
+        'aborted'               => 'Peningkatan dibatalkan. Tidak ada yang diubah.',
+        'confirm'               => 'Aplikasi akan masuk mode pemeliharaan dan basis data akan dimigrasikan. Lanjutkan?',
+        'dry-run-complete'      => 'Uji coba selesai. Tidak ada yang diubah.',
+        'preflight-failed'      => ':count pemeriksaan gagal. Peningkatan tidak dimulai dan tidak ada yang diubah.',
+        'preflight-failed-hint' => 'Selesaikan poin-poin di atas lalu jalankan kembali perintahnya. Rilis sebelumnya masih melayani lalu lintas.',
+        'verify-failed'         => ':count verifikasi gagal. Aplikasi dibiarkan dalam mode pemeliharaan.',
+        'migrate-failed'        => 'Migrasi gagal: :error',
+        'step-failed'           => 'Langkah :command gagal dengan kode keluar :code.',
+        'phase'                 => [
+            'preflight' => 'Tahap 1 dari 5 — Pemeriksaan awal',
+            'drift'     => 'Tahap 2 dari 5 — Perbedaan konfigurasi',
+            'sizing'    => 'Tahap 3 dari 5 — Perkiraan jendela pemeliharaan',
+            'execute'   => 'Tahap 4 dari 5 — Migrasi',
+            'verify'    => 'Tahap 5 dari 5 — Verifikasi',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Versi PHP',
+            'php-version-detail'         => 'membutuhkan :required, ditemukan :found',
+            'php-version-remedy'         => 'Tingkatkan PHP ke :required atau lebih baru sebelum melanjutkan.',
+            'extensions'                 => 'Ekstensi PHP',
+            'extensions-remedy'          => 'Pasang ekstensi yang hilang lalu mulai ulang PHP-FPM.',
+            'database'                   => 'Koneksi basis data',
+            'database-detail'            => ':driver, basis data :database, awalan :prefix',
+            'database-remedy'            => 'Periksa kredensial basis data pada berkas .env Anda.',
+            'source-version'             => 'Rilis terpasang',
+            'source-version-detail'      => ':version atau lebih baru',
+            'source-version-unsupported' => 'lebih lama dari :version',
+            'source-version-remedy'      => 'Tingkatkan dulu ke :version, lalu jalankan kembali perintah ini.',
+            'pending-migrations'         => 'Migrasi tertunda',
+            'pending-migrations-detail'  => ':count akan dijalankan',
+            'pending-migrations-none'    => 'tidak ada — basis data sudah mutakhir',
+            'pending-migrations-remedy'  => 'Tabel migrasi tidak dapat dibaca. Periksa izin basis data.',
+            'active-jobs'                => 'Tugas impor dan ekspor',
+            'active-jobs-detail'         => ':count masih berjalan',
+            'active-jobs-remedy'         => 'Tunggu hingga tugas yang berjalan selesai atau hentikan worker antrean, lalu jalankan kembali perintahnya.',
+            'writable-paths'             => 'Direktori yang dapat ditulis',
+            'writable-paths-remedy'      => 'Berikan izin tulis kepada pengguna server web pada direktori yang tercantum di atas.',
+            'disk-space'                 => 'Ruang disk',
+            'disk-space-detail'          => ':free tersedia, :required dibutuhkan',
+            'disk-space-unknown'         => 'tidak dapat ditentukan',
+            'disk-space-remedy'          => 'Kosongkan ruang disk, atau gunakan --skip-backup bila basis data dicadangkan di tempat lain.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Tidak ditemukan perbedaan konfigurasi.',
+            'no-previous' => 'Direktori rilis sebelumnya tidak diberikan, sehingga berkas konfigurasi dan dependensi Composer tidak dapat dibandingkan. Gunakan --from=/path/ke/rilis/lama untuk laporan lengkap.',
+            'env-missing' => 'Kunci lingkungan yang ditambahkan rilis ini dan tidak ada di .env Anda:',
+            'env-removed' => 'Kunci lingkungan yang dihapus rilis ini namun masih diatur di .env Anda:',
+            'config'      => 'Berkas konfigurasi yang berbeda dari rilis sebelumnya. Terapkan kembali perubahan lokal Anda:',
+            'composer'    => 'Dependensi Composer yang Anda tambahkan dan tidak ada pada rilis ini:',
+            'manual'      => 'Berkas-berkas ini milik Anda. Gabungkan secara manual sebelum membuka lalu lintas — peningkatan tidak pernah menimpanya.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabel',
+            'rows'            => 'Baris',
+            'pending'         => ':count migrasi akan dijalankan.',
+            'window'          => 'Perkiraan jendela pemeliharaan: sekitar :minutes menit.',
+            'nothing-pending' => 'Tidak ada migrasi yang tertunda.',
+            'irreversible'    => 'Migrasi berikut menulis ulang data dan tidak dapat dibatalkan. Hanya pemulihan cadangan basis data yang dapat mengembalikannya:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Cadangan basis data ditulis ke :path',
+            'skipped'            => 'Pencadangan basis data dilewati. Pastikan Anda memiliki cadangan yang dapat dipulihkan sebelum melanjutkan.',
+            'failed'             => 'Pencadangan basis data gagal: :error',
+            'empty'              => 'Cadangan basis data kosong dan telah dibuang.',
+            'abort'              => 'Peningkatan dihentikan karena tidak ada cadangan yang terverifikasi. Tidak ada yang diubah.',
+            'unsupported-driver' => 'Tidak ada perintah pencadangan untuk driver :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'dilewati, tabel tidak ada',
+            'associations'           => 'Keterkaitan produk',
+            'associations-none'      => 'tidak ada keterkaitan lama yang perlu dimigrasikan',
+            'associations-detail'    => ':migrated dari :legacy produk telah dimigrasikan',
+            'associations-remedy'    => 'Data keterkaitan lama ditemukan tetapi tidak ada yang dimigrasikan. Pulihkan cadangan dan laporkan hal ini.',
+            'robot-users'            => 'Pemilik integrasi API',
+            'robot-users-detail'     => ':count integrasi masih dimiliki oleh seseorang',
+            'robot-users-remedy'     => 'Jalankan kembali migrasi, atau tetapkan ulang integrasi dari panel admin.',
+            'category-bounds'        => 'Integritas pohon kategori',
+            'category-bounds-detail' => ':count simpul kategori memiliki batas yang tidak valid',
+            'category-bounds-remedy' => 'Bangun ulang pohon kategori sebelum membuka lalu lintas.',
+            'scrubbed-audits'        => 'Pembersihan kredensial',
+            'scrubbed-audits-detail' => ':count catatan audit masih berisi kredensial',
+            'scrubbed-audits-remedy' => 'Jalankan kembali migrasi sebelum membuka lalu lintas. Catatan ini membocorkan kredensial yang tersimpan.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Peningkatan tidak selesai. Aplikasi berada dalam mode pemeliharaan.',
+            'body'    => 'Untuk mengembalikan: pulihkan cadangan basis data, arahkan kembali server web ke direktori rilis sebelumnya, lalu jalankan «php artisan up» di sana.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Mengabaikan --with-reindex: :count produk melebihi batas :limit produk untuk pembangunan ulang langsung.',
+            'deferred'  => 'Elasticsearch tidak diindeks ulang. Dengan :count produk, proses ini lebih lama daripada peningkatannya sendiri, dan pencarian akan bersandar pada basis data sampai selesai. Jalankan ini setelah situs kembali daring:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -145,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Mata Uang yang Diizinkan',
                 'allowed-locales'     => 'Lokal yang Diizinkan',
+                'app-key-missing'     => 'File .env tidak ditemukan dan APP_KEY tidak disetel di lingkungan server. Penginstal tidak pernah menulis konfigurasi lingkungan — buat .env secara manual (salin .env.example) atau atur variabelnya di panel hosting Anda, lalu coba lagi.',
+                'env-readonly-note'   => 'Nilai-nilai ini dibaca dari lingkungan server Anda (.env). Penginstal tidak pernah menulis konfigurasi lingkungan — untuk mengubah sesuatu, edit file .env (atau variabel panel hosting Anda) lalu muat ulang halaman ini.',
                 'application-name'    => 'Nama Aplikasi',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan Tiongkok (CNY)',
@@ -197,7 +318,7 @@ return [
                 'turkish-lira'        => 'Lira Turki (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ukraina (UAH)',
                 'usd'                 => 'Dolar AS (USD)',
-                'warning-message'     => 'Perhatian! Pengaturan bahasa sistem bawaan serta mata uang bawaan bersifat permanen dan tidak dapat diubah lagi.',
+                'warning-message'     => 'Lokal dan mata uang yang Anda pilih di sini menjadi default awal untuk saluran dan akun admin. Anda dapat mengaktifkan lebih banyak lokal dan mata uang, atau mengubah default ini, kapan saja dari pengaturan admin.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalasi UnoPim',
@@ -221,6 +342,8 @@ return [
                 'package-installed'  => '✓ :label terinstal',
                 'package-failed'     => '✗ :label gagal: :message',
                 'package-manual'     => '! :label tidak dapat diinstal secara otomatis di server ini (tidak ada akses shell). Jalankan ini dari mesin yang memiliki akses shell:',
+                'install-failed'     => '✗ Instalasi gagal. Periksa storage/logs/laravel.log untuk detailnya.',
+                'stream-interrupted' => '! Koneksi ke penginstal terputus. Instalasi mungkin masih sedang diselesaikan — tunggu sebentar, lalu muat ulang halaman ini.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panel Admin',

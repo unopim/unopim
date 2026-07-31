@@ -1,0 +1,69 @@
+<?php
+
+namespace Webkul\ProductPassport\Jobs;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
+use Webkul\Publication\Models\PublicationProxy;
+
+/**
+ * Bulk publish: chunks the selected publications and re-dispatches one PublishPassportForProductChannelJob per (product, channel).
+ *
+ * Queued so an arbitrarily large grid selection never runs in the web request.
+ * Withdrawn and redacted rows are filtered out here rather than dispatched and
+ * refused downstream.
+ */
+class BulkPublishPassportsJob implements ShouldQueue
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    private const CHUNK = 200;
+
+    /**
+     * @param  list<int>  $publicationIds
+     */
+    public function __construct(
+        private readonly array $publicationIds,
+        private readonly ?int $publishedById = null,
+    ) {
+        $this->onQueue(config('publication.queue'));
+    }
+
+    public function handle(): void
+    {
+        PublicationProxy::modelClass()::query()
+            ->whereIn('id', $this->publicationIds)
+            ->where('type', 'dpp')
+            ->whereIn('status', PublicationStatus::publishable())
+            ->with('channel.locales')
+            ->chunkById(self::CHUNK, function ($publications): void {
+                foreach ($publications as $publication) {
+                    $localeIds = $publication->channel?->locales
+                        ->pluck('id')
+                        ->map(fn ($id): int => (int) $id)
+                        ->all() ?? [];
+
+                    if ($localeIds === []) {
+                        continue;
+                    }
+
+                    // One dispatch per (product, channel) preserves the publish job's uniqueId() de-dupe and per-locale locking.
+                    PublishPassportForProductChannelJob::dispatch(
+                        $publication->product_id,
+                        $publication->channel_id,
+                        'dpp',
+                        $localeIds,
+                        $this->publishedById,
+                    );
+                }
+            });
+    }
+}

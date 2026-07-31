@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources\Export\Elastic;
 
+use Illuminate\Support\Facades\Date;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
@@ -15,7 +16,7 @@ class ProductCursor extends AbstractElasticCursor
      *
      * @var array|\stdClass|null
      */
-    protected $cachedBoolQuery = null;
+    protected $cachedBoolQuery;
 
     public function __construct(
         array $requestParams,
@@ -43,7 +44,7 @@ class ProductCursor extends AbstractElasticCursor
             'stored_fields'    => [],
         ];
 
-        if (! empty($this->searchAfter)) {
+        if ($this->searchAfter !== []) {
             $query['search_after'] = $this->searchAfter;
         }
 
@@ -67,7 +68,7 @@ class ProductCursor extends AbstractElasticCursor
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];
 
-                return array_map(fn ($hit) => ['id' => $hit['_id']], $hits);
+                return array_map(fn (array $hit): array => ['id' => $hit['_id']], $hits);
             }
         } catch (\Throwable $e) {
             \Log::error('Elasticsearch search error: '.$e->getMessage());
@@ -79,7 +80,7 @@ class ProductCursor extends AbstractElasticCursor
 
     protected function buildBoolQuery(array $filters): array
     {
-        $filter = app(ProductExportFilter::class);
+        $filter = resolve(ProductExportFilter::class);
 
         $clauses = [];
 
@@ -102,11 +103,11 @@ class ProductCursor extends AbstractElasticCursor
         }
 
         $range = array_filter([
-            'gte' => $filter->updatedAfter($filters),
-            'lte' => $filter->updatedBefore($filters),
-        ], fn ($bound) => ! empty($bound));
+            'gte' => $this->toElasticDate($filter->updatedAfter($filters)),
+            'lte' => $this->toElasticDate($filter->updatedBefore($filters)),
+        ], fn (?string $bound): bool => $bound !== null);
 
-        if (! empty($range)) {
+        if ($range !== []) {
             $clauses[] = ['range' => ['updated_at' => $range]];
         }
 
@@ -116,7 +117,19 @@ class ProductCursor extends AbstractElasticCursor
             $clauses[] = ['terms' => ['id' => $valueFilteredIds]];
         }
 
-        return $clauses ? ['filter' => $clauses] : [];
+        return $clauses !== [] ? ['filter' => $clauses] : [];
+    }
+
+    /**
+     * Convert a filter bound to the UTC ISO-8601 format Elasticsearch can parse.
+     */
+    protected function toElasticDate(?string $date): ?string
+    {
+        if (in_array($date, [null, '', '0'], true)) {
+            return null;
+        }
+
+        return Date::parse($date)->utc()->toIso8601ZuluString();
     }
 
     /**
@@ -124,7 +137,7 @@ class ProductCursor extends AbstractElasticCursor
      */
     protected static function resolveOptions(array $options): array
     {
-        $prefix = env('ELASTICSEARCH_INDEX_PREFIX') ?: env('APP_NAME');
+        $prefix = config('elasticsearch.prefix');
         $options['index'] = strtolower("{$prefix}_products");
         $options['sort'] ??= [];
 

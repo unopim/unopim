@@ -54,7 +54,7 @@ class UpdateCategory implements PimTool
 
                 $data = [];
                 if ($name) {
-                    $existing = json_decode($category->additional_data, true) ?? [];
+                    $existing = json_decode((string) $category->additional_data, true) ?? [];
                     $existing['locale_specific'][$this->context->locale]['name'] = $name;
                     $data['additional_data'] = json_encode($existing);
                 }
@@ -64,7 +64,7 @@ class UpdateCategory implements PimTool
                     $data['parent_id'] = $parent ? $parent->id : null;
                 }
 
-                if (! empty($data)) {
+                if ($data !== []) {
                     DB::table('categories')->where('id', $category->id)->update($data);
                 }
 
