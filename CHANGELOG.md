@@ -1,4 +1,4 @@
-# Unreleased
+# 3.0.0 — July 31st, 2026
 
 ## Bug fixes
 
