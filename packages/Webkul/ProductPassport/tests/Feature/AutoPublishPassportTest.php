@@ -34,6 +34,7 @@ it('dispatches a publish job when auto_publish is on for a dpp-family product', 
     [$product, $context] = $this->productWithSecretAndDppAttributes();
 
     setChannelPassportConfig($context->channel->code, enabled: true, autoPublish: true);
+    $this->enablePublicTier($context->channel->code);
 
     Event::dispatch('catalog.product.update.after', $product);
 

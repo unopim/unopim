@@ -15,7 +15,7 @@ return [
                 'enabled-hint'                     => 'Công tắc chính cho tầng phục vụ công khai. Khi tắt, mọi URL hộ chiếu công khai đều trả về 404. Các màn hình hộ chiếu trong trang quản trị không bị ảnh hưởng — hãy ẩn chúng bằng cài đặt Hộ chiếu Sản phẩm Số.',
                 'base-url-hint'                    => 'Địa chỉ công khai nơi hộ chiếu được phục vụ, dùng để tạo mã QR và liên kết chia sẻ. Để trống để dùng tên miền của chính trang này.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
-                'cache-ttl-hint'                   => 'Thời gian một hộ chiếu công khai đã kết xuất được lưu vào bộ nhớ đệm trước khi được dựng lại. Giá trị cao hơn giảm tải; giá trị thấp hơn phản ánh chỉnh sửa nhanh hơn.',
+                'cache-ttl-hint'                   => 'Bộ nhớ đệm dùng chung (CDN hoặc reverse proxy) được tái sử dụng một hộ chiếu công khai đã kết xuất trong bao lâu. Trình duyệt xác thực lại mỗi lần truy cập, nên chỉnh sửa, thu hồi và tắt tầng này có hiệu lực ngay.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit-hint'                  => 'Số yêu cầu hộ chiếu công khai tối đa mỗi phút từ một khách truy cập trước khi bị giới hạn.',
                 'rate-limit-placeholder'           => '60',

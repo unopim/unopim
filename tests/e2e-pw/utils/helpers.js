@@ -193,6 +193,35 @@ async function fillLocalizedField(page, value, field = 'name') {
   await named.locator('..').locator('input[type="text"]').first().fill(value);
 }
 
+/**
+ * Resolve a real, editable simple product id from the live catalog instead of
+ * hardcoding one: demo-data rebuilds renumber/replace products, so a fixed id
+ * can end up pointing at a deleted row or an edge-case fixture (no name,
+ * configurable parent, etc.) left behind by another test.
+ * @param {import('@playwright/test').Page} page — an already-authenticated admin page
+ * @returns {Promise<number>} a product id safe to open on the edit page
+ */
+async function resolveEditableProductId(page) {
+  await navigateTo(page, 'products');
+
+  const grid = await page.evaluate(async () => {
+    const response = await fetch(window.location.origin + '/admin/catalog/products?pagination[perPage]=50', {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      credentials: 'same-origin',
+    });
+
+    return response.json();
+  });
+
+  const record = (grid.records || []).find((row) => row.type === 'Simple' && row.name);
+
+  if (!record) {
+    throw new Error('resolveEditableProductId: no Simple product with a name found in the catalog');
+  }
+
+  return record.product_id;
+}
+
 module.exports = {
   ROUTES,
   navigateTo,
@@ -205,4 +234,5 @@ module.exports = {
   clickSaveAndExpect,
   generateUid,
   fillLocalizedField,
+  resolveEditableProductId,
 };

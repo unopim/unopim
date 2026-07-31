@@ -13,7 +13,7 @@ return [
                 'base-url-hint'                    => 'Offentlig adresse, hvor pas serveres; bruges til at opbygge QR-koder og delbare links. Lad stå tomt for at bruge dette websteds eget domæne.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl'                        => 'Cache-TTL (sekunder)',
-                'cache-ttl-hint'                   => 'Hvor længe et gengivet offentligt pas gemmes i cachen, før det genopbygges. Højere værdier reducerer belastningen; lavere værdier afspejler ændringer hurtigere.',
+                'cache-ttl-hint'                   => 'Hvor længe en delt cache (CDN eller reverse proxy) må genbruge et gengivet offentligt pas. Browsere genvaliderer ved hvert besøg, så rettelser, tilbagetrækninger og at slå laget fra får virkning med det samme.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit'                       => 'Hastighedsgrænse (forespørgsler/minut)',
                 'rate-limit-hint'                  => 'Maksimalt antal offentlige pas-anmodninger tilladt pr. minut fra en enkelt besøgende, før vedkommende begrænses.',

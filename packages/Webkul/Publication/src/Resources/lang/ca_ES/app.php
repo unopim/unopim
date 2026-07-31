@@ -13,7 +13,7 @@ return [
                 'base-url-hint'                    => 'Adreça pública on es serveixen els passaports; s\'utilitza per generar codis QR i enllaços per compartir. Deixeu-ho en blanc per utilitzar el domini propi d\'aquest lloc.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl'                        => 'TTL de la memòria cau (segons)',
-                'cache-ttl-hint'                   => 'Durant quant de temps es desa a la memòria cau un passaport públic renderitzat abans de reconstruir-lo. Els valors més alts redueixen la càrrega; els més baixos reflecteixen els canvis abans.',
+                'cache-ttl-hint'                   => 'Quant de temps una memòria cau compartida (CDN o proxy invers) pot reutilitzar un passaport públic ja renderitzat. Els navegadors revaliden a cada visita, de manera que les edicions, les retirades i desactivar el nivell tenen efecte immediat.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit'                       => 'Límit de velocitat (sol·licituds/minut)',
                 'rate-limit-hint'                  => 'Nombre màxim de sol·licituds de passaport públic permeses cada minut des d\'un sol visitant abans que se\'l limiti.',

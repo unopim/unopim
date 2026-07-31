@@ -94,7 +94,7 @@
                 </p>
             </div>
 
-            <div class="bg-white dark:bg-cherry-900 rounded box-shadow">
+            <div class="bg-white dark:bg-cherry-900 rounded box-shadow min-w-0">
                 <x-admin::tabs position="left">
                     <x-admin::tabs.item
                         :title="trans('passport::app.catalog.products.edit.passport.tabs.locales')"

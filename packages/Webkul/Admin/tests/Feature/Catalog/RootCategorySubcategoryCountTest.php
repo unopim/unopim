@@ -125,6 +125,8 @@ it('repairs a legacy tree whose bounds were left with gaps', function () {
 
     Category::fixTree();
 
-    expect(renderedSubcategoryCounts(browseTreeHtml()))->toBe([13])
+    $expected = count((require base_path('packages/Webkul/Installer/src/Database/Data/Demo/categories.php'))['tree']);
+
+    expect(renderedSubcategoryCounts(browseTreeHtml()))->toBe([$expected])
         ->and((int) Category::max('_rgt'))->toBe(Category::count() * 2);
 });

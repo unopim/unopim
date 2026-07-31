@@ -13,7 +13,7 @@ return [
                 'base-url-hint'                    => 'Öffentliche Adresse, unter der die Pässe bereitgestellt werden; wird zur Erzeugung von QR-Codes und teilbaren Links verwendet. Leer lassen, um die eigene Domain dieser Website zu verwenden.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl'                        => 'Cache-TTL (Sekunden)',
-                'cache-ttl-hint'                   => 'Wie lange ein gerenderter öffentlicher Pass zwischengespeichert wird, bevor er neu erstellt wird. Höhere Werte verringern die Last; niedrigere Werte übernehmen Änderungen schneller.',
+                'cache-ttl-hint'                   => 'Wie lange ein gemeinsamer Cache (CDN oder Reverse Proxy) einen gerenderten öffentlichen Pass wiederverwenden darf. Browser validieren bei jedem Besuch neu, sodass Änderungen, Rücknahmen und das Abschalten der Ebene sofort wirken.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit'                       => 'Ratenbegrenzung (Anfragen/Minute)',
                 'rate-limit-hint'                  => 'Maximale Anzahl öffentlicher Pass-Anfragen pro Minute von einem einzelnen Besucher, bevor dieser gedrosselt wird.',

@@ -132,7 +132,7 @@
 
                             <select
                                 class="shrink-0 h-[30px] rounded-lg border-0 bg-white/[0.18] text-white text-[12.5px] font-semibold px-2 cursor-pointer focus:outline-none [&>option]:text-gray-800"
-                                onchange="window.location.href='/install?locale=' + this.value"
+                                onchange="window.location.href = window.location.pathname + '?locale=' + this.value"
                                 aria-label="@lang('installer::app.installer.index.wizard-language')"
                             >
                                 @foreach ($locales as $value)
@@ -1200,12 +1200,14 @@
                                     </div>
 
                                     <div class="flex flex-col gap-5 px-6 py-6 border-b border-gray-200 max-h-[484px] overflow-y-auto">
-                                        <p class="text-[14px] text-gray-600 !leading-normal">
+                                        <p
+                                            class="text-[14px] text-gray-600 !leading-normal"
+                                            v-if="hasOptionalPackages"
+                                        >
                                             @lang('installer::app.installer.index.add-ons.info')
                                         </p>
 
-                                        <!-- Optional package cards -->
-                                        <div class="grid gap-3">
+                                        <div class="grid gap-3" v-if="hasOptionalPackages">
                                             <label
                                                 v-for="(pkg, key) in optionalPackages"
                                                 :key="key"
@@ -1239,8 +1241,10 @@
                                             </label>
                                         </div>
 
-                                        <!-- Sample data toggle -->
-                                        <div class="grid gap-1.5 pt-2 border-t border-gray-100">
+                                        <div
+                                            class="grid gap-1.5 pt-2"
+                                            :class="hasOptionalPackages ? 'border-t border-gray-100' : ''"
+                                        >
                                             <p class="text-[14px] font-bold text-gray-800 mt-3">
                                                 @lang('installer::app.installer.index.add-ons.sample-data-title')
                                             </p>
@@ -1481,7 +1485,7 @@
 
                             envConfigData: {},
 
-                            defaultAppUrl: window.location.origin,
+                            defaultAppUrl: window.location.origin + window.location.pathname.replace(/\/install\/?$/, ''),
 
                             installStage: '',
 
@@ -1553,6 +1557,12 @@
                                 'installationCompleted',
                             ],
                         }
+                    },
+
+                    computed: {
+                        hasOptionalPackages() {
+                            return Object.keys(this.optionalPackages || {}).length > 0;
+                        },
                     },
 
                     mounted() {
@@ -1689,6 +1699,14 @@
                             });
                         },
 
+                        resolveInstallerUrl(routeUrl) {
+                            const marker = '/install';
+
+                            const base = window.location.pathname.slice(0, window.location.pathname.lastIndexOf(marker));
+
+                            return base + routeUrl.slice(routeUrl.lastIndexOf(marker));
+                        },
+
                         // Runs the whole installation server-side and streams its output
                         // to the read-only terminal:
                         //   1) write .env (DB credentials),
@@ -1716,11 +1734,11 @@
 
                             this.installStage = 'environment';
 
-                            this.$axios.post("{{ route('installer.env_file_setup', [], false) }}", this.envData)
+                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.env_file_setup', [], false) }}"), this.envData)
                                 .then(() => {
                                     this.installStage = 'prepare';
 
-                                    return this.$axios.post("{{ route('installer.prepare', [], false) }}", preparePayload);
+                                    return this.$axios.post(this.resolveInstallerUrl("{{ route('installer.prepare', [], false) }}"), preparePayload);
                                 })
                                 .then(() => {
                                     this.startStream();
@@ -1753,7 +1771,7 @@
                         },
 
                         startStream() {
-                            const source = new EventSource("{{ route('installer.process', [], false) }}");
+                            const source = new EventSource(this.resolveInstallerUrl("{{ route('installer.process', [], false) }}"));
 
                             source.onmessage = (event) => {
                                 try {
@@ -1797,7 +1815,7 @@
                         runSampleDataSeeder() {
                             this.seedSampleDataMessage = "@lang('installer::app.installer.index.create-administrator.seeding-sample-data')";
 
-                            this.$axios.post("{{ route('installer.seed_sample_data', [], false) }}")
+                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.seed_sample_data', [], false) }}"))
                                 .then(() => {
                                     this.seedSampleDataMessage = '';
                                     this.currentStep = 'installationCompleted';

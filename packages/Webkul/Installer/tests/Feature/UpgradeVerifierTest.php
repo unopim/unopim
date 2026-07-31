@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Helpers\Upgrade\CheckStatus;
 use Webkul\Installer\Helpers\Upgrade\PostUpgradeVerifier;
+use Webkul\Product\Models\ProductProxy;
 
 /**
  * A clean `migrate` exit only proves no statement threw. These assertions cover
@@ -27,9 +28,7 @@ function clearVerifierBaseline(): void
 }
 
 it('fails when legacy association data survived without being migrated', function () {
-    $product = DB::table('products')->first();
-
-    expect($product)->not->toBeNull();
+    $product = ProductProxy::factory()->create();
 
     DB::table('product_associations')->delete();
 
@@ -48,9 +47,7 @@ it('fails when legacy association data survived without being migrated', functio
 });
 
 it('passes the association check once normalised rows exist', function () {
-    $products = DB::table('products')->limit(2)->get();
-
-    expect($products)->toHaveCount(2);
+    $products = ProductProxy::factory()->count(2)->create();
 
     DB::table('products')->where('id', $products[0]->id)->update([
         'values' => json_encode(['associations' => ['related_products' => ['sku']]]),

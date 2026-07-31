@@ -45,6 +45,6 @@ class PublicationCarrierController extends Controller
 
         return response($writer->writeString($target))
             ->header('Content-Type', 'image/svg+xml')
-            ->header('Cache-Control', 'public, max-age=86400');
+            ->header('Cache-Control', 'public, max-age=0, s-maxage=86400, must-revalidate');
     }
 }

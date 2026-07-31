@@ -15,7 +15,7 @@ return [
                 'enabled-hint'                     => 'Hovedbryter for det offentlige visningsnivået. Når den er av, returnerer alle offentlige pass-URL-er 404. Passkjermene i administrasjonen påvirkes ikke — skjul dem med innstillingen Digitalt produktpass.',
                 'base-url-hint'                    => 'Offentlig adresse der pass leveres, brukt til å bygge QR-koder og delbare lenker. La stå tom for å bruke dette nettstedets eget domene.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
-                'cache-ttl-hint'                   => 'Hvor lenge et gjengitt offentlig pass mellomlagres før det bygges på nytt. Høyere verdier reduserer belastningen; lavere verdier viser endringer raskere.',
+                'cache-ttl-hint'                   => 'Hvor lenge en delt hurtigbuffer (CDN eller omvendt proxy) kan gjenbruke et gjengitt offentlig pass. Nettlesere revaliderer ved hvert besøk, så endringer, tilbaketrekkinger og å slå av nivået virker umiddelbart.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit-hint'                  => 'Maksimalt antall offentlige passforespørsler tillatt per minutt fra én besøkende før vedkommende begrenses.',
                 'rate-limit-placeholder'           => '60',

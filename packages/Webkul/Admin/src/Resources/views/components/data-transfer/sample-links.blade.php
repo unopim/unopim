@@ -39,16 +39,18 @@
     }
 @endphp
 
-<template v-if="{{ $selection }} && {{ $selection }}.selectedOption">
-    <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1">
-        <a
-            v-for="sample in ({{ Js::from($samples) }}[{{ $selection }}.selectedOption] || [])"
-            :key="sample.url"
-            :href="sample.url"
-            target="_blank"
-            class="text-sm text-primary-700 dark:text-sky-500 cursor-pointer transition-all hover:underline"
-        >
-            @{{ sample.label }}
-        </a>
-    </div>
-</template>
+@foreach ($samples as $entityType => $links)
+    <template v-if="{!! $selection !!} && {!! $selection !!}.selectedOption === '{{ $entityType }}'">
+        <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+            @foreach ($links as $link)
+                <a
+                    href="{{ $link['url'] }}"
+                    target="_blank"
+                    class="text-sm text-primary-700 dark:text-sky-500 cursor-pointer transition-all hover:underline"
+                >
+                    {{ $link['label'] }}
+                </a>
+            @endforeach
+        </div>
+    </template>
+@endforeach

@@ -172,10 +172,25 @@ class PublicationController extends Controller
         return $this->tierCache(
             response($view->render())
                 ->header('ETag', $etag)
-                ->header('Cache-Control', 'public, max-age='.(int) (core()->getConfigData('general.publication.settings.cache_ttl', $publication->channel->code) ?? 3600))
+                ->header('Cache-Control', $this->cacheControl($publication->channel?->code))
                 ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
             $grantedIndex,
         );
+    }
+
+    /**
+     * A passport is a legal artifact that has to stop being served the moment it
+     * is withdrawn or the channel's public tier is switched off, so browsers
+     * revalidate every visit — the ETag answers 304 and the render is skipped.
+     * Shared caches still hold the page for the configured TTL, where a purge is
+     * available; `max-age` alone left an already-issued page live for an hour
+     * after the kill switch, which is what made a disabled tier look ignored.
+     */
+    private function cacheControl(?string $channelCode): string
+    {
+        $ttl = (int) (core()->getConfigData('general.publication.settings.cache_ttl', $channelCode) ?? 300);
+
+        return 'public, max-age=0, s-maxage='.max(0, $ttl).', must-revalidate';
     }
 
     /**
@@ -259,8 +274,14 @@ class PublicationController extends Controller
         return $publication;
     }
 
+    /**
+     * Never cached: a 404 here is a switch state, not a fact about the URL, and a
+     * cached one would outlive re-enabling the tier.
+     */
     private function notFound(): Response
     {
-        return response()->view('publication::errors.404', [], 404);
+        return response()
+            ->view('publication::errors.404', [], 404)
+            ->header('Cache-Control', 'no-store');
     }
 }

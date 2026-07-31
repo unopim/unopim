@@ -15,7 +15,7 @@ return [
                 'enabled-hint'                     => 'Interruptor principal da camada de disponibilização pública. Quando desativado, todos os URLs de passaporte públicos devolvem 404. Os ecrãs de passaporte na administração não são afetados — oculte-os com a definição Passaporte Digital de Produto.',
                 'base-url-hint'                    => 'Endereço público onde os passaportes são disponibilizados, utilizado para criar códigos QR e ligações partilháveis. Deixe em branco para utilizar o próprio domínio deste site.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
-                'cache-ttl-hint'                   => 'Durante quanto tempo um passaporte público renderizado fica em cache antes de ser reconstruído. Valores mais altos reduzem a carga; valores mais baixos refletem as edições mais depressa.',
+                'cache-ttl-hint'                   => 'Durante quanto tempo uma cache partilhada (CDN ou proxy inverso) pode reutilizar um passaporte público já apresentado. Os navegadores revalidam em cada visita, pelo que edições, retiradas e desativar a camada têm efeito de imediato.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit-hint'                  => 'Número máximo de pedidos de passaporte público permitidos por minuto a partir de um único visitante antes de ser limitado.',
                 'rate-limit-placeholder'           => '60',
