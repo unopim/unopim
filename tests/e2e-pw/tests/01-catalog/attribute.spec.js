@@ -245,8 +245,8 @@ test.describe('UnoPim Attribute', () => {
     await searchAttribute(adminPage, code);
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
-    await adminPage.locator('input[name$="[name]"]').first().fill('prudact nem');
-    await adminPage.locator('#is_required').nth(1).click();
+    await fillLocalizedField(adminPage, 'prudact nem');
+    await adminPage.locator('label[for="is_required"]').first().click();
     await clickSaveAndExpect(adminPage, 'Save Attribute', /Attribute Updated Successfully/i);
 
     await deleteAttribute(adminPage, code);
