@@ -33,7 +33,6 @@ services:
     environment: *mysql-environment
     depends_on: *mysql-depends
 
-  # An unselected profile keeps the default engine from starting alongside MySQL.
   unopim-pgsql:
     profiles: ["pgsql-disabled"]
 

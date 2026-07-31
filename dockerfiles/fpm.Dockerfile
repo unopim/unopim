@@ -93,9 +93,6 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
-# The entrypoint reinstalls when composer.lock is newer than the install
-# manifest. COPY carries build-context timestamps, so stamp it once here to keep
-# a published image from reinstalling its own dependencies on every start.
 RUN touch vendor/composer/installed.json
 
 # Align www-data with the host user so bind-mounted storage stays
@@ -117,10 +114,6 @@ RUN git config --system --add safe.directory /var/www/html
 
 EXPOSE 9000
 
-# php-fpm -t only parses the config: it passes while the entrypoint is still
-# migrating and no worker is listening, which reports healthy to an nginx that
-# then serves 502. Probe the pool socket instead, and require setup to have
-# finished since the queue and scheduler containers gate on this.
 HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
     CMD test -f /var/www/html/storage/unopim.lock \
         && timeout 5 bash -c 'exec 3<>/dev/tcp/127.0.0.1/9000'

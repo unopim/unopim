@@ -1,12 +1,7 @@
 #!/bin/bash
-# Guarantees vendor/autoload.php exists before the first artisan call.
-#
-# The published images bake vendor/ at build time, but the source stack
-# bind-mounts the checkout over /var/www/html, which shadows it. On a fresh
-# clone that leaves no autoloader and every artisan command dies with
-# "Failed opening required '/var/www/html/vendor/autoload.php'".
-#
-# Idempotent: a no-op once the autoloader is present and current.
+# Guarantees vendor/autoload.php exists before the first artisan call. The
+# source stack bind-mounts the checkout over /var/www/html, which shadows the
+# vendor directory baked into the image.
 
 ensure_vendor() {
     local root="${1:-/var/www/html}"

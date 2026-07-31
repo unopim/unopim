@@ -1,12 +1,6 @@
 #!/bin/bash
-# Blocks until the application container has finished migrating and seeding.
-#
-# Compose and ECS gate these containers on the app's health check, so this is
-# normally satisfied immediately. It stays as the safety net for `docker run`
-# and for orchestrators with no dependency ordering (Swarm), where a worker can
-# otherwise start against a half-migrated schema.
-#
-# Idempotent: safe to source on every container start.
+# Blocks until the application container has finished migrating and seeding, for
+# orchestrators that cannot gate on its health check.
 
 wait_for_setup() {
     local root="${1:-/var/www/html}"

@@ -61,8 +61,6 @@ jobs:
         with:
           node-version: '22'
 
-      # package-lock.json is gitignored, so setup-node's npm cache has nothing to
-      # hash and npm ci has no lock to install from.
       - name: Cache Node dependencies
         uses: actions/cache@v5
         with:
@@ -70,8 +68,6 @@ jobs:
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
           restore-keys: ${{ runner.os }}-npm-
 
-      # Runtime front-end packages only; tests assert against the shipped
-      # vue-multiselect distribution.
       - name: Install Node dependencies
         run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
@@ -159,8 +155,6 @@ jobs:
         with:
           node-version: '22'
 
-      # package-lock.json is gitignored, so setup-node's npm cache has nothing to
-      # hash and npm ci has no lock to install from.
       - name: Cache Node dependencies
         uses: actions/cache@v5
         with:
@@ -168,8 +162,6 @@ jobs:
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
           restore-keys: ${{ runner.os }}-npm-
 
-      # Runtime front-end packages only; tests assert against the shipped
-      # vue-multiselect distribution.
       - name: Install Node dependencies
         run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 

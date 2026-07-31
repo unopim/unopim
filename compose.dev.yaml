@@ -115,7 +115,6 @@ services:
     env_file: .env
     environment:
       <<: *app-environment
-      # Contributors need the dev dependencies the published images omit.
       COMPOSER_INSTALL_ARGS: "${COMPOSER_INSTALL_ARGS-}"
       UNOPIM_SKIP_MIGRATIONS: "${UNOPIM_SKIP_MIGRATIONS:-false}"
     depends_on:

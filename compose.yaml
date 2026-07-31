@@ -33,11 +33,7 @@ x-app-environment: &app-environment
   APP_TIMEZONE: "${APP_TIMEZONE:-UTC}"
   APP_LOCALE: "${APP_LOCALE:-en_US}"
   APP_CURRENCY: "${APP_CURRENCY:-USD}"
-  # Generated on first boot and persisted to the storage volume when unset.
   APP_KEY: "${APP_KEY:-}"
-  # Service topology is pinned, not interpolated: a Laravel .env left in the
-  # project directory is picked up by Compose and would otherwise point these
-  # containers at the developer's host database.
   DB_CONNECTION: pgsql
   DB_HOST: unopim-pgsql
   DB_PORT: "5432"
@@ -62,8 +58,6 @@ x-app-environment: &app-environment
   MAIL_PORT: "1025"
   MAIL_FROM_ADDRESS: "${MAIL_FROM_ADDRESS:-admin@example.com}"
 
-# required: false keeps compose.mysql.yaml free to park this engine behind an
-# unused profile without every dependent service becoming invalid.
 x-app-depends: &app-depends
   unopim-pgsql:
     condition: service_healthy
@@ -86,7 +80,6 @@ services:
     restart: unless-stopped
     environment:
       <<: *app-environment
-      # Set true when migrations are run out of band (Kubernetes Job, CI step).
       UNOPIM_SKIP_MIGRATIONS: "${UNOPIM_SKIP_MIGRATIONS:-false}"
     depends_on: *app-depends
     healthcheck:
@@ -181,9 +174,6 @@ services:
   # ---------------------------------------------------------------------------
   unopim-elasticsearch:
     image: elasticsearch:8.17.0
-    # Stable hostname so InetAddress.getLocalHost() resolves before Log4j is
-    # initialized. Without it the random container id becomes the hostname and
-    # the missing /etc/hosts entry crashes ES at boot.
     hostname: unopim-elasticsearch
     environment:
       - discovery.type=single-node

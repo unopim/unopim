@@ -1,22 +1,7 @@
 #!/bin/bash
-# Resolves Laravel's APP_KEY for a container, in order of precedence:
-#
-#   1. APP_KEY in the environment (injected secret — always wins)
-#   2. APP_KEY in .env (source checkout / development stack)
-#   3. A key persisted to the storage volume by an earlier boot
-#   4. A freshly generated key, persisted for every later boot
-#
-# Step 4 is what lets the published image run with no configuration at all. The
-# key is written once and reused, so encrypted data stays readable across
-# restarts and image upgrades — the failure the old production guard existed to
-# prevent. Losing the storage volume with no APP_KEY in the environment is still
-# unrecoverable, which is why production is told to inject one.
-#
-# The key is generated without booting Laravel so this stays usable before the
-# autoloader exists, and mirrored into a source checkout's .env so host-side
-# artisan agrees with the container.
-#
-# Idempotent: safe to source on every container start.
+# Resolves APP_KEY from the environment, then .env, then a key persisted to the
+# storage volume, generating and persisting one only as a last resort so an
+# existing key is never replaced.
 
 ensure_app_key() {
     local env_file="${1:-/var/www/html/.env}"

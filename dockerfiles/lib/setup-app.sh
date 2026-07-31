@@ -1,17 +1,7 @@
 #!/bin/bash
-# Brings the application up to date: migrations, first-run seed, storage link
-# and search indexes.
-#
-# Only the application container runs this. Queue and scheduler containers wait
-# for it via a health gate, so nothing else writes the schema concurrently.
-#
-# Installation state is read back from the database rather than a marker file,
-# so a wiped volume or a wiped database recovers on the next boot instead of
-# deadlocking on a stale lock file.
-#
-# Set UNOPIM_SKIP_MIGRATIONS=true where schema changes belong to the deployment
-# itself — a Kubernetes Job, a Helm pre-upgrade hook, a CI release step. Running
-# migrations from every replica of a scaled Deployment races the same schema.
+# Migrates, seeds on first run, links storage and builds search indexes. Only
+# the application container runs this. Set UNOPIM_SKIP_MIGRATIONS=true where the
+# deployment owns the schema, since scaled replicas would otherwise race it.
 
 setup_app() {
     local root="${1:-/var/www/html}"
