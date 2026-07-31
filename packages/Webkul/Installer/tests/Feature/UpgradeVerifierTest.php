@@ -21,10 +21,56 @@ function verifierResult(string $name): ?object
  */
 function clearVerifierBaseline(): void
 {
-    DB::table('api_keys')->update(['revoked' => 1]);
+    DB::table('api_keys')->update(['revoked' => true]);
 
     DB::table('audits')->where('auditable_type', 'like', '%\\\\Admin')->delete();
 }
+
+it('fails when legacy association data survived without being migrated', function () {
+    $product = DB::table('products')->first();
+
+    expect($product)->not->toBeNull();
+
+    DB::table('product_associations')->delete();
+
+    DB::table('products')->where('id', $product->id)->update([
+        'values' => json_encode([
+            'associations' => [
+                'related_products' => ['some-other-sku'],
+            ],
+        ]),
+    ]);
+
+    $check = verifierResult(trans('installer::app.upgrade.verify.associations'));
+
+    expect($check->status)->toBe(CheckStatus::Failed)
+        ->and($check->remedy)->not->toBe('');
+});
+
+it('passes the association check once normalised rows exist', function () {
+    $products = DB::table('products')->limit(2)->get();
+
+    expect($products)->toHaveCount(2);
+
+    DB::table('products')->where('id', $products[0]->id)->update([
+        'values' => json_encode(['associations' => ['related_products' => ['sku']]]),
+    ]);
+
+    $type = DB::table('association_types')->first();
+
+    expect($type)->not->toBeNull();
+
+    DB::table('product_associations')->insertOrIgnore([
+        'product_id'          => $products[0]->id,
+        'association_type_id' => $type->id,
+        'related_product_id'  => $products[1]->id,
+        'created_at'          => now(),
+        'updated_at'          => now(),
+    ]);
+
+    expect(verifierResult(trans('installer::app.upgrade.verify.associations'))->status)
+        ->toBe(CheckStatus::Passed);
+});
 
 it('fails when integrations are still owned by a human administrator', function () {
     clearVerifierBaseline();
@@ -34,11 +80,12 @@ it('fails when integrations are still owned by a human administrator', function 
     expect($admin)->not->toBeNull();
 
     DB::table('api_keys')->insert([
-        'name'       => 'upgrade-test-key',
-        'admin_id'   => $admin->id,
-        'revoked'    => 0,
-        'created_at' => now(),
-        'updated_at' => now(),
+        'name'            => 'upgrade-test-key',
+        'admin_id'        => $admin->id,
+        'permission_type' => 'all',
+        'revoked'         => false,
+        'created_at'      => now(),
+        'updated_at'      => now(),
     ]);
 
     $check = verifierResult(trans('installer::app.upgrade.verify.robot-users'));

@@ -28,14 +28,39 @@ function trackJob(string $state, ?string $heartbeatAt = null): void
     ]);
 
     DB::table('job_track')->insert([
-        'job_instances_id' => $instanceId,
-        'type'             => 'import',
-        'state'            => $state,
-        'heartbeat_at'     => $heartbeatAt,
-        'created_at'       => now(),
-        'updated_at'       => now(),
+        'job_instances_id'    => $instanceId,
+        'type'                => 'import',
+        'action'              => 'append',
+        'validation_strategy' => 'stop-on-errors',
+        'meta'                => json_encode([]),
+        'state'               => $state,
+        'heartbeat_at'        => $heartbeatAt,
+        'created_at'          => now(),
+        'updated_at'          => now(),
     ]);
 }
+
+it('fails when the runtime php version is below the requirement', function () {
+    config(['upgrade.minimum_php' => '99.0.0']);
+
+    $check = preflightResult(
+        app(PreflightChecker::class)->run(),
+        trans('installer::app.upgrade.checks.php-version')
+    );
+
+    expect($check->status)->toBe(CheckStatus::Failed)
+        ->and($check->detail)->toContain(PHP_VERSION)
+        ->and($check->remedy)->toContain('99.0.0');
+});
+
+it('passes when the runtime php version satisfies the requirement', function () {
+    config(['upgrade.minimum_php' => '8.0.0']);
+
+    expect(preflightResult(
+        app(PreflightChecker::class)->run(),
+        trans('installer::app.upgrade.checks.php-version')
+    )->status)->toBe(CheckStatus::Passed);
+});
 
 it('fails when the installed release predates the supported floor', function () {
     config(['upgrade.source_version_sentinel' => 'a_migration_that_never_ran']);
@@ -92,9 +117,13 @@ it('fails when a required directory is not writable', function () {
 });
 
 it('fails when tracked import or export jobs are still running', function () {
-    config(['upgrade.active_job_states' => ['processing']]);
+    /**
+     * A state no real job uses, so the assertion measures only the row this
+     * test inserted rather than whatever the database already holds.
+     */
+    config(['upgrade.active_job_states' => ['upgrade_test_active']]);
 
-    trackJob('processing');
+    trackJob('upgrade_test_active');
 
     $check = preflightResult(
         app(PreflightChecker::class)->run(),
@@ -105,9 +134,9 @@ it('fails when tracked import or export jobs are still running', function () {
 });
 
 it('ignores tracked jobs whose heartbeat has gone stale', function () {
-    config(['upgrade.active_job_states' => ['processing'], 'upgrade.stale_job_minutes' => 15]);
+    config(['upgrade.active_job_states' => ['upgrade_test_active'], 'upgrade.stale_job_minutes' => 15]);
 
-    trackJob('processing', now()->subHour()->toDateTimeString());
+    trackJob('upgrade_test_active', now()->subHour()->toDateTimeString());
 
     expect(preflightResult(
         app(PreflightChecker::class)->run(),
