@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turkisk Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainsk Hryvnia (UAH)',
                 'usd'                 => 'Amerikansk Dollar (USD)',
-                'warning-message'     => 'Varning! Standardspråk och standardvaluta kan inte ändras senare.',
+                'warning-message'     => 'Standardspråk och standardvaluta anges en gång vid installationen och kan inte ändras efteråt. Du kan lägga till fler språk och valutor när som helst — endast dessa två standardvärden är permanenta.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Installerar UnoPim',

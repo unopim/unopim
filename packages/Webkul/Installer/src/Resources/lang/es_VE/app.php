@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Lira Turca (TRY)',
                 'ukrainian-hryvnia'   => 'Grivna Ucraniana (UAH)',
                 'usd'                 => 'Dólar Estadounidense (USD)',
-                'warning-message'     => '¡Advertencia! Las configuraciones de idioma y moneda predeterminadas son permanentes y no se pueden cambiar.',
+                'warning-message'     => 'El idioma y la moneda predeterminados se establecen una sola vez, durante la instalación, y no se pueden cambiar después. Puede agregar más idiomas y monedas en cualquier momento: solo estos dos valores predeterminados son permanentes.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalación de UnoPim',

@@ -40,7 +40,7 @@ test.describe('Locale Import', () => {
         await expect(importNowBtn).toBeVisible({ timeout: 5000 });
         await importNowBtn.click();
 
-        await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
+        await expect(adminPage.locator('.overflow-hidden.box-shadow').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
     });
 
     test('Delete Locale Import', async ({ adminPage }) => {

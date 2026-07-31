@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => '土耳其里拉 (TRY)',
                 'ukrainian-hryvnia'   => '烏克蘭格里夫納 (UAH)',
                 'usd'                 => '美元 (USD)',
-                'warning-message'     => '警告！這些配置為永久設定，無法更改。',
+                'warning-message'     => '預設語系與預設貨幣在安裝時設定一次，之後無法變更。您可以隨時新增其他語系與貨幣——只有這兩個預設值是永久固定的。',
             ],
             'installation-processing' => [
                 'unopim'      => '正在安裝 UnoPim',

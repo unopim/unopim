@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => '터키 리라 (TRY)',
                 'ukrainian-hryvnia'   => '우크라이나 흐리브냐 (UAH)',
                 'usd'                 => '미국 달러 (USD)',
-                'warning-message'     => '주의! 기본 로케일 및 통화 설정은 나중에 변경할 수 없습니다.',
+                'warning-message'     => '기본 로케일과 기본 통화는 설치 중에 한 번만 설정되며 이후에는 변경할 수 없습니다. 로케일과 통화는 언제든지 추가할 수 있으며, 영구적으로 고정되는 것은 이 두 가지 기본값뿐입니다.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim 설치 중',

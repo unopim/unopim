@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Türk Lirası (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrayna Grivnası (UAH)',
                 'usd'                 => 'Amerikan Doları (USD)',
-                'warning-message'     => 'Uyarı! Varsayılan dil ve para birimi daha sonra değiştirilemez.',
+                'warning-message'     => 'Varsayılan dil ve para birimi kurulum sırasında bir kez belirlenir ve sonradan değiştirilemez. İstediğiniz zaman başka dil ve para birimleri ekleyebilirsiniz; yalnızca bu iki varsayılan kalıcıdır.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim Kurulumu',

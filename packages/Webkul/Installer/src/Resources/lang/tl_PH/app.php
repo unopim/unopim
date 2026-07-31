@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turkish Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainian Hryvnia (UAH)',
                 'usd'                 => 'Dollars ng Amerika (USD)',
-                'warning-message'     => 'Babala! Hindi na ito mababago pa - Karaniwang Pera at Karaniwang Lokalisasyon.',
+                'warning-message'     => 'Isang beses lang itinatakda ang default na locale at currency, habang nag-i-install, at hindi na ito mababago pagkatapos. Maaari kang magdagdag ng iba pang locale at currency anumang oras — ang dalawang default na ito lang ang permanente.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Pag-install ng UnoPim',

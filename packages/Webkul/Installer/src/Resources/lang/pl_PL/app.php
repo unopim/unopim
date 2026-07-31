@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Turecka Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukraińska Hrywna (UAH)',
                 'usd'                 => 'Dolar Amerykański (USD)',
-                'warning-message'     => 'Uwaga! Domyślna lokalizacja i waluta nie mogą być zmienione później.',
+                'warning-message'     => 'Domyślny język i domyślna waluta są ustawiane jednorazowo podczas instalacji i nie można ich później zmienić. Kolejne języki i waluty możesz dodać w dowolnym momencie — trwałe są tylko te dwie wartości domyślne.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalacja UnoPim',

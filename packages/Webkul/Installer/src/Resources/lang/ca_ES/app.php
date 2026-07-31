@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira turca (TRY)',
                 'ukrainian-hryvnia'   => 'Hrívnia ucraïnesa (UAH)',
                 'usd'                 => 'Dòlar estatunidenc (USD)',
-                'warning-message'     => 'Atenció! Els ajustos per als idiomes predeterminats i la moneda són permanents i no es poden canviar mai més.',
+                'warning-message'     => 'L’idioma i la moneda per defecte es defineixen una sola vegada, durant la instal·lació, i no es poden canviar després. Podeu afegir més idiomes i monedes en qualsevol moment: només aquests dos valors per defecte són permanents.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instal·lació d’UnoPim',

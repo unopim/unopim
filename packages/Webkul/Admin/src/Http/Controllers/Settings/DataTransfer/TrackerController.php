@@ -64,7 +64,7 @@ class TrackerController extends Controller
             $import->refresh();
         }
 
-        $jobInstance = json_decode($import->meta, true);
+        $jobInstance = $import->meta;
         $summary = $this->normalizeSummary($import->summary);
 
         $batchState = $this->mapJobStateToBatchState($import->state);

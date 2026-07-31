@@ -42,6 +42,29 @@ async function selectByLabel(modal, name, optionLabel) {
 }
 
 /**
+ * Every save on this page responds with a `redirect_url` back to itself, so
+ * `onAjaxSubmit` (packages/Webkul/Admin/.../assets/js/app.js) follows it with
+ * an ajax-nav `$navigate()` that swaps in a freshly rendered `#main-content` —
+ * a whole new builder Vue instance. Clicking anything inside that region
+ * (e.g. "Add Field") before that swap lands is a race: it can hit the
+ * about-to-be-discarded old instance and silently no-op. Listening for the
+ * `unopim:navigate:success` document event the plugin dispatches on
+ * completion (packages/Webkul/Admin/.../assets/js/plugins/navigation.js) is
+ * the actual completion signal, so waiting on it beats any fixed delay.
+ */
+async function saveAndSettle(page) {
+  const navigated = page.evaluate(() => new Promise((resolve) => {
+    document.addEventListener('unopim:navigate:success', () => resolve(true), { once: true });
+  }));
+
+  await page.getByRole('button', { name: /^Save changes$/ }).click();
+
+  await expect(page.getByText(/updated successfully/i)).toBeVisible({ timeout: 20000 });
+
+  await navigated;
+}
+
+/**
  * Removing a section whose fields are still mapped used to leave those fields
  * pointing at the deleted code: the rows already read "Default section", but the
  * save was rejected as an unknown section and the deletion never persisted.
@@ -70,6 +93,18 @@ test.describe.serial('Passport template section removal', () => {
 
     await expect(adminPage.getByRole('cell', { name: SECTION_NAME })).toBeVisible();
 
+    /**
+     * Persist the section now, before opening the field modal. The page's only
+     * save control is the fixed unsaved-changes bar (bottom-0, z-[999]), which
+     * mounts the moment the section commit dirties the form; on a template with
+     * enough fields the field modal's own footer "Done" button (also fixed,
+     * centered near viewport-bottom) can land in the same screen region as the
+     * bar. Saving here clears the dirty state and unmounts the bar before that
+     * modal ever opens, so the two fixed-position controls never compete for
+     * the same click.
+     */
+    await saveAndSettle(adminPage);
+
     await adminPage.getByRole('button', { name: 'Add Field' }).click();
     await adminPage.locator('input[name="draft_field_name"]').waitFor();
     await adminPage.locator('input[name="draft_field_name"]').fill(FIELD_NAME);
@@ -85,9 +120,7 @@ test.describe.serial('Passport template section removal', () => {
 
     await adminPage.getByRole('button', { name: 'Done' }).click();
 
-    await adminPage.getByRole('button', { name: /^Save changes$/ }).click();
-
-    await expect(adminPage.getByText(/updated successfully/i)).toBeVisible({ timeout: 20000 });
+    await saveAndSettle(adminPage);
   });
 
   test('removing the section raises no unknown-section error and survives a reload', async ({ adminPage }) => {

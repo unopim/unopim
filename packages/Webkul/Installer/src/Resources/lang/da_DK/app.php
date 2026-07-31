@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Tyrkisk lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainsk hryvnia (UAH)',
                 'usd'                 => 'Amerikansk dollar (USD)',
-                'warning-message'     => 'Advarsel! Indstillingerne for standardsprog og -valuta er permanente og kan ikke ændres igen.',
+                'warning-message'     => 'Standardsproget og standardvalutaen fastlægges én gang under installationen og kan ikke ændres senere. Du kan altid tilføje flere sprog og valutaer — kun disse to standardværdier er permanente.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim Installation',

@@ -121,6 +121,49 @@ function unopim_install_run(string $command, string $workingDirectory): int
 }
 
 /**
+ * Resolve a runnable PHP CLI binary for spawned commands.
+ *
+ * `PHP_BINARY` is empty on some web SAPIs and points at php-fpm on others;
+ * spawning either yields "Permission denied" and exit 127. Symfony's
+ * PhpExecutableFinder is unavailable before composer install, so this probes
+ * PHP_BINDIR and PATH by hand.
+ */
+function unopim_install_php_binary(): string
+{
+    if (PHP_BINARY !== '' && is_executable(PHP_BINARY) && ! str_contains(basename(PHP_BINARY), 'fpm')) {
+        return PHP_BINARY;
+    }
+
+    $names = [
+        'php'.PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION,
+        'php'.PHP_MAJOR_VERSION,
+        'php',
+    ];
+
+    $directories = array_merge(
+        [PHP_BINDIR],
+        explode(PATH_SEPARATOR, (string) getenv('PATH')),
+        ['/usr/local/bin', '/usr/bin', '/opt/homebrew/bin']
+    );
+
+    foreach ($directories as $directory) {
+        if ($directory === '') {
+            continue;
+        }
+
+        foreach ($names as $name) {
+            $candidate = rtrim($directory, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.$name;
+
+            if (is_executable($candidate)) {
+                return $candidate;
+            }
+        }
+    }
+
+    return 'php';
+}
+
+/**
  * Resolve the minimum PHP version from composer.json so the two cannot drift.
  */
 function unopim_install_required_php(string $projectRoot): string
@@ -300,14 +343,12 @@ if ($alreadyInstalled) {
         }
     }
 
-    if ($ready) {
-        $composerPhar = $projectRoot.'/bin/composer/composer.phar';
+    $composerPhar = $projectRoot.'/bin/composer/composer.phar';
 
-        if (! is_file($composerPhar)) {
-            unopim_install_write('ERROR: bin/composer/composer.phar is missing.', 'error');
+    if ($ready && ! is_file($composerPhar)) {
+        unopim_install_write('ERROR: bin/composer/composer.phar is missing.', 'error');
 
-            $ready = false;
-        }
+        $ready = false;
     }
 
     if ($ready) {
@@ -319,8 +360,10 @@ if ($alreadyInstalled) {
 
         putenv('COMPOSER_HOME='.$composerHome);
 
+        $phpBinary = unopim_install_php_binary();
+
         $commands = [
-            escapeshellarg(PHP_BINARY).' '.escapeshellarg($composerPhar)
+            escapeshellarg($phpBinary).' '.escapeshellarg($composerPhar)
                 .' install --no-ansi --no-interaction --working-dir='.escapeshellarg($projectRoot),
         ];
 
@@ -338,7 +381,7 @@ if ($alreadyInstalled) {
         }
 
         if ($ready) {
-            $commands[] = escapeshellarg(PHP_BINARY).' '
+            $commands[] = escapeshellarg($phpBinary).' '
                 .escapeshellarg($projectRoot.'/artisan').' key:generate --force';
         }
 

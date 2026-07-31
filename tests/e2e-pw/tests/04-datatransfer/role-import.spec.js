@@ -43,7 +43,7 @@ test.describe('Role Import Jobs', () => {
     await createRoleImport(adminPage, code);
 
     await adminPage.getByRole('button', { name: 'Import Now' }).click();
-    await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
+    await expect(adminPage.locator('.overflow-hidden.box-shadow').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
 
     await deleteImport(adminPage, code);
   });

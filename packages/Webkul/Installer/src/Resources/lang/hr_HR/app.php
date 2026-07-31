@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turska Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrajinska Grivnja (UAH)',
                 'usd'                 => 'Američki Dolar (USD)',
-                'warning-message'     => 'Upozorenje! Zadane jezične i valutne postavke ne mogu se kasnije mijenjati.',
+                'warning-message'     => 'Zadani jezik i zadana valuta postavljaju se jednom, tijekom instalacije, i poslije se ne mogu promijeniti. Dodatne jezike i valute možete dodati bilo kada — trajne su samo te dvije zadane vrijednosti.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalacija UnoPim-a',
