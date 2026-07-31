@@ -15,7 +15,7 @@
             <div class="flex items-center justify-between gap-2 px-4 py-2.5 border-b dark:border-cherry-800 shrink-0">
                 <div class="flex items-center gap-2 min-w-0">
                     <span
-                        class="px-2 py-0.5 rounded bg-violet-100 text-violet-700 dark:bg-violet-900 dark:text-violet-200 text-[10px] font-bold uppercase shrink-0"
+                        class="px-2 py-0.5 rounded bg-primary-100 text-primary-700 dark:bg-primary-900 dark:text-primary-200 text-[10px] font-bold uppercase shrink-0"
                         v-if="extension"
                         v-text="extension"
                     ></span>

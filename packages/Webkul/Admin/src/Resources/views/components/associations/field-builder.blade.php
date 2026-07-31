@@ -221,7 +221,7 @@
                             >
                                 <template #item="{ element, index }">
                                     <x-admin::table.thead.tr
-                                        class="hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                        class="hover:bg-primary-50 dark:hover:bg-cherry-800"
                                         v-show="! element.isDelete"
                                     >
                                         <input type="hidden" :name="'fields[' + element.id + '][isNew]'" :value="element.isNew">
@@ -285,13 +285,13 @@
                                         <!-- Actions -->
                                         <x-admin::table.td class="!px-0">
                                             <span
-                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                                 @click="openEditField(element)"
                                             >
                                             </span>
 
                                             <span
-                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                                 @click="removeField(element)"
                                             >
                                             </span>
@@ -588,7 +588,7 @@
                                         >
                                             <template #item="{ element, index }">
                                                 <x-admin::table.thead.tr
-                                                    class="hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                                    class="hover:bg-primary-50 dark:hover:bg-cherry-800"
                                                     v-show="! element.isDelete"
                                                 >
                                                     <x-admin::table.td>
@@ -614,7 +614,7 @@
                                                         </span>
 
                                                         <span
-                                                            class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                                            class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                                             @click="removeOptionRow(element)"
                                                         >
                                                         </span>
