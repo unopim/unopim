@@ -114,18 +114,21 @@ class DemoAttributeSeeder extends Seeder
     protected function seedOptions(int $attributeId, array $options): void
     {
         foreach (array_values($options) as $index => $option) {
-            DB::table('attribute_options')->updateOrInsert(
-                ['attribute_id' => $attributeId, 'code' => $option['code']],
-                [
-                    'sort_order'   => $index + 1,
-                    'swatch_value' => $option['swatch_value'] ?? null,
-                ]
-            );
+            $optionId = $this->matchingOptionId($attributeId, $option['code']);
 
-            $optionId = (int) DB::table('attribute_options')
-                ->where('attribute_id', $attributeId)
-                ->where('code', $option['code'])
-                ->value('id');
+            $payload = [
+                'code'         => $option['code'],
+                'sort_order'   => $index + 1,
+                'swatch_value' => $option['swatch_value'] ?? null,
+            ];
+
+            if ($optionId === null) {
+                $optionId = (int) DB::table('attribute_options')->insertGetId(
+                    $payload + ['attribute_id' => $attributeId]
+                );
+            } else {
+                DB::table('attribute_options')->where('id', $optionId)->update($payload);
+            }
 
             foreach ($option['labels'] as $locale => $label) {
                 DB::table('attribute_option_translations')->updateOrInsert(
@@ -134,6 +137,25 @@ class DemoAttributeSeeder extends Seeder
                 );
             }
         }
+    }
+
+    /**
+     * Existing option whose code matches case-insensitively.
+     *
+     * The unique index on (attribute_id, code) is case-insensitive under the
+     * default MySQL collation, so seeding `s` next to the base installer's `S`
+     * silently rewrites that row instead of adding one. Product values are
+     * matched case-sensitively in the UI, so the mismatch would leave the
+     * variant's axis select empty and the row unsavable.
+     */
+    protected function matchingOptionId(int $attributeId, string $code): ?int
+    {
+        $id = DB::table('attribute_options')
+            ->where('attribute_id', $attributeId)
+            ->whereRaw('lower(code) = ?', [mb_strtolower($code)])
+            ->value('id');
+
+        return $id === null ? null : (int) $id;
     }
 
     /**
