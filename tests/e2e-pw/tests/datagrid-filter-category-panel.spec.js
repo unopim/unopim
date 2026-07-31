@@ -6,6 +6,27 @@ const pinAgenticPim = (page, isOpen) => page.addInitScript((open) => {
   sessionStorage.setItem('agenting_pim_state', JSON.stringify({ isOpen: open }));
 }, isOpen);
 
+const AGENTIC_PIM_TOGGLE = 'input[name="general[magic_ai][agentic_pim][enabled]"][type="checkbox"]';
+
+/**
+ * The chat widget (and its `.ap-panel`) is only injected server-side when
+ * `general.magic_ai.agentic_pim.enabled` is on, so the stacking test needs it
+ * flipped on for its own run and restored to whatever it found afterwards.
+ */
+const setAgenticPimEnabled = async (page, enabled) => {
+  await page.goto('/admin/configuration/general/magic_ai');
+  await page.waitForLoadState('networkidle');
+
+  const checkbox = page.locator(AGENTIC_PIM_TOGGLE);
+  await expect(checkbox).toHaveCount(1);
+
+  if (await checkbox.isChecked() !== enabled) {
+    await checkbox.click({ force: true });
+    await page.locator('[data-unsaved-save]').click();
+    await page.waitForLoadState('networkidle');
+  }
+};
+
 const topmostAtPanelCentre = (page) => page.evaluate((sel) => {
   const panel = document.querySelector(sel);
 
@@ -83,13 +104,26 @@ test.describe('datagrid filter category panel stacking', () => {
   });
 
   test('the panel stays reachable while the Agentic PIM panel is docked', async ({ page }) => {
-    await pinAgenticPim(page, true);
-    await page.goto('/admin/catalog/products');
+    const wasEnabled = await (async () => {
+      await page.goto('/admin/configuration/general/magic_ai');
+      await page.waitForLoadState('networkidle');
 
-    await expect(page.locator('.ap-panel')).toBeVisible({ timeout: 60_000 });
+      return page.locator(AGENTIC_PIM_TOGGLE).isChecked();
+    })();
 
-    await openCategoryFilterPanel(page);
+    await setAgenticPimEnabled(page, true);
 
-    await expect.poll(() => topmostAtPanelCentre(page)).toBe('panel');
+    try {
+      await pinAgenticPim(page, true);
+      await page.goto('/admin/catalog/products');
+
+      await expect(page.locator('.ap-panel')).toBeVisible({ timeout: 60_000 });
+
+      await openCategoryFilterPanel(page);
+
+      await expect.poll(() => topmostAtPanelCentre(page)).toBe('panel');
+    } finally {
+      await setAgenticPimEnabled(page, wasEnabled);
+    }
   });
 });
