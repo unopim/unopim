@@ -1200,12 +1200,14 @@
                                     </div>
 
                                     <div class="flex flex-col gap-5 px-6 py-6 border-b border-gray-200 max-h-[484px] overflow-y-auto">
-                                        <p class="text-[14px] text-gray-600 !leading-normal">
+                                        <p
+                                            class="text-[14px] text-gray-600 !leading-normal"
+                                            v-if="hasOptionalPackages"
+                                        >
                                             @lang('installer::app.installer.index.add-ons.info')
                                         </p>
 
-                                        <!-- Optional package cards -->
-                                        <div class="grid gap-3">
+                                        <div class="grid gap-3" v-if="hasOptionalPackages">
                                             <label
                                                 v-for="(pkg, key) in optionalPackages"
                                                 :key="key"
@@ -1239,8 +1241,10 @@
                                             </label>
                                         </div>
 
-                                        <!-- Sample data toggle -->
-                                        <div class="grid gap-1.5 pt-2 border-t border-gray-100">
+                                        <div
+                                            class="grid gap-1.5 pt-2"
+                                            :class="hasOptionalPackages ? 'border-t border-gray-100' : ''"
+                                        >
                                             <p class="text-[14px] font-bold text-gray-800 mt-3">
                                                 @lang('installer::app.installer.index.add-ons.sample-data-title')
                                             </p>
@@ -1553,6 +1557,12 @@
                                 'installationCompleted',
                             ],
                         }
+                    },
+
+                    computed: {
+                        hasOptionalPackages() {
+                            return Object.keys(this.optionalPackages || {}).length > 0;
+                        },
                     },
 
                     mounted() {
