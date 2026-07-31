@@ -1,5 +1,28 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, resolveEditableProductId } = require('../../utils/helpers');
+const { navigateTo, generateUid, searchInDataGrid, resolveEditableProductId } = require('../../utils/helpers');
+
+/**
+ * Deletes an association type by code through the index DataGrid.
+ *
+ * Best-effort and swallows its own errors: this only ever runs from a
+ * finally block, so a slow or already-torn-down page must not mask the
+ * test's real pass/fail result.
+ */
+async function deleteAssociationType(page, code) {
+  try {
+    await navigateTo(page, 'associationTypes');
+    await searchInDataGrid(page, code);
+
+    const deleteBtn = page.locator('div.row.grid.cursor-pointer').filter({ hasText: code }).first()
+      .locator('span[title="Delete"]').first();
+
+    if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await deleteBtn.click();
+      await page.getByRole('button', { name: 'Agree' }).or(page.getByRole('button', { name: 'Delete' })).first().click();
+      await page.waitForLoadState('networkidle');
+    }
+  } catch {}
+}
 
 test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
   test.setTimeout(150000);
@@ -7,89 +30,97 @@ test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
   test('should align field labels above their controls and label the remove action', async ({ adminPage }) => {
     const uid = generateUid();
     const typeCode = `layout_${uid}`;
-    const productId = await resolveEditableProductId(adminPage);
 
-    await navigateTo(adminPage, 'associationTypes');
+    try {
+      const productId = await resolveEditableProductId(adminPage);
 
-    await adminPage.getByRole('button', { name: 'Create Association Type' }).click();
-    await adminPage.waitForTimeout(500);
-    await adminPage.locator('input[name="code"]').last().fill(typeCode);
-    await adminPage.getByRole('button', { name: 'Save Association Type' }).click();
-    await adminPage.waitForLoadState('domcontentloaded');
-    await adminPage.waitForTimeout(1000);
+      await navigateTo(adminPage, 'associationTypes');
 
-    for (const field of [{ code: `qty_${uid}`, label: `Quantity ${uid}` }, { code: `note_${uid}`, label: `Note ${uid}` }]) {
-      await adminPage.getByText('Add Field', { exact: true }).first().click();
-      await adminPage.waitForTimeout(800);
+      await adminPage.getByRole('button', { name: 'Create Association Type' }).click();
+      await adminPage.waitForTimeout(500);
+      await adminPage.locator('input[name="code"]').last().fill(typeCode);
 
-      await adminPage.getByPlaceholder('Name', { exact: true }).fill(field.label);
-      await adminPage.getByPlaceholder('Code', { exact: true }).fill(field.code);
+      const created = adminPage.waitForURL(/\/catalog\/association-types\/edit\/\d+/, { timeout: 20000 });
+      await adminPage.getByRole('button', { name: 'Save Association Type' }).click();
+      await created;
+      await adminPage.waitForLoadState('networkidle');
 
-      const typeSelect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="type"]') });
-      await typeSelect.locator('.multiselect__tags').click();
-      await typeSelect.locator('li[role="option"]', { hasText: 'Text' }).first().click();
+      for (const field of [{ code: `qty_${uid}`, label: `Quantity ${uid}` }, { code: `note_${uid}`, label: `Note ${uid}` }]) {
+        await adminPage.getByText('Add Field', { exact: true }).first().click();
+        await adminPage.waitForTimeout(800);
 
-      await adminPage.getByRole('button', { name: 'Save Field' }).click();
-      await adminPage.waitForTimeout(800);
+        await adminPage.getByPlaceholder('Name', { exact: true }).fill(field.label);
+        await adminPage.getByPlaceholder('Code', { exact: true }).fill(field.code);
+
+        const typeSelect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="type"]') });
+        await typeSelect.locator('.multiselect__tags').click();
+        await typeSelect.locator('li[role="option"]', { hasText: 'Text' }).first().click();
+
+        await adminPage.getByRole('button', { name: 'Save Field' }).click();
+        await expect(adminPage.getByText(field.code, { exact: true }).first()).toBeVisible({ timeout: 10000 });
+      }
+
+      await adminPage.getByRole('button', { name: 'Save changes' }).click();
+      await adminPage.waitForLoadState('networkidle');
+
+      await adminPage.goto(`/admin/catalog/products/edit/${productId}`, { waitUntil: 'networkidle' });
+
+      await adminPage.locator('div.box-shadow').filter({ hasText: 'Associations' }).first().click();
+
+      const drawer = adminPage.locator('.fixed[data-section-id="associations"]');
+      await drawer.getByRole('button', { name: 'Add Association Type' }).click();
+
+      const searched = adminPage.waitForResponse((r) => {
+        if (! r.url().includes('/catalog/association-types/search')) {
+          return false;
+        }
+
+        return new URL(r.url()).searchParams.get('query') === typeCode;
+      });
+      await adminPage.getByPlaceholder('Search by name or code').fill(typeCode);
+      await searched;
+
+      const typeOption = adminPage.locator('div[role="checkbox"]', { hasText: typeCode });
+      await expect(typeOption).toHaveCount(1);
+      await typeOption.first().click();
+      await adminPage.locator('.primary-button:text-is("Add")').first().click();
+      await adminPage.waitForTimeout(1000);
+
+      await drawer.locator('button:visible:text-is("Add")').first().click();
+      await adminPage.locator('label[for^="assoc-pick-"]').first().waitFor({ state: 'visible', timeout: 15000 });
+
+      await adminPage.locator('label[for^="assoc-pick-"]').first().click();
+      await adminPage.waitForTimeout(500);
+      await adminPage.locator('button:text-is("Add Selected")').last().click();
+
+      const removeButton = drawer.locator('button:visible', { hasText: 'Remove Product' });
+      await expect(removeButton).toBeVisible({ timeout: 15000 });
+
+      const geometry = await adminPage.evaluate((fieldCode) => {
+        const input = document.querySelector(`input[name*="[additional_data][common][${fieldCode}]"]`);
+        const group = input.closest('[data-control-group]') || input.closest('div').parentElement;
+        const label = group.querySelector('label');
+
+        const labelRect = label.getBoundingClientRect();
+        const inputRect = input.getBoundingClientRect();
+
+        return {
+          labelBottom: labelRect.bottom,
+          inputTop: inputRect.top,
+          labelLeft: labelRect.left,
+          inputLeft: inputRect.left,
+        };
+      }, `qty_${uid}`);
+
+      expect(geometry.labelBottom).toBeLessThanOrEqual(geometry.inputTop + 1);
+      expect(Math.abs(geometry.labelLeft - geometry.inputLeft)).toBeLessThanOrEqual(2);
+
+      await removeButton.click();
+      await adminPage.getByRole('button', { name: 'Agree' }).or(adminPage.getByRole('button', { name: 'Delete' })).first().click();
+
+      await expect(adminPage.locator(`input[name*="[additional_data][common][qty_${uid}]"]`)).toHaveCount(0);
+    } finally {
+      await deleteAssociationType(adminPage, typeCode);
     }
-
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
-    await adminPage.waitForLoadState('domcontentloaded');
-    await adminPage.waitForTimeout(1500);
-
-    await adminPage.goto(`/admin/catalog/products/edit/${productId}`, { waitUntil: 'domcontentloaded' });
-    await adminPage.waitForTimeout(1500);
-
-    await adminPage.locator('div.box-shadow').filter({ hasText: 'Associations' }).first().click();
-    await adminPage.waitForTimeout(1000);
-
-    const drawer = adminPage.locator('.fixed[data-section-id="associations"]');
-    await drawer.getByRole('button', { name: 'Add Association Type' }).click();
-    await adminPage.waitForTimeout(1000);
-
-    await adminPage.getByPlaceholder('Search by name or code').fill(typeCode);
-    await adminPage.waitForTimeout(1000);
-
-    await adminPage.locator('div[role="checkbox"]', { hasText: typeCode }).first().click();
-    await adminPage.locator('.primary-button:text-is("Add")').first().click();
-    await adminPage.waitForTimeout(1000);
-
-    await drawer.locator('button:visible:text-is("Add")').first().click();
-    await adminPage.waitForTimeout(1800);
-
-    await adminPage.locator('label[for^="assoc-pick-"]').first().click();
-    await adminPage.waitForTimeout(500);
-    await adminPage.locator('button:text-is("Add Selected")').last().click();
-    await adminPage.waitForTimeout(1800);
-
-    const removeButton = drawer.locator('button:visible', { hasText: 'Remove Product' });
-    await expect(removeButton).toBeVisible();
-
-    const geometry = await adminPage.evaluate((fieldCode) => {
-      const input = document.querySelector(`input[name*="[additional_data][common][${fieldCode}]"]`);
-      const group = input.closest('[data-control-group]') || input.closest('div').parentElement;
-      const label = group.querySelector('label');
-
-      const labelRect = label.getBoundingClientRect();
-      const inputRect = input.getBoundingClientRect();
-
-      return {
-        labelBottom: labelRect.bottom,
-        inputTop: inputRect.top,
-        labelLeft: labelRect.left,
-        inputLeft: inputRect.left,
-      };
-    }, `qty_${uid}`);
-
-    expect(geometry.labelBottom).toBeLessThanOrEqual(geometry.inputTop + 1);
-    expect(Math.abs(geometry.labelLeft - geometry.inputLeft)).toBeLessThanOrEqual(2);
-
-    await removeButton.click();
-    await adminPage.waitForTimeout(800);
-
-    await adminPage.getByRole('button', { name: 'Agree' }).or(adminPage.getByRole('button', { name: 'Delete' })).first().click();
-    await adminPage.waitForTimeout(1200);
-
-    await expect(adminPage.locator(`input[name*="[additional_data][common][qty_${uid}]"]`)).toHaveCount(0);
   });
 });
