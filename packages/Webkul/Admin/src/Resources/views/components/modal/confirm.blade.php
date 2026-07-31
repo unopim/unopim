@@ -5,7 +5,7 @@
         type="text/x-template"
         id="v-modal-confirm-template"
     >
-        <div>
+        <teleport to="body">
             <transition
                 tag="div"
                 name="modal-overlay"
@@ -59,7 +59,7 @@
                     </div>
                 </div>
             </transition>
-        </div>
+        </teleport>
     </script>
 
     <script type="module">
