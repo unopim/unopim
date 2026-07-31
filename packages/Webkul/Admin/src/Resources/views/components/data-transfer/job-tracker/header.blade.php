@@ -12,7 +12,7 @@
 
     {!! view_render_event('unopim.admin.settings.data_transfer.tracker.job.header.actions.before', $jobTrack) !!}
 
-    @if ($editRoute)
+    @if ($editRoute && bouncer()->hasPermission($jobType->editPermission()))
         <a
             href="{{ route($editRoute, $jobTrack->job_instances_id) }}"
             class="primary-button"

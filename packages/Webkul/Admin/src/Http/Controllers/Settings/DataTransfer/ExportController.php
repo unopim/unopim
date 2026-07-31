@@ -277,6 +277,8 @@ class ExportController extends Controller
             // Dispatch the Export job
             ExportTrackBatch::dispatch($jobTrackInstance);
 
+            session()->flash('success', trans('admin::app.settings.data-transfer.exports.batch.title'));
+
             // Redirect to the tracker view
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
         } catch (\Exception $e) {

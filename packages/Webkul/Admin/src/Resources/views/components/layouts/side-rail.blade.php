@@ -36,7 +36,7 @@
             <button
                 type="button"
                 class="absolute flex shrink-0 items-center justify-center w-7 h-7 rounded-md text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-cherry-800 dark:hover:text-white ltr:right-0 rtl:left-0"
-                style="top: -34px"
+                style="top: -50px"
                 :title="collapsed ? expandLabel : collapseLabel"
                 :aria-label="collapsed ? expandLabel : collapseLabel"
                 @click="toggle"
