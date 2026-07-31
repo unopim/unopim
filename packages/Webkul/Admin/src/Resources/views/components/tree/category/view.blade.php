@@ -171,6 +171,10 @@
                     type: [Array, String, Object],
                     default: () => ([])
                 },
+                baselineValue: {
+                    type: [Array, String, Object],
+                    default: null
+                },
                 fallbackLocale: {
                     type: String,
                     default: 'en_US',
@@ -251,7 +255,9 @@
                 this.formattedItems = this.parseInput(this.items);
                 this.formattedExpandedBranch = this.parseInput(this.expandedBranch);
                 this.formattedValues = this.getInitialFormattedValues();
-                this.savedValues = [...this.formattedValues];
+                this.savedValues = this.baselineValue === null
+                    ? [...this.formattedValues]
+                    : [...this.parseInput(this.baselineValue)];
                 this.mergeExpandedBranches();
             },
 
