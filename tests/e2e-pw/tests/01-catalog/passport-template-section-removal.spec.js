@@ -70,6 +70,20 @@ test.describe.serial('Passport template section removal', () => {
 
     await expect(adminPage.getByRole('cell', { name: SECTION_NAME })).toBeVisible();
 
+    /**
+     * Persist the section now, before opening the field modal. The page's only
+     * save control is the fixed unsaved-changes bar (bottom-0, z-[999]), which
+     * mounts the moment the section commit dirties the form; on a template with
+     * enough fields the field modal's own footer "Done" button (also fixed,
+     * centered near viewport-bottom) can land in the same screen region as the
+     * bar. Saving here clears the dirty state and unmounts the bar before that
+     * modal ever opens, so the two fixed-position controls never compete for
+     * the same click.
+     */
+    await adminPage.getByRole('button', { name: /^Save changes$/ }).click();
+
+    await expect(adminPage.getByText(/updated successfully/i)).toBeVisible({ timeout: 20000 });
+
     await adminPage.getByRole('button', { name: 'Add Field' }).click();
     await adminPage.locator('input[name="draft_field_name"]').waitFor();
     await adminPage.locator('input[name="draft_field_name"]').fill(FIELD_NAME);
