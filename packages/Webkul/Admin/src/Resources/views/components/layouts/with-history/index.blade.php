@@ -92,7 +92,7 @@
             >
                 <x-admin::layouts.sidebar />
 
-                <main id="main-content" class="flex-1 min-w-0 overflow-y-auto px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 transition-all duration-300">
+                <main id="main-content" class="flex-1 min-w-0 overflow-y-auto overflow-x-hidden px-4 pt-3 pb-6 bg-transparent dark:bg-cherry-800 transition-all duration-300">
                     @php
                         $hasPermission = bouncer()->hasPermission('history');
 
