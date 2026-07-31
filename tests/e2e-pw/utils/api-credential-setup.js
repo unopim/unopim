@@ -53,6 +53,7 @@ async function adminLoginStorageState({ baseUrl, adminEmail, adminPassword }) {
 }
 
 // Read the credentials on an integration's edit page, generating/rotating the secret if needed.
+// ClientRepository::find() only accepts its own provisioned robot admin, so username/password below must come from this page, not the logged-in admin.
 async function readCredentialsOnEditPage(page) {
   // Fresh integration: "Generate" mints client_id + secret_key. Existing: "Re-Generate" rotates the secret.
   const generate = page.getByRole('button', { name: 'Generate', exact: true });
@@ -78,7 +79,29 @@ async function readCredentialsOnEditPage(page) {
 
   const cid = await valueFor('Client ID');
   const sec = await valueFor('Secret Key');
-  if (cid && sec) return { client_id: cid, client_secret: sec };
+  const username = await valueFor('API Username');
+
+  // Masked placeholder (no p[title]) unless just created/regenerated — force a regenerate to recover it.
+  let password = await valueFor('API Password');
+
+  if (!password) {
+    const regenPassword = page.getByTitle('Regenerate password');
+
+    if (await regenPassword.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await regenPassword.click();
+
+      const agree = page.getByRole('button', { name: 'Agree', exact: true });
+      await agree.waitFor({ state: 'visible', timeout: 5000 });
+
+      const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
+      await agree.click();
+      await resp;
+
+      password = await valueFor('API Password');
+    }
+  }
+
+  if (cid && sec) return { client_id: cid, client_secret: sec, username, password };
   return null;
 }
 
@@ -108,7 +131,7 @@ async function tryCreateNewIntegration(page, baseUrl, integrationName) {
   const perm = page.locator('input[name="permission_type"]')
     .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
   await perm.locator('.multiselect__tags').click();
-  await perm.locator('.multiselect__option', { hasText: 'Custom' }).first().click();
+  await perm.locator('.multiselect__option', { hasText: 'All' }).first().click();
 
   const postPromise = page.waitForResponse(
     (r) => r.request().method() === 'POST' && r.url().includes('configuration/integrations'),
@@ -150,11 +173,20 @@ async function createApiIntegration({ baseUrl, adminEmail, adminPassword, integr
       );
     }
 
+    if (!creds.username || !creds.password) {
+      throw new Error(
+        'Integration edit page never exposed the robot admin\'s API Username/Password (neither on ' +
+        'creation nor after "Regenerate password"). The OAuth client only authenticates that robot, ' +
+        `not the logged-in admin, so there is no valid username/password to save. Inspect ${baseUrl}` +
+        '/admin/configuration/integrations/edit/<id> manually.',
+      );
+    }
+
     return {
       client_id: creds.client_id,
       client_secret: creds.client_secret,
-      username: adminEmail,
-      password: adminPassword,
+      username: creds.username,
+      password: creds.password,
       savedAt: new Date().toISOString(),
       integrationName,
     };
