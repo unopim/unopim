@@ -20,6 +20,10 @@ class DemoAssociationSeeder extends Seeder
     /** @var array<string, int> */
     protected array $typeIds = [];
 
+    public function __construct(
+        protected DemoProductSeeder $catalog,
+    ) {}
+
     public function run(): void
     {
         $data = $this->demoData('associations');
@@ -29,8 +33,79 @@ class DemoAssociationSeeder extends Seeder
                 $this->seedType($type, $position + 1);
             }
 
-            $this->seedLinks($data['links']);
+            $this->seedLinks($this->withCatalogCoverage($data['links']));
         });
+    }
+
+    /**
+     * Fill in products the curated link list does not mention.
+     *
+     * Hand-written links carry the interesting cases (spare parts, bundles,
+     * cross-family pairings); this adds the obvious ones — catalogue
+     * neighbours and same-brand cross-sells — so no product opens with an
+     * empty associations panel.
+     *
+     * @param  array<string, array<string, mixed>>  $curated
+     * @return array<string, array<string, mixed>>
+     */
+    protected function withCatalogCoverage(array $curated): array
+    {
+        $products = array_filter(
+            $this->catalog->catalog(),
+            static fn (array $product): bool => ($product['categories'] ?? []) !== [],
+        );
+
+        $byCategory = [];
+        $byBrand = [];
+
+        foreach ($products as $product) {
+            $byCategory[$product['categories'][0]][] = $product['sku'];
+
+            $brand = $product['common']['brand'] ?? null;
+
+            if ($brand !== null) {
+                $byBrand[$brand][] = $product['sku'];
+            }
+        }
+
+        foreach ($products as $product) {
+            $sku = $product['sku'];
+
+            $curated[$sku]['related_products'] ??= $this->pick($byCategory[$product['categories'][0]] ?? [], $sku, 4);
+
+            $brand = $product['common']['brand'] ?? null;
+
+            if ($brand !== null) {
+                $curated[$sku]['cross_sells'] ??= $this->pick(
+                    array_diff($byBrand[$brand] ?? [], $byCategory[$product['categories'][0]] ?? []),
+                    $sku,
+                    3,
+                );
+            }
+
+            if ($curated[$sku]['related_products'] === []) {
+                unset($curated[$sku]['related_products']);
+            }
+
+            if (($curated[$sku]['cross_sells'] ?? null) === []) {
+                unset($curated[$sku]['cross_sells']);
+            }
+        }
+
+        return array_filter($curated);
+    }
+
+    /**
+     * @param  array<int, string>  $candidates
+     * @return array<int, string>
+     */
+    protected function pick(array $candidates, string $exclude, int $limit): array
+    {
+        return array_slice(
+            array_values(array_filter($candidates, static fn (string $sku): bool => $sku !== $exclude)),
+            0,
+            $limit,
+        );
     }
 
     /**
