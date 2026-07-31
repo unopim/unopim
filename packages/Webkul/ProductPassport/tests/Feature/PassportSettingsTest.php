@@ -15,6 +15,13 @@ it('exposes the section through the system settings hub', function (): void {
     expect(collect(config('system_settings'))->pluck('key'))->toContain('digital_product_passport.product_passport');
 });
 
+it('sorts the product passport row above the publication row', function (): void {
+    $rows = collect(config('system_settings'))->keyBy('key');
+
+    expect($rows['digital_product_passport.product_passport']['sort'])
+        ->toBeLessThan($rows['digital_product_passport.publication']['sort']);
+});
+
 it('passes the translations checker for the product passport package', function (): void {
     Artisan::call('unopim:translations:check', ['--package' => 'ProductPassport']);
 

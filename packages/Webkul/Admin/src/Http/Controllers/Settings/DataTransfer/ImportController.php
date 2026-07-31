@@ -614,7 +614,7 @@ class ImportController extends Controller
             $import->refresh();
         }
 
-        $jobInstance = json_decode($import->meta, true);
+        $jobInstance = $import->meta;
         $summary = $this->normalizeSummary($import->summary);
 
         if (JobType::fromTrack($import)->isExport()) {

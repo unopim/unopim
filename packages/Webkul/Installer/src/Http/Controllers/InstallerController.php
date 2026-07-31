@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 use Webkul\Installer\Console\Commands\Installer;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
@@ -140,6 +142,33 @@ class InstallerController extends Controller
                 || (time() - $createdAt) > self::ADMIN_SEED_PROMOTION_WINDOW,
             403
         );
+    }
+
+    /**
+     * Reject an admin password that opens or closes with whitespace, before
+     * any install state is written.
+     *
+     * Every other password entry point (user forms, account settings, reset)
+     * applies the same rule, and the login page strips a leading space on the
+     * assumption that no stored password starts with one — so the installer
+     * must never mint the account that breaks that assumption.
+     */
+    protected function validateAdminPassword(array $payload, string $attribute): ?JsonResponse
+    {
+        $validator = Validator::make($payload, [
+            $attribute => ['nullable', 'string', new PasswordWithoutSurroundingWhitespace],
+        ], [], [
+            $attribute => trans('installer::app.installer.index.create-administrator.password'),
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error'  => $validator->errors()->first($attribute),
+                'errors' => $validator->errors()->toArray(),
+            ], 422);
+        }
+
+        return null;
     }
 
     /**
@@ -376,6 +405,10 @@ class InstallerController extends Controller
         // Only ever promote the seeder's freshly-created default admin.
         $this->abortUnlessAdminIsFreshlySeeded();
 
+        if (($invalid = $this->validateAdminPassword(request()->all(), 'password')) instanceof JsonResponse) {
+            return $invalid;
+        }
+
         $this->reloadDatabaseConfigFromEnv();
 
         $password = password_hash((string) request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
@@ -459,6 +492,10 @@ class InstallerController extends Controller
         $this->reloadDatabaseConfigFromEnv();
 
         $payload = $request->all();
+
+        if (($invalid = $this->validateAdminPassword($payload, 'admin.password')) instanceof JsonResponse) {
+            return $invalid;
+        }
 
         $this->environmentManager->setEnvConfiguration($payload);
 
@@ -791,7 +828,7 @@ class InstallerController extends Controller
             }
 
             $artisan = new Process(
-                [PHP_BINARY, base_path('artisan'), $package['install'], '--no-interaction'],
+                [$this->resolvePhpBinary(), base_path('artisan'), $package['install'], '--no-interaction'],
                 base_path(),
                 $this->resolvedDatabaseEnv() + $env,
                 null,
@@ -849,6 +886,22 @@ class InstallerController extends Controller
     }
 
     /**
+     * Resolve the PHP executable used to spawn child processes.
+     *
+     * `PHP_BINARY` is empty on some web SAPIs, which spawns a command whose
+     * first argument is an empty string — the shell reports "Permission
+     * denied" and exit 127, and the install fails with nothing to act on.
+     */
+    protected function resolvePhpBinary(): string
+    {
+        if (PHP_BINARY !== '' && is_executable(PHP_BINARY) && ! str_contains(basename(PHP_BINARY), 'fpm')) {
+            return PHP_BINARY;
+        }
+
+        return (new PhpExecutableFinder)->find(false) ?: 'php';
+    }
+
+    /**
      * Resolve the composer executable as a process-argument prefix.
      *
      * A web process PATH may not include composer, so probe common locations
@@ -861,7 +914,7 @@ class InstallerController extends Controller
     {
         foreach ($this->composerProbePaths() as $path) {
             if (is_file($path)) {
-                return str_ends_with($path, '.phar') ? [PHP_BINARY, $path] : [$path];
+                return str_ends_with($path, '.phar') ? [$this->resolvePhpBinary(), $path] : [$path];
             }
         }
 

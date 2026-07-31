@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira Thổ Nhĩ Kỳ (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ukraine (UAH)',
                 'usd'                 => 'Đô la Mỹ (USD)',
-                'warning-message'     => 'Cảnh báo! Cấu hình này sẽ không thể thay đổi sau này.',
+                'warning-message'     => 'Ngôn ngữ và tiền tệ mặc định chỉ được thiết lập một lần trong quá trình cài đặt và không thể thay đổi về sau. Bạn có thể thêm ngôn ngữ và tiền tệ khác bất cứ lúc nào — chỉ hai giá trị mặc định này là cố định.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Cài đặt UnoPim',

@@ -5,8 +5,8 @@ namespace Webkul\Admin\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\Validator;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
+use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 
 class AccountForm extends FormRequest
 {
@@ -49,7 +49,7 @@ class AccountForm extends FormRequest
         return [
             'name'               => 'required',
             'email'              => ['email', Rule::unique('admins', 'email')->ignore($user?->id, 'id')],
-            'password'           => 'nullable|confirmed|min:'.$passwordMin,
+            'password'           => ['nullable', 'confirmed', 'min:'.$passwordMin, new PasswordWithoutSurroundingWhitespace],
             'current_password'   => Rule::when(
                 $this->filled('password'),
                 ['required', 'current_password:admin'],
@@ -62,22 +62,6 @@ class AccountForm extends FormRequest
             'catalog_locale_id'  => 'nullable|integer|exists:locales,id,status,1',
             'default_channel_id' => 'nullable|integer|exists:channels,id',
             'use_gravatar'       => 'boolean',
-        ];
-    }
-
-    /**
-     * @return array<int, callable>
-     */
-    public function after(): array
-    {
-        return [
-            function (Validator $validator): void {
-                $password = (string) $this->input('password');
-
-                if ($password !== '' && trim($password) === '') {
-                    $validator->errors()->add('password', trans('admin::app.account.edit.password-whitespace'));
-                }
-            },
         ];
     }
 }

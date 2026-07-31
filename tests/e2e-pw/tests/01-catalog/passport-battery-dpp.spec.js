@@ -80,10 +80,24 @@ function inContainer(args) {
   });
 }
 
+/**
+ * A bare `php script.php` run (no Artisan command runner) prints whatever
+ * PHP deprecations/warnings the boot triggers straight onto the same stdout
+ * stream as our payload — CI's `display_errors=on` surfaces these where a
+ * locally-muted `error_reporting` doesn't, so "the last line is the JSON"
+ * isn't a safe assumption. The seed script wraps its payload in delimiters
+ * so it can be pulled out regardless of what else lands on stdout.
+ */
 function seed() {
   const output = inContainer(['php', 'tests/e2e-pw/scripts/seed-passport-template-e2e.php']);
 
-  return JSON.parse(output.trim().split('\n').pop());
+  const match = output.match(/<<<SEED_JSON>>>\s*([\s\S]*?)\s*<<<END_SEED_JSON>>>/);
+
+  if (!match) {
+    throw new Error(`seed-passport-template-e2e.php produced no parseable payload. Raw output:\n${output}`);
+  }
+
+  return JSON.parse(match[1]);
 }
 
 /** The picker is a vue-multiselect; its searchbox shares the field name, so commit through the hidden input. */

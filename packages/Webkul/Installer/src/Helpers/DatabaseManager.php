@@ -219,7 +219,7 @@ class DatabaseManager
      */
     private function storageLink(): void
     {
-        Artisan::call('storage:link');
+        Artisan::call('storage:link', ['--relative' => true]);
     }
 
     /**

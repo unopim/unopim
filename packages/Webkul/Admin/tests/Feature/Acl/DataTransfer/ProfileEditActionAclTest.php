@@ -16,14 +16,15 @@ function gridActionIndices(string $route): array
 function trackFor(JobInstances $jobInstance): JobTrack
 {
     return JobTrack::create([
-        'state'            => Import::STATE_PROCESSING,
-        'type'             => $jobInstance->type,
-        'action'           => $jobInstance->action,
-        'file_path'        => $jobInstance->file_path,
-        'meta'             => json_encode($jobInstance->toArray()),
-        'job_instances_id' => $jobInstance->id,
-        'user_id'          => auth('admin')->id(),
-        'started_at'       => now(),
+        'state'               => Import::STATE_PROCESSING,
+        'type'                => $jobInstance->type,
+        'action'              => $jobInstance->action,
+        'file_path'           => $jobInstance->file_path,
+        'validation_strategy' => $jobInstance->validation_strategy ?? '',
+        'meta'                => $jobInstance->toArray(),
+        'job_instances_id'    => $jobInstance->id,
+        'user_id'             => auth('admin')->id(),
+        'started_at'          => now(),
     ]);
 }
 

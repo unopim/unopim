@@ -11,6 +11,7 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\AlphaNumericSpace;
 use Webkul\Core\Rules\FileMimeExtensionMatch;
+use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 
 class UserForm extends FormRequest
 {
@@ -66,7 +67,7 @@ class UserForm extends FormRequest
                 'email',
                 Rule::unique('admins', 'email')->ignore($id, 'id'),
             ],
-            'password'              => sprintf('%s|min:%s', $id ? 'nullable' : 'required', $passwordMin),
+            'password'              => [$id ? 'nullable' : 'required', 'min:'.$passwordMin, new PasswordWithoutSurroundingWhitespace],
             'current_password'      => $id
                 ? Rule::when(
                     $this->filled('password'),

@@ -1446,7 +1446,7 @@
                     <footer class="w-full px-6 py-6 text-center text-[13px] text-gray-600 font-medium flex flex-col items-center">
                         <div>
                             @lang('installer::app.installer.index.powered-by', [
-                                'unopim' => '<a class="text-primary-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">Unopim</a>',
+                                'unopim' => '<a class="text-primary-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">UnoPim</a>',
                             ])
                         </div>
 

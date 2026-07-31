@@ -148,7 +148,7 @@ class JobExecuteCommand extends Command
             'field_separator'       => $jobInstance->field_separator,
             'file_path'             => $jobInstance->file_path,
             'images_directory_path' => $jobInstance->images_directory_path,
-            'meta'                  => $jobInstance->toJson(),
+            'meta'                  => $jobInstance->toArray(),
             'job_instances_id'      => $jobInstance->id,
             'user_id'               => $userId,
             'created_at'            => now(),

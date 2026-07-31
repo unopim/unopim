@@ -145,7 +145,7 @@ class Installer extends Command
         ]);
 
         $this->warn('Step: Linking storage directory...');
-        $this->call('storage:link');
+        $this->call('storage:link', ['--relative' => true]);
 
         if (config('elasticsearch.enabled') == 'true') {
             $this->warn('Step: Clearing elasticsearch index...');
@@ -721,17 +721,13 @@ class Installer extends Command
         $adminPassword = password(
             label: 'Input a Password for Administrator',
             required: true,
+            validate: fn (string $value): ?string => match (true) {
+                strlen($value) < 6       => 'Password must be at least 6 characters.',
+                trim($value) !== $value  => 'Password must not begin or end with whitespace.',
+                default                  => null,
+            },
             hint: 'Minimum 6 characters',
         );
-
-        while (strlen($adminPassword) < 6) {
-            $this->error('Password must be at least 6 characters.');
-
-            $adminPassword = password(
-                label: 'Input a Secure Password for Administrator',
-                required: true,
-            );
-        }
 
         $password = password_hash($adminPassword, PASSWORD_BCRYPT, ['cost' => 10]);
 
