@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { searchInDataGrid } = require('../../utils/helpers');
+const { searchInDataGrid, fillLocalizedField } = require('../../utils/helpers');
 
 /**
  * Association Types (Catalog > Association Types) — Plan 1 slice.
@@ -73,13 +73,16 @@ async function addAssociationTypeField(page, { name, code, type, validation }) {
 }
 
 async function configureAssociationTypeField(page, { required, section }) {
+	// The field-builder edit modal has no Display Section control (it only
+	// exposes Code/Type/Label/Input Validation/flags); the section is shown
+	// as a read-only column on the fields table instead.
+	if (section) {
+		await expect(page.locator('td').filter({ hasText: section }).first()).toBeVisible();
+	}
+
 	await page.locator('span.icon-edit').first().click();
 
 	const modal = fieldModal(page);
-
-	if (section) {
-		await expect(modal.getByText(section, { exact: true })).toBeVisible();
-	}
 
 	if (required) {
 		await modal.getByText('Is Required', { exact: true }).click();
@@ -143,17 +146,12 @@ test.describe('UnoPim Association Type Tests', () => {
 		});
 
 		await test.step('configure labels and a required quantity field on the edit page', async () => {
-			// Locale name inputs have no accessible label (matches the pattern
-			// used for category fields); fill every active locale so the
-			// per-locale `required` name rule passes regardless of how many
-			// locales are active. They are seeded to the code on create and are
-			// overwritten here.
-			const nameInputs = adminPage.locator('input[name$="\\[name\\]"]');
-			const localeCount = await nameInputs.count();
-
-			for (let i = 0; i < localeCount; i++) {
-				await nameInputs.nth(i).fill('Bundle / Kit');
-			}
+			// The name field is the translatable-field component: its per-locale
+			// inputs travel as hidden fields and only the active locale's editor
+			// is visible. Filling it updates every locale's hidden value (seeded
+			// from the create-time name), which satisfies the per-locale
+			// `required` name rule.
+			await fillLocalizedField(adminPage, 'Bundle / Kit');
 
 			await addAssociationTypeField(adminPage, {
 				name: 'Quantity',
@@ -185,12 +183,15 @@ test.describe('UnoPim Association Type Tests', () => {
 			await adminPage.reload({ waitUntil: 'load' });
 			await expect(adminPage.getByText('quantity', { exact: true }).first()).toBeVisible();
 
+			// Section is a read-only column on the fields table; the edit modal has
+			// no Display Section control.
+			await expect(adminPage.locator('td').filter({ hasText: 'General Section' }).first()).toBeVisible();
+
 			await adminPage.locator('span.icon-edit').first().click();
 
 			const modal = fieldModal(adminPage);
 
 			await expect(modal.locator('input[name="is_required"]')).toBeChecked();
-			await expect(modal.getByText('General Section', { exact: true }).first()).toBeVisible();
 		});
 
 		await test.step('the history tab lists the versions of the type and its fields', async () => {
