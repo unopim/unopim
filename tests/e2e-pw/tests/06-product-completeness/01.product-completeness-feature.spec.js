@@ -22,7 +22,9 @@ async function selectFirstOpenOption(page) {
   await page
     .locator('.multiselect__content-wrapper li.multiselect__element:not(.multiselect__element--disabled)')
     .first()
-    .click();
+    .waitFor({ state: 'visible' });
+
+  await page.keyboard.press('Enter');
 }
 
 /**
@@ -221,14 +223,9 @@ test.describe('Verify that Product Completeness feature correctly Exists', () =>
   });
 
   // ── Default family: Filter by Required in Channels after assignment ──
-  // `scrollIntoViewIfNeeded()` only scrolls the minimum distance needed, which
-  // can leave the row directly beneath the page's `js-sticky-header` (negative
-  // top/side margins pull it over the content below — see PRODUCT BUG in the
-  // task report). Centering the row in the viewport keeps it clear of the
-  // sticky header regardless of which row happens to be unassigned. The
-  // channel picked is whichever renders first — the "default"-coded channel's
-  // display name is seed data ("Default", "Master Catalog", ...), but its
-  // `code` (what the filter itself searches) stays `default` across reseeds.
+  // The channel picked is whichever renders first — the "default"-coded
+  // channel's display name is seed data ("Default", "Master Catalog", ...),
+  // but its `code`, which the filter searches, stays `default` across reseeds.
 
   test('Verify filter using Required in Channels returns results after channel assignment', async ({ adminPage }) => {
     await goToCompletenessTab(adminPage, 1);

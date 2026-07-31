@@ -7,9 +7,12 @@ const NUMBER_INPUT_SELECTOR = 'input[name="values[common][product_number]"]';
  * attribute this spec drives. `PRODUCT_EDIT_ID` (or id 1) can land on a product
  * whose family never got that attribute assigned (e.g. a bare `default`-family
  * fixture from another spec) — ids and family mixes both drift across reseeds —
- * so this falls back to scanning the products grid's own first page of rows
- * (via their mass-action checkbox values, no extra navigation needed to read
- * them) for one that does.
+ * and the grid's default sort surfaces whichever spec most recently created a
+ * burst of fixtures, which can crowd the base catalog off page 1 entirely. So
+ * this fetches the grid's own AJAX payload (oldest-first — the seeded base
+ * catalog, not another spec's fresh fixtures) across a wide-enough page to give
+ * the per-candidate check below plenty of products to try, including variants
+ * whose parent hides this attribute from their own edit form.
  */
 async function resolveProductEditUrl(page) {
   const preferredId = process.env.PRODUCT_EDIT_ID;
@@ -19,11 +22,22 @@ async function resolveProductEditUrl(page) {
   }
 
   await page.goto('/admin/catalog/products', { waitUntil: 'load' });
-  await page.waitForLoadState('networkidle');
 
-  const ids = await page.locator('input[name^="mass_action_select_record_"]').evaluateAll(
-    (els) => els.map((el) => el.value),
-  );
+  const query = new URLSearchParams({
+    'sort[column]': 'created_at',
+    'sort[order]': 'asc',
+    'pagination[per_page]': '50',
+  }).toString();
+
+  const grid = await page.evaluate(async (q) => {
+    const res = await fetch(`/admin/catalog/products?${q}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+    });
+
+    return res.json();
+  }, query);
+
+  const ids = (grid.records || []).map((record) => record.product_id).filter(Boolean);
 
   for (const id of ids) {
     const url = `/admin/catalog/products/edit/${id}`;

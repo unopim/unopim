@@ -3,7 +3,7 @@
 </template>
 
 <template v-else>
-    <div class="datagrid-toolbar mt-7 flex items-center justify-between gap-4 max-md:flex-wrap">
+    <div class="datagrid-toolbar mt-7 flex items-center justify-between gap-4 flex-wrap">
         <!-- Left Toolbar -->
         <div class="flex gap-x-1">
             <div
@@ -125,7 +125,7 @@
             </div>
         </div>
 
-        <div class="flex items-center gap-x-4">
+        <div class="flex flex-wrap items-center justify-end gap-4">
              <template v-if="available.meta.managedColumn?.enabled">
                 <x-admin::datagrid.manage-columns />
              </template>

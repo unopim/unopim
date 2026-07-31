@@ -5,7 +5,7 @@
 // suite moves with tests/e2e-pw/.env instead of being pinned to one port.
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require('@playwright/test');
+const { chromium, request } = require('@playwright/test');
 const { loadEnv } = require('./load-env');
 
 loadEnv();
@@ -27,10 +27,34 @@ function isFresh() {
   }
 }
 
+/**
+ * A file within MAX_AGE_MS is not proof the session still authenticates: a shared
+ * DB (session table reset/cleaned between shards) can invalidate the cookie well
+ * before the file goes stale by mtime alone. Probe the server directly rather than
+ * trust the clock.
+ */
+async function isSessionValid() {
+  if (!isFresh()) {
+    return false;
+  }
+
+  const ctx = await request.newContext({ storageState: STATE_PATH, baseURL: BASE });
+
+  try {
+    const response = await ctx.get('/admin/dashboard', { maxRedirects: 0 });
+
+    return response.status() === 200;
+  } catch {
+    return false;
+  } finally {
+    await ctx.dispose();
+  }
+}
+
 let inFlight = null;
 
 async function ensureFamilyState() {
-  if (isFresh()) {
+  if (await isSessionValid()) {
     return STATE_PATH;
   }
   if (inFlight) {

@@ -90,7 +90,6 @@ it('downloads a sample for a known type', function (string $route) {
     $this->get(route($route, 'products'))->assertOk()->assertDownload('products.csv');
 })->with([
     'admin.settings.data_transfer.imports.download_sample',
-    'admin.settings.data_transfer.exports.download_sample',
 ]);
 
 it('downloads a keyed sample', function () {
@@ -127,7 +126,14 @@ it('renders every sample link on the job forms', function (string $route, string
 })->with([
     ['admin.settings.data_transfer.imports.create', 'download-sample/products/variants'],
     ['admin.settings.data_transfer.imports.create', 'download-sample-images-zip/products'],
-    ['admin.settings.data_transfer.exports.create', 'exports/download-sample/products/default'],
+]);
+
+it('offers no sample file on the export form', function (string $route) {
+    $this->loginAsAdmin();
+
+    $this->get(route($route))->assertOk()->assertDontSee('download-sample', false);
+})->with([
+    'admin.settings.data_transfer.exports.create',
 ]);
 
 it('returns not found when a type ships no images archive', function () {

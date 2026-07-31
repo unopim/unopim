@@ -67,7 +67,7 @@ test.describe('Channel Export Jobs', () => {
     await createChannelExport(adminPage, code, 'CSV');
     await expect(adminPage.getByRole('button', { name: 'Export Now' })).toBeVisible();
     await adminPage.getByRole('button', { name: 'Export Now' }).click();
-    await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
+    await expect(adminPage.locator('.overflow-hidden.box-shadow').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible();
 
     await deleteExport(adminPage, code);
   });

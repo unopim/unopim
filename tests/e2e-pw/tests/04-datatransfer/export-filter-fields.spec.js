@@ -30,6 +30,26 @@ async function chooseFilterOption(page, name, option) {
   await page.getByRole('option', { name: option }).locator('span').first().click();
 }
 
+/**
+ * Waits for the locator's bounding box to hold steady across two animation
+ * frames before clicking it, since async option lists can still be
+ * reflowing when they first become visible.
+ */
+async function clickWhenStable(locator) {
+  await locator.waitFor({ state: 'visible' });
+
+  await expect(async () => {
+    const before = await locator.boundingBox();
+    await locator.page().evaluate(() => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve))));
+    const after = await locator.boundingBox();
+
+    expect(before).not.toBeNull();
+    expect(after).toEqual(before);
+  }).toPass({ timeout: 5000 });
+
+  await locator.click();
+}
+
 test.describe('Export filter fields — reusable input components', () => {
   test('publishes one normalized field-set registry to the browser', async ({ adminPage }) => {
     await openCreateExport(adminPage);
@@ -96,13 +116,14 @@ test.describe('Export filter fields — reusable input components', () => {
     await openCreateExport(adminPage);
     await selectEntityType(adminPage, 'Products');
 
+    await adminPage.waitForLoadState('networkidle');
+
     const channelsLoaded = adminPage.waitForResponse((r) => r.url().includes('/filters/channels'));
     await openFilter(adminPage, 'channels');
     await channelsLoaded;
 
     const channel = adminPage.locator('.multiselect__content-wrapper:visible li.multiselect__element').first();
-    await expect(channel).toBeVisible();
-    await channel.locator('span').first().click();
+    await clickWhenStable(channel.locator('span').first());
 
     await expect(filterValue(adminPage, 'channels')).not.toHaveValue('');
 

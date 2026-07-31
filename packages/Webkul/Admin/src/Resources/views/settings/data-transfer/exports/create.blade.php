@@ -88,13 +88,6 @@
                                     </x-admin::form.control-group.control>
 
                                     <x-admin::form.control-group.error control-name="entity_type" />
-
-                                    <x-admin::data-transfer.sample-links
-                                        config-file="exporters"
-                                        route-name="admin.settings.data_transfer.exports.download_sample"
-                                        zip-route="admin.settings.data_transfer.exports.download_sample_zip"
-                                        selection="$refs['exportType']"
-                                    />
                                 </x-admin::form.control-group>
                             </div>
                         </div>

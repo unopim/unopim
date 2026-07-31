@@ -117,6 +117,12 @@ export default function initAjaxNavigation() {
         return true;
     }
 
+    /**
+     * The history entry is pushed right after the #app swap — before the
+     * page's scripts run and the app mounts — so anything reading
+     * window.location during boot (e.g. datagrid URL filters) sees the
+     * destination URL, not the page being left.
+     */
     async function performVisit(url, push) {
         const before = dispatch(NAV_EVENTS.BEFORE, { url }, true);
 
@@ -161,6 +167,10 @@ export default function initAjaxNavigation() {
 
             document.querySelector('#app').replaceWith(nextApp);
 
+            if (push) {
+                window.history.pushState({ ajaxNav: true }, '', finalUrl);
+            }
+
             removePageScripts();
 
             replaceInjectedStyles(styles);
@@ -173,9 +183,7 @@ export default function initAjaxNavigation() {
 
             document.title = doc.title;
 
-            if (push) {
-                window.history.pushState({ ajaxNav: true }, '', finalUrl);
-            }
+            syncDocumentLocale(doc);
 
             (document.getElementById('main-content') ?? window).scrollTo(0, 0);
 
@@ -188,6 +196,30 @@ export default function initAjaxNavigation() {
             return;
         } finally {
             toggleProgress(false);
+        }
+    }
+
+    /**
+     * Carry the swapped page's language and writing direction onto the live
+     * document. They live on <html>, outside the #app subtree a visit replaces,
+     * so a locale change would otherwise keep the previous lang and direction
+     * until the user reloaded by hand.
+     */
+    function syncDocumentLocale(doc) {
+        const next = doc.documentElement;
+
+        if (! next) {
+            return;
+        }
+
+        if (next.lang && next.lang !== document.documentElement.lang) {
+            document.documentElement.lang = next.lang;
+        }
+
+        const dir = next.getAttribute('dir');
+
+        if (dir && dir !== document.documentElement.getAttribute('dir')) {
+            document.documentElement.setAttribute('dir', dir);
         }
     }
 
