@@ -1446,7 +1446,7 @@
                     <footer class="w-full px-6 py-6 text-center text-[13px] text-gray-600 font-medium flex flex-col items-center">
                         <div>
                             @lang('installer::app.installer.index.powered-by', [
-                                'unopim' => '<a class="text-primary-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">Unopim</a>',
+                                'unopim' => '<a class="text-primary-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">UnoPim</a>',
                             ])
                         </div>
 
@@ -1791,25 +1791,37 @@
                                 this.completeStep('readyForInstallation', 'installationCompleted', 'active', 'complete');
                             });
 
-                            source.addEventListener('error', (event) => {
-                                let message = "@lang('installer::app.installer.index.create-administrator.seed-sample-data-failed')";
+                            source.addEventListener('install-error', (event) => {
+                                let message = "@lang('installer::app.installer.index.terminal.install-failed')";
 
                                 if (event && event.data) {
                                     try {
                                         const payload = JSON.parse(event.data);
 
                                         if (payload && payload.message) {
-                                            message = payload.message;
+                                            message = '✗ ' + payload.message;
                                         }
                                     } catch (e) {}
                                 }
 
-                                this.pushTerminalLine('✗ ' + message);
+                                this.pushTerminalLine(message);
 
                                 source.close();
 
                                 this.installing = false;
                             });
+
+                            source.onerror = () => {
+                                if (source.readyState === EventSource.CLOSED) {
+                                    return;
+                                }
+
+                                this.pushTerminalLine("@lang('installer::app.installer.index.terminal.stream-interrupted')");
+
+                                source.close();
+
+                                this.installing = false;
+                            };
                         },
 
                         runSampleDataSeeder() {

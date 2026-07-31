@@ -327,7 +327,9 @@ test('5.1 - Sending a message shows user message bubble', async ({ adminPageWith
   await adminPageWithWidget.getByPlaceholder('Ask me anything about your catalog…').fill('How many products do I have?');
   await adminPageWithWidget.getByRole('button', { name: 'Send' }).click();
 
-  await expect(adminPageWithWidget.locator('#app')).toContainText('How many products do I have?');
+  // The widget panel is <teleport to="body">, so it never lands inside #app —
+  // assert against the panel itself, not the SPA root.
+  await expect(adminPageWithWidget.locator('#agenting-pim-panel')).toContainText('How many products do I have?');
 });
 
 test('5.3 - AI response shows Retry, Copy, Helpful, Not helpful buttons', async ({ adminPageWithWidget }) => {

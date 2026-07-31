@@ -2,6 +2,23 @@ const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, searchInDataGrid, resolveEditableProductId } = require('../../utils/helpers');
 
 /**
+ * The shared `v-modal-confirm` singleton (`packages/Webkul/Admin/.../components/modal/confirm.blade.php`),
+ * scoped to its own `.z-[10002]` content wrapper rather than a bare
+ * page-wide `getByRole`. On the product-edit page the confirm dialog opens
+ * on top of the associations section-drawer (itself a `position:fixed`
+ * teleport to `<body>`); an unscoped role lookup can resolve its click
+ * against whichever fixed-position layer happens to intercept the pointer
+ * at that coordinate instead of the modal itself. Scoping to the modal's
+ * own wrapper makes the click land inside it regardless of what else is
+ * fixed-positioned on the page.
+ */
+function confirmModalAgreeButton(page) {
+  return page.locator('div.z-\\[10002\\]').getByRole('button', { name: 'Agree' })
+    .or(page.locator('div.z-\\[10002\\]').getByRole('button', { name: 'Delete' }))
+    .first();
+}
+
+/**
  * Deletes an association type by code through the index DataGrid.
  *
  * Best-effort and swallows its own errors: this only ever runs from a
@@ -18,7 +35,7 @@ async function deleteAssociationType(page, code) {
 
     if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await deleteBtn.click();
-      await page.getByRole('button', { name: 'Agree' }).or(page.getByRole('button', { name: 'Delete' })).first().click();
+      await confirmModalAgreeButton(page).click();
       await page.waitForLoadState('networkidle');
     }
   } catch {}
@@ -116,7 +133,7 @@ test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
       expect(Math.abs(geometry.labelLeft - geometry.inputLeft)).toBeLessThanOrEqual(2);
 
       await removeButton.click();
-      await adminPage.getByRole('button', { name: 'Agree' }).or(adminPage.getByRole('button', { name: 'Delete' })).first().click();
+      await confirmModalAgreeButton(adminPage).click();
 
       await expect(adminPage.locator(`input[name*="[additional_data][common][qty_${uid}]"]`)).toHaveCount(0);
     } finally {

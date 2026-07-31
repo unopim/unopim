@@ -15,7 +15,7 @@ test.describe('Appearance — favicon', () => {
   const faviconControl = (page) => page.locator('[data-media-control]').nth(1);
 
   const faviconImage = (page) => faviconControl(page).locator('img[src*="/storage/configuration/"]').first();
-
+  const unsavedBar = (page) => page.getByText('You have unsaved changes');
 
   async function dropFavicon(page, fileName, mimeType) {
     await faviconControl(page).locator('label').first().waitFor({ state: 'visible', timeout: 15000 });
@@ -49,6 +49,7 @@ test.describe('Appearance — favicon', () => {
     await tile.hover();
     await faviconControl(page).locator('.icon-delete').first().click();
 
+    await expect(unsavedBar(page)).toBeVisible({ timeout: 10000 });
     await clickSaveAndExpect(page, 'Save changes', /Appearance updated successfully/i, /system-settings/);
     await gotoSettings(page);
   }
@@ -86,6 +87,7 @@ test.describe('Appearance — favicon', () => {
       )
       .toBe(true);
 
+    await expect(unsavedBar(adminPage)).toBeVisible({ timeout: 10000 });
     await clickSaveAndExpect(adminPage, 'Save changes', /Appearance updated successfully/i, /system-settings/);
 
     await gotoSettings(adminPage);

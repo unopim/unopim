@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira Turki (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ukraina (UAH)',
                 'usd'                 => 'Dolar AS (USD)',
-                'warning-message'     => 'Perhatian! Pengaturan bahasa sistem bawaan serta mata uang bawaan bersifat permanen dan tidak dapat diubah lagi.',
+                'warning-message'     => 'Lokal dan mata uang yang Anda pilih di sini menjadi default awal untuk saluran dan akun admin. Anda dapat mengaktifkan lebih banyak lokal dan mata uang, atau mengubah default ini, kapan saja dari pengaturan admin.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalasi UnoPim',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label terinstal',
                 'package-failed'     => '✗ :label gagal: :message',
                 'package-manual'     => '! :label tidak dapat diinstal secara otomatis di server ini (tidak ada akses shell). Jalankan ini dari mesin yang memiliki akses shell:',
+                'install-failed'     => '✗ Instalasi gagal. Periksa storage/logs/laravel.log untuk detailnya.',
+                'stream-interrupted' => '! Koneksi ke penginstal terputus. Instalasi mungkin masih sedang diselesaikan — tunggu sebentar, lalu muat ulang halaman ini.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panel Admin',

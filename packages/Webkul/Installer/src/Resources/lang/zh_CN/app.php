@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => '土耳其里拉 (TRY)',
                 'ukrainian-hryvnia'   => '乌克兰格里夫纳 (UAH)',
                 'usd'                 => '美元 (USD)',
-                'warning-message'     => '提防！默认系统语言和默认货币的设置是永久性的，不能再次更改。',
+                'warning-message'     => '您在此处选择的语言环境和货币将成为渠道和管理员账户的初始默认值。您可以随时在管理设置中启用更多语言环境和货币，或更改这些默认值。',
             ],
             'installation-processing' => [
                 'unopim'      => '安装 UnoPim',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label 已安装',
                 'package-failed'     => '✗ :label 失败：:message',
                 'package-manual'     => '! :label 无法在此服务器上自动安装（无 shell 访问权限）。请在具有 shell 访问权限的机器上运行此命令：',
+                'install-failed'     => '✗ 安装失败。请查看 storage/logs/laravel.log 了解详情。',
+                'stream-interrupted' => '! 与安装程序的连接已断开。安装可能仍在完成中 — 请稍候片刻，然后重新加载此页面。',
             ],
             'installation-completed' => [
                 'admin-panel'               => '管理面板',

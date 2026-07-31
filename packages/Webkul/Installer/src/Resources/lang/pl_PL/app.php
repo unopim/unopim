@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Turecka Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukraińska Hrywna (UAH)',
                 'usd'                 => 'Dolar Amerykański (USD)',
-                'warning-message'     => 'Uwaga! Domyślna lokalizacja i waluta nie mogą być zmienione później.',
+                'warning-message'     => 'Wybrane tutaj ustawienia regionalne i waluta stają się początkowymi wartościami domyślnymi dla kanału i konta administratora. W dowolnym momencie możesz aktywować więcej ustawień regionalnych i walut lub zmienić te wartości domyślne w ustawieniach administracyjnych.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalacja UnoPim',
@@ -341,6 +341,8 @@ return [
                 'package-installed'  => '✓ :label zainstalowano',
                 'package-failed'     => '✗ :label nie powiodło się: :message',
                 'package-manual'     => '! :label nie może zostać automatycznie zainstalowany na tym serwerze (brak dostępu do powłoki). Uruchom to z komputera z dostępem do powłoki:',
+                'install-failed'     => '✗ Instalacja nie powiodła się. Sprawdź storage/logs/laravel.log, aby poznać szczegóły.',
+                'stream-interrupted' => '! Utracono połączenie z instalatorem. Instalacja może się jeszcze kończyć — poczekaj chwilę, a następnie odśwież tę stronę.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panel Administratora',

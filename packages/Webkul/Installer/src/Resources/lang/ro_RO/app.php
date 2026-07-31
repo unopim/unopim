@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Liră Turcească (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ucraineană (UAH)',
                 'usd'                 => 'Dolar American (USD)',
-                'warning-message'     => 'Atenție! Localizarea și moneda implicită nu pot fi modificate ulterior.',
+                'warning-message'     => 'Limba și moneda pe care le alegeți aici devin valorile implicite inițiale pentru canal și contul de administrator. Puteți activa mai multe limbi și monede, sau puteți modifica aceste valori implicite, oricând din setările de administrare.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalare UnoPim',
@@ -341,6 +341,8 @@ return [
                 'package-installed'  => '✓ :label instalat',
                 'package-failed'     => '✗ :label a eșuat: :message',
                 'package-manual'     => '! :label nu poate fi instalat automat pe acest server (fără acces la shell). Rulați aceasta de pe o mașină cu acces la shell:',
+                'install-failed'     => '✗ Instalarea a eșuat. Verificați storage/logs/laravel.log pentru detalii.',
+                'stream-interrupted' => '! Conexiunea cu programul de instalare a fost pierdută. Este posibil ca instalarea să fie încă în curs de finalizare — așteptați un moment, apoi reîncărcați această pagină.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panou Administrativ',

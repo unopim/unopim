@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Tyrkisk Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainsk Hryvnia (UAH)',
                 'usd'                 => 'Amerikansk Dollar (USD)',
-                'warning-message'     => 'Advarsel! Standard lokalitet og valuta kan ikke endres senere.',
+                'warning-message'     => 'Lokaliteten og valutaen du velger her, blir de innledende standardverdiene for kanalen og administratorkontoen. Du kan når som helst aktivere flere lokaliteter og valutaer, eller endre disse standardverdiene, fra administrasjonsinnstillingene.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Installerer UnoPim',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label installert',
                 'package-failed'     => '✗ :label mislyktes: :message',
                 'package-manual'     => '! :label kan ikke installeres automatisk på denne serveren (ingen shell-tilgang). Kjør dette fra en maskin med shell-tilgang:',
+                'install-failed'     => '✗ Installasjonen mislyktes. Se storage/logs/laravel.log for detaljer.',
+                'stream-interrupted' => '! Forbindelsen til installasjonsprogrammet ble brutt. Installasjonen kan fortsatt være i ferd med å fullføres — vent et øyeblikk, og last deretter inn denne siden på nytt.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Administratorpanel',

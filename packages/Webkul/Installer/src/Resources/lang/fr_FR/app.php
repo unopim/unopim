@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Lire turque (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia ukrainienne (UAH)',
                 'usd'                 => 'Dollar américain (USD)',
-                'warning-message'     => 'Méfiez-vous ! Les paramètres de vos langues système par défaut ainsi que la devise par défaut sont permanents et ne pourront jamais être modifiés.',
+                'warning-message'     => 'La langue et la devise que vous choisissez ici deviennent les valeurs par défaut initiales du canal et du compte administrateur. Vous pouvez activer d\'autres langues et devises, ou modifier ces valeurs par défaut, à tout moment depuis les paramètres d\'administration.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Installation d\'UnoPim',
@@ -341,6 +341,8 @@ return [
                 'package-installed'  => '✓ :label installé',
                 'package-failed'     => '✗ Échec de :label : :message',
                 'package-manual'     => '! :label ne peut pas être installé automatiquement sur ce serveur (aucun accès au shell). Exécutez ceci depuis une machine disposant d\'un accès au shell :',
+                'install-failed'     => '✗ L\'installation a échoué. Consultez storage/logs/laravel.log pour plus de détails.',
+                'stream-interrupted' => '! La connexion à l\'installateur a été perdue. L\'installation est peut-être encore en cours de finalisation — patientez un instant, puis rechargez cette page.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panneau d\'administration',

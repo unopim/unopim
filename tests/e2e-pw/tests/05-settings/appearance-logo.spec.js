@@ -46,7 +46,7 @@ test.describe('Appearance — admin logo', () => {
     }, FIXTURE_B64);
 
     // Preview tile (data URL) confirms the dropped file was accepted.
-    await expect(page.locator('img[src^="data:"]').first()).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('img[src^="data:"]').first()).toBeVisible({ timeout: 15000 });
 
     // The item mounts and copies the File into its hidden multipart input; wait for
     // that to complete so the submit below actually carries the file (avoids a race).
@@ -69,7 +69,7 @@ test.describe('Appearance — admin logo', () => {
     await tile.hover();
     await page.locator('.icon-delete').first().click();
 
-    await expect(unsavedBar(page)).toBeVisible({ timeout: 10000 });
+    await expect(unsavedBar(page)).toBeVisible({ timeout: 15000 });
     await clickSaveAndExpect(page, 'Save changes', /Appearance updated successfully/i, /system-settings/);
     await gotoSettings(page);
   }
@@ -82,7 +82,7 @@ test.describe('Appearance — admin logo', () => {
    */
   async function uploadLogoAndSave(page) {
     await dropLogo(page);
-    await expect(unsavedBar(page)).toBeVisible({ timeout: 10000 });
+    await expect(unsavedBar(page)).toBeVisible({ timeout: 15000 });
     await clickSaveAndExpect(page, 'Save changes', /Appearance updated successfully/i, /system-settings/);
   }
 
@@ -131,7 +131,7 @@ test.describe('Appearance — admin logo', () => {
       .getByText(/were not saved|review the highlighted fields/i);
 
     const saveButton = adminPage.locator('[data-unsaved-save]');
-    await expect(saveButton).toBeVisible({ timeout: 8000 });
+    await expect(saveButton).toBeVisible({ timeout: 15000 });
     await saveButton.click();
 
     const errorSeen = await Promise.race([

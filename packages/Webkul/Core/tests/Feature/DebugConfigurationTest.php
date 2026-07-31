@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Webkul\Core\Http\Middleware\EnableDebugForAllowedIps;
@@ -89,6 +90,27 @@ it('enables debug using forwarded client IP when request comes through a trusted
     } finally {
         Request::setTrustedProxies([], Request::HEADER_X_FORWARDED_FOR);
     }
+});
+
+it('passes the request through with debug off when the configuration is unreadable pre-install', function () {
+    $core = Mockery::mock(app('core'))->makePartial();
+    $core->shouldReceive('getConfigData')->andThrow(
+        new QueryException('mysql', 'select * from core_config', [], new RuntimeException('Base table or view not found'))
+    );
+
+    app()->instance('core', $core);
+
+    config(['app.debug' => false]);
+    config(['debugbar.enabled' => true]);
+
+    $response = (new EnableDebugForAllowedIps)->handle(
+        Request::create('/install', 'GET', server: ['REMOTE_ADDR' => '127.0.0.1']),
+        fn ($request) => response('ok')
+    );
+
+    expect($response->getContent())->toBe('ok')
+        ->and(config('app.debug'))->toBeFalse()
+        ->and(config('debugbar.enabled'))->toBeFalse();
 });
 
 it('does not enable debug when an untrusted client spoofs a forwarded header', function () {

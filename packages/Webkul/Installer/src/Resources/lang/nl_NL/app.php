@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turkse lira (TRY)',
                 'ukrainian-hryvnia'   => 'Oekraïense hryvnia (UAH)',
                 'usd'                 => 'Amerikaanse dollar (USD)',
-                'warning-message'     => 'Let op! De instellingen voor je standaardsysteemtalen en de standaardvaluta zijn permanent en kunnen nooit meer worden gewijzigd.',
+                'warning-message'     => 'De landinstelling en valuta die u hier kiest, worden de initiële standaardwaarden voor het kanaal en het beheerdersaccount. U kunt op elk moment meer landinstellingen en valuta\'s activeren, of deze standaardwaarden wijzigen, via de beheerdersinstellingen.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim-installatie',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label geïnstalleerd',
                 'package-failed'     => '✗ :label mislukt: :message',
                 'package-manual'     => '! :label kan niet automatisch op deze server worden geïnstalleerd (geen shell-toegang). Voer dit uit vanaf een machine met shell-toegang:',
+                'install-failed'     => '✗ Installatie mislukt. Controleer storage/logs/laravel.log voor details.',
+                'stream-interrupted' => '! De verbinding met het installatieprogramma is verbroken. De installatie wordt mogelijk nog voltooid — wacht even en laad deze pagina daarna opnieuw.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Beheerderspaneel',

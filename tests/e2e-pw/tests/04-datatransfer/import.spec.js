@@ -174,7 +174,7 @@ test.describe('UnoPim Import Jobs', () => {
     // advances it to Queued/Processing/Completed almost immediately, so accept
     // any of the tracker states rather than only the transient pending text.
     await expect(
-      adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()
+      adminPage.locator('.overflow-hidden.box-shadow').getByText(/Job queued|Queued|Processing|Completed/i).first()
     ).toBeVisible();
 
     // Cleanup

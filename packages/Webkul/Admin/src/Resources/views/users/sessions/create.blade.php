@@ -129,12 +129,12 @@
             <div class="mt-6 text-center text-xs text-gray-500 dark:text-gray-400">
                 <div>
                     @lang('admin::app.users.sessions.powered-by', [
-                        'unopim' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://unopim.com/" target="_blank">Unopim</a>',
+                        'unopim' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">UnoPim</a>',
                     ])
                 </div>
                 <div>
                     @lang('admin::app.users.sessions.open-source-project-by', [
-                        'webkul' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://webkul.com/" target="_blank">Webkul</a>',
+                        'webkul' => '<a class="text-primary-700 dark:text-primary-400 hover:underline" href="https://webkul.com/" target="_blank" rel="noopener">Webkul</a>',
                     ])
                 </div>
             </div>

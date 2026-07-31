@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira turca (TRY)',
                 'ukrainian-hryvnia'   => 'Hrívnia ucraïnesa (UAH)',
                 'usd'                 => 'Dòlar estatunidenc (USD)',
-                'warning-message'     => 'Atenció! Els ajustos per als idiomes predeterminats i la moneda són permanents i no es poden canviar mai més.',
+                'warning-message'     => 'La configuració regional i la moneda que trieu aquí es converteixen en els valors predeterminats inicials per al canal i el compte d\'administrador. Podeu activar més configuracions regionals i monedes, o canviar aquests valors predeterminats, en qualsevol moment des de la configuració d\'administració.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instal·lació d’UnoPim',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label instal·lat',
                 'package-failed'     => '✗ :label ha fallat: :message',
                 'package-manual'     => '! :label no es pot instal·lar automàticament en aquest servidor (sense accés a la consola). Executa això des d’una màquina amb accés a la consola:',
+                'install-failed'     => '✗ La instal·lació ha fallat. Consulteu storage/logs/laravel.log per a més detalls.',
+                'stream-interrupted' => '! S\'ha perdut la connexió amb l\'instal·lador. És possible que la instal·lació encara s\'estigui completant — espereu un moment i torneu a carregar aquesta pàgina.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panell d’administració',

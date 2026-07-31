@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira Thổ Nhĩ Kỳ (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ukraine (UAH)',
                 'usd'                 => 'Đô la Mỹ (USD)',
-                'warning-message'     => 'Cảnh báo! Cấu hình này sẽ không thể thay đổi sau này.',
+                'warning-message'     => 'Ngôn ngữ và tiền tệ bạn chọn ở đây sẽ trở thành mặc định ban đầu cho kênh và tài khoản quản trị. Bạn có thể kích hoạt thêm ngôn ngữ và tiền tệ, hoặc thay đổi các mặc định này, bất cứ lúc nào trong phần cài đặt quản trị.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Cài đặt UnoPim',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ Đã cài đặt :label',
                 'package-failed'     => '✗ :label thất bại: :message',
                 'package-manual'     => '! :label không thể được cài đặt tự động trên máy chủ này (không có quyền truy cập shell). Hãy chạy lệnh này từ một máy có quyền truy cập shell:',
+                'install-failed'     => '✗ Cài đặt thất bại. Kiểm tra storage/logs/laravel.log để biết chi tiết.',
+                'stream-interrupted' => '! Mất kết nối với trình cài đặt. Quá trình cài đặt có thể vẫn đang hoàn tất — hãy đợi một lát rồi tải lại trang này.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Bảng điều khiển quản trị',
