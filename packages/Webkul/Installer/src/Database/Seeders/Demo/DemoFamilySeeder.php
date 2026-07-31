@@ -16,6 +16,10 @@ class DemoFamilySeeder extends Seeder
 {
     use LoadsDemoData;
 
+    public function __construct(
+        protected DemoProductSeeder $catalog,
+    ) {}
+
     public function run(): void
     {
         $data = $this->demoData('families');
@@ -27,14 +31,58 @@ class DemoFamilySeeder extends Seeder
                 ->whereIn('code', $data['completeness_channels'])
                 ->pluck('id', 'code');
 
+            $axes = $this->axesByFamily();
+
             foreach ($data['families'] as $family) {
                 $familyId = $this->seedFamily($family);
 
-                $this->seedGroupMappings($familyId, $family['groups'], $groupIds, $attributeIds);
+                $groups = $this->withVariantAxes($family['groups'], $axes[$family['code']] ?? []);
+
+                $this->seedGroupMappings($familyId, $groups, $groupIds, $attributeIds);
 
                 $this->seedCompleteness($familyId, $family['completeness'], $attributeIds, $channelIds);
             }
         });
+    }
+
+    /**
+     * Variant axis codes each family's configurables are built from.
+     *
+     * @return array<string, array<int, string>>
+     */
+    protected function axesByFamily(): array
+    {
+        $axes = [];
+
+        foreach ($this->catalog->catalog() as $product) {
+            foreach ($product['axes'] ?? [] as $axis) {
+                $axes[$product['family']][] = $axis;
+            }
+        }
+
+        return array_map(array_unique(...), $axes);
+    }
+
+    /**
+     * A variant axis the family does not carry leaves the configurable
+     * unbuildable in the admin while its value still renders on the product,
+     * so any axis missing from the dataset's own groups is added here.
+     *
+     * @param  array<string, array<int, string>>  $groups
+     * @param  array<int, string>  $axes
+     * @return array<string, array<int, string>>
+     */
+    protected function withVariantAxes(array $groups, array $axes): array
+    {
+        $carried = array_merge(...array_values($groups));
+
+        foreach ($axes as $axis) {
+            if (! in_array($axis, $carried, true)) {
+                $groups['general'][] = $axis;
+            }
+        }
+
+        return $groups;
     }
 
     /**
