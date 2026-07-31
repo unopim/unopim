@@ -12,6 +12,10 @@
     $stickyClasses = $sticky ? 'js-sticky-header sticky -top-3 z-20 -mx-4 -mt-3 border-b border-gray-200 bg-unopim-primary-page px-4 py-2 transition-shadow dark:border-gray-800 dark:bg-cherry-800' : '';
     $headerAttributes = $attributes->merge(['class' => $stickyClasses]);
 
+    if (request()->has('history') && bouncer()->hasPermission('history')) {
+        $saveLabel = null;
+    }
+
     $saveAttributes = new \Illuminate\View\ComponentAttributeBag([
         'type'  => 'submit',
         'class' => 'primary-button',
