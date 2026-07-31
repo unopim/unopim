@@ -2,6 +2,7 @@
 
 namespace Webkul\ProductPassport\Services;
 
+use Illuminate\Contracts\Database\Query\Builder;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
@@ -27,16 +28,14 @@ class PassportFeature
             ->where('code', self::ENABLED)
             ->whereNull('locale_code')
             ->where('value', '1')
-            ->where(fn ($query) => $query
+            ->where(fn (Builder $query) => $query
                 ->whereNull('channel_code')
                 ->orWhereIn('channel_code', ChannelProxy::modelClass()::query()->select('code'))
             )
             ->exists();
     }
 
-    /**
-     * @deprecated Use {@see self::enabledAnywhere()}; the flag was never global-scope only.
-     */
+    #[\Deprecated(message: 'Use enabledAnywhere(); the flag was never global-scope only.')]
     public function globallyEnabled(): bool
     {
         return $this->enabledAnywhere();
