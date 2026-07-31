@@ -12,19 +12,33 @@ const AGENTIC_PIM_TOGGLE = 'input[name="general[magic_ai][agentic_pim][enabled]"
  * The chat widget (and its `.ap-panel`) is only injected server-side when
  * `general.magic_ai.agentic_pim.enabled` is on, so the stacking test needs it
  * flipped on for its own run and restored to whatever it found afterwards.
+ *
+ * The settings page bundles every Magic AI group into one form, and an unrelated
+ * required field elsewhere on it can silently fail native form-validation on
+ * submit — so this posts the single field directly to the same store route the
+ * form itself targets, rather than driving the giant shared form through the UI.
  */
 const setAgenticPimEnabled = async (page, enabled) => {
-  await page.goto('/admin/configuration/general/magic_ai');
+  await page.goto('/admin/magic-ai/settings');
   await page.waitForLoadState('networkidle');
 
   const checkbox = page.locator(AGENTIC_PIM_TOGGLE);
   await expect(checkbox).toHaveCount(1);
 
-  if (await checkbox.isChecked() !== enabled) {
-    await checkbox.click({ force: true });
-    await page.locator('[data-unsaved-save]').click();
-    await page.waitForLoadState('networkidle');
+  if (await checkbox.isChecked() === enabled) {
+    return;
   }
+
+  const token = await page.locator('input[name="_token"]').first().getAttribute('value');
+
+  const response = await page.request.post(page.url(), {
+    form: {
+      _token: token,
+      'general[magic_ai][agentic_pim][enabled]': enabled ? '1' : '0',
+    },
+  });
+
+  expect(response.ok()).toBeTruthy();
 };
 
 const topmostAtPanelCentre = (page) => page.evaluate((sel) => {
@@ -104,12 +118,10 @@ test.describe('datagrid filter category panel stacking', () => {
   });
 
   test('the panel stays reachable while the Agentic PIM panel is docked', async ({ page }) => {
-    const wasEnabled = await (async () => {
-      await page.goto('/admin/configuration/general/magic_ai');
-      await page.waitForLoadState('networkidle');
+    await page.goto('/admin/magic-ai/settings');
+    await page.waitForLoadState('networkidle');
 
-      return page.locator(AGENTIC_PIM_TOGGLE).isChecked();
-    })();
+    const wasEnabled = await page.locator(AGENTIC_PIM_TOGGLE).isChecked();
 
     await setAgenticPimEnabled(page, true);
 
