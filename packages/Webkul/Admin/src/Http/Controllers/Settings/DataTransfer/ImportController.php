@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -22,6 +23,8 @@ use Webkul\DataTransfer\Services\JobHealth;
 
 class ImportController extends Controller
 {
+    use Concerns\DownloadsSampleFile;
+
     const TYPE = 'import';
 
     const IMPORTERS = 'importers';
@@ -651,13 +654,11 @@ class ImportController extends Controller
     }
 
     /**
-     * Download import error report
+     * Download the sample file shipped for an importer type
      */
-    public function downloadSample(string $type)
+    public function downloadSample(?string $type = null): StreamedResponse
     {
-        $importer = config('importers.'.$type);
-
-        return Storage::disk('public')->download($importer['sample_path']);
+        return $this->downloadSampleFile(self::IMPORTERS, $type);
     }
 
     /**

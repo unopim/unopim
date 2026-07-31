@@ -1,3 +1,6 @@
-sku,association_type,related_sku,quantity
-SKU001,bundle_kit,SKU002,2
-SKU001,bundle_kit,SKU003,3
+sku,association_type,related_sku
+simple-product-1,related_products,simple-product-2
+simple-product-1,cross_sells,simple-product-3
+simple-product-2,up_sells,configurable-product-1
+configurable-product-1,related_products,configurable-product-2
+configurable-product-2,cross_sells,simple-product-3

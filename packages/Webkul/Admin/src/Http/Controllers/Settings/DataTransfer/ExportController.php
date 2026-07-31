@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -20,7 +21,11 @@ use Webkul\DataTransfer\Services\JobHealth;
 
 class ExportController extends Controller
 {
+    use Concerns\DownloadsSampleFile;
+
     const TYPE = 'export';
+
+    const EXPORTERS = 'exporters';
 
     /**
      * Create a new controller instance.
@@ -512,13 +517,11 @@ class ExportController extends Controller
     }
 
     /**
-     * Download export error report
+     * Download the sample file shipped for an exporter type
      */
-    public function downloadSample(string $type)
+    public function downloadSample(?string $type = null): StreamedResponse
     {
-        $exporter = config('exporters.'.$type);
-
-        return Storage::download($exporter['sample_path']);
+        return $this->downloadSampleFile(self::EXPORTERS, $type);
     }
 
     /**

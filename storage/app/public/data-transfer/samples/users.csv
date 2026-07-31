@@ -1,3 +1,3 @@
 name,email,image,status,role_name,permission_type,permissions,timezone,ui_locale_code
-User,user@example.com,avatar.jpg,active,Administrator,all,,UTC,en_US
-Editor,editor@example.com,editor.jpg,active,Editor,custom,"dashboard,catalog.products",UTC,en_US
+"Catalog Manager",catalog.manager@example.com,,active,"Catalog Manager",custom,"dashboard,catalog,catalog.products",UTC,en_US
+"Data Operator",data.operator@example.com,,inactive,"Data Operator",custom,"dashboard,data_transfer",UTC,en_US
