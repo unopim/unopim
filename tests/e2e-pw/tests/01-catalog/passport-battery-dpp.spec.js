@@ -428,6 +428,12 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await page.goto('/admin/catalog/passports');
     await closeAgentShell(page);
 
+    const searchInput = page.getByPlaceholder('Search').first();
+    await searchInput.waitFor({ state: 'visible', timeout: 30000 });
+    await searchInput.fill(fixture.sku);
+    await page.keyboard.press('Enter');
+    await page.waitForLoadState('load');
+
     const row = page.locator('div.row').filter({ hasText: fixture.sku }).first();
 
     await expect(row).toBeVisible();
