@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Configuració de publicació',
                 'enabled'                          => 'Activat',
-                'enabled-hint'                     => 'Interruptor principal del nivell de servei públic. Quan està desactivat, cada URL pública de passaport retorna un 404 i el menú de passaports queda ocult.',
+                'enabled-hint'                     => 'Interruptor principal del nivell de servei públic. Quan està desactivat, cada URL pública de passaport retorna un 404. Les pantalles de passaports de l’administració no es veuen afectades: per amagar-les, feu servir la configuració del Passaport Digital de Producte.',
                 'base-url'                         => 'URL base',
                 'base-url-hint'                    => 'Adreça pública on es serveixen els passaports; s\'utilitza per generar codis QR i enllaços per compartir. Deixeu-ho en blanc per utilitzar el domini propi d\'aquest lloc.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

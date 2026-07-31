@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => 'Cache-TTL (sekunder)',
                 'rate-limit'                       => 'Hastighetsgrense (forespørsler/minutt)',
                 'indexable'                        => 'Tillat indeksering fra søkemotorer',
-                'enabled-hint'                     => 'Hovedbryter for det offentlige visningsnivået. Når den er av, returnerer alle offentlige pass-URL-er 404, og passmenyen skjules.',
+                'enabled-hint'                     => 'Hovedbryter for det offentlige visningsnivået. Når den er av, returnerer alle offentlige pass-URL-er 404. Passkjermene i administrasjonen påvirkes ikke — skjul dem med innstillingen Digitalt produktpass.',
                 'base-url-hint'                    => 'Offentlig adresse der pass leveres, brukt til å bygge QR-koder og delbare lenker. La stå tom for å bruke dette nettstedets eget domene.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => 'Hvor lenge et gjengitt offentlig pass mellomlagres før det bygges på nytt. Høyere verdier reduserer belastningen; lavere verdier viser endringer raskere.',

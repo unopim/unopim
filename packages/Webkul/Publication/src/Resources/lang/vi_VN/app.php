@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => 'TTL bộ nhớ đệm (giây)',
                 'rate-limit'                       => 'Giới hạn tốc độ (yêu cầu/phút)',
                 'indexable'                        => 'Cho phép công cụ tìm kiếm lập chỉ mục',
-                'enabled-hint'                     => 'Công tắc chính cho tầng phục vụ công khai. Khi tắt, mọi URL hộ chiếu công khai đều trả về 404 và menu hộ chiếu bị ẩn.',
+                'enabled-hint'                     => 'Công tắc chính cho tầng phục vụ công khai. Khi tắt, mọi URL hộ chiếu công khai đều trả về 404. Các màn hình hộ chiếu trong trang quản trị không bị ảnh hưởng — hãy ẩn chúng bằng cài đặt Hộ chiếu Sản phẩm Số.',
                 'base-url-hint'                    => 'Địa chỉ công khai nơi hộ chiếu được phục vụ, dùng để tạo mã QR và liên kết chia sẻ. Để trống để dùng tên miền của chính trang này.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => 'Thời gian một hộ chiếu công khai đã kết xuất được lưu vào bộ nhớ đệm trước khi được dựng lại. Giá trị cao hơn giảm tải; giá trị thấp hơn phản ánh chỉnh sửa nhanh hơn.',

@@ -415,8 +415,9 @@ test('8.1 - Shows Completeness section heading', async ({ adminPage }) => {
   await expect(heading).toBeVisible();
 });
 
-test('8.2 - Completeness shows channel name (Default)', async ({ adminPage }) => {
-  await expect(adminPage.getByRole('heading', { name: 'Default' })).toBeVisible();
+test('8.2 - Completeness shows channel name (Master Catalog)', async ({ adminPage }) => {
+  // The `default` channel's demo display name is "Master Catalog" (its code stays `default`).
+  await expect(adminPage.getByRole('heading', { name: 'Master Catalog' })).toBeVisible();
 });
 
 test('8.3 - Completeness shows improvement suggestion text', async ({ adminPage }) => {

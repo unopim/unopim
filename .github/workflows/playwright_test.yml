@@ -122,6 +122,10 @@ jobs:
           # login throttle so those legitimate logins don't cascade into 429s. The
           # rate-limit security spec reads this same value to still assert throttling.
           echo "ADMIN_LOGIN_RATE_LIMIT=20" >> .env
+          # The oauth spec requests well over a dozen tokens as the same admin from
+          # the same address, and that limiter keys on `username|ip`, so the 10/min
+          # production default throttles the suite against itself.
+          echo "OAUTH_TOKEN_RATE_LIMIT=100000" >> .env
 
           # The webhook-delivery spec's catcher listens on the runner's loopback;
           # SafeWebhookUrl blocks loopback unless this opt-in is set.

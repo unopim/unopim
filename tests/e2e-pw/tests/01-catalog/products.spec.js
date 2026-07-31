@@ -52,13 +52,59 @@ async function createSimpleProduct(adminPage, sku) {
   return sku;
 }
 
-// Configurable needs a family declaring a variant structure (Electronics has the seeded ones).
+/**
+ * Ensure the `default` family (id 1, guaranteed to exist on any install) carries at
+ * least one variant structure. This environment's seed doesn't include the demo
+ * catalog (no `Electronics`/`audio_electronics` family survives here — see PRODUCT
+ * BUG / environment note in the task report), so Configurable creation is exercised
+ * against `default` instead, mirroring `variant-structure-editor.spec.js`'s own
+ * guarded `ensureStructure()` (same fixture code, so the two specs converge on one
+ * shared structure rather than clobbering each other's).
+ */
+async function ensureVariantStructure(adminPage) {
+  await adminPage.goto('/admin/catalog/attribute-families/edit/1?variants=1', { waitUntil: 'domcontentloaded' });
+  const hasStructure = await adminPage.locator('span[title="Edit"], .icon-edit').first().isVisible({ timeout: 5000 }).catch(() => false);
+  if (hasStructure) {
+    return;
+  }
+
+  const result = await adminPage.evaluate(async () => {
+    const xsrf = decodeURIComponent((document.cookie.match(/XSRF-TOKEN=([^;]+)/) || [])[1] || '');
+    const res = await fetch('/admin/catalog/attribute-families/edit/1/variant-structures', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-XSRF-TOKEN': xsrf,
+      },
+      body: JSON.stringify({
+        _method: 'PUT',
+        structures: [{
+          code: 'e2e_variant_structure',
+          name: 'E2E Variant Structure',
+          levels: 1,
+          axes: { level_1: ['color'] },
+          placements: {},
+        }],
+      }),
+    });
+
+    return { status: res.status, body: await res.text() };
+  });
+
+  if (result.status >= 300) {
+    throw new Error(`variant structure setup failed: ${result.body}`);
+  }
+}
+
 async function createConfigurableProduct(adminPage, sku) {
+  await ensureVariantStructure(adminPage);
   await navigateTo(adminPage, 'products');
   await adminPage.getByRole('button', { name: 'Create Product' }).click();
   await adminPage.waitForLoadState('networkidle');
   await selectMultiselect(adminPage, 'type', 'Configurable');
-  await selectMultiselect(adminPage, 'attribute_family_id', 'Electronics');
+  await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
   await adminPage.locator('input[name="sku"]').fill(sku);
   // Scope to the modal's submit so the grid's pagination "Next" is not matched.
   await adminPage.locator('button[type="submit"]').filter({ hasText: 'Next' }).click();
@@ -330,8 +376,6 @@ test.describe('Configurable Product CRUD', () => {
     const uid = generateUid();
     await adminPage.locator('#name').fill(`Config Product ${uid}`);
     await adminPage.locator('#url_key').fill(`url-${uid}`);
-    // The electronics family requires weight on the configurable parent.
-    await adminPage.locator('#weight').fill('1.5');
     // Multi-currency default channel; fill every #price input.
     {
       const prices = adminPage.locator('[id^="price_"], #price');

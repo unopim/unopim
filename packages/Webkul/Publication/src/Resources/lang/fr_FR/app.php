@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Paramètres de publication',
                 'enabled'                          => 'Activé',
-                'enabled-hint'                     => 'Interrupteur principal du niveau de service public. Lorsqu\'il est désactivé, chaque URL publique de passeport renvoie une erreur 404 et le menu des passeports est masqué.',
+                'enabled-hint'                     => 'Interrupteur principal du niveau de service public. Lorsqu’il est désactivé, chaque URL publique de passeport renvoie une erreur 404. Les écrans de passeports de l’administration ne sont pas affectés : masquez-les avec le paramètre Passeport Numérique de Produit.',
                 'base-url'                         => 'URL de base',
                 'base-url-hint'                    => 'Adresse publique où les passeports sont servis, utilisée pour générer les codes QR et les liens partageables. Laissez vide pour utiliser le domaine propre de ce site.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

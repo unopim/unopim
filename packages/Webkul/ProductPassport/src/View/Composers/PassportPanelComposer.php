@@ -14,6 +14,7 @@ use Webkul\ProductPassport\Services\PassportReadinessService;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationVersionProxy;
 use Webkul\Publication\Models\PublicationViewStatProxy;
+use Webkul\Publication\Services\PublicAccessGate;
 
 /**
  * Computes the locale x status matrix in a fixed number of queries, never one per locale in a loop.
@@ -25,6 +26,7 @@ class PassportPanelComposer
     public function __construct(
         private readonly PassportReadinessService $readiness,
         private readonly PassportFeature $feature,
+        private readonly PublicAccessGate $publicAccess,
     ) {}
 
     public function compose(View $view): void
@@ -161,6 +163,10 @@ class PassportPanelComposer
             'passportHistoryUrl'     => $publication === null ? null : route('admin.catalog.passports.versions', $publication->id),
             'passportEnabled'        => true,
             'passportAutoPublish'    => $this->feature->autoPublishEnabledFor($channel),
+            'passportPublicAccess'   => $this->publicAccess->enabledForChannel($channel->code),
+            'passportSettingsUrl'    => bouncer()->hasPermission('configuration')
+                ? route('admin.configuration.edit', ['general', 'publication'])
+                : null,
         ]);
     }
 

@@ -113,7 +113,7 @@
                 <div class="min-h-screen flex flex-col bg-gray-50 font-inter">
                     <!-- Persistent Cloud Hosting Top Bar (every step) -->
                     <div class="sticky top-0 z-[10050] w-full">
-                        <div class="flex items-center gap-4 px-5 h-12 text-[13.5px] bg-gradient-to-r from-[#5B41D6] to-[#8367F0] text-white">
+                        <div class="flex items-center gap-4 px-5 h-12 text-[13.5px] bg-gradient-to-r from-cloud-start to-cloud-end text-white">
                             <div class="flex items-center gap-3 min-w-0 flex-1">
                                 <span class="inline-flex shrink-0">
                                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
@@ -146,7 +146,7 @@
                                 href="{{ $cloudHostingUrl }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="shrink-0 inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all bg-white text-[#5B41D6] hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(0,0,0,0.18)]"
+                                class="shrink-0 inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all bg-white text-cloud-start hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(0,0,0,0.18)]"
                             >
                                 @lang('installer::app.installer.index.cloud-bar.cta')
 

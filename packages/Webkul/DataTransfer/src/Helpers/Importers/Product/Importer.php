@@ -1107,7 +1107,11 @@ class Importer extends AbstractImporter
         $cacheKey = $rowData['type'].'|'.$structureKey;
 
         if (! isset($this->cachedValidators[$cacheKey])) {
-            $this->cachedValidators[$cacheKey] = Validator::make([], $validationRules);
+            $this->cachedValidators[$cacheKey] = Validator::make([], $validationRules)
+                ->setAttributeNames(array_combine(
+                    array_keys($validationRules),
+                    array_keys($validationRules)
+                ));
         }
 
         $validator = $this->cachedValidators[$cacheKey];

@@ -24,6 +24,8 @@ module.exports = {
 
         extend: {
             colors: {
+                'cloud-start': '#5B41D6',
+                'cloud-end': '#8367F0',
             },
 
             fontFamily: {

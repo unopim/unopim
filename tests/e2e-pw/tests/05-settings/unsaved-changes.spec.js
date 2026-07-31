@@ -125,6 +125,9 @@ test.describe('Unsaved changes bar', () => {
 
     await adminPage.goto('/admin/dashboard', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
 
+    // The sidebar is icon-only by default; its Configuration flyout (and the
+    // System Settings link inside it) only renders on hover.
+    await adminPage.locator('a[href$="/admin/configuration/integrations"]').first().hover();
     await adminPage.locator('a[href$="/admin/configuration/system-settings"]').first().click({ timeout: 15000 });
     await adminPage.locator('a[href$="/admin/configuration/system/system.email"]').first().click({ timeout: 15000 });
 

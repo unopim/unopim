@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => 'TTL cache (secunde)',
                 'rate-limit'                       => 'Limită de rată (cereri/minut)',
                 'indexable'                        => 'Permite indexarea de către motoarele de căutare',
-                'enabled-hint'                     => 'Comutatorul principal pentru nivelul public de servire. Când este dezactivat, fiecare URL public de pașaport returnează 404, iar meniul de pașapoarte este ascuns.',
+                'enabled-hint'                     => 'Comutatorul principal pentru nivelul public de servire. Când este dezactivat, fiecare URL public de pașaport returnează 404. Ecranele de pașapoarte din administrare nu sunt afectate — ascunde-le din setarea Pașaport Digital de Produs.',
                 'base-url-hint'                    => 'Adresa publică unde sunt servite pașapoartele, folosită pentru a crea coduri QR și linkuri care pot fi partajate. Lăsați necompletat pentru a folosi domeniul propriu al acestui site.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => 'Cât timp este păstrat în cache un pașaport public randat înainte de a fi reconstruit. Valorile mai mari reduc încărcarea; valorile mai mici reflectă modificările mai repede.',

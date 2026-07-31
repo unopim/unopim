@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => 'TTL ng Cache (segundo)',
                 'rate-limit'                       => 'Limitasyon sa Bilis (mga kahilingan/minuto)',
                 'indexable'                        => 'Payagan ang pag-index ng mga search engine',
-                'enabled-hint'                     => 'Pangunahing switch para sa pampublikong serving tier. Kapag naka-off, ang bawat pampublikong URL ng passport ay nagbabalik ng 404 at nakatago ang menu ng passport.',
+                'enabled-hint'                     => 'Pangunahing switch para sa pampublikong serving tier. Kapag naka-off, ang bawat pampublikong URL ng passport ay nagbabalik ng 404. Hindi apektado ang mga screen ng passport sa admin — itago ang mga ito gamit ang setting na Digital Product Passport.',
                 'base-url-hint'                    => 'Pampublikong address kung saan ihinahain ang mga passport, ginagamit upang bumuo ng mga QR code at mga link na maibabahagi. Iwanang blangko upang gamitin ang sariling domain ng site na ito.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => 'Gaano katagal naka-cache ang isang na-render na pampublikong passport bago ito muling itayo. Mas mataas na halaga ay nagpapababa ng load; mas mababa ay mas mabilis na naipapakita ang mga pagbabago.',

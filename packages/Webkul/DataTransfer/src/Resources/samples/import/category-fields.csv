@@ -1,0 +1,4 @@
+code,type,locale,name,enable_wysiwyg,section,position,status,is_required,is_unique,validation,regex_pattern,value_per_locale
+banner_note,text,en_US,"Banner Note",0,left,10,1,0,0,,,1
+seo_summary,textarea,en_US,"SEO Summary",1,left,11,1,0,0,,,1
+is_featured,boolean,en_US,Featured,0,right,12,1,0,0,,,0

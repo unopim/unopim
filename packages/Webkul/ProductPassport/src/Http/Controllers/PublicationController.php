@@ -27,6 +27,7 @@ use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationPublishAttempt;
 use Webkul\Publication\Models\PublicationPublishAttemptProxy;
 use Webkul\Publication\Models\PublicationVersionProxy;
+use Webkul\Publication\Services\PublicAccessGate;
 use Webkul\Publication\Services\Publisher;
 
 class PublicationController extends Controller
@@ -34,6 +35,7 @@ class PublicationController extends Controller
     public function __construct(
         private readonly PassportFeature $feature,
         private readonly PassportReadinessService $readiness,
+        private readonly PublicAccessGate $publicAccess,
     ) {}
 
     public function index(): View|JsonResponse|BinaryFileResponse
@@ -60,12 +62,16 @@ class PublicationController extends Controller
      */
     public static function featureEnabled(): bool
     {
-        return resolve(PassportFeature::class)->globallyEnabled();
+        return resolve(PassportFeature::class)->enabledAnywhere();
     }
 
     /**
      * One job dispatch per admin action, not one per locale — the job
      * itself loops requested locales.
+     *
+     * Refuses while the channel's public tier is off: the version would be
+     * minted and every public URL would still answer 404, which reads as a
+     * broken publish rather than the disabled setting it is.
      */
     public function publish(PublishPassportRequest $request, Product $product): JsonResponse
     {
@@ -76,6 +82,12 @@ class PublicationController extends Controller
             403,
             trans('passport::app.catalog.products.edit.passport.publishing-disabled'),
         );
+
+        if (! $this->publicAccess->enabledForChannel($channel->code)) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.public-access-disabled'),
+            ], 422);
+        }
 
         $localeIds = $request->collect('locale_ids')
             ->map(fn ($id): int => (int) $id)
@@ -215,6 +227,12 @@ class PublicationController extends Controller
             trans('passport::app.catalog.products.edit.passport.publishing-disabled'),
         );
 
+        if (! $this->publicAccess->enabledForChannel($channel->code)) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.public-access-disabled'),
+            ], 422);
+        }
+
         $localeIds = $channel->locales->pluck('id')->all();
 
         $productIds = $request->collect('indices')->map(fn ($id): int => (int) $id);
@@ -254,7 +272,8 @@ class PublicationController extends Controller
      * returns immediately regardless of how many rows were selected.
      *
      * Answers 422 when nothing in the selection can publish, so an all-withdrawn
-     * selection reads as the no-op it is rather than a queued success.
+     * selection — or one whose channels have the public tier switched off —
+     * reads as the no-op it is rather than a queued success.
      */
     public function bulkPublish(BulkPublishPassportRequest $request): JsonResponse
     {
@@ -264,18 +283,34 @@ class PublicationController extends Controller
 
         $publicationIds = $request->collect('indices')->map(fn ($id): int => (int) $id)->all();
 
-        $skipped = Publication::query()
+        $publications = PublicationProxy::modelClass()::query()
             ->whereIn('id', $publicationIds)
-            ->whereNotIn('status', PublicationStatus::publishable())
-            ->count();
+            ->with('channel:id,code')
+            ->get(['id', 'channel_id', 'status']);
 
-        if ($skipped === count($publicationIds)) {
+        $publicAccess = $this->publicAccess->enabledByChannel($publications->pluck('channel.code'));
+
+        $reachable = $publications->filter(
+            fn (Publication $publication): bool => $publication->channel !== null
+                && ($publicAccess[$publication->channel->code] ?? false)
+        );
+
+        $publishable = $reachable
+            ->filter(fn (Publication $publication): bool => in_array($publication->status->value, PublicationStatus::publishable(), true))
+            ->pluck('id')
+            ->all();
+
+        $skipped = count($publicationIds) - count($publishable);
+
+        if ($publishable === []) {
             return new JsonResponse([
-                'message' => trans('passport::app.publications.publish-none-publishable', ['count' => $skipped]),
+                'message' => $publications->isNotEmpty() && $reachable->isEmpty()
+                    ? trans('passport::app.publications.public-access-disabled')
+                    : trans('passport::app.publications.publish-none-publishable', ['count' => $skipped]),
             ], 422);
         }
 
-        BulkPublishPassportsJob::dispatch($publicationIds, auth()->guard('admin')->id());
+        BulkPublishPassportsJob::dispatch($publishable, auth()->guard('admin')->id());
 
         return new JsonResponse([
             'message' => $skipped === 0
@@ -399,6 +434,12 @@ class PublicationController extends Controller
      */
     public function republish(RepublishPassportVersionRequest $request, Publication $publication, Publisher $publisher): JsonResponse
     {
+        if (! $this->publicAccess->enabledForChannel($publication->channel?->code)) {
+            return new JsonResponse([
+                'message' => trans('passport::app.publications.public-access-disabled'),
+            ], 422);
+        }
+
         $source = PublicationVersionProxy::modelClass()::query()
             ->where('publication_id', $publication->id)
             ->findOrFail($request->integer('version_id'));

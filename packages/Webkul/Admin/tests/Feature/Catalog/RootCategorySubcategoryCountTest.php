@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Category\Models\Category;
 use Webkul\Installer\Database\Seeders\Category\CategoryTableSeeder;
-use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
 
 function seedInstallerRoot(): object
 {
@@ -103,10 +103,12 @@ it('matches the real descendant count for the demo seeded tree', function () {
 
     $root = seedInstallerRoot();
 
-    resolve(CategoryDemoTableSeeder::class)->run();
+    resolve(DemoCategorySeeder::class)->run();
 
-    expect(realDescendantCount((int) $root->id))->toBe(13)
-        ->and(renderedSubcategoryCounts(browseTreeHtml()))->toBe([13]);
+    $expected = count((require base_path('packages/Webkul/Installer/src/Database/Data/Demo/categories.php'))['tree']);
+
+    expect(realDescendantCount((int) $root->id))->toBe($expected)
+        ->and(renderedSubcategoryCounts(browseTreeHtml()))->toBe([$expected]);
 });
 
 it('repairs a legacy tree whose bounds were left with gaps', function () {
@@ -114,10 +116,10 @@ it('repairs a legacy tree whose bounds were left with gaps', function () {
 
     $root = seedInstallerRoot();
 
-    resolve(CategoryDemoTableSeeder::class)->run();
+    resolve(DemoCategorySeeder::class)->run();
 
     DB::table('categories')->where('id', $root->id)->update(['_rgt' => 40]);
-    DB::table('categories')->where('code', 'clothes')->update(['_lft' => 14, '_rgt' => 19]);
+    DB::table('categories')->where('code', 'apparel')->update(['_lft' => 14, '_rgt' => 19]);
 
     expect(renderedSubcategoryCounts(browseTreeHtml()))->toBe([19]);
 

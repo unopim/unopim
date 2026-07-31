@@ -2,6 +2,20 @@ const { test, expect } = require('../../utils/fixtures');
 const { clickSave } = require('../../utils/helpers');
 
 /**
+ * Click the first selectable option in an already-open vue-multiselect
+ * dropdown. Channel display names are seed data (the "default"-coded
+ * channel's name has read "Default", "Master Catalog", etc. across reseeds
+ * of this environment) — never assume one; whichever channel renders first
+ * is enough to exercise the assignment.
+ */
+async function selectFirstOpenOption(page) {
+  await page
+    .locator('.multiselect__content-wrapper li.multiselect__element:not(.multiselect__element--disabled)')
+    .first()
+    .click();
+}
+
+/**
  * Helper: Navigate to the Default family's Completeness tab with all rows visible.
  */
 async function goToDefaultFamilyCompleteness(adminPage) {
@@ -95,11 +109,16 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 
-    // Find a multiselect with "Select option" (no channel yet) and assign Default
+    // Find a multiselect with "Select option" (no channel yet) and assign the
+    // first available channel. Centered rather than minimal scroll: a row
+    // scrolled to just below the viewport edge lands under the page's sticky
+    // header, which then intercepts clicks on the option list (see PRODUCT
+    // BUG in the task report).
     const unassignedSelect = adminPage.locator('.multiselect__tags', { hasText: 'Select option' }).first();
     if (await unassignedSelect.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await unassignedSelect.evaluate((el) => el.scrollIntoView({ block: 'center' }));
       await unassignedSelect.click();
-      await adminPage.getByRole('option', { name: 'Default' }).first().click();
+      await selectFirstOpenOption(adminPage);
     } else {
       // All already assigned — toggle the first select by removing a tag then re-adding
       const firstSelect = adminPage.locator('.multiselect__tags').first();
@@ -107,7 +126,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
       // Re-open the same multiselect and assign a channel back
       await firstSelect.click();
-      await adminPage.getByRole('option', { name: 'Default' }).first().click();
+      await selectFirstOpenOption(adminPage);
     }
     await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
   });
@@ -128,8 +147,9 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     } else {
       // Assign one first, then deselect
       const unassignedSelect = adminPage.locator('.multiselect__tags', { hasText: 'Select option' }).first();
+      await unassignedSelect.evaluate((el) => el.scrollIntoView({ block: 'center' }));
       await unassignedSelect.click();
-      await adminPage.getByRole('option', { name: 'Default' }).first().click();
+      await selectFirstOpenOption(adminPage);
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
       // Now deselect
       await adminPage.locator('.multiselect__tag-icon').first().click();
@@ -145,16 +165,20 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 20000 });
 
     // Click the first available multiselect to assign a channel
-    await adminPage.locator('input[name="channel_requirements"]').locator('..').locator('.multiselect__tags').first().click();
-    // Try to assign Default channel (may already be assigned)
-    const defaultOption = adminPage.getByRole('option', { name: 'Default' }).first();
-    if (await defaultOption.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await defaultOption.click();
+    const channelSelect = adminPage.locator('input[name="channel_requirements"]').locator('..').locator('.multiselect__tags').first();
+    await channelSelect.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    await channelSelect.click();
+    // Try to assign a channel (every channel may already be assigned to this row)
+    const anyOption = adminPage
+      .locator('.multiselect__content-wrapper li.multiselect__element:not(.multiselect__element--disabled)')
+      .first();
+    if (await anyOption.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await anyOption.click();
       await expect(adminPage.locator('#app').getByText('Completeness updated successfully').first()).toBeVisible();
     } else {
-      // Default already assigned — close the dropdown and try a different channel
+      // Every channel already assigned — close the dropdown and verify the
+      // multiselect carries a tag for it.
       await adminPage.keyboard.press('Escape');
-      // Just verify the multiselect has a tag (channel is assigned)
       await expect(adminPage.locator('.multiselect__tag').first()).toBeVisible();
     }
   });

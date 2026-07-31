@@ -1,10 +1,57 @@
 <?php
 
 use Illuminate\Support\Facades\Artisan;
-use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
-use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
-use Webkul\Installer\Database\Seeders\ProductTableSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoAssociationSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoAttributeSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoCoreSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoJobSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoMediaSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoOrganisationSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoPassportSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoWorkspaceSeeder;
 use Webkul\Installer\Helpers\DemoDataInstaller;
+
+/**
+ * The seeders in the order DemoDataInstaller must run them: configuration
+ * before catalog, catalog before anything that links to it.
+ */
+function demoSeederOrder(): array
+{
+    return [
+        DemoCoreSeeder::class,
+        DemoAttributeSeeder::class,
+        DemoFamilySeeder::class,
+        DemoCategorySeeder::class,
+        DemoMediaSeeder::class,
+        DemoProductSeeder::class,
+        DemoAssociationSeeder::class,
+        DemoPassportSeeder::class,
+        DemoWorkspaceSeeder::class,
+        DemoOrganisationSeeder::class,
+        DemoJobSeeder::class,
+    ];
+}
+
+/**
+ * Replace every demo seeder with a spy that records the order it ran in.
+ */
+function bindDemoSeederSpies(array &$calls): void
+{
+    foreach (demoSeederOrder() as $class) {
+        app()->instance($class, new class($calls, $class)
+        {
+            public function __construct(private array &$calls, private string $name) {}
+
+            public function run(): void
+            {
+                $this->calls[] = $this->name;
+            }
+        });
+    }
+}
 
 /**
  * Returns a DemoDataInstaller whose idempotency probe is hard-coded.
@@ -34,24 +81,8 @@ function demoInstaller(bool $alreadySeeded, bool $familyHasGroups = true): DemoD
 
 describe('DemoDataInstaller::seed (issue #794)', function () {
     it('runs every demo seeder in order, reports each step, and returns success', function () {
-        // Replace the three demo seeders with no-op spies so the test does not
-        // touch the JSON fixtures (slow) and we can verify call order.
         $calls = [];
-        foreach ([
-            DemoExtrasTableSeeder::class,
-            CategoryDemoTableSeeder::class,
-            ProductTableSeeder::class,
-        ] as $class) {
-            app()->instance($class, new class($calls, $class)
-            {
-                public function __construct(private array &$calls, private string $name) {}
-
-                public function run(): void
-                {
-                    $this->calls[] = $this->name;
-                }
-            });
-        }
+        bindDemoSeederSpies($calls);
 
         // Stub elasticsearch off and queue default to sync to avoid touching
         // the real queue/ES while still exercising recalculateCompleteness.
@@ -68,19 +99,16 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         });
 
         expect($result)->toBe(['success' => true])
-            ->and($calls)->toBe([
-                DemoExtrasTableSeeder::class,
-                CategoryDemoTableSeeder::class,
-                ProductTableSeeder::class,
-            ])
-            ->and($messages)->toContain('Seeding demo extras (channels, attributes, families, core config, ...)...')
+            ->and($calls)->toBe(demoSeederOrder())
+            ->and($messages)->toContain('Seeding demo attributes...')
             ->and($messages)->toContain('Seeding demo categories...')
-            ->and($messages)->toContain('Seeding sample products...')
+            ->and($messages)->toContain('Seeding demo catalog...')
+            ->and($messages)->toContain('Seeding product associations...')
             ->and($messages)->toContain('Recalculating product completeness...');
     });
 
     it('reports the seeder failure message instead of bubbling the exception', function () {
-        app()->instance(DemoExtrasTableSeeder::class, new class
+        app()->instance(DemoCoreSeeder::class, new class
         {
             public function run(): void
             {
@@ -95,22 +123,8 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
     });
 
     it('short-circuits with skipped=true when demo data is already present', function () {
-        $invoked = false;
-        foreach ([
-            DemoExtrasTableSeeder::class,
-            CategoryDemoTableSeeder::class,
-            ProductTableSeeder::class,
-        ] as $class) {
-            app()->instance($class, new class($invoked)
-            {
-                public function __construct(private bool &$invoked) {}
-
-                public function run(): void
-                {
-                    $this->invoked = true;
-                }
-            });
-        }
+        $calls = [];
+        bindDemoSeederSpies($calls);
 
         $messages = [];
         $result = demoInstaller(alreadySeeded: true)->seed(function (string $message) use (&$messages): void {
@@ -118,27 +132,13 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         });
 
         expect($result)->toBe(['success' => true, 'skipped' => true])
-            ->and($invoked)->toBeFalse()
+            ->and($calls)->toBe([])
             ->and($messages)->toContain('Demo data is already seeded; skipping. Pass --force to re-seed.');
     });
 
     it('re-seeds even when demo data is already present if force=true', function () {
         $calls = [];
-        foreach ([
-            DemoExtrasTableSeeder::class,
-            CategoryDemoTableSeeder::class,
-            ProductTableSeeder::class,
-        ] as $class) {
-            app()->instance($class, new class($calls, $class)
-            {
-                public function __construct(private array &$calls, private string $name) {}
-
-                public function run(): void
-                {
-                    $this->calls[] = $this->name;
-                }
-            });
-        }
+        bindDemoSeederSpies($calls);
 
         config(['elasticsearch.enabled' => 'false']);
         Artisan::shouldReceive('registerCommand')->andReturnNull();
@@ -150,24 +150,12 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         $result = demoInstaller(alreadySeeded: true)->seed(null, force: true);
 
         expect($result)->toBe(['success' => true])
-            ->and($calls)->toBe([
-                DemoExtrasTableSeeder::class,
-                CategoryDemoTableSeeder::class,
-                ProductTableSeeder::class,
-            ]);
+            ->and($calls)->toBe(demoSeederOrder());
     });
 
     it('returns success=false when the default attribute family has no group mappings after seeding', function () {
-        foreach ([
-            DemoExtrasTableSeeder::class,
-            CategoryDemoTableSeeder::class,
-            ProductTableSeeder::class,
-        ] as $class) {
-            app()->instance($class, new class
-            {
-                public function run(): void {}
-            });
-        }
+        $calls = [];
+        bindDemoSeederSpies($calls);
 
         config(['elasticsearch.enabled' => 'false']);
         Artisan::shouldReceive('registerCommand')->andReturnNull();
@@ -183,16 +171,8 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
     });
 
     it('also reindexes elasticsearch when it is enabled', function () {
-        foreach ([
-            DemoExtrasTableSeeder::class,
-            CategoryDemoTableSeeder::class,
-            ProductTableSeeder::class,
-        ] as $class) {
-            app()->instance($class, new class
-            {
-                public function run(): void {}
-            });
-        }
+        $calls = [];
+        bindDemoSeederSpies($calls);
 
         config(['elasticsearch.enabled' => 'true']);
 

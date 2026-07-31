@@ -1,0 +1,2 @@
+name,email,status,role_name,timezone,ui_locale_code
+"Data Operator",data.operator@example.com,inactive,"Data Operator",UTC,en_US

@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Fișier exemplu',
+        'variants'      => 'Exemplu de variante',
+        'multi-locale'  => 'Exemplu multilingv',
+        'delete'        => 'Exemplu de ștergere',
+        'custom-fields' => 'Exemplu de câmpuri personalizate',
+        'with-images'   => 'Exemplu cu imagini (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produse',

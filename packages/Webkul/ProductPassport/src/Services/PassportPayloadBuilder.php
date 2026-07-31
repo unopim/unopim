@@ -231,8 +231,30 @@ class PassportPayloadBuilder implements PayloadBuilder
             'select'                  => $this->resolveOptionLabels($attribute, [(string) $value])[0] ?? (string) $value,
             'price'                   => (string) (is_array($value) ? ($value[$channelCode] ?? reset($value) ?: '') : $value),
             'boolean'                 => in_array(strtolower((string) $value), ['true', '1'], true) ? 'true' : 'false',
-            default                   => (string) $value,
+            'measurement'             => $this->formatMeasurement($value),
+            default                   => is_array($value) ? implode(', ', array_map(strval(...), $value)) : (string) $value,
         };
+    }
+
+    /**
+     * Measurement values are stored as an amount/unit structure, so a bare cast
+     * would raise "array to string conversion" and abort the publish.
+     */
+    private function formatMeasurement(mixed $value): string
+    {
+        if (! is_array($value)) {
+            return (string) $value;
+        }
+
+        $amount = $value['amount'] ?? $value['value'] ?? null;
+
+        if ($amount === null || $amount === '') {
+            return '';
+        }
+
+        $unit = $value['symbol'] ?? $value['unit'] ?? '';
+
+        return trim($amount.' '.$unit);
     }
 
     /**

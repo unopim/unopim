@@ -43,8 +43,8 @@ async function gridRow(page, sku) {
 /** Click a row action by title, confirm the modal, and return the flash payloads emitted. */
 async function runRowAction(page, sku, title) {
   await page.goto('/admin/catalog/passports', { waitUntil: 'domcontentloaded' });
-  await page.getByRole('textbox', { name: 'Search' }).fill(sku);
-  await page.getByRole('textbox', { name: 'Search' }).press('Enter');
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(sku);
+  await page.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
 
   const row = page.locator('.row', { hasText: sku }).first();
   await row.locator(`span[title='${title}']`).waitFor({ state: 'visible', timeout: 15000 });

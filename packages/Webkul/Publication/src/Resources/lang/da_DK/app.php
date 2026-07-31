@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Udgivelsesindstillinger',
                 'enabled'                          => 'Aktiveret',
-                'enabled-hint'                     => 'Hovedafbryder for det offentlige visningslag. Når det er slået fra, returnerer hver offentlig pas-URL 404, og pas-menuen skjules.',
+                'enabled-hint'                     => 'Hovedafbryder for det offentlige visningslag. Når det er slået fra, returnerer hver offentlig pas-URL 404. Pas-skærmene i administrationen påvirkes ikke — skjul dem med indstillingen Digitalt Produktpas.',
                 'base-url'                         => 'Basis-URL',
                 'base-url-hint'                    => 'Offentlig adresse, hvor pas serveres; bruges til at opbygge QR-koder og delbare links. Lad stå tomt for at bruge dette websteds eget domæne.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

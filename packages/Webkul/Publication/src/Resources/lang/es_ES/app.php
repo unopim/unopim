@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Configuración de publicación',
                 'enabled'                          => 'Activado',
-                'enabled-hint'                     => 'Interruptor principal del nivel de servicio público. Cuando está desactivado, cada URL pública de pasaporte devuelve un 404 y el menú de pasaportes se oculta.',
+                'enabled-hint'                     => 'Interruptor principal del nivel de servicio público. Cuando está desactivado, cada URL pública de pasaporte devuelve un 404. Las pantallas de pasaportes del panel de administración no se ven afectadas: ocúltalas con la configuración de Pasaporte Digital de Producto.',
                 'base-url'                         => 'URL base',
                 'base-url-hint'                    => 'Dirección pública donde se sirven los pasaportes; se utiliza para generar códigos QR y enlaces para compartir. Déjelo en blanco para usar el dominio propio de este sitio.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

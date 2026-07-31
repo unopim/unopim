@@ -25,9 +25,12 @@ test.describe('admin ajax navigation', () => {
 
         // Guard against script re-execution regressions (redeclarations,
         // templates executed as JS, libraries not ready) during navigation.
+        // Network resource failures (missing/broken product images, etc.) also
+        // surface as console "error" entries but are unrelated to script
+        // re-execution, so they are excluded here.
         const consoleErrors = [];
         page.on('console', (message) => {
-            if (message.type() === 'error') {
+            if (message.type() === 'error' && ! message.text().startsWith('Failed to load resource')) {
                 consoleErrors.push(message.text());
             }
         });

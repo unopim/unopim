@@ -1,0 +1,2 @@
+name,description,permission_type,permissions
+"Data Operator","Runs imports and exports only",custom,"dashboard,data_transfer"

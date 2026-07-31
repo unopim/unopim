@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => 'TTL da cache (segundos)',
                 'rate-limit'                       => 'Limite de taxa (pedidos/minuto)',
                 'indexable'                        => 'Permitir indexação por motores de pesquisa',
-                'enabled-hint'                     => 'Interruptor principal da camada de disponibilização pública. Quando desativado, todos os URLs de passaporte públicos devolvem 404 e o menu de passaportes fica oculto.',
+                'enabled-hint'                     => 'Interruptor principal da camada de disponibilização pública. Quando desativado, todos os URLs de passaporte públicos devolvem 404. Os ecrãs de passaporte na administração não são afetados — oculte-os com a definição Passaporte Digital de Produto.',
                 'base-url-hint'                    => 'Endereço público onde os passaportes são disponibilizados, utilizado para criar códigos QR e ligações partilháveis. Deixe em branco para utilizar o próprio domínio deste site.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => 'Durante quanto tempo um passaporte público renderizado fica em cache antes de ser reconstruído. Valores mais altos reduzem a carga; valores mais baixos refletem as edições mais depressa.',

@@ -21,6 +21,7 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\Product\Repositories\ProductRepository;
 
 require __DIR__.'/../../../vendor/autoload.php';
 
@@ -122,7 +123,18 @@ if ($product === null) {
         'values'              => $values,
     ]);
 } else {
-    $product->update(['attribute_family_id' => $family->id, 'values' => $values]);
+    // A plain `$product->update(['values' => ...])` silently no-ops on a JSON-cast
+    // column here: Eloquent's dirty-check on re-run doesn't see the array as
+    // changed, so the write is dropped from the UPDATE and `values` stays whatever
+    // it was. The repository's `updateWithValues()` goes through the product type's
+    // own update path, which does mark it dirty and persists correctly — the same
+    // route a real product-edit save takes.
+    $product->update(['attribute_family_id' => $family->id]);
+
+    app(ProductRepository::class)->updateWithValues(
+        ['values' => $values],
+        $product->id,
+    );
 }
 
 foreach ([

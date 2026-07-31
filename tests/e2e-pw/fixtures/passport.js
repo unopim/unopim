@@ -310,18 +310,41 @@ exports.passportLocaleMap = passportLocaleMap;
 /**
  * The signed operator/authority links and QR carrier link the passport panel minted for a locale row,
  * read from the product-edit panel DOM after publishing. Only present once a version is live.
+ *
+ * The row's actions live behind an "Actions" dropdown (`x-admin::dropdown`, teleported), so the menu
+ * items are not descendants of the row (or even of `#passport-panel`) once opened — open the row's
+ * dropdown first, then read the teleported items from the document.
  * @returns {Promise<{operator: string|null, authority: string|null, carrier: string|null}>}
  */
 async function passportRowLinks(page, localeCode) {
   await page.locator('#passport-panel').waitFor({ state: 'attached', timeout: 20000 });
 
-  return page.evaluate((code) => {
-    const tr = document.querySelector(`#passport-panel tr[data-locale-code="${code}"]`);
-    if (!tr) {
-      return { operator: null, authority: null, carrier: null };
-    }
+  // The passport table lives inside a product.section-drawer, which starts
+  // closed (`v-show="isOpen"`); open it via its section-card toggle before
+  // interacting with anything inside.
+  if (! (await page.locator('#passport-panel').isVisible())) {
+    // Two elements match this title: an in-form DPP fields accordion and the
+    // sidebar section-card that opens the drawer (the one offering "View").
+    await page.locator('[role="button"]').filter({ hasText: 'Digital Product Passport' })
+      .filter({ hasText: 'View' })
+      .first()
+      .click();
+    await page.locator('#passport-panel').waitFor({ state: 'visible', timeout: 10000 });
+  }
+
+  const row = page.locator(`#passport-panel tr[data-locale-code="${localeCode}"]`);
+  const toggle = row.locator('button.icon-chevron-down');
+
+  if (await toggle.count() === 0) {
+    return { operator: null, authority: null, carrier: null };
+  }
+
+  await toggle.first().click();
+  await page.locator('.passport-copy-link-btn, a[download]').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+
+  const links = await page.evaluate(() => {
     const linkByLabel = (needle) => {
-      const btn = [...tr.querySelectorAll('.passport-copy-link-btn')]
+      const btn = [...document.querySelectorAll('.passport-copy-link-btn')]
         .find((b) => (b.dataset.label || '').toLowerCase().includes(needle));
 
       return btn ? btn.dataset.link : null;
@@ -330,9 +353,13 @@ async function passportRowLinks(page, localeCode) {
     return {
       operator: linkByLabel('operator'),
       authority: linkByLabel('authority'),
-      carrier: tr.querySelector('a[download]')?.getAttribute('href') ?? null,
+      carrier: document.querySelector('a[download]')?.getAttribute('href') ?? null,
     };
-  }, localeCode);
+  });
+
+  await page.keyboard.press('Escape');
+
+  return links;
 }
 exports.passportRowLinks = passportRowLinks;
 

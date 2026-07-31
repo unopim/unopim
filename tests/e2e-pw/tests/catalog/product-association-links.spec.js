@@ -123,47 +123,54 @@ async function addAssociationTypeField(page, { name, code, type, validation, req
 /**
  * Idempotent precondition: ensures `bundle_kit` (with a required, numeric
  * `quantity` field) exists, creating it via the admin UI only if it isn't
- * already there. Never deletes it — `association-types.spec.js` owns that
- * type's full CRUD lifecycle test independently; this spec only needs the
- * type to exist as a fixture.
+ * already there, and adding the `quantity` field only if it isn't already
+ * there either (a previous, interrupted run can leave the type created but
+ * still fieldless — the grid's own search is used rather than scanning the
+ * unfiltered first page, which silently misses rows once enough concurrent
+ * fixtures push `bundle_kit` past page 1). Never deletes it —
+ * `association-types.spec.js` owns that type's full CRUD lifecycle test
+ * independently; this spec only needs the type (with its field) to exist.
  */
 async function ensureBundleKitAssociationTypeExists(page) {
 	await page.goto(ASSOCIATION_TYPES_INDEX_URL, { waitUntil: 'load' });
+	await page.waitForLoadState('networkidle');
 
-	// Polls the unfiltered grid rather than searching it: `isVisible()` reads
-	// the DOM once without waiting, and the DataGrid's filter round-trip
-	// outlasts the fixed sleep in `searchInDataGrid()`, so the check raced to
-	// false and tried to create `bundle_kit` a second time.
-	let alreadyExists = true;
+	await page.getByRole('textbox', { name: 'Search' }).first().fill(BUNDLE_KIT_CODE);
+	await page.keyboard.press('Enter');
+	await expect(page.locator('#app').getByText(/\d+ Results?/)).toBeVisible({ timeout: 15000 });
 
-	try {
-		await expect(page.getByText(BUNDLE_KIT_CODE, { exact: true }).first()).toBeVisible({ timeout: 8000 });
-	} catch {
-		alreadyExists = false;
-	}
+	const editIcon = page.locator('span[title="Edit"]').first();
+	const alreadyExists = await editIcon.isVisible({ timeout: 3000 }).catch(() => false);
 
 	if (alreadyExists) {
-		return;
+		await editIcon.click();
+	} else {
+		await page.getByRole('button', { name: 'Create Association Type' }).click();
+
+		const createModal = page.locator('form')
+			.filter({ has: page.getByRole('button', { name: 'Save Association Type' }) })
+			.last();
+
+		await createModal.getByRole('textbox', { name: 'Enter Name' }).fill(BUNDLE_KIT_NAME);
+		await createModal.getByRole('textbox', { name: 'Enter Code' }).fill(BUNDLE_KIT_CODE);
+		await createModal.getByRole('button', { name: 'Save Association Type' }).click();
 	}
 
-	await page.getByRole('button', { name: 'Create Association Type' }).click();
-
-	const createModal = page.locator('form')
-		.filter({ has: page.getByRole('button', { name: 'Save Association Type' }) })
-		.last();
-
-	await createModal.getByRole('textbox', { name: 'Enter Name' }).fill(BUNDLE_KIT_NAME);
-	await createModal.getByRole('textbox', { name: 'Enter Code' }).fill(BUNDLE_KIT_CODE);
-	await createModal.getByRole('button', { name: 'Save Association Type' }).click();
-
 	await expect(page).toHaveURL(/\/admin\/catalog\/association-types\/edit\//);
+	await page.waitForLoadState('networkidle');
 
-	// Locale name inputs have no accessible label; fill every active locale.
-	const nameInputs = page.locator('input[name$="\\[name\\]"]');
-	const localeCount = await nameInputs.count();
+	// The create modal already set the current locale's name (`{currentLocale}[name]`
+	// on `create.blade.php`), which is all the controller requires — an empty locale
+	// falls back to the type's code. The edit page's own "Label" field is a
+	// `v-translatable-field`: one visible input bound to whichever locale the
+	// switcher has selected, with every other locale's value living in a hidden
+	// input (`input[name$="[name]"]`) that Playwright can't `fill()` directly, so
+	// there's nothing further to do here.
 
-	for (let i = 0; i < localeCount; i++) {
-		await nameInputs.nth(i).fill(BUNDLE_KIT_NAME);
+	const hasQuantityField = await page.getByText('quantity', { exact: true }).first().isVisible({ timeout: 3000 }).catch(() => false);
+
+	if (hasQuantityField) {
+		return;
 	}
 
 	await addAssociationTypeField(page, {
@@ -297,9 +304,13 @@ test.describe('Product Edit — rich association Links (bundle_kit custom type)'
 
 		const bundleKitTab = adminPage.getByRole('tab', { name: BUNDLE_KIT_NAME });
 
-		const addProductButton = adminPage
-			.locator('button.secondary-button:visible')
-			.filter({ hasText: 'Add' });
+		// The panel's own "Add Association Type" trigger is always rendered (even
+		// with zero types attached), so the per-type "Add" button (added once a
+		// type tab exists) needs an exact accessible-name match to stay
+		// unambiguous — `filter({ hasText: /^Add$/ })` tests unnormalized
+		// `textContent`, which still carries the Blade template's indentation
+		// whitespace and never matches.
+		const addProductButton = adminPage.getByRole('button', { name: 'Add', exact: true });
 
 		const pickerTitle = adminPage.getByText('Select Products', { exact: true });
 
@@ -327,6 +338,25 @@ test.describe('Product Edit — rich association Links (bundle_kit custom type)'
 			await test.step('bundle_kit appears as a dynamic association type on the Links panel', async () => {
 				// The dev Debugbar swallows real pointer clicks at the page bottom.
 				await associationsCard.evaluate((el) => el.click());
+
+				// `getAssociationTypesForView()` (ProductController) only returns
+				// types the product ALREADY links products under, so a brand-new
+				// product's panel starts with zero tabs — bundle_kit has to be
+				// attached via the type-search drawer before its tab exists.
+				await adminPage.getByRole('button', { name: 'Add Association Type', exact: true }).click();
+
+				const typeSearchDrawer = adminPage.locator('.fixed').filter({ hasText: 'Select All' }).last();
+
+				// Not `getByPlaceholder('Search by name or code')` — PRODUCT BUG:
+				// `:placeholder="@json(trans(...))"` on this input (type-search.blade.php)
+				// double-quote-collides with the surrounding HTML attribute quotes, so the
+				// rendered DOM never gets a real `placeholder` attribute (see task report).
+				const searchInput = typeSearchDrawer.locator('input[type="text"]').first();
+				await searchInput.fill(BUNDLE_KIT_CODE);
+				await adminPage.waitForTimeout(600);
+
+				await typeSearchDrawer.locator('[role="checkbox"]').filter({ hasText: BUNDLE_KIT_NAME }).first().click();
+				await typeSearchDrawer.getByText('Add', { exact: true }).click();
 
 				await expect(bundleKitTab).toBeVisible();
 

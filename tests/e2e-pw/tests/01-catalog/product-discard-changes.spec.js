@@ -8,17 +8,33 @@ const { clickSave, navigateTo, generateUid, searchInDataGrid, clickEditOnRow } =
 const bar = (page) => page.getByText('You have unsaved changes');
 
 async function confirmDiscard(page) {
-  /** force: the unsaved bar keeps animating, so actionability never settles. */
-  await page.getByRole('button', { name: 'Discard' }).click({ force: true });
-  await page.locator('button.danger-button').first().click({ force: true }).catch(() => {});
+  /**
+   * The bar slides in over a 200ms CSS transition (`.unsaved-bar-enter-active`
+   * in app.css); `force: true` skips Playwright's own actionability retries and
+   * clicks at whatever coordinate the button is mid-flight, which is often still
+   * off-screen (`bottom: 0` + an in-flight `translateY`) — a genuine "outside of
+   * viewport" failure, not a stale-selector issue. A plain click retries until the
+   * transition settles, which resolves well inside the default timeout.
+   */
+  await page.getByRole('button', { name: 'Discard' }).click();
+  await page.locator('button.danger-button').first().click().catch(() => {});
 }
 
-async function createSimpleProduct(adminPage, sku) {
+async function createSimpleProduct(adminPage, sku, familyIndex = 0) {
   await navigateTo(adminPage, 'products');
-  await adminPage.getByRole('button', { name: 'Create Product' }).click();
+  await adminPage.getByRole('button', { name: 'Create Product', exact: true }).click();
   await adminPage.waitForLoadState('networkidle');
   await selectFirstOption(adminPage, 'type', 'Simple');
-  await selectFirstOption(adminPage, 'attribute_family_id');
+
+  const familyWrapper = adminPage.locator('input[name="attribute_family_id"]').locator('..');
+  await familyWrapper.locator('.multiselect__tags').click();
+  await familyWrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
+  await familyWrapper
+    .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
+    .nth(familyIndex)
+    .click();
+  await adminPage.keyboard.press('Escape');
+
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');
   await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\//, { waitUntil: 'domcontentloaded', timeout: 30000 });
@@ -52,26 +68,83 @@ async function deleteProductBySku(adminPage, sku) {
   await adminPage.waitForLoadState('networkidle').catch(() => {});
 }
 
+/**
+ * Not every family's first non-type/family multiselect necessarily has any
+ * selectable option (e.g. a fresh install with no tax categories seeded
+ * leaves `tax_category_id` empty), so this opens each candidate in DOM order
+ * until it finds one that actually offers something to pick, rather than
+ * assuming the very first one does.
+ */
+async function findMultiselectWithOptions(page) {
+  const candidates = page
+    .locator('.unsaved-root .multiselect')
+    .filter({ hasNot: page.locator('input[name="type"], input[name="attribute_family_id"]') });
+
+  const count = await candidates.count();
+
+  for (let i = 0; i < count; i++) {
+    const candidate = candidates.nth(i);
+
+    if (!(await candidate.isVisible({ timeout: 3000 }).catch(() => false))) {
+      continue;
+    }
+
+    await candidate.locator('.multiselect__tags').click();
+    await candidate.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
+
+    // `isVisible()` is an instant, non-retrying snapshot (unlike `waitFor`/`expect`),
+    // so it can race the dropdown's options rendering a tick after the click —
+    // `waitFor` actually polls until the option appears or the timeout elapses.
+    const hasOption = await candidate
+      .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
+      .first()
+      .waitFor({ state: 'visible', timeout: 2000 })
+      .then(() => true)
+      .catch(() => false);
+
+    if (hasOption) {
+      return candidate;
+    }
+
+    await page.keyboard.press('Escape');
+  }
+
+  return null;
+}
+
 test.describe('Product edit — Discard reverts rich fields', () => {
   test('multiselect edit is reverted by Discard', async ({ adminPage }) => {
-    const sku = `discard-ms-${generateUid()}`;
-    await createSimpleProduct(adminPage, sku);
+    // The very first family option (typically `default`) can be a bare fixture
+    // family with no populated multiselect attribute of its own (e.g. a fresh
+    // install with no tax categories leaves `tax_category_id` optionless) — try
+    // a handful of families in listed order until one actually offers a
+    // selectable option, rather than assuming the first one does.
+    const MAX_FAMILY_ATTEMPTS = 6;
 
-    // First multiselect inside the tracked form, excluding the top type/family selects.
-    const msWrapper = adminPage
-      .locator('.unsaved-root .multiselect')
-      .filter({ hasNot: adminPage.locator('input[name="type"], input[name="attribute_family_id"]') })
-      .first();
+    let msWrapper = null;
+    let sku = null;
 
-    if (!(await msWrapper.isVisible({ timeout: 5000 }).catch(() => false))) {
-      test.skip(true, 'No editable multiselect attribute in this product family');
+    for (let familyIndex = 0; familyIndex < MAX_FAMILY_ATTEMPTS; familyIndex++) {
+      sku = `discard-ms-${generateUid()}`;
+      await createSimpleProduct(adminPage, sku, familyIndex);
+
+      msWrapper = await findMultiselectWithOptions(adminPage);
+
+      if (msWrapper) {
+        break;
+      }
+
+      await deleteProductBySku(adminPage, sku);
+    }
+
+    if (!msWrapper) {
+      test.skip(true, `No editable multiselect attribute with a selectable option in the first ${MAX_FAMILY_ATTEMPTS} families`);
     }
 
     const hidden = msWrapper.locator('xpath=following-sibling::input[@type="hidden"]').first();
     const original = await hidden.inputValue().catch(() => '');
 
-    await msWrapper.locator('.multiselect__tags').click();
-    await msWrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
+    // The dropdown opened by `findMultiselectWithOptions` while probing is still open.
     await msWrapper
       .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
       .first()

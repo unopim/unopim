@@ -13,7 +13,7 @@ it('rejects an invalid dpp_gtin when a product is saved', function (): void {
     } catch (ValidationException $e) {
         expect($e->errors())->toHaveKey('values.common.dpp_gtin')
             ->and($e->errors()['values.common.dpp_gtin'][0])->toBe(
-                trans('passport::app.validation.gtin', ['attribute' => trans('passport::app.attributes.dpp_gtin')])
+                trans('passport::app.validation.gtin', ['attribute' => trans('passport::app.templates.preset.fields.dpp_gtin')])
             );
     }
 });

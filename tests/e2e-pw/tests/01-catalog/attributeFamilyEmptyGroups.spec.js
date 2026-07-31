@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/family-fixtures');
-const { generateUid } = require('../../utils/helpers');
+const { generateUid, fillLocalizedField } = require('../../utils/helpers');
 const {
   gotoIndex, createFamily, deleteFamilyByCode, assignGroup, saveFamilyEdit,
 } = require('../../utils/family-helpers');
@@ -10,7 +10,7 @@ const {
  */
 async function reopenFamily(page, code) {
   await gotoIndex(page);
-  await page.getByRole('textbox', { name: 'Search' }).fill(code);
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await page.keyboard.press('Enter');
   await page.waitForTimeout(1500);
   await page.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
@@ -29,8 +29,7 @@ test.describe('Attribute Family - Save with empty groups (#709)', () => {
 
     // Assign an extra group, then save via the tracked bar.
     await assignGroup(page);
-    await page.locator('input[name$="[name]"]').first().fill('Empty Group Test A');
-    await page.locator('input[name$="[name]"]').first().blur();
+    await fillLocalizedField(page, 'Empty Group Test A');
     await saveFamilyEdit(page);
 
     // Reopen and remove the non-SKU group via its trash icon (the General group
@@ -47,8 +46,7 @@ test.describe('Attribute Family - Save with empty groups (#709)', () => {
     await agree.waitFor({ state: 'hidden', timeout: 10000 });
 
     // Save again — must succeed (no 500).
-    await page.locator('input[name$="[name]"]').first().fill('Empty Group Test B');
-    await page.locator('input[name$="[name]"]').first().blur();
+    await fillLocalizedField(page, 'Empty Group Test B');
     await saveFamilyEdit(page);
 
     await deleteFamilyByCode(page, created);

@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Datasheet ng produkto',
+                'lede'              => 'Sanggunian na espesipikasyon para sa demo catalog. Nalalapat ang mga halaga sa bawat produkto sa pamilyang ito maliban kung iba ang nakasaad sa pahina ng produkto.',
+                'family-code'       => 'Code ng pamilya',
+                'compliance'        => 'Pagsunod',
+                'compliance-value'  => 'May marka ng CE; makukuha ang mga deklarasyong RoHS at REACH kapag hiniling.',
+                'spare-parts'       => 'Mga ekstrang bahagi',
+                'spare-parts-value' => 'Nakastock ang mga nauubos na bahagi sa loob ng sampung taon mula sa huling petsa ng produksyon.',
+                'packaging'         => 'Pakete',
+                'packaging-value'   => 'Pakete na walang plastik, FSC-certified na karton, nakalimbag gamit ang tintang walang mineral oil.',
+                'footer'            => 'Nilikha ng UnoPim para sa layuning pagpapakita.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Default',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Pag-upgrade ng UnoPim',
+        'complete'              => 'Tapos na ang pag-upgrade. Muling online ang aplikasyon.',
+        'aborted'               => 'Kinansela ang pag-upgrade. Walang binago.',
+        'confirm'               => 'Ilalagay sa maintenance mode ang aplikasyon at ililipat ang database. Magpatuloy?',
+        'dry-run-complete'      => 'Tapos na ang pagsubok. Walang binago.',
+        'preflight-failed'      => ':count pagsusuri ang nabigo. Hindi nagsimula ang pag-upgrade at walang binago.',
+        'preflight-failed-hint' => 'Ayusin ang mga nakalista sa itaas at patakbuhin muli ang utos. Patuloy pa ring naghahatid ng trapiko ang naunang bersyon.',
+        'verify-failed'         => ':count pagpapatunay ang nabigo. Naiwan sa maintenance mode ang aplikasyon.',
+        'migrate-failed'        => 'Nabigo ang paglilipat: :error',
+        'step-failed'           => 'Nabigo ang hakbang na :command na may exit code :code.',
+        'phase'                 => [
+            'preflight' => 'Yugto 1 ng 5 — Paunang pagsusuri',
+            'drift'     => 'Yugto 2 ng 5 — Pagkakaiba sa configuration',
+            'sizing'    => 'Yugto 3 ng 5 — Tinatayang panahon ng maintenance',
+            'execute'   => 'Yugto 4 ng 5 — Paglilipat',
+            'verify'    => 'Yugto 5 ng 5 — Pagpapatunay',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Bersyon ng PHP',
+            'php-version-detail'         => 'kailangan ng :required, nakita ang :found',
+            'php-version-remedy'         => 'I-upgrade ang PHP sa :required o mas bago bago magpatuloy.',
+            'extensions'                 => 'Mga extension ng PHP',
+            'extensions-remedy'          => 'I-install ang mga kulang na extension at i-restart ang PHP-FPM.',
+            'database'                   => 'Koneksyon sa database',
+            'database-detail'            => ':driver, database :database, prefix :prefix',
+            'database-remedy'            => 'Suriin ang mga kredensyal ng database sa iyong .env file.',
+            'source-version'             => 'Naka-install na bersyon',
+            'source-version-detail'      => ':version o mas bago',
+            'source-version-unsupported' => 'mas luma sa :version',
+            'source-version-remedy'      => 'Mag-upgrade muna sa :version, pagkatapos ay patakbuhin muli ang utos na ito.',
+            'pending-migrations'         => 'Mga nakabinbing paglilipat',
+            'pending-migrations-detail'  => ':count ang tatakbo',
+            'pending-migrations-none'    => 'wala — napapanahon na ang database',
+            'pending-migrations-remedy'  => 'Hindi nabasa ang talahanayan ng paglilipat. Suriin ang mga pahintulot sa database.',
+            'active-jobs'                => 'Mga gawain sa pag-import at pag-export',
+            'active-jobs-detail'         => ':count ang tumatakbo pa',
+            'active-jobs-remedy'         => 'Hintaying matapos ang mga tumatakbong gawain o ihinto ang mga queue worker, pagkatapos ay patakbuhin muli ang utos.',
+            'writable-paths'             => 'Mga direktoryong masusulatan',
+            'writable-paths-remedy'      => 'Bigyan ng pahintulot na magsulat ang user ng web server sa mga direktoryong nakalista sa itaas.',
+            'disk-space'                 => 'Espasyo sa disk',
+            'disk-space-detail'          => ':free ang libre, :required ang kailangan',
+            'disk-space-unknown'         => 'hindi matukoy',
+            'disk-space-remedy'          => 'Maglaan ng espasyo sa disk, o gamitin ang --skip-backup kung may ibang paraan ng pag-backup ng database.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Walang natukoy na pagkakaiba sa configuration.',
+            'no-previous' => 'Walang ibinigay na direktoryo ng naunang bersyon, kaya hindi maihahambing ang mga configuration file at mga dependency ng Composer. Gamitin ang --from=/landas/sa/lumang/bersyon para sa buong ulat.',
+            'env-missing' => 'Mga environment key na idinagdag ng bersyong ito at wala sa iyong .env:',
+            'env-removed' => 'Mga environment key na tinanggal ng bersyong ito ngunit nakatakda pa rin sa iyong .env:',
+            'config'      => 'Mga configuration file na naiiba sa naunang bersyon mo. Ilapat muli ang iyong mga lokal na pagbabago:',
+            'composer'    => 'Mga dependency ng Composer na idinagdag mo at wala sa bersyong ito:',
+            'manual'      => 'Sa iyo ang mga file na ito. Pagsamahin ang mga ito nang manual bago magbukas ng trapiko — hindi kailanman pinapatungan ng pag-upgrade ang mga ito.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Talahanayan',
+            'rows'            => 'Mga hilera',
+            'pending'         => 'Tatakbo ang :count na paglilipat.',
+            'window'          => 'Tinatayang panahon ng maintenance: humigit-kumulang :minutes minuto.',
+            'nothing-pending' => 'Walang nakabinbing paglilipat.',
+            'irreversible'    => 'Muling isinusulat ng mga paglilipat na ito ang datos at hindi na maibabalik. Ang pagpapanumbalik lamang ng backup ng database ang paraan pabalik:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Naisulat ang backup ng database sa :path',
+            'skipped'            => 'Nilaktawan ang backup ng database. Tiyaking may backup kang maibabalik bago magpatuloy.',
+            'failed'             => 'Nabigo ang backup ng database: :error',
+            'empty'              => 'Walang laman ang backup ng database at itinapon ito.',
+            'abort'              => 'Huminto ang pag-upgrade dahil walang napatunayang backup. Walang binago.',
+            'unsupported-driver' => 'Walang available na utos ng backup para sa driver na :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'nilaktawan, walang talahanayan',
+            'associations'           => 'Mga ugnayan ng produkto',
+            'associations-none'      => 'walang lumang ugnayan na ilalipat',
+            'associations-detail'    => ':migrated sa :legacy na produkto ang nailipat',
+            'associations-remedy'    => 'May natagpuang lumang datos ng ugnayan ngunit walang nailipat. Ibalik ang backup at iulat ito.',
+            'robot-users'            => 'Mga may-ari ng integrasyon ng API',
+            'robot-users-detail'     => ':count na integrasyon ang pag-aari pa rin ng isang tao',
+            'robot-users-remedy'     => 'Patakbuhin muli ang paglilipat, o italaga muli ang mga integrasyon mula sa admin panel.',
+            'category-bounds'        => 'Integridad ng puno ng kategorya',
+            'category-bounds-detail' => ':count na node ng kategorya ang may di-wastong hangganan',
+            'category-bounds-remedy' => 'Muling buuin ang puno ng kategorya bago magbukas ng trapiko.',
+            'scrubbed-audits'        => 'Paglilinis ng mga kredensyal',
+            'scrubbed-audits-detail' => ':count na tala ng audit ang may kredensyal pa rin',
+            'scrubbed-audits-remedy' => 'Patakbuhin muli ang paglilipat bago magbukas ng trapiko. Inilalantad ng mga talang ito ang mga nakaimbak na kredensyal.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Hindi natapos ang pag-upgrade. Nasa maintenance mode ang aplikasyon.',
+            'body'    => 'Para bumalik: ibalik ang backup ng database, ituro muli ang web server sa direktoryo ng naunang bersyon, at patakbuhin doon ang «php artisan up».',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Binabalewala ang --with-reindex: :count na produkto ay lampas sa limitasyong :limit na produkto para sa agarang muling pagbuo.',
+            'deferred'  => 'Hindi na-reindex ang Elasticsearch. Sa :count na produkto, mas matagal ito kaysa sa mismong pag-upgrade, at aasa muna sa database ang paghahanap hanggang matapos. Patakbuhin ito kapag online na muli ang site:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

@@ -30,19 +30,79 @@ async function deleteProductBySku(adminPage, sku) {
   await adminPage.locator('#app').getByText(/Product deleted successfully/i).waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 }
 
-// Reuses seeded structures rather than creating a family per run, to keep the focus on the modal.
+const FAMILY_ID = 1;
+const COLOR_SIZE_STRUCTURE_CODE = 'e2e_color_size_structure';
+
+/**
+ * Ensure the `default` family (id 1, guaranteed to exist on any install) carries a
+ * two-axis (Color, Size) variant structure named "Based on Color and Size". This
+ * environment's seed doesn't include the demo catalog (no `Electronics` family
+ * survives here — see PRODUCT BUG / environment note in the task report).
+ * `saveVariantStructures` replaces the family's whole structure list, so existing
+ * structures (e.g. `variant-structure-editor.spec.js`'s own `e2e_variant_structure`
+ * fixture) are fetched first and resubmitted alongside the new one rather than
+ * being dropped.
+ */
+async function ensureColorSizeVariantStructure(adminPage) {
+  const result = await adminPage.evaluate(async ({ familyId, code }) => {
+    const xsrf = decodeURIComponent((document.cookie.match(/XSRF-TOKEN=([^;]+)/) || [])[1] || '');
+    const headers = {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
+      'X-XSRF-TOKEN': xsrf,
+    };
+
+    const listRes = await fetch(`/admin/catalog/attribute-families/edit/${familyId}/variant-structures`, {
+      headers,
+    });
+    const listBody = await listRes.json();
+    const existing = listBody.data ?? [];
+
+    if (existing.some((structure) => structure.code === code)) {
+      return { status: 200, body: 'already exists' };
+    }
+
+    const structures = [
+      ...existing.map(({ code: c, name, levels, axes, placements }) => ({ code: c, name, levels, axes, placements })),
+      {
+        code,
+        name: 'Based on Color and Size',
+        levels: 1,
+        axes: { level_1: ['color', 'size'] },
+        placements: {},
+      },
+    ];
+
+    const res = await fetch(`/admin/catalog/attribute-families/edit/${familyId}/variant-structures`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ _method: 'PUT', structures }),
+    });
+
+    return { status: res.status, body: await res.text() };
+  }, { familyId: FAMILY_ID, code: COLOR_SIZE_STRUCTURE_CODE });
+
+  if (result.status >= 300) {
+    throw new Error(`variant structure setup failed: ${result.body}`);
+  }
+}
+
+// Reuses a `default`-family variant structure rather than creating a family per run,
+// to keep the focus on the modal.
 test.describe('Product Creation - Variant Structure selector', () => {
   test('create configurable product picks a variant structure and redirects to edit', async ({ adminPage }) => {
     test.setTimeout(60000);
     const sku = `vs-${generateUid()}`;
 
     await navigateTo(adminPage, 'products');
+    await ensureColorSizeVariantStructure(adminPage);
     await adminPage.getByRole('button', { name: 'Create Product' }).click();
     await adminPage.waitForLoadState('networkidle');
 
     await selectMultiselect(adminPage, 'type', 'Configurable');
-    // The Electronics family carries the seeded variant structures; Default has none.
-    await selectMultiselect(adminPage, 'attribute_family_id', 'Electronics');
+    // `default` (id 1) now carries the "Based on Color and Size" structure ensured above.
+    await selectMultiselect(adminPage, 'attribute_family_id', 'Default');
     await adminPage.locator('input[name="sku"]').fill(sku);
 
     // Scope submits to the modal; the datagrid's pagination also exposes a "Next" button.
