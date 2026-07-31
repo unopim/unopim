@@ -38,7 +38,7 @@ class DemoDataInstaller
      */
     public function seed(?Closure $reporter = null, bool $force = false): array
     {
-        $report = $reporter ?? static fn (string $message) => null;
+        $report = $reporter ?? static fn (string $message): null => null;
 
         if (! $force && $this->isAlreadySeeded()) {
             $report('Demo data is already seeded; skipping. Pass --force to re-seed.');
@@ -48,13 +48,13 @@ class DemoDataInstaller
 
         try {
             $report('Seeding demo extras (channels, attributes, families, core config, ...)...');
-            app(DemoExtrasTableSeeder::class)->run();
+            resolve(DemoExtrasTableSeeder::class)->run();
 
             $report('Seeding demo categories...');
-            app(CategoryDemoTableSeeder::class)->run();
+            resolve(CategoryDemoTableSeeder::class)->run();
 
             $report('Seeding sample products...');
-            app(ProductTableSeeder::class)->run();
+            resolve(ProductTableSeeder::class)->run();
 
             if (config('elasticsearch.enabled') == 'true') {
                 try {
@@ -63,8 +63,8 @@ class DemoDataInstaller
                     // optimization — never fail the whole seed if it errors
                     // (e.g. Elasticsearch unreachable); the data is already in
                     // the database and can be re-indexed later.
-                    Artisan::registerCommand(app(CategoryIndexer::class));
-                    Artisan::registerCommand(app(ProductIndexer::class));
+                    Artisan::registerCommand(resolve(CategoryIndexer::class));
+                    Artisan::registerCommand(resolve(ProductIndexer::class));
 
                     $report('Re-indexing categories to Elasticsearch...');
                     Artisan::call('unopim:category:index');
@@ -124,10 +124,17 @@ class DemoDataInstaller
     public function isAlreadySeeded(): bool
     {
         try {
-            return DB::table('products')->exists()
-                || DB::table('categories')->whereNotNull('parent_id')->exists()
-                || DB::table('attribute_families')->where('code', '!=', 'default')->exists()
-                || DB::table('channels')->where('code', '!=', 'default')->exists();
+            if (DB::table('products')->exists()) {
+                return true;
+            }
+            if (DB::table('categories')->whereNotNull('parent_id')->exists()) {
+                return true;
+            }
+            if (DB::table('attribute_families')->where('code', '!=', 'default')->exists()) {
+                return true;
+            }
+
+            return DB::table('channels')->where('code', '!=', 'default')->exists();
         } catch (Throwable) {
             // Table missing / DB not migrated yet → treat as not seeded
             // so the caller can decide how to handle the failure mode.
@@ -144,12 +151,12 @@ class DemoDataInstaller
 
         try {
             config(['queue.default' => 'sync']);
-            Artisan::registerCommand(app(RecalculateCompletenessCommand::class));
+            Artisan::registerCommand(resolve(RecalculateCompletenessCommand::class));
 
             // The Completeness package only auto-registers this command when
             // running in the console, so register it explicitly for the web
             // installer (which calls this inside an HTTP request).
-            Artisan::registerCommand(app(RecalculateCompletenessCommand::class));
+            Artisan::registerCommand(resolve(RecalculateCompletenessCommand::class));
 
             Artisan::call('unopim:completeness:recalculate', ['--all' => true]);
         } finally {

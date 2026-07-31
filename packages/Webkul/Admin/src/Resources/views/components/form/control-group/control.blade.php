@@ -1,8 +1,24 @@
 @props([
     'type' => 'text',
-    'name' => '', 
+    'name' => '',
     'info' => '',
 ])
+
+@php
+    $providedId = $attributes->get('id');
+
+    /** Radios share a name, so the value keeps each generated id unique. */
+    $controlId = match (true) {
+        (bool) $providedId => unique_form_control_id(form_control_id($providedId), allowSuffix: false),
+        'hidden' === $type => '',
+        default            => unique_form_control_id(form_control_id($name, 'radio' === $type ? $attributes->get('value') : null)),
+    };
+
+    $idAttribute = '' === $controlId ? [] : ['id' => $controlId];
+
+    /** Re-emitted from $controlId so the rendered id always matches what labels target. */
+    $attributes = $attributes->except(['id']);
+@endphp
 
 @switch($type)
     @case('hidden')
@@ -20,7 +36,7 @@
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
             />
         </v-field>
 
@@ -33,7 +49,7 @@
             name="{{ $name }}"
         >
             <div
-                class="flex items-center w-full border rounded-md overflow-hidden text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400  focus-within:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
+                class="focus-ring-within flex items-center w-full border rounded-md overflow-hidden text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400  focus-within:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600"
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
             >
                 @if (isset($currency))
@@ -50,7 +66,7 @@
                     type="text"
                     name="{{ $name }}"
                     v-bind="field"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900']) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'no-focus-ring w-full p-2.5 text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-900'] + $idAttribute) }}
                 />
             </div>
         </v-field>
@@ -65,6 +81,7 @@
         >
             <v-file-uploader
                 name="{{ $name }}"
+                @if ('' !== $controlId) id="{{ $controlId }}" @endif
                 :field="field"
                 :class="[errors.length ? 'border border-red-500' : '']"
                  {{ $attributes }}
@@ -85,7 +102,7 @@
                 type="{{ $type }}"
                 :class="[errors.length ? 'border border-red-500' : '']"
                 v-bind="field"
-                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400']) }}
+                {{ $attributes->except(['value'])->merge(['class' => 'w-full appearance-none border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:border-gray-600 transition-all hover:border-gray-400 dark:hover:border-gray-400'] + $idAttribute) }}
             >
         </v-field>
         @break
@@ -101,13 +118,13 @@
                 name="{{ $name }}"
                 v-bind="field"
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
             >
             </textarea>
 
             @if ($attributes->get('tinymce', false) || $attributes->get(':tinymce', false))
-                <x-admin::tinymce 
-                    :selector="'textarea#' . $attributes->get('id')"
+                <x-admin::tinymce
+                    :selector="'textarea#' . $controlId"
                     :prompt="stripcslashes($attributes->get('prompt', ''))"
                     ::field="field"
                     :entity-name="$attributes->get('entity-name', '')"
@@ -129,7 +146,7 @@
                     name="{{ $name }}"
                     v-bind="field"
                     :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
                     autocomplete="off"
                 />
             </x-admin::flat-picker.date>
@@ -148,7 +165,7 @@
                     name="{{ $name }}"
                     v-bind="field"
                     :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
-                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600']) }}
+                    {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
                     autocomplete="off"
                 >
             </x-admin::flat-picker.datetime>
@@ -164,6 +181,7 @@
             @if ('true' == $attributes->get('async'))
                 <v-async-select-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -172,6 +190,7 @@
             @else
                 <v-select-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -192,6 +211,7 @@
             @if ('true' == $attributes->get('async'))
                 <v-async-select-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     multiple="true"
@@ -202,6 +222,7 @@
             @else
                 <v-multiselect-handler
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :onselect="false"
                     :class="[errors.length ? 'border border-red-500' : '']"
@@ -223,6 +244,7 @@
                 <v-tagging-handler
                     :taggable=true
                     name="{{ $name }}"
+                    @if ('' !== $controlId) id="{{ $controlId }}" @endif
                     v-bind="field"
                     :class="[errors.length ? 'border border-red-500' : '']"
                     {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -243,6 +265,7 @@
         <v-taggingselect-handler
             :taggable=true
             name="{{ $name }}"
+            @if ('' !== $controlId) id="{{ $controlId }}" @endif
             v-bind="field"
             :class="[errors.length ? 'border border-red-500' : '']"
             {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
@@ -266,7 +289,7 @@
                 name="{{ $name }}"
                 v-bind="field"
                 class="sr-only peer"
-                {{ $attributes->except(['rules', 'label', ':label']) }}
+                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($idAttribute) }}
             />
 
             <v-checkbox-handler
@@ -277,10 +300,11 @@
         </v-field>
 
         <label
-             {{ 
+            @if ('' !== $controlId) for="{{ $controlId }}" @endif
+            {{
                 $attributes
-                    ->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])
-                    ->merge(['class' => 'icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-violet-700'])
+                    ->except(['id', 'name', 'for', 'type', 'checked', 'disabled', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])
+                    ->merge(['class' => 'icon-checkbox-normal text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-600 peer-focus-visible:rounded-sm'])
                     ->merge(['class' => $attributes->get('disabled') ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'])
             }}
         >
@@ -301,20 +325,21 @@
                 name="{{ $name }}"
                 v-bind="field"
                 class="sr-only peer"
-                {{ $attributes->except(['rules', 'label', ':label']) }}
+                {{ $attributes->except(['for', 'rules', 'label', ':label'])->merge($idAttribute) }}
             />
         </v-field>
 
         <label
-            class="icon-radio-normal text-2xl peer-checked:icon-radio-selected peer-checked:text-violet-700 cursor-pointer"
-            {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
+            class="icon-radio-normal text-2xl peer-checked:icon-radio-selected peer-checked:text-primary-700 cursor-pointer peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-600 peer-focus-visible:rounded-full"
+            @if ('' !== $controlId) for="{{ $controlId }}" @endif
+            {{ $attributes->except(['id', 'name', 'for', 'type', 'checked', 'disabled', 'value', ':value', 'v-model', 'rules', ':rules', 'label', ':label']) }}
         >
         </label>
 
         @break
 
     @case('switch')
-        <label class="relative inline-flex items-center cursor-pointer">
+        <span class="relative inline-flex items-center cursor-pointer">
             <v-field
                 type="checkbox"
                 class="hidden"
@@ -325,12 +350,11 @@
                 <input
                     type="checkbox"
                     name="{{ $name }}"
-                    id="{{ $name }}"
                     class="sr-only peer"
                     v-bind="field"
-                    {{ $attributes->except(['v-model', 'rules', ':rules', 'label', ':label']) }}
+                    {{ $attributes->except(['for', ':for', 'v-model', 'rules', ':rules', 'label', ':label'])->merge($idAttribute) }}
                 />
-                
+
                 <v-checkbox-handler
                     class="hidden"
                     :field="field"
@@ -340,16 +364,18 @@
             </v-field>
 
             <label
-                class="rounded-full w-9 h-5 bg-gray-200 cursor-pointer peer-focus:ring-violet-300 after:bg-white dark:after:bg-white after:border-gray-300 dark:after:border-white peer-checked:bg-violet-700 dark:peer-checked:bg-violet-700 peer peer-checked:after:border-white peer-checked:after:ltr:translate-x-full peer-checked:after:rtl:-translate-x-full after:content-[''] after:absolute after:top-0.5 after:ltr:left-0.5 after:rtl:right-0.5 peer-focus:outline-none after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-cherry-800"
-                for="{{ $name }}"
+                class="rounded-full w-9 h-5 bg-gray-200 cursor-pointer peer-focus:ring-primary-300 after:bg-white dark:after:bg-white after:border-gray-300 dark:after:border-white peer-checked:bg-primary-700 dark:peer-checked:bg-primary-700 peer peer-checked:after:border-white peer-checked:after:ltr:translate-x-full peer-checked:after:rtl:-translate-x-full after:content-[''] after:absolute after:top-0.5 after:ltr:left-0.5 after:rtl:right-0.5 peer-focus:outline-none after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:bg-cherry-800"
+                @if ('' !== $controlId) for="{{ $controlId }}" @endif
+                {{ $attributes->only([':for']) }}
             ></label>
-        </label>
+        </span>
 
         @break
 
     @case('image')
-        <x-admin::media.images
+        <x-admin::media.image
             name="{{ $name }}"
+            @if ($providedId) id="{{ $providedId }}" @endif
             ::class="[errors && errors['{{ $name }}'] ? 'border !border-red-600 hover:border-red-600' : '']"
             {{ $attributes }}
         />
@@ -386,7 +412,7 @@
     </script>
 
     <script type="text/x-template" id="v-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
                 :track-by="trackBy ?? 'id'"
                 :label="labelBy ?? 'label'"
@@ -405,16 +431,23 @@
                 @select="selectOption"
                 @remove="removeOption"
             >
+                <template v-slot:option="{ option }">
+                    <span v-text="option[labelBy ?? 'label'] ?? option.label"></span>
 
-            </v-multiselect>   
+                    <span
+                        v-if="option.description"
+                        class="block text-xs text-gray-500 dark:text-gray-300 whitespace-normal mt-0.5"
+                        v-text="option.description"
+                    ></span>
+                </template>
+            </v-multiselect>
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
         </div>
-         
+
     </script>
 
     <script type="module">
@@ -422,6 +455,7 @@
             template: '#v-select-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -443,7 +477,16 @@
                 const parsed = this.parseValue();
                 return {
                     selectedValue: parsed != null ? this.parseOptions().find(option => String(option[this.trackBy]) === String(parsed)) : null,
+                    initialValue: this.value,
                 }
+            },
+
+            mounted() {
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             computed: {
@@ -468,6 +511,20 @@
             },
 
             methods: {
+                resetToInitial() {
+                    const parsed = this.parseInitialValue();
+
+                    this.selectedValue = parsed != null
+                        ? this.parseOptions().find(option => String(option[this.trackBy]) === String(parsed))
+                        : null;
+                },
+                parseInitialValue() {
+                    try {
+                        return this.initialValue ? JSON.parse(this.initialValue) : null;
+                    } catch (error) {
+                        return this.initialValue;
+                    }
+                },
                 parseOptions() {
                     try {
                         return JSON.parse(this.options);
@@ -507,7 +564,7 @@
     </script>
 
     <script type="text/x-template" id="v-multiselect-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
                 :track-by="trackBy"
                 :label="labelBy"
@@ -531,7 +588,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -543,6 +599,7 @@
             template: '#v-multiselect-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -565,11 +622,34 @@
                     default: false
                 }
             },
-            
+
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                    initialValue: this.value,
                 }
+            },
+
+            mounted() {
+                this.resetToInitial = () => {
+                    let values;
+
+                    try {
+                        values = this.initialValue ? JSON.parse(this.initialValue) : [];
+                    } catch (error) {
+                        values = this.initialValue;
+                    }
+
+                    this.selectedValue = (values instanceof Array)
+                        ? this.parseOptions().filter(option => values.some(valueItem => option[this.trackBy] === valueItem))
+                        : [];
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             computed: {
@@ -641,9 +721,8 @@
         });
     </script>
 
-
     <script type="text/x-template" id="v-tagging-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
                 :track-by="trackBy"
                 :label="labelBy"
@@ -668,7 +747,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -680,6 +758,7 @@
             template: '#v-tagging-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -695,11 +774,34 @@
                 field: Array,
                 placeholder: String,
             },
-            
+
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                    initialValue: this.value,
                 }
+            },
+
+            mounted() {
+                this.resetToInitial = () => {
+                    let values;
+
+                    try {
+                        values = this.initialValue ? JSON.parse(this.initialValue) : [];
+                    } catch (error) {
+                        values = this.initialValue;
+                    }
+
+                    this.selectedValue = (values instanceof Array)
+                        ? this.parseOptions().filter(option => values.some(valueItem => option[this.trackBy] === valueItem))
+                        : [];
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             computed: {
@@ -715,7 +817,7 @@
 
                     return selectedOptions.length > 0 ? selectedOptions : null;
                 },
-                
+
             },
 
             watch: {
@@ -785,11 +887,9 @@
         });
     </script>
 
-
     <script type="text/x-template" id="v-taggingselect-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                id="ajax"
                 :track-by="trackBy"
                 :label="labelBy"
                 :taggable="true"
@@ -819,7 +919,6 @@
             </v-multiselect>   
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -831,6 +930,7 @@
             template: '#v-taggingselect-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -848,20 +948,20 @@
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
-                isLoading: Boolean,
                 listRoute: {
                     type: String,
                     default: '{{ route('admin.catalog.options.fetch-all') }}'
                 },
-                queryParams: Array,
+                queryParams: [Array, Object],
             },
             
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseOptions().filter(option =>  this.parseValue() instanceof Array && this.parseValue()?.some(valueItem => option[this.trackBy] === valueItem)) : [],
+                    initialValue: this.value,
                     isLoading: false,
                     optionsList: [],
-                    timeout: null,
+                    timer: null,
                     delayTime: 500,
                     lastPage: 1,
 
@@ -875,12 +975,43 @@
                 }
             },
             mounted() {
-                this.$refs['taggingselect__handler__']._.refs.list.addEventListener('scroll', this.onScroll);
+                this.$nextTick(() => {
+                    const list = this.$refs['taggingselect__handler__']?._?.refs?.list;
 
-                if (this.selectedValue && typeof this.selectedValue != 'object') {
-                    this.initializeValue();
-                }
+                    if (list) {
+                        list.addEventListener('scroll', this.onScroll);
+                    }
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                });
+
+                this.resetToInitial = () => {
+                    let parsed;
+
+                    try {
+                        parsed = this.initialValue ? JSON.parse(this.initialValue) : [];
+                    } catch (error) {
+                        parsed = this.initialValue;
+                    }
+
+                    this.selectedValue = parsed
+                        ? this.parseOptions().filter(option => parsed instanceof Array && parsed?.some(valueItem => option[this.trackBy] === valueItem))
+                        : [];
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
             },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
+            },
+
             computed: {
                 formattedOptions() {
                     return this.optionsList;
@@ -941,7 +1072,12 @@
                     }
                 },
                 onScroll(e) {
-                    const element = this.$refs['taggingselect__handler__']._.refs.list;
+                    const element = this.$refs['taggingselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (
@@ -986,7 +1122,7 @@
                         clearTimeout(this.timer);
                     }
 
-                    this.timer = setTimeout(this.search(query), this.delayTime);
+                    this.timer = setTimeout(() => this.search(query), this.delayTime);
                 },
 
                 parseOptions() {
@@ -1042,9 +1178,8 @@
     </script>
 
     <script type="text/x-template" id="v-async-select-handler-template">
-        <div>
+        <div :id="id">
             <v-multiselect
-                id="ajax"
                 :track-by="trackBy"
                 :label="labelBy"
                 :options="formattedOptions"
@@ -1060,8 +1195,11 @@
                 :hide-selected="false"
                 :disabled="disabled ?? false"
                 :multiple="multiple ?? false"
+                :taggable="taggable ?? false"
+                :tag-placeholder="tagPlaceholder"
                 :name="name"
                 @search-change="handleSearch"
+                @tag="createOption"
                 @open="openedSelect"
                 @scroll="onScroll"
                 @select="selectOption"
@@ -1090,7 +1228,6 @@
             </v-multiselect>
             <input
                 v-model="selectedOption"
-                v-validate="'required'"
                 :name="name"
                 type="hidden"
             >
@@ -1116,6 +1253,7 @@
             template: '#v-async-select-handler-template',
 
             props: {
+                id: String,
                 trackBy: {
                     type: String,
                     default: 'id'
@@ -1131,7 +1269,6 @@
                 field: Array,
                 placeholder: String,
                 disabled: Boolean,
-                isLoading: Boolean,
                 entityName: String,
                 attributeId: String,
                 multiple: Boolean,
@@ -1143,16 +1280,29 @@
                     type: String,
                     default: "{{ route('admin.catalog.options.fetch-all')}}"
                 },
-                queryParams: Array,
+                queryParams: [Array, Object, String],
+                taggable: {
+                    type: Boolean,
+                    default: false
+                },
+                createRoute: {
+                    type: String,
+                    default: ''
+                },
+                tagPlaceholder: {
+                    type: String,
+                    default: ''
+                },
             },
 
             data() {
                 return {
                     selectedValue: this.parseValue() ? this.parseValue() : null,
+                    initialValue: this.value,
 
                     isLoading: false,
                     optionsList: [],
-                    timeout: null,
+                    timer: null,
                     delayTime: 500,
                     lastPage: 1,
 
@@ -1161,7 +1311,7 @@
                         attributeId: this.attributeId,
                         page: 1,
                         locale: "{{ core()->getRequestedLocaleCode() }}",
-                        ...this.queryParams
+                        ...this.parsedQueryParams()
                     }
                 }
             },
@@ -1190,6 +1340,28 @@
                 if (this.selectedValue && typeof this.selectedValue != 'object') {
                     this.initializeValue();
                 }
+
+                this.resetToInitial = () => {
+                    let parsed;
+
+                    try {
+                        parsed = this.initialValue ? JSON.parse(this.initialValue) : null;
+                    } catch (error) {
+                        parsed = this.initialValue;
+                    }
+
+                    this.selectedValue = parsed ? parsed : null;
+
+                    if (this.selectedValue && typeof this.selectedValue != 'object') {
+                        this.initializeValue();
+                    }
+                };
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             watch: {
@@ -1206,14 +1378,37 @@
 
                     this.$emit('input', JSON.stringify(newValue));
                 },
+
+                value(newValue) {
+                    if (newValue !== '' && newValue !== null && newValue !== undefined) {
+                        return;
+                    }
+
+                    if (this.selectedValue !== null) {
+                        this.selectedValue = null;
+                    }
+                },
             },
-            
+
             methods: {
                 parseValue() {
                     try {
                         return this.value ? JSON.parse(this.value) : null;
                     } catch (error) {
                         return this.value;
+                    }
+                },
+                {{-- Blade cannot bind a computed object to a Vue prop from a component
+                     attribute, so server-rendered callers pass their filters as JSON. --}}
+                parsedQueryParams() {
+                    if (typeof this.queryParams !== 'string') {
+                        return this.queryParams;
+                    }
+
+                    try {
+                        return JSON.parse(this.queryParams);
+                    } catch (error) {
+                        return {};
                     }
                 },
                 getMultiSelectedOption() {
@@ -1248,7 +1443,7 @@
                         clearTimeout(this.timer);
                     }
 
-                    this.timer = setTimeout(this.search(query), this.delayTime);
+                    this.timer = setTimeout(() => this.search(query), this.delayTime);
                 },
 
                 search(query) {
@@ -1289,7 +1484,12 @@
                     });
                 },
                 onScroll(e) {
-                    const element = this.$refs['multiselect__handler__']._.refs.list;
+                    const element = this.$refs['multiselect__handler__']?._?.refs?.list;
+
+                    if (! element) {
+                        return;
+                    }
+
                     const tolerance = 10;
 
                     if (
@@ -1346,6 +1546,48 @@
                     });
                 },
 
+                createOption(query) {
+                    if (! this.createRoute) {
+                        return;
+                    }
+
+                    const code = query.trim().toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+
+                    if (! code) {
+                        return;
+                    }
+
+                    this.isLoading = true;
+
+                    this.$axios.post(this.createRoute, { code: code, name: query.trim() })
+                        .then((response) => {
+                            const option = response.data.data;
+
+                            this.optionsList.unshift(option);
+
+                            if (this.multiple) {
+                                const current = Array.isArray(this.selectedValue) ? this.selectedValue : [];
+
+                                this.selectedValue = [...current, option];
+                            } else {
+                                this.selectedValue = option;
+                            }
+
+                            this.selectOption(option);
+
+                            this.isLoading = false;
+                        })
+                        .catch((error) => {
+                            this.isLoading = false;
+
+                            const message = error.response?.data?.errors?.code?.[0]
+                                ?? error.response?.data?.message
+                                ?? '';
+
+                            this.$emitter.emit('add-flash', { type: 'warning', message: message });
+                        });
+                },
+
                 previewImage(option) {
                     this.fileUrl = option.swatch_value_url || '{{ unopim_asset('images/product-placeholders/front.svg') }}';
                     this.$refs.imagePreviewModal.toggle();
@@ -1356,35 +1598,35 @@
     <script type="text/x-template" id="v-file-uploader-template">
         <div :class="[errors.length ? 'flex items-center justify-center w-full border !border-red-600 hover:border-red-600' : 'flex items-center justify-center w-full']">
             <label
-                :for="$.uid + '_dropzone-file'"
-                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-violet-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
+                :for="inputId"
+                class="flex flex-col items-center justify-center w-full h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-primary-50 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 transition-colors"
                 @dragover.prevent="isDragging = true"
                 @dragleave.prevent="isDragging = false"
                 @drop.prevent="onDrop($event)"
-                :class="{ '!border-violet-500 !bg-violet-50 dark:!bg-violet-900/20': isDragging }"
+                :class="{ '!border-primary-500 !bg-primary-50 dark:!bg-primary-900/20': isDragging }"
             >
                 <div class="flex flex-col items-center justify-center py-6">
                     <template v-if="fieldData.value && (fieldData.value.name || field.value)">
                         <span class="icon-product text-4xl mb-4 mr-4"></span>
                         <div class="flex justify-between items-center mb-2 text-sm text-gray-500 dark:text-gray-400">
-                            <p class="text-sm text-gray-500 dark:text-gray-400" v-html="fieldData.value.name || field.value"></p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400" v-text="fieldData.value.name || field.value"></p>
                             <button
                                 type="button"
                                 @click="clearFile"
-                                class="icon-cancel text-3xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                class="icon-cancel text-3xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                             >
                             </button>
                         </div>
                     </template>
                     <template v-else>
                         <span class="icon-export text-gray-500 dark:text-gray-400 text-4xl"></span>
-                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span> or drag and drop</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400" v-html="info"></p>
+                        <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">@lang('admin::app.components.form.file-uploader.upload-cta')</span> @lang('admin::app.components.form.file-uploader.upload-hint')</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400" v-text="info"></p>
                     </template>
                 </div>
                             
                 <input
-                    :id="$.uid + '_dropzone-file'"
+                    :id="inputId"
                     type="file"
                     :name="name"
                     class="hidden"
@@ -1403,6 +1645,7 @@
 
             props: {
                 field: Object,
+                id: String,
                 info: String,
                 name: String,
                 value: String,
@@ -1412,11 +1655,24 @@
                 }
             },
 
+            computed: {
+                inputId() {
+                    return this.id || this.$.uid + '_dropzone-file';
+                },
+            },
+
             data() {
                 return {
                     fieldData: this.field,
                     isDragging: false,
+                    initialValue: this.field.value,
                 }
+            },
+            mounted() {
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
             watch: {
                 field: {
@@ -1454,15 +1710,15 @@
 
                     this.fieldData.value = file;
 
-                    // Dropping onto the <label> does NOT auto-attach the
-                    // file to the associated <input type="file">, so the
-                    // traditional multipart/form-data submit would ship an
-                    // empty file input. Populate the real input via the
-                    // DataTransfer API so form submission picks it up.
                     if (this.$refs.fileInput) {
                         const dt = new DataTransfer();
                         dt.items.add(file);
                         this.$refs.fileInput.files = dt.files;
+
+                        this.$refs.fileInput.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                            bubbles: true,
+                            detail: { name: this.name },
+                        }));
                     }
 
                     this.$nextTick(() => {
@@ -1478,10 +1734,19 @@
                     }
 
                     this.$nextTick(() => {
-                        // Force update to refresh any related UI without reopening the upload dialog
                         this.$forceUpdate();
                     });
                     event.preventDefault();
+                },
+
+                resetToInitial() {
+                    this.fieldData.value = this.initialValue;
+
+                    if (this.$refs.fileInput) {
+                        this.$refs.fileInput.value = '';
+                    }
+
+                    this.$nextTick(() => this.$forceUpdate());
                 }
             }
         });

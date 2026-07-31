@@ -3,6 +3,7 @@
 namespace Webkul\Product\Filter\Database;
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\QueryString;
 
@@ -23,17 +24,15 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
         $operator,
         $value,
         $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         $escapedValue = QueryString::escapeValue(current((array) $value));
 
-        $this->queryBuilder->where(function ($query) use ($fields, $options, $escapedValue) {
+        $this->queryBuilder->where(function ($query) use ($fields, $options, $escapedValue): void {
             foreach ($fields as $attribute) {
                 $attribute = $this->attributeService->findAttributeByCode($attribute);
-                if (! $attribute) {
+                if (! $attribute instanceof Attribute) {
                     continue;
                 }
 
@@ -45,7 +44,7 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
                 $searchPath = DB::rawQueryGrammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
 
                 $query->orWhereRaw(
-                    sprintf("LOWER($searchPath) LIKE ?"),
+                    "LOWER($searchPath) LIKE ?",
                     '%'.strtolower($escapedValue).'%'
                 );
             }

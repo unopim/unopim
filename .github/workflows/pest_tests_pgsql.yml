@@ -1,9 +1,16 @@
 name: Pest Tests (PostgreSQL)
 
-on: [push, pull_request]
+# A branch push and its own pull request are the same commit, so pushes are
+# limited to the release lines and everything else arrives through the PR event.
+on:
+  push:
+    branches: [master, '2.1']
+  pull_request:
 
+# head_ref is the branch on a pull request and empty elsewhere, which keeps a
+# branch's runs in one group no matter which event opened them.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -38,27 +45,31 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@2.37.1
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--optimize-autoloader"
 
-      - name: Cache Composer dependencies
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Node dependencies
         uses: actions/cache@v5
         with:
-          path: |
-            vendor
-            ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
 
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -78,7 +89,13 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always
+        # Each worker owns a database clone. The suite runs as two halves so
+        # every half starts with fresh workers: per-process memory grows over
+        # thousands of tests and a single long run ends with a worker
+        # OOM-killed (exit 137), which aborts paratest mid-run.
+        run: |
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
 
   pest-pgsql-elasticsearch:
     runs-on: ubuntu-24.04
@@ -122,27 +139,31 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@2.37.1
         with:
-          php-version: '8.3'
+          php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_pgsql, tokenizer, zip
           ini-values: error_reporting=E_ALL
           tools: composer:v2
           coverage: none
 
-      - name: Get Composer cache directory
-        id: composer-cache
-        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--optimize-autoloader"
 
-      - name: Cache Composer dependencies
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Node dependencies
         uses: actions/cache@v5
         with:
-          path: |
-            vendor
-            ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
 
-      - name: Install dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -172,4 +193,10 @@ jobs:
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
-        run: vendor/bin/pest --colors=always
+        # Each worker owns a database clone. The suite runs as two halves so
+        # every half starts with fresh workers: per-process memory grows over
+        # thousands of tests and a single long run ends with a worker
+        # OOM-killed (exit 137), which aborts paratest mid-run.
+        run: |
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"

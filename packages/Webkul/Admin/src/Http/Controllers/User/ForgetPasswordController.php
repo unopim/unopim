@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Controllers\User;
 
 use Illuminate\Contracts\Auth\PasswordBroker;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Password;
 use Illuminate\View\View;
@@ -39,26 +40,43 @@ class ForgetPasswordController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(): RedirectResponse|JsonResponse
     {
-        try {
-            $this->validate(request(), [
-                'email' => 'required|email',
-            ]);
+        $this->validate(request(), [
+            'email' => 'required|email',
+        ]);
 
+        try {
             $this->broker()->sendResetLink(
                 request(['email'])
             );
-
-            session()->flash('success', trans('admin::app.users.forget-password.create.reset-link-sent'));
-
-            return redirect()->route('admin.forget_password.create');
-        } catch (\Exception $e) {
-            session()->flash('error', trans('admin::app.users.forget-password.create.email-settings-error'));
+        } catch (\Throwable $e) {
             report($e);
+
+            // 200 warning, not a 500: a mail-transport failure is operator config, shown to the admin while logged.
+            $warning = trans('admin::app.users.forget-password.create.email-settings-error');
+
+            if (request()->wantsJson()) {
+                return response()->json([
+                    'message' => $warning,
+                    'type'    => 'warning',
+                ]);
+            }
+
+            session()->flash('warning', $warning);
 
             return redirect()->route('admin.forget_password.create');
         }
+
+        $message = trans('admin::app.users.forget-password.create.reset-link-sent');
+
+        if (request()->wantsJson()) {
+            return response()->json(['message' => $message]);
+        }
+
+        session()->flash('success', $message);
+
+        return redirect()->route('admin.forget_password.create');
     }
 
     /**

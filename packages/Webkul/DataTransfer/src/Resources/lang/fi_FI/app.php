@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code-arvon on oltava ainutlaatuinen.',
                     'incorrect-family-for-variant'             => 'Perheen on oltava sama kuin vanhemman perhe',
                     'parent-not-exist'                         => 'Vanhempaa ei ole olemassa.',
+                    'variant-structure-not-found'              => 'Varianttirakennetta :code ei ole tälle attribuuttiperheelle.',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'Attribuuttikoodi :code on jo käytössä.',
                     'code_not_found_to_delete'             => 'Attribuuttikoodia ei löytynyt poistettavaksi.',
                     'code_is_system_and_cannot_be_deleted' => 'Järjestelmäattribuuttia ei voi poistaa.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Tuoteyhdistelmät',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Kenttä \'%s\' on pakollinen.',
+                    'self-link-not-allowed'       => 'Tuotetta \'%s\' ei voi yhdistää itseensä.',
+                    'sku-not-found'               => 'Tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'related-sku-not-found'       => 'Liittyvää tuotetta SKU-koodilla \'%s\' ei löytynyt.',
+                    'association-type-not-found'  => 'Yhdistelmätyyppiä \'%s\' ei ole olemassa tai se ei ole aktiivinen.',
+                    'invalid-field-value'         => 'Yhdistelmäkentälle annettiin virheellinen arvo.',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Tämä vienti on liian suuri suoritettavaksi: arvioidut :rows riviä × :columns saraketta (~:estimated) ylittävät käytettävissä olevan tilan (~:available). Rajaa vientiä valitsemalla vähemmän kanavia/kieliä (ja attribuutteja) ja yritä uudelleen.',
         'fields'           => [
-            'file-format'         => 'Tiedostomuoto',
-            'with-media'          => 'Median kanssa',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Tiedostomuoto',
+            'with-media'             => 'Median kanssa',
+            'with-associations'      => 'Liitoksineen',
+            'with-associations-info' => 'Sisällytä vanhat SKU-luettelosarakkeet (up_sells, cross_sells ja related_products) vientiin',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'Attribuutit',
         ],
+        'product-associations' => [
+            'title' => 'Tuoteyhdistelmät',
+        ],
         'attribute-groups' => [
             'title' => 'Attribuuttiryhmät',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Työn suoritus aloitettiin',
         'completed' => 'Työn suoritus saatiin päätökseen',
+        'stalled'   => 'Työ lakkasi vastaamasta yli :minutes minuutin ajan ja merkittiin epäonnistuneeksi. Sen suoritusprosessi todennäköisesti keskeytyi.',
+        'reaped'    => ':count jumittunutta työtä merkittiin epäonnistuneiksi.',
     ],
 ];

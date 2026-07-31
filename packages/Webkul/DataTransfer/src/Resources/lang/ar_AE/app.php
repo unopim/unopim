@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'يجب أن تكون قيمة :code فريدة.',
                     'incorrect-family-for-variant'             => 'يجب أن تكون العائلة هي نفس عائلة الوالدين',
                     'parent-not-exist'                         => 'الوالد غير موجود.',
+                    'variant-structure-not-found'              => 'بنية المتغيرات :code غير موجودة لعائلة السمات هذه.',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
                     'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
                     'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'ارتباطات المنتج',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'الحقل \'%s\' مطلوب.',
+                    'self-link-not-allowed'       => 'لا يمكن ربط المنتج \'%s\' بنفسه.',
+                    'sku-not-found'               => 'لم يتم العثور على منتج بوحدة SKU \'%s\'.',
+                    'related-sku-not-found'       => 'لم يتم العثور على المنتج المرتبط بوحدة SKU \'%s\'.',
+                    'association-type-not-found'  => 'نوع الارتباط \'%s\' غير موجود أو غير نشط.',
+                    'invalid-field-value'         => 'قيمة غير صالحة لحقل الارتباط.',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'هذا التصدير كبير جدًا بحيث لا يمكن تشغيله: العدد التقديري :rows صف × :columns عمود (~:estimated) يتجاوز المساحة المتاحة (~:available). قلّص نطاق التصدير باختيار عدد أقل من القنوات/اللغات (والسمات) ثم حاول مرة أخرى.',
         'fields'           => [
-            'file-format'         => 'تنسيق الملف',
-            'with-media'          => 'مع الوسائط',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'تنسيق الملف',
+            'with-media'             => 'مع الوسائط',
+            'with-associations'      => 'مع الارتباطات',
+            'with-associations-info' => 'تضمين أعمدة قوائم SKU القديمة (up_sells وcross_sells وrelated_products) في التصدير',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'السمات',
         ],
+        'product-associations' => [
+            'title' => 'ارتباطات المنتج',
+        ],
         'attribute-groups' => [
             'title' => 'مجموعات السمات',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'بدأ تنفيذ المهمة',
         'completed' => 'الانتهاء من تنفيذ المهمة',
+        'stalled'   => 'توقف المهمة عن الاستجابة لأكثر من :minutes دقيقة وتم وضع علامة فشل عليها. من المرجح أن العامل المنفذ قد أُنهي.',
+        'reaped'    => 'تم وضع علامة فشل على :count مهمة متوقفة.',
     ],
 ];

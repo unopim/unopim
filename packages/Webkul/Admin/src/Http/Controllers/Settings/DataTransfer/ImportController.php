@@ -7,14 +7,18 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
+use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobHealth;
 
 class ImportController extends Controller
 {
@@ -31,7 +35,8 @@ class ImportController extends Controller
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
         protected Import $importHelper,
-        protected Export $exportHelper
+        protected Export $exportHelper,
+        protected JobHealth $jobHealth,
     ) {}
 
     /**
@@ -68,7 +73,7 @@ class ImportController extends Controller
         $importers = array_keys($importerConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/', 'unique:job_instances,code'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -146,7 +151,7 @@ class ImportController extends Controller
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => 'required',
+            'code'                => ['required'],
             'entity_type'         => 'required|in:'.implode(',', $importers),
         ], ['file.mimes' => trans('core::validation.file-type')]);
 
@@ -155,7 +160,6 @@ class ImportController extends Controller
             request()->only([
                 'entity_type',
                 'action',
-                'validation_strategy',
                 'validation_strategy',
                 'allowed_errors',
                 'field_separator',
@@ -258,16 +262,18 @@ class ImportController extends Controller
         $jobTrackInstance = null;
 
         try {
-            // Retrieve the import instance or fail with a 404
             $import = $this->jobInstancesRepository->findOrFail($id);
 
-            // Get the authenticated user's ID
+            if (empty($import->file_path)) {
+                return redirect()
+                    ->route('admin.settings.data_transfer.imports.import-view', $import->id)
+                    ->with('error', trans('admin::app.settings.data-transfer.imports.rerun-no-file'));
+            }
+
             $userId = auth()->guard('admin')->user()->id;
 
-            // Dispatch an event before the import process starts
             Event::dispatch('data_transfer.imports.import.now.before', $import);
 
-            // Create a job track instance
             $jobTrackInstance = $this->jobTrackRepository->create([
                 'type'                  => 'import',
                 'state'                 => Import::STATE_PENDING,
@@ -284,13 +290,10 @@ class ImportController extends Controller
                 'action'                => $import->action,
             ]);
 
-            // Dispatch the import job
             ImportTrackBatch::dispatch($jobTrackInstance);
 
-            // Redirect to the tracker view
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
         } catch (\Throwable $e) {
-            // Log the error and redirect with an error message
             \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
             $batchId = $jobTrackInstance?->id ?? $id;
@@ -305,6 +308,10 @@ class ImportController extends Controller
      */
     public function validateImport(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         $isValid = $this->importHelper
@@ -322,6 +329,10 @@ class ImportController extends Controller
      */
     public function start(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -382,6 +393,10 @@ class ImportController extends Controller
      */
     public function link(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -443,6 +458,10 @@ class ImportController extends Controller
      */
     public function indexData(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         if (! $import->processed_rows_count) {
@@ -499,20 +518,37 @@ class ImportController extends Controller
     }
 
     /**
+     * Authorize control of a running job against the permission of its own type, since this
+     * controller serves import, export and system job tracks alike.
+     */
+    protected function authorizeJobControl(JobTrackContract $jobTrack): JobType
+    {
+        $jobType = JobType::fromTrack($jobTrack);
+
+        if (! bouncer()->hasPermission($jobType->executePermission())) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        return $jobType;
+    }
+
+    /**
      * Pause a running import job
      */
     public function pause(int $id): JsonResponse
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $jobType = $this->authorizeJobControl($jobTrack);
+
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->pause();
         } else {
             $this->importHelper->setImport($jobTrack)->pause();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.paused'),
+            'message' => $jobType->trackerMessage('paused'),
         ]);
     }
 
@@ -523,14 +559,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $jobType = $this->authorizeJobControl($jobTrack);
+
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->resume();
         } else {
             $this->importHelper->setImport($jobTrack)->resume();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'),
+            'message' => $jobType->trackerMessage('resumed'),
         ]);
     }
 
@@ -541,14 +579,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $jobType = $this->authorizeJobControl($jobTrack);
+
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->cancel();
         } else {
             $this->importHelper->setImport($jobTrack)->cancel();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'),
+            'message' => $jobType->trackerMessage('cancelled'),
         ]);
     }
 
@@ -557,11 +597,24 @@ class ImportController extends Controller
      */
     public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
     {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        // The scheduled reaper is the safety net; failing it here too stops the
+        // tracker polling a dead job for up to a scheduler tick.
+        if ($this->jobHealth->isStalled($import)) {
+            $this->jobHealth->fail($import);
+
+            $import->refresh();
+        }
+
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
 
-        if ($jobInstance['type'] == 'export') {
+        if (JobType::fromTrack($import)->isExport()) {
             $isValid = $this->exportHelper->setExport($import)->isValid();
             $stats = $this->exportHelper->stats($state);
             $jobTrack = $this->exportHelper->getExport()->unsetRelations();
@@ -612,6 +665,10 @@ class ImportController extends Controller
      */
     public function download(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.imports')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobInstancesRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->file_path);
@@ -622,6 +679,10 @@ class ImportController extends Controller
      */
     public function downloadErrorReport(int $id)
     {
+        if (! bouncer()->hasPermission('data_transfer.imports')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $import = $this->jobTrackRepository->findOrFail($id);
 
         return Storage::disk('private')->download($import->error_file_path);
@@ -633,7 +694,11 @@ class ImportController extends Controller
     public function uploadImagesZip(): JsonResponse
     {
         $this->validate(request(), [
-            'images_zip' => 'required|file|mimes:zip|max:102400',
+            'images_zip' => 'required|file|mimes:zip|max:'.$this->maxUploadKilobytes(),
+        ], [
+            'images_zip.max' => trans('admin::app.settings.data-transfer.imports.zip-exceeds-server-limit', [
+                'limit' => $this->maxUploadKilobytes(),
+            ]),
         ]);
 
         $file = request()->file('images_zip');
@@ -648,6 +713,16 @@ class ImportController extends Controller
         if ($zip->open($file->getPathname()) !== true) {
             return new JsonResponse([
                 'message' => trans('admin::app.settings.data-transfer.imports.invalid-zip'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $rejection = $this->archiveRejectionReason($zip);
+
+        if ($rejection !== null) {
+            $zip->close();
+
+            return new JsonResponse([
+                'message' => trans('admin::app.settings.data-transfer.imports.'.$rejection['key'], $rejection['replace']),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
@@ -678,10 +753,12 @@ class ImportController extends Controller
         $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'];
 
         $maxEntrySize = (int) config('image_import.max_entry_size', 15 * 1024 * 1024);
+        $maxTotalSize = (int) config('image_import.max_total_size', 500 * 1024 * 1024);
 
         $fileInfo = new \finfo(FILEINFO_MIME_TYPE);
 
         $extractedCount = 0;
+        $totalExtractedBytes = 0;
 
         for ($index = 0; $index < $zip->numFiles; $index++) {
             $entryName = $zip->getNameIndex($index);
@@ -714,11 +791,25 @@ class ImportController extends Controller
                 continue;
             }
 
-            $contents = stream_get_contents($stream);
+            $contents = $maxEntrySize > 0
+                ? stream_get_contents($stream, $maxEntrySize + 1)
+                : stream_get_contents($stream);
 
             fclose($stream);
 
-            if ($contents === false || ! str_starts_with((string) $fileInfo->buffer($contents), 'image/')) {
+            if ($contents === false) {
+                continue;
+            }
+
+            $actualSize = strlen($contents);
+
+            $mimeType = (string) $fileInfo->buffer($contents);
+
+            if (
+                ($maxEntrySize > 0 && $actualSize > $maxEntrySize)
+                || ($maxTotalSize > 0 && ($totalExtractedBytes + $actualSize) > $maxTotalSize)
+                || ! in_array($extension, MimeTypes::getDefault()->getExtensions($mimeType), true)
+            ) {
                 continue;
             }
 
@@ -740,8 +831,88 @@ class ImportController extends Controller
             file_put_contents($targetPath, $contents);
 
             $extractedCount++;
+            $totalExtractedBytes += $actualSize;
         }
 
         return $extractedCount;
+    }
+
+    protected function archiveRejectionReason(\ZipArchive $zip): ?array
+    {
+        $maxEntries = (int) config('image_import.max_entries', 10000);
+        $maxTotalSize = (int) config('image_import.max_total_size', 500 * 1024 * 1024);
+        $maxCompressionRatio = (float) config('image_import.max_compression_ratio', 100);
+
+        if ($maxEntries > 0 && $zip->numFiles > $maxEntries) {
+            return [
+                'key'     => 'zip-too-many-entries',
+                'replace' => ['count' => $zip->numFiles, 'limit' => $maxEntries],
+            ];
+        }
+
+        $totalSize = 0;
+
+        for ($index = 0; $index < $zip->numFiles; $index++) {
+            $stat = $zip->statIndex($index);
+
+            if ($stat === false) {
+                return ['key' => 'invalid-zip', 'replace' => []];
+            }
+
+            $size = (int) ($stat['size'] ?? 0);
+            $compressedSize = (int) ($stat['comp_size'] ?? 0);
+            $totalSize += $size;
+
+            if ($maxTotalSize > 0 && $totalSize > $maxTotalSize) {
+                return [
+                    'key'     => 'zip-contents-too-large',
+                    'replace' => ['limit' => (int) round($maxTotalSize / 1048576)],
+                ];
+            }
+
+            if (
+                $maxCompressionRatio > 0
+                && $size > 0
+                && ($compressedSize === 0 || ($size / $compressedSize) > $maxCompressionRatio)
+            ) {
+                return [
+                    'key'     => 'zip-compression-suspicious',
+                    'replace' => ['entry' => (string) ($stat['name'] ?? '')],
+                ];
+            }
+        }
+
+        return null;
+    }
+
+    protected function maxUploadKilobytes(): int
+    {
+        $limits = array_filter([
+            $this->iniSizeInBytes((string) ini_get('upload_max_filesize')),
+            $this->iniSizeInBytes((string) ini_get('post_max_size')),
+        ]);
+
+        $configured = (int) config('image_import.max_upload_kilobytes', 102400);
+
+        return $limits === [] ? $configured : min($configured, intdiv(min($limits), 1024));
+    }
+
+    protected function iniSizeInBytes(string $value): int
+    {
+        $value = trim($value);
+
+        if ($value === '') {
+            return 0;
+        }
+
+        $unit = strtolower(substr($value, -1));
+        $number = (int) $value;
+
+        return match ($unit) {
+            'g'     => $number * 1024 ** 3,
+            'm'     => $number * 1024 ** 2,
+            'k'     => $number * 1024,
+            default => $number,
+        };
     }
 }

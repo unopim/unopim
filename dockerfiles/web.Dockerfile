@@ -27,7 +27,7 @@ RUN composer install \
 # ---------------------------------------------------------------------------
 # Stage 2: Production image
 # ---------------------------------------------------------------------------
-FROM php:8.3-apache
+FROM php:8.4-apache
 
 LABEL maintainer="Webkul <support@webkul.com>"
 LABEL org.opencontainers.image.title="UnoPim"
@@ -52,6 +52,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libonig-dev \
     libicu-dev \
     libgmp-dev \
+    libpq-dev \
     && docker-php-ext-configure gd \
         --with-freetype \
         --with-jpeg \
@@ -65,6 +66,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         intl \
         pcntl \
         pdo_mysql \
+        pdo_pgsql \
+        pgsql \
         zip \
     && pecl install redis-6.1.0 \
     && docker-php-ext-enable redis \
@@ -89,13 +92,15 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
+RUN touch vendor/composer/installed.json
+
 # Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
 EXPOSE 80
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
-    CMD curl -sf http://localhost/ -o /dev/null -w '%{http_code}' | grep -qE '^(200|302)$' || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
+    CMD curl -fsS http://localhost/up > /dev/null || exit 1
 
 ENTRYPOINT ["/var/www/html/dockerfiles/web-entrypoint.sh"]

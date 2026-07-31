@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Struktur Varian',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'salinan - :value',
@@ -13,7 +16,9 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Dapat dikonfigurasi',
-        'simple'       => 'Sederhana',
+        'configurable'  => 'Dapat dikonfigurasi',
+        'simple'        => 'Sederhana',
+        'variant-group' => 'Grup Varian',
+        'variant_group' => 'Grup Varian',
     ],
 ];

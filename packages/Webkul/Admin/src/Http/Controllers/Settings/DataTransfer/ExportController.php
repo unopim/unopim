@@ -16,6 +16,7 @@ use Webkul\DataTransfer\Jobs\Export\ExportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
+use Webkul\DataTransfer\Services\JobHealth;
 
 class ExportController extends Controller
 {
@@ -29,7 +30,8 @@ class ExportController extends Controller
     public function __construct(
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
-        protected Export $jobHelper
+        protected Export $jobHelper,
+        protected JobHealth $jobHealth,
     ) {}
 
     /**
@@ -66,7 +68,7 @@ class ExportController extends Controller
         $exporters = array_keys($exporterConfig);
 
         $this->validate(request(), [
-            'code'                => 'required|unique:job_instances,code',
+            'code'                => ['required', 'regex:/^[A-Za-z0-9_-]+$/', 'unique:job_instances,code'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
@@ -133,7 +135,7 @@ class ExportController extends Controller
         $export = $this->jobInstancesRepository->findOrFail($id);
 
         $this->validate(request(), [
-            'code'                => 'required',
+            'code'                => ['required'],
             'entity_type'         => 'required|in:'.implode(',', $exporters),
             'filters'             => 'array',
             'field_separator'     => ['required_if:filters.file_format,Csv', new SeparatorTypes],
@@ -149,7 +151,6 @@ class ExportController extends Controller
             ]),
             [
                 'action'               => 'fetch',
-                'validation_strategy'  => '',
                 'validation_strategy'  => '',
                 'allowed_errors'       => '',
                 'state'                => 'pending',
@@ -481,11 +482,24 @@ class ExportController extends Controller
     }
 
     /**
-     * Returns export stats
+     * Returns export stats for a run.
+     *
+     * The helper reads its counters off the job track `exportNow()` creates, so
+     * the id addresses a track rather than the saved export profile.
      */
     public function stats(int $id, string $state = Export::STATE_PROCESSED): JsonResponse
     {
-        $export = $this->jobInstancesRepository->findOrFail($id);
+        if (! bouncer()->hasPermission('data_transfer.export')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $export = $this->jobTrackRepository->findOrFail($id);
+
+        if ($this->jobHealth->isStalled($export)) {
+            $this->jobHealth->fail($export);
+
+            $export->refresh();
+        }
 
         $stats = $this->jobHelper
             ->setExport($export)

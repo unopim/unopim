@@ -3,19 +3,28 @@
 namespace Webkul\Admin\Http\Controllers\Catalog\Options;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeOptionRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryFieldOptionRepository;
+use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Core\Eloquent\TranslatableModel;
 
 class AjaxOptionsController extends Controller
 {
     const DEFAULT_PER_PAGE = 20;
+
+    /**
+     * Upper bound for a client-requested page size, used by "select all" style
+     * actions that need every matching record in a single request.
+     */
+    const MAX_PER_PAGE = 5000;
 
     /**
      * This is used for fetching attribute options for a specific attribute id
@@ -43,6 +52,11 @@ class AjaxOptionsController extends Controller
     const ENTITY_ATTRIBUTE = 'attributes';
 
     /**
+     * This is used for fetching categories
+     */
+    const ENTITY_CATEGORY = 'category';
+
+    /**
      * Return instance of Controller
      */
     public function __construct(
@@ -50,7 +64,8 @@ class AjaxOptionsController extends Controller
         protected AttributeOptionRepository $attributeOptionsRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected AttributeGroupRepository $attributeGroupRepository,
-        protected AttributeRepository $attributeRepository
+        protected AttributeRepository $attributeRepository,
+        protected CategoryRepository $categoryRepository
     ) {}
 
     /**
@@ -60,29 +75,38 @@ class AjaxOptionsController extends Controller
     {
         $attributeId = request()->input('attributeId') ?? request()->input('attribute_id');
         $entityName = request()->input('entityName') ?? request()->input('entity_name');
-        $page = request()->input('page');
+        $page = max(1, (int) request()->input('page', 1));
         $query = request()->input('query') ?? request()->input('search') ?? '';
 
-        $queryParams = request()->except(['page', 'query', 'search', 'entityName', 'entity_name', 'attributeId', 'attribute_id']);
+        $perPage = $this->resolvePerPage(request()->input('perPage'));
+
+        $queryParams = request()->except(['page', 'perPage', 'query', 'search', 'entityName', 'entity_name', 'attributeId', 'attribute_id']);
 
         if (! $entityName) {
             return new JsonResponse(['options' => [], 'page' => 1, 'lastPage' => 1]);
         }
 
-        $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query, $queryParams);
+        $options = $this->getOptionsByParams($attributeId, $entityName, $page, $query, $queryParams, $perPage);
 
         $currentLocaleCode = core()->getRequestedLocaleCode();
 
         $formattedOptions = [];
 
+        $swatchType = $entityName === self::ENTITY_ATTRIBUTE_OPTION && $attributeId
+            ? $this->attributeRepository->find($attributeId)?->swatch_type
+            : null;
+
         foreach ($options as $option) {
-            $translatedOptionLabel = $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
+            $translatedOptionLabel = $entityName === self::ENTITY_CATEGORY
+                ? $option->name
+                : $this->getTranslatedLabel($currentLocaleCode, $option, $entityName);
 
             $formattedOptions[] = [
                 'id'    => $option->id,
                 'code'  => $option->code,
                 'label' => ! empty($translatedOptionLabel) ? $translatedOptionLabel : "[{$option->code}]",
                 ...$option->makeHidden(['translations', 'label'])->toArray(),
+                'attribute' => ['swatch_type' => $swatchType],
             ];
         }
 
@@ -90,29 +114,50 @@ class AjaxOptionsController extends Controller
             'options'  => $formattedOptions,
             'page'     => $options->currentPage(),
             'lastPage' => $options->lastPage(),
+            'total'    => $options->total(),
         ]);
     }
 
     /**
-     * Fetch options according to parameters for search, page and id
+     * Fetch options according to parameters for search, page and id.
+     *
+     * `notInFamily` drops attributes already assigned to the given family. It
+     * exists because listing their codes in `exclude` does not scale: a large
+     * family assigns tens of thousands of attributes, and the caller would have
+     * to send every code on every page request.
      */
     protected function getOptionsByParams(
         int|string|null $id,
         string $entityName,
-        int|string $page,
+        int $page,
         string $query = '',
-        ?array $queryParams = []
+        ?array $queryParams = [],
+        int $perPage = self::DEFAULT_PER_PAGE
     ): LengthAwarePaginator {
-        $repository = $this->getRepository($entityName);
+        $isCategory = $entityName === self::ENTITY_CATEGORY;
 
-        if ($id) {
+        $repository = $isCategory
+            ? $this->categoryQuery($query)
+            : $this->getRepository($entityName);
+
+        if (! $isCategory) {
+            // Eager load translations so per-row label resolution is one query, not N+1.
+            $repository = $repository->with(['translations']);
+        }
+
+        if ($id && ! $isCategory) {
             $repository = $repository->where($entityName.'_id', $id);
         }
 
-        if (! empty($query)) {
-            $repository = $repository->where(function ($queryBuilder) use ($query, $entityName) {
-                $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
-                    ->orWhere('code', $query);
+        if (! empty($query) && ! $isCategory) {
+            $search = '%'.mb_strtolower($query).'%';
+
+            $column = $this->getTranslationColumnName($entityName);
+
+            $repository = $repository->where(function ($queryBuilder) use ($search, $column) {
+                $queryBuilder->whereHas('translations', function ($translations) use ($search, $column) {
+                    $translations->whereRaw("LOWER($column) LIKE ?", [$search]);
+                })->orWhereRaw('LOWER(code) LIKE ?', [$search]);
             });
         }
 
@@ -129,7 +174,155 @@ class AjaxOptionsController extends Controller
             $repository = $repository->whereNotIn($queryParams['exclude']['columnName'], $queryParams['exclude']['values']);
         }
 
-        return $repository->orderBy($this->getSortColumn($entityName))->paginate(self::DEFAULT_PER_PAGE, ['*'], 'paginate', $page);
+        if ($familyId = (int) ($queryParams['notInFamily'] ?? 0)) {
+            if ($entityName === self::ENTITY_ATTRIBUTE) {
+                $repository = $repository->whereNotExists(function ($builder) use ($familyId) {
+                    $builder->select(DB::raw(1))
+                        ->from('attribute_group_mappings')
+                        ->join(
+                            'attribute_family_group_mappings',
+                            'attribute_group_mappings.attribute_family_group_id',
+                            '=',
+                            'attribute_family_group_mappings.id'
+                        )
+                        ->whereColumn('attribute_group_mappings.attribute_id', 'attributes.id')
+                        ->where('attribute_family_group_mappings.attribute_family_id', $familyId);
+                });
+            }
+
+            if ($entityName === self::ENTITY_ATTRIBUTE_GROUP) {
+                $repository = $repository->whereNotExists(function ($builder) use ($familyId) {
+                    $builder->select(DB::raw(1))
+                        ->from('attribute_family_group_mappings')
+                        ->whereColumn('attribute_family_group_mappings.attribute_group_id', 'attribute_groups.id')
+                        ->where('attribute_family_group_mappings.attribute_family_id', $familyId);
+                });
+            }
+        }
+
+        if ($entityName === self::ENTITY_ATTRIBUTE) {
+            $repository = $this->applyAttributeFilters($repository, $queryParams ?? []);
+        }
+
+        if ($isCategory) {
+            return $repository->defaultOrder()->paginate($perPage, ['*'], 'paginate', $page);
+        }
+
+        return $repository->orderBy($this->getSortColumn($entityName))->paginate($perPage, ['*'], 'paginate', $page);
+    }
+
+    /**
+     * Attribute-only narrowing used by pickers that may only offer a class of
+     * attribute: `types`/`notTypes` filter on the attribute type, `inFamilies`
+     * keeps only attributes assigned to one of those families, and `notInGroup`
+     * drops every attribute assigned to that attribute group in any family.
+     * The family/group filters exist because listing the codes in `exclude` does
+     * not scale — the caller would resend them on every page request.
+     *
+     * @param  array<string, mixed>  $queryParams
+     */
+    protected function applyAttributeFilters(mixed $repository, array $queryParams): mixed
+    {
+        if ($types = $this->listParam($queryParams['types'] ?? null)) {
+            $repository = $repository->whereIn('type', $types);
+        }
+
+        if ($notTypes = $this->listParam($queryParams['notTypes'] ?? null)) {
+            $repository = $repository->whereNotIn('type', $notTypes);
+        }
+
+        if ($familyIds = $this->listParam($queryParams['inFamilies'] ?? null)) {
+            $repository = $repository->whereExists(function ($builder) use ($familyIds) {
+                $builder->select(DB::raw(1))
+                    ->from('attribute_group_mappings')
+                    ->join(
+                        'attribute_family_group_mappings',
+                        'attribute_group_mappings.attribute_family_group_id',
+                        '=',
+                        'attribute_family_group_mappings.id'
+                    )
+                    ->whereColumn('attribute_group_mappings.attribute_id', 'attributes.id')
+                    ->whereIn('attribute_family_group_mappings.attribute_family_id', $familyIds);
+            });
+        }
+
+        $groupCode = trim((string) ($queryParams['notInGroup'] ?? ''));
+
+        if ($groupCode === '') {
+            return $repository;
+        }
+
+        return $repository->whereNotExists(function ($builder) use ($groupCode) {
+            $builder->select(DB::raw(1))
+                ->from('attribute_group_mappings')
+                ->join(
+                    'attribute_family_group_mappings',
+                    'attribute_group_mappings.attribute_family_group_id',
+                    '=',
+                    'attribute_family_group_mappings.id'
+                )
+                ->join(
+                    'attribute_groups',
+                    'attribute_groups.id',
+                    '=',
+                    'attribute_family_group_mappings.attribute_group_id'
+                )
+                ->whereColumn('attribute_group_mappings.attribute_id', 'attributes.id')
+                ->where('attribute_groups.code', $groupCode);
+        });
+    }
+
+    /**
+     * Accepts a repeated query param (`types[]=file`) or a comma separated one.
+     *
+     * @return list<string>
+     */
+    protected function listParam(mixed $value): array
+    {
+        $values = match (true) {
+            is_array($value)                   => $value,
+            is_string($value) && $value !== '' => explode(',', $value),
+            default                            => [],
+        };
+
+        return array_values(array_filter(array_map(
+            fn ($item): string => trim((string) $item),
+            $values,
+        ), fn (string $item): bool => $item !== ''));
+    }
+
+    /**
+     * Category labels live in an `additional_data` JSON column, not a translations table.
+     */
+    protected function categoryQuery(string $query): Builder
+    {
+        $locale = core()->getRequestedLocaleCode();
+
+        $builder = $this->categoryRepository->getModel()->newQuery();
+
+        if ($query !== '') {
+            $builder->where(function ($builder) use ($query, $locale) {
+                $builder->where('additional_data->locale_specific->'.$locale.'->name', 'LIKE', '%'.$query.'%')
+                    ->orWhere('code', 'LIKE', '%'.$query.'%');
+            });
+        }
+
+        return $builder;
+    }
+
+    /**
+     * Clamp a client-supplied page size into a safe range, falling back to the
+     * default when the value is absent or invalid.
+     */
+    protected function resolvePerPage(mixed $perPage): int
+    {
+        $perPage = (int) $perPage;
+
+        if ($perPage < 1) {
+            return self::DEFAULT_PER_PAGE;
+        }
+
+        return min($perPage, self::MAX_PER_PAGE);
     }
 
     /**

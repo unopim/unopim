@@ -2,8 +2,8 @@
 
 namespace Webkul\Product\Filter\ElasticSearch\Property;
 
-use Carbon\Carbon;
 use Carbon\Exceptions\InvalidFormatException;
+use Illuminate\Support\Facades\Date;
 use Webkul\ElasticSearch\Enums\FilterOperators;
 use Webkul\Product\Filter\AbstractPropertyFilter;
 
@@ -18,7 +18,12 @@ class DateTimeFilter extends AbstractPropertyFilter
 
     public function __construct(
         array $supportedProperties = [self::CREATED_AT_PROPERTY, self::UPDATED_AT_PROPERTY],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::RANGE]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::RANGE,
+            FilterOperators::LESS_THAN,
+            FilterOperators::GREATER_THAN,
+        ]
     ) {
         $this->allowedOperators = $allowedOperators;
         $this->supportedProperties = $supportedProperties;
@@ -27,11 +32,9 @@ class DateTimeFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         if (! in_array($property, $this->supportedProperties)) {
             throw new \InvalidArgumentException(
@@ -47,13 +50,11 @@ class DateTimeFilter extends AbstractPropertyFilter
             case FilterOperators::IN:
                 $clause = [
                     'terms' => [
-                        $property => array_map(function ($data) use ($property) {
-                            return $this->getFormattedDateTime($property, $data);
-                        }, $value),
+                        $property => array_map(fn (string $data): string => $this->getFormattedDateTime($property, $data), $value),
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::RANGE:
@@ -67,7 +68,27 @@ class DateTimeFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
+                break;
+
+            case FilterOperators::LESS_THAN:
+                $this->queryBuilder->where([
+                    'range' => [
+                        $property => [
+                            $operator->value => $this->getFormattedDateTime($property, $this->scalarValue($value).' 00:00:01'),
+                        ],
+                    ],
+                ]);
+                break;
+
+            case FilterOperators::GREATER_THAN:
+                $this->queryBuilder->where([
+                    'range' => [
+                        $property => [
+                            $operator->value => $this->getFormattedDateTime($property, $this->scalarValue($value).' 23:59:59'),
+                        ],
+                    ],
+                ]);
                 break;
         }
 
@@ -82,8 +103,8 @@ class DateTimeFilter extends AbstractPropertyFilter
         try {
             $utcTimeZone = 'UTC';
 
-            $dateTime = Carbon::parse($value, $utcTimeZone);
-        } catch (InvalidFormatException $e) {
+            $dateTime = Date::parse($value, $utcTimeZone);
+        } catch (InvalidFormatException) {
             throw new \LogicException(
                 sprintf(
                     'Invalid date format for field "%s", expected "Y-m-d H:i:s", but "%s" given',

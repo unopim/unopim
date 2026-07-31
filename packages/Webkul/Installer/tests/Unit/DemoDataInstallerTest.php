@@ -56,6 +56,7 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         // Stub elasticsearch off and queue default to sync to avoid touching
         // the real queue/ES while still exercising recalculateCompleteness.
         config(['elasticsearch.enabled' => 'false']);
+        Artisan::shouldReceive('registerCommand')->andReturnNull();
         Artisan::shouldReceive('call')
             ->with('unopim:completeness:recalculate', ['--all' => true])
             ->once()
@@ -140,6 +141,7 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         }
 
         config(['elasticsearch.enabled' => 'false']);
+        Artisan::shouldReceive('registerCommand')->andReturnNull();
         Artisan::shouldReceive('call')
             ->with('unopim:completeness:recalculate', ['--all' => true])
             ->once()
@@ -168,6 +170,7 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
         }
 
         config(['elasticsearch.enabled' => 'false']);
+        Artisan::shouldReceive('registerCommand')->andReturnNull();
         Artisan::shouldReceive('call')
             ->with('unopim:completeness:recalculate', ['--all' => true])
             ->once()
@@ -193,6 +196,7 @@ describe('DemoDataInstaller::seed (issue #794)', function () {
 
         config(['elasticsearch.enabled' => 'true']);
 
+        Artisan::shouldReceive('registerCommand')->andReturnNull();
         Artisan::shouldReceive('call')->with('unopim:category:index')->once()->andReturn(0);
         Artisan::shouldReceive('call')->with('unopim:product:index')->once()->andReturn(0);
         Artisan::shouldReceive('call')

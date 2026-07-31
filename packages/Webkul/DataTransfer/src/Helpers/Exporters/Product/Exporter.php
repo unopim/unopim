@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
@@ -15,6 +16,7 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
+use Webkul\DataTransfer\Helpers\Sources\Export\ProductCursor;
 use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Models\JobTrack;
@@ -81,8 +83,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -98,10 +98,8 @@ class Exporter extends AbstractExporter
      * Initializes the channels and locales for the export process.
      * Uses a static in-process cache so that the DB queries run only once
      * per worker process regardless of how many ExportBatch jobs are handled.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         if (self::$staticInitCache === null) {
             $channels = $this->channelRepository->with(['locales', 'currencies'])->all();
@@ -164,7 +162,7 @@ class Exporter extends AbstractExporter
 
     protected function applyChannelScope(array $selectedChannels): void
     {
-        if (empty($selectedChannels)) {
+        if ($selectedChannels === []) {
             return;
         }
 
@@ -178,7 +176,7 @@ class Exporter extends AbstractExporter
 
     protected function applyLocaleScope(array $selectedLocales): void
     {
-        if (empty($selectedLocales)) {
+        if ($selectedLocales === []) {
             return;
         }
 
@@ -189,7 +187,7 @@ class Exporter extends AbstractExporter
 
     protected function applyCurrencyScope(array $selectedCurrencies): void
     {
-        if (empty($selectedCurrencies)) {
+        if ($selectedCurrencies === []) {
             return;
         }
 
@@ -203,7 +201,7 @@ class Exporter extends AbstractExporter
 
     protected function isAttributeValueExported(string $code): bool
     {
-        return empty($this->selectedAttributeCodes)
+        return $this->selectedAttributeCodes === []
             || in_array($code, $this->selectedAttributeCodes, true);
     }
 
@@ -241,12 +239,12 @@ class Exporter extends AbstractExporter
         $pairs = 0;
 
         foreach ($this->channelRepository->with(['locales'])->all() as $channel) {
-            if (! empty($channelCodes) && ! in_array($channel->code, $channelCodes, true)) {
+            if ($channelCodes !== [] && ! in_array($channel->code, $channelCodes, true)) {
                 continue;
             }
 
             foreach ($channel->locales as $locale) {
-                if (! empty($localeCodes) && ! in_array($locale->code, $localeCodes, true)) {
+                if ($localeCodes !== [] && ! in_array($locale->code, $localeCodes, true)) {
                     continue;
                 }
 
@@ -281,7 +279,7 @@ class Exporter extends AbstractExporter
     /**
      * {@inheritdoc}
      */
-    protected function getResults()
+    protected function getResults(): \Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductCursor|ProductCursor
     {
         $filters = $this->getFilters();
 
@@ -333,7 +331,7 @@ class Exporter extends AbstractExporter
         }
 
         try {
-            return Carbon::parse($date);
+            return Date::parse($date);
         } catch (\Throwable) {
             return null;
         }
@@ -352,20 +350,20 @@ class Exporter extends AbstractExporter
             ->where('state', Export::STATE_COMPLETED)
             ->where('id', '!=', $this->export->id)
             ->whereNotNull('completed_at')
-            ->orderByDesc('completed_at')
+            ->latest('completed_at')
             ->value('completed_at');
 
-        return $completedAt ? Carbon::parse($completedAt) : null;
+        return $completedAt ? Date::parse($completedAt) : null;
     }
 
     protected function getItemsFromIds(array $ids)
     {
-        if (empty($ids)) {
+        if ($ids === []) {
             return [];
         }
 
         if (! $this->source) {
-            $this->source = app(ProductRepository::class);
+            $this->source = resolve(ProductRepository::class);
         }
 
         return $this->source
@@ -373,6 +371,7 @@ class Exporter extends AbstractExporter
                 'super_attributes:id,code',
                 'parent:id,sku',
                 'attribute_family:id,code',
+                'variantStructure:id,code',
             ])
             ->whereIn('id', $ids)
             ->get();
@@ -381,11 +380,16 @@ class Exporter extends AbstractExporter
     /**
      * Prepare products from current batch
      */
-    public function prepareProducts(JobTrackBatchContract $batch, $filePath)
+    public function prepareProducts(JobTrackBatchContract $batch, $filePath): void
     {
         $flatIds = array_column($batch->data, 'id');
 
         $productsByIds = $this->getItemsFromIds($flatIds);
+
+        // Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns are opt-in
+        // (default off) so the product export stays clean by default. The dedicated
+        // association export job is the rich, row-per-link alternative for this data.
+        $withAssociations = (bool) ($this->getFilters()['with_associations'] ?? false);
 
         foreach ($productsByIds as $product) {
             // Build rowData directly from model properties instead of calling toArray().
@@ -406,8 +410,9 @@ class Exporter extends AbstractExporter
             ];
 
             $family = $product->attribute_family?->code;
-            $parentSku = $product->type === 'simple'
-                ? optional($product->parent)->sku
+            $parentSku = $product->parent?->sku;
+            $variantStructure = $product->type === 'configurable'
+                ? $product->variantStructure?->code
                 : null;
 
             $sku = $product->sku;
@@ -415,9 +420,12 @@ class Exporter extends AbstractExporter
             $status = $product->status ? 'true' : 'false';
             $configurableAttributes = $this->getSuperAttributes($rowData);
             $categories = $this->getCategories($rowData);
-            $upSells = $this->getAssociations($rowData, 'up_sells');
-            $crossSells = $this->getAssociations($rowData, 'cross_sells');
-            $relatedProducts = $this->getAssociations($rowData, 'related_products');
+
+            $associationFields = $withAssociations ? [
+                'up_sells'         => $this->getAssociations($rowData, 'up_sells'),
+                'cross_sells'      => $this->getAssociations($rowData, 'cross_sells'),
+                'related_products' => $this->getAssociations($rowData, 'related_products'),
+            ] : [];
 
             $commonFields = $this->getCommonFields($rowData);
             unset($commonFields['sku']);
@@ -445,30 +453,28 @@ class Exporter extends AbstractExporter
                         'type'                    => $type,
                         'parent'                  => $parentSku,
                         'attribute_family'        => $family,
+                        'variant_structure'       => $variantStructure,
                         'configurable_attributes' => $configurableAttributes,
                         'categories'              => $categories,
-                        'up_sells'                => $upSells,
-                        'cross_sells'             => $crossSells,
-                        'related_products'        => $relatedProducts,
-                    ], $values);
+                    ], $associationFields, $values);
 
                     $this->exportBuffer->write([$row]);
                 }
             }
 
+            $this->heartbeat();
+
             $this->createdItemsCount++;
         }
     }
 
-    public function getSuperAttributes($data)
+    public function getSuperAttributes(array $data): ?string
     {
         if (! isset($data['super_attributes'])) {
             return null;
         }
 
-        $configurable_attributes = array_map(function ($data) {
-            return $data['code'];
-        }, $data['super_attributes'] ?? []);
+        $configurable_attributes = array_map(fn (array $data) => $data['code'], $data['super_attributes'] ?? []);
 
         return implode(',', $configurable_attributes);
     }
@@ -570,13 +576,10 @@ class Exporter extends AbstractExporter
 
     protected function headerLocale(): ?string
     {
-        foreach ($this->channelsAndLocales as $locales) {
-            if (! empty($locales)) {
-                return $locales[0];
-            }
-        }
+        $codes = collect($this->channelsAndLocales)->flatten()->unique();
+        $configured = config('app.locale');
 
-        return null;
+        return $codes->contains($configured) ? $configured : $codes->sort()->first();
     }
 
     protected function formatDateValue(mixed $value, string $format): mixed
@@ -586,18 +589,16 @@ class Exporter extends AbstractExporter
         }
 
         try {
-            return Carbon::parse($value)->format($format);
-        } catch (\Exception $e) {
+            return Date::parse($value)->format($format);
+        } catch (\Exception) {
             return $value;
         }
     }
 
     /**
      * Sets attribute values for a product. If an attribute is not present in the given values array,
-     *
-     * @return array
      */
-    protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null)
+    protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
     {
         $attributeValues = [];
         $filters = $this->getFilters();
@@ -609,8 +610,10 @@ class Exporter extends AbstractExporter
         foreach ($this->attributeMeta as $meta) {
             $code = $meta['code'];
             $type = $meta['type'];
-
-            if ($code === 'sku' || $code === 'status') {
+            if ($code === 'sku') {
+                continue;
+            }
+            if ($code === 'status') {
                 continue;
             }
 
@@ -634,9 +637,7 @@ class Exporter extends AbstractExporter
 
             if (
                 $withMedia
-                && ($type === AttributeTypes::FILE_ATTRIBUTE_TYPE
-                    || $type === AttributeTypes::IMAGE_ATTRIBUTE_TYPE
-                    || $type === AttributeTypes::GALLERY_ATTRIBUTE_TYPE)
+                && (in_array($type, [AttributeTypes::FILE_ATTRIBUTE_TYPE, AttributeTypes::IMAGE_ATTRIBUTE_TYPE, AttributeTypes::GALLERY_ATTRIBUTE_TYPE], true))
             ) {
                 $mediaPaths = (array) $rawValue;
                 foreach ($mediaPaths as $path) {
@@ -744,17 +745,15 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the categories associated with a product.
-     *
-     * @return string|null
      */
-    protected function getCategories(array $data)
+    protected function getCategories(array $data): ?string
     {
         if (
             ! array_key_exists('values', $data)
             || ! array_key_exists('categories', $data['values'])
             || ! is_array($data['values']['categories'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['categories']);
@@ -762,10 +761,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Retrieves and formats the associated products for a given data row and type.
-     *
-     * @return string|null
      */
-    protected function getAssociations(array $data, string $type)
+    protected function getAssociations(array $data, string $type): ?string
     {
         if (
             ! array_key_exists('values', $data)
@@ -773,7 +770,7 @@ class Exporter extends AbstractExporter
             || ! is_array($data['values']['associations'])
             || ! array_key_exists($type, $data['values']['associations'])
         ) {
-            return;
+            return null;
         }
 
         return implode(',', $data['values']['associations'][$type]) ?? null;

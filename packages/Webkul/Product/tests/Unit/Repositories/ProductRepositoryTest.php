@@ -88,6 +88,22 @@ describe('updateStatus', function () {
     it('throws exception when product not found', function () {
         $this->productRepository->updateStatus(true, 999999);
     })->throws(ModelNotFoundException::class);
+
+    it('marks the product dirty when the status actually changes', function () {
+        $product = Product::factory()->create(['status' => 1]);
+
+        $updated = $this->productRepository->updateStatus(false, $product->id);
+
+        expect($updated->wasDirtyOnUpdate)->toBeTrue();
+    });
+
+    it('does not mark the product dirty when the status is unchanged', function () {
+        $product = Product::factory()->create(['status' => 1]);
+
+        $updated = $this->productRepository->updateStatus(true, $product->id);
+
+        expect($updated->wasDirtyOnUpdate)->toBeFalse();
+    });
 });
 
 describe('copy', function () {
@@ -277,4 +293,31 @@ describe('updateWithValues', function () {
             'values' => ['common' => ['sku' => 'whatever']],
         ], 999999);
     })->throws(ModelNotFoundException::class);
+
+    it('marks the product dirty when values actually change', function () {
+        $product = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+
+        $updated = $this->productRepository->updateWithValues([
+            'sku'    => $product->sku,
+            'values' => [
+                'common' => [
+                    'sku'  => $product->sku,
+                    'name' => 'A Different Name',
+                ],
+            ],
+        ], $product->id);
+
+        expect($updated->wasDirtyOnUpdate)->toBeTrue();
+    });
+
+    it('does not mark the product dirty when the values payload is identical', function () {
+        $product = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+
+        $updated = $this->productRepository->updateWithValues([
+            'sku'    => $product->sku,
+            'values' => $product->values,
+        ], $product->id);
+
+        expect($updated->wasDirtyOnUpdate)->toBeFalse();
+    });
 });

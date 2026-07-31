@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code 值必须是唯一的。',
                     'incorrect-family-for-variant'             => '家庭必须与父母家庭相同',
                     'parent-not-exist'                         => '父级不存在。',
+                    'variant-structure-not-found'              => '该属性族不存在变体结构 :code。',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => '属性代码 :code 已被使用。',
                     'code_not_found_to_delete'             => '未找到要删除的属性代码。',
                     'code_is_system_and_cannot_be_deleted' => '无法删除系统属性。',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => '产品关联',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' 字段为必填项。',
+                    'self-link-not-allowed'       => '产品 \'%s\' 不能与自身关联。',
+                    'sku-not-found'               => '未找到 SKU 为 \'%s\' 的产品。',
+                    'related-sku-not-found'       => '未找到 SKU 为 \'%s\' 的关联产品。',
+                    'association-type-not-found'  => '关联类型 \'%s\' 不存在或未启用。',
+                    'invalid-field-value'         => '关联字段提供了无效的值。',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => '此导出过大，无法运行：预计 :rows 行 × :columns 列（~:estimated）超出了可用空间（~:available）。请通过选择更少的渠道/区域（和属性）来缩小导出范围，然后重试。',
         'fields'           => [
-            'file-format'         => '文件格式',
-            'with-media'          => '包含媒体',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => '文件格式',
+            'with-media'             => '包含媒体',
+            'with-associations'      => '包含关联',
+            'with-associations-info' => '在导出中包含旧版 up_sells、cross_sells、related_products SKU 列表列',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => '属性',
         ],
+        'product-associations' => [
+            'title' => '产品关联',
+        ],
         'attribute-groups' => [
             'title' => '属性组',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => '作业执行开始',
         'completed' => '作业执行完成',
+        'stalled'   => '该任务超过 :minutes 分钟没有响应，已标记为失败。执行它的工作进程很可能已被终止。',
+        'reaped'    => '已将 :count 个停滞的任务标记为失败。',
     ],
 ];

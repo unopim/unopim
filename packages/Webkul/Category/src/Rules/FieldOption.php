@@ -10,7 +10,7 @@ class FieldOption implements ValidationRule
     /**
      * Constructor.
      *
-     * @param  array  $currentIds
+     * @param  mixed  $field
      */
     public function __construct(
         protected $field = null,
@@ -21,7 +21,7 @@ class FieldOption implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        $optionCode = is_array($value) ? $value : explode(',', $value);
+        $optionCode = is_array($value) ? $value : explode(',', (string) $value);
         $codeNotExists = array_diff($optionCode, $this->getOptionCode());
 
         if (count($codeNotExists) > 0) {

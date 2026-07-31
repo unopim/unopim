@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Varyant Yapıları',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'kopyası-:value',
         'copy-of'                       => ':value\'in kopyası',
@@ -12,7 +16,9 @@ return [
     ],
 
     'type'     => [
-        'configurable' => 'Ayarlanabilir',
-        'simple'       => 'Basit',
+        'configurable'  => 'Ayarlanabilir',
+        'simple'        => 'Basit',
+        'variant-group' => 'Varyant Grubu',
+        'variant_group' => 'Varyant Grubu',
     ],
 ];

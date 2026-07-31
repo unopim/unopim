@@ -16,6 +16,7 @@ const invalidCredentials = {
  * which is unreliable via click() because the dropdown requires Vue to toggle isActive first.
  */
 async function logout(adminPage) {
+  await adminPage.waitForSelector('#adminLogout', { state: 'attached', timeout: 15000 });
   await adminPage.evaluate(() => {
     const form = document.getElementById('adminLogout');
     if (form) form.submit();
@@ -93,11 +94,12 @@ test.describe('Login Page', () => {
     await expect(adminPage.getByText(/The Password field is required/i).first()).toBeVisible();
   });
 
-  test('shows a validation error for a short password', async ({ guestPage: adminPage }) => {
+  test('does not impose a password min-length; a short password fails on credentials, not length', async ({ guestPage: adminPage }) => {
     await goToLoginPage(adminPage);
+    await adminPage.getByRole('textbox', { name: 'Email Address' }).fill('nouser@example.com');
     await adminPage.getByRole('textbox', { name: 'Password' }).fill('in123');
     await adminPage.getByRole('button', { name: /sign in/i }).click();
-    await expect(adminPage.getByText(/The Password field must be at least 6 characters/i).first()).toBeVisible();
+    await expect(adminPage.getByText(/Please check your credentials and try again\./i).first()).toBeVisible();
   });
 
   test('toggles password visibility', async ({ guestPage: adminPage }) => {

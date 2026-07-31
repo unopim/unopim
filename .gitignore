@@ -1,5 +1,7 @@
 .env
 .env.testing
+.env.hostbak.*
+tests/e2e-pw/dbg.mjs
 .idea
 .php_cs.cache
 .phpunit.result.cache
@@ -9,8 +11,6 @@
 /stubs
 /data
 /docker-compose-collection
-Homestead.json
-Homestead.yaml
 /ignorables/*
 /node_modules
 npm-debug.log
@@ -26,17 +26,53 @@ package-lock.json
 /storage/*.key
 /storage/unopim.lock
 /storage/dcc-data/
+/storage/parallel/
 /vendor
 yarn.lock
 yarn-error.log
 .phpunit.cache/
 .playwright-mcp/
-.claude/settings.json
-.claude/scheduled_tasks.lock
-.claude/settings.local.json
+/.state/
 tests/e2e-pw/.state/
 tests/e2e-pw/playwright-report/
 tests/e2e-pw/test-results/
-tests/e2e-pw/test-results/
 test-results
+/*.png
+.agents
+.claude
+.codex
+.superpowers
 
+.cursor
+.github/skills
+docs
+graphify-out
+.mcp.json
+boost.json
+CLAUDE.md
+opencode.json
+skills-lock.json
+# Passport OAuth signing keys — generated per environment, never commit
+packages/Webkul/AdminApi/src/Secrets/Oauth/*.key
+AGENTS.md
+.playwright-cli
+
+# OWASP ZAP scan artifacts (generated, do not commit)
+/storage/zap-report/
+
+# local-only E2E secrets (never commit)
+tests/e2e-pw/.secrets.local
+
+.env.e2e
+
+.env.live-backup
+.factory
+
+# graphify knowledge-graph output (generated, do not commit)
+/graphify-out/
+
+# Pest Test Impact Analysis cache (fallback when HOME is unavailable)
+.pest/
+
+# staging area for the separate unopim/agent-skills project — never commit here
+/agent-skills/

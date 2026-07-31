@@ -35,7 +35,7 @@ return new class extends Migration
             'api_url'    => $this->normalizeApiUrl($apiDomain, $platform),
             'api_key'    => Crypt::encryptString($apiKey),
             'models'     => $apiModel ?: '',
-            'extras'     => ! empty($extras) ? json_encode($extras) : null,
+            'extras'     => $extras === [] ? null : json_encode($extras),
             'is_default' => true,
             'status'     => true,
             'created_at' => now(),
@@ -85,7 +85,7 @@ return new class extends Migration
 
         // Append /v1 if it's a bare domain like https://api.openai.com
         if (in_array($platform, ['openai', 'groq', 'xai', 'mistral']) && ! str_contains($domain, '/v1')) {
-            $domain = rtrim($domain, '/').'/v1';
+            return rtrim($domain, '/').'/v1';
         }
 
         return $domain;

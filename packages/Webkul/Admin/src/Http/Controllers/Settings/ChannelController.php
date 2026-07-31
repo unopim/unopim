@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Settings\ChannelDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\ChannelForm;
+use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Repositories\ChannelRepository;
-use Webkul\Core\Rules\Code;
-use Webkul\Core\Rules\ConvertToArrayIfNeeded;
 
 class ChannelController extends Controller
 {
@@ -19,7 +19,10 @@ class ChannelController extends Controller
      *
      * @return void
      */
-    public function __construct(protected ChannelRepository $channelRepository) {}
+    public function __construct(
+        protected ChannelRepository $channelRepository,
+        protected CategoryRepository $categoryRepository
+    ) {}
 
     /**
      * Display a listing of the resource.
@@ -40,30 +43,17 @@ class ChannelController extends Controller
      */
     public function create(): View
     {
-        return view('admin::settings.channels.create');
+        $rootCategories = $this->categoryRepository->getRootCategories();
+
+        return view('admin::settings.channels.create', compact('rootCategories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(ChannelForm $request): RedirectResponse
     {
-        $locales = core()->getAllActiveLocales();
-
-        $rules = [
-            'code'              => ['required', 'unique:channels,code', new Code],
-            'root_category_id'  => 'required',
-            'locales'           => ['required', new ConvertToArrayIfNeeded],
-            'currencies'        => ['required', new ConvertToArrayIfNeeded],
-        ];
-
-        foreach ($locales as $locale) {
-            $rules[$locale->code.'.name'] = 'nullable';
-        }
-
-        $this->validate(request(), $rules);
-
-        $data = request()->only(array_keys($rules));
+        $data = $request->validated();
 
         Event::dispatch('core.channel.create.before');
 
@@ -73,7 +63,7 @@ class ChannelController extends Controller
 
         session()->flash('success', trans('admin::app.settings.channels.create.create-success'));
 
-        return redirect()->route('admin.settings.channels.index');
+        return redirect()->route('admin.settings.channels.edit', $channel->id);
     }
 
     /**
@@ -83,29 +73,17 @@ class ChannelController extends Controller
     {
         $channel = $this->channelRepository->with(['locales', 'currencies'])->findOrFail($id);
 
-        return view('admin::settings.channels.edit', compact('channel'));
+        $rootCategories = $this->categoryRepository->getRootCategories();
+
+        return view('admin::settings.channels.edit', compact('channel', 'rootCategories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(int $id): RedirectResponse
+    public function update(ChannelForm $request, int $id): RedirectResponse
     {
-        $locales = core()->getAllActiveLocales();
-
-        $rules = [
-            'root_category_id'  => 'required',
-            'locales'           => ['required', new ConvertToArrayIfNeeded],
-            'currencies'        => ['required', new ConvertToArrayIfNeeded],
-        ];
-
-        foreach ($locales as $locale) {
-            $rules[$locale->code.'.name'] = 'nullable';
-        }
-
-        $this->validate(request(), $rules);
-
-        $data = request()->only(array_keys($rules));
+        $data = $request->validated();
 
         Event::dispatch('core.channel.update.before', $id);
 
@@ -133,8 +111,7 @@ class ChannelController extends Controller
 
         if ($channel->code == config('app.channel')) {
             return new JsonResponse([
-                'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
-                'message'    => trans('admin::app.settings.channels.index.last-delete-error'),
+                'message' => trans('admin::app.settings.channels.index.last-delete-error'),
             ], JsonResponse::HTTP_BAD_REQUEST);
         }
 
@@ -153,20 +130,5 @@ class ChannelController extends Controller
                 'message' => trans('admin::app.settings.channels.index.delete-failed'),
             ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    /**
-     * Unset keys.
-     *
-     * @param  array  $keys
-     * @return array
-     */
-    private function unsetKeys($data, $keys)
-    {
-        foreach ($keys as $key) {
-            unset($data[$key]);
-        }
-
-        return $data;
     }
 }

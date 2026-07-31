@@ -97,7 +97,7 @@ it('should update a Role', function () {
     ]);
 });
 
-it('should give validation message when creating a Role without description', function () {
+it('should create a Role without a description, which is optional', function () {
     $this->loginAsAdmin();
 
     $role = [
@@ -105,9 +105,13 @@ it('should give validation message when creating a Role without description', fu
         'permission_type' => 'custom',
     ];
 
-    $response = postJson(route('admin.settings.roles.store'), $role);
+    postJson(route('admin.settings.roles.store'), $role)
+        ->assertJsonMissingValidationErrors('description');
 
-    $response->assertJsonValidationErrorFor('description');
+    $this->assertDatabaseHas($this->getFullTableName(Role::class), [
+        'name'        => 'demo role',
+        'description' => null,
+    ]);
 });
 
 it('should give validation message when creating a Role without permission type', function () {
@@ -149,6 +153,56 @@ it('should delete a Role', function () {
     $this->assertDatabaseMissing($this->getFullTableName(Role::class), [
         'id' => $role->id,
     ]);
+});
+
+it('returns a json message with a redirect url when creating a role via ajax', function () {
+    $this->loginAsAdmin();
+
+    $data = [
+        'name'            => 'ajax role',
+        'permission_type' => 'custom',
+        'description'     => 'created via ajax',
+        'permissions'     => ['admin.users.index'],
+    ];
+
+    postJson(route('admin.settings.roles.store'), $data)
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.roles.create-success')])
+        ->assertJsonFragment(['redirect_url' => route('admin.settings.roles.index')]);
+});
+
+it('returns a json message and stays on the page when updating a role via ajax', function () {
+    $this->loginAsAdmin();
+
+    $role = Role::factory()->create();
+
+    $data = [
+        'name'            => 'updated via ajax',
+        'permission_type' => 'custom',
+        'description'     => 'updated via ajax',
+        'permissions'     => ['admin.users.index'],
+    ];
+
+    putJson(route('admin.settings.roles.update', ['id' => $role->id]), $data)
+        ->assertOk()
+        ->assertJsonFragment(['message' => trans('admin::app.settings.roles.update-success')])
+        ->assertJsonMissingPath('redirect_url');
+});
+
+it('redirects with a success flash when updating a role without ajax', function () {
+    $this->loginAsAdmin();
+
+    $role = Role::factory()->create();
+
+    $data = [
+        'name'            => 'updated plain',
+        'permission_type' => 'custom',
+        'description'     => 'updated plain',
+    ];
+
+    $this->put(route('admin.settings.roles.update', ['id' => $role->id]), $data)
+        ->assertRedirect()
+        ->assertSessionHas('success', trans('admin::app.settings.roles.update-success'));
 });
 
 it('should have acl top-level sort values matching menu sort values for common items', function () {

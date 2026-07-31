@@ -2,8 +2,8 @@
 
 namespace Webkul\Installer\Database\Seeders;
 
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use JsonException;
@@ -35,7 +35,7 @@ class CategoryDemoTableSeeder extends Seeder
             return;
         }
 
-        $now = Carbon::now();
+        $now = Date::now();
 
         DB::transaction(function () use ($root, $now, $categories): void {
             DB::table('categories')->whereNotNull('parent_id')->delete();

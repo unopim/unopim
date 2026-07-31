@@ -1,9 +1,17 @@
 @props([
-    'isActive' => false,
+    'isActive'      => false,
+    'noClass'       => false,
+    'preventSubmit' => false,
 ])
 
 <v-modal
     is-active="{{ $isActive }}"
+    @if ($noClass)
+        :no-class="true"
+    @endif
+    @if ($preventSubmit)
+        :prevent-submit="true"
+    @endif
     {{ $attributes }}
 >
     @isset($toggle)
@@ -18,7 +26,7 @@
                 {{ $header }}
 
                 <span
-                    class="icon-cancel text-3xl  cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                    class="icon-cancel text-3xl  cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                     @click="toggle"
                 >
                 </span>
@@ -27,7 +35,7 @@
     @endisset
 
     @isset($content)
-        <template v-slot:content>
+        <template v-slot:content="{ toggle, isOpen }">
             <div {{ $content->attributes->merge(['class' => 'px-4 py-2.5 border-b dark:border-gray-800']) }}>
                 {{ $content }}
             </div>
@@ -79,13 +87,15 @@
             >
                 <div
                     class="fixed inset-0 z-[10002] transform transition overflow-y-auto"
+                    data-unsaved-ignore
                     v-if="isOpen"
                 >
-                    <div class="flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0">
+                    <div :class="noClass ? '' : 'flex min-h-full items-end justify-center p-4 sm:items-center sm:p-0'">
                         <div
                             ref="modalContent"
-                            class="w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2"
-                            :class="[modalSize, { 'overflow-y-auto': isOverflowing, 'overflow-hidden': clip }]"
+                            :class="noClass
+                                ? 'w-full h-full'
+                                : ['w-full max-h-[96%] z-[999] absolute ltr:left-1/2 rtl:right-1/2 top-1/2 rounded-lg bg-white dark:bg-gray-900 box-shadow max-md:w-[90%] ltr:-translate-x-1/2 rtl:translate-x-1/2 -translate-y-1/2', modalSize, { 'overflow-y-auto': isOverflowing, 'overflow-hidden': clip }]"
                         >
                             <!-- Header Slot -->
                             <slot
@@ -96,7 +106,11 @@
                             </slot>
 
                             <!-- Content Slot -->
-                            <slot name="content"></slot>
+                            <slot
+                                name="content"
+                                :toggle="toggle"
+                                :isOpen="isOpen"
+                            ></slot>
                             
                             <!-- Footer Slot -->
                             <slot name="footer"></slot>
@@ -111,7 +125,7 @@
         app.component('v-modal', {
             template: '#v-modal-template',
 
-            props: ['isActive', 'type', 'clip'],
+            props: ['isActive', 'type', 'clip', 'noClass', 'preventSubmit'],
 
             data() {
                 return {
@@ -131,7 +145,7 @@
 
             computed: {
                 modalSize() {
-                    return this.sizeMap[this.modalType] || this.sizeMap.medium; // Default to medium
+                    return this.sizeMap[this.modalType] || this.sizeMap.medium;
                 }
             },
 
@@ -152,24 +166,22 @@
 
                 window.addEventListener('resize', this._onWindowResize);
                 window.addEventListener('orientationchange', this._onWindowResize);
+                window.addEventListener('keydown', this.handleKeydown);
             },
 
             beforeUnmount() {
+                if (this.isOpen) {
+                    window.unlockBodyScroll();
+                }
+
                 this.cleanupObservers();
 
                 if (this._onWindowResize) {
                     window.removeEventListener('resize', this._onWindowResize);
                     window.removeEventListener('orientationchange', this._onWindowResize);
                 }
-            },
 
-            beforeDestroy() {
-                this.cleanupObservers();
-
-                if (this._onWindowResize) {
-                    window.removeEventListener('resize', this._onWindowResize);
-                    window.removeEventListener('orientationchange', this._onWindowResize);
-                }
+                window.removeEventListener('keydown', this.handleKeydown);
             },
 
             methods: {
@@ -177,9 +189,9 @@
                     this.isOpen = ! this.isOpen;
 
                     if (this.isOpen) {
-                        document.body.style.overflow = 'hidden';
+                        window.lockBodyScroll();
                     } else {
-                        document.body.style.overflow ='scroll';
+                        window.unlockBodyScroll();
                     }
 
                     this.$emit('toggle', { isActive: this.isOpen });
@@ -195,9 +207,11 @@
                 },
 
                 open() {
-                    this.isOpen = true;
+                    if (! this.isOpen) {
+                        window.lockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'hidden';
+                    this.isOpen = true;
 
                     this.$emit('open', { isActive: this.isOpen });
 
@@ -208,9 +222,11 @@
                 },
 
                 close() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.cleanupObservers();
 
@@ -262,6 +278,12 @@
                     if (this.mutationObserver) {
                         this.mutationObserver.disconnect();
                         this.mutationObserver = null;
+                    }
+                },
+
+                handleKeydown(event) {
+                    if (event.key === 'Enter' && this.isOpen && this.preventSubmit) {
+                        event.preventDefault();
                     }
                 },
             }

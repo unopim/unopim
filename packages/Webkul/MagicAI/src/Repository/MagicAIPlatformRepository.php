@@ -3,6 +3,7 @@
 namespace Webkul\MagicAI\Repository;
 
 use Webkul\Core\Eloquent\Repository;
+use Webkul\MagicAI\Contracts\MagicAIPlatform;
 
 class MagicAIPlatformRepository extends Repository
 {
@@ -11,15 +12,25 @@ class MagicAIPlatformRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\MagicAI\Contracts\MagicAIPlatform';
+        return MagicAIPlatform::class;
     }
 
     /**
-     * Get the default active platform.
+     * Get the platform marked as default, enabled or not.
      */
     public function getDefault()
     {
-        return $this->model->active()->default()->first();
+        return $this->model->default()->first();
+    }
+
+    /**
+     * Get the default platform to generate with: the default one when it is
+     * enabled, else any other enabled platform.
+     */
+    public function getActiveDefault()
+    {
+        return $this->model->active()->default()->first()
+            ?? $this->model->active()->first();
     }
 
     /**
@@ -35,15 +46,13 @@ class MagicAIPlatformRepository extends Repository
      */
     public function getActivePlatformOptions(): array
     {
-        return $this->model->active()->get()->map(function ($platform) {
-            return [
-                'id'         => $platform->id,
-                'label'      => $platform->label.' ('.ucfirst($platform->provider).')',
-                'provider'   => $platform->provider,
-                'models'     => $platform->model_list,
-                'is_default' => $platform->is_default,
-            ];
-        })->toArray();
+        return $this->model->active()->get()->map(fn ($platform): array => [
+            'id'         => $platform->id,
+            'label'      => $platform->label.' ('.ucfirst((string) $platform->provider).')',
+            'provider'   => $platform->provider,
+            'models'     => $platform->model_list,
+            'is_default' => $platform->is_default,
+        ])->toArray();
     }
 
     /**
@@ -57,11 +66,9 @@ class MagicAIPlatformRepository extends Repository
             return [];
         }
 
-        return array_map(function ($model) {
-            return [
-                'id'    => $model,
-                'label' => $model,
-            ];
-        }, $platform->model_list);
+        return array_map(fn ($model): array => [
+            'id'    => $model,
+            'label' => $model,
+        ], $platform->model_list);
     }
 }

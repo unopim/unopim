@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Ang :attribute ay dapat valid na slug.',
     'sku'                          => 'Ang :attribute ay dapat na valid na SKU (mga alphanumeric na character, hyphen, at underscore lang).',
     'comma-separated-integer'      => 'Ang :attribute field ay dapat numerikal at maaaring maglaman ng kuwit.',
+    'ip-address-list'              => 'Ang field na :attribute ay dapat maglaman ng wastong mga IP address na pinaghihiwalay ng kuwit.',
     'type'                         => 'Ang :attribute ay dapat valid na uri.',
     'validation-type'              => 'Ang :attribute ay dapat valid na uri.',
     'field-option-not-found'       => 'Ang :attribute ay naglalaman ng mga hindi wasto na opsyon: :invalid_codes.',

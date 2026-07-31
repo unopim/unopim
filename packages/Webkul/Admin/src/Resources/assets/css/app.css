@@ -1,6 +1,60 @@
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Design tokens: single source for brand + status colour. R G B channels so
+   `/opacity` modifiers work. Re-skin by overriding a token, e.g. --c-primary-600. */
+@layer base {
+    :root {
+        --c-primary-50: 245 243 255;
+        --c-primary-100: 237 233 254;
+        --c-primary-200: 221 214 254;
+        --c-primary-300: 196 181 253;
+        --c-primary-400: 167 139 250;
+        --c-primary-500: 139 92 246;
+        --c-primary-600: 124 58 237;
+        --c-primary-700: 109 40 217;
+        --c-primary-800: 91 33 182;
+        --c-primary-900: 76 29 149;
+
+        --c-success: 16 185 129;
+        --c-warning: 245 158 11;
+        --c-danger: 239 68 68;
+        --c-info: 12 140 233;
+
+        /* Semantic chart hues reuse the tokens above; categorical hues are their own. */
+        --chart-1: rgb(var(--c-primary-600));
+        --chart-2: #0ea5e9;
+        --chart-3: #14b8a6;
+        --chart-4: #f97316;
+        --chart-5: #ec4899;
+        --chart-6: #6366f1;
+        --chart-success: rgb(var(--c-success));
+        --chart-warning: rgb(var(--c-warning));
+        --chart-danger: rgb(var(--c-danger));
+        --chart-muted: #a1a1aa;
+    }
+
+    /* Brand ramp is constant; only status + categorical chart hues shift for dark. */
+    .dark {
+        --c-success: 52 211 153;
+        --c-warning: 251 191 36;
+        --c-danger: 248 113 113;
+        --c-info: 56 189 248;
+
+        --chart-2: #38bdf8;
+        --chart-3: #2dd4bf;
+        --chart-4: #fb923c;
+        --chart-5: #f472b6;
+        --chart-6: #818cf8;
+        --chart-muted: #d4d4d8;
+    }
+}
 
 @font-face {
     font-family: "unopim-admin";
@@ -10,13 +64,69 @@
     font-display: block;
 }
 
+@layer base {
+    /*
+     * Reserve the scrollbar gutter at the root so opening a modal (which sets
+     * body overflow:hidden and removes the page scrollbar) does not change the
+     * viewport width — kills the horizontal flicker/layout shift.
+     */
+    html {
+        scrollbar-gutter: stable;
+    }
+
+    /* Kill the default black tap-highlight on mobile (menu items etc.); hover/active styles convey feedback. */
+    * {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Minimal, subtle scrollbars everywhere (Firefox) */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(100, 100, 120, 0.35) transparent;
+    }
+
+    /* Minimal scrollbars (WebKit/Chromium) */
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background-color: rgba(100, 100, 120, 0.35);
+        border-radius: 9999px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(100, 100, 120, 0.55);
+    }
+
+    /* Dark mode: lighter thumb for contrast */
+    .dark * {
+        scrollbar-color: rgba(200, 200, 220, 0.30) transparent;
+    }
+
+    .dark *::-webkit-scrollbar-thumb {
+        background-color: rgba(200, 200, 220, 0.30);
+    }
+
+    .dark *::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(200, 200, 220, 0.5);
+    }
+}
+
 @layer components {
     ::selection {
         background-color: rgba(0, 68, 242, .2);
     }
 
     body {
-        @apply bg-violet-50 bg-opacity-50 font-inter;
+        @apply bg-unopim-primary-page bg-primary-50 bg-opacity-50 font-inter;
     }
 
     button:disabled {
@@ -26,6 +136,30 @@
     button:disabled:hover {
         @apply cursor-not-allowed opacity-50;
     }
+
+    /* Prose styles for AI rich-text previews (v-html content, unreachable by utilities). */
+    .rich-content-preview h1,
+    .rich-content-preview h2,
+    .rich-content-preview h3,
+    .rich-content-preview h4 { font-weight: 700; margin: 0.5em 0 0.25em; }
+    .rich-content-preview h1 { font-size: 1.5em; }
+    .rich-content-preview h2 { font-size: 1.25em; }
+    .rich-content-preview h3 { font-size: 1.1em; }
+    .rich-content-preview p { margin: 0.4em 0; }
+    .rich-content-preview strong,
+    .rich-content-preview b { font-weight: 700; }
+    .rich-content-preview em,
+    .rich-content-preview i { font-style: italic; }
+    .rich-content-preview ul,
+    .rich-content-preview ol { padding-left: 1.5em; margin: 0.4em 0; }
+    .rich-content-preview ul { list-style-type: disc; }
+    .rich-content-preview ol { list-style-type: decimal; }
+    .rich-content-preview li { margin: 0.2em 0; }
+    .rich-content-preview a { color: rgb(var(--c-primary-700)); text-decoration: underline; }
+    .rich-content-preview table { border-collapse: collapse; width: 100%; margin: 0.5em 0; }
+    .rich-content-preview th,
+    .rich-content-preview td { border: 1px solid theme('colors.gray.200'); padding: 0.4em 0.6em; text-align: left; }
+    .rich-content-preview th { background: theme('colors.gray.100'); font-weight: 600; }
 
     .direction-ltr {
         direction: ltr;
@@ -37,7 +171,7 @@
 
     .draggable-ghost {
         opacity: 0.5;
-        background: #e0e7ff;
+        background: theme('colors.violet.100');
     }
 
     [class^="icon-"],
@@ -65,7 +199,14 @@
 
     html.dark .active [class^="icon-"],
     html.dark .active [class*=" icon-"]{
-        @apply text-violet-700;
+        @apply text-primary-400;
+    }
+
+    /* The switcher chip keeps its light pill in dark mode, so its icons must stay
+       dark too -- the global rule above would render them white on white. */
+    html.dark .switcher-chip [class^="icon-"],
+    html.dark .switcher-chip [class*=" icon-"]{
+        @apply text-gray-600;
     }
 
     .box-shadow {
@@ -94,20 +235,40 @@
         @apply outline-none;
     }
 
+    *:focus-visible:not(.sr-only):not(.no-focus-ring):not(input):not(textarea):not(select) {
+        @apply outline outline-2 outline-offset-2 outline-primary-600 rounded-sm;
+    }
+
+    /* Fields already draw their own border, so an offset ring reads as a second
+       frame around them. Recolour that border and add a tight halo instead:
+       identical box geometry, no double outline, still a 3:1 focus indicator. */
+    input:focus-visible:not(.multiselect__input),
+    textarea:focus-visible,
+    select:focus-visible,
+    .focus-ring-within:focus-within {
+        @apply outline-none !border-primary-600 dark:!border-primary-400;
+
+        box-shadow: 0 0 0 3px rgb(var(--c-primary-600) / 0.2);
+    }
+
     .primary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-violet-600 border border-violet-700 hover:bg-violet-500 hover:border-violet-500 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-[0.9] focus:opacity-[0.9];
+        @apply flex gap-x-1 items-center px-3 py-1.5 bg-unopim-primary-base bg-primary-600 border border-unopim-primary border-primary-700 hover:bg-unopim-primary-hover hover:bg-primary-500 hover:border-unopim-primary-hover hover:border-primary-500 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-[0.9] focus:opacity-[0.9];
     }
 
     .secondary-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-violet-600 text-violet-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-violet-500 hover:border-violet-500 hover:bg-violet-100 dark:bg-cherry-900 dark:border-violet-400 dark:text-violet-200 dark:hover:bg-cherry-800 dark:hover:border-violet-300 dark:hover:text-violet-100;
+        @apply flex gap-x-1 items-center px-3 py-1.5 bg-white border-2 border-unopim-primary-base border-primary-600 text-unopim-primary-base text-primary-600 rounded-md font-semibold whitespace-nowrap cursor-pointer transition-all hover:text-unopim-primary-hover hover:text-primary-500 hover:border-unopim-primary-hover hover:border-primary-500 hover:bg-unopim-primary-muted hover:bg-primary-100 dark:bg-cherry-900 dark:border-unopim-primary-400 dark:border-primary-400 dark:text-unopim-primary-100 dark:text-primary-200 dark:hover:bg-cherry-800 dark:hover:border-unopim-primary-200 dark:hover:border-primary-300 dark:hover:text-unopim-primary-50 dark:hover:text-primary-100 dark:focus-visible:ring-offset-cherry-900;
     }
 
     .transparent-button {
-        @apply flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md text-violet-600 font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:text-violet-500 hover:bg-violet-50 dark:hover:bg-cherry-900  dark:text-slate-50 ;
+        @apply flex gap-x-1 items-center px-3 py-1.5 border-2 border-transparent rounded-md text-unopim-primary-base text-primary-600 font-semibold whitespace-nowrap cursor-pointer marker:shadow appearance-none transition-all hover:text-unopim-primary-hover hover:text-primary-500 hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-900 dark:text-slate-50;
     }
 
     .danger-button {
         @apply flex gap-x-1 items-center px-3 py-1.5 bg-red-600 rounded-md text-gray-50 font-semibold cursor-pointer transition-all hover:opacity-90 focus:opacity-90;
+    }
+
+    .compact-datagrid .datagrid-toolbar {
+        @apply mt-0;
     }
 
     .journal-scroll::-webkit-scrollbar {
@@ -436,17 +597,17 @@
     }
 
     .highlighted-tribute-item {
-        @apply bg-violet-100 dark:bg-cherry-600 rounded-md;
+        @apply bg-unopim-primary-muted bg-primary-100 dark:bg-cherry-600 rounded-md;
     }
 }
 
 .tox .tox-toolbar__group:last-child button {
     padding: 6px 8px;
-    @apply text-violet-700 bg-violet-100;
+    @apply text-unopim-primary text-primary-700 bg-unopim-primary-muted bg-primary-100;
 }
 
 .tox .tox-toolbar__group:last-child button:hover {
-    @apply bg-violet-200;
+    @apply bg-unopim-primary-border bg-primary-200;
 }
 
 
@@ -455,38 +616,223 @@
 }
 
 .tox .tox-tbtn:hover {
-    @apply !bg-violet-100;
+    @apply !bg-unopim-primary-muted !bg-primary-100;
+}
+
+/* Disabled multiselect keeps the library's light grey fill; give it a dark
+   surface so it doesn't render as a light slab in dark mode. */
+.dark .multiselect--disabled,
+.dark .multiselect--disabled .multiselect__tags,
+.dark .multiselect--disabled .multiselect__single,
+.dark .multiselect--disabled .multiselect__select {
+    background: #1F1C30 !important;
+    color: #9ca3af !important;
+}
+
+/* Match the TinyMCE (oxide-dark) chrome to the cherry palette so the editor
+   reads as a native dark field instead of the skin's default blue-grey. */
+.dark .tox.tox-tinymce {
+    @apply border-gray-600;
+}
+
+.dark .tox .tox-editor-header,
+.dark .tox .tox-toolbar-overlord,
+.dark .tox .tox-toolbar__primary,
+.dark .tox .tox-toolbar,
+.dark .tox .tox-statusbar {
+    background-color: #26283D !important;
+    background-image: none !important;
+    @apply border-cherry-700;
+}
+
+.dark .tox .tox-edit-area__iframe {
+    background-color: #1F1C30 !important;
+}
+
+.dark .tox .tox-statusbar,
+.dark .tox .tox-statusbar a,
+.dark .tox .tox-statusbar__path-item,
+.dark .tox .tox-statusbar__wordcount {
+    @apply text-gray-400;
 }
 
 .multiselect__option--highlight,
 .multiselect__tag,
 .multiselect__spinner:after {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
-    @apply !text-violet-600 dark:!text-slate-50;
+    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
+    @apply !text-unopim-primary !text-primary-600 dark:!text-slate-50;
 }
 
 .multiselect__option--selected.multiselect__option--highlight,
 .multiselect__option--highlight:after {
-    @apply !bg-violet-100 dark:!bg-cherry-600;;
-    @apply !text-violet-600 dark:!text-slate-50;
+    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
+    @apply !text-unopim-primary !text-primary-600 dark:!text-slate-50;
 }
 
 .multiselect__option--highlight {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
-    @apply !text-violet-600 dark:!text-slate-50;;
+    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
+    @apply !text-unopim-primary !text-primary-600 dark:!text-slate-50;
 
 }
 
 .multiselect__option--highlight.multiselect__option--selected.multiselect__option,
 .multiselect__option--selected.multiselect__option--highlight {
-    @apply !bg-violet-100 dark:!bg-cherry-600;
+    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
     @apply !text-red-600 dark:!text-red-600;
 }
 
+/* Focus lives on the inner search input, so ringing it would draw a second
+   frame inside the tags box. Move the indicator onto the box itself. */
+.multiselect:focus-visible,
+.multiselect__input:focus-visible {
+    @apply outline-none;
+}
+
+.multiselect--active > .multiselect__tags {
+    @apply !border-primary-600 dark:!border-primary-400;
+
+    box-shadow: 0 0 0 3px rgb(var(--c-primary-600) / 0.2);
+}
+
 .multiselect__tag-icon:after {
-    @apply !text-violet-600 dark:!bg-cherry-600 dark:!text-slate-50;
+    @apply !text-unopim-primary !text-primary-600 dark:!bg-cherry-600 dark:!text-slate-50;
+}
+
+.multiselect--active .multiselect__content-wrapper {
+    z-index: 1001;
 }
 
 .multiselect__content-wrapper, .multiselect__tags, .multiselect__input, .multiselect__single {
-    @apply bg-violet-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
+    @apply bg-unopim-primary-muted bg-primary-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
+}
+
+/* One tag is rendered per selection, so fields backed by large sets (channel
+   locales/currencies) otherwise stretch their card past the viewport. */
+.multiselect__tags {
+    max-height: 11.5rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+}
+
+.multiselect__tags::-webkit-scrollbar {
+    width: 6px;
+}
+
+.multiselect__tags::-webkit-scrollbar-thumb {
+    @apply rounded bg-gray-300 dark:bg-cherry-600;
+}
+
+/**
+ * Unsaved-changes bar (v-unsaved-changes component).
+ *
+ * Lives in the compiled bundle rather than an inline per-page <style> so it
+ * persists across ajax navigation and stays out of the Blade template.
+ */
+.unsaved-root {
+    display: contents;
+}
+
+.unsaved-badge {
+    @apply hidden ml-1.5 font-semibold rounded align-middle whitespace-nowrap;
+    padding: 0.05rem 0.4rem;
+    font-size: 0.625rem;
+    line-height: 1.2;
+    color: #854d0e;
+    background: #fef9c3;
+}
+
+.dark .unsaved-badge {
+    color: #fde68a;
+    background: #713f12;
+}
+
+[data-control-group].unsaved-dirty .unsaved-badge {
+    @apply inline-flex items-center;
+}
+
+/*
+ * Align the bar's left edge with the main content column so it lines up with
+ * (and never covers) the fixed left menu. Mirrors the layout's own
+ * ltr:pl-[286px] / collapsed pl-[85px] offsets. Below lg the menu is hidden
+ * (max-lg:hidden), so the bar spans full width there.
+ */
+.unsaved-bar {
+    left: 286px;
+    right: 0;
+}
+
+body:has(.sidebar-collapsed) .unsaved-bar {
+    left: 85px;
+}
+
+[dir="rtl"] .unsaved-bar {
+    left: 0;
+    right: 286px;
+}
+
+[dir="rtl"] body:has(.sidebar-collapsed) .unsaved-bar,
+body:has(.sidebar-collapsed) [dir="rtl"] .unsaved-bar {
+    right: 85px;
+}
+
+@media (max-width: 1024px) {
+    .unsaved-bar,
+    [dir="rtl"] .unsaved-bar {
+        left: 0;
+        right: 0;
+    }
+}
+
+/*
+ * Right AI drawer: while its panel is actually mounted (it is v-if'd, so the
+ * node exists ONLY when open — no stale-class phantom gap), stop the bar at the
+ * panel's left edge so the panel's chat composer at the bottom stays clickable.
+ * Driven off :has(.ap-panel), not a body class, so it can never get stuck open.
+ */
+@media (min-width: 1025px) {
+    body:has(.ap-panel) .unsaved-bar,
+    [dir="rtl"] body:has(.ap-panel) .unsaved-bar,
+    body:has(.ap-panel) [dir="rtl"] .unsaved-bar {
+        right: 420px;
+    }
+}
+
+/* Keep page content clear of the bar so nothing is hidden behind it. */
+body.unsaved-bar-open {
+    padding-bottom: 76px;
+}
+
+/*
+ * Phones: the wordy title + two buttons don't fit, so drop the text and keep
+ * the warning icon + Discard / Save changes (which convey the state).
+ */
+@media (max-width: 524px) {
+    .unsaved-bar-text {
+        display: none;
+    }
+
+    .unsaved-bar-inner {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+}
+
+/*
+ * And when the bar is showing, lift the floating chat launcher above it so the
+ * chat icon never sits over the "Save changes" button.
+ */
+body.unsaved-bar-open .ap-launcher {
+    bottom: 88px !important;
+}
+
+.unsaved-bar-enter-active,
+.unsaved-bar-leave-active {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.unsaved-bar-enter-from,
+.unsaved-bar-leave-to {
+    transform: translateY(100%);
+    opacity: 0;
 }

@@ -2,17 +2,21 @@
 
 namespace Webkul\AdminApi\Http\Controllers\Integrations;
 
-use Illuminate\Database\Query\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Token;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\AdminApi\DataGrids\Integrations\ApiKeysDataGrid;
+use Webkul\AdminApi\Http\Requests\Integrations\GenerateKeyRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\RegeneratePasswordRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\RegenerateSecretKeyRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\StoreApiKeyRequest;
+use Webkul\AdminApi\Http\Requests\Integrations\UpdateApiKeyRequest;
 use Webkul\AdminApi\Repositories\ApiKeyRepository;
 use Webkul\AdminApi\Traits\OauthClientGenerator;
 use Webkul\User\Repositories\AdminRepository;
@@ -27,9 +31,9 @@ class ApiKeysController extends Controller
      * @return void
      */
     public function __construct(
-        protected AdminRepository $adminRepository,
         protected ApiKeyRepository $apiKeyRepository,
-        protected ClientRepository $clients
+        protected ClientRepository $clients,
+        protected AdminRepository $adminRepository
     ) {}
 
     /**
@@ -49,32 +53,24 @@ class ApiKeysController extends Controller
      */
     public function create(): View
     {
-        $adminUsers = json_encode($this->adminRepository->all(['id', 'name', 'email'])->toArray());
-
         $permissionTypes = json_encode($this->apiKeyRepository->getPermissionTypes());
 
-        return view('admin_api::integrations.api-keys.create', compact(
-            'adminUsers',
-            'permissionTypes',
-        ));
+        return view('admin_api::integrations.api-keys.create', compact('permissionTypes'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(StoreApiKeyRequest $request): RedirectResponse
     {
-        $this->validate(request(), [
-            'name'            => 'required',
-            'admin_id'        => ['required', Rule::unique('api_keys')->where(fn (Builder $query) => $query->where('revoked', 0))],
-            'permission_type' => 'required',
-        ]);
+        if (! bouncer()->hasPermission('configuration.integrations.create')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
 
         Event::dispatch('user.api_integration.create.before');
 
-        $data = request()->only([
+        $data = $request->only([
             'name',
-            'admin_id',
             'permission_type',
             'permissions',
         ]);
@@ -82,6 +78,11 @@ class ApiKeysController extends Controller
         $apiKey = $this->apiKeyRepository->create($data);
 
         Event::dispatch('user.api_integration.create.after', $apiKey);
+
+        session()->flash('api_credentials', [
+            'username' => $apiKey->plainEmail,
+            'password' => $apiKey->plainPassword,
+        ]);
 
         session()->flash('success', trans('admin::app.configuration.integrations.create-success'));
 
@@ -100,22 +101,18 @@ class ApiKeysController extends Controller
 
     /**
      * Update the specified resource in storage.
-     *
-     *
-     * @throws ValidationException If the required parameters are not provided.
      */
-    public function update(int $id): RedirectResponse
+    public function update(UpdateApiKeyRequest $request, int $id): RedirectResponse
     {
-        $this->validate(request(), [
-            'name'            => 'required',
-            'permission_type' => 'required|in:all,custom',
-        ]);
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
 
-        $data = array_merge(request()->only([
+        $data = array_merge($request->only([
             'name',
             'permission_type',
         ]), [
-            'permissions' => request()->has('permissions') ? request('permissions') : [],
+            'permissions' => $request->has('permissions') ? $request->input('permissions') : [],
         ]);
 
         Event::dispatch('user.api_integration.update.before', $id);
@@ -146,6 +143,7 @@ class ApiKeysController extends Controller
             'oauth_client_id' => $oauthClientId,
             'client_id'       => $clientId,
             'secret_key'      => $secretKey,
+            'username'        => $apiKey->admins?->email,
             'permissionTypes' => json_encode($this->apiKeyRepository->getPermissionTypes()),
         ];
     }
@@ -158,40 +156,32 @@ class ApiKeysController extends Controller
      * associated with the API key in the database.
      *
      * @return JsonResponse The JSON response containing the new client ID and secret key.
-     *
-     * @throws ValidationException If the required parameters are not provided.
      */
-    public function generateKey(): JsonResponse
+    public function generateKey(GenerateKeyRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'name'     => 'required',
-            'admin_id' => 'required',
-            'apiId'    => 'required',
-        ]);
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
 
-        $data = request()->only([
-            'name',
-            'admin_id',
-            'apiId',
-        ]);
+        $apiKey = $this->apiKeyRepository->findOrFail($request->input('apiId'));
 
-        $userId = $data['admin_id'];
-        $name = $data['name'];
+        if (! $apiKey->admins?->isApiUser()) {
+            abort(404);
+        }
 
-        $client = $this->generateClientIdAndSecretKey($userId, $name);
-
-        $id = $name = $data['apiId'];
+        $client = $this->generateClientIdAndSecretKey($apiKey->admin_id, $apiKey->name);
 
         $clientId = $client->getKey();
 
         $apiKey = $this->apiKeyRepository->update([
             'oauth_client_id' => $clientId,
-        ], $id);
+        ], $apiKey->id);
 
         return new JsonResponse([
             'client_id'       => $clientId,
             'secret_key'      => $client->plainSecret,
             'oauth_client_id' => $clientId,
+            'username'        => $apiKey->admins?->email,
         ]);
     }
 
@@ -204,9 +194,13 @@ class ApiKeysController extends Controller
      *
      * @return JsonResponse The JSON response containing the regenerated secret key.
      */
-    public function regenerateSecretKey(): JsonResponse
+    public function regenerateSecretKey(RegenerateSecretKeyRequest $request): JsonResponse
     {
-        $data = request()->only('oauth_client_id');
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $data = $request->validated();
 
         $client = $this->clients->find($data['oauth_client_id']);
 
@@ -226,10 +220,52 @@ class ApiKeysController extends Controller
     }
 
     /**
+     * Regenerates the robot admin's password for the specified API key.
+     *
+     * This is the recovery path for a lost robot password: the plaintext is only
+     * shown once at creation time, so regenerating issues a fresh one. Rotates
+     * the OAuth client's tokens too, since a leaked/lost password should not
+     * leave existing access tokens valid.
+     *
+     * @return JsonResponse The JSON response containing the robot's username and the new plaintext password.
+     */
+    public function regeneratePassword(RegeneratePasswordRequest $request): JsonResponse
+    {
+        if (! bouncer()->hasPermission('configuration.integrations.edit')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        $apiKey = $this->apiKeyRepository->findOrFail($request->input('apiId'));
+
+        $robot = $apiKey->admins;
+
+        if (! $robot?->isApiUser()) {
+            abort(404);
+        }
+
+        $password = Str::random(32);
+
+        $this->adminRepository->update(['password' => Hash::make($password)], $robot->id);
+
+        if ($apiKey->oauth_client_id) {
+            Token::where('client_id', $apiKey->oauth_client_id)->update(['revoked' => true]);
+        }
+
+        return new JsonResponse([
+            'username' => $robot->email,
+            'password' => $password,
+        ]);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(int $id): JsonResponse
     {
+        if (! bouncer()->hasPermission('configuration.integrations.delete')) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
         $apiKey = $this->apiKeyRepository->findOrFail($id);
 
         try {

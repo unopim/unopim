@@ -12,6 +12,16 @@ it('content endpoint returns 403 when user lacks ai-agent permission', function 
     ])->assertStatus(403);
 });
 
+it('image endpoint returns 403 when user lacks ai-agent permission', function () {
+    $this->loginWithPermissions();
+
+    $this->postJson(route('admin.magic_ai.image'), [
+        'model'  => 'dall-e-3',
+        'prompt' => 'Generate a product image.',
+        'size'   => '1024x1024',
+    ])->assertForbidden();
+});
+
 it('content endpoint is accessible to user with ai-agent permission', function () {
     $this->loginWithPermissions('custom', ['ai-agent']);
 

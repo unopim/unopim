@@ -51,15 +51,15 @@ class EnrichmentService
 
         $missing = array_filter(
             self::TARGETS,
-            fn (string $key) => empty($existing[$key]),
+            fn (string $key): bool => empty($existing[$key]),
         );
 
-        if (empty($missing)) {
+        if ($missing === []) {
             return $ctx;
         }
 
         // Use pre-configured client if provided
-        if ($apiClient) {
+        if ($apiClient instanceof AiApiClient) {
             $this->apiClient = $apiClient;
         } elseif ($credentialId > 0) {
             $credential = $this->credentialRepository->findOrFail($credentialId);
@@ -118,12 +118,12 @@ class EnrichmentService
         // Merge common (product-level) data with locale-specific data so the AI
         // has full product context (e.g. English copy to translate from) while
         // the completeness check that determined $missing used locale-only data.
-        $contextData = empty($common) ? $existing : array_merge($common, $existing);
+        $contextData = $common === [] ? $existing : array_merge($common, $existing);
         $existingJson = json_encode($contextData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         $targetKeys = json_encode($missing);
 
         $extra = '';
-        if (! empty($instruction)) {
+        if ($instruction !== '' && $instruction !== '0') {
             $extra = "\n\nAdditional instructions from the user:\n$instruction";
         }
 
@@ -189,7 +189,7 @@ class EnrichmentService
         $domain = (string) (core()->getConfigData('general.magic_ai.settings.api_domain') ?? '');
         $model = trim(explode(',', $models)[0]);
 
-        if (! $domain) {
+        if ($domain === '' || $domain === '0') {
             $domain = match ($platform) {
                 'openai' => 'https://api.openai.com/v1',
                 'gemini' => 'https://generativelanguage.googleapis.com',

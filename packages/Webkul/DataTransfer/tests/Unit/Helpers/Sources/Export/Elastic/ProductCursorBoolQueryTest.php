@@ -53,7 +53,7 @@ it('builds a status term clause', function () {
 it('builds an updated_at range clause', function () {
     expect(buildBoolQuery(['updated_after' => '2026-01-01 00:00:00']))->toBe([
         'filter' => [
-            ['range' => ['updated_at' => ['gte' => '2026-01-01 00:00:00']]],
+            ['range' => ['updated_at' => ['gte' => '2026-01-01T00:00:00Z']]],
         ],
     ]);
 });
@@ -66,7 +66,7 @@ it('builds an updated_at range clause with both bounds', function () {
 
     expect(buildBoolQuery($filters))->toBe([
         'filter' => [
-            ['range' => ['updated_at' => ['gte' => '2026-01-01 00:00:00', 'lte' => '2026-02-20 23:59:59']]],
+            ['range' => ['updated_at' => ['gte' => '2026-01-01T00:00:00Z', 'lte' => '2026-02-20T23:59:59Z']]],
         ],
     ]);
 });
@@ -74,7 +74,7 @@ it('builds an updated_at range clause with both bounds', function () {
 it('builds an updated_at range clause with only an upper bound', function () {
     expect(buildBoolQuery(['updated_before' => '2026-02-20 23:59:59']))->toBe([
         'filter' => [
-            ['range' => ['updated_at' => ['lte' => '2026-02-20 23:59:59']]],
+            ['range' => ['updated_at' => ['lte' => '2026-02-20T23:59:59Z']]],
         ],
     ]);
 });

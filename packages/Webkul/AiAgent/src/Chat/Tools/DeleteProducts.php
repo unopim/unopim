@@ -8,6 +8,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Product\Repositories\ProductRepository;
 
 class DeleteProducts implements PimTool
 {
@@ -48,7 +49,7 @@ class DeleteProducts implements PimTool
                     return json_encode(['error' => 'Deletion not confirmed. Ask the user to confirm before proceeding.']);
                 }
 
-                $skuList = array_map('trim', explode(',', $skus));
+                $skuList = array_map(trim(...), explode(',', $skus));
 
                 if (count($skuList) > 20) {
                     return json_encode(['error' => trans('ai-agent::app.common.bulk-delete-limit')]);
@@ -57,7 +58,7 @@ class DeleteProducts implements PimTool
                 $deleted = 0;
                 $errors = [];
 
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = resolve(ProductRepository::class);
 
                 foreach ($skuList as $sku) {
                     $product = $repo->findOneByField('sku', $sku);
@@ -76,7 +77,7 @@ class DeleteProducts implements PimTool
                     'result' => [
                         'deleted' => $deleted,
                         'skus'    => implode(', ', $skuList),
-                        'errors'  => empty($errors) ? null : $errors,
+                        'errors'  => $errors === [] ? null : $errors,
                     ],
                 ]);
             }

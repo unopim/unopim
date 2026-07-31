@@ -26,10 +26,12 @@ class UserDataGrid extends DataGrid
     {
         $queryBuilder = DB::table('admins as u')
             ->leftJoin('roles as ro', 'u.role_id', '=', 'ro.id')
+            ->where('u.type', 'user')
             ->addSelect(
                 'u.id as user_id',
                 'u.name as user_name',
                 'u.image as user_image',
+                'u.use_gravatar',
                 'u.status',
                 'u.email',
                 'ro.name as role_name'
@@ -80,7 +82,13 @@ class UserDataGrid extends DataGrid
                     return Storage::url($row->user_image);
                 }
 
-                return AdminUser::getGravatarUrlFromEmail($row->email);
+                if (! $row->use_gravatar) {
+                    return null;
+                }
+
+                return AdminUser::gravatarCachedForEmail($row->email)
+                    ? AdminUser::getGravatarUrlFromEmail($row->email)
+                    : null;
             },
         ]);
 

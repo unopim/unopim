@@ -2,9 +2,12 @@
 
 namespace Webkul\Installer\Console\Commands;
 
-use Carbon\Carbon;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
@@ -12,28 +15,16 @@ use function Laravel\Prompts\password;
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
-class DefaultUser extends Command
-{
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
-    protected $signature = 'unopim:user:create
+#[Description('This command allows you to create a new user with a name, email, password, UI locale, timezone, and optionally specify whether the user is an admin.')]
+#[Signature('unopim:user:create
         {--name= : The name of the user}
         {--email= : The email address of the user}
         {--password= : The password for the user}
         {--ui_locale= : The UI locale (e.g., en_US) of the user}
         {--timezone= : The timezone of the user}
-        {--admin : Specify if the user is an admin}';
-
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'This command allows you to create a new user with a name, email, password, UI locale, timezone, and optionally specify whether the user is an admin.';
-
+        {--admin : Specify if the user is an admin}')]
+class DefaultUser extends Command
+{
     /**
      * Locales list.
      *
@@ -294,7 +285,7 @@ class DefaultUser extends Command
     /**
      * Create UnoPim user.
      */
-    public function handle()
+    public function handle(): void
     {
         Log::info('User create command has started');
 
@@ -304,7 +295,7 @@ class DefaultUser extends Command
         $userPassword = $this->getUserPassword($isAdmin);
         $timezone = $this->getSelectedTimeZone();
         $defaultLocale = $this->getSelectedUiLocale();
-        $password = password_hash($userPassword, PASSWORD_BCRYPT, ['cost' => 10]);
+        $password = Hash::make($userPassword);
 
         $localeId = DB::table('locales')->where('code', $defaultLocale)->where('status', 1)->first()?->id ?? 58;
 
@@ -318,7 +309,7 @@ class DefaultUser extends Command
                     'name'            => $isAdmin ? 'Admin' : 'User',
                     'description'     => $isAdmin ? 'This role users will have all the access' : 'This role users have limited access',
                     'permission_type' => $isAdmin ? 'all' : 'custom',
-                    'permissions'     => ! $isAdmin ? json_encode(['dashboard']) : null,
+                    'permissions'     => $isAdmin ? null : json_encode(['dashboard']),
                 ],
             );
         }
@@ -342,12 +333,7 @@ class DefaultUser extends Command
                 ]
             );
 
-            $this->info('-----------------------------');
-            $this->info('Congratulations! The User has been created successfully.');
-            $this->info('Please navigate to: '.env('APP_URL').'/admin'.' and use the following credentials for authentication:');
-            $this->info('Email: '.$userEmail);
-            $this->info('Password: '.$userPassword);
-            $this->info('Cheers!');
+            $this->info(trans('admin::app.settings.users.create-success'));
             Log::info('Congratulations! The User has been created successfully');
         } catch (\Exception $e) {
             $this->error($e->getMessage());
@@ -360,13 +346,17 @@ class DefaultUser extends Command
      */
     protected function askForDefaultValues(string $key, string $question, array $choices): string
     {
-        $choice = select(
+        $configKey = match ($key) {
+            'APP_LOCALE'   => 'app.locale',
+            'APP_TIMEZONE' => 'app.timezone',
+            default        => null,
+        };
+
+        return select(
             label: $question,
             options: $choices,
-            default: env($key)
+            default: $configKey ? config($configKey) : null
         );
-
-        return $choice;
     }
 
     /**
@@ -378,8 +368,8 @@ class DefaultUser extends Command
 
         $formattedTimezones = [];
 
-        foreach ($timezones as $index => $timezone) {
-            $now = Carbon::now($timezone);
+        foreach ($timezones as $timezone) {
+            $now = Date::now($timezone);
 
             $offset = $now->offset / 60;
 
@@ -416,17 +406,15 @@ class DefaultUser extends Command
             $userName = null;
         }
 
-        $userName = $userName ?: text(
+        return $userName ?: text(
             label: 'Set the Name for User',
             default: $isAdmin ? 'Admin' : 'User',
             required: true,
-            validate: fn (string $value) => match (true) {
+            validate: fn (string $value): ?string => match (true) {
                 ! preg_match('/^[a-zA-Z0-9\s]+$/', $value) => 'The name can only accept alphanumeric characters and spaces.',
                 default                                    => null
             }
         );
-
-        return $userName;
     }
 
     /**
@@ -449,10 +437,10 @@ class DefaultUser extends Command
         }
 
         if (! $userEmail || ! filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-            $userEmail = text(
+            return text(
                 label: 'Provide Email of User',
                 default: $isAdmin ? 'admin@example.com' : 'user@example.com',
-                validate: fn (string $value) => match (true) {
+                validate: fn (string $value): ?string => match (true) {
                     ! filter_var($value, FILTER_VALIDATE_EMAIL) => 'The provided email is invalid, kindly enter a valid email address.',
                     in_array($value, $existingUserEmails)       => 'User with email '.$value.' already exists.',
                     default                                     => null
@@ -470,18 +458,26 @@ class DefaultUser extends Command
      */
     protected function getUserPassword(bool $isAdmin): string
     {
+        $passwordMin = config('admin.auth.password_min');
+        $passwordMin = is_numeric($passwordMin) ? (int) $passwordMin : 8;
+        $minimumLengthMessage = trans('validation.min.string', [
+            'attribute' => trans('installer::app.installer.index.create-administrator.password'),
+            'min'       => $passwordMin,
+        ]);
+
         $userPassword = $this->option('password') ?: password(
             label: 'Input a Secure Password for User',
             required: true,
-            hint: 'Minimum 6 characters',
+            hint: $minimumLengthMessage,
         );
 
-        while (strlen($userPassword) < 6) {
-            $this->generateWarnings('Password must be at least 6 characters.');
+        while (Str::length($userPassword) < $passwordMin) {
+            $this->generateWarnings($minimumLengthMessage);
 
             $userPassword = password(
                 label: 'Input a Secure Password for User',
                 required: true,
+                hint: $minimumLengthMessage,
             );
         }
 
@@ -500,13 +496,11 @@ class DefaultUser extends Command
             $timezone = null;
         }
 
-        $timezone = $timezone ?: $this->askForDefaultValues(
+        return $timezone ?: $this->askForDefaultValues(
             'APP_LOCALE',
             'Please select the default timezone',
             $this->getTimeZones()
         );
-
-        return $timezone;
     }
 
     /**
@@ -521,12 +515,10 @@ class DefaultUser extends Command
             $uiLocale = null;
         }
 
-        $defaultLocale = $uiLocale ?: $this->askForDefaultValues(
+        return $uiLocale ?: $this->askForDefaultValues(
             'APP_LOCALE',
             'Please select the default application locale',
             $this->locales
         );
-
-        return $defaultLocale;
     }
 }

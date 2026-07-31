@@ -10,10 +10,8 @@ class SecureHeaders
 {
     /**
      * Unwanted header list.
-     *
-     * @var array
      */
-    private $unwantedHeaderList = [
+    private array $unwantedHeaderList = [
         'X-Powered-By',
         'Server',
     ];
@@ -39,11 +37,14 @@ class SecureHeaders
      * Set headers.
      *
      * @param  Response  $response
-     * @return void
      */
-    private function setHeaders($response)
+    private function setHeaders($response): void
     {
-        $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
+        // Don't clobber a stricter Referrer-Policy an inner layer already set (e.g. passport's 'no-referrer').
+        if (! $response->headers->has('Referrer-Policy')) {
+            $response->headers->set('Referrer-Policy', 'no-referrer-when-downgrade');
+        }
+
         $response->headers->set('X-Content-Type-Options', 'nosniff');
         $response->headers->set('X-XSS-Protection', '1; mode=block');
         $response->headers->set('X-Frame-Options', 'SAMEORIGIN');
@@ -54,10 +55,8 @@ class SecureHeaders
 
     /**
      * Remove unwanted headers.
-     *
-     * @return void
      */
-    private function removeUnwantedHeaders()
+    private function removeUnwantedHeaders(): void
     {
         if (headers_sent()) {
             return;

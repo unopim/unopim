@@ -17,7 +17,7 @@ return new class extends Migration
     public function up(): void
     {
         if (Schema::hasTable('audits') && ! $this->indexExists('audits', 'audits_tags_history_id_index')) {
-            Schema::table('audits', function (Blueprint $table) {
+            Schema::table('audits', function (Blueprint $table): void {
                 $table->index(['tags', 'history_id'], 'audits_tags_history_id_index');
             });
         }
@@ -29,7 +29,7 @@ return new class extends Migration
     public function down(): void
     {
         if (Schema::hasTable('audits') && $this->indexExists('audits', 'audits_tags_history_id_index')) {
-            Schema::table('audits', function (Blueprint $table) {
+            Schema::table('audits', function (Blueprint $table): void {
                 $table->dropIndex('audits_tags_history_id_index');
             });
         }

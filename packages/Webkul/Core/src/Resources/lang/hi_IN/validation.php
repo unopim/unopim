@@ -9,6 +9,7 @@ return [
     'slug'                         => ':attribute मान्य स्लग होना चाहिए।',
     'sku'                          => ':attribute मान्य SKU होना चाहिए (केवल अल्फ़ान्यूमेरिक वर्ण, हाइफ़न और अंडरस्कोर)।',
     'comma-separated-integer'      => ':attribute फ़ील्ड संख्यात्मक होना चाहिए और इसमें अल्पविराम हो सकता है।',
+    'ip-address-list'              => ':attribute फ़ील्ड में अल्पविराम से अलग किए गए मान्य IP पते होने चाहिए।',
     'type'                         => ':attribute मान्य प्रकार का होना चाहिए।',
     'validation-type'              => ':attribute मान्य प्रकार का होना चाहिए।',
     'field-option-not-found'       => ':attribute में अमान्य विकल्प(विकल्प) :invalid_codes शामिल हैं।',

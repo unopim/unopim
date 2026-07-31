@@ -2,6 +2,8 @@
 
 namespace Webkul\AiAgent\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +14,18 @@ use Webkul\AiAgent\Presenters\AgentPresenter;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 
+#[Fillable([
+    'name',
+    'description',
+    'systemPrompt',
+    'pipeline',
+    'credentialId',
+    'maxTokens',
+    'temperature',
+    'extras',
+    'status',
+])]
+#[Table(name: 'ai_agent_agents')]
 class Agent extends Model implements AgentContract, AuditableContract, PresentableHistoryInterface
 {
     use HasFactory, HistoryTrait;
@@ -22,41 +36,6 @@ class Agent extends Model implements AgentContract, AuditableContract, Presentab
      * @var array
      */
     protected $historyTags = ['ai-agent'];
-
-    /**
-     * @var string
-     */
-    protected $table = 'ai_agent_agents';
-
-    /**
-     * Fillable attributes.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'description',
-        'systemPrompt',
-        'pipeline',
-        'credentialId',
-        'maxTokens',
-        'temperature',
-        'extras',
-        'status',
-    ];
-
-    /**
-     * Casts.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'extras'      => 'array',
-        'pipeline'    => 'array',
-        'status'      => 'boolean',
-        'maxTokens'   => 'integer',
-        'temperature' => 'float',
-    ];
 
     /**
      * Fields excluded from history audit.
@@ -80,6 +59,8 @@ class Agent extends Model implements AgentContract, AuditableContract, Presentab
 
     /**
      * Get the credential associated with this agent.
+     *
+     * @return BelongsTo<Credential, $this>
      */
     public function credential(): BelongsTo
     {
@@ -88,6 +69,8 @@ class Agent extends Model implements AgentContract, AuditableContract, Presentab
 
     /**
      * Get executions for this agent.
+     *
+     * @return HasMany<AgentExecution, $this>
      */
     public function executions(): HasMany
     {
@@ -101,6 +84,20 @@ class Agent extends Model implements AgentContract, AuditableContract, Presentab
     {
         return [
             'common' => AgentPresenter::class,
+        ];
+    }
+
+    /**
+     * Casts.
+     */
+    protected function casts(): array
+    {
+        return [
+            'extras'      => 'array',
+            'pipeline'    => 'array',
+            'status'      => 'boolean',
+            'maxTokens'   => 'integer',
+            'temperature' => 'float',
         ];
     }
 }

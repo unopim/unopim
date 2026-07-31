@@ -47,6 +47,10 @@
                 this.activate(options);
             },
 
+            beforeUnmount: function() {
+                this.datepicker?.destroy();
+            },
+
             methods: {
                 setOptions: function() {
                     let self = this;

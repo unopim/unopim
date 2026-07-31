@@ -9,6 +9,7 @@ return [
     'slug'                         => 'يجب أن تكون :attribute slug صالحة.',
     'sku'                          => 'يجب أن يكون :attribute رمز SKU صالحًا (أحرف أبجدية رقمية وشرطات وشرطات سفلية فقط).',
     'comma-separated-integer'      => 'يجب أن يكون حقل :attribute رقميًا وقد يحتوي على فاصلة.',
+    'ip-address-list'              => 'يجب أن يحتوي الحقل :attribute على عناوين IP صالحة مفصولة بفواصل.',
     'type'                         => 'يجب أن تكون :attribute من النوع الصالح.',
     'validation-type'              => 'يجب أن تكون :attribute من النوع الصالح.',
     'field-option-not-found'       => 'تحتوي :attribute على خيار(ات) غير صالح:invalid_codes.',

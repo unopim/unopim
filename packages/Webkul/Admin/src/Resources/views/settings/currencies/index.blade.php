@@ -6,12 +6,8 @@
     {!! view_render_event('unopim.admin.settings.currencies.create.before') !!}
 
     <v-currencies>
-        <div class="flex  gap-4 justify-between items-center max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                @lang('admin::app.settings.currencies.index.title')
-            </p>
-
-            <div class="flex gap-x-2.5 items-center">
+        <x-admin::page-header :title="trans('admin::app.settings.currencies.index.title')">
+            <x-slot:actions>
                 <!-- Create currency Button -->
                 @if (bouncer()->hasPermission('settings.currencies.create'))
                     <button
@@ -21,8 +17,8 @@
                         @lang('admin::app.settings.currencies.index.create-btn')
                     </button>
                 @endif
-            </div>
-        </div>
+            </x-slot>
+        </x-admin::page-header>
 
         <!-- DataGrid Shimmer -->
         <x-admin::shimmer.datagrid />
@@ -35,12 +31,8 @@
             type="text/x-template"
             id="v-currencies-template"
         >
-            <div class="flex gap-4 justify-between items-center max-sm:flex-wrap">
-                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                    @lang('admin::app.settings.currencies.index.title')
-                </p>
-
-                <div class="flex gap-x-2.5 items-center">
+            <x-admin::page-header :title="trans('admin::app.settings.currencies.index.title')">
+                <x-slot:actions>
                     <!-- Create currency Button -->
                     @if (bouncer()->hasPermission('settings.currencies.create'))
                         <button
@@ -51,8 +43,8 @@
                             @lang('admin::app.settings.currencies.index.create-btn')
                         </button>
                     @endif
-                </div>
-            </div>
+                </x-slot>
+            </x-admin::page-header>
 
             @php
                 $hasDeletePermission = bouncer()->hasPermission('settings.currencies.delete');
@@ -70,7 +62,7 @@
                 <template #body="{ columns, records, performAction, setCurrentSelectionMode, applied }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="selectedCurrencies=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
                     >
@@ -88,7 +80,7 @@
                                 >
 
                                 <label
-                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-violet-700"
+                                    class="icon-checkbox-normal rounded-md text-2xl cursor-pointer peer-checked:icon-checkbox-check peer-checked:text-primary-700"
                                     :for="`mass_action_select_record_${record.id}`"
                                 ></label>
                             </div>
@@ -113,7 +105,7 @@
                                     <span
                                         :class="record.actions.find(action => action.index === 'edit')?.icon"
                                         title="@lang('admin::app.settings.currencies.index.datagrid.edit')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                     >
                                     </span>
                                 </a>
@@ -124,7 +116,7 @@
                                     <span
                                         :class="record.actions.find(action => action.index === 'delete')?.icon"
                                         title="@lang('admin::app.settings.currencies.index.datagrid.delete')"
-                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                        class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                     >
                                     </span>
                                 </a>
@@ -176,6 +168,8 @@
                             <x-admin::form.control-group>
                                 <x-admin::form.control-group.label class="required">
                                     @lang('admin::app.settings.currencies.index.create.code')
+
+                                    <a href="https://en.wikipedia.org/wiki/ISO_4217" target="_blank" rel="noopener noreferrer" class="inline-flex items-center cursor-pointer text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 transition-colors" title="{{ trans('admin::app.settings.currencies.index.create.code-hint') }}"><svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></a>
                                 </x-admin::form.control-group.label>
 
                                 <x-admin::form.control-group.control
@@ -185,7 +179,7 @@
                                     :value="old('code')"
                                     v-model="selectedCurrency.code"
                                     :label="trans('admin::app.settings.currencies.index.create.code')"
-                                    :placeholder="trans('admin::app.settings.currencies.index.create.code')"
+                                    :placeholder="trans('admin::app.settings.currencies.index.create.code-placeholder')"
                                     ::readonly="true !== codeIsNew"
                                 />
 
@@ -324,17 +318,7 @@
                     },
 
                     editModal(url) {
-                        this.codeIsNew = false;
-
-                        this.$axios.get(url)
-                            .then((response) => {
-                                this.selectedCurrency = response.data;
-
-                                this.$refs.currencyUpdateOrCreateModal.toggle();
-                            })
-                            .catch(error => {
-                                this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message })
-                            });
+                        this.$navigate(url);
                     },
                 }
             })

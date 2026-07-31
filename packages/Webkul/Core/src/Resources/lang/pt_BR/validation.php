@@ -9,6 +9,7 @@ return [
     'slug'                         => 'O :attribute deve ser um slug válido.',
     'sku'                          => 'O :attribute deve ser um SKU válido (apenas caracteres alfanuméricos, hífens e underlines).',
     'comma-separated-integer'      => 'O campo :attribute deve ser numérico e pode conter vírgula.',
+    'ip-address-list'              => 'O campo :attribute deve conter endereços IP válidos separados por vírgulas.',
     'type'                         => 'O :attribute deve ser um tipo válido.',
     'validation-type'              => 'O :attribute deve ser um tipo válido.',
     'field-option-not-found'       => 'O :attribute contém opções inválidas: :invalid_codes.',

@@ -7,17 +7,19 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
-use Webkul\ElasticSearch\Facades\ElasticSearchQuery;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
+use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\AttributeValueNormalizer;
@@ -47,6 +49,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
     protected $attributeColumns = [];
 
+    protected ?array $variantStructureCodes = null;
+
     protected $productQueryBuilder;
 
     protected $defaultColumns = [
@@ -57,6 +61,24 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         'status',
         'type',
         'completeness',
+    ];
+
+    /**
+     * Filters active on first load. Deliberately independent of the displayed
+     * columns: a filter is about what you search by, not about what the grid
+     * happens to render. Every one of them is removable, and every other
+     * filterable property or attribute is reachable from "Add Filter".
+     *
+     * @var array<int, string>
+     */
+    protected $defaultFilters = [
+        'sku',
+        'parent',
+        'attribute_family',
+        'type',
+        'categories',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -151,18 +173,20 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         'entityName' => 'attribute_family',
                     ],
                 ],
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
+                'searchable'       => false,
+                'filterable'       => true,
+                'sortable'         => true,
+                'removable_filter' => true,
             ],
             'status' => [
-                'index'      => 'status',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.status'),
-                'type'       => 'boolean',
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
-                'options'    => [
+                'index'            => 'status',
+                'label'            => trans('admin::app.catalog.products.index.datagrid.status'),
+                'type'             => 'boolean',
+                'searchable'       => false,
+                'filterable'       => true,
+                'sortable'         => true,
+                'removable_filter' => true,
+                'options'          => [
                     'type'   => 'basic',
                     'params' => [
                         'options' => [
@@ -213,37 +237,24 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                             ->toArray(),
                     ],
                 ],
-                'closure'    => fn ($row) => trans('product::app.type.'.$row->type),
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
+                'closure'          => fn ($row) => trans('product::app.type.'.$row->type),
+                'searchable'       => false,
+                'filterable'       => true,
+                'sortable'         => true,
+                'removable_filter' => true,
             ],
 
-            'created_at' => [
-                'index'      => 'created_at',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.created-at'),
-                'type'       => 'date_range',
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
-            ],
+            'created_at' => ProductPropertyFilters::get(ProductPropertyFilters::CREATED_AT),
 
-            'updated_at' => [
-                'index'      => 'updated_at',
-                'label'      => trans('admin::app.catalog.products.index.datagrid.updated-at'),
-                'type'       => 'date_range',
-                'searchable' => false,
-                'filterable' => true,
-                'sortable'   => true,
-                'closure'    => function ($row) {
+            'updated_at' => ProductPropertyFilters::get(ProductPropertyFilters::UPDATED_AT) + [
+                'closure' => function ($row) {
                     return core()->formatDateWithTimeZone($row->updated_at, 'Y-m-d H:i:s');
                 },
             ],
 
-            'completeness' => [
-                'index'   => 'completeness',
-                'label'   => trans('completeness::app.catalog.products.index.datagrid.completeness'),
-                'type'    => 'integer',
+            'categories' => ProductPropertyFilters::get(ProductPropertyFilters::CATEGORIES),
+
+            'completeness' => ProductPropertyFilters::get(ProductPropertyFilters::COMPLETENESS) + [
                 'closure' => function ($row) {
                     if (is_null($row->completeness)) {
                         return '<span class="label-info break-words">'.trans('completeness::app.catalog.products.index.datagrid.missing-completeness-setting').'</span>';
@@ -262,9 +273,6 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     return '<span class="inline-flex items-center justify-center text-center px-2 py-1 w-10 rounded-md text-xs fon-base text-white '.$bgClass.'">'
                         .$score.'%</span>';
                 },
-                'searchable' => false,
-                'filterable' => false,
-                'sortable'   => true,
             ],
         ];
     }
@@ -290,10 +298,57 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 continue;
             }
 
-            $this->addColumn($propertyColumns[$column]);
+            $this->addColumn($this->withFilterDefaults($propertyColumns[$column]));
         }
 
+        $this->addPropertyFilterColumns($propertyColumns);
+
         $this->addFilterableAttributes();
+    }
+
+    /**
+     * Expose every filterable property as a filter, whether or not it is a displayed column.
+     * Hidden entries are dropped by the table and by "Manage Columns", which both skip
+     * `visible === false`, so they only ever surface in the filter list.
+     *
+     * @param  array<string, array<string, mixed>>  $propertyColumns
+     */
+    protected function addPropertyFilterColumns(array $propertyColumns): void
+    {
+        foreach ($propertyColumns as $index => $column) {
+            if (in_array($index, $this->defaultColumns, true)) {
+                continue;
+            }
+
+            if (empty($column['filterable'])) {
+                continue;
+            }
+
+            unset($column['closure']);
+
+            $column['visible'] = false;
+
+            $this->addColumn($this->withFilterDefaults($column));
+        }
+    }
+
+    /**
+     * A filter is on by default only when listed in `$defaultFilters`, and is always
+     * removable so the "Add Filter" list stays the single way back to it.
+     *
+     * @param  array<string, mixed>  $column
+     * @return array<string, mixed>
+     */
+    protected function withFilterDefaults(array $column): array
+    {
+        if (empty($column['filterable'])) {
+            return $column;
+        }
+
+        $column['default_filter'] = in_array($column['index'], $this->defaultFilters, true);
+        $column['removable_filter'] = true;
+
+        return $column;
     }
 
     public function prepareAttributeColumns($column)
@@ -317,29 +372,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
-        $existingCodes = array_merge(
-            $this->defaultColumns,
-            array_keys($this->attributeColumns)
-        );
-
-        $requestedFilters = array_keys(request()->input('filters', []));
-
-        $propertyColumnKeys = array_merge(
-            array_keys($this->getPropertyColumns()),
-            ['channel', 'locale', 'all', 'indices']
-        );
-
-        $activeAttributeFilters = array_diff($requestedFilters, $propertyColumnKeys, $existingCodes);
-
-        if (empty($activeAttributeFilters)) {
-            return;
-        }
-
         $filterableAttributes = app(AttributeRepository::class)
             ->where('is_filterable', true)
             ->whereIn('code', $requestedCodes)
-            ->whereNotIn('code', $existingCodes)
-            ->whereIn('code', array_values($activeAttributeFilters))
             ->get();
 
         foreach ($filterableAttributes as $attribute) {
@@ -360,9 +395,16 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return [];
         }
 
-        return array_values(array_diff(
-            array_keys($filters),
-            ['all', 'indices', 'channel', 'locale']
+        $excludedCodes = array_merge(
+            ['all', 'indices', 'channel', 'locale'],
+            $this->defaultColumns,
+            array_keys($this->attributeColumns),
+            array_keys($this->getPropertyColumns()),
+        );
+
+        return array_values(array_filter(
+            array_diff(array_keys($filters), $excludedCodes),
+            fn (mixed $code): bool => is_string($code),
         ));
     }
 
@@ -417,13 +459,12 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
      */
     public function prepareMassActions()
     {
-        if (bouncer()->hasPermission('catalog.products.mass_update')) {
+        if (bouncer()->hasPermission('catalog.products.bulk_edit')) {
             $this->addMassAction([
                 'title'   => trans('admin::app.catalog.products.bulk-edit.action'),
                 'url'     => route('admin.catalog.products.bulkedit.filters'),
                 'method'  => 'POST',
                 'options' => ['actionType' => 'redirect', 'modal' => 'open-bulk-edit-modal'],
-
             ]);
         }
 
@@ -443,15 +484,15 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                     ],
                 ],
             ]);
+        }
 
-            if (bouncer()->hasPermission('catalog.products.mass_delete')) {
-                $this->addMassAction([
-                    'title'   => trans('admin::app.catalog.products.index.datagrid.delete'),
-                    'url'     => route('admin.catalog.products.mass_delete'),
-                    'method'  => 'POST',
-                    'options' => ['actionType' => 'delete'],
-                ]);
-            }
+        if (bouncer()->hasPermission('catalog.products.mass_delete')) {
+            $this->addMassAction([
+                'title'   => trans('admin::app.catalog.products.index.datagrid.delete'),
+                'url'     => route('admin.catalog.products.mass_delete'),
+                'method'  => 'POST',
+                'options' => ['actionType' => 'delete'],
+            ]);
         }
     }
 
@@ -475,6 +516,31 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             return;
         }
 
+        if (isset($requestedParams['mass_action_ids']) && (bool) $requestedParams['mass_action_ids']) {
+            try {
+                $this->setElasticSort($requestedParams['sort'] ?? []);
+                $this->setElasticFilters($requestedParams['filters'] ?? []);
+
+                $esQuery = $this->prepareQuery->build();
+
+                $matchingParams = $requestedParams;
+                $matchingParams['pagination'] = [
+                    'page'     => 1,
+                    'per_page' => self::MASS_ACTION_ID_LIMIT,
+                ];
+
+                $result = ResultCursorFactory::createCursor($esQuery, $matchingParams);
+
+                $this->massActionIds = array_map('intval', $result->getAllIds());
+            } catch (\Exception $e) {
+                Log::error('Elasticsearch unavailable, falling back to database query: '.$e->getMessage());
+
+                parent::processRequest();
+            }
+
+            return;
+        }
+
         try {
             $pagination = $requestedParams['pagination'] ?? [];
             $pagination['per_page'] ??= $this->itemsPerPage;
@@ -483,7 +549,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $this->setElasticSort($requestedParams['sort'] ?? []);
             $this->setElasticFilters($requestedParams['filters'] ?? []);
 
-            $esQuery = ElasticSearchQuery::build();
+            $esQuery = $this->prepareQuery->build();
             $result = ResultCursorFactory::createCursor($esQuery, $requestedParams);
 
             $ids = $result->getAllIds();
@@ -559,9 +625,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $sortOrder = strtolower(trim((string) $sortOrder)) === 'asc' ? 'asc' : 'desc';
 
         if ($attributePath = $this->getAttributePathForSort($sortColumn)) {
-            $attribute = $this->attributeService->findAttributeByCode($sortColumn) ?? 'text';
+            $attribute = $this->attributeService->findAttributeByCode($sortColumn);
 
-            $castType = $attribute?->type === 'price' || $attribute->validation === 'numeric'
+            $castType = $attribute && ($attribute->type === 'price' || $attribute->validation === 'numeric')
                 ? 'DECIMAL'
                 : null;
 
@@ -645,6 +711,10 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $column = reset($column);
 
+        if ($column instanceof Column && $condition = $this->getRequestedCondition($value)) {
+            return $this->resolveCondition($column, $condition);
+        }
+
         switch ($column->type) {
             case 'datetime_range':
             case 'date_range':
@@ -666,6 +736,67 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         }
 
         return [$operator, $value];
+    }
+
+    /**
+     * Pull the {operator, value, value2, currency} payload sent by an attribute filter,
+     * or null when the request uses the plain value format.
+     *
+     * @return array<array-key, mixed>|null
+     */
+    protected function getRequestedCondition(mixed $value): ?array
+    {
+        $condition = is_array($value) ? reset($value) : null;
+
+        if (! is_array($condition) || empty($condition['operator'])) {
+            return null;
+        }
+
+        return $condition;
+    }
+
+    /**
+     * Turn an attribute filter's condition into the [operator, value] pair its filter expects.
+     *
+     * @param  array<array-key, mixed>  $condition
+     * @return array{0: FilterOperators|null, 1: mixed}
+     */
+    protected function resolveCondition(Column $column, array $condition): array
+    {
+        $operator = is_string($condition['operator'])
+            ? FilterOperators::tryFrom($condition['operator'])
+            : null;
+
+        if (! $operator) {
+            return [null, null];
+        }
+
+        $value = $condition['value'] ?? '';
+
+        if (in_array($operator, [FilterOperators::IS_EMPTY, FilterOperators::IS_NOT_EMPTY], true)) {
+            return [
+                $operator,
+                $column->type === 'price' ? [$condition['currency'] ?? '', ''] : [''],
+            ];
+        }
+
+        if ($column->type === 'price') {
+            return [$operator, [$condition['currency'] ?? '', $value, $condition['value2'] ?? '']];
+        }
+
+        if ($operator === FilterOperators::RANGE) {
+            return [$operator, [$value, $condition['value2'] ?? '']];
+        }
+
+        if (in_array($operator, [FilterOperators::IN, FilterOperators::NOT_IN], true)) {
+            if (is_array($value)) {
+                return [$operator, array_values($value)];
+            }
+
+            return [$operator, array_filter(explode(',', is_scalar($value) ? (string) $value : ''))];
+        }
+
+        return [$operator, is_array($value) ? array_values($value) : [$value]];
     }
 
     /**
@@ -698,7 +829,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         $sortOrder = strtolower($params['order'] ?? $this->sortOrder) === 'asc' ? 'asc' : 'desc';
 
-        ElasticSearchQuery::orderBy([
+        $this->prepareQuery->orderBy([
             $sort => [
                 'order'         => $sortOrder,
                 'missing'       => '_last',
@@ -770,6 +901,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'products.updated_at',
             'parent_products.sku as parent',
             'products.values',
+            'products.variant_structure_id',
             'af.code as attribute_family',
             'products.avg_completeness_score as completeness'
         );
@@ -784,6 +916,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         $exportableData = [];
         $columns = [];
 
+        $channelsAndLocales = $this->getAllChannelsAndLocales();
+
         foreach ($gridData as $product) {
             $productArray = (array) $product;
             if (! empty($productArray['values']) && is_string($productArray['values'])) {
@@ -794,7 +928,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
             unset($productArray[AbstractType::PRODUCT_VALUES_KEY], $productArray['raw_values'], $productArray['completeness']);
 
-            foreach ($this->getAllChannelsAndLocales() as [$channelCode, $localeCode]) {
+            foreach ($channelsAndLocales as [$channelCode, $localeCode]) {
                 $data = $this->getInitialData($channelCode, $localeCode);
 
                 $data += $this->formatProductColumnsData($productArray);
@@ -841,17 +975,17 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * get channel and locales as iterable
      */
-    protected function getAllChannelsAndLocales(): iterable
+    protected function getAllChannelsAndLocales(): array
     {
-        foreach ($this->channelRepository->all() as $channel) {
-            $channelCode = $channel->code;
+        $pairs = [];
 
+        foreach ($this->channelRepository->with('locales')->all() as $channel) {
             foreach ($channel->locales as $locale) {
-                $localeCode = $locale->code;
-
-                yield [$channelCode, $localeCode];
+                $pairs[] = [$channel->code, $locale->code];
             }
         }
+
+        return $pairs;
     }
 
     /**
@@ -906,11 +1040,30 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     {
         $productArray['status'] = $productArray['status'] ? 'true' : 'false';
 
+        $structureId = $productArray['variant_structure_id'] ?? null;
+
+        $productArray['variant_structure'] = $structureId
+            ? ($this->getVariantStructureCodes()[$structureId] ?? null)
+            : null;
+
         unset($productArray['product_id']);
         unset($productArray['created_at']);
         unset($productArray['updated_at']);
+        unset($productArray['variant_structure_id']);
 
         return $productArray;
+    }
+
+    /**
+     * Variant structure codes keyed by id, loaded once per export.
+     *
+     * @return array<int, string>
+     */
+    protected function getVariantStructureCodes(): array
+    {
+        return $this->variantStructureCodes ??= VariantStructure::query()
+            ->pluck('code', 'id')
+            ->all();
     }
 
     /**
@@ -969,16 +1122,18 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'   => $this->primaryColumn,
-                'default_order'    => $this->sortColumn,
-                'from'             => $paginator['from'],
-                'to'               => $paginator['to'],
-                'total'            => $paginator['total'],
-                'per_page_options' => [10, 20, 30, 40, 50],
-                'per_page'         => $paginator['per_page'],
-                'current_page'     => $paginator['current_page'],
-                'last_page'        => $paginator['last_page'],
-                'managedColumn'    => [
+                'primary_column'     => $this->primaryColumn,
+                'select_all_enabled' => $this->enableSelectAll,
+                'default_order'      => $this->sortColumn,
+                'from'               => $paginator['from'],
+                'to'                 => $paginator['to'],
+                'total'              => $paginator['total'],
+                'per_page_options'   => [10, 20, 30, 40, 50],
+                'per_page'           => $paginator['per_page'],
+                'current_page'       => $paginator['current_page'],
+                'last_page'          => $paginator['last_page'],
+                'default_filters'    => $this->defaultFilters,
+                'managedColumn'      => [
                     'enabled' => $this->manageableColumn,
                     'columns' => $this->managedColumns,
                     'route'   => route('admin.datagrid.available_columns'),

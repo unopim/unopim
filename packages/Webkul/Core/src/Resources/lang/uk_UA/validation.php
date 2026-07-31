@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Slug :attribute має бути правильним.',
     'sku'                          => 'SKU :attribute має бути дійсним (лише буквено-цифрові символи, дефіси та підкреслення).',
     'comma-separated-integer'      => 'Поле :attribute повинно бути числовим і може містити коми.',
+    'ip-address-list'              => 'Поле :attribute має містити коректні IP-адреси, розділені комами.',
     'type'                         => 'Тип :attribute має бути правильним.',
     'validation-type'              => 'Тип перевірки :attribute має бути правильним.',
     'field-option-not-found'       => 'Поле :attribute містить недійсні опції: :invalid_codes.',

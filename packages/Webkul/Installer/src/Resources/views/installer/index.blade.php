@@ -18,11 +18,6 @@
         @unoPimVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'], 'installer')
 
         <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-            rel="stylesheet"
-        />
-
-        <link
             type="image/x-icon"
             href="{{ unopim_asset('images/favicon.svg') }}"
             rel="shortcut icon"
@@ -191,9 +186,9 @@
                                                 <span
                                                     class="flex items-center justify-center w-7 h-7 rounded-full text-[12px] font-bold shrink-0 transition-colors"
                                                     :class="stepStates.{{ $stepKey }} === 'complete'
-                                                        ? 'bg-violet-700 text-white'
+                                                        ? 'bg-primary-700 text-white'
                                                         : (stepStates.{{ $stepKey }} === 'active'
-                                                            ? 'bg-violet-100 text-violet-700 ring-2 ring-violet-700'
+                                                            ? 'bg-primary-100 text-primary-700 ring-2 ring-primary-700'
                                                             : 'bg-gray-100 text-gray-400')"
                                                 >
                                                     <svg
@@ -284,7 +279,7 @@
                                             <div class="flex px-6 py-4 justify-end items-center border-t border-gray-200">
                                                 <button
                                                     type="button"
-                                                    class="px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                                    class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                                     tabindex="0"
                                                     @click="nextForm"
                                                 >
@@ -341,7 +336,7 @@
 
                                     <div class="flex px-6 py-4 justify-between items-center">
                                         <div
-                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-violet-700 text-violet-700 text-[14px] font-semibold cursor-pointer hover:bg-violet-50 transition-all"
+                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-primary-700 text-primary-700 text-[14px] font-semibold cursor-pointer hover:bg-primary-50 transition-all"
                                             role="button"
                                             aria-label="@lang('installer::app.installer.index.back')"
                                             tabindex="0"
@@ -351,7 +346,7 @@
                                         </div>
 
                                         <div
-                                            class="{{ $hasRequirement ? 'opacity-50 cursor-not-allowed' : ''}} px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer {{ $hasRequirement ?: 'hover:opacity-90' }}"
+                                            class="{{ $hasRequirement ? 'opacity-50 cursor-not-allowed' : ''}} px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer {{ $hasRequirement ?: 'hover:opacity-90' }}"
                                             @click="nextForm"
                                             tabindex="0"
                                         >
@@ -382,6 +377,11 @@
 
                                             <div class="grid grid-cols-2 gap-x-6 gap-y-1 px-6 py-6 border-b border-gray-200 max-sm:grid-cols-1">
                                                 <!-- Database Connection-->
+                                                @php
+                                                    $currentDbConnection = in_array(config('database.default'), ['mysql', 'pgsql'], true)
+                                                        ? config('database.default')
+                                                        : 'mysql';
+                                                @endphp
                                                 <x-installer::form.control-group class="mb-2.5 col-span-2 max-sm:col-span-1">
                                                     <x-installer::form.control-group.label class="required">
                                                         @lang('installer::app.installer.index.environment-configuration.database-connection')
@@ -390,19 +390,22 @@
                                                     <x-installer::form.control-group.control
                                                         type="select"
                                                         name="db_connection"
-                                                        ::value="envData.db_connection ?? 'mysql'"
+                                                        ::value="envData.db_connection ?? '{{ $currentDbConnection }}'"
                                                         rules="required"
                                                         :label="trans('installer::app.installer.index.environment-configuration.database-connection')"
                                                         :placeholder="trans('installer::app.installer.index.environment-configuration.database-connection')"
                                                     >
                                                         <option
                                                             value="mysql"
-                                                            selected
+                                                            {{ $currentDbConnection === 'mysql' ? 'selected' : '' }}
                                                         >
                                                             @lang('installer::app.installer.index.environment-configuration.mysql')
                                                         </option>
 
-                                                        <option value="pgsql">
+                                                        <option
+                                                            value="pgsql"
+                                                            {{ $currentDbConnection === 'pgsql' ? 'selected' : '' }}
+                                                        >
                                                             @lang('installer::app.installer.index.environment-configuration.pgsql')
                                                         </option>
                                                     </x-installer::form.control-group.control>
@@ -520,7 +523,7 @@
 
                                             <div class="flex px-6 py-4 justify-between items-center">
                                                 <div
-                                                    class="inline-flex items-center px-4 py-2 rounded-lg border border-violet-700 text-violet-700 text-[14px] font-semibold cursor-pointer hover:bg-violet-50 transition-all"
+                                                    class="inline-flex items-center px-4 py-2 rounded-lg border border-primary-700 text-primary-700 text-[14px] font-semibold cursor-pointer hover:bg-primary-50 transition-all"
                                                     role="button"
                                                     :aria-label="@lang('installer::app.installer.index.back')"
                                                     tabindex="0"
@@ -531,7 +534,7 @@
 
                                                 <button
                                                     type="submit"
-                                                    class="px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                                    class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                                     tabindex="0"
                                                 >
                                                     @lang('installer::app.installer.index.continue')
@@ -994,7 +997,7 @@
                                             <div class="flex px-6 py-4 justify-end items-center">
                                                 <button
                                                     type="submit"
-                                                    class="px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                                    class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                                     tabindex="0"
                                                 >
                                                     @lang('installer::app.installer.index.continue')
@@ -1070,7 +1073,7 @@
                                                     <x-installer::form.control-group.control
                                                         type="password"
                                                         name="password"
-                                                        rules="required|min:6"
+                                                        rules="required|min:{{ config('admin.auth.password_min') }}"
                                                         :value="old('password')"
                                                         :label="trans('installer::app.installer.index.create-administrator.password')"
                                                     />
@@ -1164,7 +1167,7 @@
 
                                             <div class="flex px-6 py-4 justify-between items-center">
                                                 <div
-                                                    class="inline-flex items-center px-4 py-2 rounded-lg border border-violet-700 text-violet-700 text-[14px] font-semibold cursor-pointer hover:bg-violet-50 transition-all"
+                                                    class="inline-flex items-center px-4 py-2 rounded-lg border border-primary-700 text-primary-700 text-[14px] font-semibold cursor-pointer hover:bg-primary-50 transition-all"
                                                     role="button"
                                                     :aria-label="@lang('installer::app.installer.index.back')"
                                                     tabindex="0"
@@ -1175,7 +1178,7 @@
 
                                                 <button
                                                     type="submit"
-                                                    class="px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                                    class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                                     tabindex="0"
                                                 >
                                                     @lang('installer::app.installer.index.continue')
@@ -1208,25 +1211,25 @@
                                                 :key="key"
                                                 class="flex items-start gap-3 p-4 rounded-xl border cursor-pointer select-none transition-all"
                                                 :class="selectedPackages.includes(key)
-                                                    ? 'border-violet-700 bg-violet-50 ring-1 ring-violet-700'
-                                                    : 'border-gray-200 hover:border-violet-300'"
+                                                    ? 'border-primary-700 bg-primary-50 ring-1 ring-primary-700'
+                                                    : 'border-gray-200 hover:border-primary-300'"
                                             >
                                                 <input
                                                     type="checkbox"
-                                                    class="mt-1 h-4 w-4 accent-violet-700 cursor-pointer"
+                                                    class="mt-1 h-4 w-4 accent-primary-700 cursor-pointer"
                                                     :value="key"
                                                     :checked="selectedPackages.includes(key)"
                                                     @change="togglePackage(key)"
                                                 />
 
                                                 <span
-                                                    class="flex items-center justify-center w-10 h-10 rounded-lg bg-violet-100 text-violet-700 shrink-0"
+                                                    class="flex items-center justify-center w-10 h-10 rounded-lg bg-primary-100 text-primary-700 shrink-0"
                                                     v-html="addOnIcons[key]"
                                                 ></span>
 
                                                 <span class="min-w-0">
                                                     <span class="block text-[14px] font-bold text-gray-800">
-                                                        @{{ pkg.label }}
+                                                        @{{ addOnLabels[key] }}
                                                     </span>
 
                                                     <span class="block text-[13px] text-gray-600 !leading-normal mt-0.5">
@@ -1249,7 +1252,7 @@
                                             <label class="flex items-center gap-2.5 mt-2 cursor-pointer select-none">
                                                 <input
                                                     type="checkbox"
-                                                    class="h-4 w-4 accent-violet-700 cursor-pointer"
+                                                    class="h-4 w-4 accent-primary-700 cursor-pointer"
                                                     :checked="seedSampleData"
                                                     @change="seedSampleData = $event.target.checked"
                                                 />
@@ -1270,7 +1273,7 @@
 
                                     <div class="flex px-6 py-4 justify-between items-center">
                                         <div
-                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-violet-700 text-violet-700 text-[14px] font-semibold cursor-pointer hover:bg-violet-50 transition-all"
+                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-primary-700 text-primary-700 text-[14px] font-semibold cursor-pointer hover:bg-primary-50 transition-all"
                                             role="button"
                                             aria-label="@lang('installer::app.installer.index.back')"
                                             tabindex="0"
@@ -1281,7 +1284,7 @@
 
                                         <button
                                             type="button"
-                                            class="px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                            class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                             tabindex="0"
                                             @click="nextForm"
                                         >
@@ -1322,13 +1325,13 @@
 
                                                     <div class="grid gap-3">
                                                         <div class="flex gap-1.5 items-center text-[14px] text-gray-600">
-                                                            <span class="icon-right text-[20px] text-violet-700"></span>
+                                                            <span class="icon-right text-[20px] text-primary-700"></span>
 
                                                             <p>@lang('installer::app.installer.index.ready-for-installation.create-databsae-table')</p>
                                                         </div>
 
                                                         <div class="flex gap-1.5 items-center text-[14px] text-gray-600">
-                                                            <span class="icon-right text-[20px] text-violet-700"></span>
+                                                            <span class="icon-right text-[20px] text-primary-700"></span>
 
                                                             <p>@lang('installer::app.installer.index.ready-for-installation.populate-database-table')</p>
                                                         </div>
@@ -1338,7 +1341,7 @@
 
                                             <div class="flex px-6 py-4 justify-between items-center">
                                                 <div
-                                                    class="inline-flex items-center px-4 py-2 rounded-lg border border-violet-700 text-violet-700 text-[14px] font-semibold cursor-pointer hover:bg-violet-50 transition-all"
+                                                    class="inline-flex items-center px-4 py-2 rounded-lg border border-primary-700 text-primary-700 text-[14px] font-semibold cursor-pointer hover:bg-primary-50 transition-all"
                                                     role="button"
                                                     :aria-label="@lang('installer::app.installer.index.back')"
                                                     tabindex="0"
@@ -1349,7 +1352,7 @@
 
                                                 <button
                                                     type="submit"
-                                                    class="px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                                    class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                                 >
                                                     @lang('installer::app.installer.index.ready-for-installation.start-installation')
                                                 </button>
@@ -1387,7 +1390,7 @@
                                                 <div class="flex gap-4 items-center">
                                                     <a
                                                         href="{{ URL('/admin/login')}}"
-                                                        class="px-4 py-2 bg-violet-700 border border-violet-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                                        class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                                     >
                                                         @lang('installer::app.installer.index.installation-completed.admin-panel')
                                                     </a>
@@ -1416,7 +1419,7 @@
                                                 >
                                                     <span class="icon-tick text-[18px] text-green-600"></span>
 
-                                                    @{{ optionalPackages[key].label }}
+                                                    @{{ addOnLabels[key] }}
                                                 </li>
                                             </ul>
                                         </div>
@@ -1425,7 +1428,7 @@
                                     <div class="flex px-6 py-4 justify-between items-center">
                                         <a
                                             href="https://unopim.com/extensions"
-                                            class="px-4 py-2 bg-white border border-violet-700 rounded-lg text-violet-700 text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                            class="px-4 py-2 bg-white border border-primary-700 rounded-lg text-primary-700 text-[14px] font-semibold cursor-pointer hover:opacity-90"
                                         >
                                             @lang('installer::app.installer.index.installation-completed.explore-unopim-extensions')
                                         </a>
@@ -1439,13 +1442,13 @@
                     <footer class="w-full px-6 py-6 text-center text-[13px] text-gray-600 font-medium flex flex-col items-center">
                         <div>
                             @lang('installer::app.installer.index.powered-by', [
-                                'unopim' => '<a class="text-violet-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">Unopim</a>',
+                                'unopim' => '<a class="text-primary-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">Unopim</a>',
                             ])
                         </div>
 
                         <div>
                             @lang('installer::app.installer.index.open-source-project-by', [
-                                'webkul' => '<a class="text-violet-700 hover:underline" href="https://webkul.com/" target="_blank" rel="noopener">Webkul</a>',
+                                'webkul' => '<a class="text-primary-700 hover:underline" href="https://webkul.com/" target="_blank" rel="noopener">Webkul</a>',
                             ])
                         </div>
                     </footer>
@@ -1506,6 +1509,12 @@
                             selectedPackages: [],
 
                             addOnIcons: @json($addOnIcons),
+
+                            addOnLabels: {
+                                dam: "@lang('installer::app.installer.index.add-ons.packages.dam.label')",
+                                shopify: "@lang('installer::app.installer.index.add-ons.packages.shopify.label')",
+                                bagisto: "@lang('installer::app.installer.index.add-ons.packages.bagisto.label')",
+                            },
 
                             addOnDescriptions: {
                                 dam: "@lang('installer::app.installer.index.add-ons.packages.dam.description')",

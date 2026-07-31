@@ -6,6 +6,7 @@ use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Eloquent\Repository;
 use Webkul\Product\Contracts\Product;
@@ -14,8 +15,6 @@ class ProductRepository extends Repository
 {
     /**
      * Create a new repository instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -29,7 +28,7 @@ class ProductRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Product\Contracts\Product';
+        return Product::class;
     }
 
     /**
@@ -39,11 +38,9 @@ class ProductRepository extends Repository
      */
     public function create(array $data)
     {
-        $typeInstance = app(config('product_types.'.$data['type'].'.class'));
+        $typeInstance = resolve(config('product_types.'.$data['type'].'.class'));
 
-        $product = $typeInstance->create($data);
-
-        return $product;
+        return $typeInstance->create($data);
     }
 
     /**
@@ -84,16 +81,57 @@ class ProductRepository extends Repository
 
     /**
      * Updates the status of product.
+     *
+     * Dirty state is compared as booleans because PostgreSQL hydrates the
+     * status column as true/false while MySQL hydrates 1/0.
      */
     public function updateStatus(bool $status, int $id): Product
     {
         $product = $this->findOrFail($id);
 
+        $product->wasDirtyOnUpdate = ((bool) $product->status) !== $status;
+
         $product->status = (int) $status;
 
-        $product->save();
+        if ($product->wasDirtyOnUpdate) {
+            $product->save();
+        }
 
         return $product;
+    }
+
+    /**
+     * @param  array<int>  $productIds
+     */
+    public function massDelete(array $productIds): void
+    {
+        foreach ($productIds as $productId) {
+            $product = $this->find($productId);
+
+            if (! isset($product)) {
+                continue;
+            }
+
+            Event::dispatch('catalog.product.delete.before', $productId);
+
+            $this->delete($productId);
+
+            Event::dispatch('catalog.product.delete.after', $productId);
+        }
+    }
+
+    /**
+     * @param  array<int>  $productIds
+     */
+    public function massUpdateStatus(array $productIds, bool $status): void
+    {
+        foreach ($productIds as $productId) {
+            Event::dispatch('catalog.product.update.before', $productId);
+
+            $product = $this->updateStatus($status, $productId);
+
+            Event::dispatch('catalog.product.update.after', $product);
+        }
     }
 
     /**
@@ -112,11 +150,7 @@ class ProductRepository extends Repository
             throw new \Exception(trans('product::app.datagrid.variant-already-exist-message'));
         }
 
-        return DB::transaction(function () use ($product) {
-            $copiedProduct = $product->getTypeInstance()->copy();
-
-            return $copiedProduct;
-        });
+        return DB::transaction(fn () => $product->getTypeInstance()->copy());
     }
 
     /**
@@ -130,14 +164,14 @@ class ProductRepository extends Repository
             $query = $query->where('values->common->'.$variantAttribute, $value);
         }
 
-        if (! empty($variantId)) {
+        if (! in_array($variantId, ['', '0', 0], true)) {
             $query = $query->where('id', '<>', $variantId);
         }
 
         if ($sku) {
             $query = $query->orWhere('sku', $sku);
 
-            if (! empty($variantId)) {
+            if (! in_array($variantId, ['', '0', 0], true)) {
                 $query = $query->where('id', '<>', $variantId);
             }
         }
@@ -174,7 +208,7 @@ class ProductRepository extends Repository
 
         if (! $product) {
             throw (new ModelNotFoundException)->setModel(
-                get_class($this->model), $slug
+                $this->model::class, $slug
             );
         }
 
@@ -219,7 +253,7 @@ class ProductRepository extends Repository
         return $query->paginate($limit);
     }
 
-    public function queryBuilderFromDatabase($params)
+    public function queryBuilderFromDatabase($params): array
     {
         $query = $this->with([
             'attribute_family',
@@ -227,12 +261,7 @@ class ProductRepository extends Repository
             'super_attributes',
             'variants',
         ])->scopeQuery(function ($query) use ($params) {
-            $prefix = DB::getTablePrefix();
-
-            // Check if distinct is actually required here
-            $qb = $query
-                ->select('products.*')
-                ->leftJoin('products as variants', DB::raw('COALESCE('.$prefix.'variants.parent_id, '.$prefix.'variants.id)'), '=', 'products.id');
+            $qb = $query->select('products.*');
 
             if (! empty($params['type'])) {
                 $qb->where('products.type', $params['type']);
@@ -242,11 +271,15 @@ class ProductRepository extends Repository
                 $qb->where('products.sku', 'like', '%'.$params['sku'].'%');
             }
 
+            if (! empty($params['ids'])) {
+                $qb->whereIn('products.id', array_filter((array) $params['ids'], 'is_numeric'));
+            }
+
             if (! empty($params['skipSku'])) {
                 $qb->whereNotIn('products.sku', is_string($params['skipSku']) ? [$params['skipSku']] : $params['skipSku']);
             }
 
-            return $qb->groupBy('products.id');
+            return $qb;
         });
 
         return [$query];
@@ -272,9 +305,8 @@ class ProductRepository extends Repository
      * Returns product's super attribute with options.
      *
      * @param  Product  $product
-     * @return Collection
      */
-    public function getSuperAttributes($product)
+    public function getSuperAttributes($product): array
     {
         $superAttributes = [];
 

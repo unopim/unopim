@@ -9,7 +9,6 @@ describe('ImportProducts SKU validation (Issue #689)', function () {
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/ImportProducts.php')
         );
 
-        // Must contain SKU validation using the same pattern as Core\Rules\Sku
         expect($source)->toContain('validateSku');
     });
 
@@ -23,7 +22,6 @@ describe('ImportProducts SKU validation (Issue #689)', function () {
         expect($method->invoke($tool, 'ABC-123'))->toBeTrue();
         expect($method->invoke($tool, 'simple'))->toBeTrue();
 
-        // Invalid SKUs with special characters
         expect($method->invoke($tool, 'invalid-sku!!'))->toBeFalse();
         expect($method->invoke($tool, 'sku with spaces'))->toBeFalse();
         expect($method->invoke($tool, 'sku@special'))->toBeFalse();
@@ -34,13 +32,21 @@ describe('ImportProducts SKU validation (Issue #689)', function () {
         expect($method->invoke($tool, '_starts-with-underscore'))->toBeFalse();
     });
 
-    it('has no MAX_ROWS constant — all rows are dispatched to a background job', function () {
+    it('delegates imports to the core DataTransfer batch pipeline behind a memory-safety row cap', function () {
         $source = file_get_contents(
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/ImportProducts.php')
         );
 
-        expect($source)->not->toContain('MAX_ROWS');
-        expect($source)->toContain('ImportProductsJob::dispatch');
+        expect($source)->toContain('ImportTrackBatch::dispatch');
+        expect($source)->toContain('MAX_IMPORT_ROWS');
+    });
+
+    it('gates variant rows attaching to an existing parent behind edit permission', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/AiAgent/src/Chat/Tools/ImportProducts.php')
+        );
+
+        expect($source)->toContain('import-acl-skip-parent');
     });
 
     it('validateSku uses the same regex pattern as Core Sku rule', function () {
@@ -52,28 +58,18 @@ describe('ImportProducts SKU validation (Issue #689)', function () {
             base_path('packages/Webkul/Core/src/Rules/Sku.php')
         );
 
-        // Extract the regex pattern from the Sku rule
         preg_match("/preg_match\('([^']+)'/", $ruleSource, $ruleMatch);
         $skuPattern = $ruleMatch[1];
 
-        // The tool must use the same pattern
         expect($toolSource)->toContain($skuPattern);
     });
 
-    it('invalid SKUs are counted as skipped before the job is dispatched', function () {
+    it('pre-filters invalid SKUs before handing rows to the importer', function () {
         $toolSource = file_get_contents(
             base_path('packages/Webkul/AiAgent/src/Chat/Tools/ImportProducts.php')
         );
 
-        $jobSource = file_get_contents(
-            base_path('packages/Webkul/AiAgent/src/Jobs/ImportProductsJob.php')
-        );
-
-        // Tool pre-filters invalid SKUs before dispatching
         expect($toolSource)->toContain('validateSku');
         expect($toolSource)->toContain('skippedInvalidSku');
-
-        // Job handles per-row errors during processing
-        expect($jobSource)->toContain('errors[]');
     });
 });

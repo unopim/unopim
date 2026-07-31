@@ -11,10 +11,8 @@ class EventServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Event::listen('catalog.product.update.after', [Product::class, 'afterUpdate']);
 
@@ -22,7 +20,9 @@ class EventServiceProvider extends ServiceProvider
 
         Event::listen('catalog.product.bulk.edit.after', [Product::class, 'afterBulkEdit']);
 
-        Event::listen('data_transfer.imports.batch.product.save.after', [Product::class, 'afterBulkUpdate']);
+        Event::listen('data_transfer.imports.batch.product.created.after', [Product::class, 'afterBulkCreate']);
+
+        Event::listen('data_transfer.imports.batch.product.updated.after', [Product::class, 'afterBulkEditFromImport']);
 
         Event::listen('data_transfer.imports.batch.import.before', ImportBatch::class);
     }

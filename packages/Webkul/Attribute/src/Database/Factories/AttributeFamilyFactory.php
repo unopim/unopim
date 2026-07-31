@@ -7,6 +7,9 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
 
+/**
+ * @extends Factory<AttributeFamily>
+ */
 class AttributeFamilyFactory extends Factory
 {
     /**
@@ -24,8 +27,8 @@ class AttributeFamilyFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'   => $this->faker->word(),
-            'code'   => $this->faker->word(),
+            'name'   => fake()->word(),
+            'code'   => fake()->word(),
             'status' => 0,
         ];
     }
@@ -67,7 +70,7 @@ class AttributeFamilyFactory extends Factory
      */
     public function withRequiredAttributes(?Attribute $attributes = null): AttributeFamilyFactory
     {
-        return $this->afterCreating(function (AttributeFamily $family) {
+        return $this->afterCreating(function (AttributeFamily $family) use ($attributes): void {
             $this->linkAttributeGroupToFamily($family);
 
             $this->linkAttributesToFamily($family, $attributes ?? Attribute::factory()->create(['is_required' => 1]));
@@ -81,7 +84,7 @@ class AttributeFamilyFactory extends Factory
      */
     public function withMinimalAttributesForProductTypes(?Attribute $attributes = null): AttributeFamilyFactory
     {
-        return $this->afterCreating(function (AttributeFamily $family) {
+        return $this->afterCreating(function (AttributeFamily $family) use ($attributes): void {
             $this->linkAttributeGroupToFamily($family);
 
             $this->linkAttributesToFamily($family, $attributes ?? Attribute::factory()->create(['type' => 'select']));

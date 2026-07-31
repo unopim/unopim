@@ -7,7 +7,7 @@ namespace Webkul\AiAgent\DTOs;
  * through the pipeline. Each pipeline stage reads from and enriches
  * this DTO without modifying the original.
  */
-final class AgentPayload
+final readonly class AgentPayload
 {
     /**
      * @param  int  $agentId  The agent configuration ID
@@ -18,12 +18,12 @@ final class AgentPayload
      * @param  array<string, mixed>  $metadata  Pipeline-enriched metadata
      */
     public function __construct(
-        public readonly int $agentId,
-        public readonly int $credentialId,
-        public readonly string $instruction,
-        public readonly array $context = [],
-        public readonly array $messages = [],
-        public readonly array $metadata = [],
+        public int $agentId,
+        public int $credentialId,
+        public string $instruction,
+        public array $context = [],
+        public array $messages = [],
+        public array $metadata = [],
     ) {}
 
     /**

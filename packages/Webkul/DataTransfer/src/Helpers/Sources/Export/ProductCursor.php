@@ -18,33 +18,43 @@ class ProductCursor extends AbstractCursor
         $this->batchSize = $batchSize;
     }
 
+    protected int $lastId = 0;
+
     /**
-     * Fetch a batch of product IDs from the source using offset-based pagination.
+     * Fetch a batch of product IDs using keyset (seek) pagination. Offset
+     * pagination is O(n^2) at depth; seeking on the ordered primary key keeps
+     * each batch a constant-cost index range scan, which is what lets exports
+     * scale to millions of products.
      */
     protected function fetchNextBatch(): array
     {
-        $ids = [];
+        if ($this->offset === 0) {
+            $this->lastId = 0;
+        }
+
         $query = $this->source->newQuery();
         $filters = $this->requestParams['filters'] ?? [];
 
-        app(ProductExportFilter::class)->applyToQuery($query, $filters);
+        resolve(ProductExportFilter::class)->applyToQuery($query, $filters);
 
         try {
             $ids = $query->select('id')
+                ->where('id', '>', $this->lastId)
                 ->orderBy('id')
-                ->offset($this->offset)
                 ->limit($this->batchSize)
-                ->pluck('id')
-                ->map(fn ($id) => ['id' => $id])
-                ->all();
+                ->pluck('id');
+
+            if ($ids->isNotEmpty()) {
+                $this->lastId = (int) $ids->last();
+            }
 
             $this->offset += $this->batchSize;
         } catch (\Throwable $e) {
-            \Log::error('Elasticsearch search error: '.$e->getMessage());
+            \Log::error('Product export cursor error: '.$e->getMessage());
             throw $e;
         }
 
-        return $ids;
+        return $ids->map(fn ($id): array => ['id' => $id])->all();
     }
 
     /**

@@ -15,7 +15,15 @@ class MagicAISystemPromptController extends Controller
     public function __construct(
         protected MagicAISystemPromptRepository $magicAiSystemPromptRepository,
         protected Prompt $promptService,
-    ) {}
+    ) {
+        $this->middleware(function ($request, $next) {
+            if (! bouncer()->hasPermission('ai-agent.system-prompt')) {
+                abort(403);
+            }
+
+            return $next($request);
+        });
+    }
 
     public function index(): View|JsonResponse
     {
@@ -55,9 +63,13 @@ class MagicAISystemPromptController extends Controller
         ]);
     }
 
-    public function edit(int $id): JsonResponse
+    public function edit(int $id): View|JsonResponse
     {
         $prompt = $this->magicAiSystemPromptRepository->findOrFail($id);
+
+        if (! request()->expectsJson()) {
+            return view('admin::configuration.magic-ai.system-prompt.edit', compact('prompt'));
+        }
 
         return new JsonResponse([
             'data' => $prompt,
@@ -85,7 +97,8 @@ class MagicAISystemPromptController extends Controller
         $this->magicAiSystemPromptRepository->update($data, $id);
 
         return new JsonResponse([
-            'message' => trans('admin::app.configuration.system-prompt.message.update-success'),
+            'message'      => trans('admin::app.configuration.system-prompt.message.update-success'),
+            'redirect_url' => route('admin.magic_ai.system_prompt.index'),
         ]);
     }
 

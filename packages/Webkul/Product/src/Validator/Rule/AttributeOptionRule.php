@@ -26,7 +26,7 @@ class AttributeOptionRule implements ValidationRule
 
         $optionCode = is_string($value) ? explode(',', $value) : (is_array($value) ? $value : []);
 
-        $optionCode = array_map('trim', $optionCode);
+        $optionCode = array_map(trim(...), $optionCode);
 
         $codeNotExists = array_diff($optionCode, $this->getOptionCode($optionCode));
 

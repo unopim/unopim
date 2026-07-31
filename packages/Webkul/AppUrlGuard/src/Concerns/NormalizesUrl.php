@@ -23,16 +23,15 @@ trait NormalizesUrl
 
         $url = preg_replace_callback(
             '#^[a-z][a-z0-9+.\-]*://[^/]*#i',
-            fn ($match) => strtolower($match[0]),
+            fn ($match): string => strtolower($match[0]),
             $url
         );
 
-        $url = rtrim($url, '/');
+        $url = rtrim((string) $url, '/');
 
         $url = preg_replace('#^(http://[^/:]+):80(?=$|/)#', '$1', $url);
-        $url = preg_replace('#^(https://[^/:]+):443(?=$|/)#', '$1', $url);
 
-        return $url;
+        return preg_replace('#^(https://[^/:]+):443(?=$|/)#', '$1', (string) $url);
     }
 
     /**

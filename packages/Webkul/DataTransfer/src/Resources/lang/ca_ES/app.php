@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'El valor :code ha de ser únic.',
                     'incorrect-family-for-variant'             => 'La família ha de ser la mateixa que la família parent',
                     'parent-not-exist'                         => 'El parent no existeix.',
+                    'variant-structure-not-found'              => 'L\'estructura de variants :code no existeix per a aquesta família d\'atributs.',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'El codi d\'atribut :code ja està en ús.',
                     'code_not_found_to_delete'             => 'Codi d\'atribut no trobat per a supressió.',
                     'code_is_system_and_cannot_be_deleted' => 'L\'atribut del sistema no es pot eliminar.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Associacions de productes',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'El camp \'%s\' és obligatori.',
+                    'self-link-not-allowed'       => 'El producte \'%s\' no es pot associar amb si mateix.',
+                    'sku-not-found'               => 'No s\'ha trobat cap producte amb l\'SKU \'%s\'.',
+                    'related-sku-not-found'       => 'No s\'ha trobat el producte relacionat amb l\'SKU \'%s\'.',
+                    'association-type-not-found'  => 'El tipus d\'associació \'%s\' no existeix o no està actiu.',
+                    'invalid-field-value'         => 'Valor no vàlid per a un camp d\'associació.',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Aquesta exportació és massa gran per executar-se: s\'estimen :rows files × :columns columnes (~:estimated), que superen l\'espai disponible (~:available). Reduïu l\'exportació seleccionant menys canals/idiomes (i atributs) i torneu-ho a provar.',
         'fields'           => [
-            'file-format'         => 'Format de fitxer',
-            'with-media'          => 'Amb mèdia',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Format de fitxer',
+            'with-media'             => 'Amb mèdia',
+            'with-associations'      => 'Amb associacions',
+            'with-associations-info' => 'Inclou les columnes heretades de llistes d\'SKU (up_sells, cross_sells i related_products) a l\'exportació',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'Atributs',
         ],
+        'product-associations' => [
+            'title' => 'Associacions de productes',
+        ],
         'attribute-groups' => [
             'title' => 'Grups d\'Atributs',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Inici de l\'execució de la feina',
         'completed' => 'Finalització de l\'execució de la feina',
+        'stalled'   => 'La tasca ha deixat de respondre durant més de :minutes minuts i s\'ha marcat com a fallida. Probablement el procés que l\'executava s\'ha aturat.',
+        'reaped'    => 'S\'han marcat :count tasques aturades com a fallides.',
     ],
 ];

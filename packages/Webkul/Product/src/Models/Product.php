@@ -3,6 +3,8 @@
 namespace Webkul\Product\Models;
 
 use Exception;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,44 +16,35 @@ use Illuminate\Support\Facades\Storage;
 use Shetabit\Visitor\Traits\Visitable;
 use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeProxy;
-use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Completeness\Models\CompletenessSetting;
 use Webkul\Completeness\Models\ProductCompletenessScore;
+use Webkul\Core\RequestMemo;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Product\Contracts\Product as ProductContract;
+use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Database\Factories\ProductFactory;
 use Webkul\Product\Presenters\ProductValuesPresenter;
 use Webkul\Product\Type\AbstractType;
 
+#[Fillable([
+    'type',
+    'attribute_family_id',
+    'sku',
+    'parent_id',
+    'status',
+    'variant_structure_id',
+])]
 class Product extends Model implements HistoryAuditable, PresentableHistoryInterface, ProductContract
 {
     use HasFactory, Visitable;
     use HistoryTrait;
 
     protected $historyTags = ['product'];
-
-    /**
-     * The attributes that are mass assignable.
-     */
-    protected $fillable = [
-        'type',
-        'attribute_family_id',
-        'sku',
-        'parent_id',
-        'status',
-    ];
-
-    /**
-     * The attributes that should be cast.
-     */
-    protected $casts = [
-        'additional' => 'array',
-        'values'     => 'array',
-    ];
 
     /**
      * The type of product.
@@ -61,7 +54,16 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     protected $typeInstance;
 
     /**
+     * Whether the last update actually mutated the product. Transient (not persisted,
+     * not serialized) so update pipelines can gate `catalog.product.update.after` and
+     * completeness recomputation on a real change instead of a no-op save.
+     */
+    public bool $wasDirtyOnUpdate = false;
+
+    /**
      * Get the product that owns the product.
+     *
+     * @return BelongsTo<Product, $this>
      */
     public function parent(): BelongsTo
     {
@@ -77,11 +79,20 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
+     * Get the variant structure that owns the product.
+     */
+    public function variantStructure(): BelongsTo
+    {
+        return $this->belongsTo(VariantStructureProxy::modelClass(), 'variant_structure_id');
+    }
+
+    /**
      * The super attributes that belong to the product.
      */
     public function super_attributes(): BelongsToMany
     {
-        return $this->belongsToMany(AttributeProxy::modelClass(), 'product_super_attributes');
+        return $this->belongsToMany(AttributeProxy::modelClass(), 'product_super_attributes')
+            ->with('translations');
     }
 
     /**
@@ -95,6 +106,8 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * Get the product variants that owns the product.
+     *
+     * @return HasMany<Product, $this>
      */
     public function variants(): HasMany
     {
@@ -113,7 +126,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             return $this->typeInstance;
         }
 
-        $this->typeInstance = app(config('product_types.'.$this->type.'.class'));
+        $this->typeInstance = resolve(config('product_types.'.$this->type.'.class'));
 
         if (! $this->typeInstance instanceof AbstractType) {
             throw new Exception("Please ensure the product type '{$this->type}' is configured in your application.");
@@ -126,43 +139,14 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
 
     /**
      * The images that belong to the product.
-     *
-     * @return string
      */
-    public function getBaseImageUrlAttribute()
+    protected function baseImageUrl(): Attribute
     {
-        $image = $this->images->first();
+        return Attribute::make(get: function () {
+            $image = $this->images->first();
 
-        return $image->url ?? null;
-    }
-
-    /**
-     * Get an attribute from the model.
-     *
-     * @param  string  $key
-     * @return mixed
-     */
-    public function getAttribute($key)
-    {
-        if (! method_exists(static::class, $key)
-            && ! in_array($key, [
-                'pivot',
-                'parent_id',
-                'attribute_family_id',
-            ])
-            && ! isset($this->attributes[$key])
-        ) {
-            if (isset($this->id) && $this->attribute_family?->id) {
-                $attribute = $this->checkInLoadedFamilyAttributes()->where('code', $key)->first();
-                if ($attribute) {
-                    $this->attributes[$key] = $this->getCustomAttributeValue($attribute);
-                }
-
-                return $this->getAttributeValue($key);
-            }
-        }
-
-        return parent::getAttribute($key);
+            return $image->url ?? null;
+        });
     }
 
     /**
@@ -177,6 +161,15 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     {
         return $this->getTypeInstance()
             ->getEditableAttributes($group, $skipSuperAttribute);
+    }
+
+    /**
+     * Retrieve the product's editable attributes for a single attribute group.
+     */
+    public function getEditableAttributesForGroup(int $groupId, bool $skipSuperAttribute = true): Collection
+    {
+        return $this->getTypeInstance()
+            ->getEditableAttributesForGroup($groupId, $skipSuperAttribute);
     }
 
     public function completenessScores()
@@ -209,81 +202,25 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             return [];
         }
 
+        $planner = resolve(VariantStructurePlanner::class);
+
         return CompletenessSetting::where('family_id', $this->attribute_family_id)
             ->where('channel_id', $channelId)
-            ->get();
+            ->with('attribute:id,code')
+            ->get()
+            ->filter(fn ($setting): bool => ! $setting->attribute
+                || $planner->ownsAttribute($this, $setting->attribute->code))
+            ->values();
     }
 
     /**
-     * Get an product attribute value.
-     *
-     * @return mixed
+     * Resolve this product's `values` across its ancestor chain (read-time
+     * variant inheritance). Returns the effective values array: the product's
+     * own values overlaid on every ancestor's, root -> leaf.
      */
-    public function getCustomAttributeValue($attribute)
+    public function resolvedValues(): array
     {
-        if (! $attribute) {
-            return;
-        }
-
-        $locale = core()->getRequestedLocaleCodeInRequestedChannel();
-
-        $channel = core()->getRequestedChannelCode();
-
-        if (empty($this->attribute_values->count())) {
-            $this->load('attribute_values');
-        }
-
-        if ($attribute->value_per_channel) {
-            if ($attribute->value_per_locale) {
-                $attributeValue = $this->attribute_values
-                    ->where('channel', $channel)
-                    ->where('locale', $locale)
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-
-                if (empty($attributeValue[$attribute->column_name])) {
-                    $attributeValue = $this->attribute_values
-                        ->where('channel', core()->getDefaultChannelCode())
-                        ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
-                        ->where('attribute_id', $attribute->id)
-                        ->first();
-                }
-            } else {
-                $attributeValue = $this->attribute_values
-                    ->where('channel', $channel)
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-            }
-        } else {
-            if ($attribute->value_per_locale) {
-                $attributeValue = $this->attribute_values
-                    ->where('locale', $locale)
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-
-                if (empty($attributeValue[$attribute->column_name])) {
-                    $attributeValue = $this->attribute_values
-                        ->where('locale', core()->getDefaultLocaleCodeFromDefaultChannel())
-                        ->where('attribute_id', $attribute->id)
-                        ->first();
-                }
-            } else {
-                $attributeValue = $this->attribute_values
-                    ->where('attribute_id', $attribute->id)
-                    ->first();
-            }
-        }
-
-        return $attributeValue[$attribute->column_name] ?? $attribute->default_value;
-    }
-
-    /**
-     * Check in loaded family attributes.
-     */
-    public function checkInLoadedFamilyAttributes(): object
-    {
-        return core()->getSingletonInstance(AttributeRepository::class)
-            ->getFamilyAttributes($this->attribute_family);
+        return resolve(VariantValueResolver::class)->resolve($this);
     }
 
     /**
@@ -317,11 +254,26 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
     }
 
     /**
-     * Get all image attributes for the product
+     * Get all image attributes for the product.
+     *
+     * Image attributes are family-level, so the result is memoised per family for the
+     * request to avoid one join per product in normalizeWithImage() loops.
      */
     public function getImageAttributes()
     {
-        return $this->attribute_family->customAttributes()->where('type', 'image')->get();
+        $memoKey = 'product_image_attributes.'.$this->attribute_family_id;
+
+        $memo = app(RequestMemo::class);
+
+        if ($memo->has($memoKey)) {
+            return $memo->get($memoKey);
+        }
+
+        $imageAttributes = $this->attribute_family->customAttributes()->where('type', 'image')->get();
+
+        $memo->set($memoKey, $imageAttributes);
+
+        return $imageAttributes;
     }
 
     /**
@@ -346,7 +298,22 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             }
         }
 
-        return $productImage;
+        return $productImage ?: $this->getVariantDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
+    }
+
+    public function getVariantDisplayImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): ?string
+    {
+        if (! $this->id) {
+            return null;
+        }
+
+        foreach ($this->variants as $variant) {
+            if ($variantImage = $variant->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes)) {
+                return $variantImage;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -354,7 +321,7 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
      */
     public function normalizeWithImage(?string $currentChannelCode = null, ?string $currentLocaleCode = null, mixed $imageAttributes = null): array
     {
-        $image = $this->getProductDisplayImage();
+        $image = $this->getProductDisplayImage($currentChannelCode, $currentLocaleCode, $imageAttributes);
 
         $image = $image ? Storage::url($image) : null;
 
@@ -365,6 +332,17 @@ class Product extends Model implements HistoryAuditable, PresentableHistoryInter
             'values'          => $this->values,
             'additional_data' => $this->additional_data,
             'image'           => $image,
+        ];
+    }
+
+    /**
+     * The attributes that should be cast.
+     */
+    protected function casts(): array
+    {
+        return [
+            'additional' => 'array',
+            'values'     => 'array',
         ];
     }
 }

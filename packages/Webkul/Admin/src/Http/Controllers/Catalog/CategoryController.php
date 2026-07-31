@@ -4,25 +4,34 @@ namespace Webkul\Admin\Http\Controllers\Catalog;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\CategoryBrowseRequest;
+use Webkul\Admin\Http\Requests\CategoryChildrenForm;
 use Webkul\Admin\Http\Requests\CategoryRequest;
+use Webkul\Admin\Http\Requests\CategorySearchForm;
+use Webkul\Admin\Http\Requests\CategoryTreeForm;
 use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Http\Resources\Catalog\CategoryTreeResource;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryRequestValidator;
 use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Traits\HtmlPurifier;
 
 class CategoryController extends Controller
 {
+    use HtmlPurifier;
+
     const DEFAULT_PAGE = 1;
 
     const SEARCH_PER_PAGE = 50;
+
+    const VIEW_MODE_SESSION_KEY = 'catalog.categories.view_mode';
 
     /**
      * Create a new controller instance.
@@ -32,23 +41,179 @@ class CategoryController extends Controller
     public function __construct(
         protected ChannelRepository $channelRepository,
         protected CategoryRepository $categoryRepository,
-        protected CategoryFieldRepository $categoryFieldRepository
-    ) {
-        $this->categoryValidator = new CategoryRequestValidator($this->categoryRepository, $this->categoryFieldRepository, $this->channelRepository);
+        protected CategoryFieldRepository $categoryFieldRepository,
+        protected CategoryRequestValidator $categoryValidator
+    ) {}
+
+    /**
+     * Sanitize wysiwyg category-field values in additional_data before persisting.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    protected function sanitizeAdditionalData(array $data): array
+    {
+        if (empty($data['additional_data'])) {
+            return $data;
+        }
+
+        $fields = $this->categoryFieldRepository->findByField('status', true)
+            ->where('enable_wysiwyg', '==', 1)
+            ->where('type', '==', 'textarea');
+
+        foreach ($fields as $field) {
+            if ($field->value_per_locale) {
+                foreach ($data['additional_data']['locale_specific'] ?? [] as $locale => $values) {
+                    foreach ($values ?? [] as $code => $value) {
+                        if (empty($value) || $field->code !== $code) {
+                            continue;
+                        }
+
+                        $data['additional_data']['locale_specific'][$locale][$code] = $this->purifyText($value);
+                    }
+                }
+            } else {
+                foreach ($data['additional_data']['common'] ?? [] as $code => $value) {
+                    if (empty($value) || $field->code !== $code) {
+                        continue;
+                    }
+
+                    $data['additional_data']['common'][$code] = $this->purifyText($value);
+                }
+            }
+        }
+
+        return $data;
     }
 
     /**
-     * Display a listing of the resource.
+     * Tree workspace, or the flat listing when `view=list` is asked for.
      *
-     * @return View
+     * A category id that no longer resolves leaves no panel to render, so the
+     * workspace falls back to the overview instead of a partial with no data.
      */
-    public function index(): View|JsonResponse
+    public function index(CategoryBrowseRequest $request): View|JsonResponse
     {
-        if (request()->ajax()) {
+        if ($request->ajax()) {
             return app(CategoryDataGrid::class)->toJson();
         }
 
-        return view('admin::catalog.categories.index');
+        $viewMode = $this->resolveViewMode($request);
+
+        $data = [
+            'viewMode'            => $viewMode,
+            'treeItems'           => [],
+            'branchToParent'      => [],
+            'selectedId'          => null,
+            'panelMode'           => null,
+            'showHistory'         => false,
+            'overview'            => null,
+            'category'            => null,
+            'parentCategory'      => null,
+            'breadcrumb'          => '',
+            'leftCategoryFields'  => $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left'),
+            'rightCategoryFields' => $this->categoryFieldRepository->getActiveCategoryFieldsBySection('right'),
+        ];
+
+        if ($viewMode === 'list') {
+            return view('admin::catalog.categories.index', $data);
+        }
+
+        $roots = $this->categoryRepository->getRootCategories();
+
+        $data['treeItems'] = CategoryTreeResource::collection($roots)->toArray($request);
+
+        if ($categoryId = $request->selectedCategoryId()) {
+            $data['category'] = $this->categoryRepository->find($categoryId);
+            $data['panelMode'] = $data['category'] ? 'edit' : null;
+            $data['selectedId'] = $data['category']?->id;
+            $data['showHistory'] = $data['category'] && $request->wantsHistory();
+        } elseif ($request->wantsCreatePanel()) {
+            $data['panelMode'] = 'create';
+
+            if ($parentId = $request->parentCategoryId()) {
+                $data['parentCategory'] = $this->categoryRepository->find($parentId);
+                $data['selectedId'] = $data['parentCategory']?->id;
+            }
+        }
+
+        if (! $data['panelMode']) {
+            $data['overview'] = [
+                'total'          => $this->categoryRepository->getModel()->count(),
+                'roots'          => $roots,
+                'channelRootIds' => $this->channelRepository->pluck('root_category_id')->filter()->map(intval(...))->all(),
+            ];
+        }
+
+        $revealed = $data['category'] ?? $data['parentCategory'];
+
+        if ($revealed) {
+            $pathNodes = $this->categoryRepository->getPathNodes([$revealed->code]);
+
+            $branch = $pathNodes->toTree();
+
+            $this->revealChildrenOf($pathNodes, $revealed->id);
+
+            $data['branchToParent'] = CategoryTreeResource::collection($branch)->toArray($request);
+
+            $breadcrumbId = $data['panelMode'] === 'create' ? $revealed->id : $revealed->parent_id;
+
+            $data['breadcrumb'] = $breadcrumbId
+                ? ($this->categoryRepository->getBreadcrumbsForIds([$breadcrumbId])[$breadcrumbId] ?? '')
+                : '';
+        }
+
+        return view('admin::catalog.categories.index', $data);
+    }
+
+    /**
+     * Hang the first page of a category's children off the revealed path, so opening
+     * a category shows what is under it rather than just where it sits. The nodes are
+     * marked partial by the resource, so expanding the branch still refetches the
+     * level in full instead of trusting this page of it.
+     */
+    private function revealChildrenOf(Collection $pathNodes, int $categoryId): void
+    {
+        $node = $pathNodes->firstWhere('id', $categoryId);
+
+        if (! $node) {
+            return;
+        }
+
+        $children = $this->categoryRepository->getChildCategoriesPaginated(
+            $categoryId,
+            0,
+            CategoryRepository::DEFAULT_PAGE,
+            CategoryRepository::DEFAULT_PER_PAGE
+        );
+
+        if ($children['data']->isEmpty()) {
+            return;
+        }
+
+        $node->setRelation('children', $children['data']);
+    }
+
+    /**
+     * The chosen view sticks for the rest of the session, so returning to the
+     * listing lands where it was left. A deep link to a category outranks it —
+     * the properties panel only exists in the tree.
+     */
+    private function resolveViewMode(CategoryBrowseRequest $request): string
+    {
+        if ($requested = $request->requestedView()) {
+            session()->put(self::VIEW_MODE_SESSION_KEY, $requested);
+
+            return $requested;
+        }
+
+        if ($request->selectedCategoryId() || $request->wantsCreatePanel()) {
+            return 'tree';
+        }
+
+        $stored = session(self::VIEW_MODE_SESSION_KEY);
+
+        return in_array($stored, ['tree', 'list'], true) ? $stored : 'tree';
     }
 
     /**
@@ -101,19 +266,37 @@ class CategoryController extends Controller
             throw $e;
         }
 
-        $category = $this->categoryRepository->create($categoryRequest->only([
+        $category = $this->categoryRepository->create($this->sanitizeAdditionalData($categoryRequest->only([
             'code',
             'locale',
             'name',
             'parent_id',
             'additional_data',
-        ]));
+        ])));
 
         Event::dispatch('catalog.category.create.after', $category);
 
         session()->flash('success', trans('admin::app.catalog.categories.create-success'));
 
-        return redirect()->route('admin.catalog.categories.index');
+        return redirect()->route(...$this->savedDestination($categoryRequest, $category->id, 'admin.catalog.categories.index'));
+    }
+
+    /**
+     * A save made in the tree panel returns to the category it wrote, selected,
+     * rather than to the listing.
+     *
+     * @return array{0: string, 1: array<string, mixed>}
+     */
+    private function savedDestination(CategoryRequest $request, int $categoryId, string $route, array $params = []): array
+    {
+        if (! $request->boolean('panel')) {
+            return [$route, $params];
+        }
+
+        return ['admin.catalog.categories.index', [
+            'category' => $categoryId,
+            'locale'   => core()->getRequestedLocaleCode(),
+        ]];
     }
 
     /**
@@ -127,9 +310,9 @@ class CategoryController extends Controller
 
         $categories = $this->transformCategoryTree($categories);
 
-        $category = $this->categoryRepository->find($id);
-
-        $branchToParent = $this->categoryRepository->getTreeBranchToParent($category);
+        $branchToParent = CategoryTreeResource::collection(
+            $this->categoryRepository->getTreeBranchToParent($category) ?? collect()
+        )->toArray(request());
 
         $leftCategoryFields = $this->categoryFieldRepository->getActiveCategoryFieldsBySection('left');
 
@@ -145,10 +328,17 @@ class CategoryController extends Controller
     {
         Event::dispatch('catalog.category.update.before', $id);
 
+        $rejected = $this->savedDestination($categoryRequest, $id, 'admin.catalog.categories.edit', ['id' => $id]);
+
+        $destination = $this->savedDestination($categoryRequest, $id, 'admin.catalog.categories.edit', [
+            'id'     => $id,
+            'locale' => core()->getRequestedLocaleCode(),
+        ]);
+
         if (! empty($categoryRequest->input('parent_id')) && $this->isRelatedToChannel($id)) {
             session()->flash('error', trans('admin::app.catalog.categories.can-not-update'));
 
-            return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+            return redirect()->route(...$rejected);
         }
 
         if (! empty($categoryRequest->input('parent_id'))) {
@@ -159,7 +349,7 @@ class CategoryController extends Controller
             if ($parentId === $id || ($category && $parentCategory && $parentCategory->isDescendantOf($category))) {
                 session()->flash('error', trans('admin::app.catalog.categories.invalid-parent'));
 
-                return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+                return redirect()->route(...$rejected);
             }
         }
 
@@ -171,18 +361,18 @@ class CategoryController extends Controller
             throw $e;
         }
 
-        $category = $this->categoryRepository->update($categoryRequest->only([
+        $category = $this->categoryRepository->update($this->sanitizeAdditionalData($categoryRequest->only([
             'locale',
             'parent_id',
             core()->getRequestedLocaleCode(),
             'additional_data',
-        ]), $id);
+        ])), $id);
 
         Event::dispatch('catalog.category.update.after', $category);
 
         session()->flash('success', trans('admin::app.catalog.categories.update-success'));
 
-        return redirect()->route('admin.catalog.categories.edit', ['id' => $id, 'locale' => core()->getRequestedLocaleCode()]);
+        return redirect()->route(...$destination);
     }
 
     /**
@@ -281,76 +471,67 @@ class CategoryController extends Controller
     }
 
     /**
-     * Get all categories in tree format.
+     * Roots of every category tree, plus the branches that have to be revealed
+     * so the already selected categories are visible without expanding.
+     *
+     * Only the path down to each selection is sent — siblings at every level
+     * are left to the lazy children endpoint, which keeps the payload
+     * proportional to the number of selections rather than to the width of the
+     * tree they sit in.
      */
-    public function tree(Request $request): JsonResponse
+    public function tree(CategoryTreeForm $request): JsonResponse
     {
-        $validated = $request->validate([
-            'locale'     => 'required|string',
-            'selected'   => 'nullable|array',
-            'selected.*' => 'string',
-        ]);
-
-        $selectedCodes = $validated['selected'] ?? [];
-
-        $selectedCategories = $this->categoryRepository->findWhereIn('code', $selectedCodes);
-
-        $allBranches = collect();
-
-        foreach ($selectedCategories as $category) {
-            if (! $category->parent) {
-                continue;
-            }
-
-            $branches = $this->categoryRepository->getTreeBranchToParent($category, false);
-
-            if ($branches && ! empty($branches)) {
-                $allBranches[] = $branches->first();
-            }
-        }
-
-        $categories = $this->categoryRepository->getRootCategories();
+        $pathNodes = $this->categoryRepository->getPathNodes($request->selectedCodes());
 
         return new JsonResponse([
-            'data'          => $categories,
-            'selected_tree' => $allBranches,
+            'data'          => CategoryTreeResource::collection($this->categoryRepository->getRootCategories())->toArray($request),
+            'selected_tree' => CategoryTreeResource::collection($pathNodes->toTree())->toArray($request),
         ]);
     }
 
     /**
      * Fetch child categories for a given category ID.
      */
-    public function children(): JsonResponse
+    public function children(CategoryChildrenForm $request): JsonResponse
     {
-        $parentId = (int) request()->input('id');
+        $parentId = (int) $request->validated('id');
 
-        $categoryId = (int) (request()->input('category') ?? 0);
+        $categoryId = (int) ($request->validated('category') ?? 0);
 
-        $this->categoryRepository->findOrFail($parentId);
-
-        if (request()->filled('page')) {
-            return new JsonResponse(
-                $this->categoryRepository->getChildCategoriesPaginated(
-                    $parentId,
-                    $categoryId,
-                    (int) request()->input('page'),
-                    (int) request()->input('limit', CategoryRepository::DEFAULT_PER_PAGE),
-                )
+        if ($request->filled('page')) {
+            $children = $this->categoryRepository->getChildCategoriesPaginated(
+                $parentId,
+                $categoryId,
+                (int) $request->validated('page'),
+                (int) ($request->validated('limit') ?? CategoryRepository::DEFAULT_PER_PAGE),
             );
+
+            return new JsonResponse([
+                ...$children,
+                'data' => CategoryTreeResource::collection($children['data'])->toArray($request),
+            ]);
         }
 
         $childCategories = $this->categoryRepository->getChildCategories($parentId, $categoryId);
 
-        return new JsonResponse($childCategories->toArray());
+        return new JsonResponse(CategoryTreeResource::collection($childCategories)->toArray($request));
     }
 
-    public function search(): JsonResponse
+    /**
+     * Paginated flat search across every tree, each hit carrying its breadcrumb
+     * so identically named categories in different trees stay distinguishable.
+     */
+    public function search(CategorySearchForm $request): JsonResponse
     {
-        $locale = preg_replace('/[^A-Za-z_]/', '', (string) (request('locale') ?? core()->getRequestedLocaleCode()));
+        $locale = $request->validated('locale') ?? core()->getRequestedLocaleCode();
 
-        $searchQuery = trim((string) request('query', ''));
+        $searchQuery = trim((string) $request->validated('query', ''));
 
         $query = $this->categoryRepository->getModel()->newQuery();
+
+        if ($codes = $request->codes()) {
+            $query->whereIn('code', $codes);
+        }
 
         if ($searchQuery !== '') {
             $query->where(function ($builder) use ($searchQuery, $locale) {
@@ -359,14 +540,20 @@ class CategoryController extends Controller
             });
         }
 
-        $page = max(self::DEFAULT_PAGE, (int) request('page', self::DEFAULT_PAGE));
+        $page = max(self::DEFAULT_PAGE, (int) ($request->validated('page') ?? self::DEFAULT_PAGE));
 
         $paginator = $query->defaultOrder()->paginate(self::SEARCH_PER_PAGE, ['*'], 'page', $page);
+
+        $breadcrumbs = $this->categoryRepository->getBreadcrumbsForIds(
+            $paginator->getCollection()->pluck('id')->all(),
+            $locale
+        );
 
         $results = $paginator->getCollection()->map(fn ($category) => [
             'id'    => $category->id,
             'code'  => $category->code,
             'label' => $category->additional_data['locale_specific'][$locale]['name'] ?? '['.$category->code.']',
+            'path'  => $breadcrumbs[(int) $category->id] ?? null,
         ])->values();
 
         return new JsonResponse([

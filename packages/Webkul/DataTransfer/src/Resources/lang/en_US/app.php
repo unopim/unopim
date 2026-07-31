@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'The :code value must be unique.',
                     'incorrect-family-for-variant'             => 'The family must be same as the parent family',
                     'parent-not-exist'                         => 'The parent does not exist.',
+                    'variant-structure-not-found'              => 'The variant structure :code does not exist for this attribute family.',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'Attribute code :code is already in use.',
                     'code_not_found_to_delete'             => 'Attribute code not found for deletion.',
                     'code_is_system_and_cannot_be_deleted' => 'System attribute cannot be deleted.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Product Associations',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => "The '%s' field is required.",
+                    'self-link-not-allowed'       => "Product '%s' cannot be associated with itself.",
+                    'sku-not-found'               => "Product with SKU '%s' not found.",
+                    'related-sku-not-found'       => "Related product with SKU '%s' not found.",
+                    'association-type-not-found'  => "Association type '%s' does not exist or is inactive.",
+                    'invalid-field-value'         => 'Invalid value provided for an association field.',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'This export is too large to run: an estimated :rows rows × :columns columns (~:estimated) exceeds the available space (~:available). Narrow the export by selecting fewer channels/locales (and attributes) and try again.',
         'fields'           => [
-            'file-format'         => 'File Format',
-            'with-media'          => 'With Media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'File Format',
+            'with-media'             => 'With Media',
+            'with-associations'      => 'With Associations',
+            'with-associations-info' => 'Include the legacy up_sells, cross_sells and related_products SKU-list columns in the export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'Attributes',
         ],
+        'product-associations' => [
+            'title' => 'Product Associations',
+        ],
         'attribute-groups' => [
             'title' => 'Attribute Groups',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Job execution started',
         'completed' => 'Job execution completed',
+        'stalled'   => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
+        'reaped'    => 'Marked :count stalled jobs as failed.',
     ],
 ];

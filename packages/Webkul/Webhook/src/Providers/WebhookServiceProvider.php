@@ -2,17 +2,18 @@
 
 namespace Webkul\Webhook\Providers;
 
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Webhook\Console\Commands\PruneWebhookLogs;
+use Webkul\Webhook\Registry\EventRegistry;
 
 class WebhookServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap services.
-     *
-     * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         Route::middleware('web')->group(__DIR__.'/../Routes/web.php');
 
@@ -23,16 +24,26 @@ class WebhookServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__.'/../Resources/views', 'webhook');
 
         $this->app->register(EventServiceProvider::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([PruneWebhookLogs::class]);
+
+            $this->app->booted(function (): void {
+                $this->app->make(Schedule::class)->command('webhook:logs:prune')->daily();
+            });
+        }
     }
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerConfig();
+
+        $this->app->singleton(EventRegistry::class, fn (): EventRegistry => new EventRegistry(
+            config('webhook.events', [])
+        ));
     }
 
     /**
@@ -46,6 +57,10 @@ class WebhookServiceProvider extends ServiceProvider
 
         $this->mergeConfigFrom(
             dirname(__DIR__).'/Config/acl.php', 'acl'
+        );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/webhook.php', 'webhook'
         );
     }
 }

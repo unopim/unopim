@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code मान अद्वितीय होना चाहिए।',
                     'incorrect-family-for-variant'             => 'परिवार मूल परिवार के समान ही होना चाहिए',
                     'parent-not-exist'                         => 'अभिभावक मौजूद नहीं है.',
+                    'variant-structure-not-found'              => 'इस विशेषता परिवार के लिए वेरिएंट संरचना :code मौजूद नहीं है।',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'विशेषता कोड :code पहले से ही उपयोग में है।',
                     'code_not_found_to_delete'             => 'हटाने के लिए विशेषता कोड नहीं मिला।',
                     'code_is_system_and_cannot_be_deleted' => 'सिस्टम विशेषता को हटाया नहीं जा सकता।',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'उत्पाद संबंध',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' फ़ील्ड आवश्यक है।',
+                    'self-link-not-allowed'       => 'उत्पाद \'%s\' को स्वयं से संबद्ध नहीं किया जा सकता।',
+                    'sku-not-found'               => 'SKU \'%s\' वाला उत्पाद नहीं मिला।',
+                    'related-sku-not-found'       => 'SKU \'%s\' वाला संबंधित उत्पाद नहीं मिला।',
+                    'association-type-not-found'  => 'संबंध प्रकार \'%s\' मौजूद नहीं है या निष्क्रिय है।',
+                    'invalid-field-value'         => 'संबंध फ़ील्ड के लिए अमान्य मान प्रदान किया गया।',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'यह निर्यात चलाने के लिए बहुत बड़ा है: अनुमानित :rows पंक्तियाँ × :columns स्तंभ (~:estimated) उपलब्ध स्थान (~:available) से अधिक हैं। कम चैनल/लोकेल (और विशेषताएँ) चुनकर निर्यात को सीमित करें और पुनः प्रयास करें।',
         'fields'           => [
-            'file-format'         => 'फ़ाइल प्रारूप',
-            'with-media'          => 'मीडिया के साथ',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'फ़ाइल प्रारूप',
+            'with-media'             => 'मीडिया के साथ',
+            'with-associations'      => 'संबंधों सहित',
+            'with-associations-info' => 'निर्यात में पुराने up_sells, cross_sells और related_products SKU-सूची कॉलम शामिल करें',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'विशेषताएँ',
         ],
+        'product-associations' => [
+            'title' => 'उत्पाद संबंध',
+        ],
         'attribute-groups' => [
             'title' => 'विशेषता समूह',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'कार्य निष्पादन प्रारंभ हुआ',
         'completed' => 'कार्य निष्पादन पूरा हुआ',
+        'stalled'   => 'कार्य :minutes मिनट से अधिक समय तक प्रतिक्रिया नहीं दे रहा था और इसे विफल चिह्नित कर दिया गया। संभवतः इसे चलाने वाली प्रक्रिया समाप्त हो गई थी।',
+        'reaped'    => ':count रुके हुए कार्यों को विफल चिह्नित किया गया।',
     ],
 ];

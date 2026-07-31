@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attribute_family_group_mappings', function (Blueprint $table) {
+        Schema::create('attribute_family_group_mappings', function (Blueprint $table): void {
             $table->increments('id');
             $table->integer('attribute_family_id')->unsigned();
             $table->integer('attribute_group_id')->unsigned();
@@ -21,7 +21,7 @@ return new class extends Migration
             $table->foreign('attribute_group_id')->references('id')->on('attribute_groups')->onDelete('cascade');
         });
 
-        Schema::create('attribute_group_mappings', function (Blueprint $table) {
+        Schema::create('attribute_group_mappings', function (Blueprint $table): void {
             $table->integer('attribute_id')->unsigned();
             $table->integer('attribute_family_group_id')->unsigned();
             $table->integer('position')->nullable();

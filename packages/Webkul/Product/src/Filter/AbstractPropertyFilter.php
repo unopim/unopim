@@ -19,6 +19,14 @@ abstract class AbstractPropertyFilter extends AbstractFilter implements Property
     }
 
     /**
+     * Filter values arrive as a list even for single-value operators.
+     */
+    protected function scalarValue(mixed $value): mixed
+    {
+        return is_array($value) ? reset($value) : $value;
+    }
+
+    /**
      * Retrieves the search table path based on the provided options.
      */
     protected function getSearchTablePath(array $options = [])

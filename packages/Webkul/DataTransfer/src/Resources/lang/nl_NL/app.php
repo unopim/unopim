@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'De waarde van :code moet uniek zijn.',
                     'incorrect-family-for-variant'             => 'De attribuutset moet gelijk zijn aan die van het hoofdproduct.',
                     'parent-not-exist'                         => 'Het hoofdproduct bestaat niet.',
+                    'variant-structure-not-found'              => 'De variantstructuur :code bestaat niet voor deze attributenfamilie.',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'Attribuutcode :code is al in gebruik.',
                     'code_not_found_to_delete'             => 'Attribuutcode niet gevonden voor verwijdering.',
                     'code_is_system_and_cannot_be_deleted' => 'Systeemattribuut kan niet worden verwijderd.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Productassociaties',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Het veld \'%s\' is verplicht.',
+                    'self-link-not-allowed'       => 'Product \'%s\' kan niet aan zichzelf worden gekoppeld.',
+                    'sku-not-found'               => 'Product met SKU \'%s\' niet gevonden.',
+                    'related-sku-not-found'       => 'Gekoppeld product met SKU \'%s\' niet gevonden.',
+                    'association-type-not-found'  => 'Het associatietype \'%s\' bestaat niet of is inactief.',
+                    'invalid-field-value'         => 'Ongeldige waarde opgegeven voor een associatieveld.',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Deze export is te groot om uit te voeren: naar schatting :rows rijen × :columns kolommen (~:estimated) overschrijden de beschikbare ruimte (~:available). Beperk de export door minder kanalen/talen (en attributen) te selecteren en probeer het opnieuw.',
         'fields'           => [
-            'file-format'         => 'Bestandsformaat',
-            'with-media'          => 'Met media',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Bestandsformaat',
+            'with-media'             => 'Met media',
+            'with-associations'      => 'Met koppelingen',
+            'with-associations-info' => 'Neem de verouderde SKU-lijstkolommen (up_sells, cross_sells en related_products) op in de export',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'Attributen',
         ],
+        'product-associations' => [
+            'title' => 'Productassociaties',
+        ],
         'attribute-groups' => [
             'title' => 'Attribuutgroepen',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'De taak is gestart.',
         'completed' => 'Taak succesvol voltooid.',
+        'stalled'   => 'De taak reageerde langer dan :minutes minuten niet en is als mislukt gemarkeerd. De uitvoerende worker is waarschijnlijk beëindigd.',
+        'reaped'    => ':count vastgelopen taken zijn als mislukt gemarkeerd.',
     ],
 ];

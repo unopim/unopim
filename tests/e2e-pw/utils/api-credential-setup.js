@@ -1,21 +1,10 @@
 /**
  * First-run bootstrap of UnoPim API integration credentials.
  *
- * Flow:
- *   1. Server-to-server admin login via `request.newContext` (works around
- *      UnoPim 2.x's Vue "Sign In" button which doesn't reliably fire when
- *      clicked in headless chromium).
- *   2. Pin session-cookie expiry so chromium doesn't drop "session" cookies
- *      (expires=-1) as already-expired on reload.
- *   3. Open chromium with that storage state, navigate directly to
- *      `/admin/integrations/api-keys/create`, create a new integration.
- *   4. If the admin user already owns an integration (UnoPim enforces
- *      one-integration-per-admin), fall through to reading the existing
- *      integration's credentials at `/admin/integrations/api-keys/edit/{id}`
- *      and re-generating its secret if missing.
- *
- * The chromium leg is needed only for the integration form, which posts
- * via Vue/axios; there's no equivalent plain-HTML form endpoint to hit.
+ * Server-to-server admin login (the Vue "Sign In" button is unreliable in headless chromium),
+ * then chromium with that storage state drives the Vue integration form (no plain-HTML endpoint).
+ * If the admin already owns an integration (UnoPim enforces one-per-admin), reuse it and
+ * re-generate its secret. Session-cookie expiry is pinned so chromium keeps the cookies.
  */
 'use strict';
 
@@ -29,10 +18,7 @@ function writeConfig(config) {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
 }
 
-/**
- * Login server-to-server and return a Playwright storage-state object the
- * caller can persist or pass directly to `browser.newContext({ storageState })`.
- */
+// Login server-to-server and return a Playwright storage-state object for the caller to reuse.
 async function adminLoginStorageState({ baseUrl, adminEmail, adminPassword }) {
   const ctx = await request.newContext({ baseURL: baseUrl });
   try {
@@ -66,74 +52,72 @@ async function adminLoginStorageState({ baseUrl, adminEmail, adminPassword }) {
   }
 }
 
-/**
- * Read the credentials displayed on an integration's edit page. If the secret
- * has been hidden / never generated, click "Re-Generate Secret Key" first.
- *
- * @returns {Promise<{ client_id: string, client_secret: string } | null>}
- */
+// Read the credentials on an integration's edit page, generating/rotating the secret if needed.
 async function readCredentialsOnEditPage(page) {
-  // Re-Generate Secret Key is the only reliable button — clicking it mints
-  // a fresh client_id+secret pair and reveals both inputs populated.
-  const regen = page.locator('button').filter({ hasText: /re-?generate/i }).first();
-  if (await regen.isVisible({ timeout: 3000 }).catch(() => false)) {
-    const respPromise = page.waitForResponse(
-      (r) => r.request().method() === 'POST',
-      { timeout: 15000 },
-    ).catch(() => null);
+  // Fresh integration: "Generate" mints client_id + secret_key. Existing: "Re-Generate" rotates the secret.
+  const generate = page.getByRole('button', { name: 'Generate', exact: true });
+  const regen = page.getByTitle('Re-Generate Secret Key');
+
+  if (await generate.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
+    await generate.click();
+    await resp;
+  } else if (await regen.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
     await regen.click();
-    // If a confirm dialog appears, accept it.
-    const confirm = page.locator('button:has-text("Yes"), button:has-text("Confirm"), button:has-text("OK")').first();
-    if (await confirm.isVisible({ timeout: 2000 }).catch(() => false)) await confirm.click();
-    await respPromise;
-    await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+    await resp;
   }
 
-  const cid = await page.locator('#client_id').inputValue().catch(() => '');
-  const sec = await page.locator('#secret_key').inputValue().catch(() => '');
+  // Credentials render as read-only rows; the full value lives in the <p>'s title attr.
+  const valueFor = async (label) => {
+    const row = page.locator('div.flex.items-center.gap-2')
+      .filter({ hasText: label })
+      .first();
+    return (await row.locator('p[title]').first().getAttribute('title').catch(() => '')) || '';
+  };
+
+  const cid = await valueFor('Client ID');
+  const sec = await valueFor('Secret Key');
   if (cid && sec) return { client_id: cid, client_secret: sec };
   return null;
 }
 
-/**
- * Open the integrations list and navigate into the first existing integration.
- * Returns its credentials, regenerating the secret if necessary.
- */
+// Open the first existing integration and return its credentials, regenerating the secret if needed.
 async function reuseExistingIntegration(page, baseUrl) {
-  await page.goto(`${baseUrl}/admin/integrations/api-keys`, { waitUntil: 'networkidle', timeout: 30000 });
+  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
   const editIcon = page.locator('[title="Edit"], .icon-edit').first();
   if (!await editIcon.isVisible({ timeout: 5000 }).catch(() => false)) return null;
   await editIcon.click();
-  await page.waitForURL(/\/admin\/integrations\/api-keys\/edit\//, { timeout: 15000 });
-  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
+  await page.waitForURL(/\/admin\/configuration\/integrations\/edit\//, { timeout: 15000 });
+  await page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
   return readCredentialsOnEditPage(page);
 }
 
-/**
- * Try to create a new integration. Returns its credentials on success, or
- * `null` if creation failed (typically because the admin user already owns
- * one — UnoPim enforces unique admin_id on integrations).
- */
+// Create a new integration; returns credentials, or null if it failed (admin already owns one — unique admin_id).
 async function tryCreateNewIntegration(page, baseUrl, integrationName) {
-  await page.goto(`${baseUrl}/admin/integrations/api-keys/create`, { waitUntil: 'networkidle', timeout: 30000 });
-  await page.locator('input[name="name"]').first().waitFor({ state: 'visible', timeout: 10000 });
-  await page.locator('input[name="name"]').first().fill(integrationName);
+  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
-  // Vue multiselect — click container, wait for options to render, pick first.
-  await page.locator('#admin_id .multiselect').click();
-  await page.locator('#admin_id .multiselect__element').first().waitFor({ state: 'visible', timeout: 5000 });
-  await page.locator('#admin_id .multiselect__element').first().click();
+  const createBtn = page.getByRole('button', { name: 'Create', exact: true });
+  await createBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await createBtn.click();
+
+  await page.locator('input[name="name"]').waitFor({ state: 'visible', timeout: 10000 });
+  await page.locator('input[name="name"]').fill(integrationName);
+
+  // Permission type is a required vue-multiselect (Custom / All).
+  const perm = page.locator('input[name="permission_type"]')
+    .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
+  await perm.locator('.multiselect__tags').click();
+  await perm.locator('.multiselect__option', { hasText: 'Custom' }).first().click();
 
   const postPromise = page.waitForResponse(
-    (r) => r.request().method() === 'POST' && r.url().includes('integrations/api-keys'),
+    (r) => r.request().method() === 'POST' && r.url().includes('configuration/integrations'),
     { timeout: 15000 },
   ).catch(() => null);
-  await page.locator('button:has-text("Save")').first().click();
+  await page.locator('button[type="submit"]').filter({ hasText: 'Save' }).first().click();
+  await page.waitForURL(/\/integrations\/edit\//, { timeout: 15000 }).catch(() => {});
   const post = await postPromise;
-  await page.waitForLoadState('networkidle', { timeout: 10000 }).catch(() => {});
 
-  // 302 + still on /create means validation failure (almost always
-  // "admin id has already been taken" on UnoPim).
   if (!post || !/\/edit\//.test(page.url())) return null;
   return readCredentialsOnEditPage(page);
 }
@@ -154,10 +138,7 @@ async function createApiIntegration({ baseUrl, adminEmail, adminPassword, integr
     const context = await browser.newContext({ storageState: stateFile });
     const page = await context.newPage();
 
-    // Try to create a fresh integration first
     let creds = await tryCreateNewIntegration(page, baseUrl, integrationName);
-
-    // Fall back to reusing the existing one
     if (!creds) {
       creds = await reuseExistingIntegration(page, baseUrl);
     }
@@ -165,7 +146,7 @@ async function createApiIntegration({ baseUrl, adminEmail, adminPassword, integr
     if (!creds) {
       throw new Error(
         'Could not obtain API credentials. Try creating an integration manually at ' +
-        `${baseUrl}/admin/integrations/api-keys then paste client_id + client_secret into .api-config.json.`,
+        `${baseUrl}/admin/configuration/integrations then paste client_id + client_secret into .api-config.json.`,
       );
     }
 

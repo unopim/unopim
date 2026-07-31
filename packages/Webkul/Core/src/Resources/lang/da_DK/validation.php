@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Slug :attribute skal være gyldig.',
     'sku'                          => 'SKU :attribute skal være gyldig (kun alfanumeriske tegn, bindestreger og understregninger).',
     'comma-separated-integer'      => 'Feltet :attribute skal være numerisk og kan indeholde kommaer.',
+    'ip-address-list'              => 'Feltet :attribute skal indeholde gyldige IP-adresser adskilt af kommaer.',
     'type'                         => 'Typen :attribute skal være gyldig.',
     'validation-type'              => 'Validationstypen :attribute skal være gyldig.',
     'field-option-not-found'       => 'Feltet :attribute indeholder ugyldige valgmuligheder: :invalid_codes.',

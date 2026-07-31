@@ -15,15 +15,12 @@ class UserNotify extends Mailable implements ShouldQueue
 
     /**
      * Create a new message instance.
-     *
-     * @param  object  $asset
-     * @return void
      */
     public function __construct(
         protected array $recipients,
         protected string $emailSubject,
         protected string $emailTemplate,
-        protected mixed $templateData
+        protected array $templateData = []
     ) {}
 
     /**

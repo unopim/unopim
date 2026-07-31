@@ -2,6 +2,7 @@
 
 namespace Webkul\AiAgent\Http\Controllers;
 
+use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
@@ -17,9 +18,7 @@ class AgentController extends Controller
         protected CredentialRepository $credentialRepository,
     ) {
         $this->middleware(function ($request, $next) {
-            if (! bouncer()->hasPermission('ai-agent.agents')) {
-                abort(403, trans('ai-agent::app.common.unauthorized'));
-            }
+            abort_unless(bouncer()->hasPermission('ai-agent.agents'), 403, trans('ai-agent::app.common.unauthorized'));
 
             return $next($request);
         });
@@ -33,7 +32,7 @@ class AgentController extends Controller
     public function index()
     {
         if (request()->ajax()) {
-            return app(AgentDataGrid::class)->toJson();
+            return resolve(AgentDataGrid::class)->toJson();
         }
 
         return view('ai-agent::agents.index');
@@ -44,11 +43,11 @@ class AgentController extends Controller
      *
      * @return View
      */
-    public function create()
+    public function create(): Factory|\Illuminate\Contracts\View\View
     {
         $credentials = $this->credentialRepository->getActiveList();
 
-        return view('ai-agent::agents.create', compact('credentials'));
+        return view('ai-agent::agents.create', ['credentials' => $credentials]);
     }
 
     /**
@@ -69,12 +68,12 @@ class AgentController extends Controller
      *
      * @return View
      */
-    public function edit(int $id)
+    public function edit(int $id): Factory|\Illuminate\Contracts\View\View
     {
         $agent = $this->agentRepository->findOrFail($id);
         $credentials = $this->credentialRepository->getActiveList();
 
-        return view('ai-agent::agents.edit', compact('agent', 'credentials'));
+        return view('ai-agent::agents.edit', ['agent' => $agent, 'credentials' => $credentials]);
     }
 
     /**

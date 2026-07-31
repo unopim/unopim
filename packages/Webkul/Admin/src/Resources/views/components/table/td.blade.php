@@ -1,3 +1,3 @@
-<td {{ $attributes->merge(['scope' => 'row', 'class' => 'px-6 py-4 whitespace-nowrap text-gray-600']) }}>
+<td {{ $attributes->merge(['scope' => 'row', 'class' => 'px-6 py-4 whitespace-nowrap text-gray-600 dark:text-gray-300']) }}>
     {{ $slot }}
 </td>

@@ -1,6 +1,11 @@
 const { defineConfig, devices } = require('@playwright/test');
 const path = require('path');
 const os = require('os');
+const fs = require('fs');
+
+const { loadEnv } = require('./utils/load-env');
+
+loadEnv();
 
 const isCI = !!process.env.CI;
 const STORAGE_STATE = path.resolve(__dirname, '.state/admin-auth.json');
@@ -17,6 +22,9 @@ const workerCount = isCI
 
 module.exports = defineConfig({
   testDir: './tests',
+
+  /* Scratch specs under 99-debug are for local diagnosis only, never CI. */
+  testIgnore: '**/99-debug/**',
 
   /* Run tests within each file sequentially, but files in parallel across workers */
   fullyParallel: false,
@@ -49,7 +57,9 @@ module.exports = defineConfig({
   globalSetup: require.resolve('./global-setup.js'),
 
   use: {
-    /* Base URL — configurable via env for different environments */
+    /* Base URL — must point at THIS project's server and match its APP_URL so the
+     * app-url guard doesn't redirect. Set BASE_URL (env or tests/e2e-pw/.env) per
+     * environment; defaults to the local dev server. */
     baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000',
 
     /* Reuse authenticated session across all tests */

@@ -16,6 +16,19 @@ class AbstractOptionsController extends Controller
     const DEFAULT_PER_PAGE = 20;
 
     /**
+     * Entities {@see getEntityRepository()} can resolve. Requests are validated
+     * against this list so an unknown name is rejected before it reaches the
+     * match arm and surfaces as a 500.
+     */
+    const SUPPORTED_ENTITIES = [
+        'attributes',
+        'locale',
+        'currency',
+        'channel',
+        'category_fields',
+    ];
+
+    /**
      * Return instance of Controller
      */
     public function __construct(
@@ -83,12 +96,26 @@ class AbstractOptionsController extends Controller
      * Tries the requested locale first; falls back to any locale that has a
      * non-empty label; returns null when no label exists in any locale.
      */
-    protected function getTranslatedLabel(string $currentLocaleCode, TranslatableModel $option, string $entityName = ''): ?string
+    protected function getTranslatedLabel(string $currentLocaleCode, Model $option, string $entityName = ''): ?string
     {
+        if (! $option instanceof TranslatableModel) {
+            return $option->name ?? null;
+        }
+
         return $option->getTranslatedValueWithFallback(
             $this->getTranslationColumnName($entityName),
             $currentLocaleCode
         );
+    }
+
+    /**
+     * Locales and currencies resolve their label from the code in PHP rather
+     * than a translation table, so both the translated-label accessor and the
+     * translation-table search only apply to genuinely translatable entities.
+     */
+    protected function isTranslatableEntity(string $entityName): bool
+    {
+        return $this->getEntityRepository($entityName)->getModel() instanceof TranslatableModel;
     }
 
     /**
@@ -129,9 +156,18 @@ class AbstractOptionsController extends Controller
      */
     protected function applySearchQuery($repository, string $query, string $entityName)
     {
-        return $repository->where(function ($queryBuilder) use ($query, $entityName) {
-            $queryBuilder->whereTranslationLike($this->getTranslationColumnName($entityName), '%'.$query.'%')
-                ->orWhere('code', $query);
+        $search = '%'.mb_strtolower($query).'%';
+
+        if (! $this->isTranslatableEntity($entityName)) {
+            return $repository->whereRaw('LOWER(code) LIKE ?', [$search]);
+        }
+
+        $column = $this->getTranslationColumnName($entityName);
+
+        return $repository->where(function ($queryBuilder) use ($search, $column) {
+            $queryBuilder->whereHas('translations', function ($translations) use ($search, $column) {
+                $translations->whereRaw("LOWER($column) LIKE ?", [$search]);
+            })->orWhereRaw('LOWER(code) LIKE ?', [$search]);
         });
     }
 

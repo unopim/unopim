@@ -10,6 +10,7 @@ use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Category\Repositories\CategoryRepository;
 
 class CreateCategory implements PimTool
 {
@@ -67,7 +68,7 @@ class CreateCategory implements PimTool
                     $parentId = $parent->id;
                 }
 
-                $repo = app('Webkul\Category\Repositories\CategoryRepository');
+                $repo = resolve(CategoryRepository::class);
                 $category = $repo->create([
                     'code'            => $code,
                     'parent_id'       => $parentId,

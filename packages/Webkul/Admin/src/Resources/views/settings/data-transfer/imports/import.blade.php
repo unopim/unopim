@@ -8,7 +8,7 @@
         <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
             <a
                 href="{{ route('admin.settings.data_transfer.imports.index') }}"
-                class="text-gray-600 hover:bg-violet-100 dark:hover:bg-gray-800 dark:text-white"
+                class="text-gray-600 hover:bg-primary-100 dark:hover:bg-gray-800 dark:text-white"
             >
                 @lang('admin::app.settings.data-transfer.imports.import.title')
             </a>
@@ -25,12 +25,14 @@
             </a>
 
             <!-- Save Button -->
-            <a
-                href="{{ route('admin.settings.data_transfer.imports.edit', $import->id) }}"
-                class="primary-button"
-            >
-                @lang('admin::app.settings.data-transfer.imports.import.edit-btn')
-            </a>
+            @if (bouncer()->hasPermission('data_transfer.imports.edit'))
+                <a
+                    href="{{ route('admin.settings.data_transfer.imports.edit', $import->id) }}"
+                    class="primary-button"
+                >
+                    @lang('admin::app.settings.data-transfer.imports.import.edit-btn')
+                </a>
+            @endif
         </div>
     </div>
 
@@ -92,15 +94,15 @@
 
                         @method('PUT')
 
-                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.before') !!}
+                        {!! view_render_event('unopim.admin.settings.data-transfer.imports.import.import_form_controls.before') !!}
                             <button
-                                type="submit" 
+                                type="submit"
                                 class="primary-button place-self-start"
-                                aria-lebel="Submit"
+                                aria-label="{{ trans('admin::app.settings.data-transfer.imports.import.import-now') }}"
                             >
                                 @lang('admin::app.settings.data-transfer.imports.import.import-now')
                             </button>
-                        {!! view_render_event('unopim.admin.settings.channels.edit.edit_form_controls.after') !!}
+                        {!! view_render_event('unopim.admin.settings.data-transfer.imports.import.import_form_controls.after') !!}
 
                     </x-admin::form> 
                 @endif
@@ -112,9 +114,7 @@
                 template: '#v-import-now-template',
 
                 data() {
-                    return {
-                        importResource: @json($import),
-                    };
+                    return {};
                 },
             })
         </script>

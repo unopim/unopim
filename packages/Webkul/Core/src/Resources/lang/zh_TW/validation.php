@@ -9,6 +9,7 @@ return [
     'slug'                         => 'Slug :attribute 必須有效。',
     'sku'                          => 'SKU :attribute 必須有效（只能包含字母、數字、連字符和底線）。',
     'comma-separated-integer'      => '字段 :attribute 必須是數字，並可包含逗號。',
+    'ip-address-list'              => ':attribute 欄位必須包含以逗號分隔的有效 IP 位址。',
     'type'                         => '類型 :attribute 必須有效。',
     'validation-type'              => '驗證類型 :attribute 必須有效。',
     'field-option-not-found'       => '字段 :attribute 包含無效選項: :invalid_codes。',

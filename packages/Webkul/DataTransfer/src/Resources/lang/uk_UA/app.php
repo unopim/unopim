@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => 'Значення :code повинно бути унікальним.',
                     'incorrect-family-for-variant'             => 'Сімейство має бути таким самим, як і основне сімейство',
                     'parent-not-exist'                         => 'Батьківський товар не існує.',
+                    'variant-structure-not-found'              => 'Структура варіантів :code не існує для цього сімейства атрибутів.',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'Код атрибута :code вже використовується.',
                     'code_not_found_to_delete'             => 'Код атрибута для видалення не знайдено.',
                     'code_is_system_and_cannot_be_deleted' => 'Системний атрибут не може бути видалено.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Зв\'язки товарів',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Поле \'%s\' є обов\'язковим.',
+                    'self-link-not-allowed'       => 'Товар \'%s\' не може бути пов\'язаний сам із собою.',
+                    'sku-not-found'               => 'Товар з артикулом (SKU) \'%s\' не знайдено.',
+                    'related-sku-not-found'       => 'Пов\'язаний товар з артикулом (SKU) \'%s\' не знайдено.',
+                    'association-type-not-found'  => 'Тип зв\'язку \'%s\' не існує або є неактивним.',
+                    'invalid-field-value'         => 'Вказано неприпустиме значення для поля зв\'язку.',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Цей експорт надто великий для виконання: приблизно :rows рядків × :columns стовпців (~:estimated) перевищують доступний простір (~:available). Звузьте експорт, вибравши менше каналів/локалей (та атрибутів), і повторіть спробу.',
         'fields'           => [
-            'file-format'         => 'Формат файлу',
-            'with-media'          => 'З медіафайлами',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Формат файлу',
+            'with-media'             => 'З медіафайлами',
+            'with-associations'      => 'З асоціаціями',
+            'with-associations-info' => 'Включити до експорту застарілі стовпці списків SKU (up_sells, cross_sells і related_products)',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'Атрибути',
         ],
+        'product-associations' => [
+            'title' => 'Зв\'язки товарів',
+        ],
         'attribute-groups' => [
             'title' => 'Групи атрибутів',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Запущено виконання завдання',
         'completed' => 'Завдання виконане',
+        'stalled'   => 'Завдання не відповідало понад :minutes хвилин і було позначене як невдале. Найімовірніше, процес, що його виконував, було завершено.',
+        'reaped'    => 'Позначено :count завислих завдань як невдалі.',
     ],
 ];

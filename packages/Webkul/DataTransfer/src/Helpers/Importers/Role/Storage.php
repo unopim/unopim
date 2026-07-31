@@ -21,8 +21,6 @@ class Storage
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(protected RoleRepository $roleRepository) {}
 
@@ -44,7 +42,7 @@ class Storage
         $query = $this->roleRepository->query()
             ->select($this->selectColumns);
 
-        if (! empty($names)) {
+        if ($names !== []) {
             $query->whereIn('name', $names);
         }
 

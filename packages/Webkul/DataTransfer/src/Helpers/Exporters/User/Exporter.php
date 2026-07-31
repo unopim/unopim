@@ -19,8 +19,6 @@ class Exporter extends AbstractExporter
 {
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -34,10 +32,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->initializeFileBuffer();
 
@@ -66,8 +62,10 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare users from current batch
+     *
+     * @return array{name: mixed, email: mixed, image: mixed, status: ('active' | 'inactive'), role_name: mixed, permission_type: mixed, permissions: string, timezone: mixed, ui_locale_code: mixed}[]
      */
-    public function prepareUsers(JobTrackBatchContract $batch, mixed $filePath = null)
+    public function prepareUsers(JobTrackBatchContract $batch, mixed $filePath = null): array
     {
         $users = [];
 
@@ -79,11 +77,11 @@ class Exporter extends AbstractExporter
             $role = $roles->firstWhere('id', $rowData['role_id']);
             $locale = $locales->firstWhere('id', $rowData['ui_locale_id']);
             $imagePath = $this->resolveUserImagePath($rowData['image'] ?? '');
-            $exportedImage = $imagePath ? Str::replace('\\', '/', $imagePath) : '';
+            $exportedImage = $imagePath !== '' && $imagePath !== '0' ? Str::replace('\\', '/', $imagePath) : '';
 
             if (
                 $withMedia
-                && ! empty($imagePath)
+                && ($imagePath !== '' && $imagePath !== '0')
                 && $filePath
                 && method_exists($filePath, 'getTemporaryPath')
             ) {
@@ -97,7 +95,7 @@ class Exporter extends AbstractExporter
                 'status'          => $rowData['status'] ? 'active' : 'inactive',
                 'role_name'       => $role?->name ?? '',
                 'permission_type' => $role?->permission_type ?? '',
-                'permissions'     => ! empty($role->permissions) ? implode(',', $role->permissions) : '',
+                'permissions'     => empty($role->permissions) ? '' : implode(',', $role->permissions),
                 'timezone'        => $rowData['timezone'],
                 'ui_locale_code'  => $locale?->code ?? '',
             ];

@@ -2,8 +2,10 @@
 
 namespace Webkul\ElasticSearch\Console\Command;
 
-use Carbon\Carbon;
+use Illuminate\Console\Attributes\Description;
+use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\Console\Helper\ProgressBar;
@@ -11,20 +13,25 @@ use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\Product\Models\Product;
 
+#[Description('Index all products into Elasticsearch')]
+#[Signature('unopim:product:index')]
 class ProductIndexer extends Command
 {
     const BATCH_SIZE = 10000;
 
-    protected $signature = 'unopim:product:index';
-
-    protected $description = 'Index all products into Elasticsearch';
+    /**
+     * Documents per bulk request. A batch sent whole exceeds the coordinating
+     * node's indexing pressure limit and comes back as a 429, which aborts the
+     * run partway through the catalog.
+     */
+    const BULK_DOCUMENTS = 500;
 
     public function __construct(protected ProductNormalizer $productIndexingNormalizer)
     {
         parent::__construct();
     }
 
-    public function handle()
+    public function handle(): void
     {
         if (config('elasticsearch.enabled')) {
             $indexPrefix = config('elasticsearch.prefix');
@@ -108,7 +115,7 @@ class ProductIndexer extends Command
                         if (
                             (
                                 isset($elasticProduct[$productId])
-                                && $elasticProduct[$productId] != Carbon::parse($product->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
+                                && $elasticProduct[$productId] != Date::parse($product->updated_at)->setTimezone('UTC')->format('Y-m-d\TH:i:s.u\Z')
                             )
                             || ! isset($elasticProduct[$productId])
                         ) {
@@ -140,11 +147,11 @@ class ProductIndexer extends Command
                         $progressBar->advance();
                     }
 
-                    if ($productsToUpdate) {
-                        $response = ElasticSearch::bulk($productsToUpdate);
+                    if ($productsToUpdate !== []) {
+                        $response = $this->bulkInChunks($productsToUpdate);
 
                         if (isset($response['errors']) && $response['errors']) {
-                            foreach ($response['items'] as $index => $result) {
+                            foreach ($response['items'] as $result) {
                                 if (isset($result['index']['error'])) {
                                     $failedProductIds[] = $result['index']['_id'];
 
@@ -171,7 +178,7 @@ class ProductIndexer extends Command
                 }
             }
 
-            if (! empty($failedProductIds)) {
+            if ($failedProductIds !== []) {
                 $this->newLine();
                 $this->error('Please check elasticsearch.log, failed to index the following product IDs: '.implode(', ', $failedProductIds));
             }
@@ -193,11 +200,11 @@ class ProductIndexer extends Command
                     ],
                     'size' => 1000000000,
                 ],
-            ])['hits']['hits'])->pluck('_id')->map(fn ($id) => (int) $id)->toArray();
+            ])['hits']['hits'])->pluck('_id')->map(fn ($id): int => (int) $id)->toArray();
 
             $productsToDelete = array_diff($elasticProductIds, $dbProductIds);
 
-            if (! empty($productsToDelete)) {
+            if ($productsToDelete !== []) {
                 $this->info('Deleting stale products from Elasticsearch...');
                 $deleteProgressBar = new ProgressBar($this->output, count($productsToDelete));
                 $deleteProgressBar->start();
@@ -218,9 +225,7 @@ class ProductIndexer extends Command
                         $deleteProgressBar->advance();
                     }
 
-                    if ($deleteProducts) {
-                        ElasticSearch::bulk($deleteProducts);
-                    }
+                    ElasticSearch::bulk($deleteProducts);
                 }
 
                 $deleteProgressBar->finish();
@@ -245,9 +250,37 @@ class ProductIndexer extends Command
     }
 
     /**
-     * Get product updated at values from Elasticsearch
+     * Send a bulk payload as several requests, keeping each action line paired
+     * with the document that follows it.
+     *
+     * @param  array<string, mixed>  $payload
+     * @return array{errors: bool, items: array<int, mixed>}
      */
-    public function getProductUpdates($productIndex, $command = null, array $searchIds = [])
+    protected function bulkInChunks(array $payload): array
+    {
+        $items = [];
+        $errors = false;
+
+        foreach (array_chunk($payload['body'] ?? [], self::BULK_DOCUMENTS * 2) as $chunk) {
+            $response = ElasticSearch::bulk(['body' => $chunk]);
+
+            $errors = $errors || ($response['errors'] ?? false);
+
+            $items = array_merge($items, $response['items'] ?? []);
+        }
+
+        return [
+            'errors' => $errors,
+            'items'  => $items,
+        ];
+    }
+
+    /**
+     * Get product updated at values from Elasticsearch
+     *
+     * @return mixed[]
+     */
+    public function getProductUpdates($productIndex, $command = null, array $searchIds = []): array
     {
         $elasticProduct = [];
 
@@ -297,7 +330,7 @@ class ProductIndexer extends Command
     /**
      * Create Elasticsearch index with settings and mappings
      */
-    public function elasticConfiguration($productIndex)
+    public function elasticConfiguration($productIndex): void
     {
         try {
             ElasticSearch::indices()->create([
@@ -321,7 +354,7 @@ class ProductIndexer extends Command
     /**
      * Get index mappings for product
      */
-    private function getUnopimProductMapping()
+    private function getUnopimProductMapping(): array
     {
         $statusMapping = ['type' => 'boolean'];
 
@@ -402,8 +435,10 @@ class ProductIndexer extends Command
      * Attribute type wise dynamic field mapping templates
      *
      * See 'packages/Webkul/ElasticSearch/tests/Feature/ProductIndexTest.php' for full dynamic mapping template as an array
+     *
+     * @return mixed[]
      */
-    protected function dynamicAttributeMappings()
+    protected function dynamicAttributeMappings(): array
     {
         $attributeTypes = [
             'text'     => 'text',
@@ -494,7 +529,7 @@ class ProductIndexer extends Command
     /**
      * Get index settings for product
      */
-    private function getUnopimProductSetting()
+    private function getUnopimProductSetting(): array
     {
         return [
             'analysis' => [

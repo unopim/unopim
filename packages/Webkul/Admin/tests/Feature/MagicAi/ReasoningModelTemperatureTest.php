@@ -5,8 +5,6 @@ use Illuminate\Support\Facades\Http;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
-beforeEach(fn () => $this->markTestSkipped('Pending rewrite for laravel/ai 0.7 — request body shapes differ from Prism. See follow-up issue.'));
-
 /**
  * Reasoning models (o-series, gpt-5*) reject `temperature` — only the default
  * is allowed. Sending temperature triggers a 400 invalid_request_error.
@@ -21,7 +19,6 @@ beforeEach(function () {
         'status'   => true,
     ]);
 
-    // Prism uses OpenAI's Responses API format (output[]), not the legacy Chat Completions choices[].
     Http::fake([
         '*' => Http::response([
             'id'     => 'resp_test',
@@ -38,19 +35,21 @@ beforeEach(function () {
     ]);
 });
 
-it('sends temperature for non-reasoning models', function () {
+it('sends temperature and max_output_tokens for non-reasoning models', function () {
     (new LaravelAiAdapter(
         platform: $this->platform,
         model: 'gpt-4o-mini',
         prompt: 'hi',
         temperature: 0.42,
+        maxTokens: 500,
     ))->ask();
 
     Http::assertSent(function (Request $request) {
         $body = json_decode($request->body(), true);
 
         return $body['model'] === 'gpt-4o-mini'
-            && ($body['temperature'] ?? null) === 0.42;
+            && ($body['temperature'] ?? null) === 0.42
+            && ($body['max_output_tokens'] ?? null) === 500;
     });
 });
 
@@ -83,5 +82,21 @@ it('does NOT send temperature for gpt-5* reasoning models', function () {
 
         return $body['model'] === 'gpt-5.2-pro'
             && ! array_key_exists('temperature', $body);
+    });
+});
+
+it('raises max_output_tokens to at least 16000 for reasoning models', function () {
+    (new LaravelAiAdapter(
+        platform: $this->platform,
+        model: 'o1-mini',
+        prompt: 'hi',
+        maxTokens: 500,
+    ))->ask();
+
+    Http::assertSent(function (Request $request) {
+        $body = json_decode($request->body(), true);
+
+        return $body['model'] === 'o1-mini'
+            && ($body['max_output_tokens'] ?? 0) >= 16000;
     });
 });

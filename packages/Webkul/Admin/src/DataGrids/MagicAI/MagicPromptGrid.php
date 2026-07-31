@@ -75,6 +75,11 @@ class MagicPromptGrid extends DataGrid
                     ],
                 ],
             ],
+            'closure' => fn ($row) => match ($row->type) {
+                'product'  => trans('admin::app.configuration.prompt.datagrid.product'),
+                'category' => trans('admin::app.configuration.prompt.datagrid.category'),
+                default    => $row->type,
+            },
         ]);
 
         $this->addColumn([
@@ -128,6 +133,7 @@ class MagicPromptGrid extends DataGrid
     {
         if (bouncer()->hasPermission('ai-agent.prompt.edit')) {
             $this->addAction([
+                'index'  => 'edit',
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.configuration.prompt.datagrid.edit'),
                 'method' => 'GET',
@@ -137,6 +143,7 @@ class MagicPromptGrid extends DataGrid
 
         if (bouncer()->hasPermission('ai-agent.prompt.delete')) {
             $this->addAction([
+                'index'  => 'delete',
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.configuration.prompt.datagrid.delete'),
                 'method' => 'DELETE',

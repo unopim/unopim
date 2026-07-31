@@ -30,6 +30,7 @@ class SimpleProductDataSource extends ProductDataSource
             'IN',
             'NOT IN',
         ]);
+        $this->registerDateFilters();
 
         return $queryBuilder;
     }

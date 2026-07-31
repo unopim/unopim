@@ -21,6 +21,7 @@ return [
                     'not-unique-value'                         => ':code утга нь өвөрмөц байх ёстой.',
                     'incorrect-family-for-variant'             => 'Гэр бүл нь эцэг эхтэй ижил байх ёстой',
                     'parent-not-exist'                         => 'Эцэг эх нь байхгүй.',
+                    'variant-structure-not-found'              => 'Энэ шинж чанарын бүлэгт :code хувилбарын бүтэц байхгүй байна.',
                 ],
             ],
         ],
@@ -48,6 +49,19 @@ return [
                     'duplicate-code'                       => 'Шиж чанарын код :code аль хэдийн ашиглагдаж байна.',
                     'code_not_found_to_delete'             => 'Устгах шинж чанарын код олдсонгүй.',
                     'code_is_system_and_cannot_be_deleted' => 'Системийн шинж чанарыг устгах боломжгүй.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Бүтээгдэхүүний холбоо',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => '\'%s\' талбарыг бөглөх шаардлагатай.',
+                    'self-link-not-allowed'       => '\'%s\' бүтээгдэхүүнийг өөртэй нь холбох боломжгүй.',
+                    'sku-not-found'               => 'SKU \'%s\' бүхий бүтээгдэхүүн олдсонгүй.',
+                    'related-sku-not-found'       => 'SKU \'%s\' бүхий холбогдох бүтээгдэхүүн олдсонгүй.',
+                    'association-type-not-found'  => '\'%s\' холбооны төрөл байхгүй эсвэл идэвхгүй байна.',
+                    'invalid-field-value'         => 'Холбооны талбарт буруу утга оруулсан байна.',
                 ],
             ],
         ],
@@ -151,14 +165,16 @@ return [
     'exporters' => [
         'export-too-large' => 'Энэ экспорт хэт том тул ажиллуулах боломжгүй: ойролцоогоор :rows мөр × :columns багана (~:estimated) нь боломжтой зайнаас (~:available) хэтэрсэн байна. Цөөн суваг/хэл (болон шинж чанар) сонгож экспортыг багасгаад дахин оролдоно уу.',
         'fields'           => [
-            'file-format'         => 'Файлын формат',
-            'with-media'          => 'Медиатай',
-            'header-row'          => 'Header Row',
-            'header-row-info'     => 'Write attribute codes as the first line',
-            'use-labels'          => 'Use Labels',
-            'use-labels-info'     => 'Export readable labels instead of codes',
-            'date-format'         => 'Date Format',
-            'date-format-options' => [
+            'file-format'            => 'Файлын формат',
+            'with-media'             => 'Медиатай',
+            'with-associations'      => 'Холбоотой',
+            'with-associations-info' => 'Экспортод хуучин up_sells, cross_sells, related_products SKU-жагсаалтын баганыг оруулна',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
                 'yyyy-mm-dd'       => 'YYYY-MM-DD',
                 'dd-mm-yyyy'       => 'DD-MM-YYYY',
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
@@ -231,6 +247,9 @@ return [
         'attributes' => [
             'title' => 'Шинж чанарууд',
         ],
+        'product-associations' => [
+            'title' => 'Бүтээгдэхүүний холбоо',
+        ],
         'attribute-groups' => [
             'title' => 'Шинж чанарын бүлгүүд',
         ],
@@ -276,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Ажлын гүйцэтгэл эхэлсэн',
         'completed' => 'Ажлын гүйцэтгэл дууссан',
+        'stalled'   => 'Ажил :minutes минутаас удаан хариу өгөөгүй тул амжилтгүй гэж тэмдэглэв. Гүйцэтгэж байсан процесс тасалдсан байх магадлалтай.',
+        'reaped'    => 'Гацсан :count ажлыг амжилтгүй гэж тэмдэглэв.',
     ],
 ];

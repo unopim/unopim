@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Event;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\AttributeGroupDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreAttributeGroupRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateAttributeGroupRequest;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 
 class AttributeGroupController extends ApiController
@@ -44,18 +46,10 @@ class AttributeGroupController extends ApiController
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function store(): JsonResponse
+    public function store(StoreAttributeGroupRequest $request): JsonResponse
     {
-        $validator = $this->codeRequireWithUniqueValidator('attribute_groups');
-
-        if ($validator->fails()) {
-            return $this->validateErrorResponse($validator);
-        }
-
-        $requestData = request()->only(['code', 'labels']);
+        $requestData = $request->only(['code', 'labels']);
         $requestData = $this->setLabels($requestData);
 
         try {
@@ -74,12 +68,10 @@ class AttributeGroupController extends ApiController
 
     /**
      * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function update(string $code): JsonResponse
+    public function update(UpdateAttributeGroupRequest $request, string $code): JsonResponse
     {
-        $requestData = request()->only([
+        $requestData = $request->only([
             'labels',
         ]);
 
@@ -100,6 +92,42 @@ class AttributeGroupController extends ApiController
                 trans('admin::app.catalog.attribute-groups.update-success'),
                 Response::HTTP_OK
             );
+        } catch (\Exception $e) {
+            return $this->storeExceptionLog($e);
+        }
+    }
+
+    /**
+     * Partially update the specified resource.
+     */
+    public function partialUpdate(UpdateAttributeGroupRequest $request, string $code): JsonResponse
+    {
+        return $this->update($request, $code);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function delete(string $code): JsonResponse
+    {
+        $attributeGroup = $this->attributeGroupRepository->findOneByField('code', $code);
+        if (! $attributeGroup) {
+            return $this->modelNotFoundResponse(trans('admin::app.catalog.attribute-groups.not-found', ['code' => $code]));
+        }
+
+        if ($attributeGroup->groupMappings()->count()) {
+            return $this->validateErrorResponse(
+                ['code' => [trans('admin::app.catalog.attribute-groups.attribute-group-error')]],
+                trans('admin::app.catalog.attribute-groups.attribute-group-error')
+            );
+        }
+
+        try {
+            Event::dispatch('catalog.attribute.group.delete.before', $attributeGroup->id);
+            $this->attributeGroupRepository->delete($attributeGroup->id);
+            Event::dispatch('catalog.attribute.group.delete.after', $attributeGroup->id);
+
+            return $this->successResponse(trans('admin::app.catalog.attribute-groups.delete-success'));
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }

@@ -7,12 +7,12 @@ return new class extends Migration
     /**
      * Run the migrations
      */
-    public function up()
+    public function up(): void
     {
         $query = DB::table('products')->orderBy('id');
 
         foreach ($query->cursor() as $row) {
-            $valuesJson = json_decode($row->values, true);
+            $valuesJson = json_decode((string) $row->values, true);
 
             if (! isset($valuesJson['common']['status'])) {
                 continue;
@@ -37,12 +37,12 @@ return new class extends Migration
     /**
      * Reverse the migrations.
      */
-    public function down()
+    public function down(): void
     {
         $query = DB::table('products')->orderBy('id');
 
         foreach ($query->cursor() as $row) {
-            $valuesJson = json_decode($row->values, true);
+            $valuesJson = json_decode((string) $row->values, true);
 
             if (! isset($valuesJson['common'])) {
                 $valuesJson['common'] = [];

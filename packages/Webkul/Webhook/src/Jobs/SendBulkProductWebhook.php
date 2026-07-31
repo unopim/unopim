@@ -2,35 +2,41 @@
 
 namespace Webkul\Webhook\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Auth;
 use Webkul\User\Models\AdminProxy;
 use Webkul\Webhook\Services\WebhookService;
 
 class SendBulkProductWebhook implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     /**
      * Create a new job instance.
      *
      * @param  array<int>  $ids
-     * @return void
      */
-    public function __construct(protected array $ids, protected $userId) {}
+    public function __construct(
+        protected array $ids,
+        protected $userId,
+        protected string $event = WebhookService::EVENT_PRODUCT_UPDATED
+    ) {}
 
     /**
      * Execute the job.
      */
     public function handle(WebhookService $webhookService): void
     {
-        $user = AdminProxy::find($this->userId);
+        if ($this->userId && ($user = AdminProxy::find($this->userId))) {
+            Auth::login($user);
+        }
 
-        Auth::login($user);
+        if ($this->event === WebhookService::EVENT_PRODUCT_CREATED) {
+            $webhookService->sendBatchCreatedByIds($this->ids);
+
+            return;
+        }
 
         $webhookService->sendBatchByIds($this->ids);
     }

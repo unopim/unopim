@@ -2,12 +2,12 @@
 
 namespace Webkul\Core\ImageCache;
 
-use Carbon\Carbon;
 use Closure;
 use Illuminate\Cache\FileStore;
 use Illuminate\Cache\Repository;
 use Illuminate\Cache\Repository as Cache;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Date;
 use Intervention\Image\Exceptions\EncoderException;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Interfaces\ImageInterface;
@@ -207,7 +207,7 @@ class ImageCache
      */
     protected function getClosureHash(Closure $closure): string
     {
-        return (new HashableClosure($closure))->getHash();
+        return new HashableClosure($closure)->getHash();
     }
 
     /**
@@ -261,7 +261,7 @@ class ImageCache
      */
     public function get(?int $lifetime = null, bool $returnObj = false): mixed
     {
-        $lifetime = is_null($lifetime) ? $this->lifetime : $lifetime;
+        $lifetime ??= $this->lifetime;
 
         $key = $this->checksum();
 
@@ -281,7 +281,7 @@ class ImageCache
 
         $encoded = $this->encodeImage($image);
 
-        $this->cache->put($key, $encoded, Carbon::now()->addMinutes($lifetime));
+        $this->cache->put($key, $encoded, Date::now()->addMinutes($lifetime));
 
         return $returnObj ? $image : $encoded;
     }

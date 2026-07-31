@@ -9,6 +9,7 @@ return [
     'slug'                         => 'El :attribute ha de ser un slug vàlid.',
     'sku'                          => 'El :attribute ha de ser un SKU vàlid (només caràcters alfanumèrics, guions i guions baixos).',
     'comma-separated-integer'      => 'El camp :attribute ha de ser numèric i pot contenir comes.',
+    'ip-address-list'              => 'El camp :attribute ha de contenir adreces IP vàlides separades per comes.',
     'type'                         => 'El :attribute ha de ser un tipus vàlid.',
     'validation-type'              => 'El :attribute ha de ser un tipus vàlid.',
     'field-option-not-found'       => 'El :attribute conté opcions no vàlides: :invalid_codes.',

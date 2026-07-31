@@ -1,5 +1,12 @@
+@php
+    $darkModePreference = request()->cookie('dark_mode', 'auto');
+@endphp
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}" dir="ltr">
+<html
+    lang="{{ app()->getLocale() }}"
+    dir="{{ in_array(app()->getLocale(), ['ar_AE']) ? 'rtl' : 'ltr' }}"
+    class="{{ $darkModePreference === 'dark' || $darkModePreference === '1' ? 'dark' : '' }}"
+>
 
 <head>
     <title>{{ $title ?? '' }}</title>
@@ -10,24 +17,27 @@
     <meta name="base-url" content="{{ rtrim(config('app.url'), '/') }}">
     <meta http-equiv="content-language" content="{{ app()->getLocale() }}">
 
+    {{-- Mirror the admin layout: honour the saved preference; only 'auto' falls back to the OS setting. --}}
+    <script>
+        (() => {
+            const getCookie = (name) => {
+                const value = `; ${document.cookie}`;
+                const parts = value.split(`; ${name}=`);
+
+                return parts.length === 2 ? parts.pop().split(';').shift() : null;
+            };
+
+            const preference = getCookie('dark_mode') || 'auto';
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const shouldUseDark = preference === 'dark' || preference === '1' || (preference === 'auto' && prefersDark);
+
+            document.documentElement.classList.toggle('dark', shouldUseDark);
+        })();
+    </script>
+
     @stack('meta')
 
     @unoPimVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'])
-
-   <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    />
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&display=swap"
-        rel="stylesheet"
-    />
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
-        rel="stylesheet"
-    />
 
     @if ($favicon = core()->getConfigData('general.design.admin_logo.favicon'))
         <link
@@ -54,16 +64,14 @@
     {!! view_render_event('unopim.admin.layout.head') !!}
 </head>
 
-<body>
+<body class="bg-gray-50 text-gray-800 dark:bg-cherry-900 dark:text-white antialiased">
     {!! view_render_event('unopim.admin.layout.body.before') !!}
 
     <div id="app">
-        <!-- Flash Message Blade Component -->
         <x-admin::flash-group />
 
         {!! view_render_event('unopim.admin.layout.content.before') !!}
 
-                <!-- Page Content Blade Component -->
                 {{ $slot }}
     </div>
 

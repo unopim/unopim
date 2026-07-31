@@ -5,6 +5,9 @@ namespace Webkul\Core\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Core\Models\Currency;
 
+/**
+ * @extends Factory<Currency>
+ */
 class CurrencyFactory extends Factory
 {
     /**
@@ -20,7 +23,7 @@ class CurrencyFactory extends Factory
     public function definition(): array
     {
         return [
-            'code' => $this->faker->unique()->currencyCode,
+            'code' => fake()->unique()->currencyCode,
         ];
     }
 }

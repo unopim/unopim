@@ -15,12 +15,10 @@ class PriceNormalizer extends AbstractNormalizer implements AttributeNormalizerI
     {
         $format = $options['format'] ?? 'default';
 
-        switch ($format) {
-            case 'datagrid':
-                return $this->datagridFormat($data, $options);
-            default:
-                return $data;
-        }
+        return match ($format) {
+            'datagrid' => $this->datagridFormat($data, $options),
+            default    => $data,
+        };
     }
 
     /**
@@ -52,7 +50,7 @@ class PriceNormalizer extends AbstractNormalizer implements AttributeNormalizerI
      */
     protected function filterByChannelCurrencies(array $data, ?string $channelCode): array
     {
-        if (empty($channelCode)) {
+        if (in_array($channelCode, [null, '', '0'], true)) {
             return $data;
         }
 

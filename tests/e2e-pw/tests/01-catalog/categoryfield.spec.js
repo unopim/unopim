@@ -1,23 +1,19 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
 
-/**
- * Helper: Create a category field via UI.
- */
+/** Create a category field via UI. */
 async function createCategoryField(adminPage, code, name, type = 'Text') {
   await navigateTo(adminPage, 'categoryFields');
-  await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+  await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
-  await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
+  await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
   await adminPage.getByRole('option', { name: type }).first().click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill(name);
+  await adminPage.locator('input[name$="[name]"]').first().fill(name);
   await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Created Successfully/i);
 }
 
-/**
- * Helper: Delete a category field by code.
- */
+/** Delete a category field by code. */
 async function deleteCategoryField(adminPage, code) {
   await navigateTo(adminPage, 'categoryFields');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
@@ -35,32 +31,34 @@ test.describe('UnoPim Category Field Tests', () => {
 
   test('Create category field with empty Code', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+    await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.locator('#type').getByRole('combobox').locator('div').filter({ hasText: 'Select option' }).click();
+    await adminPage.locator('input[name="type"]').locator('..').locator('.multiselect__placeholder').click();
     await adminPage.getByRole('option', { name: 'Text' }).first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
-    await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+    await adminPage.locator('input[name$="[name]"]').first().fill('Suggestion');
+    // v-code derives the code from the name, so clear it to submit an empty code.
+    await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
+    await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Code field is required ')).toBeVisible();
   });
 
   test('Create category field with empty Type', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+    await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
     await adminPage.waitForLoadState('networkidle');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('test_empty_type');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
-    await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+    await adminPage.locator('input[name$="[name]"]').first().fill('Suggestion');
+    await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Type field is required ')).toBeVisible();
   });
 
   test('Create category field with empty Code and Type', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByRole('link', { name: 'Create Category Field' }).click();
+    await adminPage.getByRole('button', { name: 'Create Category Field' }).click();
     await adminPage.waitForLoadState('networkidle');
+    await adminPage.locator('input[name$="[name]"]').first().fill('Suggestion');
     await adminPage.getByRole('textbox', { name: 'Code' }).fill('');
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Suggestion');
-    await adminPage.getByRole('button', { name: 'Save Category Field' }).click();
+    await clickSave(adminPage, 'Save Category Field');
     await expect(adminPage.locator('#app').getByText('The Code field is required ')).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Type field is required ')).toBeVisible();
   });
@@ -71,12 +69,11 @@ test.describe('UnoPim Category Field Tests', () => {
 
     await createCategoryField(adminPage, code, 'Test Field');
 
-    // Cleanup
     await deleteCategoryField(adminPage, code);
   });
 
   test('should allow category field search', async ({ adminPage }) => {
-    // Use seeded data — 'name' category field always exists
+    // Seeded 'name' category field always exists.
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('name');
     await adminPage.keyboard.press('Enter');
@@ -103,10 +100,8 @@ test.describe('UnoPim Category Field Tests', () => {
     const uid = generateUid();
     const code = `cf_${uid}`;
 
-    // Create test data
     await createCategoryField(adminPage, code, 'Actions Test');
 
-    // Search and verify Edit action
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -115,7 +110,6 @@ test.describe('UnoPim Category Field Tests', () => {
     await row.locator('span[title="Edit"]').first().click();
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/category-fields\/edit/);
 
-    // Go back, search again, verify Delete shows confirmation
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -124,7 +118,6 @@ test.describe('UnoPim Category Field Tests', () => {
     await row2.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    // Cleanup — confirm delete
     await adminPage.getByRole('button', { name: 'Delete' }).click();
     await expect(adminPage.locator('#app').getByText(/Category Field Deleted Successfully/i)).toBeVisible();
   });
@@ -139,20 +132,17 @@ test.describe('UnoPim Category Field Tests', () => {
     const uid = generateUid();
     const code = `cf_${uid}`;
 
-    // Create test data
     await createCategoryField(adminPage, code, 'Before Update');
 
-    // Search and edit
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Edit"]').first().click();
-    await adminPage.locator('input[name="en_US\\[name\\]"]').fill('After Update');
-    await clickSaveAndExpect(adminPage, 'Save Category Field', /Category Field Updated Successfully/i);
+    await adminPage.locator('input[name$="[name]"]').first().fill('After Update');
+    await clickSaveAndExpect(adminPage, 'Save changes', /Category Field Updated Successfully/i);
 
-    // Cleanup
     await deleteCategoryField(adminPage, code);
   });
 
@@ -160,10 +150,8 @@ test.describe('UnoPim Category Field Tests', () => {
     const uid = generateUid();
     const code = `cf_${uid}`;
 
-    // Create test data specifically for deletion
     await createCategoryField(adminPage, code, 'To Delete');
 
-    // Search and delete
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
@@ -175,7 +163,7 @@ test.describe('UnoPim Category Field Tests', () => {
   });
 
   test('delete default category field', async ({ adminPage }) => {
-    // Use seeded 'name' field — should not be deletable
+    // Seeded 'name' field should not be deletable.
     await navigateTo(adminPage, 'categoryFields');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('name');
     await adminPage.keyboard.press('Enter');

@@ -2,20 +2,28 @@
 
 namespace Webkul\Product\Type;
 
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
-use Webkul\Attribute\Contracts\Group;
+use Webkul\Attribute\Contracts\AttributeGroup;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Filesystem\FileStorer;
+use Webkul\Core\Traits\HtmlPurifier;
 use Webkul\Product\Contracts\Product;
+use Webkul\Product\Repositories\AssociationTypeRepository;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Validator\AssociationValidator;
 
 abstract class AbstractType
 {
+    use HtmlPurifier;
+
     const PRODUCT_VALUES_KEY = 'values';
 
     const LOCALE_VALUES_KEY = 'locale_specific';
@@ -86,8 +94,6 @@ abstract class AbstractType
 
     /**
      * Create a new product type instance.
-     *
-     * @return void
      */
     public function __construct(
         protected AttributeRepository $attributeRepository,
@@ -134,15 +140,49 @@ abstract class AbstractType
             $productValues[self::CATEGORY_VALUES_KEY] = $data[self::CATEGORY_VALUES_KEY];
         }
 
-        if (! empty($data[self::UP_SELLS_ASSOCIATION_KEY])) {
+        /**
+         * Optional unified associations payload: `associations => { <typeCode> => [ { sku, additional_data? }, ... ] }`.
+         *
+         * When present, it supersedes the legacy flat keys (`up_sells`, etc.) for
+         * any type it submits: validation happens here, BEFORE the product is
+         * saved, so an invalid link aborts the whole update with nothing
+         * persisted; sku -> related product id resolution also happens here so
+         * the rich sync after save has everything it needs.
+         */
+        $unifiedAssociations = $data[self::ASSOCIATION_VALUES_KEY] ?? [];
+
+        if (! is_array($unifiedAssociations)) {
+            $unifiedAssociations = [];
+        }
+
+        $resolvedRichAssociations = [];
+
+        if (! empty($unifiedAssociations)) {
+            [$legacySkuLists, $resolvedRichAssociations] = $this->prepareRichAssociations($unifiedAssociations, $product);
+
+            foreach ($legacySkuLists as $section => $skus) {
+                $productValues[self::ASSOCIATION_VALUES_KEY][$section] = $skus;
+            }
+        }
+
+        if (
+            ! array_key_exists(self::UP_SELLS_ASSOCIATION_KEY, $unifiedAssociations)
+            && ! empty($data[self::UP_SELLS_ASSOCIATION_KEY])
+        ) {
             $productValues[self::ASSOCIATION_VALUES_KEY][self::UP_SELLS_ASSOCIATION_KEY] = $data[self::UP_SELLS_ASSOCIATION_KEY];
         }
 
-        if (! empty($data[self::CROSS_SELLS_ASSOCIATION_KEY])) {
+        if (
+            ! array_key_exists(self::CROSS_SELLS_ASSOCIATION_KEY, $unifiedAssociations)
+            && ! empty($data[self::CROSS_SELLS_ASSOCIATION_KEY])
+        ) {
             $productValues[self::ASSOCIATION_VALUES_KEY][self::CROSS_SELLS_ASSOCIATION_KEY] = $data[self::CROSS_SELLS_ASSOCIATION_KEY];
         }
 
-        if (! empty($data[self::RELATED_ASSOCIATION_KEY])) {
+        if (
+            ! array_key_exists(self::RELATED_ASSOCIATION_KEY, $unifiedAssociations)
+            && ! empty($data[self::RELATED_ASSOCIATION_KEY])
+        ) {
             $productValues[self::ASSOCIATION_VALUES_KEY][self::RELATED_ASSOCIATION_KEY] = $data[self::RELATED_ASSOCIATION_KEY];
         }
 
@@ -154,11 +194,211 @@ abstract class AbstractType
 
         $product->fill($data);
 
-        if ($product->isDirty()) {
+        $product->wasDirtyOnUpdate = $product->isDirty();
+
+        if ($product->wasDirtyOnUpdate) {
             $product->save();
         }
 
+        if ($product->id) {
+            $this->syncAssociationLinks($product, $productValues, array_keys($unifiedAssociations));
+
+            if (! empty($resolvedRichAssociations)) {
+                $this->syncRichAssociations($product->id, $resolvedRichAssociations);
+            }
+        }
+
         return $product;
+    }
+
+    /**
+     * Resolves and validates the optional unified `associations` payload
+     * (Plan 3): for each submitted type, validates every link's
+     * `additional_data` against that type's custom fields via
+     * `AssociationValidator` (Task 2) — a failure throws `ValidationException`
+     * here, BEFORE the product is saved — then resolves each link's `sku` to
+     * a `related_product_id` (skipping unresolved SKUs and self-links), the
+     * same way `ProductAssociationRepository::syncFromSkuList` does for the
+     * legacy path.
+     *
+     * A type key present in `$associations` is treated as AUTHORITATIVE for
+     * that association type, even when it carries zero link rows: the
+     * product edit UI (`links.blade.php`) always submits an
+     * `associations[<typeCode>][__present]=1` sentinel for every active type
+     * it renders, precisely so removing the last link of a type still keeps
+     * that type's key in the payload (native form submission otherwise omits
+     * a key with no rows, which used to leave that type's `product_associations`
+     * rows — and, for the 3 legacy sections, the legacy JSON list — stale).
+     * The sentinel itself is stripped below before link rows are processed,
+     * and never resolved as a link/sku. This authoritative-when-present
+     * behavior only ever triggers from the `associations` key existing at
+     * all: the REST/import write path never sends that key, so it keeps
+     * relying on the legacy `! empty($data[section])` fallback in `update()`
+     * unchanged.
+     *
+     * Returns a two-element tuple:
+     * - `[0]` legacy section (up_sells/cross_sells/related_products) => sku
+     *   list, for mirroring into the legacy `values['associations']` JSON.
+     * - `[1]` typeCode => `['association_type_id' => int, 'links' => resolved rows]`,
+     *   ready for `syncRichAssociations()`.
+     *
+     * Public (not just used by `update()`): write paths that persist product
+     * data directly instead of going through `update()` — currently the
+     * AdminApi product controllers (`Webkul\AdminApi\...\ProductController`)
+     * — call this directly so they can validate + resolve a rich
+     * `associations` payload BEFORE writing anything to the database, same
+     * as `update()` does.
+     *
+     * @return array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}
+     */
+    public function prepareRichAssociations(array $associations, Product $product): array
+    {
+        $associationTypeRepository = app(AssociationTypeRepository::class);
+
+        $associationValidator = app(AssociationValidator::class);
+
+        $legacySkuLists = [];
+
+        $resolvedAssociations = [];
+
+        foreach ($associations as $typeCode => $links) {
+            if (! is_array($links)) {
+                continue;
+            }
+
+            unset($links['__present']);
+
+            $associationType = $associationTypeRepository->findByCode($typeCode);
+
+            if (! $associationType) {
+                continue;
+            }
+
+            $skus = [];
+
+            $additionalDataBySku = [];
+
+            foreach ($links as $link) {
+                $sku = $link['sku'] ?? null;
+
+                if (! is_string($sku) || $sku === '') {
+                    continue;
+                }
+
+                $additionalData = $link['additional_data'] ?? [];
+
+                $associationValidator->validate((int) $associationType->id, $additionalData);
+
+                $skus[] = $sku;
+
+                $additionalDataBySku[$sku] = empty($additionalData) ? null : $additionalData;
+            }
+
+            $skus = array_values(array_unique($skus));
+
+            if (in_array($typeCode, self::ASSOCIATION_SECTIONS, true)) {
+                $legacySkuLists[$typeCode] = $skus;
+            }
+
+            $resolvedProducts = empty($skus)
+                ? collect()
+                : $this->productRepository->findWhereIn('sku', $skus, ['id', 'sku']);
+
+            $resolvedLinks = [];
+
+            foreach ($resolvedProducts as $resolvedProduct) {
+                $relatedProductId = (int) $resolvedProduct->id;
+
+                if ($relatedProductId === (int) $product->id) {
+                    continue;
+                }
+
+                $resolvedLinks[] = [
+                    'related_product_id' => $relatedProductId,
+                    'position'           => null,
+                    'additional_data'    => $additionalDataBySku[$resolvedProduct->sku] ?? null,
+                ];
+            }
+
+            $resolvedAssociations[$typeCode] = [
+                'association_type_id' => (int) $associationType->id,
+                'links'               => $resolvedLinks,
+            ];
+        }
+
+        return [$legacySkuLists, $resolvedAssociations];
+    }
+
+    /**
+     * Rich, per-link sync for the unified `associations` payload (Plan 3):
+     * writes `additional_data` for each link via
+     * `ProductAssociationRepository::syncTypeWithData` (Task 1), preserving
+     * per-link custom-field values instead of only SKU membership like
+     * `syncAssociationLinks()`'s legacy path does.
+     *
+     * Kept resilient like `syncAssociationLinks()`: a sync failure for one
+     * type is reported, not rethrown, and must not affect the others or the
+     * product save that already happened.
+     *
+     * Public for the same reason as `prepareRichAssociations()` above: write
+     * paths that bypass `update()` (the AdminApi product controllers) call
+     * this directly, after they've saved the product row, to persist the
+     * resolved links.
+     *
+     * @param  array<string,array{association_type_id:int,links:array}>  $resolvedAssociations
+     */
+    public function syncRichAssociations(int $productId, array $resolvedAssociations): void
+    {
+        $associationRepository = app(ProductAssociationRepository::class);
+
+        foreach ($resolvedAssociations as $associationData) {
+            try {
+                $associationRepository->syncTypeWithData(
+                    $productId,
+                    $associationData['association_type_id'],
+                    $associationData['links']
+                );
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
+    }
+
+    /**
+     * Mirrors the legacy JSON `values['associations']` into the
+     * `product_associations` link table (dual-write).
+     *
+     * Kept resilient: a sync failure is logged but must not abort the
+     * product save that has already happened.
+     *
+     * Public so that write paths other than `update()` — e.g. the AdminApi
+     * controllers, which persist `values` directly on the model instead of
+     * going through this class's `update()` — can also mirror the link
+     * table after they save.
+     *
+     * `$excludeSections` skips sections already handled by the unified
+     * `associations` payload's rich sync (`syncRichAssociations()`), so a
+     * type is never synced twice for the same `update()` call.
+     */
+    public function syncAssociationLinks(Product $product, array $productValues, array $excludeSections = []): void
+    {
+        $associationRepository = app(ProductAssociationRepository::class);
+
+        foreach (self::ASSOCIATION_SECTIONS as $section) {
+            if (in_array($section, $excludeSections, true)) {
+                continue;
+            }
+
+            try {
+                $associationRepository->syncFromSkuList(
+                    $product->id,
+                    $section,
+                    $productValues[self::ASSOCIATION_VALUES_KEY][$section] ?? []
+                );
+            } catch (\Throwable $exception) {
+                report($exception);
+            }
+        }
     }
 
     /**
@@ -223,9 +463,6 @@ abstract class AbstractType
 
         $productChannelLocaleValues = $product->values[self::CHANNEL_LOCALE_VALUES_KEY] ?? [];
 
-        /**
-         * For Channel And Locale Values
-         */
         if (! empty($channelAndLocaleValues[$currentChannelCode][$currentLocaleCode])) {
             $productChannelLocaleValues[$currentChannelCode][$currentLocaleCode] = $this->processValues(
                 productId: $product->id,
@@ -244,9 +481,6 @@ abstract class AbstractType
             ? array_filter($channelAndLocaleValues)
             : $channelAndLocaleValues;
 
-        /**
-         * For Channel Values
-         */
         if (! empty($channelValues[$currentChannelCode])) {
             $productChannelValues[$currentChannelCode] = $this->processValues(
                 productId: $product->id,
@@ -261,9 +495,6 @@ abstract class AbstractType
             ? array_filter($channelValues)
             : $channelValues;
 
-        /**
-         * For Locale Values
-         */
         if (! empty($localeValues[$currentLocaleCode])) {
             $productLocaleValues[$currentLocaleCode] = $this->processValues(
                 productId: $product->id,
@@ -278,9 +509,6 @@ abstract class AbstractType
             ? array_filter($localeValues)
             : $localeValues;
 
-        /**
-         * For common values
-         */
         if (! empty($commonValues)) {
             $commonValues = $this->processValues(
                 productId: $product->id,
@@ -327,17 +555,29 @@ abstract class AbstractType
     protected function processValues(int $productId, array $values, array $productValues = [], bool $isCommonAttribute = false): array
     {
         $values = array_filter(
-            ! empty($productValues)
-                ? array_merge($productValues, $values)
-                : $values
+            $productValues === []
+                ? $values
+                : array_merge($productValues, $values)
         );
 
+        $attributes = $this->attributeRepository->findWhereIn('code', array_keys($values))->keyBy('code');
+
         foreach ($values as $field => $fieldValue) {
+            $attribute = $attributes->get($field);
+
+            if (
+                is_string($fieldValue)
+                && $fieldValue !== ''
+                && $attribute?->type === 'textarea'
+                && $attribute->enable_wysiwyg
+            ) {
+                $values[$field] = $fieldValue = $this->purifyText($fieldValue);
+            }
+
             if (is_array($fieldValue)) {
-                $attribute = $this->attributeRepository->findOneByField('code', $field);
                 $type = $attribute?->type;
 
-                if ($type === 'image' || $type === 'gallery' || $type === 'file') {
+                if (in_array($type, ['image', 'gallery', 'file'], true)) {
                     $path = 'product'.DIRECTORY_SEPARATOR.$productId.DIRECTORY_SEPARATOR.$field;
 
                     if ($type === 'gallery') {
@@ -358,7 +598,7 @@ abstract class AbstractType
                         }, $fieldValue);
 
                         $values[$field] = array_values($values[$field]);
-                    } elseif (! empty($fieldValue) && current($fieldValue) instanceof UploadedFile) {
+                    } elseif ($fieldValue !== [] && current($fieldValue) instanceof UploadedFile) {
                         $uploadedFile = current($fieldValue);
 
                         if (! $uploadedFile->isValid()) {
@@ -378,19 +618,15 @@ abstract class AbstractType
 
             if (
                 $isCommonAttribute
-                && $this->attributeRepository->findWhere([
-                    'type' => AttributeTypes::PRICE_ATTRIBUTE_TYPE,
-                    'code' => $field,
-                ])->first()?->toArray()
+                && $attributes->get($field)?->type === AttributeTypes::PRICE_ATTRIBUTE_TYPE
             ) {
-
                 $fieldValue = $this->processCommonPriceValues($field, $fieldValue, $productValues);
             }
 
             if (is_array($fieldValue)) {
                 $fieldValue = array_filter($fieldValue);
 
-                if (empty($fieldValue)) {
+                if ($fieldValue === []) {
                     unset($values[$field]);
                 } else {
                     $values[$field] = array_is_list($fieldValue) ? implode(',', $fieldValue) : $fieldValue;
@@ -426,9 +662,80 @@ abstract class AbstractType
 
         $copiedProduct->save();
 
+        $this->copyMediaValues($copiedProduct);
+
+        if ($copiedProduct->id) {
+            $this->syncAssociationLinks($copiedProduct, $values);
+        }
+
         $this->copyRelationships($copiedProduct);
 
         return $copiedProduct;
+    }
+
+    protected function copyMediaValues($copiedProduct): void
+    {
+        $mediaCodes = app(AttributeRepository::class)
+            ->whereIn('type', [
+                AttributeTypes::IMAGE_ATTRIBUTE_TYPE,
+                AttributeTypes::FILE_ATTRIBUTE_TYPE,
+                AttributeTypes::GALLERY_ATTRIBUTE_TYPE,
+            ])
+            ->pluck('code')
+            ->all();
+
+        if ($mediaCodes === []) {
+            return;
+        }
+
+        $values = $copiedProduct->values ?? [];
+        $changed = false;
+
+        array_walk_recursive($values, function (&$value, $key) use ($mediaCodes, $copiedProduct, &$changed): void {
+            if (! in_array($key, $mediaCodes, true) || ! is_string($value) || $value === '') {
+                return;
+            }
+
+            $paths = array_filter(array_map(trim(...), explode(',', $value)));
+
+            $copied = [];
+
+            foreach ($paths as $path) {
+                $copied[] = $this->copyMediaFile($path, $copiedProduct->id, $key);
+            }
+
+            $updated = implode(',', $copied);
+
+            if ($updated !== $value) {
+                $value = $updated;
+                $changed = true;
+            }
+        });
+
+        if ($changed) {
+            $copiedProduct->values = $values;
+
+            $copiedProduct->save();
+        }
+    }
+
+    protected function copyMediaFile(string $path, int $productId, string $attributeCode): string
+    {
+        $target = 'product/'.$productId.'/'.$attributeCode.'/'.basename($path);
+
+        if ($path === $target) {
+            return $path;
+        }
+
+        $disk = Storage::disk('public');
+
+        if (! $disk->exists($path)) {
+            return $path;
+        }
+
+        $disk->put($target, $disk->get($path));
+
+        return $target;
     }
 
     /**
@@ -439,7 +746,7 @@ abstract class AbstractType
      */
     protected function copyRelationships($product)
     {
-        $attributesToSkip = config('products.copy.skip_attributes') ?? [];
+        $attributesToSkip = config('products.copy.skip_attributes', []);
 
         if (! in_array('product_relations', $attributesToSkip)) {
             DB::table('product_relations')->insert([
@@ -447,22 +754,6 @@ abstract class AbstractType
                 'child_id'  => $product->id,
             ]);
         }
-    }
-
-    /**
-     * Copy product image video.
-     */
-    private function copyMedia($product, $media, $copiedMedia): void
-    {
-        $path = explode('/', $media->path);
-
-        $copiedMedia->path = 'product/'.$product->id.'/'.end($path);
-
-        $copiedMedia->save();
-
-        Storage::makeDirectory('product/'.$product->id);
-
-        Storage::copy($media->path, $copiedMedia->path);
     }
 
     /**
@@ -519,7 +810,7 @@ abstract class AbstractType
     /**
      * Retrieve product attributes.
      *
-     * @param  Group  $group
+     * @param  AttributeGroup|null  $group
      * @param  bool  $skipSuperAttribute
      * @return Collection
      */
@@ -539,7 +830,34 @@ abstract class AbstractType
             )->get();
         }
 
-        return $group->customAttributes($this->product->attribute_family->id)->whereNotIn('code', $this->skipAttributes);
+        return $this->product->attribute_family
+            ->customAttributesByGroup()
+            ->get($group->id, new EloquentCollection)
+            ->whereNotIn('code', $this->skipAttributes);
+    }
+
+    /**
+     * Retrieve the editable attributes of a single group.
+     *
+     * Kept separate from {@see getEditableAttributes()} because that one reads
+     * the family's memoised full attribute set, which is what makes a large
+     * family unrenderable.
+     *
+     * @return Collection<int, Attribute>
+     */
+    public function getEditableAttributesForGroup(int $groupId, bool $skipSuperAttribute = true): Collection
+    {
+        if ($skipSuperAttribute) {
+            $this->skipAttributes = array_merge(
+                $this->product->super_attributes->pluck('code')->toArray(),
+                $this->skipAttributes
+            );
+        }
+
+        return $this->product->attribute_family
+            ->customAttributesForGroup($groupId)
+            ->whereNotIn('code', $this->skipAttributes)
+            ->values();
     }
 
     /**
@@ -614,34 +932,23 @@ abstract class AbstractType
     /**
      * Compare options.
      *
-     * @param  array  $options1
-     * @param  array  $options2
      * @return bool
      */
-    public function compareOptions($options1, $options2)
+    public function compareOptions(array $options1, array $options2)
     {
         if ($this->product->id != $options2['product_id']) {
             return false;
-        } else {
-            if (
-                isset($options1['parent_id'])
-                && isset($options2['parent_id'])
-            ) {
-                return $options1['parent_id'] == $options2['parent_id'];
-            } elseif (
-                isset($options1['parent_id'])
-                && ! isset($options2['parent_id'])
-            ) {
-                return false;
-            } elseif (
-                isset($options2['parent_id'])
-                && ! isset($options1['parent_id'])
-            ) {
-                return false;
-            }
+        }
+        if (isset($options1['parent_id'])
+        && isset($options2['parent_id'])) {
+            return $options1['parent_id'] == $options2['parent_id'];
+        }
+        if (isset($options1['parent_id'])
+        && ! isset($options2['parent_id'])) {
+            return false;
         }
 
-        return true;
+        return ! isset($options2['parent_id']) || isset($options1['parent_id']);
     }
 
     /**
@@ -666,8 +973,14 @@ abstract class AbstractType
 
         $product->fill($data);
 
-        if ($product->isDirty()) {
+        $product->wasDirtyOnUpdate = $product->isDirty();
+
+        if ($product->wasDirtyOnUpdate) {
             $product->save();
+        }
+
+        if ($product->id) {
+            $this->syncAssociationLinks($product, $product->values ?? []);
         }
 
         return $product;

@@ -1,0 +1,111 @@
+name: TIA Baseline
+
+# Records Pest's test-impact graph once per push to the release branches and
+# publishes it as an artifact. `pest()->tia()->baselined()` makes every developer
+# and pull request download it, so nobody pays the recording cost locally.
+
+on:
+  push:
+    branches: [master, '2.1']
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # Advisory: baseline recording is an optimization experiment and must not
+  # redden the release branches while its memory profile is being tamed.
+  baseline:
+    runs-on: ubuntu-24.04
+    name: Record the test impact baseline
+    continue-on-error: true
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: unopim
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.37.1
+        with:
+          php-version: '8.4'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          # pcov instruments every file it loads, and the graph only cares about
+          # our own source, so keeping vendor out of it is what keeps the
+          # recording inside the runner's memory.
+          ini-values: error_reporting=E_ALL, pcov.exclude="~(vendor|node_modules|storage)~"
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--optimize-autoloader"
+
+      - name: Setting Environment
+        run: |
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
+
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+
+      - name: Set Passport OAuth key permissions
+        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
+
+      # Coverage recording peaks past the runner's 7 GB with several workers
+      # (exit 137); swap absorbs the spike and two workers keep it tolerable.
+      # The runner already holds /swapfile open, so the extra file goes on /mnt,
+      # which is both free and the larger disk.
+      - name: Add swap headroom for coverage recording
+        run: |
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
+
+      - name: Record the baseline
+        run: vendor/bin/pest --parallel --processes=2 --tia --fresh --colors=always
+
+      - name: Resolve the baseline path
+        id: baseline
+        run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the baseline
+        uses: actions/upload-artifact@v4
+        with:
+          name: pest-tia-baseline
+          path: ${{ steps.baseline.outputs.path }}
+          include-hidden-files: true
+          retention-days: 30

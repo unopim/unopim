@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
@@ -16,6 +17,8 @@ use Webkul\DataTransfer\Services\JobLogger;
 
 class Export
 {
+    use TracksJobHeartbeat;
+
     /**
      * export state for pending export
      */
@@ -122,8 +125,6 @@ class Export
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackRepository $jobTrackRepository,
@@ -176,10 +177,8 @@ class Export
 
     /**
      * Returns error helper instance.
-     *
-     * @return Error
      */
-    public function getErrorHelper()
+    public function getErrorHelper(): Error
     {
         return $this->errorHelper;
     }
@@ -189,11 +188,7 @@ class Export
      */
     public function isValid(): bool
     {
-        if ($this->export->state == self::STATE_FAILED) {
-            return false;
-        }
-
-        return true;
+        return $this->export->state != self::STATE_FAILED;
     }
 
     public function stateUpdate($state = self::STATE_VALIDATED): Export
@@ -204,7 +199,14 @@ class Export
 
         $this->setExport($export);
 
+        $this->heartbeat(force: true);
+
         return $this;
+    }
+
+    protected function getHeartbeatTrack(): mixed
+    {
+        return $this->export ?? null;
     }
 
     /**
@@ -219,6 +221,8 @@ class Export
         ], $this->export->id);
 
         $this->setExport($export);
+
+        $this->heartbeat(force: true);
 
         Event::dispatch('data_transfer.exports.started', $export);
 
@@ -237,18 +241,12 @@ class Export
             $typeExporter = $this->getTypeExporter();
             $typeExporter->queue = $queue;
             $typeExporter->exportData($exportBatch);
+
+            DB::commit();
         } catch (\Exception $e) {
-            /**
-             * Rollback transaction
-             */
             DB::rollBack();
 
             throw $e;
-        } finally {
-            /**
-             * Commit transaction
-             */
-            DB::commit();
         }
 
         return true;
@@ -364,7 +362,7 @@ class Export
         return in_array($this->export->state, [self::STATE_PAUSED, self::STATE_CANCELLED, self::STATE_FAILED]);
     }
 
-    public function flush($exportBuffer)
+    public function flush($exportBuffer): static
     {
         if (empty($exportBuffer)) {
             return $this;
@@ -376,7 +374,7 @@ class Export
         $directory = sprintf('exports/%s/%s', $this->export->id, FileBuffer::FOLDER_PREFIX);
         $fileName = $typeExporter->getFileName();
 
-        $buffer = app(FileExportFileBuffer::class)->initialize(
+        $buffer = resolve(FileExportFileBuffer::class)->initialize(
             $directory,
             $fileName,
             $typeExporter->getExportParameter()
@@ -446,7 +444,7 @@ class Export
     {
         $withMedia = (bool) ($filters['with_media'] ?? false);
         $filePath = $withMedia ? $temporaryPath : $filePath;
-        $export = $this->jobTrackRepository->update([
+        $this->jobTrackRepository->update([
             'file_path' => $filePath,
         ], $this->export->id);
     }
@@ -460,7 +458,7 @@ class Export
 
         if (! $this->typeExporter) {
             $entityType = $this->resolveEntityType($jobInstance->entity_type);
-            $exporterConfig = config('exporters.'.$entityType) ?? config('quick_exporters.'.$entityType);
+            $exporterConfig = config('exporters.'.$entityType, config('quick_exporters.'.$entityType));
 
             if (! is_array($exporterConfig) || ! isset($exporterConfig['exporter'], $exporterConfig['source'])) {
                 throw new \UnexpectedValueException(sprintf(

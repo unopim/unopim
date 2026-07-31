@@ -5,6 +5,9 @@ namespace Webkul\Category\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Category\Models\CategoryFieldOption;
 
+/**
+ * @extends Factory<CategoryFieldOption>
+ */
 class CategoryFieldOptionFactory extends Factory
 {
     /**
@@ -20,8 +23,8 @@ class CategoryFieldOptionFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'         => $this->faker->regexify('/^[a-zA-Z]+[a-zA-Z0-9_]+$/'),
-            'sort_order'   => $this->faker->randomDigit(),
+            'code'         => fake()->regexify('/^[a-zA-Z]+\w+$/'),
+            'sort_order'   => fake()->randomDigit(),
         ];
     }
 }

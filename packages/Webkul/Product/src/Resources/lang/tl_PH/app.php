@@ -1,6 +1,10 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'Mga Istruktura ng Variant',
+    ],
+
     'datagrid' => [
         'copy-of-slug'                  => 'kopya-ng-:value',
         'copy-of'                       => 'Kopya ng :value',
@@ -10,7 +14,9 @@ return [
         'product-can-not-be-copied' => 'Ang mga produkto ng uri ng :type ay hindi maaaring kopyahin',
     ],
     'type' => [
-        'configurable' => 'Nakokontrol',
-        'simple'       => 'Simple',
+        'configurable'  => 'Nakokontrol',
+        'simple'        => 'Simple',
+        'variant-group' => 'Grupo ng Variant',
+        'variant_group' => 'Grupo ng Variant',
     ],
 ];

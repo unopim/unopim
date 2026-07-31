@@ -5,8 +5,9 @@ use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\User\Models\Admin;
 
-function makeProductExporter(array $filters): Exporter
+function makeProductExporter(array $filters, ?int $userId = null): Exporter
 {
     $jobInstance = JobInstances::create([
         'code'                => 'demo_export',
@@ -24,6 +25,7 @@ function makeProductExporter(array $filters): Exporter
         'validation_strategy' => 'stop-on-errors',
         'job_instances_id'    => $jobInstance->id,
         'meta'                => $jobInstance->toArray(),
+        'user_id'             => $userId,
     ]);
 
     $exporter = app(Exporter::class);
@@ -60,6 +62,50 @@ describe('file_path token expansion', function () {
         $exporter = makeProductExporter(['file_format' => 'Csv', 'file_path' => '{code}_{date}']);
 
         expect(exporterFileName($exporter))->toBe('demo_export_2026-06-16.csv');
+
+        Carbon::setTestNow();
+    });
+
+    it('formats the [date] token with the configured date format', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 10:30:00'));
+
+        $exporter = makeProductExporter([
+            'file_format' => 'Csv',
+            'file_path'   => '[code]_[date]',
+            'date_format' => 'd-m-Y',
+        ]);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_16-06-2026.csv');
+
+        Carbon::setTestNow();
+    });
+
+    it('keeps a slashed date format readable instead of stripping the separators', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 10:30:00'));
+
+        $exporter = makeProductExporter([
+            'file_format' => 'Csv',
+            'file_path'   => '[code]_[date]',
+            'date_format' => 'd/m/Y',
+        ]);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_16-06-2026.csv');
+
+        Carbon::setTestNow();
+    });
+
+    it('renders the [time] token in the timezone of the user who ran the export', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 18:30:00', 'UTC'));
+
+        $admin = Admin::first();
+        $admin->update(['timezone' => 'Asia/Kolkata']);
+
+        $exporter = makeProductExporter([
+            'file_format' => 'Csv',
+            'file_path'   => '[code]_[time]',
+        ], $admin->id);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_000000.csv');
 
         Carbon::setTestNow();
     });
@@ -105,6 +151,52 @@ describe('header row export parameter', function () {
 
     it('produces no header labels when use_labels is off', function () {
         expect(makeProductExporter(['file_format' => 'Csv'])->getExportParameter()['headerLabels'])->toBe([]);
+    });
+});
+
+describe('header locale selection', function () {
+    function headerLocaleFor(array $channelsAndLocales): ?string
+    {
+        $exporter = app(Exporter::class);
+
+        $property = new ReflectionProperty($exporter, 'channelsAndLocales');
+        $property->setAccessible(true);
+        $property->setValue($exporter, $channelsAndLocales);
+
+        $method = new ReflectionMethod($exporter, 'headerLocale');
+        $method->setAccessible(true);
+
+        return $method->invoke($exporter);
+    }
+
+    it('labels the header in the configured locale even when another locale is listed first', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['de_DE', 'en_US', 'fr_FR']]))->toBe('en_US');
+    });
+
+    it('does not use the configured locale when the export does not cover it', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['de_DE', 'fr_FR']]))->toBe('de_DE');
+    });
+
+    it('picks the same locale no matter what order the channel lists them in', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['fr_FR', 'de_DE', 'en_US']]))
+            ->toBe(headerLocaleFor(['default' => ['de_DE', 'en_US', 'fr_FR']]));
+    });
+
+    it('considers the locales of every exported channel, not only the first', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['german' => ['de_DE'], 'american' => ['en_US']]))->toBe('en_US');
+    });
+
+    it('returns null when no exported channel carries a locale', function () {
+        expect(headerLocaleFor([]))->toBeNull()
+            ->and(headerLocaleFor(['default' => []]))->toBeNull();
     });
 });
 

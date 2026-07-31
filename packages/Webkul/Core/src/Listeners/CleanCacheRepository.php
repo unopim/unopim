@@ -9,7 +9,7 @@ use Prettus\Repository\Listeners\CleanCacheRepository as BaseCleanCacheRepositor
 
 class CleanCacheRepository extends BaseCleanCacheRepository
 {
-    public function handle(RepositoryEventBase $event)
+    public function handle(RepositoryEventBase $event): void
     {
         try {
             $this->repository = $event->getRepository();
@@ -20,7 +20,7 @@ class CleanCacheRepository extends BaseCleanCacheRepository
                 $this->model = $event->getModel();
                 $this->action = $event->getAction();
 
-                $className = get_class($this->repository);
+                $className = $this->repository::class;
 
                 if (config("repository.cache.repositories.{$className}.clean.on.{$this->action}", config("repository.cache.clean.on.{$this->action}", true))) {
                     $cacheKeys = CacheKeys::getKeys($className);

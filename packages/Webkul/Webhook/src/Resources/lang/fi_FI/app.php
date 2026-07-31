@@ -6,7 +6,7 @@ return [
             'sidebar' => [
                 'menu' => [
                     'webhook' => [
-                        'name' => 'Webhook',
+                        'name' => 'Webhookit',
                     ],
                 ],
             ],
@@ -18,11 +18,10 @@ return [
     ],
     'acl' => [
         'webhook' => [
-            'index' => 'Webhook',
-        ],
-        'settings' => [
-            'index'  => 'Asetukset',
-            'update' => 'Päivitä asetukset',
+            'index'  => 'Webhook',
+            'create' => 'Luo',
+            'edit'   => 'Muokkaa',
+            'delete' => 'Poista',
         ],
         'logs' => [
             'index'       => 'Lokit',
@@ -31,34 +30,93 @@ return [
             'mass-delete' => 'Joukkopoisto',
         ],
     ],
+
+    'events' => [
+        'product' => [
+            'created' => 'Tuote luotu',
+            'updated' => 'Tuote päivitetty',
+        ],
+    ],
+
+    'webhooks' => [
+        'index' => [
+            'title'        => 'Webhookit',
+            'create-btn'   => 'Luo Webhook',
+            'logs-btn'     => 'Lokit',
+            'back-btn'     => 'Takaisin Webhookeihin',
+            'default-name' => 'Oletus',
+            'datagrid'     => [
+                'id'         => 'Id',
+                'name'       => 'Nimi',
+                'url'        => 'URL',
+                'events'     => 'Tapahtumat',
+                'status'     => 'Tila',
+                'active'     => 'Aktiivinen',
+                'inactive'   => 'Ei-aktiivinen',
+                'created_at' => 'Luotu',
+                'edit'       => 'Muokkaa',
+                'delete'     => 'Poista',
+            ],
+        ],
+        'create' => [
+            'title'    => 'Luo Webhook',
+            'save-btn' => 'Tallenna',
+        ],
+        'edit' => [
+            'title'    => 'Muokkaa Webhookia',
+            'save-btn' => 'Tallenna',
+        ],
+        'form' => [
+            'general'       => 'Yleiset',
+            'name'          => 'Nimi',
+            'url'           => 'URL',
+            'events'        => 'Tapahtumat',
+            'select-events' => 'Valitse tapahtumat',
+            'secret'        => 'Allekirjoitussalaisuus',
+            'secret-set'    => 'Salaisuus on jo asetettu',
+            'secret-hint'   => 'Käytetään jokaisen hyötykuorman allekirjoittamiseen HMAC SHA-256 -allekirjoituksella. Jätä tyhjäksi säilyttääksesi nykyisen salaisuuden.',
+            'settings'      => 'Asetukset',
+            'active'        => 'Aktiivinen',
+            'test'          => 'Testaa yhteys',
+            'test-hint'     => 'Lähetä testipyyntö yllä olevaan URL-osoitteeseen.',
+            'test-btn'      => 'Lähetä testi',
+            'test-no-url'   => 'Anna ensin URL-osoite.',
+            'test-failed'   => 'Testipyyntö epäonnistui.',
+            'headers'       => 'Mukautetut otsikot',
+            'add-header'    => 'Lisää otsikko',
+            'no-headers'    => 'Mukautettuja otsikoita ei ole lisätty.',
+            'header-key'    => 'Otsikko',
+            'header-value'  => 'Arvo',
+        ],
+        'create-success' => 'Webhook luotu onnistuneesti',
+        'update-success' => 'Webhook päivitetty onnistuneesti',
+        'delete-success' => 'Webhook poistettu onnistuneesti',
+        'delete-failed'  => 'Webhookin poisto epäonnistui',
+        'validation'     => [
+            'unsafe-url' => 'URL-osoite osoittaa yksityiseen, loopback- tai sisäiseen osoitteeseen, eikä sitä sallita.',
+            'scheme'     => 'URL-osoitteen on alettava http:// tai https://.',
+        ],
+        'test' => [
+            'payload-message'   => 'Unopim webhook -testipyyntö',
+            'connection-failed' => 'URL-osoitteeseen ei saatu yhteyttä. Tarkista URL-osoite.',
+            'unreachable'       => 'URL-osoitetta ei tavoiteta (HTTP :code).',
+            'reachable'         => 'URL-osoite on tavoitettavissa.',
+        ],
+        'prune' => [
+            'disabled' => 'Webhook-lokien säilytys on poistettu käytöstä; mitään ei poistettu.',
+            'done'     => 'Poistettu :count webhook-loki(a), jotka ovat yli :days päivä(ä) vanhoja.',
+        ],
+    ],
+
     'configuration' => [
         'webhook' => [
-            'settings' => [
-                'index' => [
-                    'name'    => 'Asetukset',
-                    'title'   => 'Webhook-asetukset',
-                    'save'    => 'Tallenna',
-                    'general' => 'Yleiset',
-                    'active'  => [
-                        'label' => 'Aktiivinen Webhook',
-                    ],
-                    'webhook_url' => [
-                        'label'             => 'Webhook-URL',
-                        'required'          => 'Webhook-URL vaaditaan, kun webhook on käytössä.',
-                        'scheme'            => 'Webhook-URL:n on alettava http:// tai https://.',
-                        'connection_failed' => 'Webhook-URL-osoitteeseen ei saatu yhteyttä. Tarkista URL-osoite.',
-                        'unreachable'       => 'Webhook-URL ei kelpaa (HTTP :code).',
-                        'unsafe'            => 'Webhook-URL osoittaa yksityiseen, loopback- tai sisäiseen osoitteeseen, eikä sitä sallita.',
-                    ],
-                    'success'    => 'Webhook-asetukset tallennettu onnistuneesti',
-                    'logs-title' => 'Lokit',
-                ],
-            ],
             'logs' => [
                 'index' => [
                     'datagrid' => [
                         'id'               => 'ID',
+                        'webhook'          => 'Webhook',
                         'sku'              => 'SKU',
+                        'event'            => 'Tapahtuma',
                         'created_at'       => 'Päivämäärä/Aika',
                         'user'             => 'Käyttäjä',
                         'status'           => 'Tila',
@@ -75,6 +133,7 @@ return [
                     'response'       => 'Vastaus',
                     'back'           => 'Back to Logs',
                     'no-payload'     => 'Tälle lokimerkinnälle ei ole tallennettu hyötykuormaa.',
+                    'load-failed'    => 'Lokitietojen lataaminen epäonnistui.',
                     'delete-success' => 'Webhook-lokit poistettu onnistuneesti',
                     'delete-failed'  => 'Webhook-lokien poisto epäonnistui odottamattomasti',
                     'unauthorized'   => 'Tätä toimintoa ei ole valtuutettu',

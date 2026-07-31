@@ -15,6 +15,14 @@
 
     $field['options'] = isset($field['repository']) ? ($repositoryOptions ?? []) : ($field['options'] ?? []);
 
+    if (! empty($field['placeholder'])) {
+        $field['placeholder'] = trans($field['placeholder']);
+    }
+
+    if (! empty($field['info'])) {
+        $field['info'] = trans($field['info']);
+    }
+
     $value = core()->getConfigData($nameKey) ?? ($field['default_value'] ?? '');
 
     // For select fields, ensure value is always a string so v-select-handler matching works
@@ -45,17 +53,23 @@
         id="v-configurable-template"
     >
         <x-admin::form.control-group class="last:!mb-0">
-            <!-- Title of the input field -->
             <div    
                 v-if="field"
                 class="flex justify-between"
             >
                 <x-admin::form.control-group.label ::for="name">
                     @{{ label }} <span :class="isRequire"></span>
+
+                    <span
+                        v-if="info"
+                        class="icon tooltip-icon cursor-pointer ltr:ml-1.5 rtl:mr-1.5"
+                        :title="info"
+                    >
+                        &#9432;
+                    </span>
                 </x-admin::form.control-group.label>
             </div>
         
-            <!-- Text input -->
             <template v-if="field.type == 'text'">
                 <x-admin::form.control-group.control
                     type="text"
@@ -64,12 +78,24 @@
                     ::value="value"
                     ::rules="validations"
                     ::label="label"
-                    ::placeholder="field.placeholder || ''"
+                    ::placeholder="placeholder"
                     @input="emitChangeEvent($event.target.value, name)"
                 />
             </template>
         
-            <!-- Password input -->
+            <template v-if="field.type == 'textarea'">
+                <x-admin::form.control-group.control
+                    type="textarea"
+                    ::id="name"
+                    ::name="name"
+                    ::value="value"
+                    ::rules="validations"
+                    ::label="label"
+                    ::placeholder="placeholder"
+                    @input="emitChangeEvent($event.target.value, name)"
+                />
+            </template>
+
             <template v-if="field.type == 'password'">
                 <x-admin::form.control-group.control
                     type="password"
@@ -78,11 +104,11 @@
                     ::value="maskedPassword"
                     ::rules="validations"
                     ::label="label"
+                    ::placeholder="placeholder"
                     @input="emitChangeEvent($event.target.value, name)"
                 />
             </template>
         
-            <!-- Number input -->
             <template v-if="field.type == 'number'">
                 <x-admin::form.control-group.control
                     type="number"
@@ -91,13 +117,12 @@
                     ::rules="validations"
                     ::value="value"
                     ::label="label"
-                    ::placeholder="field.placeholder || ''"
+                    ::placeholder="placeholder"
                     ::min="field.name == 'minimum_order_amount'"
                     @input="emitChangeEvent($event.target.value, name)"
                 />
             </template>
 
-            <!-- Color Input -->
             <template v-if="field.type == 'color'">
                 <v-field
                     v-slot="{ field, errors }"
@@ -117,7 +142,6 @@
                 </v-field>
             </template>
 
-            <!-- Select input -->
             <template v-if="field.type == 'select'">
                 <x-admin::form.control-group.control
                     type="select"
@@ -134,7 +158,6 @@
                 </x-admin::form.control-group.control>
             </template>
 
-            <!-- Boolean/Switch input -->
             <template v-if="field.type == 'boolean'">
                 <input
                     type="hidden"
@@ -153,11 +176,10 @@
                         @input="emitChangeEvent($event.target.checked ? '1' : '0', name)"
                     >
 
-                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-violet-700"></div>
+                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-700"></div>
                 </label>
             </template>
 
-            <!-- validation message -->
             <v-error-message
                 :name="name"
                 v-slot="{ message }"
@@ -200,9 +222,12 @@
                 },
 
                 maskedPassword() {
-                    return this.value ? '*'.repeat(this.value.length) : '';
-                }
+                    return this.value ? '********' : '';
+                },
 
+                placeholder() {
+                    return this.field.placeholder || '';
+                },
             },
 
             methods: {
