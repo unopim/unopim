@@ -17,6 +17,7 @@ use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoMediaSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoPassportSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoScaleSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoWorkspaceSeeder;
 
 /**
@@ -40,9 +41,11 @@ class DemoDataInstaller
      * call short-circuits with `skipped: true`. Pass `$force: true`
      * to re-run the seeders even when data is already present.
      *
+     * Pass `$large` to pad the catalog with cloned products for scale testing.
+     *
      * @return array{success: bool, skipped?: bool, error?: string}
      */
-    public function seed(?Closure $reporter = null, bool $force = false): array
+    public function seed(?Closure $reporter = null, bool $force = false, bool $large = false): array
     {
         $report = $reporter ?? static fn (string $message): null => null;
 
@@ -79,6 +82,11 @@ class DemoDataInstaller
 
             $report('Seeding saved grid views and sample webhook...');
             resolve(DemoWorkspaceSeeder::class)->run();
+
+            if ($large) {
+                $report('Padding the catalog for scale testing...');
+                resolve(DemoScaleSeeder::class)->run();
+            }
 
             if (config('elasticsearch.enabled') == 'true') {
                 try {

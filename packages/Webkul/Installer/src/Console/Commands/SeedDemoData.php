@@ -17,7 +17,8 @@ use Webkul\Installer\Helpers\DemoDataInstaller;
  */
 #[Description('Seed demo extras, categories, and sample products into an installed UnoPim database.')]
 #[Signature('unopim:install:demo-data
-        { --force : Re-seed even when demo data is already present. }')]
+        { --force : Re-seed even when demo data is already present. }
+        { --scale= : Pass "large" to pad the catalog to 2000 products for scale testing. }')]
 class SeedDemoData extends Command
 {
     /**
@@ -48,6 +49,7 @@ class SeedDemoData extends Command
         $result = $installer->seed(
             fn (string $message) => $this->warn('Step: '.$message),
             $force,
+            $this->option('scale') === 'large',
         );
 
         if (! ($result['success'] ?? false)) {
