@@ -93,7 +93,6 @@
                                         @change="
                                             $refs.parentTree.clearSelection();
                                             $refs.parentIdField.value = '';
-                                            $refs.parentIdField.dispatchEvent(new CustomEvent('unsaved-changes:touch', { bubbles: true, detail: { name: 'parent_id' } }));
                                             $refs.parentPathLabel.textContent = $refs.rootLevelLabel.textContent.trim();
                                             $refs.parentPathLabel.title = $refs.rootLevelLabel.textContent.trim();
                                             $refs.parentDrawer.close();
@@ -124,7 +123,6 @@
                                     :fallback-locale="config('app.fallback_locale')"
                                     @select-node="
                                         $refs.parentIdField.value = $event.value;
-                                        $refs.parentIdField.dispatchEvent(new CustomEvent('unsaved-changes:touch', { bubbles: true, detail: { name: 'parent_id' } }));
                                         $refs.parentPathLabel.textContent = $event.path;
                                         $refs.parentPathLabel.title = $event.path;
                                         $refs.parentDrawer.close();
