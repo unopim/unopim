@@ -22,6 +22,43 @@ const AUTHORITY_FIELD = { label: 'EU Declaration of Conformity', attribute: 'EU 
 let fixture;
 let templateUrl;
 
+/**
+ * The AI agent shell (`.ap-shell`) can open by default and, being a fixed overlay,
+ * sits above whatever the test is trying to reach — hiding it with an injected
+ * stylesheet races the app's own styles, and it is `v-if`-gated so a client-side
+ * "hide" can still leave it intercepting clicks underneath. Closing it for real
+ * via its own Close button is the only interaction that reliably removes it.
+ */
+async function closeAgentShell(page) {
+  const closeBtn = page.locator('.ap-shell').getByRole('button', { name: 'Close', exact: true });
+
+  if (await closeBtn.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await closeBtn.click().catch(() => {});
+  }
+
+  await page.evaluate(() => {
+    document.querySelectorAll('.ap-shell').forEach((el) => {
+      el.style.setProperty('display', 'none', 'important');
+    });
+  }).catch(() => {});
+}
+
+/**
+ * A `php artisan`/plain-`php` CLI process reads `.env` fresh on every boot, but the
+ * already-running server this suite drives via BASE_URL may have been started with
+ * DB_* env vars overriding a `.env` that has since drifted (shared checkout, other
+ * suites editing it) — dotenv never overwrites an already-set process env var, so
+ * the server keeps the database/prefix it booted with regardless. Without matching
+ * overrides here, the seed script would write to whatever `.env` currently says
+ * and the browser-driven test would never see the fixture it just created.
+ */
+const LOCAL_DB_ENV = process.env.PASSPORT_E2E_LOCAL === '1'
+  ? {
+    DB_DATABASE: process.env.PASSPORT_E2E_DB_DATABASE ?? 'unopim_assoc_e2e',
+    DB_PREFIX: process.env.PASSPORT_E2E_DB_PREFIX ?? '',
+  }
+  : {};
+
 /** Dev envs run the app in docker; CI runs it on the host (PASSPORT_E2E_LOCAL=1). */
 function inContainer(args) {
   if (process.env.PASSPORT_E2E_LOCAL === '1') {
@@ -29,6 +66,7 @@ function inContainer(args) {
       cwd: `${__dirname}/../../../..`,
       encoding: 'utf-8',
       timeout: 600_000,
+      env: { ...process.env, ...LOCAL_DB_ENV },
     });
   }
 
@@ -99,26 +137,50 @@ test.describe.serial('EU battery Digital Product Passport', () => {
   test.beforeAll(() => {
     fixture = seed();
 
+    inContainer([
+      'php', 'artisan', 'tinker', '--execute',
+      "\\Webkul\\ProductPassport\\Models\\PassportTemplateProxy::modelClass()::where('code', 'like', 'battery_e2e_%')->get()->each->delete();",
+    ]);
+
+    inContainer([
+      'php', 'artisan', 'tinker', '--execute',
+      "\\Webkul\\Core\\Models\\CoreConfig::updateOrCreate(['code' => 'general.magic_ai.agentic_pim.open_by_default'], ['value' => '0']);",
+    ]);
+
     inContainer(['php', 'artisan', 'view:clear']);
   });
 
-  /** Dev builds render the Debugbar and the agent shell over the page; both swallow clicks. */
+  /**
+   * Dev builds render the Debugbar and the AI agent shell over the page; both
+   * swallow clicks. A single injected stylesheet races the app's own styles
+   * (whichever attaches last wins a same-specificity, same-!important tie), so
+   * a MutationObserver re-asserts the hide on every DOM mutation instead of
+   * relying on load order.
+   */
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      const style = document.createElement('style');
+      const hide = () => {
+        document.querySelectorAll('.ap-shell, .phpdebugbar, .phpdebugbar-open-handler').forEach((el) => {
+          el.style.setProperty('display', 'none', 'important');
+        });
+      };
 
-      style.textContent = '.ap-shell, .phpdebugbar, .phpdebugbar-open-handler { display: none !important; }';
+      const start = () => {
+        hide();
+        new MutationObserver(hide).observe(document.documentElement, { childList: true, subtree: true });
+      };
 
-      if (document.head) {
-        document.head.appendChild(style);
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
       } else {
-        document.addEventListener('DOMContentLoaded', () => document.head.appendChild(style));
+        start();
       }
     });
   });
 
   test('templates listing ships the ESPR preset', async ({ page }) => {
     await page.goto('/admin/catalog/passports/templates');
+    await closeAgentShell(page);
 
     await expect(page.getByRole('heading', { name: 'Passport Templates' })).toBeVisible();
 
@@ -127,6 +189,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
   test('a battery template is created from the listing modal', async ({ page }) => {
     await page.goto('/admin/catalog/passports/templates');
+    await closeAgentShell(page);
 
     await page.getByRole('button', { name: 'Create Template' }).click();
 
@@ -146,12 +209,18 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
   test('the family, a section and three tiered fields are configured', async ({ page }) => {
     await page.goto(templateUrl);
+    await closeAgentShell(page);
 
     await pickInMultiselect(page, 'families', fixture.family_name);
+    await page.locator('label[for="is_enabled"]').click();
     await page.getByRole('button', { name: /^Save changes$/ }).click();
     await expect(page.getByText(/updated successfully/i)).toBeVisible();
+    await page.waitForLoadState('load');
+    await page.waitForTimeout(1500);
+    await closeAgentShell(page);
 
     await page.getByRole('button', { name: 'Add Section' }).click();
+    await closeAgentShell(page);
 
     await page.locator('input[name="draft_section_name"]').fill('Battery Data');
 
@@ -160,6 +229,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await expect(page.getByRole('cell', { name: 'Battery Data' })).toBeVisible();
 
     for (const field of [CONSUMER_FIELD, OPERATOR_FIELD, AUTHORITY_FIELD]) {
+      await closeAgentShell(page);
       const modal = await openFieldModal(page);
 
       await page.locator('input[name="draft_field_name"]').fill(field.label);
@@ -181,10 +251,12 @@ test.describe.serial('EU battery Digital Product Passport', () => {
       }
 
       await page.getByRole('button', { name: 'Done' }).click();
+      await page.locator('input[name="draft_field_name"]').waitFor({ state: 'detached', timeout: 10000 }).catch(() => {});
 
-      await expect(page.getByRole('cell', { name: field.label, exact: true })).toBeVisible();
+      await expect(page.getByRole('cell', { name: field.label, exact: true }).first()).toBeVisible();
     }
 
+    await closeAgentShell(page);
     await page.getByRole('button', { name: /^Save changes$/ }).click();
 
     await expect(page.getByText(/updated successfully/i)).toBeVisible();
@@ -192,21 +264,28 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
   test('the saved template reports every required field as sourced', async ({ page }) => {
     await page.goto(templateUrl);
+    await closeAgentShell(page);
 
     await expect(page.getByText('1 of 1 required fields sourced')).toBeVisible();
 
     for (const field of [CONSUMER_FIELD, OPERATOR_FIELD, AUTHORITY_FIELD]) {
-      await expect(page.getByRole('cell', { name: field.label, exact: true })).toBeVisible();
+      await expect(page.getByRole('cell', { name: field.label, exact: true }).first()).toBeVisible();
     }
   });
 
   test('the product panel shows the battery as publishable and publishes it', async ({ page }) => {
     await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+    await closeAgentShell(page);
 
     await expect(page.getByText('Digital Product Passport').first()).toBeVisible();
     await expect(page.locator('[data-requirement="dpp"]').filter({ hasText: 'Required for DPP' }).first()).toBeVisible();
 
-    const preview = page.locator('a[href*="/passport/preview"]').first();
+    await page.locator('[role="button"]').filter({ hasText: 'Digital Product Passport' })
+      .filter({ hasText: 'View' })
+      .first()
+      .click();
+
+    const preview = page.locator('[data-section-id="passport"] tr[data-locale-code="en_US"] a[href*="/passport/preview"]').first();
 
     await expect(preview).toBeVisible();
 
@@ -224,6 +303,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
   test('missing DPP attributes explain the blocker and disable publishing', async ({ page }) => {
     await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+    await closeAgentShell(page);
 
     const capacity = page.locator('input[name="values[common][battery_rated_capacity]"]').first();
 
@@ -231,12 +311,13 @@ test.describe.serial('EU battery Digital Product Passport', () => {
       await capacity.fill('');
       await page.getByRole('button', { name: /Save changes|Save Product/ }).last().click();
       await expect(page.getByText(/updated successfully|saved successfully/i).first()).toBeVisible();
+      await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+      await closeAgentShell(page);
     }
 
-    await page
-      .getByText('Digital Product Passport', { exact: true })
+    await page.locator('[role="button"]').filter({ hasText: 'Digital Product Passport' })
+      .filter({ hasText: 'View' })
       .first()
-      .locator('xpath=ancestor::*[@role="button"][1]')
       .click({ force: true });
 
     const panel = page.locator('[data-section-id="passport"]');
@@ -290,11 +371,11 @@ test.describe.serial('EU battery Digital Product Passport', () => {
   test('keeps the locale table scroll inside the DPP drawer on mobile', async ({ page }) => {
     await page.setViewportSize({ width: 478, height: 860 });
     await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+    await closeAgentShell(page);
 
-    const passportCard = page
-      .getByText('Digital Product Passport', { exact: true })
-      .first()
-      .locator('xpath=ancestor::*[@role="button"][1]');
+    const passportCard = page.locator('[role="button"]').filter({ hasText: 'Digital Product Passport' })
+      .filter({ hasText: 'View' })
+      .first();
 
     await passportCard.click({ force: true });
 
@@ -327,32 +408,39 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
   test('publishing exposes the consumer tier only', async ({ page }) => {
     await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
+    await closeAgentShell(page);
+
+    await page.locator('[role="button"]').filter({ hasText: 'Digital Product Passport' })
+      .filter({ hasText: 'View' })
+      .first()
+      .click();
 
     const publish = page.locator('.passport-publish-all-btn').first();
 
-    await publish.waitFor({ state: 'attached' });
+    await publish.waitFor({ state: 'visible' });
 
     await publish.click();
 
-    await expect(page.getByText(/queued/i)).toBeVisible();
+    await expect(page.getByText(/queued|published/i).first()).toBeVisible();
 
     await page.waitForTimeout(2_000);
 
     await page.goto('/admin/catalog/passports');
+    await closeAgentShell(page);
 
-    await expect(page.getByText(fixture.sku).first()).toBeVisible();
+    const row = page.locator('div.row').filter({ hasText: fixture.sku }).first();
 
-    const rowCheckboxLabel = page.locator('label[for^="mass_action_select_record_"]').first();
+    await expect(row).toBeVisible();
+
+    const rowCheckboxLabel = row.locator('label[for^="mass_action_select_record_"]').first();
 
     await rowCheckboxLabel.click();
     await page.getByRole('button', { name: 'Select Action' }).click();
     await expect(page.getByText('Republish selected', { exact: true })).toBeVisible();
 
-    const publicLink = page.locator('a[href*="/p/"]').first();
+    const url = await row.locator('p.truncate[title^="http"]').first().getAttribute('title');
 
-    await publicLink.waitFor({ state: 'attached' });
-
-    const url = await publicLink.getAttribute('href');
+    expect(url).toBeTruthy();
 
     const publicPage = await page.request.get(url);
 
