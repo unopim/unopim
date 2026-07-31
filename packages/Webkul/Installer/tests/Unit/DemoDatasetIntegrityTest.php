@@ -100,6 +100,32 @@ describe('demo dataset integrity', function () {
         }
     });
 
+    it('only uses attributes the product family actually carries', function () {
+        $families = [];
+
+        foreach (demoDataset('families')['families'] as $family) {
+            $codes = [];
+
+            foreach ($family['groups'] as $group) {
+                $codes = array_merge($codes, $group);
+            }
+
+            $families[$family['code']] = $codes;
+        }
+
+        foreach (demoCatalog() as $product) {
+            $carried = array_merge($families[$product['family']] ?? [], ['sku', 'url_key']);
+
+            foreach ($product['axes'] ?? [] as $axis) {
+                expect($carried)->toContain($axis);
+            }
+
+            foreach (array_keys($product['common'] ?? []) as $code) {
+                expect($carried)->toContain($code);
+            }
+        }
+    });
+
     it('exercises at least one two-level variant structure', function () {
         $twoLevel = array_filter(
             demoCatalog(),
