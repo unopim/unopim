@@ -147,6 +147,16 @@ foreach ([
     );
 }
 
+/**
+ * A plain CLI bootstrap (no Artisan command runner, no try/catch) lets any
+ * PHP deprecation/warning triggered along the way — visible on CI, where
+ * `display_errors` is on and `~E_DEPRECATED` isn't masked like it is in the
+ * local `dockerfiles/php.ini` — print straight to STDOUT ahead of or behind
+ * this payload. Delimiters let the caller pull the JSON out regardless of
+ * what else lands on the same stream.
+ */
+echo '<<<SEED_JSON>>>'.PHP_EOL;
+
 echo json_encode([
     'family_id'    => $family->id,
     'family_name'  => $family->getTranslatedValueWithFallback('name'),
@@ -162,3 +172,5 @@ echo json_encode([
         'value' => $definition['value'],
     ])->values()->all(),
 ], JSON_THROW_ON_ERROR), PHP_EOL;
+
+echo '<<<END_SEED_JSON>>>'.PHP_EOL;
