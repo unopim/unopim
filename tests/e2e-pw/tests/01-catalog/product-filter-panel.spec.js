@@ -130,7 +130,8 @@ test.describe('Product DataGrid filter panel', () => {
 
     await adminPage.getByText('Filter', { exact: true }).click();
     await addFilter(adminPage, 'Status');
-    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
+
+    // Picking a filter from "Add Filter" expands its editor immediately.
     await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]'))
       .toHaveAttribute('aria-expanded', 'true');
     await adminPage.locator('[data-datagrid-filter="status"] .icon-chevron-down').last().click();
@@ -214,10 +215,12 @@ test.describe('Product DataGrid saved filters', () => {
     await adminPage.getByText('Filter', { exact: true }).click();
 
     if (await adminPage.locator('[data-datagrid-filter="status"]').count() === 0) {
+      // Picking a filter from "Add Filter" expands its editor immediately.
       await addFilter(adminPage, 'Status');
+    } else {
+      await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
     }
 
-    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
     await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]'))
       .toHaveAttribute('aria-expanded', 'true');
     await adminPage.locator('[data-datagrid-filter="status"] .icon-chevron-down').last().click();
