@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Impostazioni di pubblicazione',
                 'enabled'                          => 'Abilitato',
-                'enabled-hint'                     => 'Interruttore principale del livello di servizio pubblico. Quando è disattivato, ogni URL pubblico del passaporto restituisce 404 e il menu dei passaporti viene nascosto.',
+                'enabled-hint'                     => 'Interruttore principale del livello di servizio pubblico. Quando è disattivato, ogni URL pubblico del passaporto restituisce 404. Le schermate dei passaporti nell’amministrazione non sono interessate: nascondile con l’impostazione Passaporto Digitale di Prodotto.',
                 'base-url'                         => 'URL di base',
                 'base-url-hint'                    => 'Indirizzo pubblico in cui vengono serviti i passaporti, usato per generare codici QR e link condivisibili. Lascia vuoto per usare il dominio proprio di questo sito.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

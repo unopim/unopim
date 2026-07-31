@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Postavke objave',
                 'enabled'                          => 'Omogućeno',
-                'enabled-hint'                     => 'Glavni prekidač za javni sloj posluživanja. Kada je isključen, svaki javni URL putovnice vraća 404, a izbornik putovnica je skriven.',
+                'enabled-hint'                     => 'Glavni prekidač za javni sloj posluživanja. Kada je isključen, svaki javni URL putovnice vraća 404. Zasloni putovnica u administraciji nisu zahvaćeni — sakrijte ih postavkom Digitalna putovnica proizvoda.',
                 'base-url'                         => 'Osnovni URL',
                 'base-url-hint'                    => 'Javna adresa na kojoj se poslužuju putovnice, koristi se za izradu QR kodova i poveznica za dijeljenje. Ostavite prazno za korištenje vlastite domene ove stranice.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

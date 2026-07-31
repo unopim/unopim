@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Publication Settings',
                 'enabled'                          => 'Enabled',
-                'enabled-hint'                     => 'Master switch for the public serving tier. When off, every public passport URL returns 404 and the passport menu is hidden.',
+                'enabled-hint'                     => 'Master switch for the public serving tier. When off, every public passport URL returns 404. Admin passport screens are not affected — hide those with the Digital Product Passport setting.',
                 'base-url'                         => 'Base URL',
                 'base-url-hint'                    => 'Public address where passports are served, used to build QR codes and shareable links. Leave blank to use this site’s own domain.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

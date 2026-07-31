@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => '缓存 TTL(秒)',
                 'rate-limit'                       => '速率限制(请求数/分钟)',
                 'indexable'                        => '允许搜索引擎收录',
-                'enabled-hint'                     => '公开服务层的总开关。关闭时，每个公开护照 URL 都会返回 404，护照菜单也会被隐藏。',
+                'enabled-hint'                     => '公开服务层的总开关。关闭时，每个公开护照 URL 都会返回 404。管理后台的护照页面不受影响，如需隐藏请使用数字产品护照设置。',
                 'base-url-hint'                    => '提供护照的公开地址，用于生成 QR 码和可分享链接。留空则使用本站自身的域名。',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => '已渲染的公开护照在重新生成之前的缓存时长。数值越高负载越低；数值越低越能更快反映编辑。',

@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => 'Cache-TTL (seconden)',
                 'rate-limit'                       => 'Snelheidslimiet (verzoeken/minuut)',
                 'indexable'                        => 'Indexering door zoekmachines toestaan',
-                'enabled-hint'                     => 'Hoofdschakelaar voor de openbare weergavelaag. Wanneer uit, geeft elke openbare paspoort-URL een 404 terug en wordt het paspoortmenu verborgen.',
+                'enabled-hint'                     => 'Hoofdschakelaar voor de openbare weergavelaag. Wanneer uit, geeft elke openbare paspoort-URL een 404 terug. De paspoortschermen in de beheeromgeving blijven ongewijzigd — verberg die met de instelling Digitaal Productpaspoort.',
                 'base-url-hint'                    => 'Openbaar adres waar paspoorten worden aangeboden, gebruikt om QR-codes en deelbare links te bouwen. Laat leeg om het eigen domein van deze site te gebruiken.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => 'Hoe lang een gerenderd openbaar paspoort in de cache blijft voordat het opnieuw wordt opgebouwd. Hogere waarden verlagen de belasting; lagere waarden tonen wijzigingen sneller.',

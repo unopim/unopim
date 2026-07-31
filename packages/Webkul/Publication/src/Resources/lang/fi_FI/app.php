@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Julkaisuasetukset',
                 'enabled'                          => 'Käytössä',
-                'enabled-hint'                     => 'Julkisen jakelutason pääkytkin. Kun se on pois päältä, jokainen julkinen passin URL-osoite palauttaa 404-virheen ja passivalikko piilotetaan.',
+                'enabled-hint'                     => 'Julkisen jakelutason pääkytkin. Kun se on pois päältä, jokainen julkinen passin URL-osoite palauttaa 404-virheen. Hallinnan passinäkymiin tämä ei vaikuta — piilota ne Digitaalisen tuotepassin asetuksella.',
                 'base-url'                         => 'Perus-URL',
                 'base-url-hint'                    => 'Julkinen osoite, jossa passit tarjoillaan; käytetään QR-koodien ja jaettavien linkkien luomiseen. Jätä tyhjäksi käyttääksesi tämän sivuston omaa verkkotunnusta.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Veröffentlichungseinstellungen',
                 'enabled'                          => 'Aktiviert',
-                'enabled-hint'                     => 'Hauptschalter für die öffentliche Bereitstellungsebene. Wenn deaktiviert, geben alle öffentlichen Pass-URLs 404 zurück und das Pass-Menü wird ausgeblendet.',
+                'enabled-hint'                     => 'Hauptschalter für die öffentliche Bereitstellungsebene. Wenn deaktiviert, geben alle öffentlichen Pass-URLs 404 zurück. Die Pass-Ansichten im Admin bleiben unberührt — blenden Sie diese über die Einstellung Digitaler Produktpass aus.',
                 'base-url'                         => 'Basis-URL',
                 'base-url-hint'                    => 'Öffentliche Adresse, unter der die Pässe bereitgestellt werden; wird zur Erzeugung von QR-Codes und teilbaren Links verwendet. Leer lassen, um die eigene Domain dieser Website zu verwenden.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

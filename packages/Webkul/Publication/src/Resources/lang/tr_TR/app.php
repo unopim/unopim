@@ -12,7 +12,7 @@ return [
                 'cache-ttl'                        => 'Önbellek TTL (saniye)',
                 'rate-limit'                       => 'Hız Sınırı (istek/dakika)',
                 'indexable'                        => 'Arama motoru dizinlemesine izin ver',
-                'enabled-hint'                     => 'Genel yayın katmanının ana anahtarı. Kapalıyken her genel pasaport URL\'si 404 döner ve pasaport menüsü gizlenir.',
+                'enabled-hint'                     => 'Genel yayın katmanının ana anahtarı. Kapalıyken her genel pasaport URL’si 404 döner. Yönetim panelindeki pasaport ekranları bundan etkilenmez; onları gizlemek için Dijital Ürün Pasaportu ayarını kullanın.',
                 'base-url-hint'                    => 'Pasaportların sunulduğu genel adres; QR kodları ve paylaşılabilir bağlantılar oluşturmak için kullanılır. Bu sitenin kendi alan adını kullanmak için boş bırakın.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl-hint'                   => 'Oluşturulan bir genel pasaportun yeniden oluşturulmadan önce ne kadar süre önbelleğe alınacağı. Yüksek değerler yükü azaltır; düşük değerler değişiklikleri daha hızlı yansıtır.',

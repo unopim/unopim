@@ -8,7 +8,7 @@ return [
             'settings' => [
                 'title'                            => 'Pengaturan Publikasi',
                 'enabled'                          => 'Diaktifkan',
-                'enabled-hint'                     => 'Sakelar utama untuk tingkat penyajian publik. Saat nonaktif, setiap URL paspor publik mengembalikan 404 dan menu paspor disembunyikan.',
+                'enabled-hint'                     => 'Sakelar utama untuk tingkat penyajian publik. Saat nonaktif, setiap URL paspor publik mengembalikan 404. Layar paspor di admin tidak terpengaruh — sembunyikan lewat pengaturan Paspor Produk Digital.',
                 'base-url'                         => 'URL Dasar',
                 'base-url-hint'                    => 'Alamat publik tempat paspor disajikan, digunakan untuk membuat kode QR dan tautan yang dapat dibagikan. Biarkan kosong untuk menggunakan domain situs ini sendiri.',
                 'base-url-placeholder'             => 'https://dpp.example.com',

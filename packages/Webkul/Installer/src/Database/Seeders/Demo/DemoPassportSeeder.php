@@ -157,14 +157,16 @@ class DemoPassportSeeder extends Seeder
 
     /**
      * The publish gate fails closed, so the passport tier has to be switched on
-     * for the channel the demo publishes to.
+     * before the demo publishes. Written at the global scope because that is the
+     * only scope the settings screen edits — a channel-scoped row would leave the
+     * feature on with no way to turn it off from the admin.
      */
     protected function enablePassports(): void
     {
         DB::table('core_config')->updateOrInsert(
             [
                 'code'         => 'catalog.product_passport.settings.enabled',
-                'channel_code' => self::PUBLISH_CHANNEL,
+                'channel_code' => null,
                 'locale_code'  => null,
             ],
             ['value' => '1'],
