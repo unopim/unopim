@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/family-fixtures');
-const { generateUid } = require('../../utils/helpers');
+const { generateUid, fillLocalizedField } = require('../../utils/helpers');
 const { gotoIndex, createFamily, deleteFamilyByCode, saveFamilyEdit } = require('../../utils/family-helpers');
 
 /**
@@ -78,9 +78,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
     await expect(assignedGroups.getByText('General').first()).toBeVisible();
     await expect(assignedGroups.getByText('SKU').first()).toBeVisible();
 
-    const nameInput = adminPage.locator('input[name$="[name]"]').first();
-    await nameInput.fill('After Edit');
-    await nameInput.blur();
+    await fillLocalizedField(adminPage, 'After Edit');
     await saveFamilyEdit(adminPage);
 
     await deleteFamilyByCode(adminPage, code);
