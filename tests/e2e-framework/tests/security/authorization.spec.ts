@@ -9,7 +9,7 @@ test.describe('Authorization', () => {
       const page = await context.newPage();
       await page.goto(`${environment.baseUrl}${module.path!}`);
       await expect(page).toHaveURL(/\/admin\/login/);
-      await expect(page.getByRole('button', { name: /sign in|login/i }).or(page.locator('button[type="submit"]'))).toBeVisible();
+      await expect(page.getByRole('button', { name: /sign in/i }).first()).toBeVisible();
       await context.close();
     });
   }

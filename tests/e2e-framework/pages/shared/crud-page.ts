@@ -7,13 +7,13 @@ export class CrudPage extends BasePage {
     super(page);
   }
 
-  grid = this.page.locator('table, [role="table"], .datagrid').first();
-  search = this.page.getByPlaceholder(/search/i).or(this.page.locator('input[type="search"]').first());
-  filters = this.page.getByRole('button', { name: /filter/i }).or(this.page.locator('[data-test*="filter"]').first());
-  firstCheckbox = this.page.locator('input[type="checkbox"]').first();
-  createButton = this.page.getByRole('link', { name: /create|add|new/i }).or(this.page.getByRole('button', { name: /create|add|new/i }));
-  saveButton = this.page.getByRole('button', { name: /save/i });
-  deleteButton = this.page.getByRole('button', { name: /delete/i }).or(this.page.getByRole('link', { name: /delete/i }));
+  grid = this.page.getByRole('table').first();
+  search = this.page.getByPlaceholder(/search/i).first();
+  filters = this.page.getByRole('button', { name: /filter/i }).first();
+  firstCheckbox = this.page.getByRole('checkbox').first();
+  createButton = this.page.getByRole('link', { name: /create|add|new/i }).first();
+  saveButton = this.page.getByRole('button', { name: /save/i }).first();
+  deleteButton = this.page.getByRole('button', { name: /delete/i }).first();
 
   async expectIndexReady(): Promise<void> {
     await this.expectLoaded();
