@@ -54,8 +54,8 @@ async function closeAgentShell(page) {
  */
 const LOCAL_DB_ENV = process.env.PASSPORT_E2E_LOCAL === '1'
   ? {
-    DB_DATABASE: process.env.PASSPORT_E2E_DB_DATABASE ?? 'unopim_assoc_e2e',
-    DB_PREFIX: process.env.PASSPORT_E2E_DB_PREFIX ?? '',
+    ...(process.env.PASSPORT_E2E_DB_DATABASE ? { DB_DATABASE: process.env.PASSPORT_E2E_DB_DATABASE } : {}),
+    ...(process.env.PASSPORT_E2E_DB_PREFIX !== undefined ? { DB_PREFIX: process.env.PASSPORT_E2E_DB_PREFIX } : {}),
   }
   : {};
 
