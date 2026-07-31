@@ -17,7 +17,7 @@ test.describe('Category parent picker', () => {
 
     await parentField.click();
 
-    const drawerOption = adminPage.locator('input[name="parent_id_picker"]').nth(1);
+    const drawerOption = adminPage.locator('input[type="radio"][name="parent_id_picker"]:not([value=""]):not([disabled])').first();
     await drawerOption.waitFor({ state: 'attached' });
     await drawerOption.dispatchEvent('change');
 
@@ -41,7 +41,7 @@ test.describe('Category parent picker', () => {
 
     await parentField.click();
 
-    const rootOption = adminPage.locator('input[name="parent_id_picker"][value=""]');
+    const rootOption = adminPage.locator('input[type="radio"][name="parent_id_picker"][value=""]');
     await rootOption.waitFor({ state: 'attached' });
     await rootOption.dispatchEvent('change');
 
