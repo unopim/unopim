@@ -131,7 +131,7 @@ return [
 
     'validation' => [
         'code_format'      => 'This field can only contain letters, numbers, and underscores.',
-        'label_format'     => 'This field can only contain letters, numbers, spaces, and underscores.',
+        'label_format'     => 'This field may only contain letters, numbers, spaces, and the characters _ - \' . , / ( ).',
         'max_conversions'  => 'A unit cannot have more than :max conversion operations.',
         'max_units'        => 'A measurement family cannot have more than :max units.',
     ],

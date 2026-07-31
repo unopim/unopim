@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Tämä kenttä voi sisältää vain kirjaimia, numeroita ja alaviivoja.',
-        'label_format'     => 'Tämä kenttä voi sisältää vain kirjaimia, numeroita, välilyöntejä ja alaviivoja.',
+        'label_format'     => 'Tämä kenttä voi sisältää vain kirjaimia, numeroita, välilyöntejä ja merkit _ - \' . , / ( ).',
         'max_conversions'  => 'Yksiköllä ei voi olla enempää kuin :max muunnosoperaatiota.',
         'max_units'        => 'Mittausperheellä ei voi olla enempää kuin :max yksikköä.',
     ],

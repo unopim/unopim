@@ -131,7 +131,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Dette felt må kun indeholde bogstaver, tal og understregninger.',
-        'label_format'     => 'Dette felt må kun indeholde bogstaver, tal, mellemrum og understregninger.',
+        'label_format'     => 'Dette felt må kun indeholde bogstaver, tal, mellemrum og tegnene _ - \' . , / ( ).',
         'max_conversions'  => 'En enhed kan ikke have mere end :max konverteringsoperationer.',
         'max_units'        => 'En målefamilie kan ikke have mere end :max enheder.',
     ],

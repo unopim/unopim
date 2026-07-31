@@ -603,11 +603,11 @@
 
 .tox .tox-toolbar__group:last-child button {
     padding: 6px 8px;
-    @apply text-unopim-primary text-primary-700 bg-unopim-primary-muted bg-primary-100;
+    @apply text-unopim-primary text-primary-700 bg-unopim-primary-muted bg-primary-100 dark:bg-transparent dark:text-slate-50;
 }
 
 .tox .tox-toolbar__group:last-child button:hover {
-    @apply bg-unopim-primary-border bg-primary-200;
+    @apply bg-unopim-primary-border bg-primary-200 dark:bg-cherry-600;
 }
 
 
@@ -616,7 +616,7 @@
 }
 
 .tox .tox-tbtn:hover {
-    @apply !bg-unopim-primary-muted !bg-primary-100;
+    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
 }
 
 /* Disabled multiselect keeps the library's light grey fill; give it a dark
@@ -629,10 +629,12 @@
     color: #9ca3af !important;
 }
 
-/* Match the TinyMCE (oxide-dark) chrome to the cherry palette so the editor
-   reads as a native dark field instead of the skin's default blue-grey. */
 .dark .tox.tox-tinymce {
     @apply border-gray-600;
+}
+
+.dark .tox .tox-tbtn svg {
+    fill: #fff;
 }
 
 .dark .tox .tox-editor-header,

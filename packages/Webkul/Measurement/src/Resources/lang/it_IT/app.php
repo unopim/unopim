@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Questo campo può contenere solo lettere, numeri e trattini bassi.',
-        'label_format'     => 'Questo campo può contenere solo lettere, numeri, spazi e trattini bassi.',
+        'label_format'     => 'Questo campo può contenere solo lettere, numeri, spazi e i caratteri _ - \' . , / ( ).',
         'max_conversions'  => 'Un\'unità non può avere più di :max operazioni di conversione.',
         'max_units'        => 'Una famiglia di misurazione non può avere più di :max unità.',
     ],

@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => '此欄位只能包含字母、數字和底線。',
-        'label_format'     => '此欄位只能包含字母、數字、空格和底線。',
+        'label_format'     => '此欄位只能包含字母、數字、空格以及字元 _ - \' . , / ( )。',
         'max_conversions'  => '一個單位不能擁有超過 :max 個轉換操作。',
         'max_units'        => '一個計量單位群組不能擁有超過 :max 個單位。',
     ],
