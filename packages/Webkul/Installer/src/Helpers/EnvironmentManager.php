@@ -121,7 +121,7 @@ class EnvironmentManager
         $data = file_get_contents($this->envPath());
 
         foreach ($envDBParams as $key => $value) {
-            $value = preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
+            $value = (string) preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
 
             if (preg_match('/\s/', $value)) {
                 $value = '"'.$value.'"';
