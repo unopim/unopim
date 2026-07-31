@@ -4,25 +4,21 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/**
- * Leading-column prefixes of wider indexes, so they answer no lookup of their
- * own and only add an entry to rewrite on every translation save.
- */
 return new class extends Migration
 {
     /**
-     * @var array<string, array{index: string, columns: array<int, string>}>
+     * @var array<string, array<int, array{columns: array<int, string>, name: string|null}>>
      */
     private array $redundant = [
         'attribute_translations' => [
-            ['index' => 'attribute_translations_attribute_id_index', 'columns' => ['attribute_id']],
-            ['index' => 'attribute_translations_name', 'columns' => ['name']],
+            ['columns' => ['attribute_id'], 'name' => null],
+            ['columns' => ['name'], 'name' => 'attribute_translations_name'],
         ],
         'attribute_option_translations' => [
-            ['index' => 'attribute_option_translations_label', 'columns' => ['label']],
+            ['columns' => ['label'], 'name' => 'attribute_option_translations_label'],
         ],
         'attribute_family_translations' => [
-            ['index' => 'attribute_family_translations_name', 'columns' => ['name']],
+            ['columns' => ['name'], 'name' => 'attribute_family_translations_name'],
         ],
     ];
 
@@ -30,12 +26,14 @@ return new class extends Migration
     {
         foreach ($this->redundant as $table => $definitions) {
             foreach ($definitions as $definition) {
-                if (! Schema::hasTable($table) || ! Schema::hasIndex($table, $definition['index'])) {
+                $index = $this->plainIndex($table, $definition['columns']);
+
+                if ($index === null) {
                     continue;
                 }
 
-                Schema::table($table, function (Blueprint $blueprint) use ($definition): void {
-                    $blueprint->dropIndex($definition['index']);
+                Schema::table($table, function (Blueprint $blueprint) use ($index): void {
+                    $blueprint->dropIndex($index);
                 });
             }
         }
@@ -45,14 +43,32 @@ return new class extends Migration
     {
         foreach ($this->redundant as $table => $definitions) {
             foreach ($definitions as $definition) {
-                if (! Schema::hasTable($table) || Schema::hasIndex($table, $definition['index'])) {
+                if (! Schema::hasTable($table) || $this->plainIndex($table, $definition['columns']) !== null) {
                     continue;
                 }
 
                 Schema::table($table, function (Blueprint $blueprint) use ($definition): void {
-                    $blueprint->index($definition['columns'], $definition['index']);
+                    $blueprint->index($definition['columns'], $definition['name']);
                 });
             }
         }
+    }
+
+    /**
+     * @param  array<int, string>  $columns
+     */
+    private function plainIndex(string $table, array $columns): ?string
+    {
+        if (! Schema::hasTable($table)) {
+            return null;
+        }
+
+        foreach (Schema::getIndexes($table) as $index) {
+            if ($index['columns'] === $columns && ! $index['unique'] && ! $index['primary']) {
+                return $index['name'];
+            }
+        }
+
+        return null;
     }
 };

@@ -224,6 +224,8 @@
                                             ::name="`labels[{{ $locale->code }}]`"
                                             v-model="locale.labels['{{ $locale->code }}']"
                                         />
+
+                                        <x-admin::form.control-group.error control-name="labels[{{ $locale->code }}]" />
                                     </x-admin::form.control-group>
                                 @endforeach
 
@@ -403,6 +405,15 @@
                 },
 
                 methods: {
+                    toFieldNameKeys(errors) {
+                        return Object.fromEntries(
+                            Object.entries(errors ?? {}).map(([key, value]) => [
+                                key.replace(/\.([^.]+)/g, '[$1]'),
+                                Array.isArray(value) ? value[0] : value,
+                            ])
+                        );
+                    },
+
                     updateOrCreate(params, { resetForm, setErrors }) {
                         let formData = new FormData(this.$refs.createLocaleForm);
 
@@ -434,7 +445,7 @@
                         })
                         .catch((error) => {
                             if (error.response?.status === 422) {
-                                setErrors(error.response.data.errors);
+                                setErrors(this.toFieldNameKeys(error.response.data.errors));
                             } else if (error.response?.status === 403) {
                                 this.$refs.localeUpdateOrCreateModal.close();
 

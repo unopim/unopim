@@ -10,7 +10,7 @@ class MeasurementFamilyValidator
 
     public const MAX_FAMILIES = 300;
 
-    private const string LABEL_REGEX = 'regex:/^(?=.*[\pL])[\pL\pN\pM\s_]+$/u';
+    private const string LABEL_REGEX = 'regex:/^(?=.*[\pL])[\pL\pN\pM\s_\-\x{0027}\x{2019}\x{00B7}().,\/]+$/u';
 
     /**
      * Validation rules for creating a family.

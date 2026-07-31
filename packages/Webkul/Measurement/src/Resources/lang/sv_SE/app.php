@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Detta fält får endast innehålla bokstäver, siffror och understreck.',
-        'label_format'     => 'Detta fält får endast innehålla bokstäver, siffror, mellanslag och understreck.',
+        'label_format'     => 'Detta fält får endast innehålla bokstäver, siffror, mellanslag och tecknen _ - \' . , / ( ).',
         'max_conversions'  => 'En enhet kan inte ha fler än :max konverteringsoperationer.',
         'max_units'        => 'En mätningsfamilj kan inte ha fler än :max enheter.',
     ],
