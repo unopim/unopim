@@ -60,40 +60,41 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        /*
-         * Providers boot before the framework switches the connection to the
-         * per-worker database, and CoreServiceProvider::boot() reads channels
-         * and config during boot — so the Core singleton and the catalog scope
-         * memoize models from the WRONG database. Every test would then build
-         * requests from main-database channels/locales while validation reads
-         * the worker database. Forget them after the switch so the first
-         * core() call re-reads the per-worker database.
-         *
-         * The repository cache is primed during that same boot, so it is
-         * flushed alongside the memoized singletons.
-         *
-         * Runtime storage_path() writers (the installer's `storage/installed`
-         * marker, job logs, AI temp files) are also swapped to a per-worker
-         * directory — those files are process-shared state that concurrent
-         * workers otherwise race on. Disk roots resolved from config at boot
-         * are deliberately left untouched.
-         */
-        ParallelTesting::setUpTestCase(function (int|string $token): void {
-            $this->app->forgetInstance('core');
-            $this->app->forgetInstance(CatalogScope::class);
-            Facade::clearResolvedInstance('core');
+        ParallelTesting::setUpTestCase($this->rebindWorkerState(...));
+    }
 
-            Cache::flush();
+    /**
+     * Drop the state memoized before the connection switch and give the worker its own storage.
+     *
+     * Providers boot before the framework switches the connection to the
+     * per-worker database, and CoreServiceProvider::boot() reads channels and
+     * config during boot, so the Core singleton and the catalog scope memoize
+     * models from the main database. Every test would then build requests from
+     * main-database channels and locales while validation reads the worker
+     * database. The repository cache is primed during that same boot, so it is
+     * flushed alongside the memoized singletons.
+     *
+     * Runtime storage_path() writers — the installer's `storage/installed`
+     * marker, job logs, AI temp files — are process-shared state that
+     * concurrent workers otherwise race on, so they move to a per-worker
+     * directory. Disk roots resolved from config at boot are left untouched.
+     */
+    protected function rebindWorkerState(int|string $token): void
+    {
+        $this->app->forgetInstance('core');
+        $this->app->forgetInstance(CatalogScope::class);
+        Facade::clearResolvedInstance('core');
 
-            $workerStorage = $this->app->basePath('storage/parallel/'.$token);
+        Cache::flush();
 
-            foreach (['app', 'logs', 'app/purifier', 'framework/cache', 'framework/sessions', 'framework/testing', 'framework/views'] as $dir) {
-                if (! is_dir($workerStorage.'/'.$dir)) {
-                    mkdir($workerStorage.'/'.$dir, 0777, true);
-                }
+        $workerStorage = $this->app->basePath('storage/parallel/'.$token);
+
+        foreach (['app', 'logs', 'app/purifier', 'framework/cache', 'framework/sessions', 'framework/testing', 'framework/views'] as $dir) {
+            if (! is_dir($workerStorage.'/'.$dir)) {
+                mkdir($workerStorage.'/'.$dir, 0777, true);
             }
+        }
 
-            $this->app->useStoragePath($workerStorage);
-        });
+        $this->app->useStoragePath($workerStorage);
     }
 }
