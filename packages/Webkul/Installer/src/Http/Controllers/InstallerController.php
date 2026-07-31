@@ -716,7 +716,7 @@ class InstallerController extends Controller
                     $this->markInstalled();
                 }
 
-                echo 'event: error'.PHP_EOL;
+                echo 'event: install-error'.PHP_EOL;
                 echo 'data: '.json_encode(['message' => $e->getMessage()]).PHP_EOL.PHP_EOL;
 
                 @ob_flush();
