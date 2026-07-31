@@ -1,5 +1,8 @@
 const { test, expect } = require('../../utils/fixtures');
 const { navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const path = require('path');
+
+const ADMIN_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 /**
  * Helper: Create a custom role with no permissions via the UI.
@@ -141,7 +144,7 @@ test.describe('Bouncer 403 Error Message', () => {
 
     // Step 1: As admin, create a role with minimal permissions and a user
     const adminContext = await browser.newContext({
-      storageState: require('path').resolve(__dirname, '../../.state/admin-auth.json'),
+      storageState: ADMIN_STATE,
     });
     const adminPage = await adminContext.newPage();
 
@@ -194,7 +197,7 @@ test.describe('Bouncer 403 Error Message', () => {
 
     // Step 4: Cleanup as admin
     const cleanupContext = await browser.newContext({
-      storageState: require('path').resolve(__dirname, '../../.state/admin-auth.json'),
+      storageState: ADMIN_STATE,
     });
     const cleanupPage = await cleanupContext.newPage();
 
