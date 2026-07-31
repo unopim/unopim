@@ -187,7 +187,7 @@ class ExportProducts implements PimTool
             'allowed_errors'      => 0,
             'field_separator'     => ',',
             'file_path'           => '',
-            'meta'                => $jobInstance->toJson(),
+            'meta'                => $jobInstance->toArray(),
             'job_instances_id'    => $jobInstance->id,
             'user_id'             => auth()->guard('admin')->id(),
             'created_at'          => now(),

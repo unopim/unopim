@@ -267,7 +267,7 @@ class ExportController extends Controller
                 'allowed_errors'      => $jobInstance->allowed_errors,
                 'field_separator'     => $jobInstance->field_separator,
                 'file_path'           => $jobInstance->file_path,
-                'meta'                => $jobInstance->toJson(),
+                'meta'                => $jobInstance->toArray(),
                 'job_instances_id'    => $jobInstance->id,
                 'user_id'             => $userId,
                 'created_at'          => now(),

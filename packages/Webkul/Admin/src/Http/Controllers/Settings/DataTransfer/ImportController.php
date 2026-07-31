@@ -285,7 +285,7 @@ class ImportController extends Controller
                 'field_separator'       => $import->field_separator,
                 'file_path'             => $import->file_path,
                 'images_directory_path' => $import->images_directory_path,
-                'meta'                  => $import->toJson(),
+                'meta'                  => $import->toArray(),
                 'job_instances_id'      => $import->id,
                 'user_id'               => $userId,
                 'created_at'            => now(),
