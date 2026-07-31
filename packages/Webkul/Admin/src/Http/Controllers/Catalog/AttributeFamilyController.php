@@ -408,6 +408,17 @@ class AttributeFamilyController extends Controller
             }
         }
 
+        $previousStructures = VariantStructure::query()
+            ->with(['axes.attribute', 'placements.attribute'])
+            ->where('attribute_family_id', $attributeFamily->id)
+            ->get();
+
+        $previousSnapshots = $previousStructures
+            ->mapWithKeys(fn (VariantStructure $structure): array => [
+                $structure->code => $this->variantStructureSnapshot($structure),
+            ])
+            ->all();
+
         DB::transaction(function () use ($attributeFamily, $structures, $familyAttributes) {
             VariantStructure::query()
                 ->where('attribute_family_id', $attributeFamily->id)
@@ -455,6 +466,25 @@ class AttributeFamilyController extends Controller
                 }
             }
         });
+
+        $currentStructures = VariantStructure::query()
+            ->with(['axes.attribute', 'placements.attribute'])
+            ->where('attribute_family_id', $attributeFamily->id)
+            ->get();
+
+        $currentSnapshots = $currentStructures
+            ->mapWithKeys(fn (VariantStructure $structure): array => [
+                $structure->code => $this->variantStructureSnapshot($structure),
+            ])
+            ->all();
+
+        if ($previousSnapshots !== $currentSnapshots) {
+            Event::dispatch('core.model.proxy.sync.variantStructure', [
+                'old_values' => $previousSnapshots,
+                'new_values' => $currentSnapshots,
+                'model'      => $currentStructures->first() ?? $previousStructures->first(),
+            ]);
+        }
 
         return new JsonResponse([
             'message' => trans('admin::app.catalog.families.edit.variant-saved'),
