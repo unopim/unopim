@@ -24,6 +24,6 @@ return [
         'icon'         => 'icon-setting',
         'config_group' => 'catalog.product_passport.settings',
         'acl'          => 'configuration.system_settings.product_passport',
-        'sort'         => 2,
+        'sort'         => 1,
     ],
 ];
