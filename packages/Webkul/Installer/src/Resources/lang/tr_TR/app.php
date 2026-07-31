@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Yukarıdaki maddeleri giderip komutu yeniden çalıştırın. Önceki sürüm trafiği karşılamaya devam ediyor.',
         'verify-failed'         => ':count doğrulama başarısız oldu. Uygulama bakım modunda bırakıldı.',
         'migrate-failed'        => 'Taşıma başarısız: :error',
+        'step-failed'           => ':command adımı :code çıkış koduyla başarısız oldu.',
         'phase'                 => [
             'preflight' => 'Aşama 1/5 — Ön denetimler',
             'drift'     => 'Aşama 2/5 — Yapılandırma farkları',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch yeniden dizinlenmedi. :count ürünle bu işlem yükseltmenin kendisinden uzun sürer ve tamamlanana kadar arama veritabanına geri düşer. Site yeniden açıldığında şunları çalıştırın:',
+
+            'too-large' => '--with-reindex yok sayılıyor: :count ürün, anında yeniden oluşturma için :limit ürün sınırının üzerinde.',
+            'deferred'  => 'Elasticsearch yeniden dizinlenmedi. :count ürünle bu işlem yükseltmenin kendisinden uzun sürer ve tamamlanana kadar arama veritabanına geri düşer. Site yeniden açıldığında şunları çalıştırın:',
         ],
     ],
 

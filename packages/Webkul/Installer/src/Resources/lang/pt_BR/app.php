@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Resolva os itens acima e execute o comando novamente. A versão anterior continua atendendo ao tráfego.',
         'verify-failed'         => ':count conferência(s) falharam. O aplicativo foi mantido em modo de manutenção.',
         'migrate-failed'        => 'Falha na migração: :error',
+        'step-failed'           => 'A etapa :command falhou com o código de saída :code.',
         'phase'                 => [
             'preflight' => 'Fase 1 de 5 — Verificações preliminares',
             'drift'     => 'Fase 2 de 5 — Divergências de configuração',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'O Elasticsearch não foi reindexado. Com :count produto(s) isso demora mais do que a própria atualização, e a busca recorre ao banco de dados até terminar. Execute isto assim que o site voltar ao ar:',
+
+            'too-large' => 'Ignorando --with-reindex: :count produto(s) ultrapassa o limite de :limit produtos para uma reconstrução imediata.',
+            'deferred'  => 'O Elasticsearch não foi reindexado. Com :count produto(s) isso demora mais do que a própria atualização, e a busca recorre ao banco de dados até terminar. Execute isto assim que o site voltar ao ar:',
         ],
     ],
 

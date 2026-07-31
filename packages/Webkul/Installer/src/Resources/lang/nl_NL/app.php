@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Los bovenstaande punten op en voer de opdracht opnieuw uit. De vorige release bedient nog steeds het verkeer.',
         'verify-failed'         => ':count verificatie(s) mislukt. De applicatie blijft in onderhoudsmodus.',
         'migrate-failed'        => 'Migratie mislukt: :error',
+        'step-failed'           => 'De stap :command is mislukt met afsluitcode :code.',
         'phase'                 => [
             'preflight' => 'Fase 1 van 5 — Voorcontroles',
             'drift'     => 'Fase 2 van 5 — Configuratieverschillen',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch is niet opnieuw geïndexeerd. Met :count product(en) duurt dit langer dan de upgrade zelf en valt zoeken tot die tijd terug op de database. Voer dit uit zodra de site weer online is:',
+
+            'too-large' => '--with-reindex wordt genegeerd: :count product(en) ligt boven de limiet van :limit producten voor een directe herbouw.',
+            'deferred'  => 'Elasticsearch is niet opnieuw geïndexeerd. Met :count product(en) duurt dit langer dan de upgrade zelf en valt zoeken tot die tijd terug op de database. Voer dit uit zodra de site weer online is:',
         ],
     ],
 

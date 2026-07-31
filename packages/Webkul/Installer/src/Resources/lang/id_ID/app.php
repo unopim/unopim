@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Selesaikan poin-poin di atas lalu jalankan kembali perintahnya. Rilis sebelumnya masih melayani lalu lintas.',
         'verify-failed'         => ':count verifikasi gagal. Aplikasi dibiarkan dalam mode pemeliharaan.',
         'migrate-failed'        => 'Migrasi gagal: :error',
+        'step-failed'           => 'Langkah :command gagal dengan kode keluar :code.',
         'phase'                 => [
             'preflight' => 'Tahap 1 dari 5 — Pemeriksaan awal',
             'drift'     => 'Tahap 2 dari 5 — Perbedaan konfigurasi',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch tidak diindeks ulang. Dengan :count produk, proses ini lebih lama daripada peningkatannya sendiri, dan pencarian akan bersandar pada basis data sampai selesai. Jalankan ini setelah situs kembali daring:',
+
+            'too-large' => 'Mengabaikan --with-reindex: :count produk melebihi batas :limit produk untuk pembangunan ulang langsung.',
+            'deferred'  => 'Elasticsearch tidak diindeks ulang. Dengan :count produk, proses ini lebih lama daripada peningkatannya sendiri, dan pencarian akan bersandar pada basis data sampai selesai. Jalankan ini setelah situs kembali daring:',
         ],
     ],
 

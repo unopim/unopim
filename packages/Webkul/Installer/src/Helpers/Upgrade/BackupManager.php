@@ -66,8 +66,13 @@ class BackupManager
         $username = (string) ($config['username'] ?? '');
         $password = (string) ($config['password'] ?? '');
 
+        /**
+         * `--no-tablespaces` keeps mysqldump 8 from reading INFORMATION_SCHEMA
+         * tablespace data, which needs the PROCESS privilege that a
+         * least-privileged application user is not granted.
+         */
         $command = match ($driver) {
-            'mysql' => ['mysqldump', '--host='.$host, '--port='.$port, '--user='.$username, '--single-transaction', '--routines', '--result-file='.$path, $database],
+            'mysql' => ['mysqldump', '--host='.$host, '--port='.$port, '--user='.$username, '--single-transaction', '--no-tablespaces', '--routines', '--result-file='.$path, $database],
             'pgsql' => ['pg_dump', '--host='.$host, '--port='.$port, '--username='.$username, '--file='.$path, $database],
             default => throw new \RuntimeException(trans('installer::app.upgrade.backup.unsupported-driver', ['driver' => $driver])),
         };

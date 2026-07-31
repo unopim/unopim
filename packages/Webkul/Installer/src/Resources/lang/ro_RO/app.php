@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Rezolvați punctele de mai sus și rulați din nou comanda. Versiunea anterioară deservește în continuare traficul.',
         'verify-failed'         => ':count validare/validări au eșuat. Aplicația a rămas în modul de mentenanță.',
         'migrate-failed'        => 'Migrarea a eșuat: :error',
+        'step-failed'           => 'Pasul :command a eșuat cu codul de ieșire :code.',
         'phase'                 => [
             'preflight' => 'Etapa 1 din 5 — Verificări preliminare',
             'drift'     => 'Etapa 2 din 5 — Diferențe de configurare',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch nu a fost reindexat. Cu :count produs(e) această operație durează mai mult decât actualizarea în sine, iar căutarea revine la baza de date până la finalizare. Rulați acestea după ce site-ul revine online:',
+
+            'too-large' => 'Se ignoră --with-reindex: :count produs(e) depășește limita de :limit produse pentru o reconstrucție imediată.',
+            'deferred'  => 'Elasticsearch nu a fost reindexat. Cu :count produs(e) această operație durează mai mult decât actualizarea în sine, iar căutarea revine la baza de date până la finalizare. Rulați acestea după ce site-ul revine online:',
         ],
     ],
 

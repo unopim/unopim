@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Corrigez les points ci-dessus puis relancez la commande. La version précédente continue de servir le trafic.',
         'verify-failed'         => ':count contrôle(s) en échec. L\'application a été laissée en mode maintenance.',
         'migrate-failed'        => 'Échec de la migration : :error',
+        'step-failed'           => 'L\'étape :command a échoué avec le code de sortie :code.',
         'phase'                 => [
             'preflight' => 'Phase 1 sur 5 — Vérifications préalables',
             'drift'     => 'Phase 2 sur 5 — Écarts de configuration',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch n\'a pas été réindexé. Avec :count produit(s), cette opération dure plus longtemps que la mise à niveau elle-même, et la recherche s\'appuie sur la base de données en attendant. Exécutez ceci une fois le site de nouveau en ligne :',
+
+            'too-large' => '--with-reindex est ignoré : :count produit(s) dépasse la limite de :limit produits pour une reconstruction immédiate.',
+            'deferred'  => 'Elasticsearch n\'a pas été réindexé. Avec :count produit(s), cette opération dure plus longtemps que la mise à niveau elle-même, et la recherche s\'appuie sur la base de données en attendant. Exécutez ceci une fois le site de nouveau en ligne :',
         ],
     ],
 

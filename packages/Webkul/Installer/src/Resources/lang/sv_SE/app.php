@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Åtgärda punkterna ovan och kör kommandot igen. Den tidigare versionen betjänar fortfarande trafiken.',
         'verify-failed'         => ':count verifiering(ar) misslyckades. Applikationen har lämnats i underhållsläge.',
         'migrate-failed'        => 'Migreringen misslyckades: :error',
+        'step-failed'           => 'Steget :command misslyckades med slutkod :code.',
         'phase'                 => [
             'preflight' => 'Fas 1 av 5 — Förkontroller',
             'drift'     => 'Fas 2 av 5 — Konfigurationsavvikelser',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch omindexerades inte. Med :count produkt(er) tar det längre tid än själva uppgraderingen, och sökningen faller tillbaka på databasen tills den är klar. Kör detta när webbplatsen är online igen:',
+
+            'too-large' => 'Ignorerar --with-reindex: :count produkt(er) överstiger gränsen på :limit produkter för en direkt ombyggnad.',
+            'deferred'  => 'Elasticsearch omindexerades inte. Med :count produkt(er) tar det längre tid än själva uppgraderingen, och sökningen faller tillbaka på databasen tills den är klar. Kör detta när webbplatsen är online igen:',
         ],
     ],
 

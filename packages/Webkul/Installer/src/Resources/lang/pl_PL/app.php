@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Usuń powyższe problemy i uruchom polecenie ponownie. Poprzednia wersja nadal obsługuje ruch.',
         'verify-failed'         => 'Nieudane weryfikacje: :count. Aplikacja pozostała w trybie konserwacji.',
         'migrate-failed'        => 'Migracja nie powiodła się: :error',
+        'step-failed'           => 'Krok :command zakończył się niepowodzeniem z kodem wyjścia :code.',
         'phase'                 => [
             'preflight' => 'Etap 1 z 5 — Kontrole wstępne',
             'drift'     => 'Etap 2 z 5 — Różnice w konfiguracji',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch nie został przeindeksowany. Przy :count produktach trwa to dłużej niż sama aktualizacja, a wyszukiwanie do tego czasu korzysta z bazy danych. Uruchom to, gdy witryna wróci do działania:',
+
+            'too-large' => 'Pomijam --with-reindex: :count produktów przekracza limit :limit produktów dla natychmiastowej przebudowy.',
+            'deferred'  => 'Elasticsearch nie został przeindeksowany. Przy :count produktach trwa to dłużej niż sama aktualizacja, a wyszukiwanie do tego czasu korzysta z bazy danych. Uruchom to, gdy witryna wróci do działania:',
         ],
     ],
 

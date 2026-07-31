@@ -275,6 +275,18 @@ deliberately:
 
 Remove `RESPONSE_CACHE_ENABLED`. It no longer has any effect.
 
+### Re-cache configuration and routes
+
+The upgrade runs `optimize:clear` and does not re-cache, so the new release
+starts from source. If your deployment relies on cached config, rebuild it after
+cutover:
+
+```bash
+php artisan config:cache
+php artisan route:cache
+php artisan view:cache
+```
+
 ### Reissue API credentials
 
 Every integration now belongs to a robot user. Open each one in the admin panel,

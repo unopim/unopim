@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => '請解決上述項目後重新執行指令。先前的版本仍在處理流量。',
         'verify-failed'         => ':count 項驗證未通過。應用程式維持在維護模式。',
         'migrate-failed'        => '遷移失敗：:error',
+        'step-failed'           => ':command 步驟失敗，結束代碼 :code。',
         'phase'                 => [
             'preflight' => '第 1/5 階段 — 前置檢查',
             'drift'     => '第 2/5 階段 — 設定差異',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => '未重建 Elasticsearch 索引。在 :count 項商品的規模下，此作業耗時長於升級本身，完成前搜尋會改用資料庫。網站恢復後請執行：',
+
+            'too-large' => '已忽略 --with-reindex：:count 項商品超過即時重建的 :limit 項商品上限。',
+            'deferred'  => '未重建 Elasticsearch 索引。在 :count 項商品的規模下，此作業耗時長於升級本身，完成前搜尋會改用資料庫。網站恢復後請執行：',
         ],
     ],
 

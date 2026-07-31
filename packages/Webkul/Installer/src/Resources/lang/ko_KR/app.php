@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => '위 항목을 해결한 뒤 명령을 다시 실행하세요. 이전 릴리스가 계속 트래픽을 처리하고 있습니다.',
         'verify-failed'         => ':count개의 검증에 실패했습니다. 애플리케이션은 유지 관리 모드로 남아 있습니다.',
         'migrate-failed'        => '마이그레이션에 실패했습니다: :error',
+        'step-failed'           => ':command 단계가 종료 코드 :code 로 실패했습니다.',
         'phase'                 => [
             'preflight' => '1/5단계 — 사전 점검',
             'drift'     => '2/5단계 — 설정 차이',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch 색인을 다시 만들지 않았습니다. 상품 :count개 규모에서는 업그레이드 자체보다 오래 걸리며, 완료될 때까지 검색은 데이터베이스로 대체됩니다. 사이트가 복구되면 다음을 실행하세요:',
+
+            'too-large' => '--with-reindex 를 무시합니다: 상품 :count개는 즉시 재구성 한도인 :limit개를 초과합니다.',
+            'deferred'  => 'Elasticsearch 색인을 다시 만들지 않았습니다. 상품 :count개 규모에서는 업그레이드 자체보다 오래 걸리며, 완료될 때까지 검색은 데이터베이스로 대체됩니다. 사이트가 복구되면 다음을 실행하세요:',
         ],
     ],
 

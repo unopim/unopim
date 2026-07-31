@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Resolve the items above and run the command again. The previous release is still serving traffic.',
         'verify-failed'         => ':count verification(s) failed. The application has been left in maintenance mode.',
         'migrate-failed'        => 'Migration failed: :error',
+        'step-failed'           => 'The :command step failed with exit code :code.',
         'phase'                 => [
             'preflight' => 'Phase 1 of 5 — Preflight checks',
             'drift'     => 'Phase 2 of 5 — Configuration drift',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch was not reindexed. With :count product(s) this runs longer than the upgrade itself, and search falls back to the database until it finishes. Run these once the site is back up:',
+
+            'too-large' => 'Ignoring --with-reindex: :count product(s) is above the :limit product limit for an inline rebuild.',
+            'deferred'  => 'Elasticsearch was not reindexed. With :count product(s) this runs longer than the upgrade itself, and search falls back to the database until it finishes. Run these once the site is back up:',
         ],
     ],
 

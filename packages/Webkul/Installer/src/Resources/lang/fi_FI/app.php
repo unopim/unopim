@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Korjaa yllä mainitut kohdat ja suorita komento uudelleen. Aiempi julkaisu palvelee edelleen liikennettä.',
         'verify-failed'         => 'Epäonnistuneita varmistuksia: :count. Sovellus jätettiin huoltotilaan.',
         'migrate-failed'        => 'Migraatio epäonnistui: :error',
+        'step-failed'           => 'Vaihe :command epäonnistui, paluukoodi :code.',
         'phase'                 => [
             'preflight' => 'Vaihe 1/5 — Esitarkistukset',
             'drift'     => 'Vaihe 2/5 — Asetusten eroavaisuudet',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearchia ei indeksoitu uudelleen. :count tuotteella tämä kestää pidempään kuin itse päivitys, ja haku turvautuu siihen asti tietokantaan. Suorita nämä, kun sivusto on jälleen käytettävissä:',
+
+            'too-large' => 'Ohitetaan --with-reindex: :count tuotetta ylittää :limit tuotteen rajan välittömälle uudelleenindeksoinnille.',
+            'deferred'  => 'Elasticsearchia ei indeksoitu uudelleen. :count tuotteella tämä kestää pidempään kuin itse päivitys, ja haku turvautuu siihen asti tietokantaan. Suorita nämä, kun sivusto on jälleen käytettävissä:',
         ],
     ],
 

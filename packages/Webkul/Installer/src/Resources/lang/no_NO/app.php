@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Løs punktene ovenfor og kjør kommandoen på nytt. Den forrige utgivelsen betjener fortsatt trafikken.',
         'verify-failed'         => ':count verifisering(er) mislyktes. Applikasjonen er satt i vedlikeholdsmodus.',
         'migrate-failed'        => 'Migreringen mislyktes: :error',
+        'step-failed'           => 'Trinnet :command mislyktes med avslutningskode :code.',
         'phase'                 => [
             'preflight' => 'Fase 1 av 5 — Forhåndskontroller',
             'drift'     => 'Fase 2 av 5 — Konfigurasjonsavvik',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch ble ikke reindeksert. Med :count produkt(er) tar dette lengre tid enn selve oppgraderingen, og søk faller tilbake på databasen til det er ferdig. Kjør dette når nettstedet er tilbake på nett:',
+
+            'too-large' => 'Ignorerer --with-reindex: :count produkt(er) overstiger grensen på :limit produkter for en umiddelbar gjenoppbygging.',
+            'deferred'  => 'Elasticsearch ble ikke reindeksert. Med :count produkt(er) tar dette lengre tid enn selve oppgraderingen, og søk faller tilbake på databasen til det er ferdig. Kjør dette når nettstedet er tilbake på nett:',
         ],
     ],
 

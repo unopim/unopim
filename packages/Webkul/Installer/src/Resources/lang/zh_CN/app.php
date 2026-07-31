@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => '请解决上述问题后重新运行该命令。此前的版本仍在处理流量。',
         'verify-failed'         => ':count 项验证未通过。应用已保持在维护模式。',
         'migrate-failed'        => '迁移失败：:error',
+        'step-failed'           => ':command 步骤失败，退出码 :code。',
         'phase'                 => [
             'preflight' => '第 1/5 阶段 — 预检',
             'drift'     => '第 2/5 阶段 — 配置差异',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => '未重建 Elasticsearch 索引。在 :count 个产品的规模下，该操作耗时长于升级本身，完成之前搜索会回退到数据库。站点恢复后请执行：',
+
+            'too-large' => '已忽略 --with-reindex：:count 个产品超过内联重建的 :limit 个产品上限。',
+            'deferred'  => '未重建 Elasticsearch 索引。在 :count 个产品的规模下，该操作耗时长于升级本身，完成之前搜索会回退到数据库。站点恢复后请执行：',
         ],
     ],
 

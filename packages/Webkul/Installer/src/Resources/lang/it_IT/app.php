@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Risolvi i punti indicati sopra ed esegui di nuovo il comando. La versione precedente continua a servire il traffico.',
         'verify-failed'         => ':count verifica/verifiche non superata/e. L\'applicazione è rimasta in modalità manutenzione.',
         'migrate-failed'        => 'Migrazione non riuscita: :error',
+        'step-failed'           => 'Il passaggio :command non è riuscito con codice di uscita :code.',
         'phase'                 => [
             'preflight' => 'Fase 1 di 5 — Controlli preliminari',
             'drift'     => 'Fase 2 di 5 — Differenze di configurazione',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch non è stato reindicizzato. Con :count prodotto/i questa operazione dura più dell\'aggiornamento stesso e nel frattempo la ricerca ricade sul database. Esegui questi comandi quando il sito è di nuovo online:',
+
+            'too-large' => '--with-reindex ignorato: :count prodotto/i supera il limite di :limit prodotti per una ricostruzione immediata.',
+            'deferred'  => 'Elasticsearch non è stato reindicizzato. Con :count prodotto/i questa operazione dura più dell\'aggiornamento stesso e nel frattempo la ricerca ricade sul database. Esegui questi comandi quando il sito è di nuovo online:',
         ],
     ],
 

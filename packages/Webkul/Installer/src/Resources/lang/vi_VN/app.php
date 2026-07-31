@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Hãy xử lý các mục ở trên rồi chạy lại lệnh. Phiên bản trước vẫn đang phục vụ lưu lượng.',
         'verify-failed'         => ':count lượt xác minh không đạt. Ứng dụng được giữ ở chế độ bảo trì.',
         'migrate-failed'        => 'Chuyển đổi thất bại: :error',
+        'step-failed'           => 'Bước :command thất bại với mã thoát :code.',
         'phase'                 => [
             'preflight' => 'Giai đoạn 1/5 — Kiểm tra sơ bộ',
             'drift'     => 'Giai đoạn 2/5 — Khác biệt cấu hình',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch chưa được lập chỉ mục lại. Với :count sản phẩm, việc này lâu hơn cả quá trình nâng cấp, và tìm kiếm sẽ dùng cơ sở dữ liệu cho đến khi hoàn tất. Hãy chạy các lệnh sau khi trang web hoạt động trở lại:',
+
+            'too-large' => 'Bỏ qua --with-reindex: :count sản phẩm vượt quá giới hạn :limit sản phẩm để lập chỉ mục lại ngay.',
+            'deferred'  => 'Elasticsearch chưa được lập chỉ mục lại. Với :count sản phẩm, việc này lâu hơn cả quá trình nâng cấp, và tìm kiếm sẽ dùng cơ sở dữ liệu cho đến khi hoàn tất. Hãy chạy các lệnh sau khi trang web hoạt động trở lại:',
         ],
     ],
 

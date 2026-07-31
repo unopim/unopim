@@ -184,13 +184,13 @@ class Upgrade extends Command
         $this->call('down', ['--render' => 'errors::503']);
 
         try {
-            $this->call('migrate', ['--force' => true]);
+            $this->runStep('migrate', ['--force' => true]);
 
-            $this->call('storage:link');
+            $this->runStep('storage:link');
 
-            $this->call('optimize:clear');
+            $this->runStep('optimize:clear');
 
-            $this->call('queue:restart');
+            $this->runStep('queue:restart');
         } catch (\Throwable $e) {
             $this->error(trans('installer::app.upgrade.migrate-failed', ['error' => $e->getMessage()]));
 
@@ -213,6 +213,30 @@ class Upgrade extends Command
         $this->info(trans('installer::app.upgrade.complete'));
 
         return self::SUCCESS;
+    }
+
+    /**
+     * Run one migration-phase command, failing closed on its exit code.
+     *
+     * Artisan only propagates an exception for the errors that throw; a command
+     * that simply returns a non-zero code is otherwise invisible here, and
+     * continuing past one would bring the site back up on a half-migrated
+     * schema.
+     *
+     * @param  array<string, mixed>  $arguments
+     *
+     * @throws \RuntimeException
+     */
+    protected function runStep(string $command, array $arguments = []): void
+    {
+        $code = $this->call($command, $arguments);
+
+        if ($code !== self::SUCCESS) {
+            throw new \RuntimeException(trans('installer::app.upgrade.step-failed', [
+                'command' => $command,
+                'code'    => $code,
+            ]));
+        }
     }
 
     /**
@@ -262,6 +286,14 @@ class Upgrade extends Command
         }
 
         $this->newLine();
+
+        if ($this->option('with-reindex')) {
+            $this->warn(trans('installer::app.upgrade.reindex.too-large', [
+                'count' => number_format($products),
+                'limit' => number_format($limit),
+            ]));
+        }
+
         $this->warn(trans('installer::app.upgrade.reindex.deferred', ['count' => number_format($products)]));
 
         foreach (['unopim:elastic:clear', 'unopim:category:index', 'unopim:product:index'] as $command) {

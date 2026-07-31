@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Ayusin ang mga nakalista sa itaas at patakbuhin muli ang utos. Patuloy pa ring naghahatid ng trapiko ang naunang bersyon.',
         'verify-failed'         => ':count pagpapatunay ang nabigo. Naiwan sa maintenance mode ang aplikasyon.',
         'migrate-failed'        => 'Nabigo ang paglilipat: :error',
+        'step-failed'           => 'Nabigo ang hakbang na :command na may exit code :code.',
         'phase'                 => [
             'preflight' => 'Yugto 1 ng 5 — Paunang pagsusuri',
             'drift'     => 'Yugto 2 ng 5 — Pagkakaiba sa configuration',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Hindi na-reindex ang Elasticsearch. Sa :count na produkto, mas matagal ito kaysa sa mismong pag-upgrade, at aasa muna sa database ang paghahanap hanggang matapos. Patakbuhin ito kapag online na muli ang site:',
+
+            'too-large' => 'Binabalewala ang --with-reindex: :count na produkto ay lampas sa limitasyong :limit na produkto para sa agarang muling pagbuo.',
+            'deferred'  => 'Hindi na-reindex ang Elasticsearch. Sa :count na produkto, mas matagal ito kaysa sa mismong pag-upgrade, at aasa muna sa database ang paghahanap hanggang matapos. Patakbuhin ito kapag online na muli ang site:',
         ],
     ],
 

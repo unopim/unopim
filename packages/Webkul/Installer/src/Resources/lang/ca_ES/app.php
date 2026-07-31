@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Resoleu els punts anteriors i torneu a executar l\'ordre. La versió anterior continua servint el trànsit.',
         'verify-failed'         => ':count verificació/ons han fallat. L\'aplicació s\'ha deixat en mode manteniment.',
         'migrate-failed'        => 'La migració ha fallat: :error',
+        'step-failed'           => 'El pas :command ha fallat amb el codi de sortida :code.',
         'phase'                 => [
             'preflight' => 'Fase 1 de 5 — Comprovacions prèvies',
             'drift'     => 'Fase 2 de 5 — Diferències de configuració',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'L\'Elasticsearch no s\'ha reindexat. Amb :count producte(s) això triga més que la mateixa actualització, i mentrestant la cerca recorre a la base de dades. Executeu això quan el lloc torni a estar en línia:',
+
+            'too-large' => 'S\'ignora --with-reindex: :count producte(s) supera el límit de :limit productes per a una reconstrucció en línia.',
+            'deferred'  => 'L\'Elasticsearch no s\'ha reindexat. Amb :count producte(s) això triga més que la mateixa actualització, i mentrestant la cerca recorre a la base de dades. Executeu això quan el lloc torni a estar en línia:',
         ],
     ],
 

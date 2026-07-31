@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Beheben Sie die oben genannten Punkte und führen Sie den Befehl erneut aus. Die bisherige Version läuft weiterhin.',
         'verify-failed'         => ':count Überprüfung(en) fehlgeschlagen. Die Anwendung bleibt im Wartungsmodus.',
         'migrate-failed'        => 'Migration fehlgeschlagen: :error',
+        'step-failed'           => 'Der Schritt :command ist mit dem Exit-Code :code fehlgeschlagen.',
         'phase'                 => [
             'preflight' => 'Phase 1 von 5 – Vorprüfungen',
             'drift'     => 'Phase 2 von 5 – Konfigurationsabweichungen',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch wurde nicht neu indexiert. Bei :count Produkt(en) dauert das länger als das Upgrade selbst, und die Suche greift bis zum Abschluss auf die Datenbank zurück. Führen Sie dies aus, sobald die Website wieder online ist:',
+
+            'too-large' => '--with-reindex wird ignoriert: :count Produkt(e) überschreiten das Limit von :limit Produkten für eine sofortige Neuindexierung.',
+            'deferred'  => 'Elasticsearch wurde nicht neu indexiert. Bei :count Produkt(en) dauert das länger als das Upgrade selbst, und die Suche greift bis zum Abschluss auf die Datenbank zurück. Führen Sie dies aus, sobald die Website wieder online ist:',
         ],
     ],
 

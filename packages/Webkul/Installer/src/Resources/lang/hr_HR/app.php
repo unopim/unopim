@@ -124,6 +124,7 @@ return [
         'preflight-failed-hint' => 'Riješite navedene stavke i ponovno pokrenite naredbu. Prethodno izdanje i dalje poslužuje promet.',
         'verify-failed'         => 'Neuspjelih potvrda: :count. Aplikacija je ostavljena u načinu održavanja.',
         'migrate-failed'        => 'Migracija nije uspjela: :error',
+        'step-failed'           => 'Korak :command nije uspio, izlazni kôd :code.',
         'phase'                 => [
             'preflight' => 'Faza 1 od 5 — Početne provjere',
             'drift'     => 'Faza 2 od 5 — Razlike u konfiguraciji',
@@ -211,7 +212,9 @@ return [
         ],
 
         'reindex'               => [
-            'deferred' => 'Elasticsearch nije ponovno indeksiran. Uz :count proizvoda to traje dulje od same nadogradnje, a pretraga se do završetka oslanja na bazu podataka. Pokrenite ovo kada stranica ponovno bude dostupna:',
+
+            'too-large' => 'Zanemarujem --with-reindex: :count proizvoda premašuje ograničenje od :limit proizvoda za izravnu ponovnu izgradnju.',
+            'deferred'  => 'Elasticsearch nije ponovno indeksiran. Uz :count proizvoda to traje dulje od same nadogradnje, a pretraga se do završetka oslanja na bazu podataka. Pokrenite ovo kada stranica ponovno bude dostupna:',
         ],
     ],
 
