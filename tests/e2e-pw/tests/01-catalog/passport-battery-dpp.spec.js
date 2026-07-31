@@ -305,14 +305,21 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
     const previewUrl = await preview.getAttribute('href');
 
-    const rendered = await page.request.get(previewUrl);
+    /**
+     * The template save in the previous test and this fetch are two separate
+     * requests; retrying the read absorbs any commit-visibility lag between
+     * them instead of asserting against a single, possibly-early snapshot.
+     */
+    await expect(async () => {
+      const rendered = await page.request.get(previewUrl);
 
-    expect(rendered.ok()).toBeTruthy();
+      expect(rendered.ok()).toBeTruthy();
 
-    const body = await rendered.text();
+      const body = await rendered.text();
 
-    expect(body).toContain('Battery Data');
-    expect(body).toContain(CONSUMER_FIELD.value);
+      expect(body).toContain('Battery Data');
+      expect(body).toContain(CONSUMER_FIELD.value);
+    }).toPass({ timeout: 15_000 });
   });
 
   test('missing DPP attributes explain the blocker and disable publishing', async ({ page }) => {
@@ -420,10 +427,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     expect(scrollState.localesScrollWidth).toBeGreaterThan(scrollState.localesClientWidth);
   });
 
-  // The battery fixture's DPP values do not survive into the published passport
-  // reliably on a fresh install, so the grid row this asserts on is sometimes
-  // absent. Unskip once the fixture writes its values through the repository.
-  test.skip('publishing exposes the consumer tier only', async ({ page }) => {
+  test('publishing exposes the consumer tier only', async ({ page }) => {
     await page.goto(`/admin/catalog/products/edit/${fixture.product_id}`);
     await closeAgentShell(page);
 
@@ -440,20 +444,28 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
     await expect(page.getByText(/queued|published/i).first()).toBeVisible();
 
-    await page.waitForTimeout(2_000);
+    /**
+     * The panel's poll only confirms the publish attempt settled, not that the
+     * datagrid's own query (a separate request, against `publications` joined
+     * to `products`) already sees it — so the listing is polled by reloading
+     * and re-searching rather than trusting a single navigation right after.
+     */
+    let row = page.locator('div.row').filter({ hasText: fixture.sku }).first();
 
-    await page.goto('/admin/catalog/passports');
-    await closeAgentShell(page);
+    await expect(async () => {
+      await page.goto('/admin/catalog/passports');
+      await closeAgentShell(page);
 
-    const searchInput = page.getByPlaceholder('Search').first();
-    await searchInput.waitFor({ state: 'visible', timeout: 30000 });
-    await searchInput.fill(fixture.sku);
-    await page.keyboard.press('Enter');
-    await page.waitForLoadState('load');
+      const searchInput = page.getByPlaceholder('Search').first();
+      await searchInput.waitFor({ state: 'visible', timeout: 5_000 });
+      await searchInput.fill(fixture.sku);
+      await page.keyboard.press('Enter');
+      await page.waitForLoadState('load');
 
-    const row = page.locator('div.row').filter({ hasText: fixture.sku }).first();
+      row = page.locator('div.row').filter({ hasText: fixture.sku }).first();
 
-    await expect(row).toBeVisible();
+      await expect(row).toBeVisible({ timeout: 2_000 });
+    }).toPass({ timeout: 30_000 });
 
     const rowCheckboxLabel = row.locator('label[for^="mass_action_select_record_"]').first();
 

@@ -7,21 +7,7 @@ use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Presenters\BooleanPresenter;
 use Webkul\User\Models\Admin;
 use Webkul\User\Models\Role;
-
-class StatusCastAdmin extends Admin
-{
-    protected $table = 'admins';
-
-    protected $guarded = [];
-
-    protected function casts(): array
-    {
-        return [
-            'status'       => 'boolean',
-            'use_gravatar' => 'boolean',
-        ];
-    }
-}
+use Webkul\User\Tests\Support\StatusCastAdmin;
 
 function auditsTable(): string
 {

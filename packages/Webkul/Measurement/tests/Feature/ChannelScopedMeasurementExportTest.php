@@ -12,22 +12,10 @@ use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
-use Webkul\Measurement\Helpers\Exporters\ProductExporter;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
+use Webkul\Measurement\Tests\Support\ChannelScopeMeasurementSpyExporter;
 use Webkul\Product\Models\Product;
-
-class ChannelScopeMeasurementSpyExporter extends ProductExporter
-{
-    public array $extractMeasurementInputs = [];
-
-    protected function extractMeasurement(mixed $value): array
-    {
-        $this->extractMeasurementInputs[] = $value;
-
-        return parent::extractMeasurement($value);
-    }
-}
 
 beforeEach(function () {
     $this->loginAsAdmin();
