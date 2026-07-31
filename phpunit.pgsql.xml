@@ -2,7 +2,7 @@
 <phpunit
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
-    bootstrap="vendor/autoload.php"
+    bootstrap="tests/bootstrap.php"
     colors="true"
     cacheDirectory=".phpunit.cache"
     executionOrder="depends,defects"
@@ -69,21 +69,23 @@
     </source>
 
     <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_DEBUG" value="true"/>
+        <env name="APP_ENV" value="testing" force="true"/>
+        <env name="APP_DEBUG" value="true" force="true"/>
 
-        <env name="DB_CONNECTION" value="pgsql"/>
-        <env name="DB_HOST" value="127.0.0.1"/>
-        <env name="DB_PORT" value="5433"/>
-        <env name="DB_DATABASE" value="unopim"/>
-        <env name="DB_USERNAME" value="unopim"/>
-        <env name="DB_PASSWORD" value="unopim"/>
+        <env name="DB_CONNECTION" value="pgsql" force="true"/>
+        <env name="DB_HOST" value="127.0.0.1" force="true"/>
+        <env name="DB_PORT" value="5433" force="true"/>
+        <env name="DB_DATABASE" value="unopim" force="true"/>
+        <env name="DB_USERNAME" value="unopim" force="true"/>
+        <env name="DB_PASSWORD" value="unopim" force="true"/>
 
         <env name="BCRYPT_ROUNDS" value="4"/>
-        <env name="CACHE_DRIVER" value="array"/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
+        <env name="CACHE_DRIVER" value="array" force="true"/>
+        <env name="CACHE_STORE" value="array" force="true"/>
+        <env name="MAIL_MAILER" value="array" force="true"/>
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <env name="SESSION_DRIVER" value="array" force="true"/>
+        <env name="BROADCAST_CONNECTION" value="null" force="true"/>
 
         <env name="TELESCOPE_ENABLED" value="false"/>
         <env name="ELASTICSEARCH_ENABLED" value="false"/>

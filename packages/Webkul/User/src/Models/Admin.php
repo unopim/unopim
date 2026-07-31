@@ -177,6 +177,25 @@ class Admin extends Authenticatable implements AdminContract, HistoryAuditable, 
         ];
     }
 
+    /**
+     * `status` and `use_gravatar` are `boolean` columns that PostgreSQL hydrates as
+     * native PHP `bool` while MySQL's `TINYINT(1)` hydrates as `int`. The audit
+     * trail and dirty-checking both read the raw, uncast attribute array, so
+     * without normalizing here the same update would produce a different stored
+     * type - and a different phantom-audit outcome - depending on the database
+     * engine behind the connection.
+     */
+    public function setRawAttributes(array $attributes, $sync = false): static
+    {
+        foreach (['status', 'use_gravatar'] as $flag) {
+            if (array_key_exists($flag, $attributes) && is_bool($attributes[$flag])) {
+                $attributes[$flag] = (int) $attributes[$flag];
+            }
+        }
+
+        return parent::setRawAttributes($attributes, $sync);
+    }
+
     public static function getPresenters(): array
     {
         return [
