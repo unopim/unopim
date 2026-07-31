@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -34,6 +35,8 @@ it('should return the product datagrid', function () {
         try {
             $indexPrefix = config('elasticsearch.prefix');
             $productIndex = strtolower($indexPrefix.'_products');
+
+            Artisan::call('unopim:product:index');
 
             ElasticSearch::indices()->refresh(['index' => $productIndex]);
         } catch (Exception $e) {
