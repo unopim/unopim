@@ -35,6 +35,7 @@
                 type="{{ $type }}"
                 name="{{ $name }}"
                 v-bind="field"
+                @if ('password' === $type) v-no-value-attr @endif
                 :class="[errors.length ? 'border !border-red-600 hover:border-red-600' : '']"
                 {{ $attributes->except(['value', ':value', 'v-model', 'rules', ':rules', 'label', ':label'])->merge(['class' => 'w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400 focus:border-gray-400 dark:focus:border-gray-400 dark:bg-cherry-900 dark:hover:border-slate-300 dark:border-gray-600'] + $idAttribute) }}
             />
@@ -1301,6 +1302,7 @@
                     initialValue: this.value,
 
                     isLoading: false,
+                    isRehydrating: false,
                     optionsList: [],
                     timer: null,
                     delayTime: 500,
@@ -1366,6 +1368,12 @@
 
             watch: {
                 selectedValue(newValue) {
+                    if (this.isRehydrating) {
+                        this.isRehydrating = false;
+
+                        return;
+                    }
+
                     if (this.multiple && this.isInvalidMultipleValue(newValue)) {
                         this.$emit('input', newValue);
 
@@ -1515,6 +1523,7 @@
 
                 initializeValue() {
                     this.isLoading = true;
+                    this.isRehydrating = true;
                     this.params.identifiers = {
                         columnName: this.trackBy,
                         values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
@@ -1523,6 +1532,13 @@
                     this.$axios.get(this.listRoute, {params: this.params})
                         .then((result) => {
                             this.selectedValue = this.multiple ? result.data.options : result.data.options[0];
+
+                            this.params.identifiers = {};
+
+                            this.isLoading = false;
+                        })
+                        .catch(() => {
+                            this.isRehydrating = false;
 
                             this.params.identifiers = {};
 

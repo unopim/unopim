@@ -37,4 +37,10 @@ describe('JobType', function () {
         expect(JobType::IMPORT->executePermission())->toBe('data_transfer.imports.execute');
         expect(JobType::SYSTEM->executePermission())->toBe('data_transfer.imports.execute');
     });
+
+    it('authorizes each editable type against its own edit permission', function () {
+        expect(JobType::EXPORT->editPermission())->toBe('data_transfer.export.edit');
+        expect(JobType::IMPORT->editPermission())->toBe('data_transfer.imports.edit');
+        expect(JobType::SYSTEM->editPermission())->toBeNull();
+    });
 });

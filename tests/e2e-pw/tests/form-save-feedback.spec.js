@@ -1,12 +1,90 @@
 const { test, expect } = require('@playwright/test');
 
-// Ids differ per seeded workspace, hence the overrides.
-const PRODUCT_EDIT = `/admin/catalog/products/edit/${process.env.PRODUCT_EDIT_ID || 1}`;
-const EXPORT_EDIT = `/admin/data-transfer/exports/edit/${process.env.EXPORT_EDIT_ID || 1}`;
+const NUMBER_INPUT_SELECTOR = 'input[name="values[common][product_number]"]';
+
+/**
+ * Resolve a working product edit URL that actually carries the `product_number`
+ * attribute this spec drives. `PRODUCT_EDIT_ID` (or id 1) can land on a product
+ * whose family never got that attribute assigned (e.g. a bare `default`-family
+ * fixture from another spec) — ids and family mixes both drift across reseeds —
+ * and the grid's default sort surfaces whichever spec most recently created a
+ * burst of fixtures, which can crowd the base catalog off page 1 entirely. So
+ * this fetches the grid's own AJAX payload (oldest-first — the seeded base
+ * catalog, not another spec's fresh fixtures) across a wide-enough page to give
+ * the per-candidate check below plenty of products to try, including variants
+ * whose parent hides this attribute from their own edit form.
+ */
+async function resolveProductEditUrl(page) {
+  const preferredId = process.env.PRODUCT_EDIT_ID;
+
+  if (preferredId) {
+    return `/admin/catalog/products/edit/${preferredId}`;
+  }
+
+  await page.goto('/admin/catalog/products', { waitUntil: 'load' });
+
+  const query = new URLSearchParams({
+    'sort[column]': 'created_at',
+    'sort[order]': 'asc',
+    'pagination[per_page]': '50',
+  }).toString();
+
+  const grid = await page.evaluate(async (q) => {
+    const res = await fetch(`/admin/catalog/products?${q}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest', Accept: 'application/json' },
+    });
+
+    return res.json();
+  }, query);
+
+  const ids = (grid.records || []).map((record) => record.product_id).filter(Boolean);
+
+  for (const id of ids) {
+    const url = `/admin/catalog/products/edit/${id}`;
+    const response = await page.goto(url, { waitUntil: 'load' });
+
+    if (!response || response.status() >= 400) {
+      continue;
+    }
+
+    if (await page.locator(NUMBER_INPUT_SELECTOR).count()) {
+      return url;
+    }
+  }
+
+  throw new Error('No product in the grid\'s first page carries the product_number attribute.');
+}
+
+/**
+ * Resolve a working export edit URL. `EXPORT_EDIT_ID` (or id 1) can 404 in an
+ * environment whose export history doesn't happen to include that id (ids are
+ * never reused once an export/job-tracker row is pruned), so this falls back
+ * to whatever the exports grid's own first row actually is.
+ */
+async function resolveExportEditUrl(page) {
+  const preferredId = process.env.EXPORT_EDIT_ID || '1';
+  const preferredUrl = `/admin/data-transfer/exports/edit/${preferredId}`;
+
+  const response = await page.goto(preferredUrl, { waitUntil: 'load' });
+
+  if (response && response.status() < 400) {
+    return preferredUrl;
+  }
+
+  await page.goto('/admin/data-transfer/exports', { waitUntil: 'load' });
+  await page.waitForLoadState('networkidle');
+
+  const editIcon = page.locator('span[title="Edit"]').first();
+  await editIcon.waitFor({ state: 'visible', timeout: 15000 });
+  await editIcon.click();
+  await page.waitForURL(/\/data-transfer\/exports\/edit\/\d+/, { timeout: 15000 });
+
+  return new URL(page.url()).pathname;
+}
 
 const GENERIC_ERROR = /Something went wrong while saving/i;
 
-const NUMBER_INPUT = 'input[name="values[common][product_number]"]';
+const NUMBER_INPUT = NUMBER_INPUT_SELECTOR;
 
 const saveButton = (page) => page.locator('[data-unsaved-save]').first();
 
@@ -31,7 +109,7 @@ const selectFormat = async (page, label) => {
 
 test.describe('unsaved-changes save feedback', () => {
   test('a validation failure flashes the failing field, not the generic ajax error', async ({ page }) => {
-    await page.goto(PRODUCT_EDIT);
+    await page.goto(await resolveProductEditUrl(page));
 
     // Empty the always-required SKU so the save is guaranteed to fail validation.
     await page.locator('input[name="values[common][sku]"]').fill('');
@@ -59,7 +137,7 @@ test.describe('unsaved-changes save feedback', () => {
   });
 
   test('a valid save reports success only, never the generic error', async ({ page }) => {
-    await page.goto(EXPORT_EDIT);
+    const exportEditUrl = await resolveExportEditUrl(page);
 
     const original = (await formatControl(page).locator('.multiselect__single').innerText()).trim();
     const next = original === 'XLSX' ? 'XLS' : 'XLSX';
@@ -89,7 +167,7 @@ test.describe('unsaved-changes save feedback', () => {
 
     await page.unroute('**/data-transfer/exports/**');
 
-    await page.goto(EXPORT_EDIT);
+    await page.goto(exportEditUrl);
     await selectFormat(page, original);
     await clickSave(page);
     await page.waitForURL(/\/data-transfer\/exports\/export\//);

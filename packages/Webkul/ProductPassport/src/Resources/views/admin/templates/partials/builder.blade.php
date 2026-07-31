@@ -145,7 +145,7 @@
                                 @end="touch('sections')"
                             >
                                 <template #item="{ element, index }">
-                                    <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
+                                    <x-admin::table.tbody.tr class="hover:bg-primary-50 dark:hover:bg-cherry-800">
                                         <x-admin::table.td class="!px-0 text-center">
                                             <i class="icon-drag text-2xl cursor-grab"></i>
                                         </x-admin::table.td>
@@ -160,15 +160,15 @@
 
                                         <x-admin::table.td class="!px-0">
                                             <span
-                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.edit"
                                                 @click="openSection(element)"
                                             ></span>
 
                                             <span
-                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.remove"
-                                                @click="sections.splice(index, 1); touch('sections')"
+                                                @click="removeSection(index)"
                                             ></span>
                                         </x-admin::table.td>
 
@@ -253,7 +253,7 @@
                                 @end="touch('fields')"
                             >
                                 <template #item="{ element, index }">
-                                    <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
+                                    <x-admin::table.tbody.tr class="hover:bg-primary-50 dark:hover:bg-cherry-800">
                                         <x-admin::table.td class="!px-0 text-center">
                                             <i class="icon-drag text-2xl cursor-grab"></i>
                                         </x-admin::table.td>
@@ -291,13 +291,13 @@
 
                                         <x-admin::table.td class="!px-0">
                                             <span
-                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.edit"
                                                 @click="openField(element)"
                                             ></span>
 
                                             <span
-                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.remove"
                                                 @click="fields.splice(index, 1); touch('fields')"
                                             ></span>
@@ -852,6 +852,37 @@
                         };
 
                     this.$refs.sectionModal.toggle();
+                },
+
+                /**
+                 * Fields keep the section code, not a reference, so a field left
+                 * pointing at a removed section would still submit that code and
+                 * the save would be rejected as an unknown section — while the
+                 * row already reads "Default section" on screen, because an
+                 * unresolvable code falls back to that label.
+                 */
+                removeSection(index) {
+                    const removed = this.sections[index];
+
+                    this.sections.splice(index, 1);
+
+                    this.touch('sections');
+
+                    if (! removed?.code) {
+                        return;
+                    }
+
+                    const orphaned = this.fields.filter((field) => field.section === removed.code);
+
+                    if (! orphaned.length) {
+                        return;
+                    }
+
+                    orphaned.forEach((field) => {
+                        field.section = '';
+                    });
+
+                    this.touch('fields');
                 },
 
                 commitSection() {

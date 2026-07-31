@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Ce champ ne peut contenir que des lettres, des chiffres et des underscores.',
-        'label_format'     => 'Ce champ ne peut contenir que des lettres, des chiffres, des espaces et des underscores.',
+        'label_format'     => 'Ce champ ne peut contenir que des lettres, des chiffres, des espaces et les caractères _ - \' . , / ( ).',
         'max_conversions'  => 'Une unité ne peut pas avoir plus de :max opérations de conversion.',
         'max_units'        => 'Une famille de mesures ne peut pas avoir plus de :max unités.',
     ],

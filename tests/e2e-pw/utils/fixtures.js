@@ -2,7 +2,7 @@
 const base = require('@playwright/test');
 const path = require('path');
 
-const STORAGE_STATE = path.resolve(__dirname, '../.state/admin-auth.json');
+const STORAGE_STATE = path.resolve(__dirname, '..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 /**
  * Init-script injected into every page to hide overlays that collide with the

@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Dit veld mag alleen letters, cijfers en underscores bevatten.',
-        'label_format'     => 'Dit veld mag alleen letters, cijfers, spaties en underscores bevatten.',
+        'label_format'     => 'Dit veld mag alleen letters, cijfers, spaties en de tekens _ - \' . , / ( ) bevatten.',
         'max_conversions'  => 'Een eenheid kan niet meer dan :max conversieoperaties hebben.',
         'max_units'        => 'Een meetfamilie kan niet meer dan :max eenheden hebben.',
     ],

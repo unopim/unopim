@@ -132,7 +132,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Dette feltet kan bare inneholde bokstaver, tall og understreker.',
-        'label_format'     => 'Dette feltet kan bare inneholde bokstaver, tall, mellomrom og understreker.',
+        'label_format'     => 'Dette feltet kan bare inneholde bokstaver, tall, mellomrom og tegnene _ - \' . , / ( ).',
         'max_conversions'  => 'En enhet kan ikke ha mer enn :max konverteringsoperasjoner.',
         'max_units'        => 'En målefamilie kan ikke ha mer enn :max enheter.',
     ],

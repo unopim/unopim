@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'To pole może zawierać tylko litery, cyfry i podkreślenia.',
-        'label_format'     => 'To pole może zawierać tylko litery, cyfry, spacje i podkreślenia.',
+        'label_format'     => 'To pole może zawierać tylko litery, cyfry, spacje oraz znaki _ - \' . , / ( ).',
         'max_conversions'  => 'Jednostka nie może mieć więcej niż :max operacji konwersji.',
         'max_units'        => 'Rodzina jednostek nie może mieć więcej niż :max jednostek.',
     ],

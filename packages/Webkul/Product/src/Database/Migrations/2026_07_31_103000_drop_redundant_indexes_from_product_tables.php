@@ -4,40 +4,59 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-/** Both columns are already unique, so the plain copy only costs write time. */
 return new class extends Migration
 {
     /**
-     * @var array<string, array{index: string, column: string}>
+     * @var array<string, array<int, string>>
      */
     private array $redundant = [
-        'products'          => ['index' => 'products_sku_index', 'column' => 'sku'],
-        'association_types' => ['index' => 'association_types_code_index', 'column' => 'code'],
+        'products'          => ['sku'],
+        'association_types' => ['code'],
     ];
 
     public function up(): void
     {
-        foreach ($this->redundant as $table => $definition) {
-            if (! Schema::hasTable($table) || ! Schema::hasIndex($table, $definition['index'])) {
+        foreach ($this->redundant as $table => $columns) {
+            $index = $this->plainIndex($table, $columns);
+
+            if ($index === null) {
                 continue;
             }
 
-            Schema::table($table, function (Blueprint $blueprint) use ($definition): void {
-                $blueprint->dropIndex($definition['index']);
+            Schema::table($table, function (Blueprint $blueprint) use ($index): void {
+                $blueprint->dropIndex($index);
             });
         }
     }
 
     public function down(): void
     {
-        foreach ($this->redundant as $table => $definition) {
-            if (! Schema::hasTable($table) || Schema::hasIndex($table, $definition['index'])) {
+        foreach ($this->redundant as $table => $columns) {
+            if (! Schema::hasTable($table) || $this->plainIndex($table, $columns) !== null) {
                 continue;
             }
 
-            Schema::table($table, function (Blueprint $blueprint) use ($definition): void {
-                $blueprint->index($definition['column']);
+            Schema::table($table, function (Blueprint $blueprint) use ($columns): void {
+                $blueprint->index($columns);
             });
         }
+    }
+
+    /**
+     * @param  array<int, string>  $columns
+     */
+    private function plainIndex(string $table, array $columns): ?string
+    {
+        if (! Schema::hasTable($table)) {
+            return null;
+        }
+
+        foreach (Schema::getIndexes($table) as $index) {
+            if ($index['columns'] === $columns && ! $index['unique'] && ! $index['primary']) {
+                return $index['name'];
+            }
+        }
+
+        return null;
     }
 };

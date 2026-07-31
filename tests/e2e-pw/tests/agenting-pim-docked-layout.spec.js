@@ -18,6 +18,23 @@ const openPanel = async (page) => {
   }
 
   await expect(page.locator('.ap-panel')).toBeVisible();
+
+  await settleDockTransition(page);
+};
+
+const dockFrame = (page) => page.evaluate(() => [
+  getComputedStyle(document.getElementById('app')).marginRight,
+  document.querySelector('.ap-panel')?.getBoundingClientRect().right,
+].join());
+
+const settleDockTransition = async (page) => {
+  await expect.poll(async () => {
+    const before = await dockFrame(page);
+
+    await page.waitForTimeout(100);
+
+    return before === await dockFrame(page);
+  }).toBe(true);
 };
 
 // The datagrid toolbar renders its filter trigger as a clickable div, not a button.
@@ -112,6 +129,21 @@ test.describe('agenting pim docked layout', () => {
     const undocked = await boxes(page);
 
     expect(Math.round(undocked.app.width - docked.app.width)).toBe(PANEL_WIDTH);
+  });
+
+  test('the products grid reflows into the docked width instead of scrolling the page sideways', async ({ page, viewport }) => {
+    test.skip(viewport.width <= DOCK_BREAKPOINT, 'Panel only docks on wide viewports');
+
+    await openPanel(page);
+    await expect(page.locator('.datagrid-toolbar')).toBeVisible();
+
+    const main = page.locator('main#main-content');
+
+    await expect.poll(async () => main.evaluate((el) => el.scrollWidth - el.clientWidth)).toBeLessThanOrEqual(1);
+
+    await main.evaluate((el) => { el.scrollLeft = 500; });
+
+    expect(await main.evaluate((el) => el.scrollLeft)).toBe(0);
   });
 
   test('below the dock breakpoint the panel overlays instead of docking', async ({ page }) => {

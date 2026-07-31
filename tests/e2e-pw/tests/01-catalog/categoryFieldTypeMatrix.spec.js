@@ -92,10 +92,9 @@ test.describe('Category field — option changes are tracked and saved', () => {
 
       const optionCode = 'opt_one';
       await adminPage.locator('input[name="code"]').last().fill(optionCode);
-      const labels = adminPage.locator('input[name^="locales."]');
-      for (let i = 0; i < await labels.count(); i++) {
-        await labels.nth(i).fill('Option One');
-      }
+      // The translatable-fields switcher renders only the active locale's input;
+      // the rest stay in the DOM but hidden via v-show.
+      await adminPage.locator('input[name^="locales."]:visible').first().fill('Option One');
 
       await adminPage.getByRole('button', { name: 'Save Option' }).click();
 
@@ -120,10 +119,7 @@ test.describe('Category field — option changes are tracked and saved', () => {
     await adminPage.getByText('Add Row', { exact: true }).first().click();
     await adminPage.getByRole('button', { name: 'Save Option' }).waitFor({ state: 'visible', timeout: 15000 });
     await adminPage.locator('input[name="code"]').last().fill(optionCode);
-    const labels = adminPage.locator('input[name^="locales."]');
-    for (let i = 0; i < await labels.count(); i++) {
-      await labels.nth(i).fill('Keep Me');
-    }
+    await adminPage.locator('input[name^="locales."]:visible').first().fill('Keep Me');
     await adminPage.getByRole('button', { name: 'Save Option' }).click();
     await clickSave(adminPage, 'Save Category Field');
     await adminPage.waitForTimeout(2500);

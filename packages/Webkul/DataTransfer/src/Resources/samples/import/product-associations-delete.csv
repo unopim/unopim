@@ -1,0 +1,3 @@
+sku,association_type,related_sku
+simple-product-1,cross_sells,simple-product-3
+configurable-product-2,cross_sells,simple-product-3

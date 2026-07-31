@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Ovo polje može sadržavati samo slova, brojeve i podvlake.',
-        'label_format'     => 'Ovo polje može sadržavati samo slova, brojeve, razmake i podvlake.',
+        'label_format'     => 'Ovo polje može sadržavati samo slova, brojeve, razmake i znakove _ - \' . , / ( ).',
         'max_conversions'  => 'Jedinica ne može imati više od :max operacija konverzije.',
         'max_units'        => 'Obitelj mjerenja ne može imati više od :max jedinica.',
     ],

@@ -30,7 +30,7 @@
                         <input
                             type="text"
                             class="bg-white dark:bg-cherry-800 border dark:border-cherry-900 rounded-lg block w-full ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 py-1.5 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400"
-                            :placeholder="@json(trans('admin::app.components.products.search.search-by-sku'))"
+                            :placeholder='@json(trans('admin::app.components.products.search.search-by-sku'))'
                             v-model.lazy="searchTerm"
                             v-debounce="500"
                         />

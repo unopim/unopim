@@ -20,7 +20,7 @@ test.describe('Attribute Family — General tab & index', () => {
     await page.keyboard.press('Escape').catch(() => {});
 
     await gotoIndex(page);
-    await page.getByRole('textbox', { name: 'Search' }).fill('default');
+    await page.getByRole('textbox', { name: 'Search', exact: true }).fill('default');
     await page.keyboard.press('Enter');
     await page.waitForTimeout(1500);
     await expect(page.locator('#app').getByText('default', { exact: true }).first()).toBeVisible();
@@ -39,7 +39,7 @@ test.describe('Attribute Family — General tab & index', () => {
 
     await deleteFamilyByCode(page, code);
     await gotoIndex(page);
-    await page.getByRole('textbox', { name: 'Search' }).fill(code);
+    await page.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await page.keyboard.press('Enter');
     await page.waitForTimeout(1500);
     await expect(page.locator('#app').getByText(code, { exact: true })).toHaveCount(0);

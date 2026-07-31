@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Bidang ini hanya boleh berisi huruf, angka, dan garis bawah.',
-        'label_format'     => 'Bidang ini hanya boleh berisi huruf, angka, spasi, dan garis bawah.',
+        'label_format'     => 'Bidang ini hanya boleh berisi huruf, angka, spasi, dan karakter _ - \' . , / ( ).',
         'max_conversions'  => 'Sebuah unit tidak dapat memiliki lebih dari :max operasi konversi.',
         'max_units'        => 'Sebuah keluarga pengukuran tidak dapat memiliki lebih dari :max unit.',
     ],

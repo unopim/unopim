@@ -36,36 +36,50 @@ test.describe('Product DataGrid filter panel', () => {
   test('Clicking a row opens only that filter\'s editor', async ({ adminPage }) => {
     await openFilterDrawer(adminPage);
 
-    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
+    await adminPage.locator('[data-datagrid-filter="attribute_family"] [data-filter-toggle]').click();
 
-    await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]'))
+    await expect(adminPage.locator('[data-datagrid-filter="attribute_family"] [data-filter-toggle]'))
       .toHaveAttribute('aria-expanded', 'true');
 
     await adminPage.locator('[data-datagrid-filter="type"] [data-filter-toggle]').click();
 
-    await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]'))
+    await expect(adminPage.locator('[data-datagrid-filter="attribute_family"] [data-filter-toggle]'))
       .toHaveAttribute('aria-expanded', 'false');
   });
 
-  test('Name, family, status and type can be removed; sku cannot', async ({ adminPage }) => {
+  test('Every default filter, including sku, can be removed', async ({ adminPage }) => {
     await openFilterDrawer(adminPage);
 
-    for (const index of ['name', 'attribute_family', 'status', 'type']) {
+    expect(await filterLabels(adminPage)).toEqual([
+      'SKU',
+      'Parent',
+      'Attribute Family',
+      'Type',
+      'Categories',
+      'Created At',
+      'Updated At',
+    ]);
+
+    for (const index of ['parent', 'attribute_family', 'type', 'categories', 'created_at', 'updated_at']) {
       await adminPage.locator(`[data-datagrid-filter="${index}"] [data-remove-filter]`).click();
     }
 
     expect(await filterLabels(adminPage)).toEqual(['SKU']);
+
+    await adminPage.locator('[data-datagrid-filter="sku"] [data-remove-filter]').click();
+
+    expect(await filterLabels(adminPage)).toEqual([]);
   });
 
   test('A removed grid filter goes back into the Add Filter list', async ({ adminPage }) => {
     await openFilterDrawer(adminPage);
 
-    await adminPage.locator('[data-datagrid-filter="status"] .icon-cancel').click();
+    await adminPage.locator('[data-datagrid-filter="type"] .icon-cancel').click();
 
     await adminPage.getByRole('button', { name: 'Add Filter' }).click();
 
     await expect(
-      adminPage.locator('.max-h-48.overflow-auto p').filter({ hasText: /^Status$/ })
+      adminPage.locator('.max-h-48.overflow-auto p').filter({ hasText: /^Type$/ })
     ).toBeVisible();
   });
 
@@ -74,7 +88,7 @@ test.describe('Product DataGrid filter panel', () => {
 
     await adminPage.getByRole('button', { name: 'Add Filter' }).click();
 
-    for (const label of ['Created At', 'Updated At', 'Completeness', 'Categories']) {
+    for (const label of ['Status', 'ID', 'Completeness']) {
       await expect(
         adminPage.locator('.max-h-48.overflow-auto p').filter({ hasText: new RegExp(`^${label}$`) })
       ).toBeVisible();
@@ -84,19 +98,21 @@ test.describe('Product DataGrid filter panel', () => {
   test('Picked filters keep the order they were added in', async ({ adminPage }) => {
     await openFilterDrawer(adminPage);
 
-    await addFilter(adminPage, 'Created At');
-    await addFilter(adminPage, 'Updated At');
+    await addFilter(adminPage, 'Status');
     await addFilter(adminPage, 'Completeness');
+    await addFilter(adminPage, 'ID');
 
     expect(await filterLabels(adminPage)).toEqual([
       'SKU',
-      'Name',
+      'Parent',
       'Attribute Family',
-      'Status',
       'Type',
+      'Categories',
       'Created At',
       'Updated At',
+      'Status',
       'Completeness',
+      'ID',
     ]);
   });
 
@@ -113,7 +129,11 @@ test.describe('Product DataGrid filter panel', () => {
     await adminPage.waitForLoadState('networkidle');
 
     await adminPage.getByText('Filter', { exact: true }).click();
-    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
+    await addFilter(adminPage, 'Status');
+
+    // Picking a filter from "Add Filter" expands its editor immediately.
+    await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]'))
+      .toHaveAttribute('aria-expanded', 'true');
     await adminPage.locator('[data-datagrid-filter="status"] .icon-chevron-down').last().click();
     await adminPage.getByRole('listitem').filter({ hasText: /^True$/ }).first().click();
     await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
@@ -139,32 +159,32 @@ test.describe('Product DataGrid filter panel', () => {
     expect(value.x).toBeGreaterThan(operator.x + operator.width - 4);
   });
 
-  test('The categories filter narrows the grid and keeps only the picked chips', async ({ adminPage }) => {
+  test('The categories filter narrows the grid and keeps the picked category selected', async ({ adminPage }) => {
     await openFilterDrawer(adminPage);
 
-    await addFilter(adminPage, 'Categories');
+    const totalBefore = await adminPage.locator('#app').getByText(/\d+ Results?/).first().innerText();
 
-    const block = adminPage.locator('[data-attribute-filter="categories"]');
+    await adminPage.locator('[data-datagrid-filter="categories"] [data-filter-toggle]').click();
+    await adminPage.locator('[data-datagrid-filter="categories"] [data-open-tree-panel]').click();
 
-    await block.getByText('Select', { exact: true }).last().click();
-    await adminPage.locator('.multiselect__element').first().waitFor();
+    const panel = adminPage.locator('[data-section-id="datagrid-filter-categories"]');
+    const firstOption = panel.locator('label:has(input[type="checkbox"])').first();
 
-    const option = adminPage.locator('.multiselect__element').last();
+    await firstOption.waitFor();
+    await firstOption.click();
 
-    const picked = (await option.innerText()).trim();
-
-    await option.click();
-    await adminPage.getByText('Apply Filters').first().click({ force: true });
+    await panel.locator('[data-filter-panel-done]').click();
 
     await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).not.toHaveText(totalBefore);
+
     await adminPage.getByText('Filter', { exact: true }).click();
+    await adminPage.locator('[data-datagrid-filter="categories"] [data-filter-toggle]').click();
 
-    const chips = adminPage.locator('[data-attribute-filter="categories"] .multiselect__tag');
-
-    await expect(chips).toHaveCount(1);
-    await expect(chips.first()).toContainText(picked);
+    await expect(adminPage.locator('[data-datagrid-filter="categories"] [data-open-tree-panel]'))
+      .toContainText('1 selected');
   });
 });
 
@@ -193,7 +213,16 @@ test.describe('Product DataGrid saved filters', () => {
 
   async function applyStatusFilter(adminPage) {
     await adminPage.getByText('Filter', { exact: true }).click();
-    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
+
+    if (await adminPage.locator('[data-datagrid-filter="status"]').count() === 0) {
+      // Picking a filter from "Add Filter" expands its editor immediately.
+      await addFilter(adminPage, 'Status');
+    } else {
+      await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
+    }
+
+    await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]'))
+      .toHaveAttribute('aria-expanded', 'true');
     await adminPage.locator('[data-datagrid-filter="status"] .icon-chevron-down').last().click();
     await adminPage.getByRole('listitem').filter({ hasText: /^True$/ }).first().click();
     await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
@@ -349,8 +378,6 @@ test.describe('Product DataGrid saved filters', () => {
     await adminPage.locator('[data-save-view]').click();
     await adminPage.waitForTimeout(1000);
 
-    const filtered = await adminPage.locator('#app').getByText(/\d+ Results?/).first().innerText();
-
     await navigateTo(adminPage, 'products');
     await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
     await adminPage.reload({ waitUntil: 'networkidle' });
@@ -360,10 +387,27 @@ test.describe('Product DataGrid saved filters', () => {
     await adminPage.waitForLoadState('networkidle');
 
     await expect(adminPage.locator('[data-grid-views]')).toContainText(FILTER_NAME);
-    await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).toHaveText(filtered);
+
+    const restoredCount = await adminPage.locator('#app').getByText(/\d+ Results?/).first().innerText();
 
     await adminPage.getByText('Filter', { exact: true }).click();
 
     await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-summary]')).toHaveText('True');
+
+    /**
+     * The shared QA catalog is written to by other concurrent test runs, so a
+     * count captured before the save/navigate/restore round-trip can legitimately
+     * drift from one captured after it, even when restoring worked correctly.
+     * Re-applying the identical condition right now — seconds, not minutes, away
+     * from the restored count above — proves the saved view reproduces the same
+     * query without depending on the catalog holding a specific, stable count.
+     */
+    await adminPage.locator('[data-datagrid-filter="status"] [data-filter-toggle]').click();
+    await adminPage.locator('[data-datagrid-filter="status"] .icon-chevron-down').last().click();
+    await adminPage.getByRole('listitem').filter({ hasText: /^True$/ }).first().click();
+    await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
+    await adminPage.waitForLoadState('networkidle');
+
+    await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).toHaveText(restoredCount);
   });
 });

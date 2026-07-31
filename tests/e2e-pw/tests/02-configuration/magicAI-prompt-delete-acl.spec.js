@@ -5,7 +5,7 @@ const path = require('path');
 test.describe('Magic AI prompt — delete without edit permission', () => {
   test.setTimeout(180000);
 
-  const ADMIN_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
+  const ADMIN_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
   const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
   const HIDE_OVERLAYS = `

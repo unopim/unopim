@@ -346,7 +346,14 @@
 
                             <x-slot:footer>
                                 <div class="flex items-center justify-between w-full">
-                                    <div class="flex items-center gap-2" v-if="!ai.images.length">
+                                    <p
+                                        v-if="! ai.images.length && platformsFetched && ! aiModels.length"
+                                        class="text-xs text-danger max-w-[320px]"
+                                    >
+                                        @lang('admin::app.configuration.platform.fields.no-image-platform')
+                                    </p>
+
+                                    <div class="flex items-center gap-2" v-if="!ai.images.length && aiModels.length">
                                         <select
                                             v-model="ai.platform_id"
                                             @change="onPlatformChange()"
@@ -369,8 +376,8 @@
                                         <template v-if="! ai.images.length">
                                             <button
                                                 class="secondary-button"
-                                                :disabled="isLoading"
-                                                :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
+                                                :disabled="isLoading || ! aiModels.length"
+                                                :class="{ 'opacity-50 cursor-not-allowed': isLoading || ! aiModels.length }">
                                                 <template v-if="isLoading">
                                                     <img
                                                         class="animate-spin h-5 w-5 text-primary-700"
@@ -563,6 +570,7 @@
 
                     platforms: [],
                     aiModels: [],
+                    platformsFetched: false,
                     imagePrompts: [],
                     suggestionValues: [],
                     resourceId: "{{ request()->id ?? auth()->id() }}",
@@ -767,6 +775,8 @@
                         }
                     } catch (error) {
                         console.error("Failed to fetch platforms:", error);
+                    } finally {
+                        this.platformsFetched = true;
                     }
                 },
 
@@ -863,7 +873,15 @@
                             this.isLoading = false;
 
                             if (error.response.status == 422) {
-                                setErrors(error.response.data.errors);
+                                const errors = error.response.data.errors ?? {};
+
+                                setErrors(errors);
+
+                                const unboundError = errors.model?.[0] ?? errors.platform_id?.[0];
+
+                                if (unboundError) {
+                                    this.$emitter.emit('add-flash', { type: 'error', message: unboundError });
+                                }
                             } else {
                                 this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
                             }

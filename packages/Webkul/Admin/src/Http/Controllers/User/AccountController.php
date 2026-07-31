@@ -2,7 +2,7 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -43,9 +43,13 @@ class AccountController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the signed-in admin's own profile.
+     *
+     * The reload the redirect forces is what re-renders the whole panel in a
+     * freshly saved UI locale — a bare success would leave the old language
+     * on screen until the user reloads by hand.
      */
-    public function update(AccountForm $request): RedirectResponse
+    public function update(AccountForm $request): JsonResponse
     {
         $user = auth()->guard('admin')->user();
 
@@ -93,8 +97,9 @@ class AccountController extends Controller
             Event::dispatch('admin.password.update.after', $user);
         }
 
-        session()->flash('success', trans('admin::app.account.edit.update-success'));
-
-        return back();
+        return new JsonResponse([
+            'message'      => trans('admin::app.account.edit.update-success'),
+            'redirect_url' => route('admin.account.edit'),
+        ]);
     }
 }

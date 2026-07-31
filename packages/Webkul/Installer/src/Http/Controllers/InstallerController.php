@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\Process\PhpExecutableFinder;
 use Symfony\Component\Process\Process;
+use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 use Webkul\Installer\Console\Commands\Installer;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
@@ -51,33 +53,23 @@ class InstallerController extends Controller
     const CLOUD_HOSTING_URL = 'https://unopim.com/cloud-hosting/';
 
     /**
-     * Optional open-source add-on packages surfaced in the web installer.
-     *
-     * Mirrors {@see Installer::$optionalPackages}
-     * 1:1 so the labels and install commands stay in sync with the CLI. The web
-     * installer installs the selected packages server-side during the streaming
-     * install (see {@see installPackageStreamed()}); the client only sends the
-     * whitelisted keys, never the composer/artisan arguments.
+     * Optional add-on packages on offer, keyed by the whitelisted key the
+     * client may send, or an empty list while the feature is switched off in
+     * `installer.optional_packages`.
      *
      * Display labels live in the `installer::app.installer.index.add-ons.packages.*`
-     * lang files and are rendered client-side; only machine values are kept here.
+     * lang files and are rendered client-side; only machine values are read here.
      *
-     * @var array<string, array{composer: string, install: string}>
+     * @return array<string, array{composer: string, install: string}>
      */
-    protected array $optionalPackages = [
-        'dam' => [
-            'composer' => 'unopim/dam',
-            'install'  => 'dam-package:install',
-        ],
-        'shopify' => [
-            'composer' => 'unopim/shopify-connector',
-            'install'  => 'shopify-package:install',
-        ],
-        'bagisto' => [
-            'composer' => 'unopim/bagisto-connector',
-            'install'  => 'bagisto-package:install',
-        ],
-    ];
+    protected function optionalPackages(): array
+    {
+        if (! config('installer.optional_packages.enabled', false)) {
+            return [];
+        }
+
+        return config('installer.optional_packages.packages', []);
+    }
 
     /**
      * Create a new controller instance
@@ -150,6 +142,33 @@ class InstallerController extends Controller
                 || (time() - $createdAt) > self::ADMIN_SEED_PROMOTION_WINDOW,
             403
         );
+    }
+
+    /**
+     * Reject an admin password that opens or closes with whitespace, before
+     * any install state is written.
+     *
+     * Every other password entry point (user forms, account settings, reset)
+     * applies the same rule, and the login page strips a leading space on the
+     * assumption that no stored password starts with one — so the installer
+     * must never mint the account that breaks that assumption.
+     */
+    protected function validateAdminPassword(array $payload, string $attribute): ?JsonResponse
+    {
+        $validator = Validator::make($payload, [
+            $attribute => ['nullable', 'string', new PasswordWithoutSurroundingWhitespace],
+        ], [], [
+            $attribute => trans('installer::app.installer.index.create-administrator.password'),
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error'  => $validator->errors()->first($attribute),
+                'errors' => $validator->errors()->toArray(),
+            ], 422);
+        }
+
+        return null;
     }
 
     /**
@@ -259,7 +278,7 @@ class InstallerController extends Controller
             return to_route('installer.index');
         }
 
-        $optionalPackages = $this->optionalPackages;
+        $optionalPackages = $this->optionalPackages();
 
         $cloudHostingUrl = self::CLOUD_HOSTING_URL;
 
@@ -386,6 +405,10 @@ class InstallerController extends Controller
         // Only ever promote the seeder's freshly-created default admin.
         $this->abortUnlessAdminIsFreshlySeeded();
 
+        if (($invalid = $this->validateAdminPassword(request()->all(), 'password')) instanceof JsonResponse) {
+            return $invalid;
+        }
+
         $this->reloadDatabaseConfigFromEnv();
 
         $password = password_hash((string) request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
@@ -470,6 +493,10 @@ class InstallerController extends Controller
 
         $payload = $request->all();
 
+        if (($invalid = $this->validateAdminPassword($payload, 'admin.password')) instanceof JsonResponse) {
+            return $invalid;
+        }
+
         $this->environmentManager->setEnvConfiguration($payload);
 
         $admin = $request->input('admin', []);
@@ -483,7 +510,7 @@ class InstallerController extends Controller
         // client with composer/artisan arguments. Unknown keys are dropped.
         $packages = array_values(array_filter(
             array_map(strval(...), $requestedPackages),
-            fn (string $key): bool => isset($this->optionalPackages[$key])
+            fn (string $key): bool => isset($this->optionalPackages()[$key])
         ));
 
         // Persist to a temp state file rather than the session: the SSE stream is
@@ -663,11 +690,11 @@ class InstallerController extends Controller
 
                 // f. Optional add-on packages
                 foreach ($packages as $key) {
-                    if (! isset($this->optionalPackages[$key])) {
+                    if (! isset($this->optionalPackages()[$key])) {
                         continue;
                     }
 
-                    $package = $this->optionalPackages[$key];
+                    $package = $this->optionalPackages()[$key];
 
                     $this->installPackageStreamed($package, $emit, $emitLines);
                 }
@@ -689,7 +716,7 @@ class InstallerController extends Controller
                     $this->markInstalled();
                 }
 
-                echo 'event: error'.PHP_EOL;
+                echo 'event: install-error'.PHP_EOL;
                 echo 'data: '.json_encode(['message' => $e->getMessage()]).PHP_EOL.PHP_EOL;
 
                 @ob_flush();
@@ -801,7 +828,7 @@ class InstallerController extends Controller
             }
 
             $artisan = new Process(
-                [PHP_BINARY, base_path('artisan'), $package['install'], '--no-interaction'],
+                [$this->resolvePhpBinary(), base_path('artisan'), $package['install'], '--no-interaction'],
                 base_path(),
                 $this->resolvedDatabaseEnv() + $env,
                 null,
@@ -859,6 +886,22 @@ class InstallerController extends Controller
     }
 
     /**
+     * Resolve the PHP executable used to spawn child processes.
+     *
+     * `PHP_BINARY` is empty on some web SAPIs, which spawns a command whose
+     * first argument is an empty string — the shell reports "Permission
+     * denied" and exit 127, and the install fails with nothing to act on.
+     */
+    protected function resolvePhpBinary(): string
+    {
+        if (PHP_BINARY !== '' && is_executable(PHP_BINARY) && ! str_contains(basename(PHP_BINARY), 'fpm')) {
+            return PHP_BINARY;
+        }
+
+        return (new PhpExecutableFinder)->find(false) ?: 'php';
+    }
+
+    /**
      * Resolve the composer executable as a process-argument prefix.
      *
      * A web process PATH may not include composer, so probe common locations
@@ -871,7 +914,7 @@ class InstallerController extends Controller
     {
         foreach ($this->composerProbePaths() as $path) {
             if (is_file($path)) {
-                return str_ends_with($path, '.phar') ? [PHP_BINARY, $path] : [$path];
+                return str_ends_with($path, '.phar') ? [$this->resolvePhpBinary(), $path] : [$path];
             }
         }
 

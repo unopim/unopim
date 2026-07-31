@@ -66,7 +66,7 @@ test.describe('product-edit section drawer', () => {
 
     const before = await search.boundingBox();
 
-    await panel.locator('.overflow-auto').first().evaluate((el) => { el.scrollTop = el.scrollHeight; });
+    await panel.locator('.overflow-y-auto').first().evaluate((el) => { el.scrollTop = el.scrollHeight; });
 
     const after = await search.boundingBox();
     expect(Math.abs(after.y - before.y)).toBeLessThan(2);

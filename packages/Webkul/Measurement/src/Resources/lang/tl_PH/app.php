@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Ang field na ito ay maaari lamang maglaman ng mga titik, numero, at underscore.',
-        'label_format'     => 'Ang field na ito ay maaari lamang maglaman ng mga titik, numero, espasyo, at underscore.',
+        'label_format'     => 'Ang field na ito ay maaari lamang maglaman ng mga titik, numero, espasyo, at mga karakter na _ - \' . , / ( ).',
         'max_conversions'  => 'Ang isang yunit ay hindi maaaring magkaroon ng higit sa :max na operasyon ng pag-convert.',
         'max_units'        => 'Ang isang pamilya ng sukat ay hindi maaaring magkaroon ng higit sa :max na yunit.',
     ],

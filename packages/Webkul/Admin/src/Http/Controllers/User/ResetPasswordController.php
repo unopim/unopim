@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 
 class ResetPasswordController extends Controller
 {
@@ -41,7 +42,7 @@ class ResetPasswordController extends Controller
         $this->validate(request(), [
             'token'    => 'required',
             'email'    => 'required|email',
-            'password' => 'required|confirmed|min:'.config('admin.auth.password_min'),
+            'password' => ['required', 'confirmed', 'min:'.config('admin.auth.password_min'), new PasswordWithoutSurroundingWhitespace],
         ]);
 
         $wantsJson = request()->wantsJson();

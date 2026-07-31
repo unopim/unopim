@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => '产品数据表',
+                'lede'              => '演示目录的参考规格。除非产品页面另有说明，否则数值适用于该产品族的所有产品。',
+                'family-code'       => '产品族代码',
+                'compliance'        => '合规性',
+                'compliance-value'  => '已通过 CE 标识；RoHS 与 REACH 声明可应要求提供。',
+                'spare-parts'       => '备件',
+                'spare-parts-value' => '易损件自最后生产日期起备货十年。',
+                'packaging'         => '包装',
+                'packaging-value'   => '无塑料包装，FSC 认证纸板，采用无矿物油油墨印刷。',
+                'footer'            => '由 UnoPim 生成，仅供演示。',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => '默认',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim 升级',
+        'complete'              => '升级完成。应用已重新上线。',
+        'aborted'               => '升级已中止。未做任何更改。',
+        'confirm'               => '应用将进入维护模式并迁移数据库。是否继续？',
+        'dry-run-complete'      => '试运行完成。未做任何更改。',
+        'preflight-failed'      => ':count 项检查未通过。升级未启动，未做任何更改。',
+        'preflight-failed-hint' => '请解决上述问题后重新运行该命令。此前的版本仍在处理流量。',
+        'verify-failed'         => ':count 项验证未通过。应用已保持在维护模式。',
+        'migrate-failed'        => '迁移失败：:error',
+        'step-failed'           => ':command 步骤失败，退出码 :code。',
+        'phase'                 => [
+            'preflight' => '第 1/5 阶段 — 预检',
+            'drift'     => '第 2/5 阶段 — 配置差异',
+            'sizing'    => '第 3/5 阶段 — 维护窗口预估',
+            'execute'   => '第 4/5 阶段 — 迁移',
+            'verify'    => '第 5/5 阶段 — 验证',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP 版本',
+            'php-version-detail'         => '需要 :required，实际为 :found',
+            'php-version-remedy'         => '请先将 PHP 升级到 :required 或更高版本再继续。',
+            'extensions'                 => 'PHP 扩展',
+            'extensions-remedy'          => '请安装缺失的扩展并重启 PHP-FPM。',
+            'database'                   => '数据库连接',
+            'database-detail'            => ':driver，数据库 :database，前缀 :prefix',
+            'database-remedy'            => '请检查 .env 文件中的数据库凭据。',
+            'source-version'             => '已安装版本',
+            'source-version-detail'      => ':version 或更高',
+            'source-version-unsupported' => '早于 :version',
+            'source-version-remedy'      => '请先升级到 :version，然后重新运行此命令。',
+            'pending-migrations'         => '待执行的迁移',
+            'pending-migrations-detail'  => '待运行 :count 项',
+            'pending-migrations-none'    => '无 — 数据库已是最新',
+            'pending-migrations-remedy'  => '无法读取迁移表。请检查数据库权限。',
+            'active-jobs'                => '导入和导出任务',
+            'active-jobs-detail'         => ':count 项仍在运行',
+            'active-jobs-remedy'         => '请等待正在运行的任务结束，或停止队列工作进程，然后重新运行该命令。',
+            'writable-paths'             => '可写目录',
+            'writable-paths-remedy'      => '请为 Web 服务器用户授予上述目录的写入权限。',
+            'disk-space'                 => '磁盘空间',
+            'disk-space-detail'          => '可用 :free，需要 :required',
+            'disk-space-unknown'         => '无法确定',
+            'disk-space-remedy'          => '请释放磁盘空间；若数据库已由其他方式备份，可使用 --skip-backup。',
+        ],
+
+        'drift'                 => [
+            'none'        => '未检测到配置差异。',
+            'no-previous' => '未指定此前版本的目录，因此无法比对配置文件和 Composer 依赖。请使用 --from=/path/to/old/release 获取完整报告。',
+            'env-missing' => '本版本新增、但您的 .env 中缺失的环境变量：',
+            'env-removed' => '本版本已移除、但您的 .env 中仍在设置的环境变量：',
+            'config'      => '与此前版本不同的配置文件。请重新应用您的本地修改：',
+            'composer'    => '您自行添加、但本版本中缺失的 Composer 依赖：',
+            'manual'      => '这些文件归您所有。请在恢复流量前手动合并 —— 升级永远不会覆盖它们。',
+        ],
+
+        'sizing'                => [
+            'table'           => '表',
+            'rows'            => '行数',
+            'pending'         => '将执行 :count 项迁移。',
+            'window'          => '预计维护窗口：约 :minutes 分钟。',
+            'nothing-pending' => '没有待执行的迁移。',
+            'irreversible'    => '以下迁移会改写数据且无法撤销。只有还原数据库备份才能回退：',
+        ],
+
+        'backup'                => [
+            'created'            => '数据库备份已写入 :path',
+            'skipped'            => '已跳过数据库备份。继续之前请确保您拥有可还原的备份。',
+            'failed'             => '数据库备份失败：:error',
+            'empty'              => '数据库备份为空，已丢弃。',
+            'abort'              => '由于不存在经校验的备份，升级已停止。未做任何更改。',
+            'unsupported-driver' => '没有适用于 :driver 驱动的备份命令。',
+        ],
+
+        'verify'                => [
+            'table-missing'          => '已跳过，数据表不存在',
+            'associations'           => '产品关联',
+            'associations-none'      => '没有需要迁移的旧关联',
+            'associations-detail'    => '已迁移 :legacy 个产品中的 :migrated 个',
+            'associations-remedy'    => '发现了旧的关联数据，但未迁移任何内容。请还原备份并反馈此问题。',
+            'robot-users'            => 'API 集成的所有者',
+            'robot-users-detail'     => ':count 个集成仍归属于个人',
+            'robot-users-remedy'     => '请重新运行迁移，或在管理后台重新分配这些集成。',
+            'category-bounds'        => '分类树完整性',
+            'category-bounds-detail' => ':count 个分类节点的边界值无效',
+            'category-bounds-remedy' => '请在恢复流量前重建分类树。',
+            'scrubbed-audits'        => '凭据清理',
+            'scrubbed-audits-detail' => ':count 条审计记录仍包含凭据',
+            'scrubbed-audits-remedy' => '请在恢复流量前重新运行迁移。这些记录会泄露已存储的凭据。',
+        ],
+
+        'restore'               => [
+            'heading' => '升级未完成。应用处于维护模式。',
+            'body'    => '回退方法：还原数据库备份，将 Web 服务器指回此前的版本目录，并在该目录下执行「php artisan up」。',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => '已忽略 --with-reindex：:count 个产品超过内联重建的 :limit 个产品上限。',
+            'deferred'  => '未重建 Elasticsearch 索引。在 :count 个产品的规模下，该操作耗时长于升级本身，完成之前搜索会回退到数据库。站点恢复后请执行：',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -197,7 +316,7 @@ return [
                 'turkish-lira'        => '土耳其里拉 (TRY)',
                 'ukrainian-hryvnia'   => '乌克兰格里夫纳 (UAH)',
                 'usd'                 => '美元 (USD)',
-                'warning-message'     => '提防！默认系统语言和默认货币的设置是永久性的，不能再次更改。',
+                'warning-message'     => '您在此处选择的语言环境和货币将成为渠道和管理员账户的初始默认值。您可以随时在管理设置中启用更多语言环境和货币，或更改这些默认值。',
             ],
             'installation-processing' => [
                 'unopim'      => '安装 UnoPim',
@@ -221,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label 已安装',
                 'package-failed'     => '✗ :label 失败：:message',
                 'package-manual'     => '! :label 无法在此服务器上自动安装（无 shell 访问权限）。请在具有 shell 访问权限的机器上运行此命令：',
+                'install-failed'     => '✗ 安装失败。请查看 storage/logs/laravel.log 了解详情。',
+                'stream-interrupted' => '! 与安装程序的连接已断开。安装可能仍在完成中 — 请稍候片刻，然后重新加载此页面。',
             ],
             'installation-completed' => [
                 'admin-panel'               => '管理面板',

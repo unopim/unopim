@@ -5,7 +5,7 @@ const path = require('path');
 test.describe('Data transfer profile — edit button ACL', () => {
   test.setTimeout(180000);
 
-  const ADMIN_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
+  const ADMIN_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
   const BASE_URL = process.env.BASE_URL || 'http://127.0.0.1:8000';
 
   const HIDE_OVERLAYS = `
@@ -150,6 +150,61 @@ test.describe('Data transfer profile — edit button ACL', () => {
     await userPage.waitForURL(/\/data-transfer\/exports\/export\/\d+/, { timeout: 20000 });
 
     await expect(userPage.locator('a[href$="/data-transfer/exports"]').first()).toBeVisible({ timeout: 15000 });
+
+    await expect(userPage.locator('a[href*="/data-transfer/exports/edit/"]')).toHaveCount(0);
+
+    await userContext.close();
+
+    await removeRecord(adminPage, 'users', userEmail);
+    await removeRecord(adminPage, 'roles', roleName);
+    await adminContext.close();
+  });
+
+  test('the export grid and the job tracker hide Edit for a role without the edit permission', async ({ browser }) => {
+    const uid = generateUid();
+    const roleName = `TrackerNoEdit${uid}`;
+    const userEmail = `tracker-no-edit-${uid}@example.com`;
+    const userPassword = 'Test@12345';
+
+    const adminContext = await browser.newContext({ storageState: ADMIN_STATE });
+    await adminContext.addInitScript(HIDE_OVERLAYS);
+    const adminPage = await adminContext.newPage();
+
+    await createRole(adminPage, roleName);
+    const roleId = await setRolePermissions(adminPage, roleName, [
+      'dashboard',
+      'data_transfer',
+      'data_transfer.job_tracker',
+      'data_transfer.export',
+      'data_transfer.export.execute',
+    ]);
+    await createUserWithRole(adminPage, {
+      name: `Tracker Viewer ${uid}`,
+      email: userEmail,
+      password: userPassword,
+      roleId,
+    });
+
+    const userContext = await browser.newContext({ storageState: { cookies: [], origins: [] } });
+    await userContext.addInitScript(HIDE_OVERLAYS);
+    const userPage = await userContext.newPage();
+
+    await userPage.goto(`${BASE_URL}/admin/login`);
+    await userPage.locator('input[name="email"]').fill(userEmail);
+    await userPage.locator('input[name="password"]').fill(userPassword);
+    await userPage.locator('button[aria-label="Sign In"]').click();
+    await userPage.waitForURL((url) => !url.pathname.endsWith('/admin/login'), { timeout: 30000 });
+
+    await userPage.goto(`${BASE_URL}/admin/data-transfer/exports`, { waitUntil: 'domcontentloaded' });
+    await userPage.locator('span.icon-export').first().waitFor({ state: 'visible', timeout: 20000 });
+
+    await expect(userPage.locator('span[title="Edit"]')).toHaveCount(0);
+
+    await userPage.locator('span.icon-export').first().click();
+    await userPage.waitForURL(/\/data-transfer\/exports\/export\/\d+/, { timeout: 20000 });
+
+    await userPage.getByRole('button', { name: 'Export Now' }).click();
+    await userPage.waitForURL(/\/data-transfer\/job-tracker\/track\/\d+/, { timeout: 30000 });
 
     await expect(userPage.locator('a[href*="/data-transfer/exports/edit/"]')).toHaveCount(0);
 

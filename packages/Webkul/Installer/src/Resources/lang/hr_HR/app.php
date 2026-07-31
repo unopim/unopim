@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Tehnički list proizvoda',
+                'lede'              => 'Referentna specifikacija demo kataloga. Vrijednosti vrijede za sve proizvode ove obitelji, osim ako stranica proizvoda ne navodi drugačije.',
+                'family-code'       => 'Šifra obitelji',
+                'compliance'        => 'Sukladnost',
+                'compliance-value'  => 'CE oznaka; RoHS i REACH izjave dostupne na zahtjev.',
+                'spare-parts'       => 'Rezervni dijelovi',
+                'spare-parts-value' => 'Potrošni dijelovi na zalihi deset godina od posljednjeg datuma proizvodnje.',
+                'packaging'         => 'Pakiranje',
+                'packaging-value'   => 'Pakiranje bez plastike, karton s FSC certifikatom, tiskano bojama bez mineralnih ulja.',
+                'footer'            => 'Izradio UnoPim u demonstracijske svrhe.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Zadano',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Nadogradnja UnoPima',
+        'complete'              => 'Nadogradnja je dovršena. Aplikacija je ponovno dostupna.',
+        'aborted'               => 'Nadogradnja je prekinuta. Ništa nije promijenjeno.',
+        'confirm'               => 'Aplikacija će prijeći u način održavanja, a baza podataka bit će migrirana. Nastaviti?',
+        'dry-run-complete'      => 'Probno izvođenje je dovršeno. Ništa nije promijenjeno.',
+        'preflight-failed'      => 'Neuspjelih provjera: :count. Nadogradnja nije pokrenuta i ništa nije promijenjeno.',
+        'preflight-failed-hint' => 'Riješite navedene stavke i ponovno pokrenite naredbu. Prethodno izdanje i dalje poslužuje promet.',
+        'verify-failed'         => 'Neuspjelih potvrda: :count. Aplikacija je ostavljena u načinu održavanja.',
+        'migrate-failed'        => 'Migracija nije uspjela: :error',
+        'step-failed'           => 'Korak :command nije uspio, izlazni kôd :code.',
+        'phase'                 => [
+            'preflight' => 'Faza 1 od 5 — Početne provjere',
+            'drift'     => 'Faza 2 od 5 — Razlike u konfiguraciji',
+            'sizing'    => 'Faza 3 od 5 — Procjena prozora održavanja',
+            'execute'   => 'Faza 4 od 5 — Migracija',
+            'verify'    => 'Faza 5 od 5 — Potvrda',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Verzija PHP-a',
+            'php-version-detail'         => 'zahtijeva :required, pronađeno :found',
+            'php-version-remedy'         => 'Nadogradite PHP na :required ili noviju verziju prije nastavka.',
+            'extensions'                 => 'PHP proširenja',
+            'extensions-remedy'          => 'Instalirajte proširenja koja nedostaju i ponovno pokrenite PHP-FPM.',
+            'database'                   => 'Veza s bazom podataka',
+            'database-detail'            => ':driver, baza :database, prefiks :prefix',
+            'database-remedy'            => 'Provjerite podatke za pristup bazi u datoteci .env.',
+            'source-version'             => 'Instalirano izdanje',
+            'source-version-detail'      => ':version ili novije',
+            'source-version-unsupported' => 'starije od :version',
+            'source-version-remedy'      => 'Najprije se nadogradite na :version, a zatim ponovno pokrenite ovu naredbu.',
+            'pending-migrations'         => 'Migracije na čekanju',
+            'pending-migrations-detail'  => 'za izvođenje: :count',
+            'pending-migrations-none'    => 'nema — baza podataka je već ažurna',
+            'pending-migrations-remedy'  => 'Tablicu migracija nije bilo moguće pročitati. Provjerite ovlasti nad bazom podataka.',
+            'active-jobs'                => 'Poslovi uvoza i izvoza',
+            'active-jobs-detail'         => 'još u tijeku: :count',
+            'active-jobs-remedy'         => 'Pričekajte da se poslovi u tijeku dovrše ili zaustavite radnike reda, a zatim ponovno pokrenite naredbu.',
+            'writable-paths'             => 'Mape s pravom pisanja',
+            'writable-paths-remedy'      => 'Dodijelite korisniku web-poslužitelja pravo pisanja u gore navedene mape.',
+            'disk-space'                 => 'Prostor na disku',
+            'disk-space-detail'          => 'slobodno :free, potrebno :required',
+            'disk-space-unknown'         => 'nije bilo moguće utvrditi',
+            'disk-space-remedy'          => 'Oslobodite prostor na disku ili upotrijebite --skip-backup ako se baza podataka sigurnosno kopira drugdje.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Nisu pronađene razlike u konfiguraciji.',
+            'no-previous' => 'Mapa prethodnog izdanja nije navedena pa se konfiguracijske datoteke i Composer ovisnosti ne mogu usporediti. Upotrijebite --from=/putanja/do/starog/izdanja za potpuni izvještaj.',
+            'env-missing' => 'Ključevi okruženja koje ovo izdanje dodaje, a nedostaju u vašem .env-u:',
+            'env-removed' => 'Ključevi okruženja koje ovo izdanje uklanja, a još su postavljeni u vašem .env-u:',
+            'config'      => 'Konfiguracijske datoteke koje se razlikuju od prethodnog izdanja. Ponovno primijenite svoje lokalne izmjene:',
+            'composer'    => 'Composer ovisnosti koje ste dodali, a nedostaju u ovom izdanju:',
+            'manual'      => 'Ove su datoteke vaše. Spojite ih ručno prije puštanja prometa — nadogradnja ih nikada ne prepisuje.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tablica',
+            'rows'            => 'Redaka',
+            'pending'         => 'Izvest će se migracija: :count.',
+            'window'          => 'Procijenjeni prozor održavanja: oko :minutes min.',
+            'nothing-pending' => 'Nema migracija na čekanju.',
+            'irreversible'    => 'Ove migracije prepisuju podatke i ne mogu se poništiti. Povratak je moguć samo vraćanjem sigurnosne kopije baze podataka:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Sigurnosna kopija baze podataka zapisana je u :path',
+            'skipped'            => 'Sigurnosna kopija baze podataka je preskočena. Prije nastavka provjerite imate li kopiju koju je moguće vratiti.',
+            'failed'             => 'Sigurnosna kopija baze podataka nije uspjela: :error',
+            'empty'              => 'Sigurnosna kopija baze podataka bila je prazna i odbačena je.',
+            'abort'              => 'Nadogradnja je zaustavljena jer ne postoji provjerena sigurnosna kopija. Ništa nije promijenjeno.',
+            'unsupported-driver' => 'Za upravljački program :driver nije dostupna naredba za sigurnosnu kopiju.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'preskočeno, tablica ne postoji',
+            'associations'           => 'Povezani proizvodi',
+            'associations-none'      => 'nema starih poveznica za migraciju',
+            'associations-detail'    => 'migrirano :migrated od :legacy proizvoda',
+            'associations-remedy'    => 'Pronađeni su stari podaci o poveznicama, ali ništa nije migrirano. Vratite sigurnosnu kopiju i prijavite ovo.',
+            'robot-users'            => 'Vlasnici API integracija',
+            'robot-users-detail'     => 'integracija još pripada osobi: :count',
+            'robot-users-remedy'     => 'Ponovno pokrenite migraciju ili dodijelite integracije iz administratorskog sučelja.',
+            'category-bounds'        => 'Cjelovitost stabla kategorija',
+            'category-bounds-detail' => 'čvorova kategorija ima neispravne granice: :count',
+            'category-bounds-remedy' => 'Ponovno izgradite stablo kategorija prije puštanja prometa.',
+            'scrubbed-audits'        => 'Čišćenje vjerodajnica',
+            'scrubbed-audits-detail' => 'zapisa revizije još sadrži vjerodajnice: :count',
+            'scrubbed-audits-remedy' => 'Ponovno pokrenite migraciju prije puštanja prometa. Ti zapisi otkrivaju pohranjene vjerodajnice.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Nadogradnja nije dovršena. Aplikacija je u načinu održavanja.',
+            'body'    => 'Za povratak: vratite sigurnosnu kopiju baze podataka, usmjerite web-poslužitelj natrag na mapu prethodnog izdanja i ondje pokrenite «php artisan up».',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Zanemarujem --with-reindex: :count proizvoda premašuje ograničenje od :limit proizvoda za izravnu ponovnu izgradnju.',
+            'deferred'  => 'Elasticsearch nije ponovno indeksiran. Uz :count proizvoda to traje dulje od same nadogradnje, a pretraga se do završetka oslanja na bazu podataka. Pokrenite ovo kada stranica ponovno bude dostupna:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -197,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turska Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrajinska Grivnja (UAH)',
                 'usd'                 => 'Američki Dolar (USD)',
-                'warning-message'     => 'Upozorenje! Zadane jezične i valutne postavke ne mogu se kasnije mijenjati.',
+                'warning-message'     => 'Jezik i valuta koje ovdje odaberete postaju početne zadane vrijednosti za kanal i administratorski račun. Dodatne jezike i valute možete aktivirati, ili promijeniti ove zadane vrijednosti, u bilo kojem trenutku u administratorskim postavkama.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalacija UnoPim-a',
@@ -221,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label instaliran',
                 'package-failed'     => '✗ :label nije uspio: :message',
                 'package-manual'     => '! :label nije moguće automatski instalirati na ovom poslužitelju (nema pristupa ljusci). Pokrenite ovo s računala koje ima pristup ljusci:',
+                'install-failed'     => '✗ Instalacija nije uspjela. Pogledajte storage/logs/laravel.log za detalje.',
+                'stream-interrupted' => '! Veza s instalacijskim programom je prekinuta. Instalacija se možda još dovršava — pričekajte trenutak, a zatim ponovno učitajte ovu stranicu.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Administratorska Ploča',

@@ -10,6 +10,7 @@ it('hands the panel an attempt to follow when a publish is queued', function ():
     [$product, $context] = $this->productWithSecretAndDppAttributes();
 
     $this->enablePassportPublishing($context->channel->code);
+    $this->enablePublicTier($context->channel->code);
 
     $this->loginWithPermissions('all');
 

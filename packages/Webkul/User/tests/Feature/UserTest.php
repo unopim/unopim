@@ -360,7 +360,7 @@ it('should keep the current ui-locale when the field is cleared', function () {
         'ui_locale_id'     => '',
     ]);
 
-    $response->assertStatus(302);
+    $response->assertOk();
     $response->assertSessionDoesntHaveErrors(['ui_locale_id']);
 
     expect($admin->fresh()->ui_locale_id)->toBe($admin->ui_locale_id);
@@ -381,7 +381,7 @@ it('should keep the current timezone when the field is cleared', function () {
         'ui_locale_id'     => 2,
     ]);
 
-    $response->assertStatus(302);
+    $response->assertOk();
     $response->assertSessionDoesntHaveErrors(['timezone']);
 
     expect($admin->fresh()->timezone)->toBe('Asia/Kolkata');
@@ -401,7 +401,7 @@ it('should update the user with all required data', function () {
         'password_confirmation' => 'password2',
     ]);
 
-    $response->assertRedirect();
+    $response->assertOk()->assertJsonPath('redirect_url', route('admin.account.edit'));
 
     $this->assertDatabaseHas($this->getFullTableName(Admin::class), [
         'name'  => 'John doe',

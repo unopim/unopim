@@ -19,7 +19,8 @@ it('offers a locale switcher for the published locales only', function (): void 
     $version = $this->publishedPassportFixture();
     $publication = $version->publication;
 
-    $unpublished = Locale::factory()->create();
+    // Code cannot be a prefix of the published locale's, or assertDontSee matches inside its URL.
+    $unpublished = Locale::factory()->create(['code' => 'zz_ZZ']);
     $publication->channel->locales()->attach($unpublished);
 
     $response = $this->get('/p/'.$publication->uuid.'/'.$version->locale->code);

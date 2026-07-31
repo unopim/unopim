@@ -55,7 +55,7 @@ describe('InstallerController::seedSampleData (issue #794)', function () {
     it('returns success: true when the demo data installer reports success', function () {
         app()->instance(DemoDataInstaller::class, new class extends DemoDataInstaller
         {
-            public function seed(?Closure $reporter = null, bool $force = false): array
+            public function seed(?Closure $reporter = null, bool $force = false, bool $large = false): array
             {
                 return ['success' => true];
             }
@@ -69,7 +69,7 @@ describe('InstallerController::seedSampleData (issue #794)', function () {
     it('returns 500 and forwards the seeder error message on failure', function () {
         app()->instance(DemoDataInstaller::class, new class extends DemoDataInstaller
         {
-            public function seed(?Closure $reporter = null, bool $force = false): array
+            public function seed(?Closure $reporter = null, bool $force = false, bool $large = false): array
             {
                 return ['success' => false, 'error' => 'demo_extras.json missing'];
             }

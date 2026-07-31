@@ -44,22 +44,26 @@ function createTestJobTrack(JobInstances $jobInstance, string $state = 'processi
 function createTestExportJob(string $state = 'processing'): array
 {
     $jobInstance = JobInstances::create([
-        'code'        => 'test-export-'.uniqid(),
-        'entity_type' => 'products',
-        'type'        => 'export',
-        'action'      => 'export',
-        'file_path'   => 'exports/test.csv',
+        'code'                => 'test-export-'.uniqid(),
+        'entity_type'         => 'products',
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'skip',
+        'field_separator'     => ',',
+        'file_path'           => 'exports/test.csv',
     ]);
 
     $jobTrack = JobTrack::create([
-        'state'            => $state,
-        'type'             => 'export',
-        'action'           => 'export',
-        'file_path'        => 'exports/test.csv',
-        'meta'             => json_encode($jobInstance->toArray()),
-        'job_instances_id' => $jobInstance->id,
-        'user_id'          => auth('admin')->id(),
-        'started_at'       => now(),
+        'state'               => $state,
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'skip',
+        'field_separator'     => ',',
+        'file_path'           => 'exports/test.csv',
+        'meta'                => json_encode($jobInstance->toArray()),
+        'job_instances_id'    => $jobInstance->id,
+        'user_id'             => auth('admin')->id(),
+        'started_at'          => now(),
     ]);
 
     return [$jobInstance, $jobTrack];

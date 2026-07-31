@@ -7,6 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -22,6 +23,8 @@ use Webkul\DataTransfer\Services\JobHealth;
 
 class ImportController extends Controller
 {
+    use Concerns\DownloadsSampleFile;
+
     const TYPE = 'import';
 
     const IMPORTERS = 'importers';
@@ -611,7 +614,7 @@ class ImportController extends Controller
             $import->refresh();
         }
 
-        $jobInstance = json_decode($import->meta, true);
+        $jobInstance = $import->meta;
         $summary = $this->normalizeSummary($import->summary);
 
         if (JobType::fromTrack($import)->isExport()) {
@@ -651,13 +654,19 @@ class ImportController extends Controller
     }
 
     /**
-     * Download import error report
+     * Download the sample file shipped for an importer type
      */
-    public function downloadSample(string $type)
+    public function downloadSample(?string $type = null, ?string $key = null): BinaryFileResponse
     {
-        $importer = config('importers.'.$type);
+        return $this->downloadSampleFile(self::IMPORTERS, $type, $key);
+    }
 
-        return Storage::disk('public')->download($importer['sample_path']);
+    /**
+     * Download the sample images archive shipped for a type
+     */
+    public function downloadSampleImagesZip(?string $type = null, ?string $key = null): BinaryFileResponse
+    {
+        return $this->downloadSampleFile(self::IMPORTERS, $type, $key, images: true);
     }
 
     /**

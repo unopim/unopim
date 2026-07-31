@@ -93,8 +93,10 @@
 
                 </div>
                 @if (bouncer()->hasPermission('data_transfer.export.execute'))
-                    <x-admin::form  
+                    <x-admin::form
                             :action="route('admin.settings.data_transfer.exports.export_now', ['id' => $export->id])"
+                            ajax="true"
+                            :track-dirty="false"
                         >
                         @method('PUT')
 

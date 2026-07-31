@@ -1,0 +1,6 @@
+code,name,symbol,decimal,status
+USD,"US Dollar",$,2,1
+EUR,Euro,€,2,0
+GBP,"British Pound",£,2,0
+INR,"Indian Rupee",₹,2,0
+JPY,"Japanese Yen",¥,0,0

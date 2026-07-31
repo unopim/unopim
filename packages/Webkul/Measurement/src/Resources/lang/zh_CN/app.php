@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => '该字段只能包含字母、数字和下划线。',
-        'label_format'     => '该字段只能包含字母、数字、空格和下划线。',
+        'label_format'     => '该字段只能包含字母、数字、空格以及字符 _ - \' . , / ( )。',
         'max_conversions'  => '一个单位不能拥有超过 :max 个转换操作。',
         'max_units'        => '一个计量单位组不能拥有超过 :max 个单位。',
     ],

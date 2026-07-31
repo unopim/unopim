@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Productdatablad',
+                'lede'              => 'Referentiespecificatie voor de democatalogus. De waarden gelden voor elk product in deze familie, tenzij de productpagina anders vermeldt.',
+                'family-code'       => 'Familiecode',
+                'compliance'        => 'Conformiteit',
+                'compliance-value'  => 'CE-gemarkeerd; RoHS- en REACH-verklaringen op aanvraag beschikbaar.',
+                'spare-parts'       => 'Reserveonderdelen',
+                'spare-parts-value' => 'Slijtdelen tot tien jaar na de laatste productiedatum op voorraad.',
+                'packaging'         => 'Verpakking',
+                'packaging-value'   => 'Plasticvrije verpakking, FSC-gecertificeerd karton, gedrukt met minerale-olievrije inkt.',
+                'footer'            => 'Gegenereerd door UnoPim voor demonstratiedoeleinden.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standaard',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim-upgrade',
+        'complete'              => 'Upgrade voltooid. De applicatie is weer online.',
+        'aborted'               => 'Upgrade afgebroken. Er is niets gewijzigd.',
+        'confirm'               => 'De applicatie gaat in onderhoudsmodus en de database wordt gemigreerd. Doorgaan?',
+        'dry-run-complete'      => 'Testrun voltooid. Er is niets gewijzigd.',
+        'preflight-failed'      => ':count controle(s) mislukt. De upgrade is niet gestart en er is niets gewijzigd.',
+        'preflight-failed-hint' => 'Los bovenstaande punten op en voer de opdracht opnieuw uit. De vorige release bedient nog steeds het verkeer.',
+        'verify-failed'         => ':count verificatie(s) mislukt. De applicatie blijft in onderhoudsmodus.',
+        'migrate-failed'        => 'Migratie mislukt: :error',
+        'step-failed'           => 'De stap :command is mislukt met afsluitcode :code.',
+        'phase'                 => [
+            'preflight' => 'Fase 1 van 5 — Voorcontroles',
+            'drift'     => 'Fase 2 van 5 — Configuratieverschillen',
+            'sizing'    => 'Fase 3 van 5 — Geschat onderhoudsvenster',
+            'execute'   => 'Fase 4 van 5 — Migratie',
+            'verify'    => 'Fase 5 van 5 — Verificatie',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP-versie',
+            'php-version-detail'         => 'vereist :required, gevonden :found',
+            'php-version-remedy'         => 'Werk PHP bij naar :required of nieuwer voordat u doorgaat.',
+            'extensions'                 => 'PHP-extensies',
+            'extensions-remedy'          => 'Installeer de ontbrekende extensies en herstart PHP-FPM.',
+            'database'                   => 'Databaseverbinding',
+            'database-detail'            => ':driver, database :database, prefix :prefix',
+            'database-remedy'            => 'Controleer de databasegegevens in uw .env-bestand.',
+            'source-version'             => 'Geïnstalleerde release',
+            'source-version-detail'      => ':version of nieuwer',
+            'source-version-unsupported' => 'ouder dan :version',
+            'source-version-remedy'      => 'Werk eerst bij naar :version en voer deze opdracht daarna opnieuw uit.',
+            'pending-migrations'         => 'Openstaande migraties',
+            'pending-migrations-detail'  => ':count uit te voeren',
+            'pending-migrations-none'    => 'geen — de database is al bijgewerkt',
+            'pending-migrations-remedy'  => 'De migratietabel kon niet worden gelezen. Controleer de databaserechten.',
+            'active-jobs'                => 'Import- en exporttaken',
+            'active-jobs-detail'         => ':count nog bezig',
+            'active-jobs-remedy'         => 'Wacht tot de lopende taken klaar zijn of stop de queue workers, en voer deze opdracht daarna opnieuw uit.',
+            'writable-paths'             => 'Beschrijfbare mappen',
+            'writable-paths-remedy'      => 'Geef de webservergebruiker schrijfrechten op de hierboven genoemde mappen.',
+            'disk-space'                 => 'Schijfruimte',
+            'disk-space-detail'          => ':free vrij, :required vereist',
+            'disk-space-unknown'         => 'kon niet worden bepaald',
+            'disk-space-remedy'          => 'Maak schijfruimte vrij of gebruik --skip-backup als de database elders wordt geback-upt.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Geen configuratieverschillen aangetroffen.',
+            'no-previous' => 'Geen vorige releasemap opgegeven, dus configuratiebestanden en Composer-vereisten kunnen niet worden vergeleken. Gebruik --from=/pad/naar/oude/release voor een volledig rapport.',
+            'env-missing' => 'Omgevingssleutels die deze release toevoegt en in uw .env ontbreken:',
+            'env-removed' => 'Omgevingssleutels die deze release verwijdert en nog in uw .env staan:',
+            'config'      => 'Configuratiebestanden die afwijken van uw vorige release. Pas uw lokale wijzigingen opnieuw toe:',
+            'composer'    => 'Door u toegevoegde Composer-vereisten die in deze release ontbreken:',
+            'manual'      => 'Deze bestanden zijn van u. Voeg ze handmatig samen voordat u verkeer toelaat — de upgrade overschrijft ze nooit.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabel',
+            'rows'            => 'Rijen',
+            'pending'         => ':count migratie(s) worden uitgevoerd.',
+            'window'          => 'Geschat onderhoudsvenster: ongeveer :minutes minuut/minuten.',
+            'nothing-pending' => 'Er staan geen migraties open.',
+            'irreversible'    => 'Deze migraties herschrijven gegevens en kunnen niet ongedaan worden gemaakt. Alleen het terugzetten van de databaseback-up brengt u terug:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Databaseback-up weggeschreven naar :path',
+            'skipped'            => 'Databaseback-up overgeslagen. Zorg dat u een herstelbare back-up hebt voordat u doorgaat.',
+            'failed'             => 'Databaseback-up mislukt: :error',
+            'empty'              => 'De databaseback-up was leeg en is verwijderd.',
+            'abort'              => 'De upgrade is gestopt omdat er geen geverifieerde back-up is. Er is niets gewijzigd.',
+            'unsupported-driver' => 'Voor de driver :driver is geen back-upopdracht beschikbaar.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'overgeslagen, tabel niet aanwezig',
+            'associations'           => 'Productkoppelingen',
+            'associations-none'      => 'geen oude koppelingen om te migreren',
+            'associations-detail'    => ':migrated van :legacy product(en) gemigreerd',
+            'associations-remedy'    => 'Er zijn oude koppelingsgegevens gevonden, maar er is niets gemigreerd. Zet de back-up terug en meld dit.',
+            'robot-users'            => 'Eigenaren van API-integraties',
+            'robot-users-detail'     => ':count integratie(s) zijn nog eigendom van een persoon',
+            'robot-users-remedy'     => 'Voer de migratie opnieuw uit of wijs de integraties opnieuw toe vanuit het beheerpaneel.',
+            'category-bounds'        => 'Integriteit van de categorieboom',
+            'category-bounds-detail' => ':count categorieknooppunt(en) hebben ongeldige grenzen',
+            'category-bounds-remedy' => 'Bouw de categorieboom opnieuw op voordat u verkeer toelaat.',
+            'scrubbed-audits'        => 'Opschonen van inloggegevens',
+            'scrubbed-audits-detail' => ':count auditrecord(s) bevatten nog inloggegevens',
+            'scrubbed-audits-remedy' => 'Voer de migratie opnieuw uit voordat u verkeer toelaat. Deze records leggen opgeslagen inloggegevens bloot.',
+        ],
+
+        'restore'               => [
+            'heading' => 'De upgrade is niet voltooid. De applicatie staat in onderhoudsmodus.',
+            'body'    => 'Terugdraaien: zet de databaseback-up terug, laat uw webserver weer naar de vorige releasemap wijzen en voer daar "php artisan up" uit.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => '--with-reindex wordt genegeerd: :count product(en) ligt boven de limiet van :limit producten voor een directe herbouw.',
+            'deferred'  => 'Elasticsearch is niet opnieuw geïndexeerd. Met :count product(en) duurt dit langer dan de upgrade zelf en valt zoeken tot die tijd terug op de database. Voer dit uit zodra de site weer online is:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -197,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turkse lira (TRY)',
                 'ukrainian-hryvnia'   => 'Oekraïense hryvnia (UAH)',
                 'usd'                 => 'Amerikaanse dollar (USD)',
-                'warning-message'     => 'Let op! De instellingen voor je standaardsysteemtalen en de standaardvaluta zijn permanent en kunnen nooit meer worden gewijzigd.',
+                'warning-message'     => 'De landinstelling en valuta die u hier kiest, worden de initiële standaardwaarden voor het kanaal en het beheerdersaccount. U kunt op elk moment meer landinstellingen en valuta\'s activeren, of deze standaardwaarden wijzigen, via de beheerdersinstellingen.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim-installatie',
@@ -221,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label geïnstalleerd',
                 'package-failed'     => '✗ :label mislukt: :message',
                 'package-manual'     => '! :label kan niet automatisch op deze server worden geïnstalleerd (geen shell-toegang). Voer dit uit vanaf een machine met shell-toegang:',
+                'install-failed'     => '✗ Installatie mislukt. Controleer storage/logs/laravel.log voor details.',
+                'stream-interrupted' => '! De verbinding met het installatieprogramma is verbroken. De installatie wordt mogelijk nog voltooid — wacht even en laad deze pagina daarna opnieuw.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Beheerderspaneel',

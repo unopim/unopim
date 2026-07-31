@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Fișă tehnică de produs',
+                'lede'              => 'Specificație de referință pentru catalogul demonstrativ. Valorile se aplică tuturor produselor din această familie, cu excepția cazului în care pagina produsului indică altfel.',
+                'family-code'       => 'Cod familie',
+                'compliance'        => 'Conformitate',
+                'compliance-value'  => 'Marcaj CE; declarațiile RoHS și REACH sunt disponibile la cerere.',
+                'spare-parts'       => 'Piese de schimb',
+                'spare-parts-value' => 'Piesele de uzură sunt păstrate în stoc zece ani de la ultima dată de producție.',
+                'packaging'         => 'Ambalaj',
+                'packaging-value'   => 'Ambalaj fără plastic, carton certificat FSC, tipărit cu cerneluri fără uleiuri minerale.',
+                'footer'            => 'Generat de UnoPim în scop demonstrativ.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Implicit',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Actualizare UnoPim',
+        'complete'              => 'Actualizare finalizată. Aplicația este din nou online.',
+        'aborted'               => 'Actualizare anulată. Nu s-a modificat nimic.',
+        'confirm'               => 'Aplicația va intra în modul de mentenanță, iar baza de date va fi migrată. Continuați?',
+        'dry-run-complete'      => 'Simulare finalizată. Nu s-a modificat nimic.',
+        'preflight-failed'      => ':count verificare/verificări au eșuat. Actualizarea nu a pornit și nu s-a modificat nimic.',
+        'preflight-failed-hint' => 'Rezolvați punctele de mai sus și rulați din nou comanda. Versiunea anterioară deservește în continuare traficul.',
+        'verify-failed'         => ':count validare/validări au eșuat. Aplicația a rămas în modul de mentenanță.',
+        'migrate-failed'        => 'Migrarea a eșuat: :error',
+        'step-failed'           => 'Pasul :command a eșuat cu codul de ieșire :code.',
+        'phase'                 => [
+            'preflight' => 'Etapa 1 din 5 — Verificări preliminare',
+            'drift'     => 'Etapa 2 din 5 — Diferențe de configurare',
+            'sizing'    => 'Etapa 3 din 5 — Estimarea ferestrei de mentenanță',
+            'execute'   => 'Etapa 4 din 5 — Migrare',
+            'verify'    => 'Etapa 5 din 5 — Validare',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Versiunea PHP',
+            'php-version-detail'         => 'necesită :required, s-a găsit :found',
+            'php-version-remedy'         => 'Actualizați PHP la :required sau mai nou înainte de a continua.',
+            'extensions'                 => 'Extensii PHP',
+            'extensions-remedy'          => 'Instalați extensiile lipsă și reporniți PHP-FPM.',
+            'database'                   => 'Conexiunea la baza de date',
+            'database-detail'            => ':driver, baza de date :database, prefix :prefix',
+            'database-remedy'            => 'Verificați datele de acces la baza de date din fișierul .env.',
+            'source-version'             => 'Versiunea instalată',
+            'source-version-detail'      => ':version sau mai nouă',
+            'source-version-unsupported' => 'mai veche decât :version',
+            'source-version-remedy'      => 'Actualizați mai întâi la :version, apoi rulați din nou această comandă.',
+            'pending-migrations'         => 'Migrări în așteptare',
+            'pending-migrations-detail'  => ':count de rulat',
+            'pending-migrations-none'    => 'niciuna — baza de date este deja actualizată',
+            'pending-migrations-remedy'  => 'Tabelul de migrări nu a putut fi citit. Verificați permisiunile bazei de date.',
+            'active-jobs'                => 'Sarcini de import și export',
+            'active-jobs-detail'         => ':count încă în execuție',
+            'active-jobs-remedy'         => 'Așteptați finalizarea sarcinilor în curs sau opriți workerii de coadă, apoi rulați din nou comanda.',
+            'writable-paths'             => 'Directoare cu drept de scriere',
+            'writable-paths-remedy'      => 'Acordați utilizatorului serverului web drept de scriere pe directoarele de mai sus.',
+            'disk-space'                 => 'Spațiu pe disc',
+            'disk-space-detail'          => ':free liberi, :required necesari',
+            'disk-space-unknown'         => 'nu a putut fi determinat',
+            'disk-space-remedy'          => 'Eliberați spațiu pe disc sau folosiți --skip-backup dacă baza de date este salvată prin alte mijloace.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Nu au fost detectate diferențe de configurare.',
+            'no-previous' => 'Nu a fost indicat directorul versiunii anterioare, așa că fișierele de configurare și dependențele Composer nu pot fi comparate. Folosiți --from=/cale/catre/versiunea/veche pentru un raport complet.',
+            'env-missing' => 'Chei de mediu adăugate de această versiune și absente din fișierul .env:',
+            'env-removed' => 'Chei de mediu eliminate de această versiune și încă prezente în fișierul .env:',
+            'config'      => 'Fișiere de configurare diferite față de versiunea anterioară. Reaplicați modificările locale:',
+            'composer'    => 'Dependențe Composer adăugate de dumneavoastră și absente din această versiune:',
+            'manual'      => 'Aceste fișiere vă aparțin. Îmbinați-le manual înainte de a redeschide traficul — actualizarea nu le rescrie niciodată.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabel',
+            'rows'            => 'Rânduri',
+            'pending'         => 'Vor rula :count migrare/migrări.',
+            'window'          => 'Fereastră de mentenanță estimată: aproximativ :minutes minut(e).',
+            'nothing-pending' => 'Nu există migrări în așteptare.',
+            'irreversible'    => 'Aceste migrări rescriu datele și nu pot fi anulate. Doar restaurarea copiei de siguranță a bazei de date permite revenirea:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Copia de siguranță a bazei de date a fost scrisă în :path',
+            'skipped'            => 'Copia de siguranță a bazei de date a fost omisă. Asigurați-vă că aveți o copie restaurabilă înainte de a continua.',
+            'failed'             => 'Copia de siguranță a bazei de date a eșuat: :error',
+            'empty'              => 'Copia de siguranță a bazei de date era goală și a fost eliminată.',
+            'abort'              => 'Actualizarea a fost oprită deoarece nu există o copie de siguranță verificată. Nu s-a modificat nimic.',
+            'unsupported-driver' => 'Nu există o comandă de copiere de siguranță pentru driverul :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'omis, tabelul nu există',
+            'associations'           => 'Asocieri de produse',
+            'associations-none'      => 'nicio asociere veche de migrat',
+            'associations-detail'    => ':migrated din :legacy produs(e) migrate',
+            'associations-remedy'    => 'Au fost găsite date de asociere vechi, dar nu s-a migrat nimic. Restaurați copia de siguranță și raportați acest lucru.',
+            'robot-users'            => 'Proprietarii integrărilor API',
+            'robot-users-detail'     => ':count integrare/integrări aparțin încă unei persoane',
+            'robot-users-remedy'     => 'Rulați din nou migrarea sau reatribuiți integrările din panoul de administrare.',
+            'category-bounds'        => 'Integritatea arborelui de categorii',
+            'category-bounds-detail' => ':count nod(uri) de categorie au limite invalide',
+            'category-bounds-remedy' => 'Reconstruiți arborele de categorii înainte de a redeschide traficul.',
+            'scrubbed-audits'        => 'Curățarea datelor de autentificare',
+            'scrubbed-audits-detail' => ':count înregistrare/înregistrări de audit conțin încă date de autentificare',
+            'scrubbed-audits-remedy' => 'Rulați din nou migrarea înainte de a redeschide traficul. Aceste înregistrări expun date de autentificare stocate.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Actualizarea nu s-a finalizat. Aplicația este în modul de mentenanță.',
+            'body'    => 'Pentru a reveni: restaurați copia de siguranță a bazei de date, îndreptați serverul web înapoi spre directorul versiunii anterioare și rulați acolo «php artisan up».',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Se ignoră --with-reindex: :count produs(e) depășește limita de :limit produse pentru o reconstrucție imediată.',
+            'deferred'  => 'Elasticsearch nu a fost reindexat. Cu :count produs(e) această operație durează mai mult decât actualizarea în sine, iar căutarea revine la baza de date până la finalizare. Rulați acestea după ce site-ul revine online:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -198,7 +317,7 @@ return [
                 'turkish-lira'        => 'Liră Turcească (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ucraineană (UAH)',
                 'usd'                 => 'Dolar American (USD)',
-                'warning-message'     => 'Atenție! Localizarea și moneda implicită nu pot fi modificate ulterior.',
+                'warning-message'     => 'Limba și moneda pe care le alegeți aici devin valorile implicite inițiale pentru canal și contul de administrator. Puteți activa mai multe limbi și monede, sau puteți modifica aceste valori implicite, oricând din setările de administrare.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalare UnoPim',
@@ -222,6 +341,8 @@ return [
                 'package-installed'  => '✓ :label instalat',
                 'package-failed'     => '✗ :label a eșuat: :message',
                 'package-manual'     => '! :label nu poate fi instalat automat pe acest server (fără acces la shell). Rulați aceasta de pe o mașină cu acces la shell:',
+                'install-failed'     => '✗ Instalarea a eșuat. Verificați storage/logs/laravel.log pentru detalii.',
+                'stream-interrupted' => '! Conexiunea cu programul de instalare a fost pierdută. Este posibil ca instalarea să fie încă în curs de finalizare — așteptați un moment, apoi reîncărcați această pagină.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panou Administrativ',

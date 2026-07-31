@@ -113,7 +113,7 @@
                 <div class="min-h-screen flex flex-col bg-gray-50 font-inter">
                     <!-- Persistent Cloud Hosting Top Bar (every step) -->
                     <div class="sticky top-0 z-[10050] w-full">
-                        <div class="flex items-center gap-4 px-5 h-12 text-[13.5px] bg-gradient-to-r from-[#5B41D6] to-[#8367F0] text-white">
+                        <div class="flex items-center gap-4 px-5 h-12 text-[13.5px] bg-gradient-to-r from-cloud-start to-cloud-end text-white">
                             <div class="flex items-center gap-3 min-w-0 flex-1">
                                 <span class="inline-flex shrink-0">
                                     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
@@ -132,7 +132,7 @@
 
                             <select
                                 class="shrink-0 h-[30px] rounded-lg border-0 bg-white/[0.18] text-white text-[12.5px] font-semibold px-2 cursor-pointer focus:outline-none [&>option]:text-gray-800"
-                                onchange="window.location.href='/install?locale=' + this.value"
+                                onchange="window.location.href = window.location.pathname + '?locale=' + this.value"
                                 aria-label="@lang('installer::app.installer.index.wizard-language')"
                             >
                                 @foreach ($locales as $value)
@@ -146,7 +146,7 @@
                                 href="{{ $cloudHostingUrl }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="shrink-0 inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all bg-white text-[#5B41D6] hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(0,0,0,0.18)]"
+                                class="shrink-0 inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all bg-white text-cloud-start hover:-translate-y-px hover:shadow-cloud-cta"
                             >
                                 @lang('installer::app.installer.index.cloud-bar.cta')
 
@@ -221,7 +221,7 @@
                             <main class="flex-1 min-w-0">
                                 <!-- Start -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'start'"
                                 >
                                     <x-installer::form
@@ -292,7 +292,7 @@
 
                                 <!-- System Requirements -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'systemRequirements'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
@@ -357,7 +357,7 @@
 
                                 <!-- Environment Configuration Database -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'envDatabase'"
                                 >
                                     <x-installer::form
@@ -546,7 +546,7 @@
 
                                 <!-- Installation Processing (live terminal) -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'installProgress'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
@@ -587,7 +587,7 @@
 
                                 <!-- Environment Configuration .ENV -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'envConfiguration'"
                                 >
                                     <x-installer::form
@@ -1009,7 +1009,7 @@
 
                                 <!-- Create Administrator -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'createAdmin'"
                                 >
                                     <x-installer::form
@@ -1190,7 +1190,7 @@
 
                                 <!-- Add-ons + Sample Data -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'addOns'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
@@ -1200,12 +1200,14 @@
                                     </div>
 
                                     <div class="flex flex-col gap-5 px-6 py-6 border-b border-gray-200 max-h-[484px] overflow-y-auto">
-                                        <p class="text-[14px] text-gray-600 !leading-normal">
+                                        <p
+                                            class="text-[14px] text-gray-600 !leading-normal"
+                                            v-if="hasOptionalPackages"
+                                        >
                                             @lang('installer::app.installer.index.add-ons.info')
                                         </p>
 
-                                        <!-- Optional package cards -->
-                                        <div class="grid gap-3">
+                                        <div class="grid gap-3" v-if="hasOptionalPackages">
                                             <label
                                                 v-for="(pkg, key) in optionalPackages"
                                                 :key="key"
@@ -1239,8 +1241,10 @@
                                             </label>
                                         </div>
 
-                                        <!-- Sample data toggle -->
-                                        <div class="grid gap-1.5 pt-2 border-t border-gray-100">
+                                        <div
+                                            class="grid gap-1.5 pt-2"
+                                            :class="hasOptionalPackages ? 'border-t border-gray-100' : ''"
+                                        >
                                             <p class="text-[14px] font-bold text-gray-800 mt-3">
                                                 @lang('installer::app.installer.index.add-ons.sample-data-title')
                                             </p>
@@ -1295,7 +1299,7 @@
 
                                 <!-- Ready For Installation -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'readyForInstallation'"
                                 >
                                     <x-installer::form
@@ -1363,7 +1367,7 @@
 
                                 <!-- Installation Completed -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'installationCompleted'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
@@ -1442,7 +1446,7 @@
                     <footer class="w-full px-6 py-6 text-center text-[13px] text-gray-600 font-medium flex flex-col items-center">
                         <div>
                             @lang('installer::app.installer.index.powered-by', [
-                                'unopim' => '<a class="text-primary-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">Unopim</a>',
+                                'unopim' => '<a class="text-primary-700 hover:underline" href="https://unopim.com/" target="_blank" rel="noopener">UnoPim</a>',
                             ])
                         </div>
 
@@ -1481,7 +1485,7 @@
 
                             envConfigData: {},
 
-                            defaultAppUrl: window.location.origin,
+                            defaultAppUrl: window.location.origin + window.location.pathname.replace(/\/install\/?$/, ''),
 
                             installStage: '',
 
@@ -1553,6 +1557,12 @@
                                 'installationCompleted',
                             ],
                         }
+                    },
+
+                    computed: {
+                        hasOptionalPackages() {
+                            return Object.keys(this.optionalPackages || {}).length > 0;
+                        },
                     },
 
                     mounted() {
@@ -1689,6 +1699,14 @@
                             });
                         },
 
+                        resolveInstallerUrl(routeUrl) {
+                            const marker = '/install';
+
+                            const base = window.location.pathname.slice(0, window.location.pathname.lastIndexOf(marker));
+
+                            return base + routeUrl.slice(routeUrl.lastIndexOf(marker));
+                        },
+
                         // Runs the whole installation server-side and streams its output
                         // to the read-only terminal:
                         //   1) write .env (DB credentials),
@@ -1716,11 +1734,11 @@
 
                             this.installStage = 'environment';
 
-                            this.$axios.post("{{ route('installer.env_file_setup', [], false) }}", this.envData)
+                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.env_file_setup', [], false) }}"), this.envData)
                                 .then(() => {
                                     this.installStage = 'prepare';
 
-                                    return this.$axios.post("{{ route('installer.prepare', [], false) }}", preparePayload);
+                                    return this.$axios.post(this.resolveInstallerUrl("{{ route('installer.prepare', [], false) }}"), preparePayload);
                                 })
                                 .then(() => {
                                     this.startStream();
@@ -1753,7 +1771,7 @@
                         },
 
                         startStream() {
-                            const source = new EventSource("{{ route('installer.process', [], false) }}");
+                            const source = new EventSource(this.resolveInstallerUrl("{{ route('installer.process', [], false) }}"));
 
                             source.onmessage = (event) => {
                                 try {
@@ -1773,31 +1791,43 @@
                                 this.completeStep('readyForInstallation', 'installationCompleted', 'active', 'complete');
                             });
 
-                            source.addEventListener('error', (event) => {
-                                let message = "@lang('installer::app.installer.index.create-administrator.seed-sample-data-failed')";
+                            source.addEventListener('install-error', (event) => {
+                                let message = "@lang('installer::app.installer.index.terminal.install-failed')";
 
                                 if (event && event.data) {
                                     try {
                                         const payload = JSON.parse(event.data);
 
                                         if (payload && payload.message) {
-                                            message = payload.message;
+                                            message = '✗ ' + payload.message;
                                         }
                                     } catch (e) {}
                                 }
 
-                                this.pushTerminalLine('✗ ' + message);
+                                this.pushTerminalLine(message);
 
                                 source.close();
 
                                 this.installing = false;
                             });
+
+                            source.onerror = () => {
+                                if (source.readyState === EventSource.CLOSED) {
+                                    return;
+                                }
+
+                                this.pushTerminalLine("@lang('installer::app.installer.index.terminal.stream-interrupted')");
+
+                                source.close();
+
+                                this.installing = false;
+                            };
                         },
 
                         runSampleDataSeeder() {
                             this.seedSampleDataMessage = "@lang('installer::app.installer.index.create-administrator.seeding-sample-data')";
 
-                            this.$axios.post("{{ route('installer.seed_sample_data', [], false) }}")
+                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.seed_sample_data', [], false) }}"))
                                 .then(() => {
                                     this.seedSampleDataMessage = '';
                                     this.currentStep = 'installationCompleted';

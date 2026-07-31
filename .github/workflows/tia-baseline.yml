@@ -95,8 +95,11 @@ jobs:
           sudo swapon /mnt/swapfile
           swapon --show
 
+      # Single worker for the same reason the impacted job runs one: each worker
+      # holds its own resident coverage map, so a second one is killed even with
+      # the swap above in place.
       - name: Record the baseline
-        run: vendor/bin/pest --parallel --processes=2 --tia --fresh --colors=always
+        run: vendor/bin/pest --parallel --processes=1 --tia --fresh --colors=always
 
       - name: Resolve the baseline path
         id: baseline

@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Bu alan yalnızca harf, rakam ve alt çizgi içerebilir.',
-        'label_format'     => 'Bu alan yalnızca harf, rakam, boşluk ve alt çizgi içerebilir.',
+        'label_format'     => 'Bu alan yalnızca harf, rakam, boşluk ve _ - \' . , / ( ) karakterlerini içerebilir.',
         'max_conversions'  => 'Bir birim :max taneden fazla dönüştürme işlemine sahip olamaz.',
         'max_units'        => 'Bir ölçüm ailesi :max taneden fazla birime sahip olamaz.',
     ],

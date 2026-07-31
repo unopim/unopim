@@ -5,12 +5,12 @@
 // suite moves with tests/e2e-pw/.env instead of being pinned to one port.
 const fs = require('fs');
 const path = require('path');
-const { chromium } = require('@playwright/test');
+const { chromium, request } = require('@playwright/test');
 const { loadEnv } = require('./load-env');
 
 loadEnv();
 
-const STATE_PATH = path.resolve(__dirname, '../.state/admin-auth-family.json');
+const STATE_PATH = path.resolve(__dirname, '..', process.env.PW_STATE_DIR || '.state', 'admin-auth-family.json');
 const BASE = process.env.FAMILY_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:8000';
 const EMAIL = process.env.FAMILY_ADMIN_EMAIL || process.env.ADMIN_EMAIL || process.env.ADMIN_USERNAME || 'admin@example.com';
 // Never hardcode the password: supply it at run time via FAMILY_ADMIN_PASSWORD
@@ -27,10 +27,34 @@ function isFresh() {
   }
 }
 
+/**
+ * A file within MAX_AGE_MS is not proof the session still authenticates: a shared
+ * DB (session table reset/cleaned between shards) can invalidate the cookie well
+ * before the file goes stale by mtime alone. Probe the server directly rather than
+ * trust the clock.
+ */
+async function isSessionValid() {
+  if (!isFresh()) {
+    return false;
+  }
+
+  const ctx = await request.newContext({ storageState: STATE_PATH, baseURL: BASE });
+
+  try {
+    const response = await ctx.get('/admin/dashboard', { maxRedirects: 0 });
+
+    return response.status() === 200;
+  } catch {
+    return false;
+  } finally {
+    await ctx.dispose();
+  }
+}
+
 let inFlight = null;
 
 async function ensureFamilyState() {
-  if (isFresh()) {
+  if (await isSessionValid()) {
     return STATE_PATH;
   }
   if (inFlight) {

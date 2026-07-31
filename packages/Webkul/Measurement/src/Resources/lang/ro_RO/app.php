@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Acest câmp poate conține doar litere, cifre și caractere de subliniere.',
-        'label_format'     => 'Acest câmp poate conține doar litere, cifre, spații și caractere de subliniere.',
+        'label_format'     => 'Acest câmp poate conține doar litere, cifre, spații și caracterele _ - \' . , / ( ).',
         'max_conversions'  => 'O unitate nu poate avea mai mult de :max operații de conversie.',
         'max_units'        => 'O familie de măsurare nu poate avea mai mult de :max unități.',
     ],

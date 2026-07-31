@@ -80,6 +80,7 @@ it('publishes every requested locale in a single job dispatch, not one per local
     $context->channel->locales()->attach($otherLocale);
 
     $this->enablePassportPublishing($context->channel->code);
+    $this->enablePublicTier($context->channel->code);
 
     foreach ([$context->locale->id, $otherLocale->id] as $localeId) {
         ProductCompletenessScore::query()->create([
@@ -107,6 +108,7 @@ it('mass publishes selected products, one job dispatch per product', function ()
     ]);
 
     $this->enablePassportPublishing($context->channel->code);
+    $this->enablePublicTier($context->channel->code);
 
     $this->loginWithPermissions('all');
 
@@ -134,6 +136,7 @@ it('leaves a withdrawn passport out of a mass publish and reports the skip', fun
     ]);
 
     $this->enablePassportPublishing($context->channel->code);
+    $this->enablePublicTier($context->channel->code);
 
     $this->loginWithPermissions('all');
 
@@ -160,6 +163,7 @@ it('refuses a mass publish whose every product passport is withdrawn', function 
     ]);
 
     $this->enablePassportPublishing($context->channel->code);
+    $this->enablePublicTier($context->channel->code);
 
     $this->loginWithPermissions('all');
 

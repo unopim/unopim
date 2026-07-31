@@ -60,7 +60,7 @@
             <div class="flex items-start justify-between gap-4 max-lg:flex-col">
                 <div class="min-w-0">
                     <div class="flex flex-wrap items-center gap-2">
-                        <p class="truncate text-xl font-bold text-gray-800 dark:text-slate-50" v-text="structure.name || structure.code"></p>
+                        <p class="truncate text-xl font-bold !leading-normal text-gray-800 dark:text-slate-50" v-text="structure.name || structure.code"></p>
 
                         <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-cherry-800 dark:text-gray-300" v-text="structure.code"></span>
 

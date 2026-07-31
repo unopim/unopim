@@ -12,7 +12,7 @@
 | group rather than relocating saved data under a new key. Gated by the
 | section-scoped `configuration.system_settings.publication` permission
 | (see `acl.php`), enforced per-row in `SystemSettingsController`. Nested under
-| the ProductPassport-owned `digital_product_passport` section and sorted above
+| the ProductPassport-owned `digital_product_passport` section and sorted below
 | the Product Passport row.
 |
 */
@@ -25,6 +25,6 @@ return [
         'icon'         => 'icon-setting',
         'config_group' => 'general.publication.settings',
         'acl'          => 'configuration.system_settings.publication',
-        'sort'         => 1,
+        'sort'         => 2,
     ],
 ];

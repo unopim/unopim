@@ -95,31 +95,19 @@ class Installer extends Command
     ];
 
     /**
-     * Optional open-source add-on packages the installer can pull in.
+     * Optional add-on packages on offer, or an empty list while the feature is
+     * switched off in `installer.optional_packages`.
      *
-     * Each entry maps a short key to its Composer package name, a human label
-     * for the selection prompt, and the artisan command that performs the
-     * package's own setup (migrations, config publish, etc.).
-     *
-     * @var array<string, array{composer: string, label: string, install: string}>
+     * @return array<string, array{composer: string, label: string, install: string}>
      */
-    protected $optionalPackages = [
-        'dam' => [
-            'composer' => 'unopim/dam',
-            'label'    => 'Digital Asset Management (DAM)',
-            'install'  => 'dam-package:install',
-        ],
-        'shopify' => [
-            'composer' => 'unopim/shopify-connector',
-            'label'    => 'Shopify Connector',
-            'install'  => 'shopify-package:install',
-        ],
-        'bagisto' => [
-            'composer' => 'unopim/bagisto-connector',
-            'label'    => 'Bagisto Connector',
-            'install'  => 'bagisto-package:install',
-        ],
-    ];
+    protected function optionalPackages(): array
+    {
+        if (! config('installer.optional_packages.enabled', false)) {
+            return [];
+        }
+
+        return config('installer.optional_packages.packages', []);
+    }
 
     /**
      * Install and configure UnoPIm.
@@ -157,7 +145,7 @@ class Installer extends Command
         ]);
 
         $this->warn('Step: Linking storage directory...');
-        $this->call('storage:link');
+        $this->call('storage:link', ['--relative' => true]);
 
         if (config('elasticsearch.enabled') == 'true') {
             $this->warn('Step: Clearing elasticsearch index...');
@@ -211,14 +199,24 @@ class Installer extends Command
      */
     protected function resolveSelectedPackages(): array
     {
+        $available = $this->optionalPackages();
+
         $option = $this->option('with-packages');
+
+        if ($available === []) {
+            if ($option !== null && $option !== '') {
+                $this->warn('Optional add-on packages are disabled in this release; ignoring --with-packages.');
+            }
+
+            return [];
+        }
 
         if ($option !== null && $option !== '') {
             $keys = array_filter(array_map(trim(...), explode(',', $option)));
         } elseif ($this->hasInteractiveTerminal()) {
             $keys = multiselect(
                 label: 'Select optional packages to install',
-                options: array_map(fn (array $package): string => $package['label'], $this->optionalPackages),
+                options: array_map(fn (array $package): string => $package['label'], $available),
                 hint: 'Use the space bar to toggle, enter to confirm. Leave empty to skip.',
             );
         } else {
@@ -228,7 +226,7 @@ class Installer extends Command
         $selected = [];
 
         foreach ($keys as $key) {
-            if (isset($this->optionalPackages[$key])) {
+            if (isset($available[$key])) {
                 $selected[] = $key;
             } else {
                 $this->warn("Skipping unknown package: {$key}");
@@ -282,7 +280,7 @@ class Installer extends Command
         $dbEnv = $this->resolvedDatabaseEnv();
 
         foreach ($keys as $key) {
-            $package = $this->optionalPackages[$key];
+            $package = $this->optionalPackages()[$key];
 
             $this->warn("Step: Installing optional package [{$package['label']}]...");
 
@@ -723,17 +721,13 @@ class Installer extends Command
         $adminPassword = password(
             label: 'Input a Password for Administrator',
             required: true,
+            validate: fn (string $value): ?string => match (true) {
+                strlen($value) < 6       => 'Password must be at least 6 characters.',
+                trim($value) !== $value  => 'Password must not begin or end with whitespace.',
+                default                  => null,
+            },
             hint: 'Minimum 6 characters',
         );
-
-        while (strlen($adminPassword) < 6) {
-            $this->error('Password must be at least 6 characters.');
-
-            $adminPassword = password(
-                label: 'Input a Secure Password for Administrator',
-                required: true,
-            );
-        }
 
         $password = password_hash($adminPassword, PASSWORD_BCRYPT, ['cost' => 10]);
 

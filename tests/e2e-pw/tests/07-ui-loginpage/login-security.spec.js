@@ -35,19 +35,23 @@ test.describe('Login Page — Security', () => {
   test('rejects a cross-site POST with no CSRF token (419)', async ({ browser }) => {
     const { context, page } = await freshLoginPage(browser);
 
-    const status = await page.evaluate(async ({ email, password }) => {
-      const res = await fetch('/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `email=${encodeURIComponent(email)}&password=${encodeURIComponent(password)}`,
-        credentials: 'same-origin',
-        redirect: 'manual',
-      });
+    // Laravel 13's Fetch-Metadata CSRF defense trusts a browser-supplied
+    // `Sec-Fetch-Site: same-origin` header as proof of same-origin intent and
+    // skips the token check for it (PreventRequestForgery::hasValidOrigin) —
+    // a real forged cross-site request can never carry that header, since
+    // browsers set it and JS cannot override it. `page.evaluate(fetch(...))`
+    // runs inside the browser and would get that same free pass, so it can't
+    // exercise the token fallback. `context.request` issues the POST from
+    // Playwright's own HTTP client (no Sec-Fetch-Site header attached),
+    // which is what actually forces token verification and reproduces what
+    // an off-origin attacker's request looks like.
+    const res = await context.request.post('/admin/login', {
+      form: { email: KNOWN_EMAIL, password: VALID_PASSWORD },
+      maxRedirects: 0,
+      failOnStatusCode: false,
+    });
 
-      return res.status;
-    }, { email: KNOWN_EMAIL, password: VALID_PASSWORD });
-
-    expect(status).toBe(419);
+    expect(res.status()).toBe(419);
 
     await context.close();
   });
@@ -125,30 +129,30 @@ test.describe('Login Page — Security', () => {
   test('throttles brute-force attempts after the configured limit (429)', async ({ browser }) => {
     const { context, page } = await freshLoginPage(browser);
 
-    const statuses = await page.evaluate(async () => {
-      const token =
-        document.querySelector('meta[name=csrf-token]')?.content ||
-        document.querySelector('input[name=_token]')?.value;
-      const probeEmail = 'throttle-probe@example.com';
-      const out = [];
+    const token =
+      (await page.locator('meta[name=csrf-token]').getAttribute('content').catch(() => null)) ||
+      (await page.locator('input[name=_token]').inputValue().catch(() => null));
 
-      for (let i = 0; i < 8; i++) {
-        const res = await fetch('/admin/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'X-CSRF-TOKEN': token,
-            Accept: 'application/json',
-          },
-          body: `email=${encodeURIComponent(probeEmail)}&password=wrong${i}&_token=${encodeURIComponent(token || '')}`,
-          credentials: 'same-origin',
-          redirect: 'manual',
-        });
-        out.push(res.status);
-      }
+    // The limiter key is `email|ip` (AdminServiceProvider::configureRateLimiting),
+    // so a fresh email per run keeps a re-run (or a previous failed attempt)
+    // from starting the test already throttled.
+    const probeEmail = `throttle-probe-${Date.now()}@example.com`;
+    // The `admin-login` limiter is env-driven (ADMIN_LOGIN_RATE_LIMIT, default
+    // 5); CI and this environment both set it to 20, so send enough attempts
+    // to clear whatever limit is configured rather than hardcoding a count
+    // tuned to the framework default.
+    const maxAttempts = Number(process.env.ADMIN_LOGIN_RATE_LIMIT) || 20;
+    const statuses = [];
 
-      return out;
-    });
+    for (let i = 0; i < maxAttempts + 3; i++) {
+      const res = await context.request.post('/admin/login', {
+        headers: { 'X-CSRF-TOKEN': token || '', Accept: 'application/json' },
+        form: { email: probeEmail, password: `wrong${i}`, _token: token || '' },
+        maxRedirects: 0,
+        failOnStatusCode: false,
+      });
+      statuses.push(res.status());
+    }
 
     // First attempts fail on credentials (401); once the limit is hit the
     // throttle middleware returns 429 for the remainder.

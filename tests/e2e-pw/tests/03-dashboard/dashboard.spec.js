@@ -415,8 +415,9 @@ test('8.1 - Shows Completeness section heading', async ({ adminPage }) => {
   await expect(heading).toBeVisible();
 });
 
-test('8.2 - Completeness shows channel name (Default)', async ({ adminPage }) => {
-  await expect(adminPage.getByRole('heading', { name: 'Default' })).toBeVisible();
+test('8.2 - Completeness shows channel name (Master Catalog)', async ({ adminPage }) => {
+  // The `default` channel's demo display name is "Master Catalog" (its code stays `default`).
+  await expect(adminPage.getByRole('heading', { name: 'Master Catalog' })).toBeVisible();
 });
 
 test('8.3 - Completeness shows improvement suggestion text', async ({ adminPage }) => {
@@ -468,13 +469,13 @@ test('9.2 - Channel Readiness shows data or empty state message', async ({ admin
 
 test('10.1 - Shows Operations section heading', async ({ adminPage }) => {
   await adminPage.waitForLoadState('networkidle');
-  const heading = adminPage.getByText('Operations');
+  const heading = adminPage.getByText('Operations', { exact: true });
   await heading.scrollIntoViewIfNeeded();
   await expect(heading).toBeVisible();
 });
 
 test('10.2 - Shows Recent Activity card heading', async ({ adminPage }) => {
-  const heading = adminPage.getByText('Recent Activity');
+  const heading = adminPage.getByText('Recent Activity', { exact: true });
   await heading.scrollIntoViewIfNeeded();
   await expect(heading).toBeVisible();
 });

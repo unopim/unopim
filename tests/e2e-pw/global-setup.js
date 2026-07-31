@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 
 
-const STORAGE_PATH = path.resolve('.state/admin-auth.json');
+const STORAGE_PATH = path.resolve(process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 export default async function globalSetup() {
   const browser = await chromium.launch();

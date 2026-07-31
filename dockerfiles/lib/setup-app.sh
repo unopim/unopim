@@ -23,7 +23,7 @@ setup_app() {
         php artisan db:seed --force --no-interaction
     fi
 
-    php artisan storage:link --no-interaction >/dev/null 2>&1 || true
+    php artisan storage:link --relative --no-interaction >/dev/null 2>&1 || true
 
     if [ "${ELASTICSEARCH_ENABLED:-false}" = "true" ] && [ ! -f "$lock_file" ]; then
         _wait_for_elasticsearch || return 1

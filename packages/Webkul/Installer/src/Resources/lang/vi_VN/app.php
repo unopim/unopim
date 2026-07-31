@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Phiếu thông số sản phẩm',
+                'lede'              => 'Thông số tham chiếu cho danh mục minh họa. Các giá trị áp dụng cho mọi sản phẩm trong họ này, trừ khi trang sản phẩm ghi khác.',
+                'family-code'       => 'Mã họ sản phẩm',
+                'compliance'        => 'Tuân thủ',
+                'compliance-value'  => 'Có dấu CE; bản công bố RoHS và REACH được cung cấp theo yêu cầu.',
+                'spare-parts'       => 'Phụ tùng thay thế',
+                'spare-parts-value' => 'Linh kiện hao mòn được lưu kho trong mười năm kể từ ngày sản xuất cuối cùng.',
+                'packaging'         => 'Bao bì',
+                'packaging-value'   => 'Bao bì không nhựa, bìa đạt chứng nhận FSC, in bằng mực không chứa dầu khoáng.',
+                'footer'            => 'Được UnoPim tạo ra cho mục đích trình diễn.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Mặc định',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Nâng cấp UnoPim',
+        'complete'              => 'Nâng cấp hoàn tất. Ứng dụng đã hoạt động trở lại.',
+        'aborted'               => 'Đã hủy nâng cấp. Không có gì bị thay đổi.',
+        'confirm'               => 'Ứng dụng sẽ chuyển sang chế độ bảo trì và cơ sở dữ liệu sẽ được chuyển đổi. Tiếp tục?',
+        'dry-run-complete'      => 'Chạy thử hoàn tất. Không có gì bị thay đổi.',
+        'preflight-failed'      => ':count kiểm tra không đạt. Quá trình nâng cấp chưa bắt đầu và không có gì bị thay đổi.',
+        'preflight-failed-hint' => 'Hãy xử lý các mục ở trên rồi chạy lại lệnh. Phiên bản trước vẫn đang phục vụ lưu lượng.',
+        'verify-failed'         => ':count lượt xác minh không đạt. Ứng dụng được giữ ở chế độ bảo trì.',
+        'migrate-failed'        => 'Chuyển đổi thất bại: :error',
+        'step-failed'           => 'Bước :command thất bại với mã thoát :code.',
+        'phase'                 => [
+            'preflight' => 'Giai đoạn 1/5 — Kiểm tra sơ bộ',
+            'drift'     => 'Giai đoạn 2/5 — Khác biệt cấu hình',
+            'sizing'    => 'Giai đoạn 3/5 — Ước tính khung thời gian bảo trì',
+            'execute'   => 'Giai đoạn 4/5 — Chuyển đổi dữ liệu',
+            'verify'    => 'Giai đoạn 5/5 — Xác minh',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Phiên bản PHP',
+            'php-version-detail'         => 'yêu cầu :required, tìm thấy :found',
+            'php-version-remedy'         => 'Hãy nâng cấp PHP lên :required hoặc mới hơn trước khi tiếp tục.',
+            'extensions'                 => 'Các phần mở rộng PHP',
+            'extensions-remedy'          => 'Cài đặt các phần mở rộng còn thiếu rồi khởi động lại PHP-FPM.',
+            'database'                   => 'Kết nối cơ sở dữ liệu',
+            'database-detail'            => ':driver, cơ sở dữ liệu :database, tiền tố :prefix',
+            'database-remedy'            => 'Kiểm tra thông tin đăng nhập cơ sở dữ liệu trong tệp .env.',
+            'source-version'             => 'Phiên bản đã cài đặt',
+            'source-version-detail'      => ':version trở lên',
+            'source-version-unsupported' => 'cũ hơn :version',
+            'source-version-remedy'      => 'Hãy nâng cấp lên :version trước, sau đó chạy lại lệnh này.',
+            'pending-migrations'         => 'Các bản chuyển đổi đang chờ',
+            'pending-migrations-detail'  => ':count cần chạy',
+            'pending-migrations-none'    => 'không có — cơ sở dữ liệu đã được cập nhật',
+            'pending-migrations-remedy'  => 'Không đọc được bảng chuyển đổi. Hãy kiểm tra quyền trên cơ sở dữ liệu.',
+            'active-jobs'                => 'Tác vụ nhập và xuất',
+            'active-jobs-detail'         => ':count vẫn đang chạy',
+            'active-jobs-remedy'         => 'Hãy đợi các tác vụ đang chạy kết thúc hoặc dừng các worker hàng đợi, rồi chạy lại lệnh.',
+            'writable-paths'             => 'Thư mục có quyền ghi',
+            'writable-paths-remedy'      => 'Cấp quyền ghi cho người dùng máy chủ web trên các thư mục liệt kê ở trên.',
+            'disk-space'                 => 'Dung lượng đĩa',
+            'disk-space-detail'          => 'còn trống :free, cần :required',
+            'disk-space-unknown'         => 'không xác định được',
+            'disk-space-remedy'          => 'Hãy giải phóng dung lượng đĩa, hoặc dùng --skip-backup nếu cơ sở dữ liệu đã được sao lưu bằng cách khác.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Không phát hiện khác biệt cấu hình.',
+            'no-previous' => 'Chưa chỉ định thư mục phiên bản trước nên không thể so sánh tệp cấu hình và các phụ thuộc Composer. Dùng --from=/duong/dan/phien-ban-cu để có báo cáo đầy đủ.',
+            'env-missing' => 'Khóa môi trường được phiên bản này bổ sung nhưng thiếu trong tệp .env của bạn:',
+            'env-removed' => 'Khóa môi trường đã bị phiên bản này loại bỏ nhưng vẫn còn trong tệp .env của bạn:',
+            'config'      => 'Các tệp cấu hình khác với phiên bản trước. Hãy áp dụng lại các thay đổi cục bộ của bạn:',
+            'composer'    => 'Các phụ thuộc Composer bạn tự thêm nhưng không có trong phiên bản này:',
+            'manual'      => 'Những tệp này thuộc về bạn. Hãy hợp nhất thủ công trước khi mở lại lưu lượng — quá trình nâng cấp không bao giờ ghi đè chúng.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Bảng',
+            'rows'            => 'Số dòng',
+            'pending'         => 'Sẽ chạy :count bản chuyển đổi.',
+            'window'          => 'Khung thời gian bảo trì ước tính: khoảng :minutes phút.',
+            'nothing-pending' => 'Không có bản chuyển đổi nào đang chờ.',
+            'irreversible'    => 'Các bản chuyển đổi này ghi lại dữ liệu và không thể hoàn tác. Chỉ khôi phục bản sao lưu cơ sở dữ liệu mới quay lại được:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Đã ghi bản sao lưu cơ sở dữ liệu vào :path',
+            'skipped'            => 'Đã bỏ qua sao lưu cơ sở dữ liệu. Hãy đảm bảo bạn có bản sao lưu khôi phục được trước khi tiếp tục.',
+            'failed'             => 'Sao lưu cơ sở dữ liệu thất bại: :error',
+            'empty'              => 'Bản sao lưu cơ sở dữ liệu rỗng và đã bị loại bỏ.',
+            'abort'              => 'Quá trình nâng cấp đã dừng vì không có bản sao lưu đã được kiểm chứng. Không có gì bị thay đổi.',
+            'unsupported-driver' => 'Không có lệnh sao lưu cho trình điều khiển :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'đã bỏ qua, bảng không tồn tại',
+            'associations'           => 'Liên kết sản phẩm',
+            'associations-none'      => 'không có liên kết cũ nào cần chuyển đổi',
+            'associations-detail'    => 'đã chuyển đổi :migrated trên :legacy sản phẩm',
+            'associations-remedy'    => 'Đã tìm thấy dữ liệu liên kết cũ nhưng không có gì được chuyển đổi. Hãy khôi phục bản sao lưu và báo cáo vấn đề này.',
+            'robot-users'            => 'Chủ sở hữu các tích hợp API',
+            'robot-users-detail'     => ':count tích hợp vẫn thuộc về một người dùng',
+            'robot-users-remedy'     => 'Hãy chạy lại bản chuyển đổi hoặc gán lại các tích hợp từ trang quản trị.',
+            'category-bounds'        => 'Tính toàn vẹn của cây danh mục',
+            'category-bounds-detail' => ':count nút danh mục có giá trị biên không hợp lệ',
+            'category-bounds-remedy' => 'Hãy dựng lại cây danh mục trước khi mở lại lưu lượng.',
+            'scrubbed-audits'        => 'Dọn sạch thông tin đăng nhập',
+            'scrubbed-audits-detail' => ':count bản ghi kiểm toán vẫn chứa thông tin đăng nhập',
+            'scrubbed-audits-remedy' => 'Hãy chạy lại bản chuyển đổi trước khi mở lại lưu lượng. Những bản ghi này làm lộ thông tin đăng nhập đã lưu.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Quá trình nâng cấp chưa hoàn tất. Ứng dụng đang ở chế độ bảo trì.',
+            'body'    => 'Để quay lui: khôi phục bản sao lưu cơ sở dữ liệu, trỏ máy chủ web về thư mục phiên bản trước, rồi chạy «php artisan up» tại đó.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Bỏ qua --with-reindex: :count sản phẩm vượt quá giới hạn :limit sản phẩm để lập chỉ mục lại ngay.',
+            'deferred'  => 'Elasticsearch chưa được lập chỉ mục lại. Với :count sản phẩm, việc này lâu hơn cả quá trình nâng cấp, và tìm kiếm sẽ dùng cơ sở dữ liệu cho đến khi hoàn tất. Hãy chạy các lệnh sau khi trang web hoạt động trở lại:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [
@@ -197,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira Thổ Nhĩ Kỳ (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ukraine (UAH)',
                 'usd'                 => 'Đô la Mỹ (USD)',
-                'warning-message'     => 'Cảnh báo! Cấu hình này sẽ không thể thay đổi sau này.',
+                'warning-message'     => 'Ngôn ngữ và tiền tệ bạn chọn ở đây sẽ trở thành mặc định ban đầu cho kênh và tài khoản quản trị. Bạn có thể kích hoạt thêm ngôn ngữ và tiền tệ, hoặc thay đổi các mặc định này, bất cứ lúc nào trong phần cài đặt quản trị.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Cài đặt UnoPim',
@@ -221,6 +340,8 @@ return [
                 'package-installed'  => '✓ Đã cài đặt :label',
                 'package-failed'     => '✗ :label thất bại: :message',
                 'package-manual'     => '! :label không thể được cài đặt tự động trên máy chủ này (không có quyền truy cập shell). Hãy chạy lệnh này từ một máy có quyền truy cập shell:',
+                'install-failed'     => '✗ Cài đặt thất bại. Kiểm tra storage/logs/laravel.log để biết chi tiết.',
+                'stream-interrupted' => '! Mất kết nối với trình cài đặt. Quá trình cài đặt có thể vẫn đang hoàn tất — hãy đợi một lát rồi tải lại trang này.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Bảng điều khiển quản trị',
