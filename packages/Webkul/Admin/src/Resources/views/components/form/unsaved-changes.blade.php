@@ -81,6 +81,7 @@
                     elementInitial: null,
                     badgeLabel: "@lang('admin::app.components.form.unsaved-changes.field-badge')",
                     touched: {},
+                    touchedGroups: {},
                     dirtyFields: [],
                     sectionCount: 0,
                     debounced: null,
@@ -160,25 +161,7 @@
                         return;
                     }
 
-                    const matches = (name) => name === base || name.startsWith(base + '[');
-
-                    this.controls().forEach(el => {
-                        if (matches(el.name)) {
-                            this.touched[el.name] = true;
-                        }
-                    });
-
-                    Object.keys(this.initial).forEach(name => {
-                        if (matches(name)) {
-                            this.touched[name] = true;
-                        }
-                    });
-
-                    Object.keys(this.serializeForm()).forEach(name => {
-                        if (matches(name)) {
-                            this.touched[name] = true;
-                        }
-                    });
+                    this.touchedGroups[base] = true;
 
                     this.debounced();
                 };
@@ -294,6 +277,7 @@
                 snapshot() {
                     this.initial = this.serializeForm();
                     this.touched = {};
+                    this.touchedGroups = {};
                     this.elementInitial = new Map();
 
                     this.controls().forEach(el => {
@@ -305,9 +289,13 @@
                     const current = this.serializeForm();
                     const dirty = new Set();
                     const names = new Set([...Object.keys(current), ...Object.keys(this.initial)]);
+                    const groups = Object.keys(this.touchedGroups);
 
                     names.forEach(name => {
-                        if (this.touched[name] && current[name] !== this.initial[name]) {
+                        const touched = this.touched[name]
+                            || groups.some(base => name === base || name.startsWith(base + '['));
+
+                        if (touched && current[name] !== this.initial[name]) {
                             dirty.add(name);
                         }
                     });
@@ -438,6 +426,7 @@
                     this.$emitter.emit('unsaved-changes:reset');
 
                     this.touched = {};
+                    this.touchedGroups = {};
                     this.recompute();
 
                     this.$nextTick(() => this.recompute());

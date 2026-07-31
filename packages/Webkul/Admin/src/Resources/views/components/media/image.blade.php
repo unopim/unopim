@@ -56,9 +56,11 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-image-template">
         <div class="grid" data-media-control>
-            <div :class="responsive
-                ? ['grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5', images.length > 1 ? 'gap-3' : '']
-                : ['flex flex-wrap', images.length > 1 ? 'gap-3' : '']"
+            <div
+                :class="responsive
+                    ? ['grid', images.length > 1 ? 'gap-3' : '']
+                    : ['flex flex-wrap', images.length > 1 ? 'gap-3' : '']"
+                :style="responsive ? { gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' } : null"
             >
                 {{-- Add Image tile (shared dropzone; ordered last via CSS order) --}}
                 <template v-if="images.length === 0">
