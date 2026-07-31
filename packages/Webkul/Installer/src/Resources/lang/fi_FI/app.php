@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Turkin Liira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainan Hryvnia (UAH)',
                 'usd'                 => 'Yhdysvaltain Dollari (USD)',
-                'warning-message'     => 'Varoitus! Järjestelmän oletuskielen ja valuutan asetuksia ei voi myöhemmin muuttaa.',
+                'warning-message'     => 'Oletuskieli ja -valuutta määritetään kerran asennuksen aikana, eikä niitä voi muuttaa myöhemmin. Voit lisätä muita kieliä ja valuuttoja milloin tahansa — vain nämä kaksi oletusarvoa ovat pysyviä.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim Asennus',

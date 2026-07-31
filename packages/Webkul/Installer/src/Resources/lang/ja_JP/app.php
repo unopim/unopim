@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'トルコリラ (TRY)',
                 'ukrainian-hryvnia'   => 'ウクライナ グリブナ (UAH)',
                 'usd'                 => '米ドル (USD)',
-                'warning-message'     => '気をつけて！デフォルトのシステム言語およびデフォルトの通貨の設定は永続的であり、二度と変更することはできません。',
+                'warning-message'     => '既定のロケールと通貨はインストール時に一度だけ設定され、後から変更できません。ロケールや通貨はいつでも追加できます。恒久的に固定されるのはこの2つの既定値のみです。',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPimのインストール',

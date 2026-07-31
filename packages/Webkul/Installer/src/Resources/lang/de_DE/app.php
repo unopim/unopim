@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Türkische Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainische Griwna (UAH)',
                 'usd'                 => 'US-Dollar (USD)',
-                'warning-message'     => 'Vorsicht! Die Einstellungen für Ihre Standardsystemsprachen sowie die Standardwährung sind dauerhaft und können nie wieder geändert werden.',
+                'warning-message'     => 'Standardsprache und Standardwährung werden einmalig bei der Installation festgelegt und lassen sich später nicht mehr ändern. Weitere Sprachen und Währungen können Sie jederzeit hinzufügen – nur diese beiden Standardwerte sind dauerhaft.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim-Installation',

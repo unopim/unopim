@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turkish Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainian Hryvnia (UAH)',
                 'usd'                 => 'US Dollar (USD)',
-                'warning-message'     => 'Beware! The settings for your default system languages as well as the default currency are permanent and cannot be changed ever again.',
+                'warning-message'     => 'The default locale and currency are set once, during installation, and cannot be changed later. You can add more locales and currencies at any time — only these two defaults are permanent.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Installation UnoPim',

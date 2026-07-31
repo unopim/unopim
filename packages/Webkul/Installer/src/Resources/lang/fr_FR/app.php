@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Lire turque (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia ukrainienne (UAH)',
                 'usd'                 => 'Dollar américain (USD)',
-                'warning-message'     => 'Méfiez-vous ! Les paramètres de vos langues système par défaut ainsi que la devise par défaut sont permanents et ne pourront jamais être modifiés.',
+                'warning-message'     => 'La langue et la devise par défaut sont définies une seule fois, lors de l’installation, et ne peuvent plus être modifiées ensuite. Vous pourrez ajouter d’autres langues et devises à tout moment — seules ces deux valeurs par défaut sont définitives.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Installation d\'UnoPim',

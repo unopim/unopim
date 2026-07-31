@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira Turca (TRY)',
                 'ukrainian-hryvnia'   => 'Grivnia Ucraina (UAH)',
                 'usd'                 => 'Dollaro USA (USD)',
-                'warning-message'     => 'Attenzione! Le impostazioni della lingua e della valuta predefinite non possono essere modificate in seguito.',
+                'warning-message'     => 'La lingua e la valuta predefinite vengono impostate una sola volta, durante l’installazione, e non possono essere modificate in seguito. Potrai aggiungere altre lingue e valute in qualsiasi momento: solo questi due valori predefiniti sono permanenti.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Installazione UnoPim',

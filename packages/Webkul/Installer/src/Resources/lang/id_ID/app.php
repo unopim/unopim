@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Lira Turki (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ukraina (UAH)',
                 'usd'                 => 'Dolar AS (USD)',
-                'warning-message'     => 'Perhatian! Pengaturan bahasa sistem bawaan serta mata uang bawaan bersifat permanen dan tidak dapat diubah lagi.',
+                'warning-message'     => 'Locale dan mata uang default ditetapkan satu kali saat instalasi dan tidak dapat diubah setelahnya. Anda dapat menambahkan locale dan mata uang lain kapan saja — hanya kedua nilai default ini yang permanen.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalasi UnoPim',

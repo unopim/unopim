@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Liră Turcească (TRY)',
                 'ukrainian-hryvnia'   => 'Hryvnia Ucraineană (UAH)',
                 'usd'                 => 'Dolar American (USD)',
-                'warning-message'     => 'Atenție! Localizarea și moneda implicită nu pot fi modificate ulterior.',
+                'warning-message'     => 'Limba și moneda implicite sunt stabilite o singură dată, în timpul instalării, și nu mai pot fi modificate ulterior. Puteți adăuga oricând alte limbi și monede — doar aceste două valori implicite sunt permanente.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalare UnoPim',
