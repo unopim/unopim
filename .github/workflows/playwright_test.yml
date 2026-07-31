@@ -4,7 +4,7 @@ name: Playwright Tests
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
-    branches: [master, '2.1']
+    branches: [master, '3.0']
   pull_request:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
