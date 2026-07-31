@@ -339,7 +339,7 @@ return [
                 'turkish-lira'        => 'Turkish Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainian Hryvnia (UAH)',
                 'usd'                 => 'US Dollar (USD)',
-                'warning-message'     => 'The default locale and currency are set once, during installation, and cannot be changed later. You can add more locales and currencies at any time — only these two defaults are permanent.',
+                'warning-message'     => 'The locale and currency you choose here become the initial defaults for the channel and the admin account. You can activate more locales and currencies, or change these defaults, at any time from the admin settings.',
             ],
 
             'installation-processing' => [
@@ -365,6 +365,8 @@ return [
                 'package-installed'  => '✓ :label installed',
                 'package-failed'     => '✗ :label failed: :message',
                 'package-manual'     => '! :label cannot be auto-installed on this server (no shell access). Run this from a machine with shell access:',
+                'install-failed'     => '✗ Installation failed. Check storage/logs/laravel.log for details.',
+                'stream-interrupted' => '! The connection to the installer was lost. Installation may still be finishing — wait a moment, then reload this page.',
             ],
 
             'installation-completed' => [

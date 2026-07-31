@@ -4,6 +4,7 @@ namespace Webkul\Core\Http\Middleware;
 
 use Barryvdh\Debugbar\Facades\Debugbar;
 use Closure;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -12,10 +13,18 @@ class EnableDebugForAllowedIps
     /**
      * Turn on debug output (and the debug bar) for the current request when the
      * admin has enabled IP-based debugging and the caller's IP is allow-listed.
+     *
+     * The config read fails while the database is empty or unreachable — most
+     * notably on the installer routes before migrations exist — so a
+     * QueryException degrades to "feature off" instead of failing the request.
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $featureEnabled = (bool) core()->getConfigData('general.debug.settings.enabled');
+        try {
+            $featureEnabled = (bool) core()->getConfigData('general.debug.settings.enabled');
+        } catch (QueryException) {
+            $featureEnabled = false;
+        }
 
         if ($featureEnabled && $this->isAllowedIp($request) && $this->isAllowedByEnvironment($request)) {
             config(['app.debug' => true]);

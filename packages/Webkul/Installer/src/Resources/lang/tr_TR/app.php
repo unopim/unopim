@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Türk Lirası (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrayna Grivnası (UAH)',
                 'usd'                 => 'Amerikan Doları (USD)',
-                'warning-message'     => 'Varsayılan dil ve para birimi kurulum sırasında bir kez belirlenir ve sonradan değiştirilemez. İstediğiniz zaman başka dil ve para birimleri ekleyebilirsiniz; yalnızca bu iki varsayılan kalıcıdır.',
+                'warning-message'     => 'Burada seçtiğiniz yerel ayar ve para birimi, kanal ve yönetici hesabı için başlangıç varsayılanları olur. Yönetici ayarlarından istediğiniz zaman daha fazla yerel ayar ve para birimi etkinleştirebilir veya bu varsayılanları değiştirebilirsiniz.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim Kurulumu',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label kuruldu',
                 'package-failed'     => '✗ :label başarısız: :message',
                 'package-manual'     => '! :label bu sunucuda otomatik olarak kurulamıyor (kabuk erişimi yok). Bunu kabuk erişimi olan bir makineden çalıştırın:',
+                'install-failed'     => '✗ Kurulum başarısız oldu. Ayrıntılar için storage/logs/laravel.log dosyasını kontrol edin.',
+                'stream-interrupted' => '! Kurulum programıyla bağlantı kesildi. Kurulum hâlâ tamamlanıyor olabilir — bir süre bekleyin, ardından bu sayfayı yeniden yükleyin.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Yönetici Paneli',

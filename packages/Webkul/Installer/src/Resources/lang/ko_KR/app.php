@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => '터키 리라 (TRY)',
                 'ukrainian-hryvnia'   => '우크라이나 흐리브냐 (UAH)',
                 'usd'                 => '미국 달러 (USD)',
-                'warning-message'     => '기본 로케일과 기본 통화는 설치 중에 한 번만 설정되며 이후에는 변경할 수 없습니다. 로케일과 통화는 언제든지 추가할 수 있으며, 영구적으로 고정되는 것은 이 두 가지 기본값뿐입니다.',
+                'warning-message'     => '여기에서 선택한 로케일과 통화는 채널 및 관리자 계정의 초기 기본값이 됩니다. 관리자 설정에서 언제든지 더 많은 로케일과 통화를 활성화하거나 이 기본값을 변경할 수 있습니다.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim 설치 중',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label 설치됨',
                 'package-failed'     => '✗ :label 실패: :message',
                 'package-manual'     => '! 이 서버에서는 :label을(를) 자동으로 설치할 수 없습니다 (셸 접근 불가). 셸 접근이 가능한 머신에서 다음을 실행하세요:',
+                'install-failed'     => '✗ 설치에 실패했습니다. 자세한 내용은 storage/logs/laravel.log를 확인하세요.',
+                'stream-interrupted' => '! 설치 프로그램과의 연결이 끊어졌습니다. 설치가 아직 완료 중일 수 있습니다 — 잠시 기다린 후 이 페이지를 새로고침하세요.',
             ],
             'installation-completed' => [
                 'admin-panel'               => '관리자 패널',

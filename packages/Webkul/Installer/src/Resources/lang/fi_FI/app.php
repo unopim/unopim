@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Turkin Liira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainan Hryvnia (UAH)',
                 'usd'                 => 'Yhdysvaltain Dollari (USD)',
-                'warning-message'     => 'Oletuskieli ja -valuutta määritetään kerran asennuksen aikana, eikä niitä voi muuttaa myöhemmin. Voit lisätä muita kieliä ja valuuttoja milloin tahansa — vain nämä kaksi oletusarvoa ovat pysyviä.',
+                'warning-message'     => 'Tässä valitsemasi kieli ja valuutta ovat kanavan ja ylläpitäjätilin alkuperäiset oletusarvot. Voit ottaa käyttöön lisää kieliä ja valuuttoja tai muuttaa näitä oletusarvoja milloin tahansa ylläpidon asetuksista.',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPim Asennus',
@@ -341,6 +341,8 @@ return [
                 'package-installed'  => '✓ :label asennettu',
                 'package-failed'     => '✗ :label epäonnistui: :message',
                 'package-manual'     => '! :label ei voida asentaa automaattisesti tällä palvelimella (ei komentorivioikeuksia). Suorita tämä koneelta, jolla on komentorivioikeudet:',
+                'install-failed'     => '✗ Asennus epäonnistui. Katso lisätietoja tiedostosta storage/logs/laravel.log.',
+                'stream-interrupted' => '! Yhteys asennusohjelmaan katkesi. Asennus saattaa silti olla valmistumassa — odota hetki ja lataa sitten tämä sivu uudelleen.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Ylläpitäjän Paneeli',
