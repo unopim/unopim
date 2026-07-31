@@ -224,7 +224,7 @@
     "src": "node_modules/@fontsource/inter/files/inter-vietnamese-700-normal.woff2"
   },
   "src/Resources/assets/css/app.css": {
-    "file": "assets/app-BApnqJ4i.css",
+    "file": "assets/app-zzYdscev.css",
     "src": "src/Resources/assets/css/app.css",
     "isEntry": true
   },
@@ -237,7 +237,7 @@
     "src": "src/Resources/assets/images/installer/spinner.svg"
   },
   "src/Resources/assets/js/app.js": {
-    "file": "assets/app-D4t3bFXh.js",
+    "file": "assets/app-CXpye1A1.js",
     "name": "app",
     "src": "src/Resources/assets/js/app.js",
     "isEntry": true
