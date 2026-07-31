@@ -241,7 +241,7 @@ class AttributeFamilyController extends Controller
             return view('admin::catalog.families.edit');
         }
 
-        if ($activeTab === 'completeness') {
+        if ($activeTab === 'completeness' && bouncer()->hasPermission('catalog.families.completeness')) {
             return view('admin::catalog.families.edit', [
                 'attributeFamilyId' => $id,
                 'allChannels'       => $this->channelRepository->getChannelAsOptions()->toJson(),
