@@ -1,4 +1,8 @@
 const { test, expect } = require('../../utils/fixtures');
+const { clickSaveAndExpect } = require('../../utils/helpers');
+const path = require('path');
+
+const ADMIN_STATE_PATH = path.resolve(__dirname, '../../', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 /**
  * Broken-SMTP coverage for the admin forget-password flow.
@@ -45,8 +49,7 @@ async function writeMailSettings(adminPage, { host, port }) {
   await adminPage.goto(EMAIL_SETTINGS_URL, { waitUntil: 'networkidle', timeout: 30000 });
   await adminPage.locator('input[name="emails[configure][email_settings][mail_host]"]').fill(host);
   await adminPage.locator('input[name="emails[configure][email_settings][mail_port]"]').fill(port);
-  await adminPage.getByRole('button', { name: 'Save changes' }).click();
-  await adminPage.waitForLoadState('networkidle').catch(() => {});
+  await clickSaveAndExpect(adminPage, 'Save changes', /Settings saved successfully/i);
 }
 
 test.describe('Forget Password — broken SMTP', () => {
@@ -56,7 +59,7 @@ test.describe('Forget Password — broken SMTP', () => {
 
   test.beforeAll(async ({ browser }) => {
     const adminContext = await browser.newContext({
-      storageState: require('path').resolve(__dirname, '../../.state/admin-auth.json'),
+      storageState: ADMIN_STATE_PATH,
     });
     const adminPage = await adminContext.newPage();
 
@@ -72,7 +75,7 @@ test.describe('Forget Password — broken SMTP', () => {
     }
 
     const adminContext = await browser.newContext({
-      storageState: require('path').resolve(__dirname, '../../.state/admin-auth.json'),
+      storageState: ADMIN_STATE_PATH,
     });
     const adminPage = await adminContext.newPage();
 
