@@ -168,7 +168,7 @@
                                             <span
                                                 class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.remove"
-                                                @click="sections.splice(index, 1); touch('sections')"
+                                                @click="removeSection(index)"
                                             ></span>
                                         </x-admin::table.td>
 
@@ -852,6 +852,37 @@
                         };
 
                     this.$refs.sectionModal.toggle();
+                },
+
+                /**
+                 * Fields keep the section code, not a reference, so a field left
+                 * pointing at a removed section would still submit that code and
+                 * the save would be rejected as an unknown section — while the
+                 * row already reads "Default section" on screen, because an
+                 * unresolvable code falls back to that label.
+                 */
+                removeSection(index) {
+                    const removed = this.sections[index];
+
+                    this.sections.splice(index, 1);
+
+                    this.touch('sections');
+
+                    if (! removed?.code) {
+                        return;
+                    }
+
+                    const orphaned = this.fields.filter((field) => field.section === removed.code);
+
+                    if (! orphaned.length) {
+                        return;
+                    }
+
+                    orphaned.forEach((field) => {
+                        field.section = '';
+                    });
+
+                    this.touch('fields');
                 },
 
                 commitSection() {
