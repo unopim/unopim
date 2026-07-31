@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Helpers\Upgrade\CheckStatus;
 use Webkul\Installer\Helpers\Upgrade\PostUpgradeVerifier;
+use Webkul\Product\Models\ProductProxy;
 
 /**
  * A clean `migrate` exit only proves no statement threw. These assertions cover
