@@ -25,7 +25,7 @@ export abstract class BasePage {
   }
 
   async expectLoaded(): Promise<void> {
-    await expect(this.page).not.toHaveURL(/login$/);
+    await expect(this.page).not.toHaveURL(/\/login(\?|#|$)/);
     await expect(this.page.locator('body')).toBeVisible();
   }
 

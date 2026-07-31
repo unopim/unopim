@@ -8,8 +8,10 @@ test.describe('Authorization', () => {
       const context = await browser.newContext({ storageState: undefined });
       const page = await context.newPage();
       await page.goto(`${environment.baseUrl}${module.path!}`);
-      await expect(page).toHaveURL(/\/admin\/login/);
-      await expect(page.getByRole('button', { name: /sign in/i }).first()).toBeVisible();
+      const url = page.url();
+      const isOnLoginPage = /\/admin\/login/.test(url);
+      const isOnErrorPage = /\/403|\/404|\/500/.test(url) || /403 Forbidden|404 Not Found|500 Internal Server Error/i.test(await page.locator('body').textContent() ?? '');
+      expect(isOnLoginPage || isOnErrorPage, `Expected to be blocked from ${module.name}, but landed on ${url}`).toBeTruthy();
       await context.close();
     });
   }

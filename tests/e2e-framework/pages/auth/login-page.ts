@@ -10,7 +10,7 @@ export class LoginPage extends BasePage {
 
   readonly email = this.page.getByRole('textbox', { name: /email/i });
   readonly password = this.page.getByRole('textbox', { name: /password/i });
-  readonly submit = this.page.getByRole('button', { name: /sign in|login/i }).or(this.page.locator('button[type="submit"]'));
+  readonly submit = this.page.getByRole('button', { name: /sign in|login/i });
 
   async open(): Promise<void> {
     await this.goto(`${environment.adminPath}/login`);
@@ -22,12 +22,7 @@ export class LoginPage extends BasePage {
     await this.password.fill(password);
 
     await this.password.press('Enter');
-
-    await Promise.race([
-      this.page.waitForURL((url) => /\/admin\//.test(url.toString()) && !url.pathname.endsWith('/login'), { timeout: 30_000 }),
-      this.page.waitForSelector('body', { timeout: 30_000 })
-    ]).catch(() => undefined);
-
+    await this.page.waitForURL((url) => /\/admin\//.test(url.toString()) && !url.pathname.endsWith('/login'), { timeout: 30_000 }).catch(() => undefined);
     await this.page.waitForLoadState('load').catch(() => undefined);
   }
 
