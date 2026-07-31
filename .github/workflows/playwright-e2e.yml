@@ -94,7 +94,7 @@ jobs:
 
       - name: Install Playwright dependencies
         working-directory: tests/e2e-framework
-        run: npm ci
+        run: npm install
 
       - name: Type-check framework
         working-directory: tests/e2e-framework
