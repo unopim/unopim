@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Process\Process;
+use Webkul\Core\Rules\PasswordWithoutSurroundingWhitespace;
 use Webkul\Installer\Console\Commands\Installer;
 use Webkul\Installer\Helpers\DatabaseManager;
 use Webkul\Installer\Helpers\DemoDataInstaller;
@@ -140,6 +141,33 @@ class InstallerController extends Controller
                 || (time() - $createdAt) > self::ADMIN_SEED_PROMOTION_WINDOW,
             403
         );
+    }
+
+    /**
+     * Reject an admin password that opens or closes with whitespace, before
+     * any install state is written.
+     *
+     * Every other password entry point (user forms, account settings, reset)
+     * applies the same rule, and the login page strips a leading space on the
+     * assumption that no stored password starts with one — so the installer
+     * must never mint the account that breaks that assumption.
+     */
+    protected function validateAdminPassword(array $payload, string $attribute): ?JsonResponse
+    {
+        $validator = Validator::make($payload, [
+            $attribute => ['nullable', 'string', new PasswordWithoutSurroundingWhitespace],
+        ], [], [
+            $attribute => trans('installer::app.installer.index.create-administrator.password'),
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'error'  => $validator->errors()->first($attribute),
+                'errors' => $validator->errors()->toArray(),
+            ], 422);
+        }
+
+        return null;
     }
 
     /**
@@ -376,6 +404,10 @@ class InstallerController extends Controller
         // Only ever promote the seeder's freshly-created default admin.
         $this->abortUnlessAdminIsFreshlySeeded();
 
+        if (($invalid = $this->validateAdminPassword(request()->all(), 'password')) instanceof JsonResponse) {
+            return $invalid;
+        }
+
         $this->reloadDatabaseConfigFromEnv();
 
         $password = password_hash((string) request()->input('password'), PASSWORD_BCRYPT, ['cost' => 10]);
@@ -459,6 +491,10 @@ class InstallerController extends Controller
         $this->reloadDatabaseConfigFromEnv();
 
         $payload = $request->all();
+
+        if (($invalid = $this->validateAdminPassword($payload, 'admin.password')) instanceof JsonResponse) {
+            return $invalid;
+        }
 
         $this->environmentManager->setEnvConfiguration($payload);
 

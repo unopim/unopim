@@ -152,6 +152,20 @@
                 visibilityIcon.classList.toggle("icon-view");
                 visibilityIcon.classList.toggle("icon-view-close");
             }
+
+            document.addEventListener("input", function (event) {
+                const field = event.target;
+
+                if (field.id !== "password" || ! /^\s/.test(field.value)) {
+                    return;
+                }
+
+                const setValue = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value").set;
+
+                setValue.call(field, field.value.replace(/^\s+/, ""));
+
+                field.dispatchEvent(new Event("input", { bubbles: true }));
+            });
         </script>
     @endpush
 </x-admin::layouts.anonymous>
