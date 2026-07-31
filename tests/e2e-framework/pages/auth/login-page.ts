@@ -8,8 +8,8 @@ export class LoginPage extends BasePage {
     super(page);
   }
 
-  readonly email = this.page.getByLabel(/email/i).or(this.page.locator('input[name="email"]'));
-  readonly password = this.page.getByLabel(/password/i).or(this.page.locator('input[name="password"]'));
+  readonly email = this.page.getByRole('textbox', { name: /email/i });
+  readonly password = this.page.getByRole('textbox', { name: /password/i });
   readonly submit = this.page.getByRole('button', { name: /sign in|login/i }).or(this.page.locator('button[type="submit"]'));
 
   async open(): Promise<void> {
