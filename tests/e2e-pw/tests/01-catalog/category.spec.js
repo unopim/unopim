@@ -70,10 +70,14 @@ test.describe('UnoPim Category Tests', () => {
   test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
     await openCreateForm(adminPage);
     // Leave Code and Name empty; make the form dirty via the parent category
-    // radio so the "Save changes" bar appears and validation can run. A pristine
+    // picker so the "Save changes" bar appears and validation can run. A pristine
     // form exposes no save affordance — the in-form button is removed by the
     // unsaved-changes tracker and the bar only shows once the form is dirty.
-    await adminPage.locator('label[for="1"]').first().click();
+    // Parent is now a drawer picker defaulting to "Root level"; open it and pick
+    // an actual category node to fire the change.
+    await adminPage.getByText('Root level', { exact: true }).first().click();
+    await adminPage.locator('input[type="radio"]').nth(1).locator('..').click();
+    await adminPage.locator('.icon-cancel').first().click();
     await clickSaveChanges(adminPage);
     await expect(adminPage.locator('#app').getByText('The code field is required').first()).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Name field is required').first()).toBeVisible();
