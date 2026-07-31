@@ -114,11 +114,14 @@ async function ensureAssociationTypeAbsent(page, code) {
 test.describe('UnoPim Association Type Tests', () => {
 
 	test('seeded default association types show and expose no delete control', async ({ adminPage }) => {
-		for (const name of ['Related Products', 'Up Sells', 'Cross Sells']) {
+		// Searching/asserting by code rather than the translated label: the label
+		// copy (e.g. "Related products" vs "Related Products") is demo-seed
+		// wording and not a stable contract, but the code is.
+		for (const code of ['related_products', 'up_sells', 'cross_sells']) {
 			await adminPage.goto(INDEX_URL, { waitUntil: 'load' });
-			await searchInDataGrid(adminPage, name);
+			await searchInDataGrid(adminPage, code);
 
-			await expect(adminPage.getByText(name, { exact: true }).first()).toBeVisible();
+			await expect(adminPage.getByText(code, { exact: true }).first()).toBeVisible();
 			await expect(adminPage.locator('span[title="Edit"]')).toHaveCount(1);
 			await expect(adminPage.locator('span[title="Delete"]')).toHaveCount(0);
 		}
