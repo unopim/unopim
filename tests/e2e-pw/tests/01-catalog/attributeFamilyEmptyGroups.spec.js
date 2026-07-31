@@ -10,7 +10,7 @@ const {
  */
 async function reopenFamily(page, code) {
   await gotoIndex(page);
-  await page.getByRole('textbox', { name: 'Search' }).fill(code);
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await page.keyboard.press('Enter');
   await page.waitForTimeout(1500);
   await page.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
