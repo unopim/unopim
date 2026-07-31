@@ -23,7 +23,7 @@
                     @lang("admin::app.errors.{$errorCode}.title")
                 </div>
 
-                <p class="mb-6 text-sm text-gray-800">
+                <p class="mb-6 text-sm text-gray-600 dark:text-gray-300">
                     @lang("admin::app.errors.{$errorCode}.description")
                 </p>
 
@@ -52,7 +52,7 @@
                     </div>
                 </div>
 
-                <p class="text-sm text-gray-800">
+                <p class="text-sm text-gray-600 dark:text-gray-300">
                 @lang('admin::app.errors.support', [
                     'link'  => 'mailto:' . $supportEmail,
                     'email' => $supportEmail,

@@ -47,6 +47,7 @@
         id="webhook-edit-form"
         :action="route('webhook.update', $webhook->id)"
         method="PUT"
+        ajax="true"
     >
         @include('webhook::webhooks._fields')
     </x-admin::form>
