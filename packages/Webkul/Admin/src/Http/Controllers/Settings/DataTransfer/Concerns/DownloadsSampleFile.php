@@ -2,24 +2,24 @@
 
 namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer\Concerns;
 
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Webkul\DataTransfer\Services\SampleFiles;
 
 trait DownloadsSampleFile
 {
     /**
-     * Stream the sample file shipped for an import/export type.
+     * Stream a sample shipped for an import/export type.
      *
-     * Samples are always stored on the `public` disk, so the download must not
-     * follow `FILESYSTEM_DISK` — an installation pointing the default disk at
-     * S3 or `local` would otherwise fail on every sample.
+     * Samples resolve through the package rather than a disk so they survive a
+     * wiped `storage` directory, while a copy published to the `public` disk
+     * still wins for installations that tailor their own.
      */
-    protected function downloadSampleFile(string $configFile, ?string $type): StreamedResponse
+    protected function downloadSampleFile(string $configFile, ?string $type, ?string $key = null, bool $images = false): BinaryFileResponse
     {
-        $path = $type ? config($configFile.'.'.$type.'.sample_path') : null;
+        $path = $type ? app(SampleFiles::class)->path($configFile, $type, $key, $images) : null;
 
-        abort_if(! is_string($path) || ! Storage::disk('public')->exists($path), 404);
+        abort_if(! $path, 404);
 
-        return Storage::disk('public')->download($path);
+        return response()->download($path);
     }
 }

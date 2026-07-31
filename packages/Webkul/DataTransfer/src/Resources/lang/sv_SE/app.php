@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default' => 'Exempelfil',
+        'variants' => 'Exempel med varianter',
+        'multi-locale' => 'Flerspråkigt exempel',
+        'delete' => 'Exempel på borttagning',
+        'custom-fields' => 'Exempel med anpassade fält',
+        'with-images' => 'Exempel med bilder (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produkter',

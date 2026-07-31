@@ -1,0 +1,3 @@
+channel,locale,sku,type,parent,variant_structure,attribute_family
+default,en_US,simple-product-3,simple,,,default
+default,en_US,simple-product-2,simple,,,default

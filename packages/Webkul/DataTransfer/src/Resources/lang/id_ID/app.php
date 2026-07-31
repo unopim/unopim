@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default' => 'Berkas contoh',
+        'variants' => 'Contoh varian',
+        'multi-locale' => 'Contoh multi-lokal',
+        'delete' => 'Contoh penghapusan',
+        'custom-fields' => 'Contoh bidang khusus',
+        'with-images' => 'Contoh dengan gambar (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Produk',

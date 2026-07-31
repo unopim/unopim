@@ -168,7 +168,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.imports.stats');
 
-            Route::get('download-sample/{type?}', 'downloadSample')->name('admin.settings.data_transfer.imports.download_sample');
+            Route::get('download-sample/{type?}/{key?}', 'downloadSample')->name('admin.settings.data_transfer.imports.download_sample');
+
+            Route::get('download-sample-images-zip/{type?}/{key?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.imports.download_sample_zip');
 
             Route::get('download/{id}', 'download')->name('admin.settings.data_transfer.imports.download');
 
@@ -209,7 +211,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.exports.stats');
 
-            Route::get('download-sample/{type?}', 'downloadSample')->name('admin.settings.data_transfer.exports.download_sample');
+            Route::get('download-sample/{type?}/{key?}', 'downloadSample')->name('admin.settings.data_transfer.exports.download_sample');
+
+            Route::get('download-sample-images-zip/{type?}/{key?}', 'downloadSampleImagesZip')->name('admin.settings.data_transfer.exports.download_sample_zip');
 
             Route::get('download/{id}', 'download')->name('admin.settings.data_transfer.exports.download');
 

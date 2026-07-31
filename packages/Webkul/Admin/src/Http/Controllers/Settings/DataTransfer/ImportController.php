@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
@@ -656,9 +656,17 @@ class ImportController extends Controller
     /**
      * Download the sample file shipped for an importer type
      */
-    public function downloadSample(?string $type = null): StreamedResponse
+    public function downloadSample(?string $type = null, ?string $key = null): BinaryFileResponse
     {
-        return $this->downloadSampleFile(self::IMPORTERS, $type);
+        return $this->downloadSampleFile(self::IMPORTERS, $type, $key);
+    }
+
+    /**
+     * Download the sample images archive shipped for a type
+     */
+    public function downloadSampleImagesZip(?string $type = null, ?string $key = null): BinaryFileResponse
+    {
+        return $this->downloadSampleFile(self::IMPORTERS, $type, $key, images: true);
     }
 
     /**

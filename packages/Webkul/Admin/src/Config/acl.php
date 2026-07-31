@@ -595,6 +595,11 @@ return [
         'route' => 'admin.settings.data_transfer.imports.download_sample',
         'sort'  => 2,
     ], [
+        'key'   => 'data_transfer.imports',
+        'name'  => 'admin::app.acl.imports',
+        'route' => 'admin.settings.data_transfer.imports.download_sample_zip',
+        'sort'  => 2,
+    ], [
         'key'   => 'data_transfer.imports.edit',
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.settings.data_transfer.imports.validate',
@@ -638,6 +643,11 @@ return [
         'key'   => 'data_transfer.export',
         'name'  => 'admin::app.acl.exports',
         'route' => 'admin.settings.data_transfer.exports.download_sample',
+        'sort'  => 3,
+    ], [
+        'key'   => 'data_transfer.export',
+        'name'  => 'admin::app.acl.exports',
+        'route' => 'admin.settings.data_transfer.exports.download_sample_zip',
         'sort'  => 3,
     ], [
         'key'   => 'data_transfer.export',

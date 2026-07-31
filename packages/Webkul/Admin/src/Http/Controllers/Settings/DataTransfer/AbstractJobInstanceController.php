@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Helpers\Import;
@@ -459,9 +459,9 @@ abstract class AbstractJobInstanceController extends Controller
     /**
      * Download the sample file shipped for an importer type
      */
-    public function downloadSample(?string $type = null): StreamedResponse
+    public function downloadSample(?string $type = null, ?string $key = null): BinaryFileResponse
     {
-        return $this->downloadSampleFile('importers', $type);
+        return $this->downloadSampleFile('importers', $type, $key);
     }
 
     /**

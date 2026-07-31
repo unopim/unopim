@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -519,9 +519,17 @@ class ExportController extends Controller
     /**
      * Download the sample file shipped for an exporter type
      */
-    public function downloadSample(?string $type = null): StreamedResponse
+    public function downloadSample(?string $type = null, ?string $key = null): BinaryFileResponse
     {
-        return $this->downloadSampleFile(self::EXPORTERS, $type);
+        return $this->downloadSampleFile(self::EXPORTERS, $type, $key);
+    }
+
+    /**
+     * Download the sample images archive shipped for a type
+     */
+    public function downloadSampleImagesZip(?string $type = null, ?string $key = null): BinaryFileResponse
+    {
+        return $this->downloadSampleFile(self::EXPORTERS, $type, $key, images: true);
     }
 
     /**

@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default' => 'Зразок файлу',
+        'variants' => 'Приклад варіантів',
+        'multi-locale' => 'Багатомовний приклад',
+        'delete' => 'Приклад видалення',
+        'custom-fields' => 'Приклад користувацьких полів',
+        'with-images' => 'Приклад із зображеннями (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Продукти',
