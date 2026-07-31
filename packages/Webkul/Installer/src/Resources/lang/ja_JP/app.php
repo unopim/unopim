@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'トルコリラ (TRY)',
                 'ukrainian-hryvnia'   => 'ウクライナ グリブナ (UAH)',
                 'usd'                 => '米ドル (USD)',
-                'warning-message'     => '既定のロケールと通貨はインストール時に一度だけ設定され、後から変更できません。ロケールや通貨はいつでも追加できます。恒久的に固定されるのはこの2つの既定値のみです。',
+                'warning-message'     => 'ここで選択したロケールと通貨は、チャネルと管理者アカウントの初期デフォルトになります。追加のロケールや通貨の有効化、またはこれらのデフォルトの変更は、管理設定からいつでも行えます。',
             ],
             'installation-processing' => [
                 'unopim'      => 'UnoPimのインストール',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label をインストールしました',
                 'package-failed'     => '✗ :label に失敗しました: :message',
                 'package-manual'     => '! :label はこのサーバーでは自動インストールできません（シェルアクセスがありません）。シェルアクセスのあるマシンで次のコマンドを実行してください：',
+                'install-failed'     => '✗ インストールに失敗しました。詳細は storage/logs/laravel.log を確認してください。',
+                'stream-interrupted' => '! インストーラーへの接続が失われました。インストールはまだ完了処理中の可能性があります — 少し待ってから、このページを再読み込みしてください。',
             ],
             'installation-completed' => [
                 'admin-panel'               => '管理者パネル',

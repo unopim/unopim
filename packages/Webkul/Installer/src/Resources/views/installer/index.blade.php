@@ -1791,25 +1791,37 @@
                                 this.completeStep('readyForInstallation', 'installationCompleted', 'active', 'complete');
                             });
 
-                            source.addEventListener('error', (event) => {
-                                let message = "@lang('installer::app.installer.index.create-administrator.seed-sample-data-failed')";
+                            source.addEventListener('install-error', (event) => {
+                                let message = "@lang('installer::app.installer.index.terminal.install-failed')";
 
                                 if (event && event.data) {
                                     try {
                                         const payload = JSON.parse(event.data);
 
                                         if (payload && payload.message) {
-                                            message = payload.message;
+                                            message = '✗ ' + payload.message;
                                         }
                                     } catch (e) {}
                                 }
 
-                                this.pushTerminalLine('✗ ' + message);
+                                this.pushTerminalLine(message);
 
                                 source.close();
 
                                 this.installing = false;
                             });
+
+                            source.onerror = () => {
+                                if (source.readyState === EventSource.CLOSED) {
+                                    return;
+                                }
+
+                                this.pushTerminalLine("@lang('installer::app.installer.index.terminal.stream-interrupted')");
+
+                                source.close();
+
+                                this.installing = false;
+                            };
                         },
 
                         runSampleDataSeeder() {

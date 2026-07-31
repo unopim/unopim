@@ -317,7 +317,7 @@ return [
                 'turkish-lira'        => 'Lira Turca (TRY)',
                 'ukrainian-hryvnia'   => 'Grivna Ucraniana (UAH)',
                 'usd'                 => 'Dólar Estadounidense (USD)',
-                'warning-message'     => 'El idioma y la moneda predeterminados se establecen una sola vez, durante la instalación, y no se pueden cambiar después. Puede agregar más idiomas y monedas en cualquier momento: solo estos dos valores predeterminados son permanentes.',
+                'warning-message'     => 'La configuración regional y la moneda que elija aquí se convierten en los valores predeterminados iniciales para el canal y la cuenta de administrador. Puede activar más configuraciones regionales y monedas, o cambiar estos valores predeterminados, en cualquier momento desde los ajustes de administración.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalación de UnoPim',
@@ -341,6 +341,8 @@ return [
                 'package-installed'  => '✓ :label instalado',
                 'package-failed'     => '✗ :label falló: :message',
                 'package-manual'     => '! :label no se puede instalar automáticamente en este servidor (sin acceso a la consola). Ejecuta esto desde una máquina con acceso a la consola:',
+                'install-failed'     => '✗ La instalación falló. Revise storage/logs/laravel.log para más detalles.',
+                'stream-interrupted' => '! Se perdió la conexión con el instalador. Es posible que la instalación aún se esté completando — espere un momento y luego recargue esta página.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panel de Administración',

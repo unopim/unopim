@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turska Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrajinska Grivnja (UAH)',
                 'usd'                 => 'Američki Dolar (USD)',
-                'warning-message'     => 'Zadani jezik i zadana valuta postavljaju se jednom, tijekom instalacije, i poslije se ne mogu promijeniti. Dodatne jezike i valute možete dodati bilo kada — trajne su samo te dvije zadane vrijednosti.',
+                'warning-message'     => 'Jezik i valuta koje ovdje odaberete postaju početne zadane vrijednosti za kanal i administratorski račun. Dodatne jezike i valute možete aktivirati, ili promijeniti ove zadane vrijednosti, u bilo kojem trenutku u administratorskim postavkama.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Instalacija UnoPim-a',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ :label instaliran',
                 'package-failed'     => '✗ :label nije uspio: :message',
                 'package-manual'     => '! :label nije moguće automatski instalirati na ovom poslužitelju (nema pristupa ljusci). Pokrenite ovo s računala koje ima pristup ljusci:',
+                'install-failed'     => '✗ Instalacija nije uspjela. Pogledajte storage/logs/laravel.log za detalje.',
+                'stream-interrupted' => '! Veza s instalacijskim programom je prekinuta. Instalacija se možda još dovršava — pričekajte trenutak, a zatim ponovno učitajte ovu stranicu.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Administratorska Ploča',

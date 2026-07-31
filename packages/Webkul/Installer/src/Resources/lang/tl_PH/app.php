@@ -316,7 +316,7 @@ return [
                 'turkish-lira'        => 'Turkish Lira (TRY)',
                 'ukrainian-hryvnia'   => 'Ukrainian Hryvnia (UAH)',
                 'usd'                 => 'Dollars ng Amerika (USD)',
-                'warning-message'     => 'Isang beses lang itinatakda ang default na locale at currency, habang nag-i-install, at hindi na ito mababago pagkatapos. Maaari kang magdagdag ng iba pang locale at currency anumang oras — ang dalawang default na ito lang ang permanente.',
+                'warning-message'     => 'Ang locale at currency na pipiliin mo rito ang magiging paunang default para sa channel at sa admin account. Maaari kang mag-activate ng higit pang mga locale at currency, o baguhin ang mga default na ito, anumang oras mula sa mga setting ng admin.',
             ],
             'installation-processing' => [
                 'unopim'      => 'Pag-install ng UnoPim',
@@ -340,6 +340,8 @@ return [
                 'package-installed'  => '✓ Na-install ang :label',
                 'package-failed'     => '✗ Nabigo ang :label: :message',
                 'package-manual'     => '! Hindi awtomatikong mai-install ang :label sa server na ito (walang shell access). Patakbuhin ito mula sa isang makina na may shell access:',
+                'install-failed'     => '✗ Nabigo ang pag-install. Tingnan ang storage/logs/laravel.log para sa mga detalye.',
+                'stream-interrupted' => '! Nawala ang koneksyon sa installer. Maaaring tinatapos pa rin ang pag-install — maghintay ng ilang sandali, pagkatapos ay i-reload ang pahinang ito.',
             ],
             'installation-completed' => [
                 'admin-panel'               => 'Panel ng Administrador',
