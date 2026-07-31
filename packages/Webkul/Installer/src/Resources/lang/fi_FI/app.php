@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Tuotteen tekninen tietolehti',
+                'lede'              => 'Demoluettelon viitemäärittely. Arvot koskevat kaikkia tämän perheen tuotteita, ellei tuotesivulla toisin mainita.',
+                'family-code'       => 'Perheen koodi',
+                'compliance'        => 'Vaatimustenmukaisuus',
+                'compliance-value'  => 'CE-merkitty; RoHS- ja REACH-ilmoitukset saatavilla pyynnöstä.',
+                'spare-parts'       => 'Varaosat',
+                'spare-parts-value' => 'Kuluvia osia pidetään varastossa kymmenen vuotta viimeisestä valmistuspäivästä.',
+                'packaging'         => 'Pakkaus',
+                'packaging-value'   => 'Muoviton pakkaus, FSC-sertifioitu kartonki, painettu mineraaliöljyttömällä värillä.',
+                'footer'            => 'UnoPimin luoma esittelytarkoituksiin.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Oletus',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPimin päivitys',
+        'complete'              => 'Päivitys valmis. Sovellus on jälleen käytettävissä.',
+        'aborted'               => 'Päivitys keskeytettiin. Mitään ei muutettu.',
+        'confirm'               => 'Sovellus siirtyy huoltotilaan ja tietokanta migratoidaan. Jatketaanko?',
+        'dry-run-complete'      => 'Koeajo valmis. Mitään ei muutettu.',
+        'preflight-failed'      => 'Epäonnistuneita tarkistuksia: :count. Päivitystä ei käynnistetty eikä mitään muutettu.',
+        'preflight-failed-hint' => 'Korjaa yllä mainitut kohdat ja suorita komento uudelleen. Aiempi julkaisu palvelee edelleen liikennettä.',
+        'verify-failed'         => 'Epäonnistuneita varmistuksia: :count. Sovellus jätettiin huoltotilaan.',
+        'migrate-failed'        => 'Migraatio epäonnistui: :error',
+        'step-failed'           => 'Vaihe :command epäonnistui, paluukoodi :code.',
+        'phase'                 => [
+            'preflight' => 'Vaihe 1/5 — Esitarkistukset',
+            'drift'     => 'Vaihe 2/5 — Asetusten eroavaisuudet',
+            'sizing'    => 'Vaihe 3/5 — Arvioitu huoltoikkuna',
+            'execute'   => 'Vaihe 4/5 — Migraatio',
+            'verify'    => 'Vaihe 5/5 — Varmistus',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP-versio',
+            'php-version-detail'         => 'vaatii :required, löytyi :found',
+            'php-version-remedy'         => 'Päivitä PHP versioon :required tai uudempaan ennen jatkamista.',
+            'extensions'                 => 'PHP-laajennukset',
+            'extensions-remedy'          => 'Asenna puuttuvat laajennukset ja käynnistä PHP-FPM uudelleen.',
+            'database'                   => 'Tietokantayhteys',
+            'database-detail'            => ':driver, tietokanta :database, etuliite :prefix',
+            'database-remedy'            => 'Tarkista tietokannan tunnukset .env-tiedostosta.',
+            'source-version'             => 'Asennettu julkaisu',
+            'source-version-detail'      => ':version tai uudempi',
+            'source-version-unsupported' => 'vanhempi kuin :version',
+            'source-version-remedy'      => 'Päivitä ensin versioon :version ja suorita tämä komento sen jälkeen uudelleen.',
+            'pending-migrations'         => 'Odottavat migraatiot',
+            'pending-migrations-detail'  => 'suoritettavana :count',
+            'pending-migrations-none'    => 'ei yhtään — tietokanta on jo ajan tasalla',
+            'pending-migrations-remedy'  => 'Migraatiotaulua ei voitu lukea. Tarkista tietokannan käyttöoikeudet.',
+            'active-jobs'                => 'Tuonti- ja vientityöt',
+            'active-jobs-detail'         => ':count vielä käynnissä',
+            'active-jobs-remedy'         => 'Odota käynnissä olevien töiden valmistumista tai pysäytä jonotyöntekijät, ja suorita komento sitten uudelleen.',
+            'writable-paths'             => 'Kirjoitettavat hakemistot',
+            'writable-paths-remedy'      => 'Anna verkkopalvelimen käyttäjälle kirjoitusoikeus yllä lueteltuihin hakemistoihin.',
+            'disk-space'                 => 'Levytila',
+            'disk-space-detail'          => ':free vapaana, :required tarvitaan',
+            'disk-space-unknown'         => 'ei voitu selvittää',
+            'disk-space-remedy'          => 'Vapauta levytilaa tai käytä --skip-backup-valitsinta, jos tietokanta varmuuskopioidaan muualla.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Asetuseroja ei havaittu.',
+            'no-previous' => 'Aiemman julkaisun hakemistoa ei annettu, joten asetustiedostoja ja Composer-riippuvuuksia ei voi vertailla. Käytä --from=/polku/vanhaan/julkaisuun saadaksesi täyden raportin.',
+            'env-missing' => 'Tämän julkaisun lisäämät ympäristöavaimet, jotka puuttuvat .env-tiedostostasi:',
+            'env-removed' => 'Tämän julkaisun poistamat ympäristöavaimet, jotka ovat yhä .env-tiedostossasi:',
+            'config'      => 'Asetustiedostot, jotka poikkeavat aiemmasta julkaisustasi. Tee paikalliset muutoksesi niihin uudelleen:',
+            'composer'    => 'Itse lisäämäsi Composer-riippuvuudet, jotka puuttuvat tästä julkaisusta:',
+            'manual'      => 'Nämä tiedostot ovat sinun. Yhdistä ne käsin ennen liikenteen avaamista — päivitys ei koskaan kirjoita niitä yli.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Taulu',
+            'rows'            => 'Rivejä',
+            'pending'         => 'Suoritetaan :count migraatiota.',
+            'window'          => 'Arvioitu huoltoikkuna: noin :minutes minuuttia.',
+            'nothing-pending' => 'Odottavia migraatioita ei ole.',
+            'irreversible'    => 'Nämä migraatiot kirjoittavat tiedot uudelleen eikä niitä voi peruuttaa. Vain tietokannan varmuuskopion palautus vie takaisin:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Tietokannan varmuuskopio kirjoitettiin polkuun :path',
+            'skipped'            => 'Tietokannan varmuuskopio ohitettiin. Varmista ennen jatkamista, että sinulla on palautettava varmuuskopio.',
+            'failed'             => 'Tietokannan varmuuskopiointi epäonnistui: :error',
+            'empty'              => 'Tietokannan varmuuskopio oli tyhjä ja se hylättiin.',
+            'abort'              => 'Päivitys pysäytettiin, koska varmennettua varmuuskopiota ei ole. Mitään ei muutettu.',
+            'unsupported-driver' => 'Ajurille :driver ei ole saatavilla varmuuskopiointikomentoa.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'ohitettu, taulua ei ole',
+            'associations'           => 'Tuotteiden liitokset',
+            'associations-none'      => 'ei vanhoja liitoksia siirrettäväksi',
+            'associations-detail'    => ':migrated / :legacy tuotetta siirretty',
+            'associations-remedy'    => 'Vanhoja liitostietoja löytyi, mutta mitään ei siirretty. Palauta varmuuskopio ja ilmoita tästä.',
+            'robot-users'            => 'API-integraatioiden omistajat',
+            'robot-users-detail'     => ':count integraatiota kuuluu yhä henkilölle',
+            'robot-users-remedy'     => 'Suorita migraatio uudelleen tai määritä integraatiot uudelleen hallintapaneelista.',
+            'category-bounds'        => 'Kategoriapuun eheys',
+            'category-bounds-detail' => ':count kategoriasolmulla on virheelliset rajat',
+            'category-bounds-remedy' => 'Rakenna kategoriapuu uudelleen ennen liikenteen avaamista.',
+            'scrubbed-audits'        => 'Tunnistetietojen siivous',
+            'scrubbed-audits-detail' => ':count auditointitietuetta sisältää yhä tunnistetietoja',
+            'scrubbed-audits-remedy' => 'Suorita migraatio uudelleen ennen liikenteen avaamista. Nämä tietueet paljastavat tallennettuja tunnistetietoja.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Päivitys ei valmistunut. Sovellus on huoltotilassa.',
+            'body'    => 'Palautus: palauta tietokannan varmuuskopio, osoita verkkopalvelin takaisin aiemman julkaisun hakemistoon ja suorita siellä ”php artisan up”.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Ohitetaan --with-reindex: :count tuotetta ylittää :limit tuotteen rajan välittömälle uudelleenindeksoinnille.',
+            'deferred'  => 'Elasticsearchia ei indeksoitu uudelleen. :count tuotteella tämä kestää pidempään kuin itse päivitys, ja haku turvautuu siihen asti tietokantaan. Suorita nämä, kun sivusto on jälleen käytettävissä:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

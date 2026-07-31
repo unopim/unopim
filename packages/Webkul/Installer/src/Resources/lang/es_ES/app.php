@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Ficha técnica del producto',
+                'lede'              => 'Especificación de referencia del catálogo de demostración. Los valores se aplican a todos los productos de esta familia, salvo que la ficha del producto indique lo contrario.',
+                'family-code'       => 'Código de familia',
+                'compliance'        => 'Conformidad',
+                'compliance-value'  => 'Marcado CE; declaraciones RoHS y REACH disponibles a petición.',
+                'spare-parts'       => 'Piezas de repuesto',
+                'spare-parts-value' => 'Piezas de desgaste en stock durante diez años desde la última fecha de producción.',
+                'packaging'         => 'Embalaje',
+                'packaging-value'   => 'Embalaje sin plástico, cartón certificado FSC, impreso con tintas sin aceites minerales.',
+                'footer'            => 'Generado por UnoPim con fines de demostración.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Por defecto',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'Actualización de UnoPim',
+        'complete'              => 'Actualización completada. La aplicación vuelve a estar en línea.',
+        'aborted'               => 'Actualización cancelada. No se modificó nada.',
+        'confirm'               => 'La aplicación pasará a modo mantenimiento y se migrará la base de datos. ¿Continuar?',
+        'dry-run-complete'      => 'Simulación completada. No se modificó nada.',
+        'preflight-failed'      => ':count comprobación(es) fallida(s). La actualización no se inició y no se modificó nada.',
+        'preflight-failed-hint' => 'Resuelve los puntos anteriores y vuelve a ejecutar el comando. La versión anterior sigue atendiendo el tráfico.',
+        'verify-failed'         => ':count verificación(es) fallida(s). La aplicación se ha dejado en modo mantenimiento.',
+        'migrate-failed'        => 'Error en la migración: :error',
+        'step-failed'           => 'El paso :command falló con el código de salida :code.',
+        'phase'                 => [
+            'preflight' => 'Fase 1 de 5 — Comprobaciones previas',
+            'drift'     => 'Fase 2 de 5 — Diferencias de configuración',
+            'sizing'    => 'Fase 3 de 5 — Ventana de mantenimiento estimada',
+            'execute'   => 'Fase 4 de 5 — Migración',
+            'verify'    => 'Fase 5 de 5 — Verificación',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'Versión de PHP',
+            'php-version-detail'         => 'requiere :required, se encontró :found',
+            'php-version-remedy'         => 'Actualiza PHP a :required o superior antes de continuar.',
+            'extensions'                 => 'Extensiones de PHP',
+            'extensions-remedy'          => 'Instala las extensiones que faltan y reinicia PHP-FPM.',
+            'database'                   => 'Conexión a la base de datos',
+            'database-detail'            => ':driver, base de datos :database, prefijo :prefix',
+            'database-remedy'            => 'Revisa las credenciales de la base de datos en tu archivo .env.',
+            'source-version'             => 'Versión instalada',
+            'source-version-detail'      => ':version o superior',
+            'source-version-unsupported' => 'anterior a :version',
+            'source-version-remedy'      => 'Actualiza primero a :version y vuelve a ejecutar este comando.',
+            'pending-migrations'         => 'Migraciones pendientes',
+            'pending-migrations-detail'  => ':count por ejecutar',
+            'pending-migrations-none'    => 'ninguna: la base de datos ya está actualizada',
+            'pending-migrations-remedy'  => 'No se pudo leer la tabla de migraciones. Revisa los permisos de la base de datos.',
+            'active-jobs'                => 'Trabajos de importación y exportación',
+            'active-jobs-detail'         => ':count todavía en ejecución',
+            'active-jobs-remedy'         => 'Espera a que terminen los trabajos en curso o detén los workers de la cola y vuelve a ejecutar el comando.',
+            'writable-paths'             => 'Directorios con permiso de escritura',
+            'writable-paths-remedy'      => 'Concede permisos de escritura al usuario del servidor web sobre los directorios indicados arriba.',
+            'disk-space'                 => 'Espacio en disco',
+            'disk-space-detail'          => ':free libre, :required necesario',
+            'disk-space-unknown'         => 'no se pudo determinar',
+            'disk-space-remedy'          => 'Libera espacio en disco o usa --skip-backup si la base de datos se respalda por otros medios.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'No se detectaron diferencias de configuración.',
+            'no-previous' => 'No se indicó el directorio de la versión anterior, por lo que no se pueden comparar los archivos de configuración ni las dependencias de Composer. Usa --from=/ruta/a/version/anterior para obtener un informe completo.',
+            'env-missing' => 'Claves de entorno añadidas por esta versión que faltan en tu .env:',
+            'env-removed' => 'Claves de entorno eliminadas por esta versión que siguen definidas en tu .env:',
+            'config'      => 'Archivos de configuración que difieren de tu versión anterior. Vuelve a aplicar tus cambios locales:',
+            'composer'    => 'Dependencias de Composer que añadiste y que faltan en esta versión:',
+            'manual'      => 'Estos archivos son tuyos. Combínalos a mano antes de reabrir el tráfico: la actualización nunca los sobrescribe.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabla',
+            'rows'            => 'Filas',
+            'pending'         => 'Se ejecutarán :count migración(es).',
+            'window'          => 'Ventana de mantenimiento estimada: unos :minutes minuto(s).',
+            'nothing-pending' => 'No hay migraciones pendientes.',
+            'irreversible'    => 'Estas migraciones reescriben datos y no se pueden revertir. Solo restaurar la copia de seguridad de la base de datos permite volver atrás:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Copia de seguridad de la base de datos escrita en :path',
+            'skipped'            => 'Se omitió la copia de seguridad de la base de datos. Asegúrate de tener una copia restaurable antes de continuar.',
+            'failed'             => 'Error en la copia de seguridad de la base de datos: :error',
+            'empty'              => 'La copia de seguridad de la base de datos estaba vacía y se ha descartado.',
+            'abort'              => 'La actualización se detuvo porque no existe una copia de seguridad verificada. No se modificó nada.',
+            'unsupported-driver' => 'No hay ningún comando de copia de seguridad disponible para el controlador :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'omitido, la tabla no existe',
+            'associations'           => 'Asociaciones de productos',
+            'associations-none'      => 'no hay asociaciones antiguas que migrar',
+            'associations-detail'    => ':migrated de :legacy producto(s) migrado(s)',
+            'associations-remedy'    => 'Se encontraron datos de asociación antiguos, pero no se migró nada. Restaura la copia de seguridad e informa de este problema.',
+            'robot-users'            => 'Propietarios de las integraciones de API',
+            'robot-users-detail'     => ':count integración(es) siguen perteneciendo a una persona',
+            'robot-users-remedy'     => 'Vuelve a ejecutar la migración o reasigna las integraciones desde el panel de administración.',
+            'category-bounds'        => 'Integridad del árbol de categorías',
+            'category-bounds-detail' => ':count nodo(s) de categoría tienen límites no válidos',
+            'category-bounds-remedy' => 'Reconstruye el árbol de categorías antes de reabrir el tráfico.',
+            'scrubbed-audits'        => 'Limpieza de credenciales',
+            'scrubbed-audits-detail' => ':count registro(s) de auditoría todavía contienen credenciales',
+            'scrubbed-audits-remedy' => 'Vuelve a ejecutar la migración antes de reabrir el tráfico. Estos registros exponen credenciales almacenadas.',
+        ],
+
+        'restore'               => [
+            'heading' => 'La actualización no se completó. La aplicación está en modo mantenimiento.',
+            'body'    => 'Para revertir: restaura la copia de seguridad de la base de datos, apunta de nuevo el servidor web al directorio de la versión anterior y ejecuta allí «php artisan up».',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Se ignora --with-reindex: :count producto(s) supera el límite de :limit productos para una reconstrucción en línea.',
+            'deferred'  => 'Elasticsearch no se reindexó. Con :count producto(s) esta tarea dura más que la propia actualización, y mientras tanto la búsqueda recurre a la base de datos. Ejecuta esto cuando el sitio vuelva a estar en línea:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

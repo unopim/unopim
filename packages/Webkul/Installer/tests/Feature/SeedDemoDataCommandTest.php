@@ -21,7 +21,7 @@ function fakeDemoInstaller(array $result, bool &$seedCalled, bool &$forceSeen, b
             return $this->alreadySeeded;
         }
 
-        public function seed(?Closure $reporter = null, bool $force = false): array
+        public function seed(?Closure $reporter = null, bool $force = false, bool $large = false): array
         {
             $this->seedCalled = true;
             $this->forceSeen = $force;

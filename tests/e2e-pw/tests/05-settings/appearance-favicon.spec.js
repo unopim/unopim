@@ -4,7 +4,9 @@ const fs = require('fs');
 const path = require('path');
 
 test.describe('Appearance — favicon', () => {
-  const SETTINGS_URL = '/admin/settings/appearance';
+  // Appearance settings live under the Configuration > System section, not a
+  // standalone /admin/settings route.
+  const SETTINGS_URL = '/admin/configuration/system/system.appearance';
   const JPEG_B64 = fs.readFileSync(path.resolve(__dirname, '../../assets/check.jpeg')).toString('base64');
 
   const gotoSettings = (page) =>

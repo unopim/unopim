@@ -8,7 +8,9 @@ const { loadEnv } = require('./utils/load-env');
 loadEnv();
 
 const isCI = !!process.env.CI;
-const STORAGE_STATE = path.resolve(__dirname, '.state/admin-auth.json');
+/* PW_STATE_DIR keeps auth state per shard, so shards driving their own server
+ * and database don't overwrite each other's session. */
+const STORAGE_STATE = path.resolve(__dirname, process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 /**
  * Worker count strategy:

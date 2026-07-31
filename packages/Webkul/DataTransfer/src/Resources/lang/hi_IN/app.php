@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'नमूना फ़ाइल',
+        'variants'      => 'वैरिएंट उदाहरण',
+        'multi-locale'  => 'बहु-लोकेल उदाहरण',
+        'delete'        => 'हटाने का उदाहरण',
+        'custom-fields' => 'कस्टम फ़ील्ड उदाहरण',
+        'with-images'   => 'छवियों सहित नमूना (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'उत्पादों',

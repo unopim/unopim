@@ -39,7 +39,9 @@ async function fillChannelForm(adminPage, opts = {}) {
   }
 
   if (selectRootCategory) {
-    await pickOption('root_category_id', 'Root', true);
+    // The seeded root category (code "root") has no translated name, so the
+    // Category model's name accessor falls back to "[code]".
+    await pickOption('root_category_id', '[root]');
   }
 
   if (name) {
@@ -189,7 +191,11 @@ test.describe('Channel Management', () => {
     const row = adminPage.locator('#app div').filter({ hasText: code });
     await row.locator('span[title="Edit"]').first().click();
     await adminPage.waitForLoadState('networkidle');
-    await adminPage.locator('input[name$="[name]"]').first().fill(`${uid} Updated`);
+    // The edit page's name field is a v-translatable-field: the only visible
+    // control is a plain (unnamed) text input, with per-locale state carried
+    // in hidden inputs (named "<locale>[name]") that mirror it on change.
+    const nameGroup = adminPage.locator('[data-control-group]').filter({ has: adminPage.locator('input[name="en_US[name]"]') });
+    await nameGroup.locator('input[type="text"]').fill(`${uid} Updated`);
     await clickSaveAndExpect(adminPage, 'Save Channel', /Update Channel Successfully/i);
 
     await deleteChannel(adminPage, code);

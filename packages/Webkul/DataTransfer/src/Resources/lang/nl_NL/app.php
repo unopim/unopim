@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Voorbeeldbestand',
+        'variants'      => 'Voorbeeld met varianten',
+        'multi-locale'  => 'Meertalig voorbeeld',
+        'delete'        => 'Voorbeeld voor verwijderen',
+        'custom-fields' => 'Voorbeeld met aangepaste velden',
+        'with-images'   => 'Voorbeeld met afbeeldingen (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Producten',

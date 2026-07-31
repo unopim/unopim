@@ -13,12 +13,14 @@ class PublicationResolver
 
     private const LANGUAGE_TAG_PATTERN = '/^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$/';
 
+    public function __construct(private readonly PublicAccessGate $gate) {}
+
     /**
      * The per-channel public-tier kill switch (`general.publication.settings.enabled`), shared by every public controller.
      */
     public function isChannelEnabled(Publication $publication): bool
     {
-        return (bool) (core()->getConfigData('general.publication.settings.enabled', $publication->channel->code) ?? false);
+        return $this->gate->enabledForChannel($publication->channel->code);
     }
 
     /**

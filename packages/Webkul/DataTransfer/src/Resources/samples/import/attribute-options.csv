@@ -1,0 +1,5 @@
+attribute_code,code,locale,label,sort_order,swatch_value
+material,cotton,en_US,Cotton,1,
+material,leather,en_US,Leather,2,
+material,stainless_steel,en_US,"Stainless Steel",3,
+material,recycled_plastic,en_US,"Recycled Plastic",4,

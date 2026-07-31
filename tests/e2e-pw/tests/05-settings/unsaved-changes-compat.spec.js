@@ -12,6 +12,20 @@ test.describe('Unsaved changes — cross-page', () => {
     { name: 'channel edit', url: '/admin/settings/channels/edit/1' },
   ];
 
+  /**
+   * Product ids drift across reseeds, so resolve one from the products grid's
+   * own first page of rows (via their mass-action checkbox values) instead of
+   * assuming id 1 still exists.
+   */
+  async function resolveProductEditUrl(page) {
+    await page.goto('/admin/catalog/products', { waitUntil: 'load' });
+    await page.waitForLoadState('networkidle');
+
+    const id = await page.locator('input[name^="mass_action_select_record_"]').first().getAttribute('value');
+
+    return `/admin/catalog/products/edit/${id}`;
+  }
+
   for (const pageDef of PAGES) {
     test(`${pageDef.name}: clean on load, bar on real edit, no JS errors`, async ({ adminPage }) => {
       const errors = [];
@@ -45,7 +59,9 @@ test.describe('Unsaved changes — cross-page', () => {
     const errors = [];
     adminPage.on('pageerror', (e) => errors.push(e.message));
 
-    await adminPage.goto('/admin/catalog/products/edit/1', { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
+    const productEditUrl = await resolveProductEditUrl(adminPage);
+
+    await adminPage.goto(productEditUrl, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
     await adminPage.waitForTimeout(2000);
 
     // Tracked form present, and custom widgets populating after mount must NOT

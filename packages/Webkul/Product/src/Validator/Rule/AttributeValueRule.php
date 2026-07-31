@@ -7,6 +7,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Translation\PotentiallyTranslatedString;
 use Webkul\Attribute\Contracts\Attribute;
+use Webkul\Attribute\Models\Attribute as AttributeModel;
 
 class AttributeValueRule implements ValidationRule
 {
@@ -37,21 +38,61 @@ class AttributeValueRule implements ValidationRule
             return;
         }
 
-        $rules = [];
-
         $validations = $productAttribute->getValidationRules(currentChannelCode: $channel, currentLocaleCode: $locale, id: $this->productId);
 
-        if ($productAttribute->type === 'price') {
-            $rules[$attributeCode.'.*'] = $validations;
-        } else {
-            $rules[$attributeCode] = $validations;
-        }
+        $ruleKey = $this->ruleKey($productAttribute, $value);
 
-        $validator = Validator::make([$attributeCode => $value], $rules);
+        $validator = Validator::make(
+            [$attributeCode => $value],
+            [$ruleKey => $validations],
+            [],
+            $this->customAttributeNames($productAttribute, $ruleKey)
+        );
 
         if ($validator->fails()) {
             $fail($validator->errors()->first());
         }
+    }
+
+    /**
+     * Rule target for the submitted value.
+     *
+     * A composite attribute posts a keyed payload — every currency of a price, the
+     * amount and unit of a measurement — so the field rules have to address the
+     * scalar member. Aiming them at the payload hands an array to rules such as
+     * Decimal, which then rejects a field the user never filled. The stored form of
+     * a measurement keys the amount as `amount`, the submitted form as `value`.
+     */
+    protected function ruleKey(Attribute $attribute, mixed $value): string
+    {
+        if ($attribute->type === AttributeModel::PRICE_FIELD_TYPE) {
+            return $attribute->code.'.*';
+        }
+
+        if (
+            $attribute->type === AttributeModel::MEASUREMENT_FIELD_TYPE
+            && is_array($value)
+        ) {
+            return $attribute->code.'.'.(array_key_exists('amount', $value) ? 'amount' : 'value');
+        }
+
+        return $attribute->code;
+    }
+
+    /**
+     * A measurement rule targets the amount member, so without a label the message
+     * would name the payload key. Price keeps its expanded key, which carries the
+     * currency that actually failed.
+     *
+     * @return array<string, string>
+     */
+    protected function customAttributeNames(Attribute $attribute, string $ruleKey): array
+    {
+        if ($attribute->type !== AttributeModel::MEASUREMENT_FIELD_TYPE) {
+            return [];
+        }
+
+        return [$ruleKey => $attribute->name ?: $attribute->code];
     }
 
     /**

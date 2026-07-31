@@ -22,6 +22,10 @@ class DataTransferServiceProvider extends ServiceProvider
         $this->loadTranslationsFrom(__DIR__.'/../Resources/lang', 'data_transfer');
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
+
+        $this->publishes([
+            __DIR__.'/../Resources/samples' => storage_path('app/public/data-transfer/samples'),
+        ], 'unopim-data-transfer-samples');
     }
 
     /**

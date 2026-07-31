@@ -1,6 +1,15 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Örnek dosya',
+        'variants'      => 'Varyant örneği',
+        'multi-locale'  => 'Çok dilli örnek',
+        'delete'        => 'Silme örneği',
+        'custom-fields' => 'Özel alan örneği',
+        'with-images'   => 'Görsellerle örnek (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Ürünler',

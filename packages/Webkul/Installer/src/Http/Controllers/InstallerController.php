@@ -51,33 +51,23 @@ class InstallerController extends Controller
     const CLOUD_HOSTING_URL = 'https://unopim.com/cloud-hosting/';
 
     /**
-     * Optional open-source add-on packages surfaced in the web installer.
-     *
-     * Mirrors {@see Installer::$optionalPackages}
-     * 1:1 so the labels and install commands stay in sync with the CLI. The web
-     * installer installs the selected packages server-side during the streaming
-     * install (see {@see installPackageStreamed()}); the client only sends the
-     * whitelisted keys, never the composer/artisan arguments.
+     * Optional add-on packages on offer, keyed by the whitelisted key the
+     * client may send, or an empty list while the feature is switched off in
+     * `installer.optional_packages`.
      *
      * Display labels live in the `installer::app.installer.index.add-ons.packages.*`
-     * lang files and are rendered client-side; only machine values are kept here.
+     * lang files and are rendered client-side; only machine values are read here.
      *
-     * @var array<string, array{composer: string, install: string}>
+     * @return array<string, array{composer: string, install: string}>
      */
-    protected array $optionalPackages = [
-        'dam' => [
-            'composer' => 'unopim/dam',
-            'install'  => 'dam-package:install',
-        ],
-        'shopify' => [
-            'composer' => 'unopim/shopify-connector',
-            'install'  => 'shopify-package:install',
-        ],
-        'bagisto' => [
-            'composer' => 'unopim/bagisto-connector',
-            'install'  => 'bagisto-package:install',
-        ],
-    ];
+    protected function optionalPackages(): array
+    {
+        if (! config('installer.optional_packages.enabled', false)) {
+            return [];
+        }
+
+        return config('installer.optional_packages.packages', []);
+    }
 
     /**
      * Create a new controller instance
@@ -259,7 +249,7 @@ class InstallerController extends Controller
             return to_route('installer.index');
         }
 
-        $optionalPackages = $this->optionalPackages;
+        $optionalPackages = $this->optionalPackages();
 
         $cloudHostingUrl = self::CLOUD_HOSTING_URL;
 
@@ -483,7 +473,7 @@ class InstallerController extends Controller
         // client with composer/artisan arguments. Unknown keys are dropped.
         $packages = array_values(array_filter(
             array_map(strval(...), $requestedPackages),
-            fn (string $key): bool => isset($this->optionalPackages[$key])
+            fn (string $key): bool => isset($this->optionalPackages()[$key])
         ));
 
         // Persist to a temp state file rather than the session: the SSE stream is
@@ -663,11 +653,11 @@ class InstallerController extends Controller
 
                 // f. Optional add-on packages
                 foreach ($packages as $key) {
-                    if (! isset($this->optionalPackages[$key])) {
+                    if (! isset($this->optionalPackages()[$key])) {
                         continue;
                     }
 
-                    $package = $this->optionalPackages[$key];
+                    $package = $this->optionalPackages()[$key];
 
                     $this->installPackageStreamed($package, $emit, $emitLines);
                 }

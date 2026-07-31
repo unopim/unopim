@@ -34,6 +34,7 @@ it('dispatches a publish job when auto_publish is on for a dpp-family product', 
     [$product, $context] = $this->productWithSecretAndDppAttributes();
 
     setChannelPassportConfig($context->channel->code, enabled: true, autoPublish: true);
+    $this->enablePublicTier($context->channel->code);
 
     Event::dispatch('catalog.product.update.after', $product);
 
@@ -41,6 +42,27 @@ it('dispatches a publish job when auto_publish is on for a dpp-family product', 
         PublishPassportForProductChannelJob::class,
         fn (PublishPassportForProductChannelJob $job): bool => $job->uniqueId() === "{$product->id}:{$context->channel->id}:dpp",
     );
+});
+
+it('dispatches nothing while the channel public tier is off', function (): void {
+    Queue::fake();
+
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
+
+    setChannelPassportConfig($context->channel->code, enabled: true, autoPublish: true);
+
+    CoreConfig::query()->where('code', 'general.publication.settings.enabled')->delete();
+
+    CoreConfig::query()->create([
+        'code'         => 'general.publication.settings.enabled',
+        'channel_code' => $context->channel->code,
+        'locale_code'  => null,
+        'value'        => '0',
+    ]);
+
+    Event::dispatch('catalog.product.update.after', $product);
+
+    Queue::assertNotPushed(PublishPassportForProductChannelJob::class);
 });
 
 it('dispatches nothing when auto_publish is off', function (): void {

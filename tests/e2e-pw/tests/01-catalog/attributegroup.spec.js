@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
 
 /** Create an attribute group via UI. */
 async function createAttributeGroup(adminPage, code, name) {
@@ -7,20 +7,20 @@ async function createAttributeGroup(adminPage, code, name) {
   await adminPage.getByRole('button', { name: 'Create Attribute Group' }).click();
   await adminPage.waitForLoadState('networkidle');
   await adminPage.getByRole('textbox', { name: 'Code' }).fill(code);
-  await adminPage.locator('input[name$="[name]"]').first().fill(name);
+  await fillLocalizedField(adminPage, name);
   await clickSaveAndExpect(adminPage, 'Save Attribute Group', /Attribute Group Created Successfully/i);
 }
 
 /** Delete an attribute group by code (search, delete, confirm). */
 async function deleteAttributeGroup(adminPage, code) {
   await navigateTo(adminPage, 'attributeGroups');
-  await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+  await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
   const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await deleteBtn.click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
   }
 }
@@ -49,7 +49,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
   test('should allow attribute group search', async ({ adminPage }) => {
     // Seeded 'general' group always exists.
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill('general');
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('general');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText('general', { exact: true }).first()).toBeVisible();
@@ -66,7 +66,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
-    await adminPage.locator('#app').getByText('20', { exact: true }).click();
+    await adminPage.getByRole('list').getByText('20', { exact: true }).click();
     await expect(perPageBtn).toContainText('20');
   });
 
@@ -77,7 +77,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await createAttributeGroup(adminPage, code, 'Actions Test');
 
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: code });
@@ -85,14 +85,14 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/attribute-groups\/edit/);
 
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Delete"]').first().click();
     await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
 
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Attribute Group Deleted Successfully/i)).toBeVisible();
   });
 
@@ -103,12 +103,12 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await createAttributeGroup(adminPage, code, 'Before Update');
 
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Edit"]').first().click();
-    await adminPage.locator('input[name$="[name]"]').first().fill('After Update');
+    await fillLocalizedField(adminPage, 'After Update');
     await clickSaveAndExpect(adminPage, 'Save changes', /Attribute Group Updated Successfully/i);
 
     await deleteAttributeGroup(adminPage, code);
@@ -121,12 +121,12 @@ test.describe('UnoPim Attribute Group Tests', () => {
     await createAttributeGroup(adminPage, code, 'To Delete');
 
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const itemRow = adminPage.locator('div', { hasText: code });
     await itemRow.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/Attribute Group Deleted Successfully/i)).toBeVisible();
   });
 

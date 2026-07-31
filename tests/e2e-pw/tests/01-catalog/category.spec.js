@@ -39,13 +39,13 @@ async function createCategory(adminPage, code, name) {
  */
 async function deleteCategory(adminPage, code) {
   await navigateTo(adminPage, 'categoriesList');
-  await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+  await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
   const deleteBtn = adminPage.locator('div', { hasText: code }).locator('span[title="Delete"]').first();
   if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
     await deleteBtn.click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await adminPage.waitForLoadState('networkidle');
   }
 }
@@ -70,10 +70,14 @@ test.describe('UnoPim Category Tests', () => {
   test('Create Categories with empty Code and Name field', async ({ adminPage }) => {
     await openCreateForm(adminPage);
     // Leave Code and Name empty; make the form dirty via the parent category
-    // radio so the "Save changes" bar appears and validation can run. A pristine
+    // picker so the "Save changes" bar appears and validation can run. A pristine
     // form exposes no save affordance — the in-form button is removed by the
     // unsaved-changes tracker and the bar only shows once the form is dirty.
-    await adminPage.locator('label[for="1"]').first().click();
+    // Parent is now a drawer picker defaulting to "Root level"; open it and pick
+    // an actual category node to fire the change.
+    await adminPage.getByText('Root level', { exact: true }).first().click();
+    await adminPage.locator('input[type="radio"]').nth(1).locator('..').click();
+    await adminPage.locator('.icon-cancel').first().click();
     await clickSaveChanges(adminPage);
     await expect(adminPage.locator('#app').getByText('The code field is required').first()).toBeVisible();
     await expect(adminPage.locator('#app').getByText('The Name field is required').first()).toBeVisible();
@@ -92,7 +96,7 @@ test.describe('UnoPim Category Tests', () => {
   test('should allow category search', async ({ adminPage }) => {
     // Use seeded root category
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill('root');
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('root');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     await expect(adminPage.locator('#app').getByText('root', { exact: true }).first()).toBeVisible();
@@ -122,7 +126,7 @@ test.describe('UnoPim Category Tests', () => {
 
     // Search and verify Edit action
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
@@ -131,7 +135,7 @@ test.describe('UnoPim Category Tests', () => {
 
     // Go back, search again, verify Delete shows confirmation
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row2 = adminPage.locator('div', { hasText: code });
@@ -139,7 +143,7 @@ test.describe('UnoPim Category Tests', () => {
     await expect(adminPage.locator('#app').getByText('Are you sure you want to delete?')).toBeVisible();
 
     // Cleanup — confirm delete
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/category has been successfully deleted/i)).toBeVisible({ timeout: 20000 });
   });
 
@@ -158,7 +162,7 @@ test.describe('UnoPim Category Tests', () => {
 
     // Search and edit
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
@@ -182,24 +186,24 @@ test.describe('UnoPim Category Tests', () => {
 
     // Search and delete
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('div', { hasText: code });
     await row.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/category has been successfully deleted/i)).toBeVisible({ timeout: 20000 });
   });
 
   test('Delete Root Category', async ({ adminPage }) => {
     // Root category should not be deletable
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByRole('textbox', { name: 'Search' }).fill('root');
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('root');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
     const row = adminPage.locator('.row').filter({ hasText: /root/i }).first();
     await row.locator('span[title="Delete"]').first().click();
-    await adminPage.getByRole('button', { name: 'Delete' }).click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
     await expect(adminPage.locator('#app').getByText(/cannot delete the root category/i)).toBeVisible({ timeout: 20000 });
   });
 

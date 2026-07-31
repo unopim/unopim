@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Produktdatenblatt',
+                'lede'              => 'Referenzspezifikation für den Demokatalog. Die Werte gelten für jedes Produkt dieser Familie, sofern die Produktseite nichts anderes angibt.',
+                'family-code'       => 'Familiencode',
+                'compliance'        => 'Konformität',
+                'compliance-value'  => 'CE-gekennzeichnet; RoHS- und REACH-Erklärungen auf Anfrage erhältlich.',
+                'spare-parts'       => 'Ersatzteile',
+                'spare-parts-value' => 'Verschleißteile werden zehn Jahre ab dem letzten Produktionsdatum bevorratet.',
+                'packaging'         => 'Verpackung',
+                'packaging-value'   => 'Plastikfreie Verpackung, FSC-zertifizierter Karton, mit mineralölfreier Farbe bedruckt.',
+                'footer'            => 'Von UnoPim zu Demonstrationszwecken erstellt.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standard',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim-Upgrade',
+        'complete'              => 'Upgrade abgeschlossen. Die Anwendung ist wieder online.',
+        'aborted'               => 'Upgrade abgebrochen. Es wurde nichts geändert.',
+        'confirm'               => 'Die Anwendung wird in den Wartungsmodus versetzt und die Datenbank migriert. Fortfahren?',
+        'dry-run-complete'      => 'Testlauf abgeschlossen. Es wurde nichts geändert.',
+        'preflight-failed'      => ':count Prüfung(en) fehlgeschlagen. Das Upgrade wurde nicht gestartet und nichts geändert.',
+        'preflight-failed-hint' => 'Beheben Sie die oben genannten Punkte und führen Sie den Befehl erneut aus. Die bisherige Version läuft weiterhin.',
+        'verify-failed'         => ':count Überprüfung(en) fehlgeschlagen. Die Anwendung bleibt im Wartungsmodus.',
+        'migrate-failed'        => 'Migration fehlgeschlagen: :error',
+        'step-failed'           => 'Der Schritt :command ist mit dem Exit-Code :code fehlgeschlagen.',
+        'phase'                 => [
+            'preflight' => 'Phase 1 von 5 – Vorprüfungen',
+            'drift'     => 'Phase 2 von 5 – Konfigurationsabweichungen',
+            'sizing'    => 'Phase 3 von 5 – Geschätztes Wartungsfenster',
+            'execute'   => 'Phase 4 von 5 – Migration',
+            'verify'    => 'Phase 5 von 5 – Überprüfung',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP-Version',
+            'php-version-detail'         => 'erfordert :required, gefunden :found',
+            'php-version-remedy'         => 'Aktualisieren Sie PHP auf :required oder neuer, bevor Sie fortfahren.',
+            'extensions'                 => 'PHP-Erweiterungen',
+            'extensions-remedy'          => 'Installieren Sie die fehlenden Erweiterungen und starten Sie PHP-FPM neu.',
+            'database'                   => 'Datenbankverbindung',
+            'database-detail'            => ':driver, Datenbank :database, Präfix :prefix',
+            'database-remedy'            => 'Prüfen Sie die Datenbank-Zugangsdaten in Ihrer .env-Datei.',
+            'source-version'             => 'Installierte Version',
+            'source-version-detail'      => ':version oder neuer',
+            'source-version-unsupported' => 'älter als :version',
+            'source-version-remedy'      => 'Führen Sie zuerst das Upgrade auf :version durch und starten Sie diesen Befehl anschließend erneut.',
+            'pending-migrations'         => 'Ausstehende Migrationen',
+            'pending-migrations-detail'  => ':count auszuführen',
+            'pending-migrations-none'    => 'keine – die Datenbank ist bereits aktuell',
+            'pending-migrations-remedy'  => 'Die Migrationstabelle konnte nicht gelesen werden. Prüfen Sie die Datenbankberechtigungen.',
+            'active-jobs'                => 'Import- und Export-Aufträge',
+            'active-jobs-detail'         => ':count laufen noch',
+            'active-jobs-remedy'         => 'Warten Sie, bis die laufenden Aufträge beendet sind, oder stoppen Sie die Queue-Worker, und führen Sie den Befehl dann erneut aus.',
+            'writable-paths'             => 'Beschreibbare Verzeichnisse',
+            'writable-paths-remedy'      => 'Gewähren Sie dem Webserver-Benutzer Schreibrechte für die oben genannten Verzeichnisse.',
+            'disk-space'                 => 'Speicherplatz',
+            'disk-space-detail'          => ':free frei, :required erforderlich',
+            'disk-space-unknown'         => 'konnte nicht ermittelt werden',
+            'disk-space-remedy'          => 'Geben Sie Speicherplatz frei oder verwenden Sie --skip-backup, wenn die Datenbank anderweitig gesichert wird.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Keine Konfigurationsabweichungen festgestellt.',
+            'no-previous' => 'Kein vorheriges Release-Verzeichnis angegeben, daher können Konfigurationsdateien und Composer-Abhängigkeiten nicht verglichen werden. Verwenden Sie --from=/pfad/zum/alten/release für einen vollständigen Bericht.',
+            'env-missing' => 'Von dieser Version hinzugefügte Umgebungsschlüssel, die in Ihrer .env fehlen:',
+            'env-removed' => 'Von dieser Version entfernte Umgebungsschlüssel, die in Ihrer .env noch gesetzt sind:',
+            'config'      => 'Konfigurationsdateien, die sich von Ihrer bisherigen Version unterscheiden. Übertragen Sie Ihre lokalen Änderungen erneut:',
+            'composer'    => 'Von Ihnen ergänzte Composer-Abhängigkeiten, die in dieser Version fehlen:',
+            'manual'      => 'Diese Dateien gehören Ihnen. Führen Sie die Änderungen von Hand zusammen, bevor Sie wieder Traffic zulassen – das Upgrade überschreibt sie niemals.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabelle',
+            'rows'            => 'Zeilen',
+            'pending'         => ':count Migration(en) werden ausgeführt.',
+            'window'          => 'Geschätztes Wartungsfenster: etwa :minutes Minute(n).',
+            'nothing-pending' => 'Es stehen keine Migrationen aus.',
+            'irreversible'    => 'Diese Migrationen schreiben Daten um und lassen sich nicht rückgängig machen. Nur das Einspielen der Datenbanksicherung führt zurück:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Datenbanksicherung gespeichert unter :path',
+            'skipped'            => 'Datenbanksicherung übersprungen. Stellen Sie sicher, dass Sie eine wiederherstellbare Sicherung haben, bevor Sie fortfahren.',
+            'failed'             => 'Datenbanksicherung fehlgeschlagen: :error',
+            'empty'              => 'Die Datenbanksicherung war leer und wurde verworfen.',
+            'abort'              => 'Das Upgrade wurde gestoppt, weil keine geprüfte Sicherung vorliegt. Es wurde nichts geändert.',
+            'unsupported-driver' => 'Für den Treiber :driver ist kein Sicherungsbefehl verfügbar.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'übersprungen, Tabelle nicht vorhanden',
+            'associations'           => 'Produktverknüpfungen',
+            'associations-none'      => 'keine alten Verknüpfungen zu migrieren',
+            'associations-detail'    => ':migrated von :legacy Produkt(en) migriert',
+            'associations-remedy'    => 'Es wurden alte Verknüpfungsdaten gefunden, aber nichts migriert. Spielen Sie die Sicherung ein und melden Sie dies.',
+            'robot-users'            => 'Besitzer der API-Integrationen',
+            'robot-users-detail'     => ':count Integration(en) gehören noch einer Person',
+            'robot-users-remedy'     => 'Führen Sie die Migration erneut aus oder weisen Sie die Integrationen im Admin-Bereich neu zu.',
+            'category-bounds'        => 'Integrität des Kategoriebaums',
+            'category-bounds-detail' => ':count Kategorieknoten haben ungültige Grenzwerte',
+            'category-bounds-remedy' => 'Bauen Sie den Kategoriebaum neu auf, bevor Sie wieder Traffic zulassen.',
+            'scrubbed-audits'        => 'Bereinigung von Zugangsdaten',
+            'scrubbed-audits-detail' => ':count Audit-Eintrag/Einträge enthalten weiterhin Zugangsdaten',
+            'scrubbed-audits-remedy' => 'Führen Sie die Migration erneut aus, bevor Sie wieder Traffic zulassen. Diese Einträge legen gespeicherte Zugangsdaten offen.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Das Upgrade wurde nicht abgeschlossen. Die Anwendung befindet sich im Wartungsmodus.',
+            'body'    => 'So machen Sie es rückgängig: Spielen Sie die Datenbanksicherung ein, richten Sie Ihren Webserver wieder auf das bisherige Release-Verzeichnis aus und führen Sie dort "php artisan up" aus.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => '--with-reindex wird ignoriert: :count Produkt(e) überschreiten das Limit von :limit Produkten für eine sofortige Neuindexierung.',
+            'deferred'  => 'Elasticsearch wurde nicht neu indexiert. Bei :count Produkt(en) dauert das länger als das Upgrade selbst, und die Suche greift bis zum Abschluss auf die Datenbank zurück. Führen Sie dies aus, sobald die Website wieder online ist:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

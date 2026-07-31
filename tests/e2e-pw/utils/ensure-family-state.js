@@ -10,7 +10,7 @@ const { loadEnv } = require('./load-env');
 
 loadEnv();
 
-const STATE_PATH = path.resolve(__dirname, '../.state/admin-auth-family.json');
+const STATE_PATH = path.resolve(__dirname, '..', process.env.PW_STATE_DIR || '.state', 'admin-auth-family.json');
 const BASE = process.env.FAMILY_BASE_URL || process.env.BASE_URL || 'http://127.0.0.1:8000';
 const EMAIL = process.env.FAMILY_ADMIN_EMAIL || process.env.ADMIN_EMAIL || process.env.ADMIN_USERNAME || 'admin@example.com';
 // Never hardcode the password: supply it at run time via FAMILY_ADMIN_PASSWORD

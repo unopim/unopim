@@ -9,9 +9,18 @@ use Throwable;
 use Webkul\Completeness\Console\RecalculateCompletenessCommand;
 use Webkul\ElasticSearch\Console\Command\CategoryIndexer;
 use Webkul\ElasticSearch\Console\Command\ProductIndexer;
-use Webkul\Installer\Database\Seeders\CategoryDemoTableSeeder;
-use Webkul\Installer\Database\Seeders\DemoExtrasTableSeeder;
-use Webkul\Installer\Database\Seeders\ProductTableSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoAssociationSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoAttributeSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoCoreSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoJobSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoMediaSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoOrganisationSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoPassportSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoScaleSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoWorkspaceSeeder;
 
 /**
  * Runs the demo extras, demo categories, and sample products seeders
@@ -34,9 +43,11 @@ class DemoDataInstaller
      * call short-circuits with `skipped: true`. Pass `$force: true`
      * to re-run the seeders even when data is already present.
      *
+     * Pass `$large` to pad the catalog with cloned products for scale testing.
+     *
      * @return array{success: bool, skipped?: bool, error?: string}
      */
-    public function seed(?Closure $reporter = null, bool $force = false): array
+    public function seed(?Closure $reporter = null, bool $force = false, bool $large = false): array
     {
         $report = $reporter ?? static fn (string $message): null => null;
 
@@ -47,14 +58,43 @@ class DemoDataInstaller
         }
 
         try {
-            $report('Seeding demo extras (channels, attributes, families, core config, ...)...');
-            resolve(DemoExtrasTableSeeder::class)->run();
+            $report('Seeding demo channels, locales and currencies...');
+            resolve(DemoCoreSeeder::class)->run();
+
+            $report('Seeding demo attributes...');
+            resolve(DemoAttributeSeeder::class)->run();
+
+            $report('Seeding demo attribute families...');
+            resolve(DemoFamilySeeder::class)->run();
 
             $report('Seeding demo categories...');
-            resolve(CategoryDemoTableSeeder::class)->run();
+            resolve(DemoCategorySeeder::class)->run();
 
-            $report('Seeding sample products...');
-            resolve(ProductTableSeeder::class)->run();
+            $report('Publishing demo media...');
+            resolve(DemoMediaSeeder::class)->run();
+
+            $report('Seeding demo catalog...');
+            resolve(DemoProductSeeder::class)->run();
+
+            $report('Seeding product associations...');
+            resolve(DemoAssociationSeeder::class)->run();
+
+            $report('Seeding passport templates and publications...');
+            resolve(DemoPassportSeeder::class)->run();
+
+            $report('Seeding saved grid views...');
+            resolve(DemoWorkspaceSeeder::class)->run();
+
+            $report('Seeding roles, users, webhooks and system settings...');
+            resolve(DemoOrganisationSeeder::class)->run();
+
+            $report('Seeding import and export profiles...');
+            resolve(DemoJobSeeder::class)->run();
+
+            if ($large) {
+                $report('Padding the catalog for scale testing...');
+                resolve(DemoScaleSeeder::class)->run();
+            }
 
             if (config('elasticsearch.enabled') == 'true') {
                 try {

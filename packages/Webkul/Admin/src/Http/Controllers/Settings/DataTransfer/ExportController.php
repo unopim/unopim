@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ExportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
@@ -20,7 +21,11 @@ use Webkul\DataTransfer\Services\JobHealth;
 
 class ExportController extends Controller
 {
+    use Concerns\DownloadsSampleFile;
+
     const TYPE = 'export';
+
+    const EXPORTERS = 'exporters';
 
     /**
      * Create a new controller instance.
@@ -512,13 +517,19 @@ class ExportController extends Controller
     }
 
     /**
-     * Download export error report
+     * Download the sample file shipped for an exporter type
      */
-    public function downloadSample(string $type)
+    public function downloadSample(?string $type = null, ?string $key = null): BinaryFileResponse
     {
-        $exporter = config('exporters.'.$type);
+        return $this->downloadSampleFile(self::EXPORTERS, $type, $key);
+    }
 
-        return Storage::download($exporter['sample_path']);
+    /**
+     * Download the sample images archive shipped for a type
+     */
+    public function downloadSampleImagesZip(?string $type = null, ?string $key = null): BinaryFileResponse
+    {
+        return $this->downloadSampleFile(self::EXPORTERS, $type, $key, images: true);
     }
 
     /**

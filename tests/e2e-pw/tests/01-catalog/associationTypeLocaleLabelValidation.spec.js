@@ -22,8 +22,11 @@ test.describe('Association Type - Locale Label Validation (#1238)', () => {
     await expect(adminPage).toHaveURL(/association-types\/edit\/\d+/);
 
     await adminPage.locator('input[name="position"]').fill('7');
+    await adminPage.locator('input[name="position"]').press('Tab');
 
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
+    const saveBtn = adminPage.getByRole('button', { name: 'Save changes' });
+    await saveBtn.waitFor({ state: 'visible', timeout: 15000 });
+    await saveBtn.click();
 
     await expectSuccessToast(adminPage, /updated successfully/i);
 

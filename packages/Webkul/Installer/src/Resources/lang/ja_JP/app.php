@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => '製品データシート',
+                'lede'              => 'デモカタログの基準仕様です。製品ページに別段の記載がない限り、この製品ファミリーのすべての製品に適用されます。',
+                'family-code'       => 'ファミリーコード',
+                'compliance'        => '法令適合',
+                'compliance-value'  => 'CEマーキング取得。RoHSおよびREACH宣言はご要望に応じて提供します。',
+                'spare-parts'       => '交換部品',
+                'spare-parts-value' => '消耗部品は最終生産日から10年間在庫を保有します。',
+                'packaging'         => '梱包',
+                'packaging-value'   => 'プラスチックを使わない梱包、FSC認証段ボール、鉱物油フリーインキで印刷。',
+                'footer'            => 'デモンストレーション目的でUnoPimが生成しました。',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'デフォルト',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim のアップグレード',
+        'complete'              => 'アップグレードが完了しました。アプリケーションはオンラインに復帰しました。',
+        'aborted'               => 'アップグレードを中止しました。何も変更されていません。',
+        'confirm'               => 'アプリケーションをメンテナンスモードにし、データベースを移行します。続行しますか？',
+        'dry-run-complete'      => 'ドライランが完了しました。何も変更されていません。',
+        'preflight-failed'      => ':count 件のチェックに失敗しました。アップグレードは開始されず、何も変更されていません。',
+        'preflight-failed-hint' => '上記の項目を解決してから、コマンドを再実行してください。以前のリリースが引き続きトラフィックを処理しています。',
+        'verify-failed'         => ':count 件の検証に失敗しました。アプリケーションはメンテナンスモードのままです。',
+        'migrate-failed'        => 'マイグレーションに失敗しました: :error',
+        'step-failed'           => ':command ステップが終了コード :code で失敗しました。',
+        'phase'                 => [
+            'preflight' => 'フェーズ 1/5 — 事前チェック',
+            'drift'     => 'フェーズ 2/5 — 設定の差分',
+            'sizing'    => 'フェーズ 3/5 — メンテナンス時間の見積もり',
+            'execute'   => 'フェーズ 4/5 — マイグレーション',
+            'verify'    => 'フェーズ 5/5 — 検証',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP バージョン',
+            'php-version-detail'         => ':required が必要ですが、:found が見つかりました',
+            'php-version-remedy'         => '続行する前に PHP を :required 以降にアップグレードしてください。',
+            'extensions'                 => 'PHP 拡張モジュール',
+            'extensions-remedy'          => '不足している拡張モジュールをインストールし、PHP-FPM を再起動してください。',
+            'database'                   => 'データベース接続',
+            'database-detail'            => ':driver、データベース :database、プレフィックス :prefix',
+            'database-remedy'            => '.env ファイルのデータベース接続情報を確認してください。',
+            'source-version'             => 'インストール済みリリース',
+            'source-version-detail'      => ':version 以降',
+            'source-version-unsupported' => ':version より古い',
+            'source-version-remedy'      => '先に :version へアップグレードしてから、このコマンドを再実行してください。',
+            'pending-migrations'         => '未実行のマイグレーション',
+            'pending-migrations-detail'  => '実行対象 :count 件',
+            'pending-migrations-none'    => 'なし — データベースはすでに最新です',
+            'pending-migrations-remedy'  => 'マイグレーションテーブルを読み取れませんでした。データベースの権限を確認してください。',
+            'active-jobs'                => 'インポートおよびエクスポートのジョブ',
+            'active-jobs-detail'         => ':count 件が実行中',
+            'active-jobs-remedy'         => '実行中のジョブの完了を待つか、キューワーカーを停止してから、コマンドを再実行してください。',
+            'writable-paths'             => '書き込み可能なディレクトリ',
+            'writable-paths-remedy'      => '上記のディレクトリに対して、Web サーバーのユーザーに書き込み権限を付与してください。',
+            'disk-space'                 => 'ディスク容量',
+            'disk-space-detail'          => '空き :free、必要 :required',
+            'disk-space-unknown'         => '判定できませんでした',
+            'disk-space-remedy'          => 'ディスク容量を空けるか、データベースを別の方法でバックアップしている場合は --skip-backup を使用してください。',
+        ],
+
+        'drift'                 => [
+            'none'        => '設定の差分は検出されませんでした。',
+            'no-previous' => '以前のリリースディレクトリが指定されていないため、設定ファイルと Composer の依存関係を比較できません。完全なレポートには --from=/path/to/old/release を指定してください。',
+            'env-missing' => 'このリリースで追加され、お使いの .env に存在しない環境変数:',
+            'env-removed' => 'このリリースで削除されたにもかかわらず、お使いの .env にまだ設定されている環境変数:',
+            'config'      => '以前のリリースと異なる設定ファイル。ローカルの変更を適用し直してください:',
+            'composer'    => 'お客様が追加した、このリリースに存在しない Composer の依存関係:',
+            'manual'      => 'これらのファイルはお客様のものです。トラフィックを再開する前に手動でマージしてください。アップグレードがこれらを上書きすることはありません。',
+        ],
+
+        'sizing'                => [
+            'table'           => 'テーブル',
+            'rows'            => '行数',
+            'pending'         => ':count 件のマイグレーションを実行します。',
+            'window'          => '推定メンテナンス時間: 約 :minutes 分。',
+            'nothing-pending' => '未実行のマイグレーションはありません。',
+            'irreversible'    => 'これらのマイグレーションはデータを書き換えるため、元に戻せません。データベースのバックアップを復元する以外に戻す方法はありません:',
+        ],
+
+        'backup'                => [
+            'created'            => 'データベースのバックアップを :path に書き出しました',
+            'skipped'            => 'データベースのバックアップをスキップしました。続行する前に復元可能なバックアップがあることを確認してください。',
+            'failed'             => 'データベースのバックアップに失敗しました: :error',
+            'empty'              => 'データベースのバックアップが空だったため破棄しました。',
+            'abort'              => '検証済みのバックアップが存在しないため、アップグレードを中止しました。何も変更されていません。',
+            'unsupported-driver' => ':driver ドライバー用のバックアップコマンドはありません。',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'スキップ、テーブルが存在しません',
+            'associations'           => '商品の関連付け',
+            'associations-none'      => '移行対象の旧関連付けはありません',
+            'associations-detail'    => ':legacy 件中 :migrated 件の商品を移行しました',
+            'associations-remedy'    => '旧形式の関連付けデータが見つかりましたが、何も移行されませんでした。バックアップを復元し、この問題を報告してください。',
+            'robot-users'            => 'API 連携の所有者',
+            'robot-users-detail'     => ':count 件の連携がまだ個人に所属しています',
+            'robot-users-remedy'     => 'マイグレーションを再実行するか、管理画面から連携を再割り当てしてください。',
+            'category-bounds'        => 'カテゴリツリーの整合性',
+            'category-bounds-detail' => ':count 件のカテゴリノードの境界値が不正です',
+            'category-bounds-remedy' => 'トラフィックを再開する前にカテゴリツリーを再構築してください。',
+            'scrubbed-audits'        => '認証情報の除去',
+            'scrubbed-audits-detail' => ':count 件の監査レコードにまだ認証情報が含まれています',
+            'scrubbed-audits-remedy' => 'トラフィックを再開する前にマイグレーションを再実行してください。これらのレコードは保存された認証情報を露出させます。',
+        ],
+
+        'restore'               => [
+            'heading' => 'アップグレードは完了しませんでした。アプリケーションはメンテナンスモードです。',
+            'body'    => 'ロールバック手順: データベースのバックアップを復元し、Web サーバーを以前のリリースディレクトリに戻したうえで、そこで「php artisan up」を実行してください。',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => '--with-reindex を無視します: 商品 :count 件はインライン再構築の上限 :limit 件を超えています。',
+            'deferred'  => 'Elasticsearch の再インデックスは実行していません。商品 :count 件ではアップグレード本体より時間がかかり、完了するまで検索はデータベースにフォールバックします。サイト復帰後に次を実行してください:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

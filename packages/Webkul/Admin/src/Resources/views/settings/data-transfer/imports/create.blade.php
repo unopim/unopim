@@ -116,17 +116,7 @@
                                 :label="trans('admin::app.settings.data-transfer.imports.create.file')"
                             />
                             <x-admin::form.control-group.error control-name="file" />
-                            <template v-if="$refs['importType'] && $refs['importType'].selectedOption">
-                                <a
-                                    :href="'{{ route('admin.settings.data_transfer.imports.download_sample') }}/' + $refs['importType'].selectedOption"
-                                    target="_blank"
-                                    id="source-sample-link"
-                                    class="text-sm text-primary-700 dark:text-sky-500 cursor-pointer transition-all hover:underline mt-1"
-                                >
-
-                                    @{{ "@lang('admin::app.settings.data-transfer.imports.create.download-sample')".replace(':resource', $refs['importType'].selectedOption.replace(/^\w/, (c) => c.toUpperCase())) }}
-                                </a>
-                            </template>
+                            <x-admin::data-transfer.sample-links selection="$refs['importType']" />
                         </x-admin::form.control-group>
 
                         <x-admin::form.control-group.label>
@@ -252,7 +242,7 @@
                                     <x-admin::form.control-group.control
                                         type="text"
                                         name="field_separator"
-                                        :value="old('field_separator') ?? ';'"
+                                        :value="old('field_separator') ?? ','"
                                         rules="required"
                                         :label="trans('admin::app.settings.data-transfer.imports.create.field-separator')"
                                         :placeholder="trans('admin::app.settings.data-transfer.imports.create.field-separator')"

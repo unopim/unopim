@@ -124,7 +124,7 @@
                 <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
-                        class="row grid items-center gap-2.5 border-b px-4 py-4 text-gray-600 transition-all hover:bg-violet-50 dark:border-cherry-800 dark:text-gray-300 dark:hover:bg-cherry-800"
+                        class="row grid items-center gap-2.5 border-b px-4 py-4 text-gray-600 transition-all hover:bg-primary-50 dark:border-cherry-800 dark:text-gray-300 dark:hover:bg-cherry-800"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                     >
                         <p v-text="record.code"></p>
@@ -140,7 +140,7 @@
                                     @click="selectedLocales = 1; editModal(record.actions.find(a => a.index === 'edit').url)"
                                 >
                                     <span
-                                        class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-edit cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800"
                                         title="@lang('measurement::app.measurement.edit.edit_action')"
                                     ></span>
                                 </a>
@@ -152,7 +152,7 @@
                                     @click="performAction(record.actions.find(a => a.index === 'delete'))"
                                 >
                                     <span
-                                        class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"
+                                        class="icon-delete cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800"
                                         title="@lang('measurement::app.measurement.edit.delete_action')"
                                     ></span>
                                 </a>
@@ -313,7 +313,7 @@
                                         :disabled="locale.conversions.length === 1 || isConversionDisabled"
                                     >
                                         <span
-                                            class="icon-delete cursor-pointer rounded-md text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800"
+                                            class="icon-delete cursor-pointer rounded-md text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800"
                                             title="@lang('measurement::app.measurement.edit.delete_action')"
                                         ></span>
                                     </button>

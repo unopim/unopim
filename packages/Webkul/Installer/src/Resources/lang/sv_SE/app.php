@@ -2,6 +2,21 @@
 
 return [
     'seeders' => [
+        'demo' => [
+            'spec-sheet' => [
+                'title'             => 'Produktdatablad',
+                'lede'              => 'Referensspecifikation för demokatalogen. Värdena gäller alla produkter i den här familjen om inte produktsidan anger något annat.',
+                'family-code'       => 'Familjekod',
+                'compliance'        => 'Överensstämmelse',
+                'compliance-value'  => 'CE-märkt; RoHS- och REACH-deklarationer tillhandahålls på begäran.',
+                'spare-parts'       => 'Reservdelar',
+                'spare-parts-value' => 'Slitdelar lagerhålls i tio år från det senaste produktionsdatumet.',
+                'packaging'         => 'Förpackning',
+                'packaging-value'   => 'Plastfri förpackning, FSC-certifierad kartong, tryckt med mineraloljefri färg.',
+                'footer'            => 'Genererad av UnoPim i demonstrationssyfte.',
+            ],
+        ],
+
         'attribute' => [
             'attribute-families' => [
                 'default' => 'Standard',
@@ -99,6 +114,110 @@ return [
             ],
         ],
     ],
+    'upgrade' => [
+        'title'                 => 'UnoPim-uppgradering',
+        'complete'              => 'Uppgraderingen är klar. Applikationen är online igen.',
+        'aborted'               => 'Uppgraderingen avbröts. Inget ändrades.',
+        'confirm'               => 'Applikationen försätts i underhållsläge och databasen migreras. Fortsätta?',
+        'dry-run-complete'      => 'Testkörningen är klar. Inget ändrades.',
+        'preflight-failed'      => ':count kontroll(er) misslyckades. Uppgraderingen startade inte och inget ändrades.',
+        'preflight-failed-hint' => 'Åtgärda punkterna ovan och kör kommandot igen. Den tidigare versionen betjänar fortfarande trafiken.',
+        'verify-failed'         => ':count verifiering(ar) misslyckades. Applikationen har lämnats i underhållsläge.',
+        'migrate-failed'        => 'Migreringen misslyckades: :error',
+        'step-failed'           => 'Steget :command misslyckades med slutkod :code.',
+        'phase'                 => [
+            'preflight' => 'Fas 1 av 5 — Förkontroller',
+            'drift'     => 'Fas 2 av 5 — Konfigurationsavvikelser',
+            'sizing'    => 'Fas 3 av 5 — Uppskattat underhållsfönster',
+            'execute'   => 'Fas 4 av 5 — Migrering',
+            'verify'    => 'Fas 5 av 5 — Verifiering',
+        ],
+
+        'checks'                => [
+            'php-version'                => 'PHP-version',
+            'php-version-detail'         => 'kräver :required, hittade :found',
+            'php-version-remedy'         => 'Uppgradera PHP till :required eller senare innan du fortsätter.',
+            'extensions'                 => 'PHP-tillägg',
+            'extensions-remedy'          => 'Installera de saknade tilläggen och starta om PHP-FPM.',
+            'database'                   => 'Databasanslutning',
+            'database-detail'            => ':driver, databas :database, prefix :prefix',
+            'database-remedy'            => 'Kontrollera databasuppgifterna i din .env-fil.',
+            'source-version'             => 'Installerad version',
+            'source-version-detail'      => ':version eller senare',
+            'source-version-unsupported' => 'äldre än :version',
+            'source-version-remedy'      => 'Uppgradera först till :version och kör sedan det här kommandot igen.',
+            'pending-migrations'         => 'Väntande migreringar',
+            'pending-migrations-detail'  => ':count att köra',
+            'pending-migrations-none'    => 'inga — databasen är redan uppdaterad',
+            'pending-migrations-remedy'  => 'Migreringstabellen kunde inte läsas. Kontrollera databasbehörigheterna.',
+            'active-jobs'                => 'Import- och exportjobb',
+            'active-jobs-detail'         => ':count körs fortfarande',
+            'active-jobs-remedy'         => 'Vänta tills pågående jobb är klara, eller stoppa köarbetarna, och kör sedan kommandot igen.',
+            'writable-paths'             => 'Skrivbara kataloger',
+            'writable-paths-remedy'      => 'Ge webbserveranvändaren skrivbehörighet till katalogerna ovan.',
+            'disk-space'                 => 'Diskutrymme',
+            'disk-space-detail'          => ':free ledigt, :required krävs',
+            'disk-space-unknown'         => 'kunde inte fastställas',
+            'disk-space-remedy'          => 'Frigör diskutrymme, eller använd --skip-backup om databasen säkerhetskopieras på annat sätt.',
+        ],
+
+        'drift'                 => [
+            'none'        => 'Inga konfigurationsavvikelser hittades.',
+            'no-previous' => 'Ingen tidigare versionskatalog angavs, så konfigurationsfiler och Composer-beroenden kan inte jämföras. Använd --from=/sokvag/till/gammal/version för en fullständig rapport.',
+            'env-missing' => 'Miljönycklar som den här versionen lägger till och som saknas i din .env:',
+            'env-removed' => 'Miljönycklar som den här versionen tar bort och som fortfarande är satta i din .env:',
+            'config'      => 'Konfigurationsfiler som skiljer sig från din tidigare version. Tillämpa dina lokala ändringar på nytt:',
+            'composer'    => 'Composer-beroenden du lagt till som saknas i den här versionen:',
+            'manual'      => 'De här filerna är dina. Slå ihop dem för hand innan du släpper på trafik — uppgraderingen skriver aldrig över dem.',
+        ],
+
+        'sizing'                => [
+            'table'           => 'Tabell',
+            'rows'            => 'Rader',
+            'pending'         => ':count migrering(ar) kommer att köras.',
+            'window'          => 'Uppskattat underhållsfönster: ungefär :minutes minut(er).',
+            'nothing-pending' => 'Inga migreringar väntar.',
+            'irreversible'    => 'De här migreringarna skriver om data och kan inte ångras. Endast återställning av databassäkerhetskopian tar dig tillbaka:',
+        ],
+
+        'backup'                => [
+            'created'            => 'Databassäkerhetskopia skriven till :path',
+            'skipped'            => 'Databassäkerhetskopiering hoppades över. Se till att du har en återställningsbar säkerhetskopia innan du fortsätter.',
+            'failed'             => 'Databassäkerhetskopieringen misslyckades: :error',
+            'empty'              => 'Databassäkerhetskopian var tom och har kasserats.',
+            'abort'              => 'Uppgraderingen stoppades eftersom ingen verifierad säkerhetskopia finns. Inget ändrades.',
+            'unsupported-driver' => 'Det finns inget säkerhetskopieringskommando för drivrutinen :driver.',
+        ],
+
+        'verify'                => [
+            'table-missing'          => 'hoppades över, tabellen finns inte',
+            'associations'           => 'Produktkopplingar',
+            'associations-none'      => 'inga äldre kopplingar att migrera',
+            'associations-detail'    => ':migrated av :legacy produkt(er) migrerade',
+            'associations-remedy'    => 'Äldre kopplingsdata hittades men inget migrerades. Återställ säkerhetskopian och rapportera detta.',
+            'robot-users'            => 'Ägare till API-integrationer',
+            'robot-users-detail'     => ':count integration(er) ägs fortfarande av en person',
+            'robot-users-remedy'     => 'Kör migreringen igen, eller tilldela om integrationerna från adminpanelen.',
+            'category-bounds'        => 'Kategoriträdets integritet',
+            'category-bounds-detail' => ':count kategorinod(er) har ogiltiga gränser',
+            'category-bounds-remedy' => 'Bygg om kategoriträdet innan du släpper på trafik.',
+            'scrubbed-audits'        => 'Rensning av inloggningsuppgifter',
+            'scrubbed-audits-detail' => ':count granskningspost(er) innehåller fortfarande inloggningsuppgifter',
+            'scrubbed-audits-remedy' => 'Kör migreringen igen innan du släpper på trafik. De här posterna exponerar lagrade inloggningsuppgifter.',
+        ],
+
+        'restore'               => [
+            'heading' => 'Uppgraderingen slutfördes inte. Applikationen är i underhållsläge.',
+            'body'    => 'Så här återgår du: återställ databassäkerhetskopian, peka tillbaka webbservern på den tidigare versionskatalogen och kör "php artisan up" där.',
+        ],
+
+        'reindex'               => [
+
+            'too-large' => 'Ignorerar --with-reindex: :count produkt(er) överstiger gränsen på :limit produkter för en direkt ombyggnad.',
+            'deferred'  => 'Elasticsearch omindexerades inte. Med :count produkt(er) tar det längre tid än själva uppgraderingen, och sökningen faller tillbaka på databasen tills den är klar. Kör detta när webbplatsen är online igen:',
+        ],
+    ],
+
     'installer' => [
         'index' => [
             'create-administrator' => [

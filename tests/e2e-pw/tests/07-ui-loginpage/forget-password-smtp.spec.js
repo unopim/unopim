@@ -1,20 +1,25 @@
-const { execSync } = require('child_process');
 const { test, expect } = require('../../utils/fixtures');
+const { clickSaveAndExpect } = require('../../utils/helpers');
+const path = require('path');
+
+const ADMIN_STATE_PATH = path.resolve(__dirname, '../../', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 
 /**
  * Broken-SMTP coverage for the admin forget-password flow.
  * The reset mail sends synchronously, so an unreachable host makes the transport throw.
  * The endpoint must degrade to a warning flash (200), never a 500 or silent green success.
- * SMTP is broken by stopping the mailpit container for this file (restarted in afterAll);
- * requires docker on the Playwright host.
+ *
+ * SMTP host/port are stored as core config (System Settings > Email; see
+ * CoreServiceProvider, which layers `mail_host`/`mail_port` over config('mail...')
+ * at boot), so the transport is broken here by pointing that setting at an
+ * unreachable host through the admin UI — not by stopping a mail container,
+ * which this environment doesn't run the app's actual SMTP transport through.
  */
-const MAILPIT = 'unopim-unopim-mailpit-1';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || 'admin@example.com';
 const WARNING = 'Email could not be sent';
-
-function docker(command) {
-  execSync(`docker ${command}`, { stdio: 'ignore' });
-}
+const EMAIL_SETTINGS_URL = '/admin/configuration/system/system.email';
+const UNREACHABLE_HOST = '127.0.0.1';
+const UNREACHABLE_PORT = '1';
 
 async function freshForgetPasswordPage(browser) {
   // Logged-out context: global storageState is an admin, whom the controller redirects away.
@@ -25,15 +30,58 @@ async function freshForgetPasswordPage(browser) {
   return { context, page };
 }
 
+/**
+ * Read the current SMTP host/port from the admin Email settings form.
+ */
+async function readMailSettings(adminPage) {
+  await adminPage.goto(EMAIL_SETTINGS_URL, { waitUntil: 'networkidle', timeout: 30000 });
+
+  return {
+    host: await adminPage.locator('input[name="emails[configure][email_settings][mail_host]"]').inputValue(),
+    port: await adminPage.locator('input[name="emails[configure][email_settings][mail_port]"]').inputValue(),
+  };
+}
+
+/**
+ * Set the SMTP host/port via the admin UI and save through the unsaved-changes bar.
+ */
+async function writeMailSettings(adminPage, { host, port }) {
+  await adminPage.goto(EMAIL_SETTINGS_URL, { waitUntil: 'networkidle', timeout: 30000 });
+  await adminPage.locator('input[name="emails[configure][email_settings][mail_host]"]').fill(host);
+  await adminPage.locator('input[name="emails[configure][email_settings][mail_port]"]').fill(port);
+  await clickSaveAndExpect(adminPage, 'Save changes', /Settings saved successfully/i);
+}
+
 test.describe('Forget Password — broken SMTP', () => {
   test.describe.configure({ mode: 'serial' });
 
-  test.beforeAll(() => {
-    docker(`stop ${MAILPIT}`);
+  let originalSettings;
+
+  test.beforeAll(async ({ browser }) => {
+    const adminContext = await browser.newContext({
+      storageState: ADMIN_STATE_PATH,
+    });
+    const adminPage = await adminContext.newPage();
+
+    originalSettings = await readMailSettings(adminPage);
+    await writeMailSettings(adminPage, { host: UNREACHABLE_HOST, port: UNREACHABLE_PORT });
+
+    await adminContext.close();
   });
 
-  test.afterAll(() => {
-    docker(`start ${MAILPIT}`);
+  test.afterAll(async ({ browser }) => {
+    if (!originalSettings) {
+      return;
+    }
+
+    const adminContext = await browser.newContext({
+      storageState: ADMIN_STATE_PATH,
+    });
+    const adminPage = await adminContext.newPage();
+
+    await writeMailSettings(adminPage, originalSettings);
+
+    await adminContext.close();
   });
 
   test('degrades to a warning flash, never a 500, when the mail host is unreachable', async ({ browser }) => {

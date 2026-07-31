@@ -1036,14 +1036,13 @@ test('8.1 - Create a category and verify Magic AI button', async ({ adminPage })
   const uniqueCode = `magicaicat${uid}`;
 
   await navigateTo(adminPage, 'categories');
-  await adminPage.getByRole('link', { name: 'Add Root Category' }).click();
+  await adminPage.getByRole('link', { name: 'Add Category' }).click();
   await adminPage.waitForLoadState('networkidle');
-  await adminPage.locator('input[name="code"]:not([v-code])').first().waitFor({ state: 'attached', timeout: 10000 }).catch(() => {});
+  await adminPage.locator('input[name="code"]').waitFor({ state: 'visible' });
   await adminPage.locator('input[name="code"]').fill(uniqueCode);
   await adminPage.locator('#name').fill(`Electronics AI ${uid}`);
 
-  await clickSave(adminPage, 'Save Category');
-  await expect(adminPage.locator('#app').getByText(/category created successfully/i)).toBeVisible({ timeout: 20000 });
+  await clickSaveAndExpect(adminPage, 'Save changes', /category created successfully/i);
 });
 
 test('8.2 - Verify Magic AI button on category description WYSIWYG', async ({ adminPage }) => {

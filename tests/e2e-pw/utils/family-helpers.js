@@ -62,7 +62,7 @@ async function createFamily(page, code = `fam_${generateUid()}`, { name, basedOn
  */
 async function deleteFamilyByCode(page, code) {
   await gotoIndex(page);
-  await page.getByRole('textbox', { name: 'Search' }).fill(code);
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
   await page.keyboard.press('Enter');
   await page.waitForTimeout(1500);
 
@@ -76,7 +76,7 @@ async function deleteFamilyByCode(page, code) {
 
   if (await del.isVisible({ timeout: 3000 }).catch(() => false)) {
     await del.click();
-    await page.getByRole('button', { name: 'Delete' }).click().catch(() => {});
+    await page.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click().catch(() => {});
     await page.waitForTimeout(1500);
   }
 }

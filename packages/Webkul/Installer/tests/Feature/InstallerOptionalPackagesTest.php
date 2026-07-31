@@ -10,7 +10,29 @@ use Webkul\Installer\Console\Commands\Installer;
  * and banner methods in isolation by overriding handle(), so the heavy
  * migrate:fresh + seed pipeline never runs.
  */
+it('offers nothing while optional packages are disabled', function () {
+    config(['installer.optional_packages.enabled' => false]);
+
+    $this->app->extend(Installer::class, fn () => new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
+    {
+        public function handle(): void
+        {
+            $this->line('RESOLVED:'.implode(',', $this->resolveSelectedPackages()));
+        }
+    });
+
+    $this->artisan('unopim:install', [
+        '--with-packages'       => 'dam,shopify',
+        '--skip-admin-creation' => true,
+    ])
+        ->expectsOutputToContain('Optional add-on packages are disabled in this release')
+        ->expectsOutputToContain('RESOLVED:')
+        ->assertExitCode(0);
+});
+
 it('resolves valid --with-packages keys', function () {
+    config(['installer.optional_packages.enabled' => true]);
+
     $this->app->extend(Installer::class, fn () => new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
     {
         public function handle(): void
@@ -29,6 +51,8 @@ it('resolves valid --with-packages keys', function () {
 });
 
 it('skips unknown packages passed to --with-packages', function () {
+    config(['installer.optional_packages.enabled' => true]);
+
     $this->app->extend(Installer::class, fn () => new #[Signature('unopim:install {--skip-env-check} {--skip-admin-creation} {--with-demo-data} {--with-packages=}')] class extends Installer
     {
         public function handle(): void

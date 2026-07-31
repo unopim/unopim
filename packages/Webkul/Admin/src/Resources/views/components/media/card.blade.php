@@ -109,7 +109,7 @@
                         :checked="selected"
                         @change="$emit('update:selected', $event.target.checked)"
                     />
-                    <span class="icon-checkbox-normal shrink-0 rounded-md text-2xl peer-checked:icon-checkbox-check peer-checked:text-violet-700"></span>
+                    <span class="icon-checkbox-normal shrink-0 rounded-md text-2xl peer-checked:icon-checkbox-check peer-checked:text-primary-700"></span>
                 </label>
 
                 <p
@@ -190,7 +190,7 @@
                 },
                 badgeClass() {
                     if (this.isVideo || this.isAudio) {
-                        return 'bg-violet-600';
+                        return 'bg-primary-600';
                     }
 
                     if (this.extension === 'pdf') {

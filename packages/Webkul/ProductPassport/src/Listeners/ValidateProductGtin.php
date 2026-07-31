@@ -42,7 +42,7 @@ class ValidateProductGtin
                 ['dpp_gtin' => $gtin],
                 ['dpp_gtin' => [new Gs1CheckDigit]],
                 [],
-                ['dpp_gtin' => trans('passport::app.attributes.dpp_gtin')],
+                ['dpp_gtin' => trans('passport::app.templates.preset.fields.dpp_gtin')],
             );
 
             if ($validator->fails()) {

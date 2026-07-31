@@ -7,13 +7,15 @@ use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\Services\PassportFeature;
 use Webkul\ProductPassport\Services\PassportTemplateResolver;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
+use Webkul\Publication\Services\PublicAccessGate;
 
 /**
  * Wires the `catalog.product_passport.settings.auto_publish` setting: when a
  * product is saved, queue a passport publish for every channel where both
- * `enabled` and `auto_publish` are on. The publish itself is gated by the
- * template readiness check, so an incomplete save publishes nothing; the job
- * is `ShouldBeUnique`, so rapid re-saves de-dupe rather than pile up.
+ * `enabled` and `auto_publish` are on, and where the public tier would actually
+ * serve the result. The publish itself is gated by the template readiness
+ * check, so an incomplete save publishes nothing; the job is `ShouldBeUnique`,
+ * so rapid re-saves de-dupe rather than pile up.
  *
  * Guarded to products whose family carries a passport template — a save of an
  * unrelated product must never spawn a passport job.
@@ -23,6 +25,7 @@ class AutoPublishPassport
     public function __construct(
         private readonly PassportTemplateResolver $templates,
         private readonly PassportFeature $feature,
+        private readonly PublicAccessGate $publicAccess,
     ) {}
 
     public function handle(Product $product): void
@@ -38,6 +41,10 @@ class AutoPublishPassport
             ->get()
             ->each(function ($channel) use ($product, $adminId): void {
                 if (! $this->feature->autoPublishEnabledFor($channel)) {
+                    return;
+                }
+
+                if (! $this->publicAccess->enabledForChannel($channel->code)) {
                     return;
                 }
 

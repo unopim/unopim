@@ -145,6 +145,10 @@
 
 ## BC Breaks
 
+> Upgrading an existing installation? Follow [UPGRADE.md](UPGRADE.md). It covers
+> what to do about each break below, and `php artisan unopim:upgrade --dry-run`
+> reports which of them apply to your installation before you book downtime.
+
 - **Runtime requirement:** PHP `8.4.1` or newer is required. A `v2.1.6` server running PHP 8.3 must be upgraded before installing this release.
 - **Framework compatibility:** Laravel 12 was replaced by Laravel 13, upgrading its framework dependencies, including Symfony 8 components. Custom packages must update overridden method signatures, middleware references, service-provider behavior, and typed contracts for the new framework.
 - **Dependency compatibility:** major upgrades include `intervention/image` 4, `kalnoy/nestedset` 7, `laravel/passport` 13, `laravel/tinker` 3, `predis/predis` 3, `prettus/l5-repository` 4, Pest 5, and PHPUnit 13. Custom package constraints and direct use of those libraries must be updated.

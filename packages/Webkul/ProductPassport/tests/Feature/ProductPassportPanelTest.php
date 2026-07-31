@@ -89,6 +89,7 @@ it('refuses to publish a locale that fails the completeness gate', function (): 
     [$product, $channel, $incomplete] = $this->productWithTwoDppLocales();
 
     $this->enablePassportPublishing($channel->code);
+    $this->enablePublicTier($channel->code);
 
     $this->loginWithPermissions('all');
 
@@ -111,6 +112,7 @@ it('publishes a ready locale after preflight passes', function (): void {
     [$product, $channel, , $complete] = $this->productWithTwoDppLocales();
 
     $this->enablePassportPublishing($channel->code);
+    $this->enablePublicTier($channel->code);
 
     $this->loginWithPermissions('all');
 
@@ -222,6 +224,7 @@ it('explains that an enabled template is required before publishing', function (
         ?: tap(Locale::factory()->create(), fn ($createdLocale) => $channel->locales()->attach($createdLocale));
 
     $this->enablePassportPublishing($channel->code);
+    $this->enablePublicTier($channel->code);
 
     $this->loginWithPermissions('all');
 

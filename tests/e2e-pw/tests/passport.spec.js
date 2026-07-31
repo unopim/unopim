@@ -122,8 +122,8 @@ test.describe.serial('Digital Product Passport', () => {
     const page = adminPage;
     await page.goto('/admin/catalog/passports', { waitUntil: 'domcontentloaded' });
 
-    await page.getByRole('textbox', { name: 'Search' }).fill(product.sku);
-    await page.getByRole('textbox', { name: 'Search' }).press('Enter');
+    await page.getByRole('textbox', { name: 'Search', exact: true }).fill(product.sku);
+    await page.getByRole('textbox', { name: 'Search', exact: true }).press('Enter');
 
     const row = page.locator('.row', { hasText: product.sku }).first();
     await row.locator("span[title='Withdraw']").click();
