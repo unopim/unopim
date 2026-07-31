@@ -39,11 +39,12 @@
 </p>
 
 <p align="center">
-  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇦🇺 🇺🇸 🇫🇮 🇫🇷 🇮🇳 🇭🇷 
-  🇮🇹 🇯🇵 🇰🇷 🇦🇲 🇳🇱 🇵🇱 🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇹🇼
+  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇳🇿 🇺🇸 🇪🇸 🇻🇪 🇫🇮
+  🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇳 🇳🇱 🇳🇴 🇵🇱
+  🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇵🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳 🇹🇼
 </p>
 
-UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
+UnoPim is an open-source Product Information Management (PIM) system built on Laravel 13. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
 
 ---
 
@@ -153,9 +154,27 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 
   <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/version-control.png" alt="Version Control Interface" width="720"></p>
 
+- **Digital Product Passport**
+  Build DPP templates, attach QR carriers, and publish per-product passports to a public tier — with the publish path gated behind its own permission and queue.
+
+- **Publication Channels**
+  Push enriched product payloads to downstream destinations on a queue, with per-channel payloads and delivery records.
+
+- **Product Completeness**
+  Score every product against the attributes a family marks required per channel, and surface what is missing before it ships.
+
+- **Measurement Families**
+  Define units and conversions once, then let measurement attributes capture an amount and a unit together.
+
+- **Configurable Products & Associations**
+  Model variant structures with multi-level axes, and relate products through configurable association types.
+
+- **Webhooks**
+  Notify external systems on product events over an asynchronous `webhooks` queue, so subscriber HTTP calls never block a save.
+
 ## 🚀 Installation
 
-> **Requirements:** Nginx/Apache2, PHP 8.3+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 14+ *(recommended)*.
+> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 16+ *(recommended)*.
 
 Full [Installation Guide](https://devdocs.unopim.com/2.0.x/introduction/installation.html) on devdocs — or pick a quick path below.
 
