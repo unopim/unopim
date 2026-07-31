@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
+use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\Installer\Database\Seeders\Demo\Concerns\LoadsDemoData;
 use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Product\Services\VariantStructurePlanner;
@@ -81,6 +82,8 @@ class DemoProductSeeder extends Seeder
             foreach ($products as $product) {
                 $this->seedProduct($product, $channels, $channelLocales);
             }
+
+            $this->relocateMedia();
         });
 
         DatabaseSequenceHelper::fixSequences(['products', 'variant_structures', 'variant_structure_axes', 'variant_structure_attributes']);
@@ -640,6 +643,96 @@ class DemoProductSeeder extends Seeder
         }
 
         return $values;
+    }
+
+    /**
+     * Move every product's media under `product/<id>/<attribute code>/`.
+     *
+     * A stored media path is only accepted by
+     * {@see FileOrImageValidValue} when it sits under the
+     * owning product's own prefix, which cannot be known until the row has an
+     * id — so the seeder writes the shared demo path first and rewrites it here.
+     */
+    protected function relocateMedia(): void
+    {
+        $disk = Storage::disk('public');
+
+        DB::table('products')
+            ->select('id', 'values')
+            ->orderBy('id')
+            ->chunkById(200, function ($rows) use ($disk): void {
+                foreach ($rows as $row) {
+                    $values = json_decode((string) $row->values, true);
+
+                    if (! is_array($values) || ! isset($values['common'])) {
+                        continue;
+                    }
+
+                    $changed = false;
+
+                    foreach (['image', 'spec_sheet', 'assembly_manual'] as $code) {
+                        $path = $values['common'][$code] ?? null;
+
+                        if (! is_string($path) || $path === '') {
+                            continue;
+                        }
+
+                        $target = $this->relocate($disk, $path, (int) $row->id, $code);
+
+                        if ($target === null) {
+                            unset($values['common'][$code]);
+                        } else {
+                            $values['common'][$code] = $target;
+                        }
+
+                        $changed = true;
+                    }
+
+                    $gallery = $values['common']['gallery'] ?? null;
+
+                    if (is_array($gallery)) {
+                        $relocated = [];
+
+                        foreach ($gallery as $path) {
+                            $target = $this->relocate($disk, (string) $path, (int) $row->id, 'gallery');
+
+                            if ($target !== null) {
+                                $relocated[] = $target;
+                            }
+                        }
+
+                        $values['common']['gallery'] = $relocated;
+                        $changed = true;
+                    }
+
+                    if ($changed) {
+                        DB::table('products')->where('id', $row->id)->update([
+                            'values' => $this->encodeValues($values),
+                        ]);
+                    }
+                }
+            });
+    }
+
+    /**
+     * Copy one media file under the product's own prefix, returning the new
+     * path, or null when the source is missing.
+     */
+    protected function relocate($disk, string $path, int $productId, string $code): ?string
+    {
+        $target = 'product/'.$productId.'/'.$code.'/'.basename($path);
+
+        if ($path === $target) {
+            return $target;
+        }
+
+        if (! $disk->exists($path)) {
+            return $disk->exists($target) ? $target : null;
+        }
+
+        $disk->put($target, $disk->get($path));
+
+        return $target;
     }
 
     /**
