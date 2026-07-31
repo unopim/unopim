@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave } = require('../../utils/helpers');
+const { clickSave, clickSaveAndExpect } = require('../../utils/helpers');
 
 test.describe('Unsaved changes bar', () => {
   const URL = '/admin/configuration/system/system.email';
@@ -28,16 +28,18 @@ test.describe('Unsaved changes bar', () => {
 
     await field.fill(original + 'Y');
     await expect(bar(adminPage)).toBeVisible({ timeout: 10000 });
-    await clickSave(adminPage, 'Save changes');
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    // clickSave() alone only clicks the button — it does not wait for the ajax
+    // save to actually settle, so a follow-up hard navigation can cancel the
+    // in-flight request before the server persists it. clickSaveAndExpect()
+    // waits for the success toast (or a redirect) first.
+    await clickSaveAndExpect(adminPage, 'Save changes', /Settings saved successfully/i);
 
     await gotoSettings(adminPage);
     await expect(bar(adminPage)).toBeHidden();
     await expect(firstField(adminPage)).toHaveValue(original + 'Y');
 
     await firstField(adminPage).fill(original);
-    await clickSave(adminPage, 'Save changes');
-    await adminPage.waitForLoadState('networkidle').catch(() => {});
+    await clickSaveAndExpect(adminPage, 'Save changes', /Settings saved successfully/i);
   });
 
   test('subtitle counts the modified section', async ({ adminPage }) => {
