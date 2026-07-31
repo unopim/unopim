@@ -1539,6 +1539,8 @@
                         .catch(() => {
                             this.isRehydrating = false;
 
+                            this.params.identifiers = {};
+
                             this.isLoading = false;
                         })
                 },
