@@ -38,7 +38,10 @@ tests/e2e-pw/test-results/
 test-results
 /*.png
 .agents
-.claude
+.claude/*
+!.claude/hooks/
+!.claude/settings.json
+.claude/settings.local.json
 .codex
 .superpowers
 
@@ -75,3 +78,4 @@ tests/e2e-pw/.secrets.local
 
 # staging area for the separate unopim/agent-skills project — never commit here
 /agent-skills/
+.agents
