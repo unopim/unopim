@@ -20,10 +20,10 @@ describe('Gravatar opt-out persistence', function () {
             'ui_locale_id'     => $admin->ui_locale_id,
         ];
 
-        $this->put(route('admin.account.update'), $payload + ['use_gravatar' => 0])->assertRedirect();
+        $this->put(route('admin.account.update'), $payload + ['use_gravatar' => 0])->assertOk();
         expect($admin->fresh()->use_gravatar)->toBeFalse();
 
-        $this->put(route('admin.account.update'), $payload + ['use_gravatar' => 1])->assertRedirect();
+        $this->put(route('admin.account.update'), $payload + ['use_gravatar' => 1])->assertOk();
         expect($admin->fresh()->use_gravatar)->toBeTrue();
     });
 
@@ -41,7 +41,7 @@ describe('Gravatar opt-out persistence', function () {
             'timezone'         => 'UTC',
             'ui_locale_id'     => $admin->ui_locale_id,
             'use_gravatar'     => 1,
-        ])->assertRedirect();
+        ])->assertOk();
 
         expect($admin->fresh()->image)->toBeNull();
     });

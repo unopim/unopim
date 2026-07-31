@@ -117,6 +117,12 @@ export default function initAjaxNavigation() {
         return true;
     }
 
+    /**
+     * The history entry is pushed right after the #app swap — before the
+     * page's scripts run and the app mounts — so anything reading
+     * window.location during boot (e.g. datagrid URL filters) sees the
+     * destination URL, not the page being left.
+     */
     async function performVisit(url, push) {
         const before = dispatch(NAV_EVENTS.BEFORE, { url }, true);
 
@@ -161,6 +167,10 @@ export default function initAjaxNavigation() {
 
             document.querySelector('#app').replaceWith(nextApp);
 
+            if (push) {
+                window.history.pushState({ ajaxNav: true }, '', finalUrl);
+            }
+
             removePageScripts();
 
             replaceInjectedStyles(styles);
@@ -174,10 +184,6 @@ export default function initAjaxNavigation() {
             document.title = doc.title;
 
             syncDocumentLocale(doc);
-
-            if (push) {
-                window.history.pushState({ ajaxNav: true }, '', finalUrl);
-            }
 
             (document.getElementById('main-content') ?? window).scrollTo(0, 0);
 

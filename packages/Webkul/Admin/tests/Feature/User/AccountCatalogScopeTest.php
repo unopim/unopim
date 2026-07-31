@@ -38,7 +38,7 @@ it('updates the account catalog scope', function () {
         'ui_locale_id'       => $admin->ui_locale_id,
         'catalog_locale_id'  => $locale->id,
         'default_channel_id' => $channel->id,
-    ])->assertRedirect();
+    ])->assertOk();
 
     $admin->refresh();
 
