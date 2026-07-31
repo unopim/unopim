@@ -25,6 +25,7 @@ test.describe('Appearance — admin logo', () => {
     page.goto(SETTINGS_URL, { waitUntil: 'networkidle', timeout: 60000 }).catch(() => {});
 
   const logoImage = (page) => page.locator('img[src*="/storage/configuration/"]').first();
+  const unsavedBar = (page) => page.getByText('You have unsaved changes');
 
   /** Drop a file onto the first "Add Image" tile and wait for the preview to render. */
   async function dropLogo(page) {
@@ -68,12 +69,20 @@ test.describe('Appearance — admin logo', () => {
     await tile.hover();
     await page.locator('.icon-delete').first().click();
 
+    await expect(unsavedBar(page)).toBeVisible({ timeout: 10000 });
     await clickSaveAndExpect(page, 'Save changes', /Appearance updated successfully/i, /system-settings/);
     await gotoSettings(page);
   }
 
+  /**
+   * The unsaved-changes bar slides in on a CSS transition; clicking "Save
+   * changes" before it has actually mounted races Playwright's own actionability
+   * retries against the debounced dirty-check re-render, which can detach the
+   * button mid-click. Waiting for the bar first removes the race.
+   */
   async function uploadLogoAndSave(page) {
     await dropLogo(page);
+    await expect(unsavedBar(page)).toBeVisible({ timeout: 10000 });
     await clickSaveAndExpect(page, 'Save changes', /Appearance updated successfully/i, /system-settings/);
   }
 
