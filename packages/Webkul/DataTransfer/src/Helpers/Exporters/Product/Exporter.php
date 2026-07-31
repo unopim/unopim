@@ -462,6 +462,8 @@ class Exporter extends AbstractExporter
                 }
             }
 
+            $this->heartbeat();
+
             $this->createdItemsCount++;
         }
     }

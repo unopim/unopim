@@ -5,13 +5,18 @@ use Webkul\Completeness\Models\ProductCompletenessScore;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
+use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
 
-it('exports gtin, gs1 link and public url columns for the print hand-off', function (): void {
+/**
+ * The exported link is rebuilt from the current base url — the stored alias marks
+ * GTIN ownership only, so a stale host can never reach a printed carrier.
+ */
+it('exports gtin, a freshly built gs1 link and the public url for the print hand-off', function (): void {
     $publication = Publication::factory()->create([
         'gtin'             => '04006381333931',
-        'alias_identifier' => 'https://dpp.example.test/01/04006381333931',
+        'alias_identifier' => 'https://stale.example.test/01/04006381333931',
     ]);
 
     $grid = resolve(PublicationDataGrid::class);
@@ -26,7 +31,7 @@ it('exports gtin, gs1 link and public url columns for the print hand-off', funct
     $row = (array) $rows[0];
 
     expect($row['gtin'])->toBe('04006381333931')
-        ->and($row['gs1_link'])->toBe('https://dpp.example.test/01/04006381333931')
+        ->and($row['gs1_link'])->toBe(url('/01/04006381333931'))
         ->and($row['public_url'])->toContain($publication->uuid);
 });
 
@@ -111,6 +116,61 @@ it('mass publishes selected products, one job dispatch per product', function ()
     ])->assertOk();
 
     Bus::assertDispatchedTimes(PublishPassportForProductChannelJob::class, 2);
+});
+
+it('leaves a withdrawn passport out of a mass publish and reports the skip', function (): void {
+    Bus::fake();
+
+    [$productA, $context] = $this->productWithSecretAndDppAttributes();
+    $productB = ProductProxy::factory()->create([
+        'attribute_family_id' => $productA->attribute_family_id,
+    ]);
+
+    Publication::factory()->create([
+        'product_id' => $productB->id,
+        'channel_id' => $context->channel->id,
+        'type'       => 'dpp',
+        'status'     => PublicationStatus::Withdrawn,
+    ]);
+
+    $this->enablePassportPublishing($context->channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->postJson(route('admin.catalog.passports.mass_publish'), [
+        'channel' => $context->channel->code,
+        'indices' => [$productA->id, $productB->id],
+    ])
+        ->assertOk()
+        ->assertJsonPath('message', trans('passport::app.publications.bulk-publish-queued-skipped', ['count' => 1]));
+
+    Bus::assertDispatchedTimes(PublishPassportForProductChannelJob::class, 1);
+});
+
+it('refuses a mass publish whose every product passport is withdrawn', function (): void {
+    Bus::fake();
+
+    [$product, $context] = $this->productWithSecretAndDppAttributes();
+
+    Publication::factory()->create([
+        'product_id' => $product->id,
+        'channel_id' => $context->channel->id,
+        'type'       => 'dpp',
+        'status'     => PublicationStatus::Withdrawn,
+    ]);
+
+    $this->enablePassportPublishing($context->channel->code);
+
+    $this->loginWithPermissions('all');
+
+    $this->postJson(route('admin.catalog.passports.mass_publish'), [
+        'channel' => $context->channel->code,
+        'indices' => [$product->id],
+    ])
+        ->assertStatus(422)
+        ->assertJsonPath('message', trans('passport::app.publications.publish-none-publishable', ['count' => 1]));
+
+    Bus::assertNotDispatched(PublishPassportForProductChannelJob::class);
 });
 
 it('rejects mass publish without the publish permission', function (): void {

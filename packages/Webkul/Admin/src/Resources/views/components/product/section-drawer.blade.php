@@ -347,37 +347,36 @@
                     return window.innerWidth >= 768 ? 0.90 : 1;
                 },
 
-                /**
-                 * Positions the fixed overlay/panel over the visible main-content
-                 * region using its live bounding rect, so the drawer tracks the
-                 * left sidebar and app header without covering them and stays in the
-                 * viewport regardless of page scroll.
-                 */
-                /**
-                 * Width of whatever is docked against the same edge, so the panel
-                 * stops at their border rather than a fixed guess -- a second docked
-                 * panel opening after this one would otherwise be overlapped.
-                 */
-                dockEdge() {
+                dockTargets() {
                     if (! this.dockTo) {
-                        return null;
+                        return [];
                     }
 
+                    return [...document.querySelectorAll(this.dockTo)].filter(el => el.getClientRects().length);
+                },
+
+                dockEdge() {
                     const rtl = document.dir === 'rtl';
 
-                    const edges = [...document.querySelectorAll(this.dockTo)]
-                        .filter(el => el.getClientRects().length)
-                        .map(el => {
-                            const box = el.getBoundingClientRect();
+                    const edges = this.dockTargets().map(el => {
+                        const box = el.getBoundingClientRect();
 
-                            return rtl ? box.right : box.left;
-                        });
+                        return rtl ? box.right : box.left;
+                    });
 
                     if (! edges.length) {
                         return null;
                     }
 
                     return rtl ? Math.max(...edges) : Math.min(...edges);
+                },
+
+                stackBase() {
+                    const levels = this.dockTargets()
+                        .map(el => parseInt(window.getComputedStyle(el).zIndex, 10))
+                        .filter(Number.isFinite);
+
+                    return levels.length ? Math.max(...levels) + 1 : 9998;
                 },
 
                 reposition() {
@@ -389,12 +388,7 @@
 
                     const rect = main.getBoundingClientRect();
                     const rtl = document.dir === 'rtl';
-
-                    // getBoundingClientRect and a docked panel's `right: 0` are both
-                    // measured against the client area; window.innerWidth counts the
-                    // scrollbar too and would leave the panel short of the dock edge.
                     const viewport = document.documentElement.clientWidth;
-
                     const edge = this.dockEdge();
 
                     const width = edge === null
@@ -404,11 +398,8 @@
                     const top = this.fullHeight ? '0px' : Math.round(rect.top) + 'px';
                     const bottom = this.fullHeight ? '0px' : Math.round(window.innerHeight - rect.bottom) + 'px';
 
-                    // z-index set inline (not via Tailwind's z-[..] classes, which
-                    // aren't compiled from this x-template's markup) so the panel
-                    // sits above page content -- incl. the rich-text toolbars -- yet
-                    // below the app's own drawers/modals (z-index 10001), which is
-                    // what lets a docked panel slide out from beneath one.
+                    const base = this.stackBase();
+
                     this.overlayStyle = {
                         top,
                         bottom,
@@ -416,14 +407,14 @@
                         width: edge === null
                             ? Math.round(rect.width) + 'px'
                             : Math.round(rtl ? viewport - edge : edge) + 'px',
-                        zIndex: 9998,
+                        zIndex: base,
                     };
 
                     this.panelStyle = {
                         top,
                         bottom,
                         width: width + 'px',
-                        zIndex: 9999,
+                        zIndex: base + 1,
                         ...(edge === null
                             ? (rtl
                                 ? { left: Math.round(rect.left) + 'px' }

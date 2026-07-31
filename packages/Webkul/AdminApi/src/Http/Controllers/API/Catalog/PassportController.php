@@ -103,9 +103,16 @@ class PassportController extends ApiController
             return $this->modelNotFoundResponse(trans('passport::app.publications.not-found', ['id' => $id]));
         }
 
-        $publisher->withdraw($publication);
+        try {
+            $publisher->withdraw($publication);
 
-        return $this->successResponse(trans('passport::app.publications.withdrawn'));
+            return $this->successResponse(trans('passport::app.publications.withdrawn'));
+        } catch (InvalidPublicationTransitionException) {
+            return $this->validateErrorResponse(
+                ['status' => [trans('passport::app.publications.withdraw-invalid')]],
+                trans('passport::app.publications.withdraw-invalid')
+            );
+        }
     }
 
     /**

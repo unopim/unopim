@@ -15,7 +15,16 @@
             :save-label="trans('admin::app.settings.data-transfer.imports.edit.save-btn')"
             form="import-profile-edit-form"
             :sticky="false"
-        />
+        >
+            <x-slot:actions>
+                <a
+                    href="{{ route('admin.settings.data_transfer.imports.import-view', $import->id) }}"
+                    class="secondary-button"
+                >
+                    @lang('admin::app.settings.data-transfer.imports.index.datagrid.import')
+                </a>
+            </x-slot>
+        </x-admin::layouts.edit-page-header>
     </x-slot>
 
     {!! view_render_event('unopim.admin.settings.data_transfer.imports.create.before') !!}

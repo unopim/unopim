@@ -1,14 +1,31 @@
 <?php
 
+use Illuminate\Support\Collection;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Attribute\Models\Attribute;
+
+/*
+ * Property filters are a small fixed set and are always present so filtering does
+ * not depend on the displayed columns. Filterable *attributes* are the unbounded
+ * side — a catalog can hold tens of thousands — so they must still materialize
+ * only when a request actually filters on them.
+ */
 
 afterEach(function () {
     request()->replace([]);
 });
 
+function gridColumns(): Collection
+{
+    $datagrid = app(ProductDataGrid::class);
+    $datagrid->setQueryBuilder();
+    $datagrid->prepareColumns();
+
+    return collect($datagrid->getColumns());
+}
+
 it('does not materialize unrelated filterable attributes on the initial request', function () {
-    Attribute::factory()->count(30)->create([
+    $unrelated = Attribute::factory()->count(30)->create([
         'type'          => 'text',
         'is_filterable' => true,
     ]);
@@ -17,12 +34,13 @@ it('does not materialize unrelated filterable attributes on the initial request'
         'managedColumns' => ['product_id'],
     ]);
 
-    $datagrid = app(ProductDataGrid::class);
-    $datagrid->setQueryBuilder();
-    $datagrid->prepareColumns();
+    $indices = gridColumns()->pluck('index')->all();
 
-    expect(collect($datagrid->getColumns())->pluck('index')->all())
-        ->toBe(['product_id']);
+    expect($indices)->toContain('product_id');
+
+    foreach ($unrelated->pluck('code') as $code) {
+        expect($indices)->not->toContain($code);
+    }
 });
 
 it('materializes only the filterable attribute used by the request', function () {
@@ -31,7 +49,7 @@ it('materializes only the filterable attribute used by the request', function ()
         'is_filterable' => true,
     ]);
 
-    Attribute::factory()->count(30)->create([
+    $unrelated = Attribute::factory()->count(30)->create([
         'type'          => 'text',
         'is_filterable' => true,
     ]);
@@ -46,14 +64,26 @@ it('materializes only the filterable attribute used by the request', function ()
         ],
     ]);
 
-    $datagrid = app(ProductDataGrid::class);
-    $datagrid->setQueryBuilder();
-    $datagrid->prepareColumns();
+    $columns = gridColumns();
+    $indices = $columns->pluck('index')->all();
 
-    $columns = collect($datagrid->getColumns());
+    expect($indices)->toContain($requestedAttribute->code);
+    expect($columns->firstWhere('index', $requestedAttribute->code)->visible)->toBeFalse();
 
-    expect($columns->pluck('index')->all())
-        ->toBe(['product_id', $requestedAttribute->code])
-        ->and($columns->last()->visible)
-        ->toBeFalse();
+    foreach ($unrelated->pluck('code') as $code) {
+        expect($indices)->not->toContain($code);
+    }
+});
+
+it('adds the property filters as a bounded set that never grows with the catalog', function () {
+    Attribute::factory()->count(30)->create([
+        'type'          => 'text',
+        'is_filterable' => true,
+    ]);
+
+    request()->replace([
+        'managedColumns' => ['product_id'],
+    ]);
+
+    expect(gridColumns())->toHaveCount(count(app(ProductDataGrid::class)->getPropertyColumns()));
 });

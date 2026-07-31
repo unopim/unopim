@@ -6,6 +6,7 @@ use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\ServiceProvider;
 use Webkul\DataTransfer\Console\JobExecuteCommand;
+use Webkul\DataTransfer\Console\ReapStalledJobsCommand;
 use Webkul\DataTransfer\Queue\Worker;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
@@ -36,6 +37,8 @@ class DataTransferServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/actions.php', 'export_settings');
 
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/image_import.php', 'image_import');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/job_health.php', 'job_health');
 
         $this->registerWorker();
 
@@ -89,6 +92,7 @@ class DataTransferServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 JobExecuteCommand::class,
+                ReapStalledJobsCommand::class,
             ]);
         }
 

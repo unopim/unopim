@@ -1,0 +1,213 @@
+# =============================================================================
+# UnoPim — Quick Start (pre-built images, no source checkout needed)
+# =============================================================================
+#
+#   curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.yaml
+#   docker compose up -d
+#   # open http://localhost:8000/admin
+#
+# Every setting has a working default. To change one, export it or drop it in a
+# .env file next to this one — Compose interpolates it automatically.
+#
+# MySQL instead of PostgreSQL:
+#   curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.mysql.yaml
+#   docker compose -f compose.yaml -f compose.mysql.yaml up -d
+#
+# Building from source? Use compose.dev.yaml instead.
+# =============================================================================
+
+name: ${COMPOSE_PROJECT_NAME:-unopim}
+
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "10m"
+    max-file: "3"
+
+x-app-environment: &app-environment
+  APP_NAME: "${APP_NAME:-UnoPim}"
+  APP_ENV: "${APP_ENV:-production}"
+  APP_DEBUG: "${APP_DEBUG:-false}"
+  APP_URL: "${APP_URL:-http://localhost:${APP_PORT:-8000}}"
+  APP_ADMIN_URL: "${APP_ADMIN_URL:-admin}"
+  APP_TIMEZONE: "${APP_TIMEZONE:-UTC}"
+  APP_LOCALE: "${APP_LOCALE:-en_US}"
+  APP_CURRENCY: "${APP_CURRENCY:-USD}"
+  APP_KEY: "${APP_KEY:-}"
+  DB_CONNECTION: pgsql
+  DB_HOST: unopim-pgsql
+  DB_PORT: "5432"
+  DB_PREFIX: ""
+  DB_DATABASE: "${DB_DATABASE:-unopim}"
+  DB_USERNAME: "${DB_USERNAME:-unopim}"
+  DB_PASSWORD: "${DB_PASSWORD:-unopim}"
+  CACHE_STORE: redis
+  QUEUE_CONNECTION: redis
+  REDIS_HOST: unopim-redis
+  REDIS_PORT: "6379"
+  REDIS_PASSWORD: "null"
+  # Must stay above the longest job timeout — ExportBatch scales its own to
+  # max(600, rows * 3), and the 90s default would release a still-running
+  # export back onto the queue and process it twice.
+  REDIS_QUEUE_RETRY_AFTER: "${REDIS_QUEUE_RETRY_AFTER:-7200}"
+  ELASTICSEARCH_ENABLED: "${ELASTICSEARCH_ENABLED:-true}"
+  ELASTICSEARCH_HOST: unopim-elasticsearch:9200
+  ELASTICSEARCH_INDEX_PREFIX: "${ELASTICSEARCH_INDEX_PREFIX:-unopim}"
+  MAIL_MAILER: smtp
+  MAIL_HOST: unopim-mailpit
+  MAIL_PORT: "1025"
+  MAIL_FROM_ADDRESS: "${MAIL_FROM_ADDRESS:-admin@example.com}"
+
+x-app-depends: &app-depends
+  unopim-pgsql:
+    condition: service_healthy
+    required: false
+  unopim-redis:
+    condition: service_healthy
+  unopim-elasticsearch:
+    condition: service_healthy
+
+services:
+  # ---------------------------------------------------------------------------
+  # Application (Apache + PHP). Runs migrations on start unless told not to.
+  # ---------------------------------------------------------------------------
+  unopim:
+    image: webkul/unopim:${UNOPIM_TAG:-latest}
+    ports:
+      - "${APP_PORT:-8000}:80"
+    volumes:
+      - unopim-storage:/var/www/html/storage
+    restart: unless-stopped
+    environment:
+      <<: *app-environment
+      UNOPIM_SKIP_MIGRATIONS: "${UNOPIM_SKIP_MIGRATIONS:-false}"
+    depends_on: *app-depends
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/up > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # Queue worker
+  # ---------------------------------------------------------------------------
+  unopim-queue:
+    image: webkul/unopim-queue:${UNOPIM_TAG:-latest}
+    volumes:
+      - unopim-storage:/var/www/html/storage
+    restart: unless-stopped
+    environment:
+      <<: *app-environment
+      QUEUE_NAMES: "${QUEUE_NAMES:-webhooks,system,completeness,default,publication}"
+    depends_on:
+      <<: *app-depends
+      unopim:
+        condition: service_healthy
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # Scheduler (replaces cron)
+  # ---------------------------------------------------------------------------
+  unopim-scheduler:
+    image: webkul/unopim-queue:${UNOPIM_TAG:-latest}
+    entrypoint: ["/var/www/html/dockerfiles/scheduler-entrypoint.sh"]
+    volumes:
+      - unopim-storage:/var/www/html/storage
+    restart: unless-stopped
+    environment:
+      <<: *app-environment
+    depends_on:
+      <<: *app-depends
+      unopim:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ---------------------------------------------------------------------------
+  # PostgreSQL 16 (default engine)
+  # ---------------------------------------------------------------------------
+  unopim-pgsql:
+    image: postgres:16-alpine
+    volumes:
+      - unopim-pgsql-data:/var/lib/postgresql/data
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: "${DB_DATABASE:-unopim}"
+      POSTGRES_USER: "${DB_USERNAME:-unopim}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD:-unopim}"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-unopim} -d ${DB_DATABASE:-unopim}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # Redis 7.2 (cache + queue backend)
+  # ---------------------------------------------------------------------------
+  unopim-redis:
+    image: redis:7.2-alpine
+    volumes:
+      - unopim-redis-data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+  # ---------------------------------------------------------------------------
+  # Elasticsearch 8.17 (product + category search)
+  # ---------------------------------------------------------------------------
+  unopim-elasticsearch:
+    image: elasticsearch:8.17.0
+    hostname: unopim-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - node.name=unopim-elasticsearch
+      - cluster.name=unopim
+      - "ES_JAVA_OPTS=${ES_JAVA_OPTS:--Xms512m -Xmx512m}"
+    volumes:
+      - unopim-elasticsearch-data:/usr/share/elasticsearch/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cluster/health > /dev/null || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 45s
+    logging: *default-logging
+
+  # ---------------------------------------------------------------------------
+  # Mailpit — catches outgoing mail, UI on http://localhost:8025
+  # ---------------------------------------------------------------------------
+  unopim-mailpit:
+    image: axllent/mailpit:v1.21
+    ports:
+      - "127.0.0.1:${FORWARD_MAILPIT_PORT:-8025}:8025"
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "2"
+
+volumes:
+  unopim-storage:
+  unopim-pgsql-data:
+  unopim-redis-data:
+  unopim-elasticsearch-data:

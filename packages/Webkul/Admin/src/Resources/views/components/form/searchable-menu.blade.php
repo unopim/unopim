@@ -183,7 +183,7 @@
                     this.panelStyle = {
                         top: (rect.bottom + 4) + 'px',
                         left: Math.max(margin, Math.min(rect.right - width, window.innerWidth - width - margin)) + 'px',
-                        zIndex: 10003,
+                        zIndex: 10010,
                     };
                 },
 

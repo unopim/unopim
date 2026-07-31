@@ -66,7 +66,7 @@ it('versions each locale independently', function (): void {
         ->and($second->publication->currentVersion($other->id)->version)->toBe(1);
 });
 
-it('mints a new version but leaves a withdrawn publication withdrawn', function (): void {
+it('refuses to publish into a withdrawn publication: the version would be unreachable', function (): void {
     [$product, $channel, , $complete] = $this->seedPassportFixture();
 
     $publisher = resolve(Publisher::class);
@@ -80,11 +80,11 @@ it('mints a new version but leaves a withdrawn publication withdrawn', function 
     ]);
     $product->save();
 
-    $second = $publisher->publish($product, $channel, $complete, 'dpp');
+    expect(fn (): mixed => $publisher->publish($product, $channel, $complete, 'dpp'))
+        ->toThrow(InvalidPublicationTransitionException::class);
 
-    expect($second)->toBeInstanceOf(PublicationVersion::class)
-        ->and($second->version)->toBe(2)
-        ->and($second->publication->fresh()->status)->toBe(PublicationStatus::Withdrawn);
+    expect($first->publication->fresh()->status)->toBe(PublicationStatus::Withdrawn)
+        ->and($first->publication->versions()->count())->toBe(1);
 });
 
 it('reinstates a withdrawn publication back to published', function (): void {
@@ -188,9 +188,8 @@ it('never resurrects a redacted publication back to published via a routine publ
     ]);
     $product->save();
 
-    $second = $publisher->publish($product, $channel, $complete, 'dpp');
+    expect(fn (): mixed => $publisher->publish($product, $channel, $complete, 'dpp'))
+        ->toThrow(InvalidPublicationTransitionException::class);
 
-    expect($second)->toBeInstanceOf(PublicationVersion::class)
-        ->and($second->version)->toBe(2)
-        ->and($second->publication->fresh()->status)->toBe(PublicationStatus::Redacted);
+    expect($first->publication->fresh()->status)->toBe(PublicationStatus::Redacted);
 });

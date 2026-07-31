@@ -278,7 +278,7 @@
 
                     url.searchParams.set('category', categoryId);
 
-                    window.location.href = url.toString();
+                    this.$navigate(url.toString());
                 },
 
                 onSearchInput() {
@@ -422,7 +422,7 @@
                                 .then(({ data }) => {
                                     this.$emitter.emit('add-flash', { type: 'success', message: data.message });
 
-                                    window.location.href = this.isOnScreen(id) ? this.createUrl : window.location.href;
+                                    this.$navigate(this.isOnScreen(id) ? this.createUrl : window.location.href);
                                 })
                                 .catch(({ response }) => {
                                     this.$emitter.emit('add-flash', {

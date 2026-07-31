@@ -2,6 +2,8 @@
 
 ## Bug fixes
 
+- Fixed the Docker installation failing on a fresh clone, where the bind-mounted checkout shadowed the vendor directory baked into the image and the entrypoint called Artisan before installing dependencies, leaving PHP-FPM restarting on a missing autoloader and the rest of the stack waiting behind it.
+- Fixed the pre-built image stack serving nothing: it fronted the Apache application image with an Nginx container proxying FastCGI to a port nothing listened on, mounted a volume over the application that prevented a new image tag from ever replacing the code, and required files its own quick start never downloaded.
 - Removed the committed OAuth signing keys and added automatic generation of a unique 4096-bit key pair for every installation.
 - Protected Magic AI connection testing and model discovery with ACL checks and public-address validation, blocking unauthenticated requests and SSRF to private, loopback, link-local, and metadata endpoints.
 - Prevented populated installations from rewriting environment or database configuration when installation markers are missing, and made `public/install.php` inert after installation.
@@ -160,6 +162,7 @@
 - **System Settings URLs:** the legacy combined settings page was replaced by the hub at `configuration/system-settings`, with editors under `configuration/system/{key}`. Extensions linking to the old combined page must update their routes.
 - **Admin UI extensions and E2E tests:** edit forms now use AJAX navigation and a global unsaved-changes save bar. Extensions or browser tests that depend on full-page reloads, old per-form save buttons, or previous DOM IDs/selectors must be updated.
 - **Docker database default:** new Docker environments default to PostgreSQL. Existing `v2.1.6` Docker installations must keep their current `COMPOSE_PROFILES`, `DB_CONNECTION`, host, and port values; changing the profile does not migrate MySQL data to PostgreSQL.
+- **Docker Compose file layout:** `compose.yaml` now runs UnoPim from the published images and needs no `.env`, while the stack that builds from a checkout moved to `compose.dev.yaml` (`compose.dev.apache.yaml` for Apache, `compose.mysql.yaml` for MySQL on the image stack). A bare `docker compose up` in a clone therefore resolves the image stack rather than building. `docker-compose.yml` and `docker-compose.hub.yml` remain as thin includes of the new files. Service topology in `compose.yaml` is pinned rather than read from the environment, so a Laravel `.env` in the project directory can no longer redirect the containers at a host database.
 - **Deprecated REST alias:** `configrable-products` still works for this release but now returns deprecation and successor headers. Clients should move to `configurable-products` before the alias is removed in a future release.
 
 ### Classes

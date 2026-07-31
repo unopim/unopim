@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Core\Models\Locale;
 use Webkul\Publication\Services\Publisher;
 
 it('renders every payload section and links documents through the proxy', function (): void {
@@ -14,14 +15,19 @@ it('renders every payload section and links documents through the proxy', functi
         ]), false);
 });
 
-it('offers a locale switcher for every channel locale', function (): void {
+it('offers a locale switcher for the published locales only', function (): void {
     $version = $this->publishedPassportFixture();
+    $publication = $version->publication;
 
-    $response = $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code);
+    $unpublished = Locale::factory()->create();
+    $publication->channel->locales()->attach($unpublished);
 
-    foreach ($version->publication->channel->locales as $locale) {
-        $response->assertSee('/p/'.$version->publication->uuid.'/'.$locale->code, false);
-    }
+    $response = $this->get('/p/'.$publication->uuid.'/'.$version->locale->code);
+
+    $response->assertSee('/p/'.$publication->uuid.'/'.$version->locale->code, false)
+        ->assertDontSee('/p/'.$publication->uuid.'/'.$unpublished->code, false);
+
+    $this->get('/p/'.$publication->uuid.'/'.$unpublished->code)->assertNotFound();
 });
 
 it('escapes hostile field values instead of rendering them', function (): void {

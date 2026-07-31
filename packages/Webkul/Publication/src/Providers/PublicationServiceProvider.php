@@ -12,6 +12,8 @@ use Illuminate\Support\ServiceProvider;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Events\PublicationPublished;
 use Webkul\Publication\Events\PublicationRedacted;
+use Webkul\Publication\Events\PublicationReinstated;
+use Webkul\Publication\Events\PublicationWithdrawn;
 use Webkul\Publication\Http\Controllers\PublicationAssetController;
 use Webkul\Publication\Http\Controllers\PublicationCarrierController;
 use Webkul\Publication\Http\Controllers\PublicationController;
@@ -26,6 +28,7 @@ use Webkul\Publication\Listeners\SyncPublicationCounters;
 use Webkul\Publication\Listeners\SyncPublicationGtin;
 use Webkul\Publication\Listeners\SyncPublicationVersionDocuments;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
+use Webkul\Publication\Services\Gs1DigitalLink;
 
 class PublicationServiceProvider extends ServiceProvider
 {
@@ -57,6 +60,8 @@ class PublicationServiceProvider extends ServiceProvider
 
         Event::listen(PublicationPublished::class, SyncPublicationVersionDocuments::class);
         Event::listen(PublicationPublished::class, SyncPublicationCounters::class);
+        Event::listen(PublicationWithdrawn::class, SyncPublicationCounters::class);
+        Event::listen(PublicationReinstated::class, SyncPublicationCounters::class);
         Event::listen(PublicationPublished::class, SyncPublicationGtin::class);
         Event::listen(PublicationRedacted::class, PrunePublicationVersionDocumentsOnRedaction::class);
         Event::listen('catalog.product.delete.before', GuardProductDeletionAgainstPublications::class);
@@ -127,7 +132,7 @@ class PublicationServiceProvider extends ServiceProvider
         Route::middleware(['publication.errors', 'publication.enabled', 'publication.headers', 'publication.ratelimit'])
             ->group(function (): void {
                 Route::get('/01/{gtin}', [PublicationController::class, 'resolveByGtin'])
-                    ->where('gtin', '[0-9]{8,14}')
+                    ->where('gtin', Gs1DigitalLink::GTIN_PATTERN)
                     ->defaults('type', 'dpp')
                     ->name('publication.public.gs1');
             });

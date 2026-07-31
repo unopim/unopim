@@ -6,14 +6,38 @@ use Exception;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Webkul\Core\RequestMemo;
 use Webkul\Installer\Database\Seeders\DatabaseSeeder as UnoPimDatabaseSeeder;
 
 class DatabaseManager
 {
+    const INSTALLED_MEMO_KEY = 'installer.is_installed';
+
     /**
      * Check Database Connection.
+     *
+     * `CanInstall` asks on every request and the check costs a schema lookup
+     * plus a count, so a positive answer is memoized for the rest of the
+     * request. A negative one is not: the installer turns it positive mid-flow.
      */
     public function isInstalled(): bool
+    {
+        $memo = app(RequestMemo::class);
+
+        if ($memo->has(self::INSTALLED_MEMO_KEY)) {
+            return true;
+        }
+
+        if (! $this->resolveInstalled()) {
+            return false;
+        }
+
+        $memo->set(self::INSTALLED_MEMO_KEY, true);
+
+        return true;
+    }
+
+    private function resolveInstalled(): bool
     {
         if (! file_exists(base_path('.env'))) {
             return false;

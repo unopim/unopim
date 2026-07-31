@@ -76,6 +76,12 @@ class Publisher
             // Lock the row so concurrent workers on the same (publication, locale) can't race the unique index.
             $publication = Publication::query()->whereKey($publication->id)->lockForUpdate()->firstOrFail();
 
+            if (! $publication->status->acceptsNewVersions()) {
+                throw new InvalidPublicationTransitionException(
+                    'Publication '.$publication->id.' is '.$publication->status->value.'; reinstate it before publishing a locale.'
+                );
+            }
+
             $current = $publication->currentVersion($locale->id);
 
             if ($current?->checksum === $checksum) {
@@ -126,9 +132,9 @@ class Publisher
             // Lock the row so a concurrent publish/republish on the same (publication, locale) can't race the unique index.
             $publication = Publication::query()->whereKey($source->publication_id)->lockForUpdate()->firstOrFail();
 
-            if ($publication->status === PublicationStatus::Redacted) {
+            if (! $publication->status->acceptsNewVersions()) {
                 throw new InvalidPublicationTransitionException(
-                    'Publication '.$publication->id.' is redacted; its payloads are erased and cannot be republished.'
+                    'Publication '.$publication->id.' is '.$publication->status->value.'; reinstate it before republishing a version.'
                 );
             }
 
@@ -177,10 +183,18 @@ class Publisher
     }
 
     /**
-     * Marks the publication Withdrawn. Reversible via reinstate().
+     * Marks the publication Withdrawn. Reversible via reinstate(); throws when the
+     * publication is not published, so a redacted one can never be walked back to
+     * withdrawn and a no-op withdrawal cannot pass for a real state change.
      */
     public function withdraw(Publication $publication): void
     {
+        if ($publication->status !== PublicationStatus::Published) {
+            throw new InvalidPublicationTransitionException(
+                'Publication '.$publication->id.' is not published; only a published publication can be withdrawn.'
+            );
+        }
+
         $publication->update(['status' => PublicationStatus::Withdrawn]);
 
         DB::afterCommit(fn () => PublicationWithdrawn::dispatch($publication));

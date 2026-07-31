@@ -50,6 +50,7 @@ describe('JobTrack Model', function () {
             'summary',
             'started_at',
             'completed_at',
+            'heartbeat_at',
             'meta',
             'job_instances_id',
             'user_id',

@@ -10,12 +10,15 @@ use Illuminate\View\View;
 use Symfony\Component\Mime\MimeTypes;
 use Webkul\Admin\DataGrids\Settings\DataTransfer\ImportDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\Validator\JobInstances\JobValidator;
+use Webkul\DataTransfer\Enums\JobType;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
+use Webkul\DataTransfer\Services\JobHealth;
 
 class ImportController extends Controller
 {
@@ -32,7 +35,8 @@ class ImportController extends Controller
         protected JobInstancesRepository $jobInstancesRepository,
         protected JobTrackRepository $jobTrackRepository,
         protected Import $importHelper,
-        protected Export $exportHelper
+        protected Export $exportHelper,
+        protected JobHealth $jobHealth,
     ) {}
 
     /**
@@ -514,20 +518,37 @@ class ImportController extends Controller
     }
 
     /**
+     * Authorize control of a running job against the permission of its own type, since this
+     * controller serves import, export and system job tracks alike.
+     */
+    protected function authorizeJobControl(JobTrackContract $jobTrack): JobType
+    {
+        $jobType = JobType::fromTrack($jobTrack);
+
+        if (! bouncer()->hasPermission($jobType->executePermission())) {
+            abort(403, trans('admin::app.common.unauthorized'));
+        }
+
+        return $jobType;
+    }
+
+    /**
      * Pause a running import job
      */
     public function pause(int $id): JsonResponse
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $jobType = $this->authorizeJobControl($jobTrack);
+
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->pause();
         } else {
             $this->importHelper->setImport($jobTrack)->pause();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.paused'),
+            'message' => $jobType->trackerMessage('paused'),
         ]);
     }
 
@@ -538,14 +559,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $jobType = $this->authorizeJobControl($jobTrack);
+
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->resume();
         } else {
             $this->importHelper->setImport($jobTrack)->resume();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.resumed'),
+            'message' => $jobType->trackerMessage('resumed'),
         ]);
     }
 
@@ -556,14 +579,16 @@ class ImportController extends Controller
     {
         $jobTrack = $this->jobTrackRepository->findOrFail($id);
 
-        if ($jobTrack->type === 'export') {
+        $jobType = $this->authorizeJobControl($jobTrack);
+
+        if ($jobType->isExport()) {
             $this->exportHelper->setExport($jobTrack)->cancel();
         } else {
             $this->importHelper->setImport($jobTrack)->cancel();
         }
 
         return new JsonResponse([
-            'message' => trans('admin::app.settings.data-transfer.tracker.cancelled'),
+            'message' => $jobType->trackerMessage('cancelled'),
         ]);
     }
 
@@ -572,15 +597,24 @@ class ImportController extends Controller
      */
     public function stats(int $id, $state = Import::STATE_PROCESSED): JsonResponse
     {
-        if (! bouncer()->hasPermission('data_transfer.imports.execute')) {
+        if (! bouncer()->hasPermission('data_transfer.job_tracker')) {
             abort(403, trans('admin::app.common.unauthorized'));
         }
 
         $import = $this->jobTrackRepository->findOrFail($id);
+
+        // The scheduled reaper is the safety net; failing it here too stops the
+        // tracker polling a dead job for up to a scheduler tick.
+        if ($this->jobHealth->isStalled($import)) {
+            $this->jobHealth->fail($import);
+
+            $import->refresh();
+        }
+
         $jobInstance = json_decode($import->meta, true);
         $summary = $this->normalizeSummary($import->summary);
 
-        if ($jobInstance['type'] == 'export') {
+        if (JobType::fromTrack($import)->isExport()) {
             $isValid = $this->exportHelper->setExport($import)->isValid();
             $stats = $this->exportHelper->stats($state);
             $jobTrack = $this->exportHelper->getExport()->unsetRelations();

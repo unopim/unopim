@@ -1,10 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\Locale;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\ProductPassport\Jobs\BulkPublishPassportsJob;
+use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\Publication;
 
@@ -46,6 +48,36 @@ it('skips publications whose channel has no locales', function (): void {
     (new BulkPublishPassportsJob([$withLocales->id, $withoutLocales->id], null))->handle();
 
     Queue::assertPushed(PublishPassportForProductChannelJob::class, 1);
+});
+
+it('skips publications that no longer accept new versions', function (): void {
+    Queue::fake();
+
+    $publishable = makePassportPublication();
+
+    $withdrawn = makePassportPublication();
+    $withdrawn->update(['status' => PublicationStatus::Withdrawn]);
+
+    (new BulkPublishPassportsJob([$publishable->id, $withdrawn->id], null))->handle();
+
+    Queue::assertPushed(PublishPassportForProductChannelJob::class, 1);
+});
+
+it('queues nothing and says so when every selected passport is withdrawn', function (): void {
+    $withdrawn = makePassportPublication();
+    $withdrawn->update(['status' => PublicationStatus::Withdrawn]);
+
+    $this->enablePassportPublishing($withdrawn->channel->code);
+
+    $this->loginWithPermissions('all');
+
+    Bus::fake();
+
+    $this->postJson(route('admin.catalog.passports.bulk-publish'), ['indices' => [$withdrawn->id]])
+        ->assertStatus(422)
+        ->assertJsonPath('message', trans('passport::app.publications.publish-none-publishable', ['count' => 1]));
+
+    Bus::assertNotDispatched(BulkPublishPassportsJob::class);
 });
 
 it('rejects bulk publish without permission', function (): void {

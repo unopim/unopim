@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Jobbutførelse startet',
         'completed' => 'Jobbutførelse fullført',
+        'stalled'   => 'Jobben sluttet å svare i mer enn :minutes minutter og ble markert som mislykket. Prosessen som kjørte den ble sannsynligvis avbrutt.',
+        'reaped'    => ':count fastlåste jobber ble markert som mislykkede.',
     ],
 ];

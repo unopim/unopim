@@ -88,6 +88,9 @@ class CategoryController extends Controller
 
     /**
      * Tree workspace, or the flat listing when `view=list` is asked for.
+     *
+     * A category id that no longer resolves leaves no panel to render, so the
+     * workspace falls back to the overview instead of a partial with no data.
      */
     public function index(CategoryBrowseRequest $request): View|JsonResponse
     {
@@ -132,7 +135,9 @@ class CategoryController extends Controller
                 $data['parentCategory'] = $this->categoryRepository->find($parentId);
                 $data['selectedId'] = $data['parentCategory']?->id;
             }
-        } else {
+        }
+
+        if (! $data['panelMode']) {
             $data['overview'] = [
                 'total'          => $this->categoryRepository->getModel()->count(),
                 'roots'          => $roots,
@@ -273,7 +278,25 @@ class CategoryController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.categories.create-success'));
 
-        return redirect()->route('admin.catalog.categories.index');
+        return redirect()->route(...$this->savedDestination($categoryRequest, $category->id, 'admin.catalog.categories.index'));
+    }
+
+    /**
+     * A save made in the tree panel returns to the category it wrote, selected,
+     * rather than to the listing.
+     *
+     * @return array{0: string, 1: array<string, mixed>}
+     */
+    private function savedDestination(CategoryRequest $request, int $categoryId, string $route, array $params = []): array
+    {
+        if (! $request->boolean('panel')) {
+            return [$route, $params];
+        }
+
+        return ['admin.catalog.categories.index', [
+            'category' => $categoryId,
+            'locale'   => core()->getRequestedLocaleCode(),
+        ]];
     }
 
     /**
@@ -305,10 +328,17 @@ class CategoryController extends Controller
     {
         Event::dispatch('catalog.category.update.before', $id);
 
+        $rejected = $this->savedDestination($categoryRequest, $id, 'admin.catalog.categories.edit', ['id' => $id]);
+
+        $destination = $this->savedDestination($categoryRequest, $id, 'admin.catalog.categories.edit', [
+            'id'     => $id,
+            'locale' => core()->getRequestedLocaleCode(),
+        ]);
+
         if (! empty($categoryRequest->input('parent_id')) && $this->isRelatedToChannel($id)) {
             session()->flash('error', trans('admin::app.catalog.categories.can-not-update'));
 
-            return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+            return redirect()->route(...$rejected);
         }
 
         if (! empty($categoryRequest->input('parent_id'))) {
@@ -319,7 +349,7 @@ class CategoryController extends Controller
             if ($parentId === $id || ($category && $parentCategory && $parentCategory->isDescendantOf($category))) {
                 session()->flash('error', trans('admin::app.catalog.categories.invalid-parent'));
 
-                return redirect()->route('admin.catalog.categories.edit', ['id' => $id]);
+                return redirect()->route(...$rejected);
             }
         }
 
@@ -342,7 +372,7 @@ class CategoryController extends Controller
 
         session()->flash('success', trans('admin::app.catalog.categories.update-success'));
 
-        return redirect()->route('admin.catalog.categories.edit', ['id' => $id, 'locale' => core()->getRequestedLocaleCode()]);
+        return redirect()->route(...$destination);
     }
 
     /**

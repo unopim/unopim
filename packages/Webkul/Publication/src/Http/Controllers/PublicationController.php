@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\RecordPublicationView;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Services\PublicationResolver;
 
@@ -88,6 +89,9 @@ class PublicationController extends Controller
 
     /**
      * Renders the publication, honouring If-None-Match against a checksum-derived ETag.
+     *
+     * The locale switcher is built from the published versions, not the channel's
+     * locales: a channel locale with no current version has no URL to switch to.
      */
     public function show(Request $request, string $uuid, string $locale): Response
     {
@@ -159,7 +163,10 @@ class PublicationController extends Controller
             'withdrawn' => $publication->status !== PublicationStatus::Published,
             'uuid'      => $publication->uuid,
             'locale'    => $version->locale->code,
-            'locales'   => $publication->channel->locales,
+            'locales'   => $publication->versions
+                ->map(fn (PublicationVersion $published) => $published->locale)
+                ->sortBy('code')
+                ->values(),
         ]);
 
         return $this->tierCache(

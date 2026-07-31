@@ -90,6 +90,12 @@
                 :value="$currentLocale->code"
             />
 
+            <x-admin::form.control-group.control
+                type="hidden"
+                name="panel"
+                value="1"
+            />
+
             @include('admin::catalog.categories.partials.form', [
                 'showParent'   => false,
                 'parentLabel'  => $breadcrumb,

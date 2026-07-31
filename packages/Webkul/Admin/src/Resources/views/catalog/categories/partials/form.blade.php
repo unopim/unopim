@@ -36,7 +36,11 @@
             </x-admin::form.control-group>
 
             @if (($parentPicker ?? false) || ($parentLabel ?? null))
-                @php $parentText = $parentLabel ?: trans('admin::app.catalog.categories.browse.root-level'); @endphp
+                @php
+                    $parentText = $parentLabel ?: trans('admin::app.catalog.categories.browse.root-level');
+
+                    $selectedParentId = (string) (old('parent_id') ?? $category?->parent_id ?? $parentCategory?->id ?? '');
+                @endphp
 
                 <x-admin::form.control-group>
                     <x-admin::form.control-group.label>
@@ -44,6 +48,19 @@
                     </x-admin::form.control-group.label>
 
                     @if ($parentPicker ?? false)
+                        {{-- The drawer body leaves the DOM when it closes, so the picker cannot carry the value into the submit. --}}
+                        <input
+                            type="hidden"
+                            name="parent_id"
+                            ref="parentIdField"
+                            value="{{ $selectedParentId }}"
+                            data-parent-label="{{ $parentText }}"
+                            @change="
+                                $refs.parentPathLabel.textContent = $event.target.dataset.parentLabel;
+                                $refs.parentPathLabel.title = $event.target.dataset.parentLabel;
+                            "
+                        >
+
                         <x-admin::drawer width="480px" ref="parentDrawer">
                             <x-slot:toggle>
                                 <div class="flex gap-2.5 items-center justify-between w-full px-3 py-2 border dark:border-cherry-800 rounded-md cursor-pointer hover:border-gray-400">
@@ -69,12 +86,14 @@
                                 <label class="flex gap-2 items-center p-1.5 mb-1.5 border-b dark:border-cherry-800 cursor-pointer select-none">
                                     <input
                                         type="radio"
-                                        name="parent_id"
+                                        name="parent_id_picker"
                                         value=""
                                         class="hidden peer"
-                                        @checked(! $parentLabel)
+                                        @checked(! $selectedParentId)
                                         @change="
                                             $refs.parentTree.clearSelection();
+                                            $refs.parentIdField.value = '';
+                                            $refs.parentIdField.dispatchEvent(new CustomEvent('unsaved-changes:touch', { bubbles: true, detail: { name: 'parent_id' } }));
                                             $refs.parentPathLabel.textContent = $refs.rootLevelLabel.textContent.trim();
                                             $refs.parentPathLabel.title = $refs.rootLevelLabel.textContent.trim();
                                             $refs.parentDrawer.close();
@@ -91,7 +110,7 @@
                                 <x-admin::tree.category.view
                                     ref="parentTree"
                                     input-type="radio"
-                                    name-field="parent_id"
+                                    name-field="parent_id_picker"
                                     label-field="name"
                                     value-field="id"
                                     id-field="id"
@@ -101,9 +120,11 @@
                                     :current-category="$category?->id"
                                     :expanded-branch="json_encode($branchToParent)"
                                     :items="json_encode($treeItems)"
-                                    :value="old('parent_id') ?? json_encode($category?->parent_id ?? $parentCategory?->id)"
+                                    :value="$selectedParentId"
                                     :fallback-locale="config('app.fallback_locale')"
                                     @select-node="
+                                        $refs.parentIdField.value = $event.value;
+                                        $refs.parentIdField.dispatchEvent(new CustomEvent('unsaved-changes:touch', { bubbles: true, detail: { name: 'parent_id' } }));
                                         $refs.parentPathLabel.textContent = $event.path;
                                         $refs.parentPathLabel.title = $event.path;
                                         $refs.parentDrawer.close();
@@ -157,7 +178,7 @@
                             :current-category="$category?->id"
                             :expanded-branch="json_encode($branchToParent)"
                             :items="json_encode($treeItems)"
-                            :value="old('parent_id') ?? json_encode($category?->parent_id)"
+                            :value="(string) (old('parent_id') ?? $category?->parent_id ?? '')"
                             :fallback-locale="config('app.fallback_locale')"
                         />
                     </div>

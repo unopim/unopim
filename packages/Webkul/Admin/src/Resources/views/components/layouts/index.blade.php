@@ -69,6 +69,8 @@
         <div id="app" class="flex flex-col h-screen">
             <x-admin::flash-group />
 
+            <x-admin::modal.history />
+
             <x-admin::modal.confirm />
 
             {!! view_render_event('unopim.admin.layout.content.before') !!}

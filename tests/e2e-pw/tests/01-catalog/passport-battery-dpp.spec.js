@@ -102,6 +102,21 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     inContainer(['php', 'artisan', 'view:clear']);
   });
 
+  /** Dev builds render the Debugbar and the agent shell over the page; both swallow clicks. */
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      const style = document.createElement('style');
+
+      style.textContent = '.ap-shell, .phpdebugbar, .phpdebugbar-open-handler { display: none !important; }';
+
+      if (document.head) {
+        document.head.appendChild(style);
+      } else {
+        document.addEventListener('DOMContentLoaded', () => document.head.appendChild(style));
+      }
+    });
+  });
+
   test('templates listing ships the ESPR preset', async ({ page }) => {
     await page.goto('/admin/catalog/passports/templates');
 
@@ -212,18 +227,59 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
     const capacity = page.locator('input[name="values[common][battery_rated_capacity]"]').first();
 
-    await capacity.fill('');
-    await page.getByRole('button', { name: /Save changes|Save Product/ }).last().click();
-    await expect(page.getByText(/updated successfully|saved successfully/i).first()).toBeVisible();
+    if (await capacity.inputValue()) {
+      await capacity.fill('');
+      await page.getByRole('button', { name: /Save changes|Save Product/ }).last().click();
+      await expect(page.getByText(/updated successfully|saved successfully/i).first()).toBeVisible();
+    }
 
-    await page.locator('v-product-section-drawer[id="passport"] [role="button"]').first().click();
+    await page
+      .getByText('Digital Product Passport', { exact: true })
+      .first()
+      .locator('xpath=ancestor::*[@role="button"][1]')
+      .click({ force: true });
 
     const panel = page.locator('[data-section-id="passport"]');
     const localeRow = panel.locator('tr[data-locale-code]').first();
 
     await expect(localeRow.locator('.passport-publish-btn')).toBeDisabled();
     await localeRow.getByRole('button', { name: 'Missing Fields' }).click();
-    await expect(localeRow.getByText(CONSUMER_FIELD.label, { exact: true })).toBeVisible();
+
+    const popover = page.locator('.passport-missing-fields:visible');
+
+    await expect(popover.getByText(CONSUMER_FIELD.label, { exact: true })).toBeVisible();
+
+    const clipping = await popover.evaluate((element) => {
+      const rect = element.getBoundingClientRect();
+      const clippers = [];
+
+      for (let node = element.parentElement; node && node !== document.body; node = node.parentElement) {
+        const style = getComputedStyle(node);
+
+        if (! /auto|scroll|hidden/.test(style.overflowX + style.overflowY)) {
+          continue;
+        }
+
+        const bounds = node.getBoundingClientRect();
+
+        if (
+          rect.top < bounds.top - 1
+          || rect.bottom > bounds.bottom + 1
+          || rect.left < bounds.left - 1
+          || rect.right > bounds.right + 1
+        ) {
+          clippers.push(node.className);
+        }
+      }
+
+      return {
+        clippers,
+        overflowsViewport: rect.bottom > window.innerHeight + 1 || rect.top < -1,
+      };
+    });
+
+    expect(clipping.clippers).toEqual([]);
+    expect(clipping.overflowsViewport).toBe(false);
 
     await panel.getByRole('button', { name: 'Close' }).click();
     await capacity.fill(CONSUMER_FIELD.value);

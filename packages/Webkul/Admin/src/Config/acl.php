@@ -438,10 +438,14 @@ return [
         'route'  => 'admin.settings.data_transfer.tracker.index',
         'sort'   => 8,
     ], [
-        'key'   => 'data_transfer.job_tracker',
-        'name'  => 'admin::app.acl.tracker',
-        'route' => 'admin.settings.data_transfer.tracker.index',
-        'sort'  => 1,
+        'key'             => 'data_transfer.job_tracker',
+        'name'            => 'admin::app.acl.tracker',
+        'route'           => 'admin.settings.data_transfer.tracker.index',
+        'sort'            => 1,
+        'also_authorizes' => [
+            'admin.settings.data_transfer.imports.stats',
+            'admin.settings.data_transfer.jobs.stats',
+        ],
     ], [
         'key'   => 'data_transfer.imports',
         'name'  => 'admin::app.acl.imports',
@@ -488,6 +492,21 @@ return [
         'route' => 'admin.settings.data_transfer.imports.resume',
         'sort'  => 4,
     ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.jobs.pause',
+        'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.jobs.resume',
+        'sort'  => 4,
+    ], [
+        'key'   => 'data_transfer.imports.execute',
+        'name'  => 'admin::app.acl.execute',
+        'route' => 'admin.settings.data_transfer.jobs.cancel',
+        'sort'  => 4,
+    ], [
         'key'   => 'data_transfer.imports.delete',
         'name'  => 'admin::app.acl.delete',
         'route' => 'admin.settings.data_transfer.imports.delete',
@@ -528,10 +547,18 @@ return [
         'route' => 'admin.settings.data_transfer.exports.delete',
         'sort'  => 3,
     ], [
-        'key'   => 'data_transfer.export.execute',
-        'name'  => 'admin::app.acl.execute',
-        'route' => 'admin.settings.data_transfer.exports.export_now',
-        'sort'  => 4,
+        'key'             => 'data_transfer.export.execute',
+        'name'            => 'admin::app.acl.execute',
+        'route'           => 'admin.settings.data_transfer.exports.export_now',
+        'sort'            => 4,
+        'also_authorizes' => [
+            'admin.settings.data_transfer.imports.pause',
+            'admin.settings.data_transfer.imports.resume',
+            'admin.settings.data_transfer.imports.cancel',
+            'admin.settings.data_transfer.jobs.pause',
+            'admin.settings.data_transfer.jobs.resume',
+            'admin.settings.data_transfer.jobs.cancel',
+        ],
     ], [
         'key'   => 'data_transfer.imports',
         'name'  => 'admin::app.acl.imports',

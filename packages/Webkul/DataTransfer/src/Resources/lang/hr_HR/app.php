@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Izvršenje posla je započelo',
         'completed' => 'Izvršenje posla je završeno',
+        'stalled'   => 'Zadatak nije odgovarao više od :minutes minuta i označen je kao neuspješan. Proces koji ga je izvršavao vjerojatno je prekinut.',
+        'reaped'    => 'Označeno je :count zaustavljenih zadataka kao neuspješnih.',
     ],
 ];

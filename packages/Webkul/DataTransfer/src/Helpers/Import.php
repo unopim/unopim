@@ -14,6 +14,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 use Webkul\DataTransfer\Helpers\Sources\AbstractSource;
 use Webkul\DataTransfer\Helpers\Sources\CSV as CSVSource;
@@ -24,6 +25,8 @@ use Webkul\DataTransfer\Services\JobLogger;
 
 class Import
 {
+    use TracksJobHeartbeat;
+
     /**
      * Import state for pending import
      */
@@ -205,7 +208,14 @@ class Import
 
         $this->setImport($import);
 
+        $this->heartbeat(force: true);
+
         return $this;
+    }
+
+    protected function getHeartbeatTrack(): mixed
+    {
+        return $this->import ?? null;
     }
 
     /**
@@ -367,6 +377,8 @@ class Import
         $import = $this->jobTrackRepository->update($data, $this->import->id);
 
         $this->setImport($import);
+
+        $this->heartbeat(force: true);
 
         Event::dispatch('data_transfer.imports.started', $import);
     }

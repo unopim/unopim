@@ -7,9 +7,15 @@ use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Services\Gs1DigitalLink;
 
 class PublicationDataGrid extends DataGrid implements ExportableInterface
 {
+    /**
+     * `status_code` duplicates the status column on purpose: column closures run
+     * before action conditions and overwrite `publication_status` with its
+     * translated label, so the raw enum value has to survive under a second alias.
+     */
     public function prepareQueryBuilder(): Builder
     {
         $queryBuilder = DB::table('publications')
@@ -20,6 +26,7 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'publications.id',
                 'publications.uuid',
                 'publications.status as publication_status',
+                'publications.status as status_code',
                 'publications.live_locale_count',
                 'publications.last_published_at',
                 'publications.gtin',
@@ -126,6 +133,7 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
+            'closure'    => fn ($row): string => $this->gs1Link($row),
         ]);
 
         $this->addColumn([
@@ -144,7 +152,7 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
         if (bouncer()->hasPermission('catalog.passport.view')) {
             $this->addAction([
                 'index'  => 'versions',
-                'icon'   => 'icon-time-machine',
+                'icon'   => 'icon-view',
                 'title'  => trans('passport::app.publications.datagrid.version-history'),
                 'method' => 'GET',
                 'url'    => fn ($row): string => route('admin.catalog.passports.versions', $row->id),
@@ -153,11 +161,21 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
 
         if (bouncer()->hasPermission('catalog.passport.withdraw')) {
             $this->addAction([
-                'index'  => 'withdraw',
-                'icon'   => 'icon-cancel',
-                'title'  => trans('passport::app.publications.datagrid.withdraw'),
-                'method' => 'POST',
-                'url'    => fn ($row): string => route('admin.catalog.passports.withdraw', $row->id),
+                'index'     => 'withdraw',
+                'icon'      => 'icon-cancel',
+                'title'     => trans('passport::app.publications.datagrid.withdraw'),
+                'method'    => 'POST',
+                'url'       => fn ($row): string => route('admin.catalog.passports.withdraw', $row->id),
+                'condition' => fn ($row): bool => $row->status_code === PublicationStatus::Published->value,
+            ]);
+
+            $this->addAction([
+                'index'     => 'reinstate',
+                'icon'      => 'icon-done',
+                'title'     => trans('passport::app.publications.datagrid.reinstate'),
+                'method'    => 'POST',
+                'url'       => fn ($row): string => route('admin.catalog.passports.reinstate', $row->id),
+                'condition' => fn ($row): bool => $row->status_code === PublicationStatus::Withdrawn->value,
             ]);
         }
     }
@@ -171,6 +189,28 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'method' => 'POST',
             ]);
         }
+
+        if (bouncer()->hasPermission('catalog.passport.withdraw')) {
+            $this->addMassAction([
+                'title'   => trans('passport::app.publications.datagrid.mass-transition'),
+                'url'     => route('admin.catalog.passports.mass_transition'),
+                'method'  => 'POST',
+                'options' => [
+                    'type'   => 'basic',
+                    'params' => [
+                        'options' => [
+                            [
+                                'label' => trans('passport::app.publications.datagrid.withdraw'),
+                                'value' => PublicationStatus::Withdrawn->value,
+                            ], [
+                                'label' => trans('passport::app.publications.datagrid.reinstate'),
+                                'value' => PublicationStatus::Published->value,
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+        }
     }
 
     /**
@@ -180,6 +220,9 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
      *
      * `public_url` is a closure column, so the CSV writer (which reads raw row
      * properties, not the grid's formatter) never sees it unless stamped here.
+     * `status_code` goes the other way: it exists only for the action conditions,
+     * and the writer derives its header row from the row's keys, so leaving it in
+     * would add a duplicate status column to every export.
      */
     public function getExportableData(array $parameters = []): array
     {
@@ -188,11 +231,30 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             ->lazyById(1000, 'publications.id')
             ->map(function (object $row): object {
                 $row->public_url = $this->publicUrl($row);
+                $row->gs1_link = $this->gs1Link($row);
+
+                unset($row->status_code);
 
                 return $row;
             })
             ->collect()
             ->all();
+    }
+
+    /**
+     * The GS1 Digital Link the printed carrier resolves through, rebuilt from the
+     * current base url rather than read from the alias stamped at publish time —
+     * the column and the QR code must never disagree about where a scan lands.
+     */
+    private function gs1Link(object $row): string
+    {
+        $gs1 = resolve(Gs1DigitalLink::class);
+
+        if ($row->gs1_link === null || ! $gs1->isWellFormed($row->gtin)) {
+            return '';
+        }
+
+        return $gs1->build((string) $row->gtin, $row->channel_code ?? null);
     }
 
     /**

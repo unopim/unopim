@@ -156,6 +156,8 @@ class PassportPanelComposer
             'passportHistoryTotal'   => $publication === null ? 0 : $publication->versions()->count(),
             'passportRepublishUrl'   => $publication === null ? null : route('admin.catalog.passports.republish', $publication->id),
             'passportCanPublish'     => bouncer()->hasPermission('catalog.passport.publish'),
+            'passportOffline'        => $publication !== null && ! $publication->status->acceptsNewVersions(),
+            'passportStatusLabel'    => $publication === null ? null : trans($publication->status->label()),
             'passportHistoryUrl'     => $publication === null ? null : route('admin.catalog.passports.versions', $publication->id),
             'passportEnabled'        => true,
             'passportAutoPublish'    => $this->feature->autoPublishEnabledFor($channel),

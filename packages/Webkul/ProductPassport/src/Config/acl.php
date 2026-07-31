@@ -22,6 +22,11 @@ return [
         'route' => 'admin.catalog.passports.versions',
         'sort'  => 1,
     ], [
+        'key'   => 'catalog.passport.view',
+        'name'  => 'passport::app.acl.passports.view',
+        'route' => 'admin.catalog.passports.publish_attempt',
+        'sort'  => 1,
+    ], [
         'key'   => 'catalog.passport.publish',
         'name'  => 'passport::app.acl.passports.publish',
         'route' => 'admin.catalog.passports.publish',
@@ -32,10 +37,41 @@ return [
         'route' => 'admin.catalog.passports.republish',
         'sort'  => 2,
     ], [
+        'key'   => 'catalog.passport.publish',
+        'name'  => 'passport::app.acl.passports.publish',
+        'route' => 'admin.catalog.passports.mass_publish',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.passport.publish',
+        'name'  => 'passport::app.acl.passports.publish',
+        'route' => 'admin.catalog.passports.bulk-publish',
+        'sort'  => 2,
+    ], [
         'key'   => 'catalog.passport.withdraw',
         'name'  => 'passport::app.acl.passports.withdraw',
         'route' => 'admin.catalog.passports.withdraw',
         'sort'  => 3,
+    ], [
+        'key'   => 'catalog.passport.withdraw',
+        'name'  => 'passport::app.acl.passports.withdraw',
+        'route' => 'admin.catalog.passports.reinstate',
+        'sort'  => 3,
+    ], [
+        'key'   => 'catalog.passport.withdraw',
+        'name'  => 'passport::app.acl.passports.withdraw',
+        'route' => 'admin.catalog.passports.mass_transition',
+        'sort'  => 3,
+    ], [
+        /**
+         * The group node for `catalog.passport.template.*`. Without an entry of
+         * its own the tree seeds it headless, and Core::sortItems() drops every
+         * headless node — taking the four template permissions with it, so they
+         * never reach the role form.
+         */
+        'key'   => 'catalog.passport.template',
+        'name'  => 'passport::app.acl.templates.index',
+        'route' => null,
+        'sort'  => 4,
     ], [
         'key'   => 'catalog.passport.template.view',
         'name'  => 'passport::app.acl.templates.view',

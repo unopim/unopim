@@ -13,7 +13,13 @@ class DefaultFilter extends AbstractElasticSearchAttributeFilter
 {
     public function __construct(
         array $supportedAttributeTypes = [Attribute::GALLERY_ATTRIBUTE_TYPE, Attribute::IMAGE_ATTRIBUTE_TYPE, Attribute::FILE_ATTRIBUTE_TYPE],
-        array $allowedOperators = [FilterOperators::IN, FilterOperators::CONTAINS]
+        array $allowedOperators = [
+            FilterOperators::IN,
+            FilterOperators::CONTAINS,
+            FilterOperators::EQUAL,
+            FilterOperators::IS_EMPTY,
+            FilterOperators::IS_NOT_EMPTY,
+        ]
     ) {
         $this->supportedAttributeTypes = $supportedAttributeTypes;
         $this->allowedOperators = $allowedOperators;
@@ -71,6 +77,23 @@ class DefaultFilter extends AbstractElasticSearchAttributeFilter
                 ];
 
                 $this->queryBuilder->where($clause);
+                break;
+
+            case FilterOperators::EQUAL:
+                $this->queryBuilder->where([
+                    'term' => [$attributePath.'.keyword' => current((array) $value)],
+                ]);
+
+                break;
+
+            case FilterOperators::IS_EMPTY:
+                $this->queryBuilder->whereNot(['exists' => ['field' => $attributePath]]);
+
+                break;
+
+            case FilterOperators::IS_NOT_EMPTY:
+                $this->queryBuilder->where(['exists' => ['field' => $attributePath]]);
+
                 break;
         }
 

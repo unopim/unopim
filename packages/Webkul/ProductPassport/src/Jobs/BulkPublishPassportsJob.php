@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\PublishPassportForProductChannelJob;
 use Webkul\Publication\Models\PublicationProxy;
 
@@ -14,6 +15,8 @@ use Webkul\Publication\Models\PublicationProxy;
  * Bulk publish: chunks the selected publications and re-dispatches one PublishPassportForProductChannelJob per (product, channel).
  *
  * Queued so an arbitrarily large grid selection never runs in the web request.
+ * Withdrawn and redacted rows are filtered out here rather than dispatched and
+ * refused downstream.
  */
 class BulkPublishPassportsJob implements ShouldQueue
 {
@@ -39,6 +42,7 @@ class BulkPublishPassportsJob implements ShouldQueue
         PublicationProxy::modelClass()::query()
             ->whereIn('id', $this->publicationIds)
             ->where('type', 'dpp')
+            ->whereIn('status', PublicationStatus::publishable())
             ->with('channel.locales')
             ->chunkById(self::CHUNK, function ($publications): void {
                 foreach ($publications as $publication) {

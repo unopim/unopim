@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Start executie job',
         'completed' => 'Finalizare executie job',
+        'stalled'   => 'Sarcina nu a mai răspuns timp de peste :minutes minute și a fost marcată ca eșuată. Procesul care o executa a fost probabil oprit.',
+        'reaped'    => 'Au fost marcate :count sarcini blocate ca eșuate.',
     ],
 ];

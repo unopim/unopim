@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 use Webkul\DataTransfer\Buffer\FileBuffer;
 use Webkul\DataTransfer\Contracts\JobTrack as JobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
+use Webkul\DataTransfer\Helpers\Concerns\TracksJobHeartbeat;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
@@ -16,6 +17,8 @@ use Webkul\DataTransfer\Services\JobLogger;
 
 class Export
 {
+    use TracksJobHeartbeat;
+
     /**
      * export state for pending export
      */
@@ -196,7 +199,14 @@ class Export
 
         $this->setExport($export);
 
+        $this->heartbeat(force: true);
+
         return $this;
+    }
+
+    protected function getHeartbeatTrack(): mixed
+    {
+        return $this->export ?? null;
     }
 
     /**
@@ -211,6 +221,8 @@ class Export
         ], $this->export->id);
 
         $this->setExport($export);
+
+        $this->heartbeat(force: true);
 
         Event::dispatch('data_transfer.exports.started', $export);
 

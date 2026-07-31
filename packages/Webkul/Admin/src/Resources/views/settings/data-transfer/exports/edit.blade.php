@@ -15,7 +15,16 @@
             :save-label="trans('admin::app.settings.data-transfer.exports.edit.save-btn')"
             form="export-profile-edit-form"
             :sticky="false"
-        />
+        >
+            <x-slot:actions>
+                <a
+                    href="{{ route('admin.settings.data_transfer.exports.export-view', $export->id) }}"
+                    class="secondary-button"
+                >
+                    @lang('admin::app.settings.data-transfer.exports.index.datagrid.export')
+                </a>
+            </x-slot>
+        </x-admin::layouts.edit-page-header>
     </x-slot>
 
     {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.before') !!}

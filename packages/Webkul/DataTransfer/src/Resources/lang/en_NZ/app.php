@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Job execution started',
         'completed' => 'Job execution completed',
+        'stalled'   => 'The job stopped responding for more than :minutes minutes and was marked as failed. Its worker was most likely terminated.',
+        'reaped'    => 'Marked :count stalled jobs as failed.',
     ],
 ];

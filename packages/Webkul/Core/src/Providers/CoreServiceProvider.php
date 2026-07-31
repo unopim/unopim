@@ -6,7 +6,7 @@ use Elastic\Elasticsearch\Client as ElasticSearchClient;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\AliasLoader;
-use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -37,6 +37,8 @@ use Webkul\Theme\ViewRenderEventManager;
 
 class CoreServiceProvider extends ServiceProvider
 {
+    const MAIL_CONFIGURED_KEY = 'mail.configured';
+
     /**
      * Bootstrap services.
      */
@@ -61,14 +63,12 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
-        $this->overrideMailConfiguration();
-
-        Event::listen(JobProcessing::class, function (): void {
+        $this->app->beforeResolving(MailManager::class, function (): void {
             $this->overrideMailConfiguration();
         });
 
         Event::listen('core.configuration.save.after', function (): void {
-            $this->overrideMailConfiguration();
+            app(RequestMemo::class)->forget(self::MAIL_CONFIGURED_KEY);
         });
 
         $this->app['router']->pushMiddlewareToGroup('web', EnableDebugForAllowedIps::class);
@@ -128,13 +128,20 @@ class CoreServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register services.
-     */
-    /**
-     * Override the mail transport with admin Configuration (Email settings) values when present.
+     * Override the mail transport with admin Configuration (Email settings) values
+     * when present. Deferred until a mailer is resolved: reading the settings costs
+     * a schema check and several config queries, and almost no request sends mail.
      */
     protected function overrideMailConfiguration(): void
     {
+        $memo = app(RequestMemo::class);
+
+        if ($memo->has(self::MAIL_CONFIGURED_KEY)) {
+            return;
+        }
+
+        $memo->set(self::MAIL_CONFIGURED_KEY, true);
+
         try {
             if (! Schema::hasTable('core_config')) {
                 return;

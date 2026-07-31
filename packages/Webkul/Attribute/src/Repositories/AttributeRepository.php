@@ -16,6 +16,8 @@ class AttributeRepository extends Repository
 {
     use HtmlPurifier;
 
+    const BOOLEAN_FIELDS = ['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate'];
+
     protected $attributes = [];
 
     /**
@@ -79,7 +81,7 @@ class AttributeRepository extends Repository
             $data['is_filterable'] = 1;
         }
 
-        $attribute->update($validatedData);
+        $attribute->update($this->withoutUnchangedFlags($validatedData, $attribute));
 
         if (in_array($attribute->type, ['select', 'multiselect', 'checkbox']) && isset($data['options'])) {
             foreach ($data['options'] as $optionId => $optionInputs) {
@@ -102,6 +104,28 @@ class AttributeRepository extends Repository
     }
 
     /**
+     * Postgres hands these columns back as PHP booleans, so submitting the same
+     * flag as 0/1 reads as dirty and rewrites the row — plus an audit entry —
+     * on every save, even a label-only one.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function withoutUnchangedFlags(array $data, Attribute $attribute): array
+    {
+        foreach (self::BOOLEAN_FIELDS as $field) {
+            if (
+                array_key_exists($field, $data)
+                && (int) $attribute->{$field} === (int) $data[$field]
+            ) {
+                unset($data[$field]);
+            }
+        }
+
+        return $data;
+    }
+
+    /**
      * Validate user input.
      */
     public function validateUserInput(array $data): array
@@ -112,7 +136,7 @@ class AttributeRepository extends Repository
 
         // Cast boolean fields to 0/1 — unchecked checkboxes send null/empty
         // which violates PostgreSQL NOT NULL constraints.
-        foreach (['is_required', 'is_unique', 'enable_wysiwyg', 'is_filterable', 'ai_translate'] as $boolField) {
+        foreach (self::BOOLEAN_FIELDS as $boolField) {
             if (array_key_exists($boolField, $data)) {
                 $data[$boolField] = (int) (bool) $data[$boolField];
             }

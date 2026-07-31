@@ -93,6 +93,8 @@ WORKDIR /var/www/html
 COPY . .
 COPY --from=composer /app/vendor ./vendor
 
+RUN touch vendor/composer/installed.json
+
 # Align www-data with the host user so bind-mounted storage stays
 # writable on both sides (defaults keep the stock image behavior).
 ARG HOST_UID=33
@@ -112,7 +114,8 @@ RUN git config --system --add safe.directory /var/www/html
 
 EXPOSE 9000
 
-HEALTHCHECK --interval=30s --timeout=10s --start-period=90s --retries=3 \
-    CMD ["php-fpm","-t"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=180s --retries=3 \
+    CMD test -f /var/www/html/storage/unopim.lock \
+        && timeout 5 bash -c 'exec 3<>/dev/tcp/127.0.0.1/9000'
 
 ENTRYPOINT ["/var/www/html/dockerfiles/fpm-entrypoint.sh"]

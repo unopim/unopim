@@ -295,5 +295,7 @@ return [
     'job' => [
         'started'   => 'Início da execução do trabalho',
         'completed' => 'Conclusão da execução do trabalho',
+        'stalled'   => 'A tarefa parou de responder por mais de :minutes minutos e foi marcada como falha. O processo que a executava provavelmente foi encerrado.',
+        'reaped'    => ':count tarefas travadas foram marcadas como falha.',
     ],
 ];

@@ -2,7 +2,10 @@
 
 namespace Webkul\Publication\Listeners;
 
+use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Events\PublicationPublished;
+use Webkul\Publication\Events\PublicationReinstated;
+use Webkul\Publication\Events\PublicationWithdrawn;
 use Webkul\Publication\Models\PublicationProxy;
 
 /**
@@ -10,19 +13,25 @@ use Webkul\Publication\Models\PublicationProxy;
  * (not $publication->update()) deliberately bypasses Eloquent events — these
  * are derived counters, not attested state, and firing history/audit
  * machinery for them on every publish would be noise.
+ *
+ * Live means publicly reachable, so a withdrawn or redacted passport counts
+ * zero however many current versions it holds: the public routes gate on the
+ * publication's status, not on the versions. `last_published_at` stays put —
+ * it is history, not a live signal.
  */
 class SyncPublicationCounters
 {
-    public function handle(PublicationPublished $event): void
+    public function handle(PublicationPublished|PublicationWithdrawn|PublicationReinstated $event): void
     {
         $publication = $event->publication;
 
-        $liveLocaleCount = $publication->versions()->where('is_current', true)->count();
-        $lastPublishedAt = $publication->versions()->where('is_current', true)->max('published_at');
+        $currentVersions = $publication->versions()->where('is_current', true);
 
         PublicationProxy::modelClass()::query()->whereKey($publication->id)->update([
-            'live_locale_count' => $liveLocaleCount,
-            'last_published_at' => $lastPublishedAt,
+            'live_locale_count' => $publication->status === PublicationStatus::Published
+                ? $currentVersions->count()
+                : 0,
+            'last_published_at' => $currentVersions->max('published_at'),
         ]);
     }
 }

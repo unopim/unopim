@@ -5,7 +5,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Middleware\TrustProxies;
 use Webkul\Admin\Http\Middleware\ConvertAjaxFormRedirect;
-use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
 use Webkul\Core\Http\Middleware\NoCacheMiddleware;
 use Webkul\Core\Http\Middleware\SecureHeaders;
 use Webkul\Installer\Http\Middleware\CanInstall;
@@ -35,7 +34,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append([
             SecureHeaders::class,
             NoCacheMiddleware::class,
-            CheckForMaintenanceMode::class,
             CanInstall::class,
         ]);
 
@@ -52,6 +50,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 $schedule->command('unopim:category:index')->twiceDailyAt(0, 12, 1);
                 $schedule->command('unopim:completeness:recalculate', ['--all'])->dailyAt('02:00');
                 $schedule->command('unopim:dashboard:refresh')->everyTenMinutes();
+                $schedule->command('unopim:data-transfer:reap-stalled')->everyFiveMinutes();
             });
     })
     ->withExceptions()
