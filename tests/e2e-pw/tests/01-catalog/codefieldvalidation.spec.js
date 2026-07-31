@@ -103,7 +103,7 @@ async function deleteAttribute(adminPage, code) {
 test.describe('Code field validation — Category', () => {
   test.beforeEach(async ({ adminPage }) => {
     await navigateTo(adminPage, 'categories');
-    await adminPage.getByRole('link', { name: 'Create Category' }).click();
+    await adminPage.getByRole('link', { name: 'Add Category' }).click();
     await adminPage.waitForLoadState('load');
     await waitForCodeHydration(adminPage);
   });

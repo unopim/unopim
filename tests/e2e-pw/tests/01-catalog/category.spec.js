@@ -9,7 +9,7 @@ const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../.
  */
 async function openCreateForm(adminPage) {
   await navigateTo(adminPage, 'categories');
-  await adminPage.getByRole('link', { name: 'Create Category' }).click();
+  await adminPage.getByRole('link', { name: 'Add Category' }).click();
   await adminPage.waitForLoadState('networkidle');
   await adminPage.locator('input[name="code"]').waitFor({ state: 'visible' });
   await adminPage.waitForTimeout(1200);
@@ -38,7 +38,7 @@ async function createCategory(adminPage, code, name) {
  * Helper: Delete a category by code.
  */
 async function deleteCategory(adminPage, code) {
-  await navigateTo(adminPage, 'categories');
+  await navigateTo(adminPage, 'categoriesList');
   await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
   await adminPage.keyboard.press('Enter');
   await adminPage.waitForLoadState('networkidle');
@@ -91,7 +91,7 @@ test.describe('UnoPim Category Tests', () => {
 
   test('should allow category search', async ({ adminPage }) => {
     // Use seeded root category
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('root');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -99,13 +99,13 @@ test.describe('UnoPim Category Tests', () => {
   });
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.getByText('Filter', { exact: true }).click();
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 
   test('should allow setting items per page', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
     await expect(perPageBtn).toBeVisible({ timeout: 20000 });
     await perPageBtn.click();
@@ -121,7 +121,7 @@ test.describe('UnoPim Category Tests', () => {
     await createCategory(adminPage, code, `Action Cat ${uid}`);
 
     // Search and verify Edit action
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -130,7 +130,7 @@ test.describe('UnoPim Category Tests', () => {
     await expect(adminPage).toHaveURL(/\/admin\/catalog\/categories\/edit/);
 
     // Go back, search again, verify Delete shows confirmation
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -144,7 +144,7 @@ test.describe('UnoPim Category Tests', () => {
   });
 
   test('should allow selecting all categories with the mass action checkbox', async ({ adminPage }) => {
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.click('label[for="mass_action_select_all_records"]');
     await expect(adminPage.locator('#mass_action_select_all_records')).toBeChecked();
   });
@@ -157,7 +157,7 @@ test.describe('UnoPim Category Tests', () => {
     await createCategory(adminPage, code, `Before Update ${uid}`);
 
     // Search and edit
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -181,7 +181,7 @@ test.describe('UnoPim Category Tests', () => {
     await createCategory(adminPage, code, `Delete Me ${uid}`);
 
     // Search and delete
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill(code);
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');
@@ -193,7 +193,7 @@ test.describe('UnoPim Category Tests', () => {
 
   test('Delete Root Category', async ({ adminPage }) => {
     // Root category should not be deletable
-    await navigateTo(adminPage, 'categories');
+    await navigateTo(adminPage, 'categoriesList');
     await adminPage.getByRole('textbox', { name: 'Search' }).fill('root');
     await adminPage.keyboard.press('Enter');
     await adminPage.waitForLoadState('networkidle');

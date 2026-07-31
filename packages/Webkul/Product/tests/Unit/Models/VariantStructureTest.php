@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Contracts\VariantPlacementSuggester;
+use Webkul\Product\Contracts\VariantStructurePlanner;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Repositories\VariantStructureRepository;
 
@@ -45,7 +45,7 @@ it('creates a variant structure with axes and placements', function () {
         ->and($structure->fresh()->placements->first()->level)->toBe('variant');
 });
 
-it('binds the placement suggester contract', function () {
-    expect(app(VariantPlacementSuggester::class))
-        ->toBeInstanceOf(Webkul\Product\Services\VariantPlacementSuggester::class);
+it('binds the structure planner contract', function () {
+    expect(app(VariantStructurePlanner::class))
+        ->toBeInstanceOf(Webkul\Product\Services\VariantStructurePlanner::class);
 });

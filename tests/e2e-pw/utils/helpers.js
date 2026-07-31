@@ -8,6 +8,7 @@ const ROUTES = {
   dashboard:         '/admin/dashboard',
   products:          '/admin/catalog/products',
   categories:        '/admin/catalog/categories',
+  categoriesList:    '/admin/catalog/categories?view=list',
   categoryFields:    '/admin/catalog/category-fields',
   attributes:        '/admin/catalog/attributes',
   attributeGroups:   '/admin/catalog/attribute-groups',
