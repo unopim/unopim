@@ -12,7 +12,7 @@ const fs = require('fs');
 const path = require('path');
 const { chromium, request } = require('@playwright/test');
 
-const CONFIG_PATH = path.resolve(__dirname, '../.api-config.json');
+const CONFIG_PATH = path.resolve(__dirname, '..', process.env.PW_API_CONFIG || '.api-config.json');
 
 function writeConfig(config) {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');

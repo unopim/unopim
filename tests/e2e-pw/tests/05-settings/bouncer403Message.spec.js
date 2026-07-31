@@ -74,23 +74,9 @@ async function createUserWithRole(adminPage, { name, email, password, roleName }
   await adminPage.getByRole('textbox', { name: 'Password', exact: true }).fill(password);
   await adminPage.getByRole('textbox', { name: 'Confirm Password' }).fill(password);
 
-  // Select UI Locale
-  const localeMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="ui_locale_id"]') });
-  await localeMultiselect.locator('.multiselect__tags').click();
-  await adminPage.waitForTimeout(300);
-  const localeOption = adminPage.getByRole('option', { name: 'English (United States)' }).first();
-  await localeOption.waitFor({ state: 'visible', timeout: 10000 });
-  await localeOption.click();
-
-  // Select Timezone
-  const tzMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="timezone"]') });
-  await tzMultiselect.locator('.multiselect__tags').click();
-  await adminPage.waitForTimeout(300);
-  await adminPage.keyboard.type('UTC');
-  await adminPage.waitForTimeout(500);
-  const tzOption = adminPage.getByRole('option', { name: /UTC/ }).first();
-  await tzOption.waitFor({ state: 'visible', timeout: 10000 });
-  await tzOption.click();
+  // UI locale, catalog locale, default channel and timezone controls only
+  // render once editing an existing user (`v-if="isUpdating"`); the create
+  // modal only asks for name, email, password and role.
 
   // Select the specific role
   const roleMultiselect = adminPage.locator('.multiselect').filter({ has: adminPage.locator('input[name="role_id"]') });

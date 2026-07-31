@@ -15,7 +15,9 @@ function randomCurrencyCode() {
  * Helper: Fill the currency creation modal fields.
  */
 async function fillCurrencyModal(adminPage, { code = '', symbol = '', decimal = '2', enableStatus = true } = {}) {
-  await adminPage.getByRole('textbox', { name: 'Code', exact: true }).fill(code);
+  // The Code label now carries an ISO-4217 hint link, which pulls the anchor's
+  // title into the label's accessible name and breaks an exact-name match.
+  await adminPage.locator('input[name="code"]').fill(code);
   if (symbol) {
     await adminPage.getByRole('textbox', { name: 'Symbol' }).fill(symbol);
   }
