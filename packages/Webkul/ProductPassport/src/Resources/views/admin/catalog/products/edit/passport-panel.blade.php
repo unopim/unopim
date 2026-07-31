@@ -23,12 +23,14 @@
                 type="button"
                 class="passport-publish-all-btn primary-button shrink-0"
                 data-locale-ids="{{ json_encode($passportRows->where('ready', true)->pluck('locale_id')->values()) }}"
-                title="{{ $passportOffline
-                    ? trans('passport::app.publications.publish-withdrawn')
-                    : ($passportRows->every('ready')
-                        ? trans('passport::app.catalog.products.edit.passport.publish-all')
-                        : trans('passport::app.catalog.products.edit.passport.publish-blocked')) }}"
-                @disabled($passportOffline || ! $passportRows->every('ready'))
+                title="{{ ! $passportPublicAccess
+                    ? trans('passport::app.publications.public-access-disabled')
+                    : ($passportOffline
+                        ? trans('passport::app.publications.publish-withdrawn')
+                        : ($passportRows->every('ready')
+                            ? trans('passport::app.catalog.products.edit.passport.publish-all')
+                            : trans('passport::app.catalog.products.edit.passport.publish-blocked'))) }}"
+                @disabled(! $passportPublicAccess || $passportOffline || ! $passportRows->every('ready'))
             >
                 {{ trans('passport::app.catalog.products.edit.passport.publish-all') }}
             </button>
@@ -42,6 +44,27 @@
             data-republish-url="{{ $passportRepublishUrl }}"
             class="grid gap-2.5"
         >
+            @if (! $passportPublicAccess)
+                <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex flex-wrap items-center gap-2.5">
+                    <x-admin::badge variant="warning">
+                        @lang('passport::app.catalog.products.edit.passport.public-access-badge')
+                    </x-admin::badge>
+
+                    <p class="text-xs text-gray-600 dark:text-gray-300">
+                        @lang('passport::app.publications.public-access-disabled')
+                    </p>
+
+                    @if ($passportSettingsUrl !== null)
+                        <a
+                            href="{{ $passportSettingsUrl }}"
+                            class="text-xs text-primary-600 dark:text-primary-400 underline"
+                        >
+                            @lang('passport::app.catalog.products.edit.passport.public-access-settings')
+                        </a>
+                    @endif
+                </div>
+            @endif
+
             @if ($passportOffline)
                 <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow flex items-center gap-2.5">
                     <x-admin::badge variant="danger">
@@ -187,12 +210,14 @@
                                                             type="button"
                                                             class="passport-publish-btn primary-button"
                                                             data-locale-id="{{ $row['locale_id'] }}"
-                                                            title="{{ $passportOffline
-                                                                ? trans('passport::app.publications.publish-withdrawn')
-                                                                : ($row['ready']
-                                                                    ? trans('passport::app.catalog.products.edit.passport.publish')
-                                                                    : trans('passport::app.catalog.products.edit.passport.publish-blocked')) }}"
-                                                            @disabled($passportOffline || ! $row['ready'])
+                                                            title="{{ ! $passportPublicAccess
+                                                                ? trans('passport::app.publications.public-access-disabled')
+                                                                : ($passportOffline
+                                                                    ? trans('passport::app.publications.publish-withdrawn')
+                                                                    : ($row['ready']
+                                                                        ? trans('passport::app.catalog.products.edit.passport.publish')
+                                                                        : trans('passport::app.catalog.products.edit.passport.publish-blocked'))) }}"
+                                                            @disabled(! $passportPublicAccess || $passportOffline || ! $row['ready'])
                                                         >
                                                             {{ $row['version'] === null
                                                                 ? trans('passport::app.catalog.products.edit.passport.publish')
@@ -315,6 +340,10 @@
                                                                 type="button"
                                                                 class="passport-republish-btn secondary-button"
                                                                 data-version-id="{{ $version->id }}"
+                                                                title="{{ $passportPublicAccess
+                                                                    ? trans('passport::app.publications.versions.republish')
+                                                                    : trans('passport::app.publications.public-access-disabled') }}"
+                                                                @disabled(! $passportPublicAccess)
                                                             >
                                                                 @lang('passport::app.publications.versions.republish')
                                                             </button>
@@ -391,7 +420,7 @@
                         button.textContent = original;
                         button.disabled = false;
 
-                        flash('warning', @json(trans('passport::app.catalog.products.edit.passport.publish-still-running')));
+                        flash('warning', @json(trans('passport::app.publications.mass-publish.publish-still-running')));
 
                         return;
                     }
@@ -407,7 +436,7 @@
                 applyLocaleState(data.locales);
 
                 if (data.status === 'failed') {
-                    flash('error', @json(trans('passport::app.catalog.products.edit.passport.publish-failed')));
+                    flash('error', @json(trans('passport::app.publications.mass-publish.publish-failed')));
 
                     return;
                 }
@@ -423,8 +452,8 @@
                 flash(
                     published ? 'success' : 'info',
                     published
-                        ? @json(trans('passport::app.catalog.products.edit.passport.published-now')).replace(':count', published)
-                        : @json(trans('passport::app.catalog.products.edit.passport.publish-unchanged'))
+                        ? @json(trans('passport::app.publications.mass-publish.published-now')).replace(':count', published)
+                        : @json(trans('passport::app.publications.mass-publish.publish-unchanged'))
                 );
             })
             .catch(function () {

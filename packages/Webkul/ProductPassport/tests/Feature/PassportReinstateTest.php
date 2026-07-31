@@ -138,6 +138,9 @@ it('reports how many selected passports the bulk publish skipped', function (): 
 
     resolve(Publisher::class)->withdraw($withdrawn);
 
+    $this->enablePublicTier($published->channel->code);
+    $this->enablePublicTier($withdrawn->channel->code);
+
     $this->loginWithPermissions('all');
 
     Bus::fake();
