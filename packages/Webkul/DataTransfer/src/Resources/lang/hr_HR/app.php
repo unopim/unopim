@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Primjer datoteke',
-        'variants' => 'Primjer varijanti',
-        'multi-locale' => 'Višejezični primjer',
-        'delete' => 'Primjer brisanja',
+        'default'       => 'Primjer datoteke',
+        'variants'      => 'Primjer varijanti',
+        'multi-locale'  => 'Višejezični primjer',
+        'delete'        => 'Primjer brisanja',
         'custom-fields' => 'Primjer prilagođenih polja',
-        'with-images' => 'Primjer sa slikama (ZIP)',
+        'with-images'   => 'Primjer sa slikama (ZIP)',
     ],
 
     'importers' => [

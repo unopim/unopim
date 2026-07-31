@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Voorbeeldbestand',
-        'variants' => 'Voorbeeld met varianten',
-        'multi-locale' => 'Meertalig voorbeeld',
-        'delete' => 'Voorbeeld voor verwijderen',
+        'default'       => 'Voorbeeldbestand',
+        'variants'      => 'Voorbeeld met varianten',
+        'multi-locale'  => 'Meertalig voorbeeld',
+        'delete'        => 'Voorbeeld voor verwijderen',
         'custom-fields' => 'Voorbeeld met aangepaste velden',
-        'with-images' => 'Voorbeeld met afbeeldingen (ZIP)',
+        'with-images'   => 'Voorbeeld met afbeeldingen (ZIP)',
     ],
 
     'importers' => [

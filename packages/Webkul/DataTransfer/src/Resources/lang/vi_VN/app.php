@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Tệp mẫu',
-        'variants' => 'Ví dụ biến thể',
-        'multi-locale' => 'Ví dụ đa ngôn ngữ',
-        'delete' => 'Ví dụ xóa',
+        'default'       => 'Tệp mẫu',
+        'variants'      => 'Ví dụ biến thể',
+        'multi-locale'  => 'Ví dụ đa ngôn ngữ',
+        'delete'        => 'Ví dụ xóa',
         'custom-fields' => 'Ví dụ trường tùy chỉnh',
-        'with-images' => 'Mẫu kèm hình ảnh (ZIP)',
+        'with-images'   => 'Mẫu kèm hình ảnh (ZIP)',
     ],
 
     'importers' => [

@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Halimbawang file',
-        'variants' => 'Halimbawa ng mga variant',
-        'multi-locale' => 'Halimbawang multi-locale',
-        'delete' => 'Halimbawa ng pagtanggal',
+        'default'       => 'Halimbawang file',
+        'variants'      => 'Halimbawa ng mga variant',
+        'multi-locale'  => 'Halimbawang multi-locale',
+        'delete'        => 'Halimbawa ng pagtanggal',
         'custom-fields' => 'Halimbawa ng custom na field',
-        'with-images' => 'Halimbawa na may mga larawan (ZIP)',
+        'with-images'   => 'Halimbawa na may mga larawan (ZIP)',
     ],
 
     'importers' => [

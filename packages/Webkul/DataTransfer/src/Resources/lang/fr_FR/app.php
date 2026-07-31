@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Fichier d\'exemple',
-        'variants' => 'Exemple de variantes',
-        'multi-locale' => 'Exemple multilingue',
-        'delete' => 'Exemple de suppression',
+        'default'       => 'Fichier d\'exemple',
+        'variants'      => 'Exemple de variantes',
+        'multi-locale'  => 'Exemple multilingue',
+        'delete'        => 'Exemple de suppression',
         'custom-fields' => 'Exemple de champs personnalisés',
-        'with-images' => 'Exemple avec images (ZIP)',
+        'with-images'   => 'Exemple avec images (ZIP)',
     ],
 
     'importers' => [

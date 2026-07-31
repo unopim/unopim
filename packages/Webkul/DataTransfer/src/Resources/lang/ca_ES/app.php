@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Fitxer d\'exemple',
-        'variants' => 'Exemple de variants',
-        'multi-locale' => 'Exemple multilingüe',
-        'delete' => 'Exemple d\'eliminació',
+        'default'       => 'Fitxer d\'exemple',
+        'variants'      => 'Exemple de variants',
+        'multi-locale'  => 'Exemple multilingüe',
+        'delete'        => 'Exemple d\'eliminació',
         'custom-fields' => 'Exemple de camps personalitzats',
-        'with-images' => 'Exemple amb imatges (ZIP)',
+        'with-images'   => 'Exemple amb imatges (ZIP)',
     ],
 
     'importers' => [

@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Жишээ файл',
-        'variants' => 'Хувилбарын жишээ',
-        'multi-locale' => 'Олон хэлний жишээ',
-        'delete' => 'Устгах жишээ',
+        'default'       => 'Жишээ файл',
+        'variants'      => 'Хувилбарын жишээ',
+        'multi-locale'  => 'Олон хэлний жишээ',
+        'delete'        => 'Устгах жишээ',
         'custom-fields' => 'Тусгай талбарын жишээ',
-        'with-images' => 'Зурагтай жишээ (ZIP)',
+        'with-images'   => 'Зурагтай жишээ (ZIP)',
     ],
 
     'importers' => [

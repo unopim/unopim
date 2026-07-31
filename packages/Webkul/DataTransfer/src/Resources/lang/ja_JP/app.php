@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'サンプルファイル',
-        'variants' => 'バリエーションの例',
-        'multi-locale' => '多言語の例',
-        'delete' => '削除の例',
+        'default'       => 'サンプルファイル',
+        'variants'      => 'バリエーションの例',
+        'multi-locale'  => '多言語の例',
+        'delete'        => '削除の例',
         'custom-fields' => 'カスタムフィールドの例',
-        'with-images' => '画像付きサンプル (ZIP)',
+        'with-images'   => '画像付きサンプル (ZIP)',
     ],
 
     'importers' => [

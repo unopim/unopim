@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Berkas contoh',
-        'variants' => 'Contoh varian',
-        'multi-locale' => 'Contoh multi-lokal',
-        'delete' => 'Contoh penghapusan',
+        'default'       => 'Berkas contoh',
+        'variants'      => 'Contoh varian',
+        'multi-locale'  => 'Contoh multi-lokal',
+        'delete'        => 'Contoh penghapusan',
         'custom-fields' => 'Contoh bidang khusus',
-        'with-images' => 'Contoh dengan gambar (ZIP)',
+        'with-images'   => 'Contoh dengan gambar (ZIP)',
     ],
 
     'importers' => [

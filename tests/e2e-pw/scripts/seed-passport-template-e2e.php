@@ -21,6 +21,7 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Models\LocaleProxy;
 use Webkul\Product\Models\ProductProxy;
+use Webkul\Product\Repositories\ProductRepository;
 
 require __DIR__.'/../../../vendor/autoload.php';
 
@@ -130,7 +131,7 @@ if ($product === null) {
     // route a real product-edit save takes.
     $product->update(['attribute_family_id' => $family->id]);
 
-    app(\Webkul\Product\Repositories\ProductRepository::class)->updateWithValues(
+    app(ProductRepository::class)->updateWithValues(
         ['values' => $values],
         $product->id,
     );

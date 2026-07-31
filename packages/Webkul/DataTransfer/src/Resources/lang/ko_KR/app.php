@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => '샘플 파일',
-        'variants' => '변형 예시',
-        'multi-locale' => '다국어 예시',
-        'delete' => '삭제 예시',
+        'default'       => '샘플 파일',
+        'variants'      => '변형 예시',
+        'multi-locale'  => '다국어 예시',
+        'delete'        => '삭제 예시',
         'custom-fields' => '사용자 정의 필드 예시',
-        'with-images' => '이미지 포함 샘플 (ZIP)',
+        'with-images'   => '이미지 포함 샘플 (ZIP)',
     ],
 
     'importers' => [

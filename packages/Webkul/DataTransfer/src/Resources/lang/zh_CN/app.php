@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => '示例文件',
-        'variants' => '变体示例',
-        'multi-locale' => '多语言示例',
-        'delete' => '删除示例',
+        'default'       => '示例文件',
+        'variants'      => '变体示例',
+        'multi-locale'  => '多语言示例',
+        'delete'        => '删除示例',
         'custom-fields' => '自定义字段示例',
-        'with-images' => '含图片的示例 (ZIP)',
+        'with-images'   => '含图片的示例 (ZIP)',
     ],
 
     'importers' => [

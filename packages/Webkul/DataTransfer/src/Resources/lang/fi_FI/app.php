@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Mallitiedosto',
-        'variants' => 'Muunnelmaesimerkki',
-        'multi-locale' => 'Monikielinen esimerkki',
-        'delete' => 'Poistoesimerkki',
+        'default'       => 'Mallitiedosto',
+        'variants'      => 'Muunnelmaesimerkki',
+        'multi-locale'  => 'Monikielinen esimerkki',
+        'delete'        => 'Poistoesimerkki',
         'custom-fields' => 'Mukautettujen kenttien esimerkki',
-        'with-images' => 'Esimerkki kuvien kanssa (ZIP)',
+        'with-images'   => 'Esimerkki kuvien kanssa (ZIP)',
     ],
 
     'importers' => [

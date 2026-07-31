@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'ملف نموذجي',
-        'variants' => 'مثال المتغيرات',
-        'multi-locale' => 'مثال متعدد اللغات',
-        'delete' => 'مثال الحذف',
+        'default'       => 'ملف نموذجي',
+        'variants'      => 'مثال المتغيرات',
+        'multi-locale'  => 'مثال متعدد اللغات',
+        'delete'        => 'مثال الحذف',
         'custom-fields' => 'مثال الحقول المخصصة',
-        'with-images' => 'نموذج مع صور (ZIP)',
+        'with-images'   => 'نموذج مع صور (ZIP)',
     ],
 
     'importers' => [

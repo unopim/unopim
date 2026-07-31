@@ -2,12 +2,12 @@
 
 return [
     'samples' => [
-        'default' => 'Eksempelfil',
-        'variants' => 'Eksempel med varianter',
-        'multi-locale' => 'Eksempel med flere sprog',
-        'delete' => 'Eksempel på sletning',
+        'default'       => 'Eksempelfil',
+        'variants'      => 'Eksempel med varianter',
+        'multi-locale'  => 'Eksempel med flere sprog',
+        'delete'        => 'Eksempel på sletning',
         'custom-fields' => 'Eksempel med brugerdefinerede felter',
-        'with-images' => 'Eksempel med billeder (ZIP)',
+        'with-images'   => 'Eksempel med billeder (ZIP)',
     ],
 
     'importers' => [
