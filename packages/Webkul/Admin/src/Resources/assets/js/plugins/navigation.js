@@ -173,6 +173,8 @@ export default function initAjaxNavigation() {
 
             document.title = doc.title;
 
+            syncDocumentLocale(doc);
+
             if (push) {
                 window.history.pushState({ ajaxNav: true }, '', finalUrl);
             }
@@ -188,6 +190,30 @@ export default function initAjaxNavigation() {
             return;
         } finally {
             toggleProgress(false);
+        }
+    }
+
+    /**
+     * Carry the swapped page's language and writing direction onto the live
+     * document. They live on <html>, outside the #app subtree a visit replaces,
+     * so a locale change would otherwise keep the previous lang and direction
+     * until the user reloaded by hand.
+     */
+    function syncDocumentLocale(doc) {
+        const next = doc.documentElement;
+
+        if (! next) {
+            return;
+        }
+
+        if (next.lang && next.lang !== document.documentElement.lang) {
+            document.documentElement.lang = next.lang;
+        }
+
+        const dir = next.getAttribute('dir');
+
+        if (dir && dir !== document.documentElement.getAttribute('dir')) {
+            document.documentElement.setAttribute('dir', dir);
         }
     }
 
