@@ -152,7 +152,7 @@
                             </div>
                         </div>
 
-                        <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden p-6">
+                        <div class="flex-1 min-h-0 overflow-y-auto overflow-x-clip p-6">
                             <slot
                                 name="content"
                                 :search="search"
