@@ -51,7 +51,7 @@ class WebhookService
      */
     public function sendBatchByIds(array $ids): ?Response
     {
-        return $this->deliverChunked('id', $ids);
+        return $this->deliverChunked('id', $ids, skipIfNoChanges: false);
     }
 
     public function sendBatchCreatedByIds(array $ids): ?Response
