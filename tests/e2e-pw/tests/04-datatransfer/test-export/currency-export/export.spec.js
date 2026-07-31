@@ -37,7 +37,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
     await expect(exportNowBtn).toBeVisible({ timeout: 5000 });
     await exportNowBtn.click();
 
-    await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
+    await expect(adminPage.locator('.overflow-hidden.box-shadow').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
 }
 
 /**

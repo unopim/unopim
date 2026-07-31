@@ -61,7 +61,7 @@ async function createExportWithStatusFilter(adminPage, code, statusLabel) {
   await exportNowBtn.click();
 
   // The export should be queued successfully, not fail with ES boolean error
-  await expect(adminPage.locator('#app').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
+  await expect(adminPage.locator('.overflow-hidden.box-shadow').getByText(/Job queued|Queued|Processing|Completed/i).first()).toBeVisible({ timeout: 20000 });
 }
 
 /**
