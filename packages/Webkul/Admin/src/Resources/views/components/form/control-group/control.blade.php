@@ -1301,6 +1301,7 @@
                     initialValue: this.value,
 
                     isLoading: false,
+                    isRehydrating: false,
                     optionsList: [],
                     timer: null,
                     delayTime: 500,
@@ -1366,6 +1367,12 @@
 
             watch: {
                 selectedValue(newValue) {
+                    if (this.isRehydrating) {
+                        this.isRehydrating = false;
+
+                        return;
+                    }
+
                     if (this.multiple && this.isInvalidMultipleValue(newValue)) {
                         this.$emit('input', newValue);
 
@@ -1515,6 +1522,7 @@
 
                 initializeValue() {
                     this.isLoading = true;
+                    this.isRehydrating = true;
                     this.params.identifiers = {
                         columnName: this.trackBy,
                         values: 'string' == typeof this.selectedValue ? this.selectedValue?.split(',') : this.selectedValue
@@ -1525,6 +1533,11 @@
                             this.selectedValue = this.multiple ? result.data.options : result.data.options[0];
 
                             this.params.identifiers = {};
+
+                            this.isLoading = false;
+                        })
+                        .catch(() => {
+                            this.isRehydrating = false;
 
                             this.isLoading = false;
                         })
