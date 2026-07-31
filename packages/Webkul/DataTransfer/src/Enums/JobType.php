@@ -61,6 +61,15 @@ enum JobType: string
         };
     }
 
+    public function editPermission(): ?string
+    {
+        return match ($this) {
+            self::IMPORT => 'data_transfer.imports.edit',
+            self::EXPORT => 'data_transfer.export.edit',
+            self::SYSTEM => null,
+        };
+    }
+
     public function executePermission(): string
     {
         return $this->isExport()

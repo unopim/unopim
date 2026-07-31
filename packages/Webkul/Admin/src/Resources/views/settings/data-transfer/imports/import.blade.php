@@ -88,8 +88,9 @@
                     </p>
                 </div>
                 @if (bouncer()->hasPermission('data_transfer.imports.execute'))
-                    <x-admin::form  
+                    <x-admin::form
                             :action="route('admin.settings.data_transfer.imports.import_now', ['id' => $import->id])"
+                            ajax="true"
                         >
 
                         @method('PUT')
