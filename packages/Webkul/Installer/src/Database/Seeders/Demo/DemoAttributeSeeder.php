@@ -31,6 +31,8 @@ class DemoAttributeSeeder extends Seeder
 
             $this->seedExtraOptions($data['extra_options']);
 
+            $this->applyBaseOverrides($data['base_overrides']);
+
             $this->applyMediaLimits($data['media_limits']);
 
             $this->promoteMeasurementAttributes($data['measurements']);
@@ -147,6 +149,20 @@ class DemoAttributeSeeder extends Seeder
             }
 
             $this->seedOptions($attributeId, $options);
+        }
+    }
+
+    /**
+     * Re-flag the attributes the base installer created. Only the listed flags
+     * are touched, so an attribute the operator already tuned keeps everything
+     * the demo does not have an opinion about.
+     *
+     * @param  array<string, array<string, bool>>  $overrides
+     */
+    protected function applyBaseOverrides(array $overrides): void
+    {
+        foreach ($overrides as $code => $flags) {
+            DB::table('attributes')->where('code', $code)->update($flags);
         }
     }
 

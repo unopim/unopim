@@ -364,14 +364,21 @@ class DemoProductSeeder extends Seeder
 
         $sku = $variant['sku'] ?? $product['sku'].'-'.$variant['suffix'];
 
-        $carriesMedia = $type === 'variant_group' || count($product['axes'] ?? []) === 1;
+        $media = $this->mediaValues($product);
+
+        // The gallery belongs to the level the structure assigns it to, but the
+        // main image is written on every row: the product grid renders each row
+        // on its own and shows a placeholder for anything without one.
+        $rowMedia = $type === 'variant_group' || count($product['axes'] ?? []) === 1
+            ? $media
+            : array_intersect_key($media, ['image' => true]);
 
         $values = [
             'common' => array_merge(
                 ['sku' => $sku, 'url_key' => $sku],
                 $variant['axis'],
                 $type === 'simple' ? ['ean' => $this->variantEan($product, $index)] : [],
-                $carriesMedia ? $this->mediaValues($product) : [],
+                $rowMedia,
             ),
         ];
 
