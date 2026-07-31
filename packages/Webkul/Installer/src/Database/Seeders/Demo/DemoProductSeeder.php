@@ -50,12 +50,16 @@ class DemoProductSeeder extends Seeder
     /** @var array<string, int> */
     protected array $attributeIds = [];
 
+    /** @var array<string, array<string, array<string, string>>> */
+    protected array $optionLabels = [];
+
     public function run(): void
     {
         $products = $this->catalog();
 
         $this->familyIds = DB::table('attribute_families')->pluck('id', 'code')->all();
         $this->attributeIds = DB::table('attributes')->pluck('id', 'code')->all();
+        $this->optionLabels = $this->loadOptionLabels();
 
         $channels = DB::table('channels')->pluck('code')->all();
 
@@ -360,17 +364,18 @@ class DemoProductSeeder extends Seeder
 
         $sku = $variant['sku'] ?? $product['sku'].'-'.$variant['suffix'];
 
+        $carriesMedia = $type === 'variant_group' || count($product['axes'] ?? []) === 1;
+
         $values = [
             'common' => array_merge(
                 ['sku' => $sku, 'url_key' => $sku],
                 $variant['axis'],
                 $type === 'simple' ? ['ean' => $this->variantEan($product, $index)] : [],
+                $carriesMedia ? $this->mediaValues($product) : [],
             ),
         ];
 
-        if ($type === 'simple') {
-            $values['channel_locale_specific'] = $this->variantPricing($product, $channels, $channelLocales);
-        }
+        $values['channel_locale_specific'] = $this->variantCopy($product, $variant, $type, $channels, $channelLocales);
 
         return (int) DB::table('products')->insertGetId([
             'sku'                  => $sku,
@@ -398,26 +403,86 @@ class DemoProductSeeder extends Seeder
     }
 
     /**
+     * Name and price for a row below the configurable. Without its own name a
+     * variant shows up as a blank row in the product grid, so each one is
+     * labelled with the axis values that distinguish it.
+     *
      * @param  array<string, mixed>  $product
+     * @param  array<string, mixed>  $variant
      * @param  array<int, string>  $channels
      * @param  array<string, array<int, string>>  $channelLocales
      * @return array<string, array<string, array<string, mixed>>>
      */
-    protected function variantPricing(array $product, array $channels, array $channelLocales): array
+    protected function variantCopy(array $product, array $variant, string $type, array $channels, array $channelLocales): array
     {
-        $pricing = [];
+        $values = [];
 
         foreach ($channels as $channel) {
             foreach ($channelLocales[$channel] ?? [] as $locale) {
-                if (! isset($product['locales'][$locale])) {
+                $copy = $product['locales'][$locale] ?? null;
+
+                if ($copy === null) {
                     continue;
                 }
 
-                $pricing[$channel][$locale]['price'] = $this->prices($product['prices'] ?? []);
+                $values[$channel][$locale]['name'] = trim($copy['name'].' — '.$this->axisLabel($variant['axis'], $locale));
+
+                if ($type === 'simple') {
+                    $values[$channel][$locale]['price'] = $this->prices($product['prices'] ?? []);
+                }
             }
         }
 
-        return $pricing;
+        return $values;
+    }
+
+    /**
+     * Human-readable label for a variant's axis values in the given locale,
+     * falling back to the option code when a translation is missing.
+     *
+     * @param  array<string, string>  $axis
+     */
+    protected function axisLabel(array $axis, string $locale): string
+    {
+        $labels = [];
+
+        foreach ($axis as $attributeCode => $optionCode) {
+            $labels[] = $this->optionLabels[$attributeCode][$optionCode][$locale]
+                ?? $this->optionLabels[$attributeCode][$optionCode]['en_US']
+                ?? $optionCode;
+        }
+
+        return implode(' / ', $labels);
+    }
+
+    /**
+     * Option labels indexed by attribute code, option code and locale.
+     *
+     * @return array<string, array<string, array<string, string>>>
+     */
+    protected function loadOptionLabels(): array
+    {
+        $rows = DB::table('attribute_options')
+            ->join('attributes', 'attributes.id', '=', 'attribute_options.attribute_id')
+            ->leftJoin('attribute_option_translations', 'attribute_option_translations.attribute_option_id', '=', 'attribute_options.id')
+            ->get([
+                'attributes.code as attribute_code',
+                'attribute_options.code as option_code',
+                'attribute_option_translations.locale',
+                'attribute_option_translations.label',
+            ]);
+
+        $labels = [];
+
+        foreach ($rows as $row) {
+            if ($row->locale === null) {
+                continue;
+            }
+
+            $labels[$row->attribute_code][$row->option_code][$row->locale] = $row->label;
+        }
+
+        return $labels;
     }
 
     /**
