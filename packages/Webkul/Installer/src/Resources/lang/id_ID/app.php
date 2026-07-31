@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Mata Uang yang Diizinkan',
                 'allowed-locales'     => 'Lokal yang Diizinkan',
+                'app-key-missing'     => 'File .env tidak ditemukan dan APP_KEY tidak disetel di lingkungan server. Penginstal tidak pernah menulis konfigurasi lingkungan — buat .env secara manual (salin .env.example) atau atur variabelnya di panel hosting Anda, lalu coba lagi.',
+                'env-readonly-note'   => 'Nilai-nilai ini dibaca dari lingkungan server Anda (.env). Penginstal tidak pernah menulis konfigurasi lingkungan — untuk mengubah sesuatu, edit file .env (atau variabel panel hosting Anda) lalu muat ulang halaman ini.',
                 'application-name'    => 'Nama Aplikasi',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan Tiongkok (CNY)',

@@ -265,6 +265,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Sallitut valuutat',
                 'allowed-locales'     => 'Sallitut paikalliset asetukset',
+                'app-key-missing'     => '.env-tiedostoa ei löytynyt eikä APP_KEY ole asetettuna palvelinympäristössä. Asennusohjelma ei koskaan kirjoita ympäristöasetuksia — luo .env käsin (kopioi .env.example) tai määritä muuttujat hosting-paneelissasi ja yritä sitten uudelleen.',
+                'env-readonly-note'   => 'Nämä arvot luetaan palvelinympäristöstäsi (.env). Asennusohjelma ei koskaan kirjoita ympäristöasetuksia — jos haluat muuttaa jotain, muokkaa .env-tiedostoa (tai hosting-paneelisi muuttujia) ja lataa tämä sivu uudelleen.',
                 'application-name'    => 'Sovelluksen nimi',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Kiinan Yuan (CNY)',

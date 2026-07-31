@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\URL;
+use Webkul\Installer\Http\Controllers\InstallerController;
 
 beforeEach(function () {
 
@@ -237,4 +238,19 @@ describe('Installer completion marker', function () {
         // Not sealed yet — the demo-data step still needs to run.
         expect(file_exists($this->marker))->toBeFalse();
     });
+});
+
+/**
+ * DB::purge() inside the reload would discard the suite's transaction and
+ * reconnect every later write to the workspace's real .env database, so under
+ * the test runner the reload must leave the configured connection untouched.
+ */
+it('never repoints the database connection at the physical .env under the test runner', function () {
+    $connection = config('database.default');
+    $sentinel = config("database.connections.{$connection}.database");
+
+    $method = new ReflectionMethod(InstallerController::class, 'reloadDatabaseConfigFromEnv');
+    $method->invoke(app(InstallerController::class));
+
+    expect(config("database.connections.{$connection}.database"))->toBe($sentinel);
 });

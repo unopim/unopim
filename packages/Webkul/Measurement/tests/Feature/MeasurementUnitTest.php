@@ -264,3 +264,15 @@ it('should update only the labels without requiring the symbol', function () {
     expect($family->units[0]['labels']['en_US'])->toBe('Metre')
         ->and($family->units[0]['symbol'])->toBe('m');
 });
+
+it('should not render the save button on the measurement family history tab', function () {
+    $family = familyWithUnits();
+
+    $this->get(route('admin.measurement.families.edit', $family->id))
+        ->assertOk()
+        ->assertSee('form="measurement_family_edit_form"', false);
+
+    $this->get(route('admin.measurement.families.edit', $family->id).'?history=1')
+        ->assertOk()
+        ->assertDontSee('form="measurement_family_edit_form"', false);
+});

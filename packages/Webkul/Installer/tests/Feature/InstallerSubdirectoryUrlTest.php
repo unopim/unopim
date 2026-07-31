@@ -61,10 +61,3 @@ it('switches wizard locale relative to the current path, not the web root', func
     expect($html)->not->toContain("window.location.href='/install?locale='")
         ->and($html)->toContain("window.location.pathname + '?locale='");
 });
-
-it('prefills the app url with the sub-directory base path', function () {
-    $html = $this->get('/install')->assertOk()->getContent();
-
-    expect($html)->not->toContain('defaultAppUrl: window.location.origin,')
-        ->and($html)->toContain("window.location.pathname.replace(/\/install\/?\$/, '')");
-});

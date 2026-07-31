@@ -360,188 +360,62 @@
                                     class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'envDatabase'"
                                 >
-                                    <x-installer::form
-                                        v-slot="{ meta, errors, handleSubmit }"
-                                        as="div"
-                                        ref="envDatabase"
-                                    >
-                                        <form
-                                            @submit.prevent="handleSubmit($event, FormSubmit)"
-                                            enctype="multipart/form-data"
-                                        >
-                                            <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
-                                                <p class="text-[18px] text-gray-800 font-bold">
-                                                    @lang('installer::app.installer.index.environment-configuration.title')
-                                                </p>
-                                            </div>
+                                    <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
+                                        <p class="text-[18px] text-gray-800 font-bold">
+                                            @lang('installer::app.installer.index.environment-configuration.title')
+                                        </p>
+                                    </div>
 
-                                            <div class="grid grid-cols-2 gap-x-6 gap-y-1 px-6 py-6 border-b border-gray-200 max-sm:grid-cols-1">
-                                                <!-- Database Connection-->
-                                                @php
-                                                    $currentDbConnection = in_array(config('database.default'), ['mysql', 'pgsql'], true)
-                                                        ? config('database.default')
-                                                        : 'mysql';
-                                                @endphp
-                                                <x-installer::form.control-group class="mb-2.5 col-span-2 max-sm:col-span-1">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.database-connection')
-                                                    </x-installer::form.control-group.label>
+                                    <div class="flex flex-col gap-3 px-6 py-6 border-b border-gray-200">
+                                        <div class="flex items-start gap-2 p-3 rounded-lg bg-warning/10 text-gray-800 text-[13px]">
+                                            <i class="icon-limited !text-black"></i>
 
-                                                    <x-installer::form.control-group.control
-                                                        type="select"
-                                                        name="db_connection"
-                                                        ::value="envData.db_connection ?? '{{ $currentDbConnection }}'"
-                                                        rules="required"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.database-connection')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.database-connection')"
-                                                    >
-                                                        <option
-                                                            value="mysql"
-                                                            {{ $currentDbConnection === 'mysql' ? 'selected' : '' }}
-                                                        >
-                                                            @lang('installer::app.installer.index.environment-configuration.mysql')
-                                                        </option>
+                                            @lang('installer::app.installer.index.environment-configuration.env-readonly-note')
+                                        </div>
 
-                                                        <option
-                                                            value="pgsql"
-                                                            {{ $currentDbConnection === 'pgsql' ? 'selected' : '' }}
-                                                        >
-                                                            @lang('installer::app.installer.index.environment-configuration.pgsql')
-                                                        </option>
-                                                    </x-installer::form.control-group.control>
+                                        <div class="grid grid-cols-2 gap-x-6 gap-y-3 max-sm:grid-cols-1">
+                                            @foreach ([
+                                                'default-url'         => $environmentSummary['app_url'],
+                                                'database-connection' => $environmentSummary['connection'],
+                                                'database-hostname'   => $environmentSummary['host'],
+                                                'database-port'       => $environmentSummary['port'],
+                                                'database-name'       => $environmentSummary['database'],
+                                                'database-username'   => $environmentSummary['username'],
+                                                'database-prefix'     => $environmentSummary['prefix'],
+                                            ] as $label => $value)
+                                                <div class="flex flex-col gap-1">
+                                                    <span class="text-[13px] font-semibold text-gray-600">
+                                                        @lang("installer::app.installer.index.environment-configuration.$label")
+                                                    </span>
 
-                                                    <x-installer::form.control-group.error control-name="db_connection" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Database Hostname-->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.database-hostname')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="text"
-                                                        name="db_hostname"
-                                                        ::value="envData.db_hostname ?? '127.0.0.1'"
-                                                        rules="required"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.database-hostname')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.database-hostname')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="db_hostname" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Database Port-->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.database-port')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="text"
-                                                        name="db_port"
-                                                        ::value="envData.db_port ?? '3306'"
-                                                        rules="required"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.database-port')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.database-port')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="db_port" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Database name-->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.database-name')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="text"
-                                                        name="db_name"
-                                                        ::value="envData.db_name"
-                                                        rules="required"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.database-name')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.database-name')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="db_name" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Database Prefix-->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label>
-                                                        @lang('installer::app.installer.index.environment-configuration.database-prefix')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="text"
-                                                        name="db_prefix"
-                                                        ::value="envData.db_prefix"
-                                                        rules="max:4"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.database-prefix')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.database-prefix')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="db_prefix" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Database Username-->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.database-username')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="text"
-                                                        name="db_username"
-                                                        ::value="envData.db_username"
-                                                        rules="required"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.database-username')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.database-username')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="db_username" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Database Password-->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label>
-                                                        @lang('installer::app.installer.index.environment-configuration.database-password')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="password"
-                                                        name="db_password"
-                                                        ::value="envData.db_password"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.database-password')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.database-password')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="db_password" />
-                                                </x-installer::form.control-group>
-                                            </div>
-
-                                            <div class="flex px-6 py-4 justify-between items-center">
-                                                <div
-                                                    class="inline-flex items-center px-4 py-2 rounded-lg border border-primary-700 text-primary-700 text-[14px] font-semibold cursor-pointer hover:bg-primary-50 transition-all"
-                                                    role="button"
-                                                    :aria-label="@lang('installer::app.installer.index.back')"
-                                                    tabindex="0"
-                                                    @click="back"
-                                                >
-                                                    @lang('installer::app.installer.index.back')
+                                                    <span class="text-[14px] text-gray-800 break-all">
+                                                        {{ $value !== '' ? $value : '—' }}
+                                                    </span>
                                                 </div>
+                                            @endforeach
+                                        </div>
+                                    </div>
 
-                                                <button
-                                                    type="submit"
-                                                    class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
-                                                    tabindex="0"
-                                                >
-                                                    @lang('installer::app.installer.index.continue')
-                                                </button>
-                                            </div>
-                                        </form>
-                                    </x-installer::form>
+                                    <div class="flex px-6 py-4 justify-between items-center">
+                                        <div
+                                            class="inline-flex items-center px-4 py-2 rounded-lg border border-primary-700 text-primary-700 text-[14px] font-semibold cursor-pointer hover:bg-primary-50 transition-all"
+                                            role="button"
+                                            :aria-label="@lang('installer::app.installer.index.back')"
+                                            tabindex="0"
+                                            @click="back"
+                                        >
+                                            @lang('installer::app.installer.index.back')
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            class="px-4 py-2 bg-primary-700 border border-primary-700 rounded-lg text-white text-[14px] font-semibold cursor-pointer hover:opacity-90"
+                                            tabindex="0"
+                                            @click="nextForm"
+                                        >
+                                            @lang('installer::app.installer.index.continue')
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <!-- Installation Processing (live terminal) -->
@@ -606,83 +480,6 @@
                                             </div>
 
                                             <div class="flex flex-col gap-3 px-6 py-6 border-b border-gray-200 max-h-[484px] overflow-y-auto">
-                                                <!-- Application Name -->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.application-name')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="text"
-                                                        name="app_name"
-                                                        ::value="envData.app_name ?? 'UnoPim'"
-                                                        rules="required"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.application-name')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.unopim')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="app_name" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Application Default URL -->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.default-url')
-                                                    </x-installer::form.control-group.label>
-
-                                                    <x-installer::form.control-group.control
-                                                        type="text"
-                                                        name="app_url"
-                                                        ::value="envConfigData.app_url ?? defaultAppUrl"
-                                                        rules="required"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.default-url')"
-                                                        :placeholder="trans('installer::app.installer.index.environment-configuration.default-url-link')"
-                                                    />
-
-                                                    <x-installer::form.control-group.error control-name="app_url" />
-                                                </x-installer::form.control-group>
-
-                                                <!-- Application Default Timezone -->
-                                                <x-installer::form.control-group class="mb-2.5">
-                                                    <x-installer::form.control-group.label class="required">
-                                                        @lang('installer::app.installer.index.environment-configuration.default-timezone')
-                                                    </x-installer::form.control-group.label>
-
-                                                    @php
-                                                        date_default_timezone_set('UTC');
-
-                                                        $tzlist = DateTimeZone::listIdentifiers(DateTimeZone::ALL);
-
-                                                        $current = date_default_timezone_get();
-                                                    @endphp
-
-                                                    <x-installer::form.control-group.control
-                                                        type="select"
-                                                        name="app_timezone"
-                                                        ::value="envData.app_timezone ?? $current ?? 'UTC'"
-                                                        rules="required"
-                                                        :aria-label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
-                                                        :label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
-                                                    >
-                                                        <option
-                                                            value=""
-                                                            disabled
-                                                        >
-                                                            @lang('installer::app.installer.index.environment-configuration.select-timezone')
-                                                        </option>
-
-                                                        @foreach($tzlist as $key => $value)
-                                                            <option
-                                                                value="{{ $value }}"
-                                                                {{ $value === $current ? 'selected' : '' }}
-                                                            >
-                                                                {{ $value }}
-                                                            </option>
-                                                        @endforeach
-                                                    </x-installer::form.control-group.control>
-
-                                                    <x-installer::form.control-group.error control-name="app_timezone" />
-                                                </x-installer::form.control-group>
 
                                                 <div class="flex items-start gap-2 p-3 rounded-lg bg-amber-100 text-gray-800 text-[13px]">
                                                     <i class="icon-limited !text-black"></i>
@@ -724,7 +521,7 @@
                                                         <x-installer::form.control-group.control
                                                             type="select"
                                                             name="app_currency"
-                                                            ::value="envData.app_currency ?? 'USD'"
+                                                            ::value="envConfigData.app_currency ?? 'USD'"
                                                             :aria-label="trans('installer::app.installer.index.environment-configuration.default-currency')"
                                                             rules="required"
                                                             :label="trans('installer::app.installer.index.environment-configuration.default-currency')"
@@ -826,172 +623,6 @@
                                                     </x-installer::form.control-group>
                                                 </div>
 
-                                                <!-- Elasticsearch Configuration -->
-                                                <div class="grid gap-3 pt-3 mt-1 border-t border-gray-100">
-                                                    <p class="text-[15px] font-bold text-gray-800">
-                                                        @lang('installer::app.installer.index.environment-configuration.elasticsearch.title')
-                                                    </p>
-
-                                                    <p class="text-[13px] text-gray-600 !leading-normal">
-                                                        @lang('installer::app.installer.index.environment-configuration.elasticsearch.info')
-                                                    </p>
-
-                                                    <!-- Enable Elasticsearch -->
-                                                    <x-installer::form.control-group class="mb-2.5">
-                                                        <x-installer::form.control-group.label>
-                                                            @lang('installer::app.installer.index.environment-configuration.elasticsearch.enable')
-                                                        </x-installer::form.control-group.label>
-
-                                                        <x-installer::form.control-group.control
-                                                            type="select"
-                                                            name="elasticsearch_enabled"
-                                                            v-model="elasticsearch.enabled"
-                                                            :aria-label="trans('installer::app.installer.index.environment-configuration.elasticsearch.enable')"
-                                                            :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.enable')"
-                                                        >
-                                                            <option value="no">@lang('installer::app.installer.index.environment-configuration.elasticsearch.no')</option>
-
-                                                            <option value="yes">@lang('installer::app.installer.index.environment-configuration.elasticsearch.yes')</option>
-                                                        </x-installer::form.control-group.control>
-
-                                                        <x-installer::form.control-group.error control-name="elasticsearch_enabled" />
-                                                    </x-installer::form.control-group>
-
-                                                    <template v-if="elasticsearch.enabled === 'yes'">
-                                                        <!-- Connection -->
-                                                        <x-installer::form.control-group class="mb-2.5">
-                                                            <x-installer::form.control-group.label>
-                                                                @lang('installer::app.installer.index.environment-configuration.elasticsearch.connection')
-                                                            </x-installer::form.control-group.label>
-
-                                                            <x-installer::form.control-group.control
-                                                                type="select"
-                                                                name="elasticsearch_connection"
-                                                                v-model="elasticsearch.connection"
-                                                                :aria-label="trans('installer::app.installer.index.environment-configuration.elasticsearch.connection')"
-                                                                :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.connection')"
-                                                            >
-                                                                <option value="default">@lang('installer::app.installer.index.environment-configuration.elasticsearch.connection-default')</option>
-
-                                                                <option value="api">@lang('installer::app.installer.index.environment-configuration.elasticsearch.connection-api')</option>
-
-                                                                <option value="cloud">@lang('installer::app.installer.index.environment-configuration.elasticsearch.connection-cloud')</option>
-                                                            </x-installer::form.control-group.control>
-
-                                                            <x-installer::form.control-group.error control-name="elasticsearch_connection" />
-                                                        </x-installer::form.control-group>
-
-                                                        <!-- Cloud ID -->
-                                                        <x-installer::form.control-group
-                                                            class="mb-2.5"
-                                                            v-if="elasticsearch.connection === 'cloud'"
-                                                        >
-                                                            <x-installer::form.control-group.label>
-                                                                @lang('installer::app.installer.index.environment-configuration.elasticsearch.cloud-id')
-                                                            </x-installer::form.control-group.label>
-
-                                                            <x-installer::form.control-group.control
-                                                                type="text"
-                                                                name="elasticsearch_cloud_id"
-                                                                v-model="elasticsearch.cloud_id"
-                                                                :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.cloud-id')"
-                                                                :placeholder="trans('installer::app.installer.index.environment-configuration.elasticsearch.cloud-id')"
-                                                            />
-
-                                                            <x-installer::form.control-group.error control-name="elasticsearch_cloud_id" />
-                                                        </x-installer::form.control-group>
-
-                                                        <template v-else>
-                                                            <!-- Host -->
-                                                            <x-installer::form.control-group class="mb-2.5">
-                                                                <x-installer::form.control-group.label>
-                                                                    @lang('installer::app.installer.index.environment-configuration.elasticsearch.host')
-                                                                </x-installer::form.control-group.label>
-
-                                                                <x-installer::form.control-group.control
-                                                                    type="text"
-                                                                    name="elasticsearch_host"
-                                                                    v-model="elasticsearch.host"
-                                                                    :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.host')"
-                                                                    :placeholder="trans('installer::app.installer.index.environment-configuration.elasticsearch.host-placeholder')"
-                                                                />
-
-                                                                <x-installer::form.control-group.error control-name="elasticsearch_host" />
-                                                            </x-installer::form.control-group>
-
-                                                            <!-- User -->
-                                                            <x-installer::form.control-group class="mb-2.5">
-                                                                <x-installer::form.control-group.label>
-                                                                    @lang('installer::app.installer.index.environment-configuration.elasticsearch.user')
-                                                                </x-installer::form.control-group.label>
-
-                                                                <x-installer::form.control-group.control
-                                                                    type="text"
-                                                                    name="elasticsearch_user"
-                                                                    v-model="elasticsearch.user"
-                                                                    :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.user')"
-                                                                    :placeholder="trans('installer::app.installer.index.environment-configuration.elasticsearch.user')"
-                                                                />
-
-                                                                <x-installer::form.control-group.error control-name="elasticsearch_user" />
-                                                            </x-installer::form.control-group>
-
-                                                            <!-- Password -->
-                                                            <x-installer::form.control-group class="mb-2.5">
-                                                                <x-installer::form.control-group.label>
-                                                                    @lang('installer::app.installer.index.environment-configuration.elasticsearch.password')
-                                                                </x-installer::form.control-group.label>
-
-                                                                <x-installer::form.control-group.control
-                                                                    type="password"
-                                                                    name="elasticsearch_pass"
-                                                                    v-model="elasticsearch.pass"
-                                                                    :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.password')"
-                                                                    :placeholder="trans('installer::app.installer.index.environment-configuration.elasticsearch.password')"
-                                                                />
-
-                                                                <x-installer::form.control-group.error control-name="elasticsearch_pass" />
-                                                            </x-installer::form.control-group>
-
-                                                            <!-- API Key -->
-                                                            <x-installer::form.control-group
-                                                                class="mb-2.5"
-                                                                v-if="elasticsearch.connection === 'api'"
-                                                            >
-                                                                <x-installer::form.control-group.label>
-                                                                    @lang('installer::app.installer.index.environment-configuration.elasticsearch.api-key')
-                                                                </x-installer::form.control-group.label>
-
-                                                                <x-installer::form.control-group.control
-                                                                    type="text"
-                                                                    name="elasticsearch_api_key"
-                                                                    v-model="elasticsearch.api_key"
-                                                                    :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.api-key')"
-                                                                    :placeholder="trans('installer::app.installer.index.environment-configuration.elasticsearch.api-key')"
-                                                                />
-
-                                                                <x-installer::form.control-group.error control-name="elasticsearch_api_key" />
-                                                            </x-installer::form.control-group>
-                                                        </template>
-
-                                                        <!-- Index Prefix -->
-                                                        <x-installer::form.control-group class="mb-2.5">
-                                                            <x-installer::form.control-group.label>
-                                                                @lang('installer::app.installer.index.environment-configuration.elasticsearch.index-prefix')
-                                                            </x-installer::form.control-group.label>
-
-                                                            <x-installer::form.control-group.control
-                                                                type="text"
-                                                                name="elasticsearch_index_prefix"
-                                                                v-model="elasticsearch.index_prefix"
-                                                                :label="trans('installer::app.installer.index.environment-configuration.elasticsearch.index-prefix')"
-                                                                :placeholder="trans('installer::app.installer.index.environment-configuration.elasticsearch.index-prefix')"
-                                                            />
-
-                                                            <x-installer::form.control-group.error control-name="elasticsearch_index_prefix" />
-                                                        </x-installer::form.control-group>
-                                                    </template>
-                                                </div>
                                             </div>
 
                                             <div class="flex px-6 py-4 justify-end items-center">
@@ -1115,7 +746,7 @@
                                                     <x-installer::form.control-group.control
                                                         type="select"
                                                         name="timezone"
-                                                        ::value="envData.app_timezone ?? $current ?? 'UTC'"
+                                                        ::value="'{{ $current }}'"
                                                         rules="required"
                                                         :aria-label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
                                                         :label="trans('installer::app.installer.index.environment-configuration.default-timezone')"
@@ -1481,24 +1112,9 @@
 
                             currentStep: 'start',
 
-                            envData: {},
-
                             envConfigData: {},
 
-                            defaultAppUrl: window.location.origin + window.location.pathname.replace(/\/install\/?$/, ''),
-
                             installStage: '',
-
-                            elasticsearch: {
-                                enabled: 'no',
-                                connection: 'default',
-                                host: '127.0.0.1:9200',
-                                user: '',
-                                pass: '',
-                                api_key: '',
-                                cloud_id: '',
-                                index_prefix: '',
-                            },
 
                             seedSampleData: false,
 
@@ -1566,11 +1182,11 @@
                     },
 
                     mounted() {
-                        const preventUnload = (event) => {
+                        this.preventUnload = (event) => {
                             event.preventDefault();
                         };
 
-                        window.addEventListener('beforeunload', preventUnload);
+                        window.addEventListener('beforeunload', this.preventUnload);
                     },
 
                     methods: {
@@ -1586,17 +1202,6 @@
 
                         FormSubmit(params, { setErrors }) {
                             const stepActions = {
-                                // Collect DB credentials, then advance to environment config (no migration yet).
-                                envDatabase: (setErrors) => {
-                                    if (params.db_connection === 'mysql' || params.db_connection === 'pgsql') {
-                                        this.envData = { ...this.envData, ...params };
-
-                                        this.completeStep('envDatabase', 'envConfiguration', 'active', 'complete', setErrors);
-                                    } else {
-                                        setErrors({ 'db_connection': ["UnoPim currently supports MySQL only."] });
-                                    }
-                                },
-
                                 // Collect admin credentials, then advance to add-ons (admin is created later).
                                 createAdmin: (setErrors) => {
                                     this.adminParams = params;
@@ -1629,6 +1234,10 @@
                                     this.completeStep('systemRequirements', 'envDatabase', 'active', 'complete');
 
                                     this.currentStep = 'envDatabase';
+                                },
+
+                                envDatabase: () => {
+                                    this.completeStep('envDatabase', 'envConfiguration', 'active', 'complete');
                                 },
 
                                 // Collect environment config (app + locales/currencies + ES), then advance.
@@ -1707,15 +1316,6 @@
                             return base + routeUrl.slice(routeUrl.lastIndexOf(marker));
                         },
 
-                        // Runs the whole installation server-side and streams its output
-                        // to the read-only terminal:
-                        //   1) write .env (DB credentials),
-                        //   2) POST /install/api/prepare to write app/locale/ES env and
-                        //      stash admin/sample/packages in the session,
-                        //   3) open an EventSource that performs migrate -> seed -> admin
-                        //      -> optional sample data -> optional add-on packages, live.
-                        // The admin password is sent only over the POST prepare request; the
-                        // GET EventSource reads it back from the session — never a query string.
                         runInstall(setErrors) {
                             this.currentStep = 'installProgress';
 
@@ -1734,7 +1334,7 @@
 
                             this.installStage = 'environment';
 
-                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.env_file_setup', [], false) }}"), this.envData)
+                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.env_file_setup', [], false) }}"), {})
                                 .then(() => {
                                     this.installStage = 'prepare';
 
@@ -1789,6 +1389,24 @@
                                 this.installing = false;
 
                                 this.completeStep('readyForInstallation', 'installationCompleted', 'active', 'complete');
+
+                                let redirect = '/admin';
+
+                                try {
+                                    const payload = JSON.parse(event.data);
+
+                                    if (payload && payload.redirect) {
+                                        redirect = payload.redirect;
+                                    }
+                                } catch (e) {}
+
+                                const base = window.location.pathname.slice(0, window.location.pathname.lastIndexOf('/install'));
+
+                                setTimeout(() => {
+                                    window.removeEventListener('beforeunload', this.preventUnload);
+
+                                    window.location.href = base + redirect;
+                                }, 3000);
                             });
 
                             source.addEventListener('install-error', (event) => {
@@ -1852,7 +1470,7 @@
 
                         back() {
                             if (this.$refs[this.currentStep] && this.$refs[this.currentStep].setValues) {
-                                this.$refs[this.currentStep].setValues(this.envData);
+                                this.$refs[this.currentStep].setValues(this.envConfigData);
                             }
 
                             let index = this.steps.indexOf(this.currentStep);

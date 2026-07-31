@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Mga Pinahihintulutang Pera',
                 'allowed-locales'     => 'Mga Pinahihintulutang Lokalisasyon',
+                'app-key-missing'     => 'Walang nakitang .env file at hindi nakatakda ang APP_KEY sa environment ng server. Hindi kailanman nagsusulat ang installer ng environment configuration — gumawa ng .env nang mano-mano (kopyahin ang .env.example) o i-configure ang mga variable sa iyong hosting panel, pagkatapos ay subukang muli.',
+                'env-readonly-note'   => 'Binabasa ang mga halagang ito mula sa environment ng iyong server (.env). Hindi kailanman nagsusulat ang installer ng environment configuration — para baguhin ang anuman, i-edit ang .env file (o ang mga variable ng iyong hosting panel) at i-reload ang pahinang ito.',
                 'application-name'    => 'Pangalan ng Aplikasyon',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan ng Tsina (CNY)',

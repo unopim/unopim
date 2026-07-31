@@ -265,6 +265,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Dozwolone waluty',
                 'allowed-locales'     => 'Dozwolone lokalizacje',
+                'app-key-missing'     => 'Nie znaleziono pliku .env, a APP_KEY nie jest ustawiony w środowisku serwera. Instalator nigdy nie zapisuje konfiguracji środowiska — utwórz .env ręcznie (skopiuj .env.example) lub skonfiguruj zmienne w panelu hostingu, a następnie spróbuj ponownie.',
+                'env-readonly-note'   => 'Te wartości są odczytywane ze środowiska Twojego serwera (.env). Instalator nigdy nie zapisuje konfiguracji środowiska — aby coś zmienić, edytuj plik .env (lub zmienne w panelu hostingu) i odśwież tę stronę.',
                 'application-name'    => 'Nazwa aplikacji',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Chiński Juan (CNY)',
