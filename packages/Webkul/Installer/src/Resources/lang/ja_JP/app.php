@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => '使用できる通貨',
                 'allowed-locales'     => '許可されるロケール',
+                'app-key-missing'     => '.env ファイルが見つからず、サーバー環境に APP_KEY が設定されていません。インストーラーが環境設定を書き込むことはありません — .env を手動で作成する（.env.example をコピーする）か、ホスティングパネルで変数を設定してから、もう一度お試しください。',
+                'env-readonly-note'   => 'これらの値はサーバー環境（.env）から読み取られます。インストーラーが環境設定を書き込むことはありません — 変更するには、.env ファイル（またはホスティングパネルの変数）を編集して、このページを再読み込みしてください。',
                 'application-name'    => 'アプリケーション名',
                 'unopim'              => 'ウノピム',
                 'chinese-yuan'        => '中国人民元 (CNY)',

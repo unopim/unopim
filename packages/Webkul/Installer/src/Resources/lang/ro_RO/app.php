@@ -265,6 +265,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Monede Permise',
                 'allowed-locales'     => 'Localizări Permise',
+                'app-key-missing'     => 'Nu a fost găsit niciun fișier .env, iar APP_KEY nu este setat în mediul serverului. Programul de instalare nu scrie niciodată configurația de mediu — creați un .env manual (copiați .env.example) sau configurați variabilele în panoul de găzduire, apoi încercați din nou.',
+                'env-readonly-note'   => 'Aceste valori sunt citite din mediul serverului dumneavoastră (.env). Programul de instalare nu scrie niciodată configurația de mediu — pentru a modifica ceva, editați fișierul .env (sau variabilele panoului de găzduire) și reîncărcați această pagină.',
                 'application-name'    => 'Nume Aplicație',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Yuan Chinez (CNY)',

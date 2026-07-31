@@ -84,32 +84,6 @@ describe('InstallerController::seedSampleData (issue #794)', function () {
     });
 });
 
-describe('InstallerController::envFileSetup DB_PREFIX validation (issue #794)', function () {
-    it('rejects a prefix containing spaces with the same message the CLI surfaces', function () {
-        $this->postJson('/install/api/env-file-setup', [
-            'db_prefix' => 'a a',
-        ])
-            ->assertStatus(422)
-            ->assertJsonPath('error', 'The database prefix can only contain letters, numbers, and underscores.');
-    });
-
-    it('rejects a prefix longer than 4 characters', function () {
-        $this->postJson('/install/api/env-file-setup', [
-            'db_prefix' => 'toolong',
-        ])
-            ->assertStatus(422)
-            ->assertJsonPath('error', 'The database prefix should not exceed 4 characters.');
-    });
-
-    it('rejects a prefix that contains non-alphanumeric/underscore characters', function () {
-        $this->postJson('/install/api/env-file-setup', [
-            'db_prefix' => 'bad!',
-        ])
-            ->assertStatus(422)
-            ->assertJsonPath('error', 'The database prefix can only contain letters, numbers, and underscores.');
-    });
-});
-
 describe('InstallerController::resolveComposerBinary', function () {
     it('probes the bundled bin/composer/composer.phar', function () {
         $controller = app(InstallerController::class);
