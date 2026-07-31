@@ -369,6 +369,20 @@ if ($alreadyInstalled) {
         $ready = false;
     }
 
+    $envPath = $projectRoot.'/.env';
+
+    if ($ready) {
+        if (is_file($envPath)) {
+            unopim_install_write('.env found.', '', true);
+        } elseif (trim((string) getenv('APP_KEY')) !== '') {
+            unopim_install_write('No .env file — using the environment provided by the server.', '', true);
+        } else {
+            unopim_install_write('ERROR: No .env file and no APP_KEY in the server environment. This installer never writes environment configuration — upload a .env (copy .env.example and fill in your values) or configure the variables in your hosting panel, then try again.', 'error');
+
+            $ready = false;
+        }
+    }
+
     if ($ready) {
         $composerHome = $projectRoot.'/storage/composer';
 
@@ -385,19 +399,7 @@ if ($alreadyInstalled) {
                 .' install --no-ansi --no-interaction --working-dir='.escapeshellarg($projectRoot),
         ];
 
-        $envPath = $projectRoot.'/.env';
-
-        if (is_file($envPath)) {
-            unopim_install_write('.env found.', '', true);
-        } elseif (trim((string) getenv('APP_KEY')) !== '') {
-            unopim_install_write('No .env file — using the environment provided by the server.', '', true);
-        } else {
-            unopim_install_write('ERROR: No .env file and no APP_KEY in the server environment. This installer never writes environment configuration — upload a .env (copy .env.example and fill in your values) or configure the variables in your hosting panel, then try again.', 'error');
-
-            $ready = false;
-        }
-
-        if ($ready && is_file($envPath) && ! unopim_install_has_app_key($envPath) && trim((string) getenv('APP_KEY')) === '') {
+        if (is_file($envPath) && ! unopim_install_has_app_key($envPath) && trim((string) getenv('APP_KEY')) === '') {
             $commands[] = escapeshellarg($phpBinary).' '
                 .escapeshellarg($projectRoot.'/artisan').' key:generate --force';
         }
