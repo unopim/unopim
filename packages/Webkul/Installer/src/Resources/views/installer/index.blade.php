@@ -146,7 +146,7 @@
                                 href="{{ $cloudHostingUrl }}"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="shrink-0 inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all bg-white text-cloud-start hover:-translate-y-px hover:shadow-[0_6px_16px_rgba(0,0,0,0.18)]"
+                                class="shrink-0 inline-flex items-center gap-1.5 h-[30px] px-[14px] rounded-lg text-[12.5px] font-bold no-underline whitespace-nowrap transition-all bg-white text-cloud-start hover:-translate-y-px hover:shadow-cloud-cta"
                             >
                                 @lang('installer::app.installer.index.cloud-bar.cta')
 
@@ -221,7 +221,7 @@
                             <main class="flex-1 min-w-0">
                                 <!-- Start -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'start'"
                                 >
                                     <x-installer::form
@@ -292,7 +292,7 @@
 
                                 <!-- System Requirements -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'systemRequirements'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
@@ -357,7 +357,7 @@
 
                                 <!-- Environment Configuration Database -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'envDatabase'"
                                 >
                                     <x-installer::form
@@ -546,7 +546,7 @@
 
                                 <!-- Installation Processing (live terminal) -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'installProgress'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
@@ -587,7 +587,7 @@
 
                                 <!-- Environment Configuration .ENV -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'envConfiguration'"
                                 >
                                     <x-installer::form
@@ -1009,7 +1009,7 @@
 
                                 <!-- Create Administrator -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'createAdmin'"
                                 >
                                     <x-installer::form
@@ -1190,7 +1190,7 @@
 
                                 <!-- Add-ons + Sample Data -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'addOns'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">
@@ -1299,7 +1299,7 @@
 
                                 <!-- Ready For Installation -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'readyForInstallation'"
                                 >
                                     <x-installer::form
@@ -1367,7 +1367,7 @@
 
                                 <!-- Installation Completed -->
                                 <div
-                                    class="w-full bg-white rounded-xl shadow-[0px_8px_24px_0px_rgba(0,0,0,0.06)] border border-gray-200"
+                                    class="w-full bg-white rounded-xl shadow-step-card border border-gray-200"
                                     v-if="currentStep == 'installationCompleted'"
                                 >
                                     <div class="flex justify-between items-center gap-2.5 px-6 py-4 border-b border-gray-200">

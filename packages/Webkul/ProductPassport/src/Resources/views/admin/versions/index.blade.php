@@ -20,6 +20,14 @@
                 @lang('passport::app.publications.versions.no-versions')
             </p>
         @else
+            @php
+                $canRepublish = bouncer()->hasPermission('catalog.passport.publish');
+
+                $hasActions = $canRepublish && $publication->versions->contains(
+                    fn ($version) => ! $version->is_current && $version->redacted_at === null
+                );
+            @endphp
+
             <x-admin::table>
                 <x-admin::table.thead>
                     <x-admin::table.thead.tr>
@@ -28,7 +36,9 @@
                         <x-admin::table.th>@lang('passport::app.publications.versions.published-at')</x-admin::table.th>
                         <x-admin::table.th>@lang('passport::app.publications.versions.published-by')</x-admin::table.th>
                         <x-admin::table.th>@lang('passport::app.publications.versions.status')</x-admin::table.th>
-                        <x-admin::table.th class="text-right">@lang('passport::app.publications.versions.action')</x-admin::table.th>
+                        @if ($hasActions)
+                            <x-admin::table.th class="text-right">@lang('passport::app.publications.versions.action')</x-admin::table.th>
+                        @endif
                     </x-admin::table.thead.tr>
                 </x-admin::table.thead>
 
@@ -41,7 +51,7 @@
                                 {{ $version->version }}
 
                                 @if ($version->is_current)
-                                    <span class="ml-2 text-xs font-semibold text-violet-700 dark:text-violet-300">
+                                    <span class="ml-2 text-xs font-semibold text-primary-700 dark:text-primary-300">
                                         @lang('passport::app.publications.versions.current-badge')
                                     </span>
                                 @endif
@@ -63,15 +73,17 @@
                                 @endif
                             </x-admin::table.td>
 
-                            <x-admin::table.td class="text-right">
-                                @if (! $version->is_current && $version->redacted_at === null && bouncer()->hasPermission('catalog.passport.publish'))
-                                    <button type="button"
-                                            class="passport-republish-btn text-violet-700 dark:text-violet-300 font-semibold"
-                                            data-version-id="{{ $version->id }}">
-                                        @lang('passport::app.publications.versions.republish')
-                                    </button>
-                                @endif
-                            </x-admin::table.td>
+                            @if ($hasActions)
+                                <x-admin::table.td class="text-right">
+                                    @if (! $version->is_current && $version->redacted_at === null)
+                                        <button type="button"
+                                                class="passport-republish-btn text-primary-700 dark:text-primary-300 font-semibold"
+                                                data-version-id="{{ $version->id }}">
+                                            @lang('passport::app.publications.versions.republish')
+                                        </button>
+                                    @endif
+                                </x-admin::table.td>
+                            @endif
                         </x-admin::table.tbody.tr>
                     @endforeach
                 </x-admin::table.tbody>

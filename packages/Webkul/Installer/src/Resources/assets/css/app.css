@@ -7,6 +7,13 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	--c-cloud-start: #5B41D6;
+	--c-cloud-end: #8367F0;
+	--s-cloud-cta: 0 6px 16px rgba(0, 0, 0, 0.18);
+	--s-step-card: 0px 8px 24px 0px rgba(0, 0, 0, 0.06);
+}
+
 @layer components {
 
 	* {

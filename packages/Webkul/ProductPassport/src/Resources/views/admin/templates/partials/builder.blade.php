@@ -145,7 +145,7 @@
                                 @end="touch('sections')"
                             >
                                 <template #item="{ element, index }">
-                                    <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
+                                    <x-admin::table.tbody.tr class="hover:bg-primary-50 dark:hover:bg-cherry-800">
                                         <x-admin::table.td class="!px-0 text-center">
                                             <i class="icon-drag text-2xl cursor-grab"></i>
                                         </x-admin::table.td>
@@ -160,13 +160,13 @@
 
                                         <x-admin::table.td class="!px-0">
                                             <span
-                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.edit"
                                                 @click="openSection(element)"
                                             ></span>
 
                                             <span
-                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.remove"
                                                 @click="sections.splice(index, 1); touch('sections')"
                                             ></span>
@@ -253,7 +253,7 @@
                                 @end="touch('fields')"
                             >
                                 <template #item="{ element, index }">
-                                    <x-admin::table.tbody.tr class="hover:bg-violet-50 dark:hover:bg-cherry-800">
+                                    <x-admin::table.tbody.tr class="hover:bg-primary-50 dark:hover:bg-cherry-800">
                                         <x-admin::table.td class="!px-0 text-center">
                                             <i class="icon-drag text-2xl cursor-grab"></i>
                                         </x-admin::table.td>
@@ -291,13 +291,13 @@
 
                                         <x-admin::table.td class="!px-0">
                                             <span
-                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-edit p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.edit"
                                                 @click="openField(element)"
                                             ></span>
 
                                             <span
-                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
+                                                class="icon-delete p-1.5 rounded-md text-2xl cursor-pointer hover:bg-primary-100 dark:hover:bg-gray-800"
                                                 :title="lang.remove"
                                                 @click="fields.splice(index, 1); touch('fields')"
                                             ></span>

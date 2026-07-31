@@ -24,8 +24,13 @@ module.exports = {
 
         extend: {
             colors: {
-                'cloud-start': '#5B41D6',
-                'cloud-end': '#8367F0',
+                'cloud-start': 'var(--c-cloud-start)',
+                'cloud-end': 'var(--c-cloud-end)',
+            },
+
+            boxShadow: {
+                'cloud-cta': 'var(--s-cloud-cta)',
+                'step-card': 'var(--s-step-card)',
             },
 
             fontFamily: {
