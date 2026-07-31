@@ -40,9 +40,4 @@ return [
         ],
     ],
 
-    'webhook' => [
-        'name'   => 'Product published — staging endpoint',
-        'url'    => 'https://example.test/webhooks/unopim/product-published',
-        'events' => ['product.created', 'product.updated'],
-    ],
 ];

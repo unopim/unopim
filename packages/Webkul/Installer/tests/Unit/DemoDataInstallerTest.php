@@ -6,7 +6,9 @@ use Webkul\Installer\Database\Seeders\Demo\DemoAttributeSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoCoreSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoJobSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoMediaSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoOrganisationSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoPassportSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoWorkspaceSeeder;
@@ -28,6 +30,8 @@ function demoSeederOrder(): array
         DemoAssociationSeeder::class,
         DemoPassportSeeder::class,
         DemoWorkspaceSeeder::class,
+        DemoOrganisationSeeder::class,
+        DemoJobSeeder::class,
     ];
 }
 

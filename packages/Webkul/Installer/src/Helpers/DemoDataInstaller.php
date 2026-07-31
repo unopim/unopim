@@ -14,7 +14,9 @@ use Webkul\Installer\Database\Seeders\Demo\DemoAttributeSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoCategorySeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoCoreSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoJobSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoMediaSeeder;
+use Webkul\Installer\Database\Seeders\Demo\DemoOrganisationSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoPassportSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoScaleSeeder;
@@ -80,8 +82,14 @@ class DemoDataInstaller
             $report('Seeding passport templates and publications...');
             resolve(DemoPassportSeeder::class)->run();
 
-            $report('Seeding saved grid views and sample webhook...');
+            $report('Seeding saved grid views...');
             resolve(DemoWorkspaceSeeder::class)->run();
+
+            $report('Seeding roles, users, webhooks and system settings...');
+            resolve(DemoOrganisationSeeder::class)->run();
+
+            $report('Seeding import and export profiles...');
+            resolve(DemoJobSeeder::class)->run();
 
             if ($large) {
                 $report('Padding the catalog for scale testing...');

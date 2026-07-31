@@ -8,10 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Database\Seeders\Demo\Concerns\LoadsDemoData;
 
 /**
- * Seeds the saved product grid views and one inactive sample webhook.
- *
- * The webhook ships disabled on purpose: a demo install must not make
- * outbound requests to a placeholder endpoint.
+ * Seeds the saved product grid views.
  */
 class DemoWorkspaceSeeder extends Seeder
 {
@@ -29,8 +26,6 @@ class DemoWorkspaceSeeder extends Seeder
 
         DB::transaction(function () use ($data, $adminId): void {
             $this->seedGridViews($data['views'], $adminId);
-
-            $this->seedWebhook($data['webhook']);
         });
     }
 
@@ -52,24 +47,5 @@ class DemoWorkspaceSeeder extends Seeder
                 ]
             );
         }
-    }
-
-    /**
-     * @param  array<string, mixed>  $webhook
-     */
-    protected function seedWebhook(array $webhook): void
-    {
-        $now = Date::now();
-
-        DB::table('webhooks')->updateOrInsert(
-            ['name' => $webhook['name']],
-            [
-                'url'        => $webhook['url'],
-                'is_active'  => false,
-                'events'     => json_encode($webhook['events'], JSON_THROW_ON_ERROR),
-                'updated_at' => $now,
-                'created_at' => $now,
-            ]
-        );
     }
 }
