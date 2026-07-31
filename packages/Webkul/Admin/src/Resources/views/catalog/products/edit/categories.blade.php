@@ -153,6 +153,7 @@
                     children-page-size="100"
                     ::items="categories"
                     ::value="selectedJson"
+                    ::baseline-value="baselineJson"
                     ::expanded-branch="selectedCategoryTree"
                     :fallback-locale="config('app.fallback_locale')"
                     @change-input="onTreeSelection"
@@ -194,6 +195,10 @@
             computed: {
                 selectedJson() {
                     return JSON.stringify(this.selectedCodes);
+                },
+
+                baselineJson() {
+                    return JSON.stringify(this.initialSelected);
                 },
 
                 isSearchMode() {
@@ -244,10 +249,16 @@
             mounted() {
                 this.get();
                 this.$productWorkspace.setCount('categories', this.selectedCodes.length);
+
+                this.$emitter.on('unsaved-changes:reset', this.restoreSelection);
+                this.$emitter.on('form-saved', this.commitSelection);
             },
 
             beforeUnmount() {
                 clearTimeout(this.searchTimer);
+
+                this.$emitter.off('unsaved-changes:reset', this.restoreSelection);
+                this.$emitter.off('form-saved', this.commitSelection);
             },
 
             methods: {
@@ -267,6 +278,14 @@
                     .catch(() => {
                         this.isLoading = false;
                     });
+                },
+
+                restoreSelection() {
+                    this.selectedCodes = [...this.initialSelected];
+                },
+
+                commitSelection() {
+                    this.initialSelected = [...this.selectedCodes];
                 },
 
                 onSearchInput() {
