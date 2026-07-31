@@ -28,7 +28,7 @@
 
             <button type="button"
                 class="w-full flex items-center gap-2 h-11 px-3 rounded-md text-sm font-semibold uppercase border mb-3"
-                :class="selected === rootId ? 'bg-primary-100 dark:bg-cherry-800 text-primary-600 border-primary-300 dark:border-cherry-700' : 'text-gray-700 dark:text-gray-300 bg-white dark:bg-cherry-900 border-gray-200 dark:border-cherry-800 hover:bg-gray-100 dark:hover:bg-cherry-800'"
+                :class="selected === rootId ? 'bg-primary-100 dark:bg-cherry-800 text-primary-600 border-primary-300 dark:border-cherry-700' : 'text-gray-700 dark:text-gray-300 bg-white dark:bg-cherry-900 border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-cherry-800'"
                 @click="selectCommon">
                 {{ t('common') }}
                 <span v-if="pendingId === configurableId" class="ltr:ml-auto rtl:mr-auto w-3.5 h-3.5 border-2 border-primary-500 border-t-transparent rounded-full animate-spin"></span>
@@ -39,7 +39,7 @@
                 <div class="relative" ref="pWrap">
                     <button type="button"
                         class="w-full flex items-center justify-between gap-2 h-11 px-3 rounded-md text-sm border"
-                        :class="currentLabel('p') ? 'bg-primary-50 dark:bg-cherry-800 border-primary-300 dark:border-cherry-700' : 'bg-white dark:bg-cherry-900 border-gray-200 dark:border-cherry-700 hover:border-primary-400'"
+                        :class="currentLabel('p') ? 'bg-primary-50 dark:bg-cherry-800 border-primary-300 dark:border-cherry-700' : 'bg-white dark:bg-cherry-900 border-gray-200 dark:border-gray-600 hover:border-primary-400'"
                         @click="toggle('p')">
                         <span class="flex items-center gap-2 truncate min-w-0" :class="pNode ? 'text-primary-600 dark:text-primary-400 font-semibold' : 'text-gray-400'">
                             <img v-if="pNode && pNode.image" :src="pNode.image" class="w-6 h-6 rounded object-cover shrink-0 border border-gray-200 dark:border-cherry-700" alt="">
@@ -90,7 +90,7 @@
                     <button type="button"
                         class="w-full flex items-center justify-between gap-2 h-11 px-3 rounded-md text-sm border"
                         :class="[
-                            currentLabel('c') ? 'bg-primary-50 dark:bg-cherry-800 border-primary-300 dark:border-cherry-700' : 'bg-white dark:bg-cherry-900 border-gray-200 dark:border-cherry-700',
+                            currentLabel('c') ? 'bg-primary-50 dark:bg-cherry-800 border-primary-300 dark:border-cherry-700' : 'bg-white dark:bg-cherry-900 border-gray-200 dark:border-gray-600',
                             currentGroupId ? 'hover:border-primary-400' : 'opacity-60 cursor-not-allowed'
                         ]"
                         :disabled="! currentGroupId"

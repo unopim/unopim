@@ -104,6 +104,7 @@
                         action="{{ route('admin.session.destroy') }}"
                         id="adminLogout"
                         :track-dirty="false"
+                        ajax="true"
                     >
                     </x-admin::form>
 
@@ -111,7 +112,7 @@
                         class="px-5 py-2 text-base  text-gray-800 dark:text-white hover:bg-unopim-primary-soft hover:bg-primary-50 dark:hover:bg-cherry-800 cursor-pointer"
                         href="{{ route('admin.session.destroy') }}"
                         data-no-ajax-nav
-                        onclick="event.preventDefault(); document.getElementById('adminLogout').submit();"
+                        onclick="event.preventDefault(); document.getElementById('adminLogout').requestSubmit();"
                     >
                         @lang('admin::app.components.layouts.header.logout')
                     </a>
