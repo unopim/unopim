@@ -8,10 +8,11 @@ Laravel version reaches End of Life.
 
 | Version | PHP (*)   | Laravel | Release             | Bug Fixes Until      | Security Fixes Until |
 | ------- | --------- | ------- | ------------------- | -------------------- | -------------------- |
+| 3.0     | 8.4 - 8.5 | 13.x    | Unreleased          | TBD                  | TBD                  |
 | 2.1     | 8.3 - 8.5 | 12.x    | May 13th, 2026      | August 13th, 2026    | February 24th, 2027  |
 | 2.0     | 8.3 - 8.5 | 12.x    | March 27th, 2026    | August 13th, 2026    | February 24th, 2027  |
 
-**Current:** 2.1.x
+**Current:** 2.1.x — 3.0 is in development on `master`.
 
 > (*) PHP range covers the minimum required version and the highest
 > stable version verified against the branch's CI matrix.
