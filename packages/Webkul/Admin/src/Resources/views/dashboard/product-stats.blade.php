@@ -167,7 +167,39 @@
             computed: {
                 totalProducts() {
                     return this.stats.totalProducts || 0;
-                }
+                },
+
+                /**
+                 * Chart-token slot per product type. Built-in types keep their
+                 * fixed token; custom types take the unused tokens in order so
+                 * no two types share a colour until the palette is exhausted.
+                 */
+                typeColorSlots() {
+                    const fixed = {
+                        'simple': 1,
+                        'configurable': 2,
+                        'virtual': 3,
+                        'bundle': 4,
+                        'grouped': 5,
+                        'downloadable': 6,
+                    };
+
+                    const types = Object.keys(this.stats.typeDistribution || {});
+
+                    const used = types.map(type => fixed[type]).filter(Boolean);
+
+                    const free = [1, 2, 3, 4, 5, 6].filter(slot => ! used.includes(slot));
+
+                    const slots = {};
+
+                    let overflow = 0;
+
+                    types.forEach(type => {
+                        slots[type] = fixed[type] ?? (free.length ? free.shift() : (overflow++ % 6) + 1);
+                    });
+
+                    return slots;
+                },
             },
 
             mounted() {
@@ -217,16 +249,7 @@
                 },
 
                 getTypeHex(type) {
-                    const colors = {
-                        'simple': this.cssVar('--chart-1'),
-                        'configurable': this.cssVar('--chart-2'),
-                        'virtual': this.cssVar('--chart-3'),
-                        'bundle': this.cssVar('--chart-4'),
-                        'grouped': this.cssVar('--chart-5'),
-                        'downloadable': this.cssVar('--chart-6'),
-                    };
-
-                    return colors[type] || this.cssVar('--chart-1');
+                    return this.cssVar('--chart-' + (this.typeColorSlots[type] ?? 1));
                 },
 
                 getCompletenessColor(score) {
