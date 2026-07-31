@@ -1,7 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
-
-const PRODUCT_EDIT_ID = process.env.PRODUCT_EDIT_ID || 14;
+const { navigateTo, generateUid, resolveEditableProductId } = require('../../utils/helpers');
 
 test.describe('Product Edit Associations - Field Validation Message (#1243)', () => {
   test.setTimeout(120000);
@@ -11,6 +9,7 @@ test.describe('Product Edit Associations - Field Validation Message (#1243)', ()
     const typeCode = `valmsg_${uid}`;
     const fieldCode = `qty_${uid}`;
     const fieldLabel = `Quantity ${uid}`;
+    const productId = await resolveEditableProductId(adminPage);
 
     await navigateTo(adminPage, 'associationTypes');
 
@@ -42,7 +41,7 @@ test.describe('Product Edit Associations - Field Validation Message (#1243)', ()
     await adminPage.waitForLoadState('domcontentloaded');
     await adminPage.waitForTimeout(1500);
 
-    await adminPage.goto(`/admin/catalog/products/edit/${PRODUCT_EDIT_ID}`, { waitUntil: 'domcontentloaded' });
+    await adminPage.goto(`/admin/catalog/products/edit/${productId}`, { waitUntil: 'domcontentloaded' });
     await adminPage.waitForTimeout(1500);
 
     await adminPage.getByRole('button', { name: /associations/i }).first().evaluate((el) => el.click());
@@ -54,11 +53,14 @@ test.describe('Product Edit Associations - Field Validation Message (#1243)', ()
     await drawer.getByRole('button', { name: 'Add Association Type' }).click();
     await adminPage.waitForTimeout(800);
 
+    await adminPage.getByPlaceholder('Search by name or code').fill(typeCode);
+    await adminPage.waitForTimeout(1000);
+
     await adminPage.locator('div[role="checkbox"]', { hasText: typeCode }).first().click();
     await adminPage.locator('.primary-button:text-is("Add")').first().click();
     await adminPage.waitForTimeout(800);
 
-    await drawer.locator('button:text-is("Add")').first().click();
+    await drawer.locator('button:visible:text-is("Add")').first().click();
     await adminPage.waitForTimeout(1500);
 
     await adminPage.locator('label[for^="assoc-pick-"]').first().click();

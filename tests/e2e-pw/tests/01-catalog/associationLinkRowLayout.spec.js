@@ -1,7 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid } = require('../../utils/helpers');
-
-const PRODUCT_EDIT_ID = process.env.PRODUCT_EDIT_ID || 14;
+const { navigateTo, generateUid, resolveEditableProductId } = require('../../utils/helpers');
 
 test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
   test.setTimeout(150000);
@@ -9,6 +7,7 @@ test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
   test('should align field labels above their controls and label the remove action', async ({ adminPage }) => {
     const uid = generateUid();
     const typeCode = `layout_${uid}`;
+    const productId = await resolveEditableProductId(adminPage);
 
     await navigateTo(adminPage, 'associationTypes');
 
@@ -38,7 +37,7 @@ test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
     await adminPage.waitForLoadState('domcontentloaded');
     await adminPage.waitForTimeout(1500);
 
-    await adminPage.goto(`/admin/catalog/products/edit/${PRODUCT_EDIT_ID}`, { waitUntil: 'domcontentloaded' });
+    await adminPage.goto(`/admin/catalog/products/edit/${productId}`, { waitUntil: 'domcontentloaded' });
     await adminPage.waitForTimeout(1500);
 
     await adminPage.locator('div.box-shadow').filter({ hasText: 'Associations' }).first().click();
@@ -48,11 +47,14 @@ test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
     await drawer.getByRole('button', { name: 'Add Association Type' }).click();
     await adminPage.waitForTimeout(1000);
 
+    await adminPage.getByPlaceholder('Search by name or code').fill(typeCode);
+    await adminPage.waitForTimeout(1000);
+
     await adminPage.locator('div[role="checkbox"]', { hasText: typeCode }).first().click();
     await adminPage.locator('.primary-button:text-is("Add")').first().click();
     await adminPage.waitForTimeout(1000);
 
-    await drawer.locator('button:text-is("Add")').first().click();
+    await drawer.locator('button:visible:text-is("Add")').first().click();
     await adminPage.waitForTimeout(1800);
 
     await adminPage.locator('label[for^="assoc-pick-"]').first().click();
@@ -60,7 +62,7 @@ test.describe('Product Edit Associations - Link Row Layout (#1258)', () => {
     await adminPage.locator('button:text-is("Add Selected")').last().click();
     await adminPage.waitForTimeout(1800);
 
-    const removeButton = drawer.getByRole('button', { name: 'Remove Product' });
+    const removeButton = drawer.locator('button:visible', { hasText: 'Remove Product' });
     await expect(removeButton).toBeVisible();
 
     const geometry = await adminPage.evaluate((fieldCode) => {
