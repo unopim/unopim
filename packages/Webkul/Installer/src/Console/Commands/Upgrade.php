@@ -186,7 +186,7 @@ class Upgrade extends Command
         try {
             $this->runStep('migrate', ['--force' => true]);
 
-            $this->runStep('storage:link');
+            $this->runStep('storage:link', ['--relative' => true]);
 
             $this->runStep('optimize:clear');
 

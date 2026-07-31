@@ -185,7 +185,7 @@
                         <div class="flex items-center justify-between w-full">
                             <!-- Platform & Model compact selectors (left side, copilot-style) -->
                             <p
-                                v-if="! ai.content && ! aiModels.length"
+                                v-if="! ai.content && platformsFetched && ! aiModels.length"
                                 class="text-xs text-danger max-w-[320px]"
                             >
                                 @lang('admin::app.configuration.platform.message.no-platform-configured')
@@ -301,6 +301,7 @@
                     systemPrompts: [],
                     platforms: [],
                     aiModels: [],
+                    platformsFetched: false,
                     defaultPrompts: [],
                     suggestionValues: [],
                     resourceId: "{{ request()->id }}",
@@ -567,6 +568,8 @@
                         }
                     } catch (error) {
                         console.error("Failed to fetch platforms:", error);
+                    } finally {
+                        this.platformsFetched = true;
                     }
                 },
 

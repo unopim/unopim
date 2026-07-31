@@ -145,7 +145,7 @@ class Installer extends Command
         ]);
 
         $this->warn('Step: Linking storage directory...');
-        $this->call('storage:link');
+        $this->call('storage:link', ['--relative' => true]);
 
         if (config('elasticsearch.enabled') == 'true') {
             $this->warn('Step: Clearing elasticsearch index...');

@@ -348,7 +348,7 @@
                             <x-slot:footer>
                                 <div class="flex items-center justify-between w-full">
                                     <p
-                                        v-if="! ai.images.length && ! aiModels.length"
+                                        v-if="! ai.images.length && platformsFetched && ! aiModels.length"
                                         class="text-xs text-danger max-w-[320px]"
                                     >
                                         @lang('admin::app.configuration.platform.fields.no-image-platform')
@@ -594,6 +594,7 @@
 
                     platforms: [],
                     aiModels: [],
+                    platformsFetched: false,
                     imagePrompts: [],
                     suggestionValues: [],
                     resourceId: "{{ request()->id ?? auth()->id() }}",
@@ -825,6 +826,8 @@
                         }
                     } catch (error) {
                         console.error("Failed to fetch platforms:", error);
+                    } finally {
+                        this.platformsFetched = true;
                     }
                 },
 
