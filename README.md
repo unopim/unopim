@@ -12,7 +12,8 @@
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/v/stable.svg" alt="Latest Stable Version"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
-  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=master&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=lint" alt="Lint"></a>
 </p>
 
 <p align="center">
@@ -31,9 +32,9 @@
   &nbsp;·&nbsp;
   <a href="https://devdocs.unopim.com/">📘&nbsp;Documentation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.0.x/introduction/installation.html">🚀&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html">🚀&nbsp;Installation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.0.x/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
   &nbsp;·&nbsp;
   <a href="https://demo.unopim.com/">🎯&nbsp;Live&nbsp;Demo</a>
 </p>
@@ -174,9 +175,13 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 
 ## 🚀 Installation
 
-> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 16+ *(recommended)*.
+> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 16+.
+>
+> **PHP extensions:** `calendar`, `curl`, `intl`, `mbstring`, `openssl`, `pdo`, `pdo_mysql`, `tokenizer` — these are hard `composer.json` requirements and `composer install` fails without them. The upgrade preflight additionally checks `json`, `xml`, `gd`, `zip` and `fileinfo`.
+>
+> **On PostgreSQL:** `ext-pdo_mysql` is currently required by `composer.json` regardless of the database you run, so it must be installed even on a PostgreSQL-only host. Install `ext-pdo_pgsql` as well and set `DB_CONNECTION=pgsql`.
 
-Full [Installation Guide](https://devdocs.unopim.com/2.0.x/introduction/installation.html) on devdocs — or pick a quick path below.
+Full [Installation Guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html) on devdocs — or pick a quick path below.
 
 ### Composer
 
@@ -199,7 +204,7 @@ php artisan queue:work --queue=webhooks,system,default,completeness,publication
 
 ### Docker
 
-Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/2.0.x/introduction/installation.html#install-using-docker) for advanced configuration.
+Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker) for advanced configuration.
 
 **Run UnoPim** — pre-built images, no checkout, no configuration:
 
@@ -208,7 +213,20 @@ curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.yaml
 docker compose up -d
 ```
 
-Open `http://localhost:8000/admin` and log in with `admin@example.com` / `admin123`. Every setting has a working default; override any of them by exporting it or putting it in a `.env` file next to `compose.yaml`.
+Open `http://localhost:8000/admin`. Set the admin credentials **before** the first `docker compose up`, in a `.env` file next to `compose.yaml`:
+
+```bash
+INSTALLER_ADMIN_EMAIL=you@example.com
+INSTALLER_ADMIN_PASSWORD=<a password you choose>
+```
+
+If you leave them blank, the seeder generates a random 20-character password and writes it to `storage/app/admin-credentials.txt` inside the container:
+
+```bash
+docker compose exec unopim cat storage/app/admin-credentials.txt
+```
+
+Change it after the first login. Every other setting has a working default; override any of them by exporting it or putting it in that same `.env` file.
 
 **MySQL instead of PostgreSQL:**
 

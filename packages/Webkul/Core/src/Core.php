@@ -25,7 +25,7 @@ class Core
      *
      * @var string
      */
-    const VERSION = 'master';
+    const VERSION = '3.0.0';
 
     /**
      * Current Channel.
