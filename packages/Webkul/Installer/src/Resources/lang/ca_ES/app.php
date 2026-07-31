@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Monedes permeses',
                 'allowed-locales'     => 'Idiomes permesos',
+                'app-key-missing'     => 'No s\'ha trobat cap fitxer .env i APP_KEY no està definit a l\'entorn del servidor. L\'instal·lador mai escriu la configuració de l\'entorn — creeu un .env manualment (copieu .env.example) o configureu les variables al vostre panell d\'allotjament i torneu-ho a provar.',
+                'env-readonly-note'   => 'Aquests valors es llegeixen de l\'entorn del vostre servidor (.env). L\'instal·lador mai escriu la configuració de l\'entorn — per canviar qualsevol cosa, editeu el fitxer .env (o les variables del panell d\'allotjament) i torneu a carregar aquesta pàgina.',
                 'application-name'    => 'Nom de l’aplicació',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Iuan xinès (CNY)',

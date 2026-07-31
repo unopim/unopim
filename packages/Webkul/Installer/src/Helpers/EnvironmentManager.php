@@ -12,7 +12,7 @@ class EnvironmentManager
     public function __construct(protected DatabaseManager $databaseManager) {}
 
     /**
-     * Path of the .env file the installer writes.
+     * Path of the operator-authored .env file.
      */
     protected function envPath(): string
     {
@@ -20,125 +20,30 @@ class EnvironmentManager
     }
 
     /**
-     * Path of the .env.example template used to bootstrap a missing .env.
-     */
-    protected function envExamplePath(): string
-    {
-        return base_path('.env.example');
-    }
-
-    /**
-     * Generate ENV File and Installation.
+     * Confirm the environment is ready without ever writing to it.
+     *
+     * The installer used to rewrite .env from unauthenticated wizard requests,
+     * which turned an exposed pre-install instance into a configuration
+     * backdoor. The environment is now operator-managed — a hand-authored .env
+     * or server-level variables (FTP/panel hosting has no file at all). The
+     * single permitted write is `artisan key:generate` into an existing .env,
+     * and DatabaseManager skips even that when APP_KEY is already set; without
+     * a file there is nowhere to write a key, so one must be provided.
      */
     public function generateEnv(array $request): bool|Exception
     {
-        $envExamplePath = $this->envExamplePath();
+        if (file_exists($this->envPath())) {
+            try {
+                $this->databaseManager->generateKey();
 
-        $envPath = $this->envPath();
-
-        if (! file_exists($envPath)) {
-            if (file_exists($envExamplePath)) {
-                copy($envExamplePath, $envPath);
-            } else {
-                touch($envPath);
+                return true;
+            } catch (Exception $e) {
+                return $e;
             }
         }
 
-        try {
-            $response = $this->setEnvConfiguration($request);
-
-            $this->databaseManager->generateKey();
-
-            return $response;
-        } catch (Exception $e) {
-            return $e;
-        }
-    }
-
-    /**
-     * Set the ENV file configuration.
-     *
-     * Values arrive from unauthenticated installer requests, so control
-     * characters (newlines above all) are stripped before writing: a value
-     * carrying "\nKEY=..." would otherwise smuggle arbitrary env keys past
-     * the whitelisted parameter map.
-     */
-    public function setEnvConfiguration(array $request): bool
-    {
-        $envDBParams = [];
-
-        /**
-         * Update params with form-data
-         */
-        if (isset($request['db_hostname'])) {
-            $envDBParams['DB_HOST'] = $request['db_hostname'];
-            $envDBParams['DB_DATABASE'] = $request['db_name'];
-            $envDBParams['DB_PREFIX'] = $request['db_prefix'] ?? '';
-            $envDBParams['DB_USERNAME'] = $request['db_username'];
-            $envDBParams['DB_PASSWORD'] = $request['db_password'];
-            $envDBParams['DB_CONNECTION'] = $request['db_connection'];
-            $envDBParams['DB_PORT'] = (int) $request['db_port'];
-        }
-
-        if (isset($request['app_name'])) {
-            $envDBParams['APP_NAME'] = $request['app_name'] ?? null;
-            $envDBParams['APP_URL'] = $request['app_url'];
-            $envDBParams['APP_CURRENCY'] = $request['app_currency'];
-            $envDBParams['APP_LOCALE'] = $request['app_locale'];
-            $envDBParams['APP_TIMEZONE'] = $request['app_timezone'];
-        }
-
-        /**
-         * Elasticsearch — mirror the CLI installer: only persist the connection
-         * details when enabled, and only the keys relevant to the chosen type.
-         */
-        if (isset($request['elasticsearch_enabled'])) {
-            $esEnabled = $request['elasticsearch_enabled'] === 'yes';
-
-            $envDBParams['ELASTICSEARCH_ENABLED'] = $esEnabled ? 'true' : 'false';
-
-            if ($esEnabled) {
-                $connection = $request['elasticsearch_connection'] ?? 'default';
-
-                $envDBParams['ELASTICSEARCH_CONNECTION'] = $connection;
-
-                if ($connection === 'cloud') {
-                    $envDBParams['ELASTICSEARCH_CLOUD_ID'] = $request['elasticsearch_cloud_id'] ?? '';
-                } else {
-                    $envDBParams['ELASTICSEARCH_HOST'] = $request['elasticsearch_host'] ?? '';
-                    $envDBParams['ELASTICSEARCH_USER'] = $request['elasticsearch_user'] ?? '';
-                    $envDBParams['ELASTICSEARCH_PASS'] = $request['elasticsearch_pass'] ?? '';
-
-                    if ($connection === 'api') {
-                        $envDBParams['ELASTICSEARCH_API_KEY'] = $request['elasticsearch_api_key'] ?? '';
-                    }
-                }
-
-                $envDBParams['ELASTICSEARCH_INDEX_PREFIX'] = $request['elasticsearch_index_prefix'] ?? '';
-            }
-        }
-
-        $data = file_get_contents($this->envPath());
-
-        foreach ($envDBParams as $key => $value) {
-            $value = (string) preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
-
-            if (preg_match('/\s/', $value)) {
-                $value = '"'.$value.'"';
-            }
-
-            // Use a callback so "$" in values (e.g. passwords) is not read as a backreference.
-            if (preg_match("/^{$key}=.*/m", $data)) {
-                $data = preg_replace_callback("/^{$key}=.*/m", fn (): string => "{$key}={$value}", $data);
-            } else {
-                $data = rtrim($data, "\r\n").PHP_EOL."{$key}={$value}".PHP_EOL;
-            }
-        }
-
-        try {
-            file_put_contents($this->envPath(), $data);
-        } catch (Exception) {
-            return false;
+        if (empty(config('app.key'))) {
+            return new Exception(trans('installer::app.installer.index.environment-configuration.app-key-missing'));
         }
 
         return true;

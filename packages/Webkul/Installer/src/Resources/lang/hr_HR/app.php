@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Dopuštene Valute',
                 'allowed-locales'     => 'Dopušteni Lokaliteti',
+                'app-key-missing'     => 'Datoteka .env nije pronađena, a APP_KEY nije postavljen u okruženju poslužitelja. Instalacijski program nikada ne zapisuje konfiguraciju okruženja — ručno izradite .env (kopirajte .env.example) ili konfigurirajte varijable u svojoj upravljačkoj ploči hostinga, pa pokušajte ponovno.',
+                'env-readonly-note'   => 'Ove se vrijednosti čitaju iz okruženja vašeg poslužitelja (.env). Instalacijski program nikada ne zapisuje konfiguraciju okruženja — da biste nešto promijenili, uredite datoteku .env (ili varijable upravljačke ploče hostinga) i ponovno učitajte ovu stranicu.',
                 'application-name'    => 'Ime Aplikacije',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Kineski Yuan (CNY)',

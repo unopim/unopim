@@ -164,6 +164,24 @@ function unopim_install_php_binary(): string
 }
 
 /**
+ * Whether the .env file already carries a non-empty APP_KEY.
+ *
+ * The installer never writes the .env file itself; `artisan key:generate` is
+ * the single permitted exception, and only when no key exists yet — an
+ * operator-authored key must never be rotated.
+ */
+function unopim_install_has_app_key(string $envPath): bool
+{
+    foreach (file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES) ?: [] as $line) {
+        if (preg_match('/^\s*APP_KEY\s*=\s*(.+)$/', $line, $matches)) {
+            return trim(trim($matches[1]), "\"'") !== '';
+        }
+    }
+
+    return false;
+}
+
+/**
  * Resolve the minimum PHP version from composer.json so the two cannot drift.
  */
 function unopim_install_required_php(string $projectRoot): string
@@ -368,19 +386,18 @@ if ($alreadyInstalled) {
         ];
 
         $envPath = $projectRoot.'/.env';
-        $envExamplePath = $projectRoot.'/.env.example';
 
-        if (! is_file($envPath) && is_file($envExamplePath)) {
-            if (@copy($envExamplePath, $envPath)) {
-                unopim_install_write('Created .env from .env.example.', '', true);
-            } else {
-                unopim_install_write('ERROR: Unable to create .env from .env.example.', 'error');
+        if (is_file($envPath)) {
+            unopim_install_write('.env found.', '', true);
+        } elseif (trim((string) getenv('APP_KEY')) !== '') {
+            unopim_install_write('No .env file — using the environment provided by the server.', '', true);
+        } else {
+            unopim_install_write('ERROR: No .env file and no APP_KEY in the server environment. This installer never writes environment configuration — upload a .env (copy .env.example and fill in your values) or configure the variables in your hosting panel, then try again.', 'error');
 
-                $ready = false;
-            }
+            $ready = false;
         }
 
-        if ($ready) {
+        if ($ready && is_file($envPath) && ! unopim_install_has_app_key($envPath) && trim((string) getenv('APP_KEY')) === '') {
             $commands[] = escapeshellarg($phpBinary).' '
                 .escapeshellarg($projectRoot.'/artisan').' key:generate --force';
         }

@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Đồng tiền được phép',
                 'allowed-locales'     => 'Các địa phương được phép',
+                'app-key-missing'     => 'Không tìm thấy tệp .env và APP_KEY chưa được đặt trong môi trường máy chủ. Trình cài đặt không bao giờ ghi cấu hình môi trường — hãy tự tạo tệp .env (sao chép .env.example) hoặc cấu hình các biến trong bảng điều khiển hosting của bạn, rồi thử lại.',
+                'env-readonly-note'   => 'Các giá trị này được đọc từ môi trường máy chủ của bạn (.env). Trình cài đặt không bao giờ ghi cấu hình môi trường — để thay đổi bất cứ điều gì, hãy chỉnh sửa tệp .env (hoặc các biến trong bảng điều khiển hosting) rồi tải lại trang này.',
                 'application-name'    => 'Tên ứng dụng',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Nhân dân tệ Trung Quốc (CNY)',

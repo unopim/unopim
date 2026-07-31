@@ -172,18 +172,26 @@ class InstallerController extends Controller
     }
 
     /**
-     * Apply the database credentials from the freshly written .env to the live
+     * Apply the database credentials from the operator's .env to the live
      * runtime config.
      *
-     * The .env is written by an earlier request (env-file-setup), but the
-     * process handling migration/seeding may have already booted with the old
-     * config (persistent `php artisan serve` workers, php-fpm, Octane, etc.),
+     * The serving process may have booted before the operator authored the
+     * .env (persistent `php artisan serve` workers, php-fpm, Octane, etc.),
      * so it would otherwise migrate the wrong database. Re-reading the .env and
      * purging the connection makes the install work on any server, mirroring
      * the CLI installer's loadEnvConfigAtRuntime().
+     *
+     * Inert under the test runner: DB::purge() would silently discard the
+     * suite's DatabaseTransactions rollback and reconnect every subsequent
+     * write to the workspace's real .env database — installer tests once wiped
+     * a live admin exactly this way.
      */
     protected function reloadDatabaseConfigFromEnv(): void
     {
+        if (app()->runningUnitTests()) {
+            return;
+        }
+
         $env = $this->readEnvFile();
 
         if ($env === []) {
@@ -282,47 +290,44 @@ class InstallerController extends Controller
 
         $cloudHostingUrl = self::CLOUD_HOSTING_URL;
 
-        return view('installer::installer.index', ['requirements' => $requirements, 'phpVersion' => $phpVersion, 'optionalPackages' => $optionalPackages, 'cloudHostingUrl' => $cloudHostingUrl]);
+        $this->reloadDatabaseConfigFromEnv();
+
+        $connection = (string) config('database.default');
+
+        $environmentSummary = [
+            'app_url'    => (string) config('app.url'),
+            'connection' => $connection,
+            'host'       => (string) config("database.connections.{$connection}.host"),
+            'port'       => (string) config("database.connections.{$connection}.port"),
+            'database'   => (string) config("database.connections.{$connection}.database"),
+            'username'   => (string) config("database.connections.{$connection}.username"),
+            'prefix'     => (string) config("database.connections.{$connection}.prefix"),
+        ];
+
+        return view('installer::installer.index', ['requirements' => $requirements, 'phpVersion' => $phpVersion, 'optionalPackages' => $optionalPackages, 'cloudHostingUrl' => $cloudHostingUrl, 'environmentSummary' => $environmentSummary]);
     }
 
     /**
-     * ENV File Setup
+     * Confirm the operator-authored .env is present and keyed.
+     *
+     * The installer no longer writes the .env file from wizard input — an
+     * unauthenticated endpoint that rewrites the runtime configuration is a
+     * backdoor on any exposed pre-install instance. The environment step only
+     * verifies the file exists and generates APP_KEY when it is still empty.
      */
-    public function envFileSetup(Request $request): JsonResponse
+    public function envFileSetup(): JsonResponse
     {
         $this->abortIfInstalled();
 
-        // Refuse to rewrite a live .env when the database is already populated,
-        // even if the install marker/flag were lost (prevents the .env-reset takeover).
         $this->abortIfDatabasePopulated();
 
-        $request = $request->all();
+        $result = $this->environmentManager->generateEnv([]);
 
-        if (isset($request['db_prefix'])) {
-            $request['db_prefix'] = trim((string) $request['db_prefix']);
+        if ($result instanceof \Exception) {
+            return response()->json(['error' => $result->getMessage()], 422);
         }
 
-        $request = array_map(fn ($input): string => strip_tags((string) $input), $request);
-
-        // Match the CLI installer's prefix validation 1:1 so both install
-        // paths surface the same migration-blocking errors up-front.
-        $validator = Validator::make($request, [
-            'db_prefix' => ['nullable', 'string', 'max:4', 'regex:/^[A-Za-z0-9_]*$/'],
-        ], [
-            'db_prefix.max'   => 'The database prefix should not exceed 4 characters.',
-            'db_prefix.regex' => 'The database prefix can only contain letters, numbers, and underscores.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'error'  => $validator->errors()->first('db_prefix') ?: 'Failed to parse dotenv file due to some invalid values',
-                'errors' => $validator->errors()->toArray(),
-            ], 422);
-        }
-
-        $message = $this->environmentManager->generateEnv($request);
-
-        return new JsonResponse(['data' => $message]);
+        return new JsonResponse(['data' => true]);
     }
 
     /**
@@ -381,13 +386,7 @@ class InstallerController extends Controller
             ],
         ];
 
-        $response = $this->environmentManager->setEnvConfiguration(request()->allParameters);
-
-        if ($response) {
-            return $this->databaseManager->seeder($parameter);
-        }
-
-        return null;
+        return $this->databaseManager->seeder($parameter);
     }
 
     /**
@@ -473,13 +472,13 @@ class InstallerController extends Controller
     /**
      * Persist the install configuration server-side ahead of the streaming run.
      *
-     * Writes the app/locale/currency/Elasticsearch settings to the .env via
-     * {@see EnvironmentManager::setEnvConfiguration()} and stashes the admin
-     * credentials, sample-data flag, allowed locales/currencies and the
-     * (whitelisted) optional-package keys in the session. The actual install is
-     * driven by {@see processInstall()} over a GET EventSource, which cannot
-     * carry a body — so the admin password never travels in a query string; it
-     * is read back from the session inside the SSE stream.
+     * Stashes the admin credentials, sample-data flag, allowed
+     * locales/currencies and the (whitelisted) optional-package keys in a temp
+     * state file — never the .env, which the installer does not write. The
+     * actual install is driven by {@see processInstall()} over a GET
+     * EventSource, which cannot carry a body — so the admin password never
+     * travels in a query string; it is read back from the state file inside
+     * the SSE stream.
      */
     public function prepareInstall(Request $request): JsonResponse
     {
@@ -496,8 +495,6 @@ class InstallerController extends Controller
         if (($invalid = $this->validateAdminPassword($payload, 'admin.password')) instanceof JsonResponse) {
             return $invalid;
         }
-
-        $this->environmentManager->setEnvConfiguration($payload);
 
         $admin = $request->input('admin', []);
 
@@ -940,25 +937,5 @@ class InstallerController extends Controller
             'DB_PASSWORD'   => (string) config("database.connections.{$connection}.password"),
             'DB_PREFIX'     => (string) config("database.connections.{$connection}.prefix"),
         ];
-    }
-
-    /**
-     * SMTP connection setup for Mail
-     */
-    public function smtpConfigSetup(): string
-    {
-        $this->abortIfInstalled();
-
-        $this->abortIfDatabasePopulated();
-
-        $this->environmentManager->setEnvConfiguration(request()->input());
-
-        $filePath = storage_path('installed');
-
-        File::put($filePath, 'Your UnoPim App is Successfully Installed');
-
-        Event::dispatch('unopim.installed');
-
-        return $filePath;
     }
 }

@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => '允許的貨幣',
                 'allowed-locales'     => '允許的地區',
+                'app-key-missing'     => '找不到 .env 檔案，且伺服器環境中未設定 APP_KEY。安裝程式從不寫入環境設定 — 請手動建立 .env（複製 .env.example），或在主機面板中設定這些變數，然後再試一次。',
+                'env-readonly-note'   => '這些值是從您的伺服器環境（.env）讀取的。安裝程式從不寫入環境設定 — 如需變更任何內容，請編輯 .env 檔案（或主機面板中的變數），然後重新載入此頁面。',
                 'application-name'    => '應用名稱',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => '人民幣 (CNY)',

@@ -264,6 +264,8 @@ return [
             'environment-configuration' => [
                 'allowed-currencies'  => 'Allowed Currencies',
                 'allowed-locales'     => 'Allowed Locales',
+                'app-key-missing'     => 'No .env file was found and APP_KEY is not set in the server environment. The installer never writes environment configuration — create a .env by hand (copy .env.example) or configure the variables in your hosting panel, then try again.',
+                'env-readonly-note'   => 'These values are read from your server environment (.env). The installer never writes environment configuration — to change anything, edit the .env file (or your hosting panel variables) and reload this page.',
                 'application-name'    => 'Application Name',
                 'unopim'              => 'UnoPim',
                 'chinese-yuan'        => 'Chinese Yuan (CNY)',
