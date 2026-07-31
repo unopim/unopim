@@ -13,7 +13,7 @@ return [
                 'base-url-hint'                    => 'Javna adresa na kojoj se poslužuju putovnice, koristi se za izradu QR kodova i poveznica za dijeljenje. Ostavite prazno za korištenje vlastite domene ove stranice.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl'                        => 'TTL predmemorije (sekunde)',
-                'cache-ttl-hint'                   => 'Koliko dugo se renderirana javna putovnica sprema u predmemoriju prije ponovne izrade. Veće vrijednosti smanjuju opterećenje; niže vrijednosti brže prikazuju izmjene.',
+                'cache-ttl-hint'                   => 'Koliko dugo dijeljena predmemorija (CDN ili obrnuti proxy) smije ponovno koristiti prikazanu javnu putovnicu. Preglednici provjeravaju pri svakom posjetu, pa izmjene, povlačenja i isključivanje sloja djeluju odmah.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit'                       => 'Ograničenje brzine (zahtjeva/minuti)',
                 'rate-limit-hint'                  => 'Najveći broj zahtjeva za javnim putovnicama dopušten u minuti od jednog posjetitelja prije nego što se ograniči.',

@@ -13,7 +13,7 @@ return [
                 'base-url-hint'                    => 'Adresse publique où les passeports sont servis, utilisée pour générer les codes QR et les liens partageables. Laissez vide pour utiliser le domaine propre de ce site.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl'                        => 'Durée du cache (secondes)',
-                'cache-ttl-hint'                   => 'Durée de mise en cache d\'un passeport public rendu avant sa reconstruction. Des valeurs plus élevées réduisent la charge ; des valeurs plus faibles reflètent les modifications plus rapidement.',
+                'cache-ttl-hint'                   => 'Durée pendant laquelle un cache partagé (CDN ou proxy inverse) peut réutiliser un passeport public déjà rendu. Les navigateurs revalident à chaque visite : les modifications, les retraits et la désactivation du niveau prennent effet immédiatement.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit'                       => 'Limite de débit (requêtes/minute)',
                 'rate-limit-hint'                  => 'Nombre maximal de requêtes de passeports publics autorisées par minute depuis un même visiteur avant qu\'il ne soit limité.',

@@ -380,7 +380,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await passportCard.click({ force: true });
 
     const panel = page.locator('[data-section-id="passport"]');
-    const drawerScroll = panel.locator('.overflow-auto').first();
+    const drawerScroll = panel.locator('.overflow-y-auto').first();
     const localeScroll = panel.locator('.passport-locales-table');
 
     await expect(panel).toBeVisible();
@@ -389,7 +389,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     await localeScroll.locator('a[href*="/passport/preview"]').first().focus();
 
     const scrollState = await panel.evaluate((drawer) => {
-      const outer = drawer.querySelector('.overflow-auto');
+      const outer = drawer.querySelector('.overflow-y-auto');
       const locales = drawer.querySelector('.passport-locales-table');
 
       return {

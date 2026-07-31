@@ -2,6 +2,8 @@
 
 namespace Webkul\Publication\Services;
 
+use Webkul\Core\Services\ScopedConfig;
+
 /**
  * Whether the public tier would actually serve what is published.
  *
@@ -12,11 +14,21 @@ namespace Webkul\Publication\Services;
  */
 class PublicAccessGate
 {
+    public const string ENABLED = 'general.publication.settings.enabled';
+
+    public function __construct(private readonly ScopedConfig $config) {}
+
     public function globallyEnabled(): bool
     {
         return (bool) config('publication.enabled');
     }
 
+    /**
+     * Read through {@see ScopedConfig} rather than `core()->getConfigData()`: the
+     * field is not declared channel-based, so the generic reader matches on the
+     * code alone and a stale duplicate row can keep the tier alive after the
+     * settings screen switched it off.
+     */
     public function enabledForChannel(?string $channelCode): bool
     {
         if ($channelCode === null || $channelCode === '') {
@@ -24,7 +36,7 @@ class PublicAccessGate
         }
 
         return $this->globallyEnabled()
-            && (bool) (core()->getConfigData('general.publication.settings.enabled', $channelCode) ?? false);
+            && $this->config->enabled(self::ENABLED, $channelCode);
     }
 
     /**

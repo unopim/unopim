@@ -120,6 +120,16 @@ it('returns not found for unknown sample requests', function (array $parameters)
     'type without zip' => [['roles', 'variants']],
 ]);
 
+it('renders every sample link on the job forms', function (string $route, string $sampleUrl) {
+    $this->loginAsAdmin();
+
+    $this->get(route($route))->assertOk()->assertSee($sampleUrl, false);
+})->with([
+    ['admin.settings.data_transfer.imports.create', 'download-sample/products/variants'],
+    ['admin.settings.data_transfer.imports.create', 'download-sample-images-zip/products'],
+    ['admin.settings.data_transfer.exports.create', 'exports/download-sample/products/default'],
+]);
+
 it('returns not found when a type ships no images archive', function () {
     $this->loginAsAdmin();
 

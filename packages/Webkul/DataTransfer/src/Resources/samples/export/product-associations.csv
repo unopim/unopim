@@ -1,0 +1,4 @@
+sku,association_type,related_sku,quantity
+simple-product-1,related_products,simple-product-2,
+simple-product-1,cross_sells,simple-product-3,
+simple-product-1,bundle_kit,simple-product-2,2

@@ -13,7 +13,7 @@ return [
                 'base-url-hint'                    => 'Dirección pública donde se sirven los pasaportes, usada para generar códigos QR y enlaces para compartir. Déjalo en blanco para usar el propio dominio de este sitio.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl'                        => 'TTL de caché (segundos)',
-                'cache-ttl-hint'                   => 'Cuánto tiempo se almacena en caché un pasaporte público renderizado antes de reconstruirse. Valores más altos reducen la carga; valores más bajos reflejan los cambios antes.',
+                'cache-ttl-hint'                   => 'Cuánto tiempo puede una caché compartida (CDN o proxy inverso) reutilizar un pasaporte público ya renderizado. Los navegadores revalidan en cada visita, por lo que las ediciones, los retiros y desactivar la capa surten efecto de inmediato.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit'                       => 'Límite de solicitudes (peticiones/minuto)',
                 'rate-limit-hint'                  => 'Número máximo de solicitudes de pasaportes públicos permitidas por minuto desde un mismo visitante antes de que se le limite.',

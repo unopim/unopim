@@ -15,7 +15,7 @@ return [
                 'enabled-hint'                     => '公开服务层的总开关。关闭时，每个公开护照 URL 都会返回 404。管理后台的护照页面不受影响，如需隐藏请使用数字产品护照设置。',
                 'base-url-hint'                    => '提供护照的公开地址，用于生成 QR 码和可分享链接。留空则使用本站自身的域名。',
                 'base-url-placeholder'             => 'https://dpp.example.com',
-                'cache-ttl-hint'                   => '已渲染的公开护照在重新生成之前的缓存时长。数值越高负载越低；数值越低越能更快反映编辑。',
+                'cache-ttl-hint'                   => '共享缓存（CDN 或反向代理）可重用已渲染公开护照页面的时长。浏览器每次访问都会重新验证，因此编辑、撤回以及关闭该层会立即生效。',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit-hint'                  => '单个访客每分钟允许的公开护照请求上限，超出后将被限流。',
                 'rate-limit-placeholder'           => '60',

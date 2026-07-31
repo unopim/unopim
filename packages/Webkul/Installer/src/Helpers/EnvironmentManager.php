@@ -12,13 +12,29 @@ class EnvironmentManager
     public function __construct(protected DatabaseManager $databaseManager) {}
 
     /**
+     * Path of the .env file the installer writes.
+     */
+    protected function envPath(): string
+    {
+        return base_path('.env');
+    }
+
+    /**
+     * Path of the .env.example template used to bootstrap a missing .env.
+     */
+    protected function envExamplePath(): string
+    {
+        return base_path('.env.example');
+    }
+
+    /**
      * Generate ENV File and Installation.
      */
     public function generateEnv(array $request): bool|Exception
     {
-        $envExamplePath = base_path('.env.example');
+        $envExamplePath = $this->envExamplePath();
 
-        $envPath = base_path('.env');
+        $envPath = $this->envPath();
 
         if (! file_exists($envPath)) {
             if (file_exists($envExamplePath)) {
@@ -41,6 +57,11 @@ class EnvironmentManager
 
     /**
      * Set the ENV file configuration.
+     *
+     * Values arrive from unauthenticated installer requests, so control
+     * characters (newlines above all) are stripped before writing: a value
+     * carrying "\nKEY=..." would otherwise smuggle arbitrary env keys past
+     * the whitelisted parameter map.
      */
     public function setEnvConfiguration(array $request): bool
     {
@@ -97,10 +118,10 @@ class EnvironmentManager
             }
         }
 
-        $data = file_get_contents(base_path('.env'));
+        $data = file_get_contents($this->envPath());
 
         foreach ($envDBParams as $key => $value) {
-            $value = (string) $value;
+            $value = preg_replace('/[\x00-\x1F\x7F]/', '', (string) $value);
 
             if (preg_match('/\s/', $value)) {
                 $value = '"'.$value.'"';
@@ -115,7 +136,7 @@ class EnvironmentManager
         }
 
         try {
-            file_put_contents(base_path('.env'), $data);
+            file_put_contents($this->envPath(), $data);
         } catch (Exception) {
             return false;
         }

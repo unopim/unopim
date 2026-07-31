@@ -15,7 +15,7 @@ return [
                 'enabled-hint'                     => 'Huvudbrytare för den publika visningsnivån. När den är av returnerar varje publik pass-URL 404. Passvyerna i administrationen påverkas inte — dölj dem med inställningen Digitalt produktpass.',
                 'base-url-hint'                    => 'Publik adress där passen visas, används för att skapa QR-koder och delbara länkar. Lämna tomt för att använda webbplatsens egen domän.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
-                'cache-ttl-hint'                   => 'Hur länge ett renderat publikt pass cachas innan det byggs om. Högre värden minskar belastningen; lägre värden återspeglar ändringar snabbare.',
+                'cache-ttl-hint'                   => 'Hur länge en delad cache (CDN eller omvänd proxy) får återanvända ett renderat publikt pass. Webbläsare omvaliderar vid varje besök, så ändringar, återkallanden och att stänga av nivån får effekt direkt.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit-hint'                  => 'Högsta antal publika pass-förfrågningar per minut från en enskild besökare innan de begränsas.',
                 'rate-limit-placeholder'           => '60',

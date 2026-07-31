@@ -94,14 +94,14 @@
                 </p>
             </div>
 
-            <div class="bg-white dark:bg-cherry-900 rounded box-shadow">
+            <div class="bg-white dark:bg-cherry-900 rounded box-shadow min-w-0">
                 <x-admin::tabs position="left">
                     <x-admin::tabs.item
                         :title="trans('passport::app.catalog.products.edit.passport.tabs.locales')"
                         value="passport-locales"
                         :is-selected="true"
                     >
-                        <div class="passport-locales-table min-w-0 max-w-full overflow-x-auto">
+                        <div class="passport-locales-table overflow-x-auto">
                             <x-admin::table class="min-w-0">
                                 <x-admin::table.thead>
                                     <x-admin::table.thead.tr>

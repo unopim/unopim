@@ -1,10 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\DataTransfer\Services\SampleFiles;
 
 /**
  * The shipped samples are only meant to import against a stock installation:
@@ -21,31 +23,35 @@ function reduceToStockInstallation(): void
     DB::table('locales')->where('code', '!=', 'en_US')->update(['status' => 0]);
 }
 
-function importSample(string $entityType, string $samplePath): array
+function importSample(string $entityType, string $samplePath, string $action = Import::ACTION_APPEND, string $imagesDirectory = ''): array
 {
     $filePath = 'import/'.basename($samplePath);
 
-    Storage::disk('private')->put($filePath, (string) file_get_contents(base_path('storage/app/public/'.$samplePath)));
+    Storage::disk('private')->put($filePath, (string) file_get_contents($samplePath));
 
     $jobInstance = JobInstances::factory()->create([
-        'code'            => 'sample-'.md5($samplePath),
-        'entity_type'     => $entityType,
-        'type'            => 'import',
-        'action'          => 'append',
-        'field_separator' => ',',
-        'file_path'       => $filePath,
+        'code'                  => 'sample-'.md5($samplePath.$action),
+        'entity_type'           => $entityType,
+        'type'                  => 'import',
+        'action'                => $action,
+        'field_separator'       => ',',
+        'file_path'             => $filePath,
+        'images_directory_path' => $imagesDirectory,
     ]);
 
     $jobTrack = JobTrack::factory()->create([
-        'job_instances_id'    => $jobInstance->id,
-        'type'                => 'import',
-        'action'              => 'append',
-        'validation_strategy' => 'skip-erros',
-        'allowed_errors'      => 1000,
-        'field_separator'     => ',',
-        'file_path'           => $filePath,
-        'state'               => Import::STATE_PENDING,
+        'job_instances_id'      => $jobInstance->id,
+        'type'                  => 'import',
+        'action'                => $action,
+        'validation_strategy'   => 'skip-erros',
+        'allowed_errors'        => 1000,
+        'field_separator'       => ',',
+        'file_path'             => $filePath,
+        'images_directory_path' => $imagesDirectory,
+        'state'                 => Import::STATE_PENDING,
     ]);
+
+    Storage::forgetDisk(['public', 'local', 'private']);
 
     $helper = app(Import::class)
         ->setImport($jobTrack)
@@ -66,27 +72,85 @@ function importSample(string $entityType, string $samplePath): array
     return $errors;
 }
 
-it('imports every shipped sample against a stock installation', function () {
+function samplePath(string $type, string $key = SampleFiles::DEFAULT_KEY): string
+{
+    return app(SampleFiles::class)->path('importers', $type, $key);
+}
+
+$chain = [
+    'locales',
+    'currencies',
+    'channels',
+    'attribute-groups',
+    'attributes',
+    'attribute-options',
+    'attribute-families',
+    'category-fields',
+    'categories',
+    'products',
+    'product-associations',
+    'roles',
+    'users',
+];
+
+it('imports every shipped sample against a stock installation', function () use ($chain) {
     reduceToStockInstallation();
 
-    $chain = [
-        ['locales', 'data-transfer/samples/locales.csv'],
-        ['currencies', 'data-transfer/samples/currencies.csv'],
-        ['channels', 'data-transfer/samples/channels.csv'],
-        ['attribute-groups', 'data-transfer/samples/attribute-groups.csv'],
-        ['attributes', 'data-transfer/samples/attributes.csv'],
-        ['attribute-options', 'data-transfer/samples/attribute-options.csv'],
-        ['attribute-families', 'data-transfer/samples/attribute-families.csv'],
-        ['category-fields', 'data-transfer/samples/category-fields.csv'],
-        ['categories', 'data-transfer/samples/categories.csv'],
-        ['products', 'data-transfer/samples/products.csv'],
-        ['products', 'data-transfer/samples/sample-variant-products.csv'],
-        ['product-associations', 'data-transfer/samples/product-associations.csv'],
-        ['roles', 'data-transfer/samples/roles.csv'],
-        ['users', 'data-transfer/samples/users.csv'],
-    ];
-
-    foreach ($chain as [$entityType, $samplePath]) {
-        expect(importSample($entityType, $samplePath))->toBe([], "$samplePath failed to import");
+    foreach ($chain as $type) {
+        expect(importSample($type, samplePath($type)))->toBe([], "$type sample failed to import");
     }
+
+    expect(importSample('products', samplePath('products', 'variants')))->toBe([], 'variant sample failed to import');
+});
+
+it('deletes with every shipped delete sample', function () use ($chain) {
+    reduceToStockInstallation();
+
+    foreach ($chain as $type) {
+        importSample($type, samplePath($type));
+    }
+
+    foreach (array_reverse($chain) as $type) {
+        expect(importSample($type, samplePath($type, 'delete'), Import::ACTION_DELETE))
+            ->toBe([], "$type delete sample failed to import");
+    }
+});
+
+it('imports the multi-locale product sample once the extra locales are active', function () {
+    reduceToStockInstallation();
+
+    DB::table('locales')->whereIn('code', ['fr_FR', 'de_DE'])->update(['status' => 1]);
+
+    $channelId = DB::table('channels')->where('code', 'default')->value('id');
+
+    foreach (DB::table('locales')->whereIn('code', ['fr_FR', 'de_DE'])->pluck('id') as $localeId) {
+        DB::table('channel_locales')->insertOrIgnore(['channel_id' => $channelId, 'locale_id' => $localeId]);
+    }
+
+    foreach (['attribute-groups', 'attributes', 'attribute-families', 'categories'] as $type) {
+        importSample($type, samplePath($type));
+    }
+
+    expect(importSample('products', samplePath('products', 'multi-locale')))->toBe([]);
+});
+
+it('imports the products archived with their images', function () {
+    reduceToStockInstallation();
+
+    foreach (['attribute-groups', 'attributes', 'attribute-families', 'categories'] as $type) {
+        importSample($type, samplePath($type));
+    }
+
+    $directory = 'sample-images-'.uniqid();
+
+    $zip = new ZipArchive;
+    $zip->open(app(SampleFiles::class)->path('importers', 'products', images: true));
+    $zip->extractTo(storage_path('app/public/'.$directory));
+    $zip->close();
+
+    $errors = importSample('products', storage_path('app/public/'.$directory.'/products.csv'), imagesDirectory: $directory);
+
+    File::deleteDirectory(storage_path('app/public/'.$directory));
+
+    expect($errors)->toBe([]);
 });

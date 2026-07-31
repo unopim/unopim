@@ -13,7 +13,7 @@ return [
                 'base-url-hint'                    => 'Julkinen osoite, jossa passit tarjoillaan; käytetään QR-koodien ja jaettavien linkkien luomiseen. Jätä tyhjäksi käyttääksesi tämän sivuston omaa verkkotunnusta.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
                 'cache-ttl'                        => 'Välimuistin TTL (sekuntia)',
-                'cache-ttl-hint'                   => 'Kuinka kauan renderöityä julkista passia pidetään välimuistissa ennen sen uudelleenrakentamista. Suuremmat arvot vähentävät kuormaa; pienemmät heijastavat muutokset nopeammin.',
+                'cache-ttl-hint'                   => 'Kuinka kauan jaettu välimuisti (CDN tai käänteinen välityspalvelin) saa käyttää uudelleen renderöityä julkista passia. Selaimet tarkistavat sivun joka käynnillä, joten muokkaukset, peruutukset ja tason sulkeminen tulevat voimaan heti.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit'                       => 'Nopeusrajoitus (pyyntöä/minuutti)',
                 'rate-limit-hint'                  => 'Yhden kävijän sallittujen julkisten passipyyntöjen enimmäismäärä minuutissa ennen kuin niitä rajoitetaan.',

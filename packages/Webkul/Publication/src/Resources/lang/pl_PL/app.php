@@ -15,7 +15,7 @@ return [
                 'enabled-hint'                     => 'Główny przełącznik publicznej warstwy udostępniania. Gdy jest wyłączony, każdy publiczny adres URL paszportu zwraca błąd 404. Ekrany paszportów w panelu administracyjnym pozostają bez zmian — ukryj je ustawieniem Cyfrowy Paszport Produktu.',
                 'base-url-hint'                    => 'Publiczny adres, pod którym udostępniane są paszporty, używany do tworzenia kodów QR i linków do udostępniania. Pozostaw puste, aby użyć własnej domeny tej witryny.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
-                'cache-ttl-hint'                   => 'Jak długo wyrenderowany publiczny paszport jest przechowywany w pamięci podręcznej, zanim zostanie odbudowany. Wyższe wartości zmniejszają obciążenie; niższe szybciej odzwierciedlają zmiany.',
+                'cache-ttl-hint'                   => 'Jak długo współdzielona pamięć podręczna (CDN lub reverse proxy) może ponownie użyć wyrenderowanego publicznego paszportu. Przeglądarki weryfikują stronę przy każdej wizycie, więc zmiany, wycofania i wyłączenie warstwy działają natychmiast.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit-hint'                  => 'Maksymalna liczba publicznych żądań paszportu dozwolona na minutę od jednego odwiedzającego, zanim zostanie on ograniczony.',
                 'rate-limit-placeholder'           => '60',

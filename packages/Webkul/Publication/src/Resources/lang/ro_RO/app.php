@@ -15,7 +15,7 @@ return [
                 'enabled-hint'                     => 'Comutatorul principal pentru nivelul public de servire. Când este dezactivat, fiecare URL public de pașaport returnează 404. Ecranele de pașapoarte din administrare nu sunt afectate — ascunde-le din setarea Pașaport Digital de Produs.',
                 'base-url-hint'                    => 'Adresa publică unde sunt servite pașapoartele, folosită pentru a crea coduri QR și linkuri care pot fi partajate. Lăsați necompletat pentru a folosi domeniul propriu al acestui site.',
                 'base-url-placeholder'             => 'https://dpp.example.com',
-                'cache-ttl-hint'                   => 'Cât timp este păstrat în cache un pașaport public randat înainte de a fi reconstruit. Valorile mai mari reduc încărcarea; valorile mai mici reflectă modificările mai repede.',
+                'cache-ttl-hint'                   => 'Cât timp o memorie cache partajată (CDN sau proxy invers) poate reutiliza un pașaport public deja randat. Browserele revalidează la fiecare vizită, așa că modificările, retragerile și dezactivarea nivelului au efect imediat.',
                 'cache-ttl-placeholder'            => '3600',
                 'rate-limit-hint'                  => 'Numărul maxim de cereri publice de pașaport permise pe minut de la un singur vizitator înainte de a fi limitat.',
                 'rate-limit-placeholder'           => '60',

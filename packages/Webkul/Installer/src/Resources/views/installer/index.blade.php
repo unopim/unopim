@@ -132,7 +132,7 @@
 
                             <select
                                 class="shrink-0 h-[30px] rounded-lg border-0 bg-white/[0.18] text-white text-[12.5px] font-semibold px-2 cursor-pointer focus:outline-none [&>option]:text-gray-800"
-                                onchange="window.location.href='/install?locale=' + this.value"
+                                onchange="window.location.href = window.location.pathname + '?locale=' + this.value"
                                 aria-label="@lang('installer::app.installer.index.wizard-language')"
                             >
                                 @foreach ($locales as $value)
@@ -1485,7 +1485,7 @@
 
                             envConfigData: {},
 
-                            defaultAppUrl: window.location.origin,
+                            defaultAppUrl: window.location.origin + window.location.pathname.replace(/\/install\/?$/, ''),
 
                             installStage: '',
 
@@ -1699,6 +1699,14 @@
                             });
                         },
 
+                        resolveInstallerUrl(routeUrl) {
+                            const marker = '/install';
+
+                            const base = window.location.pathname.slice(0, window.location.pathname.lastIndexOf(marker));
+
+                            return base + routeUrl.slice(routeUrl.lastIndexOf(marker));
+                        },
+
                         // Runs the whole installation server-side and streams its output
                         // to the read-only terminal:
                         //   1) write .env (DB credentials),
@@ -1726,11 +1734,11 @@
 
                             this.installStage = 'environment';
 
-                            this.$axios.post("{{ route('installer.env_file_setup', [], false) }}", this.envData)
+                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.env_file_setup', [], false) }}"), this.envData)
                                 .then(() => {
                                     this.installStage = 'prepare';
 
-                                    return this.$axios.post("{{ route('installer.prepare', [], false) }}", preparePayload);
+                                    return this.$axios.post(this.resolveInstallerUrl("{{ route('installer.prepare', [], false) }}"), preparePayload);
                                 })
                                 .then(() => {
                                     this.startStream();
@@ -1763,7 +1771,7 @@
                         },
 
                         startStream() {
-                            const source = new EventSource("{{ route('installer.process', [], false) }}");
+                            const source = new EventSource(this.resolveInstallerUrl("{{ route('installer.process', [], false) }}"));
 
                             source.onmessage = (event) => {
                                 try {
@@ -1807,7 +1815,7 @@
                         runSampleDataSeeder() {
                             this.seedSampleDataMessage = "@lang('installer::app.installer.index.create-administrator.seeding-sample-data')";
 
-                            this.$axios.post("{{ route('installer.seed_sample_data', [], false) }}")
+                            this.$axios.post(this.resolveInstallerUrl("{{ route('installer.seed_sample_data', [], false) }}"))
                                 .then(() => {
                                     this.seedSampleDataMessage = '';
                                     this.currentStep = 'installationCompleted';

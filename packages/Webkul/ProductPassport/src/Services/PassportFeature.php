@@ -6,12 +6,15 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CoreConfig;
+use Webkul\Core\Services\ScopedConfig;
 
 class PassportFeature
 {
     private const string AUTO_PUBLISH = 'catalog.product_passport.settings.auto_publish';
 
     private const string ENABLED = 'catalog.product_passport.settings.enabled';
+
+    public function __construct(private readonly ScopedConfig $config) {}
 
     /**
      * Whether the admin surface (menu item, grid, product panel, routes) is open
@@ -54,22 +57,6 @@ class PassportFeature
 
     private function valueFor(string $code, Channel $channel): bool
     {
-        $channelValue = CoreConfig::query()
-            ->where('code', $code)
-            ->where('channel_code', $channel->code)
-            ->whereNull('locale_code')
-            ->latest('id')
-            ->value('value');
-
-        if ($channelValue !== null) {
-            return (bool) $channelValue;
-        }
-
-        return (bool) CoreConfig::query()
-            ->where('code', $code)
-            ->whereNull('channel_code')
-            ->whereNull('locale_code')
-            ->latest('id')
-            ->value('value');
+        return $this->config->enabled($code, $channel->code);
     }
 }
