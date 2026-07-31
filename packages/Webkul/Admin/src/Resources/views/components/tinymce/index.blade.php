@@ -184,7 +184,14 @@
                     <x-slot:footer>
                         <div class="flex items-center justify-between w-full">
                             <!-- Platform & Model compact selectors (left side, copilot-style) -->
-                            <div class="flex items-center gap-2" v-if="!ai.content">
+                            <p
+                                v-if="! ai.content && ! aiModels.length"
+                                class="text-xs text-danger max-w-[320px]"
+                            >
+                                @lang('admin::app.configuration.platform.message.no-platform-configured')
+                            </p>
+
+                            <div class="flex items-center gap-2" v-if="!ai.content && aiModels.length">
                                 <select
                                     v-model="ai.platform_id"
                                     @change="onPlatformChange()"
@@ -209,8 +216,8 @@
                                 <button
                                     type="submit"
                                     class="secondary-button"
-                                    :disabled="isLoading"
-                                    :class="{ 'opacity-50 cursor-not-allowed': isLoading }"
+                                    :disabled="isLoading || ! aiModels.length"
+                                    :class="{ 'opacity-50 cursor-not-allowed': isLoading || ! aiModels.length }"
                                 >
                                     <template v-if="isLoading">
                                         <img
@@ -673,7 +680,15 @@
                             this.isLoading = false;
 
                             if (error.response.status == 422) {
-                                setErrors(error.response.data.errors);
+                                const errors = error.response.data.errors ?? {};
+
+                                setErrors(errors);
+
+                                const unboundError = errors.model?.[0] ?? errors.platform_id?.[0];
+
+                                if (unboundError) {
+                                    this.$emitter.emit('add-flash', { type: 'error', message: unboundError });
+                                }
                             } else {
                                 this.$emitter.emit('add-flash', {
                                     type: 'error',
