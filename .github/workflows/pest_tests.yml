@@ -59,12 +59,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+
+      # package-lock.json is gitignored, so setup-node's npm cache has nothing to
+      # hash and npm ci has no lock to install from.
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
 
       # Runtime front-end packages only; tests assert against the shipped
       # vue-multiselect distribution.
       - name: Install Node dependencies
-        run: npm ci --omit=dev --no-audit --no-fund
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -158,12 +166,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+
+      # package-lock.json is gitignored, so setup-node's npm cache has nothing to
+      # hash and npm ci has no lock to install from.
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
 
       # Runtime front-end packages only; tests assert against the shipped
       # vue-multiselect distribution.
       - name: Install Node dependencies
-        run: npm ci --omit=dev --no-audit --no-fund
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -257,12 +273,20 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+
+      # package-lock.json is gitignored, so setup-node's npm cache has nothing to
+      # hash and npm ci has no lock to install from.
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
 
       # Runtime front-end packages only; tests assert against the shipped
       # vue-multiselect distribution.
       - name: Install Node dependencies
-        run: npm ci --omit=dev --no-audit --no-fund
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       # Pest keeps the graph under $HOME/.pest/tia/<project-key>, not in the workspace.
       - name: Resolve the test impact graph path
