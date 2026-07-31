@@ -131,7 +131,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Dieses Feld darf nur Buchstaben, Zahlen und Unterstriche enthalten.',
-        'label_format'     => 'Dieses Feld darf nur Buchstaben, Zahlen, Leerzeichen und Unterstriche enthalten.',
+        'label_format'     => 'Dieses Feld darf nur Buchstaben, Zahlen, Leerzeichen und die Zeichen _ - \' . , / ( ) enthalten.',
         'max_conversions'  => 'Eine Einheit darf nicht mehr als :max Konvertierungsoperationen haben.',
         'max_units'        => 'Eine Messfamilie darf nicht mehr als :max Einheiten haben.',
     ],

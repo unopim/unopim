@@ -130,7 +130,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Trường này chỉ có thể chứa chữ cái, số và dấu gạch dưới.',
-        'label_format'     => 'Trường này chỉ có thể chứa chữ cái, số, khoảng trắng và dấu gạch dưới.',
+        'label_format'     => 'Trường này chỉ có thể chứa chữ cái, số, khoảng trắng và các ký tự _ - \' . , / ( ).',
         'max_conversions'  => 'Một đơn vị không thể có nhiều hơn :max hoạt động chuyển đổi.',
         'max_units'        => 'Một nhóm đo lường không thể có nhiều hơn :max đơn vị.',
     ],

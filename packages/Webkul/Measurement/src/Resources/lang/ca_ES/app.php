@@ -131,7 +131,7 @@ return [
 
     'validation' => [
         'code_format'      => 'Aquest camp només pot contenir lletres, números i guions baixos.',
-        'label_format'     => 'Aquest camp només pot contenir lletres, números, espais i guions baixos.',
+        'label_format'     => 'Aquest camp només pot contenir lletres, números, espais i els caràcters _ - \' . , / ( ).',
         'max_conversions'  => 'Una unitat no pot tenir més de :max operacions de conversió.',
         'max_units'        => 'Una família de mesures no pot tenir més de :max unitats.',
     ],
