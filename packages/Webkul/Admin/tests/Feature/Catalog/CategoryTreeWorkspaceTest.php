@@ -153,3 +153,33 @@ it('moves through the tree without a hard page load', function () {
 
     expect($view)->not->toContain('window.location.href = url.toString()');
 });
+
+it('updates the parent field and closes the drawer as soon as a category is picked', function () {
+    $category = Category::factory()->create(['parent_id' => null]);
+
+    $content = $this->get(route('admin.catalog.categories.index', ['category' => $category->id]))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/select-node="([^"]*)"/', $content, $matches);
+
+    expect($matches[1] ?? '')
+        ->toContain('$refs.parentPathLabel.textContent = $event.path')
+        ->toContain('$refs.parentDrawer.close()')
+        ->not->toContain('CustomEvent');
+});
+
+it('updates the parent field and closes the drawer when root level is picked', function () {
+    $category = Category::factory()->create(['parent_id' => null]);
+
+    $content = $this->get(route('admin.catalog.categories.index', ['category' => $category->id]))
+        ->assertOk()
+        ->getContent();
+
+    preg_match('/name="parent_id_picker"[^>]*@change="([^"]*)"/s', $content, $matches);
+
+    expect($matches[1] ?? '')
+        ->toContain('$refs.parentPathLabel.textContent = $refs.rootLevelLabel.textContent.trim()')
+        ->toContain('$refs.parentDrawer.close()')
+        ->not->toContain('CustomEvent');
+});
