@@ -1,6 +1,6 @@
 # Getting Started with the UnoPim Playwright Framework
 
-This guide provides a professional and practical introduction to the Playwright-based end-to-end testing setup for UnoPim.
+This guide provides a professional and practical introduction to the Playwright-based end-to-end testing setup for UnoPim on the current Laravel 13 stack.
 
 ## Prerequisites
 

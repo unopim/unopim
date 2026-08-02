@@ -2,7 +2,7 @@
 
 The executable module registry is `constants/modules.ts`. It captures discovered pages, APIs, tables, mandatory fields, optional fields, dependencies, and business rules. This document summarizes the source-backed behavior to guide manual and automated QA.
 
-The Playwright runner itself is configured for stable local and CI execution. It normalizes environment URLs and admin paths, applies a desktop viewport and timeout defaults per test, and can optionally start the application server automatically through the web-server configuration.
+The Playwright suite is aligned with the current UnoPim/Laravel 13 application stack and is configured for stable local and CI execution. It normalizes environment URLs and admin paths, applies a desktop viewport and timeout defaults per test, and can optionally start the application server automatically through the web-server configuration.
 
 ## Catalog
 

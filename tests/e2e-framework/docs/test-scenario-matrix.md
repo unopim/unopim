@@ -1,6 +1,15 @@
 # Test Scenario Matrix
 
-Apply every scenario category below to each module in `constants/modules.ts`, prioritizing source-specific rules listed in `businessRules`, `mandatoryFields`, and `dependencies`.
+This matrix is written for the current UnoPim application stack on Laravel 13 and reflects the Playwright coverage that is currently implemented for the E2E suite. Apply every scenario category below to each module in `constants/modules.ts`, prioritizing source-specific rules listed in `businessRules`, `mandatoryFields`, and `dependencies`.
+
+## Covered Test Cases
+
+- Authentication and session handling: login, logout, redirect behavior, access denial, and protected-route enforcement.
+- Module CRUD and regression flows: create, edit, copy, delete, mass actions, search, filters, pagination, and localized UI feedback.
+- API and integration checks: admin API authorization, response schema expectations, and parity between UI-driven and API-driven behavior.
+- Database and data integrity checks: table access, expected record creation, and persistence validation for key business entities.
+- Import/export and job workflows: file validation, job state transitions, download/report actions, and error handling.
+- Security, accessibility, and resilience: unsafe input handling, permission boundaries, keyboard navigation, focus behavior, and browser-state recovery scenarios.
 
 ## Test Runner Expectations
 
