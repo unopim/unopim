@@ -60,3 +60,33 @@ describe('UpdateProduct tool locale targeting', function () {
         expect($source)->toContain('$looksLikeLocaleMap = $localeKeys !== [] && array_all(');
     });
 });
+
+describe('chat widget catalog scope', function () {
+
+    it('sends the page locale and channel so the backend does not fall back to the default', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/AiAgent/Resources/views/components/chat-widget.blade.php')
+        );
+
+        expect($source)->toContain("fd.append('context[locale]', scopeLocale);")
+            ->and($source)->toContain("fd.append('context[channel]', scopeChannel);");
+    });
+
+    it('reads the scope from the query string and falls back to the scope inputs on the page', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/AiAgent/Resources/views/components/chat-widget.blade.php')
+        );
+
+        expect($source)->toContain("scopeParams.get('locale')")
+            ->and($source)->toContain('document.querySelector(\'input[name="locale"]\')?.value');
+    });
+
+    it('omits the scope keys entirely when the page has none, leaving the server fallback intact', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/AiAgent/Resources/views/components/chat-widget.blade.php')
+        );
+
+        expect($source)->toContain('if (scopeLocale) fd.append')
+            ->and($source)->toContain('if (scopeChannel) fd.append');
+    });
+});
