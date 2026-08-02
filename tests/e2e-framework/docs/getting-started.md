@@ -25,7 +25,7 @@ Before running the suite, make sure the following are available:
    cp environments/local.env.example .env
    ```
 
-3. Review the values in `.env` and update them to match your local environment.
+3. Review the values in `.env` and update them to match your local environment. The framework normalizes common values such as `BASE_URL`, `ADMIN_PATH`, and `API_BASE_URL`, so trailing slashes and path formatting are handled consistently.
 
 4. Install the required dependencies:
 
@@ -38,6 +38,8 @@ Before running the suite, make sure the following are available:
    ```bash
    npx playwright install --with-deps chrome
    ```
+
+6. If you want Playwright to start the application automatically, set `PLAYWRIGHT_WEBSERVER=true` and optionally provide `PLAYWRIGHT_WEBSERVER_COMMAND` and `PLAYWRIGHT_WEBSERVER_URL` to override the default `php artisan serve --host=127.0.0.1 --port=8000` behavior.
 
 ## Running Tests
 

@@ -2,6 +2,12 @@
 
 Apply every scenario category below to each module in `constants/modules.ts`, prioritizing source-specific rules listed in `businessRules`, `mandatoryFields`, and `dependencies`.
 
+## Test Runner Expectations
+
+- The suite uses a stable desktop viewport and per-test timeout defaults so UI interactions are consistent across local runs and CI.
+- Environment variables such as `BASE_URL`, `ADMIN_PATH`, and `API_BASE_URL` are normalized before use, reducing failures caused by trailing slashes or inconsistent path formatting.
+- The runner can optionally bootstrap the application server itself when `PLAYWRIGHT_WEBSERVER=true` or a custom server command is supplied.
+
 ## Page-Level Coverage
 
 - Smoke: route loads, authenticated shell renders, no 403/404/500, sidebar/menu item opens expected page.

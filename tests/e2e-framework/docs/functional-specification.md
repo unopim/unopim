@@ -2,6 +2,8 @@
 
 The executable module registry is `constants/modules.ts`. It captures discovered pages, APIs, tables, mandatory fields, optional fields, dependencies, and business rules. This document summarizes the source-backed behavior to guide manual and automated QA.
 
+The Playwright runner itself is configured for stable local and CI execution. It normalizes environment URLs and admin paths, applies a desktop viewport and timeout defaults per test, and can optionally start the application server automatically through the web-server configuration.
+
 ## Catalog
 
 Products require unique SKU, type, status boolean, and an attribute family. Product edit validates selected channel and locale. Product APIs cover simple products, configurable products, the legacy misspelled configurable endpoint, media upload, partial update, delete, and read/list. Tests must cover SKU uniqueness, variant uniqueness, image/video/file media, categories, associations, bulk update, mass delete, filters, search, pagination, and API/database parity.
