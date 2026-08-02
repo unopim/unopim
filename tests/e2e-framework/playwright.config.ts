@@ -3,6 +3,9 @@ import { environment } from './config/environment';
 
 const isCI = Boolean(process.env.CI);
 const browserMatrix = process.env.FULL_BROWSER_MATRIX === 'true';
+const webServerCommand = process.env.PLAYWRIGHT_WEBSERVER_COMMAND ?? process.env.WEB_SERVER_COMMAND;
+const webServerUrl = process.env.PLAYWRIGHT_WEBSERVER_URL ?? process.env.WEB_SERVER_URL ?? environment.baseUrl;
+const shouldStartWebServer = Boolean(process.env.PLAYWRIGHT_WEBSERVER === 'true' || webServerCommand);
 
 export default defineConfig({
   testDir: './tests',
@@ -16,6 +19,14 @@ export default defineConfig({
   workers: isCI ? 2 : undefined,
   timeout: 90_000,
   expect: { timeout: 15_000 },
+  webServer: shouldStartWebServer
+    ? {
+        command: webServerCommand ?? 'php artisan serve --host=127.0.0.1 --port=8000',
+        url: webServerUrl,
+        reuseExistingServer: !isCI,
+        timeout: 120_000
+      }
+    : undefined,
   globalSetup: './global-setup/global-setup.ts',
   globalTeardown: './global-teardown/global-teardown.ts',
   reporter: [

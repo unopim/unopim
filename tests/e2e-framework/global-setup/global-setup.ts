@@ -10,6 +10,11 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 
   const browser = await chromium.launch({ channel: 'chrome' });
   const page = await browser.newPage({ baseURL: environment.baseUrl });
+  const loginUrl = `${environment.adminPath}/login`;
+
+  await page.goto(loginUrl, { waitUntil: 'domcontentloaded' });
+  await page.getByRole('textbox', { name: /email/i }).waitFor({ state: 'visible', timeout: 15_000 }).catch(() => undefined);
+
   await new LoginPage(page).login();
   await page.context().storageState({ path: environment.storageStatePath });
   await browser.close();

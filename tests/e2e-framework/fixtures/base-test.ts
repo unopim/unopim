@@ -34,5 +34,10 @@ export const test = base.extend<UnoPimFixtures>({
   }
 });
 
+test.beforeEach(async ({ page }, testInfo) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  page.setDefaultTimeout(testInfo.timeout);
+});
+
 export { expect };
 export type { Page };
