@@ -51,7 +51,13 @@ async function searchInDataGrid(page, text, placeholder = 'Search') {
   const searchInput = page.getByPlaceholder(placeholder).first();
   await searchInput.waitFor({ state: 'visible', timeout: 30000 });
   await searchInput.fill(text);
-  await page.keyboard.press('Enter');
+
+  // Press Enter on the input itself (not the global keyboard): the datagrid's
+  // search input is `::value`-bound, so a Vue re-render after fill() can leave
+  // focus on <body> and swallow page.keyboard.press('Enter'), silently dropping
+  // the server-side filter. Locator-level press re-focuses before dispatching.
+  await searchInput.press('Enter');
+
   // Wait for the DataGrid to refresh after search
   await page.waitForLoadState('load');
   await page.waitForTimeout(500);

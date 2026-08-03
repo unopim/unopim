@@ -32,13 +32,7 @@ async function navigateToNotifications(page) {
 }
 
 // ─── Notification Page Tests ────────────────────────────────────────
-
-// Quarantined: the notifications page loads unauthenticated for this
-// late-running spec (the header bell never appears — same shared-session
-// signature as product-sort / security weak-passwords). 03-dashboard's
-// notification-history test uses the identical selector and passes because it
-// runs earlier. TODO(e2e): un-skip once the shared-session invalidation is fixed.
-test.describe.skip('Notification Page', () => {
+test.describe('Notification Page', () => {
   test('1 - should load the notifications page', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
     // Target the page title specifically (not the dropdown header). The page title
