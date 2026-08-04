@@ -32,7 +32,7 @@ export class CrudPage extends BasePage {
   async assertSearchDoesNotCrash(term: string): Promise<void> {
     if (await this.search.isVisible().catch(() => false)) {
       await this.search.fill(term);
-      await this.page.keyboard.press('Enter');
+      await this.search.press('Enter');
       await this.waitForAppReady();
       await expect(this.page.locator('body')).not.toContainText(/exception|sql syntax|stack trace/i);
     }

@@ -4,7 +4,7 @@ Generated from the repository source under `packages/Webkul/*`, `routes/*`, `dat
 
 ## Architecture
 
-UnoPim is a Laravel 12 PIM with a package-oriented Webkul architecture. The root app is thin; most controllers, routes, models, migrations, data grids, views, config, and validation live in package namespaces registered in `composer.json`.
+UnoPim is a Laravel 13 PIM with a package-oriented Webkul architecture. The root app is thin; most controllers, routes, models, migrations, data grids, views, config, and validation live in package namespaces registered in `composer.json`.
 
 Primary packages discovered:
 

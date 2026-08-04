@@ -58,7 +58,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: tests/e2e-framework/package.json
+          cache-dependency-path: tests/e2e-framework/package-lock.json
 
       - name: Install Composer dependencies
         run: composer install --no-progress --prefer-dist --optimize-autoloader
@@ -94,7 +94,9 @@ jobs:
 
       - name: Install Playwright dependencies
         working-directory: tests/e2e-framework
-        run: npm install
+        # npm ci is reproducible: tests/e2e-framework/package-lock.json is
+        # committed (see .gitignore) and kept in sync with package.json.
+        run: npm ci
 
       - name: Type-check framework
         working-directory: tests/e2e-framework
@@ -104,7 +106,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('tests/e2e-framework/package.json') }}
+          key: playwright-${{ runner.os }}-${{ hashFiles('tests/e2e-framework/package-lock.json') }}
 
       - name: Install Playwright browser
         working-directory: tests/e2e-framework

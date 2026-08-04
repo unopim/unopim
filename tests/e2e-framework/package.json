@@ -21,7 +21,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.1",
-    "@playwright/test": "^1.60.0",
+    "@playwright/test": "1.62.1",
     "@types/node": "^25.9.1",
     "allure-playwright": "^3.0.0",
     "dotenv": "^17.0.0",

@@ -22,8 +22,11 @@ export class LoginPage extends BasePage {
     await this.password.fill(password);
 
     await this.password.press('Enter');
-    await this.page.waitForURL((url) => /\/admin\//.test(url.toString()) && !url.pathname.endsWith('/login'), { timeout: 30_000 }).catch(() => undefined);
-    await this.page.waitForLoadState('load').catch(() => undefined);
+    // Never swallow navigation failures here: globalSetup saves the storage
+    // state from this page, so a silent failed login would seed an
+    // unauthenticated session for every test in the run.
+    await this.page.waitForURL((url) => /\/admin\//.test(url.toString()) && !url.pathname.endsWith('/login'), { timeout: 30_000 });
+    await this.page.waitForLoadState('load');
   }
 
   /**

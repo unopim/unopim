@@ -80,7 +80,11 @@ exports.test = base.test.extend({
    * `.state/admin-auth.json`.
    */
   guestPage: async ({ browser }, use) => {
-    const context = await browser.newContext();
+    // Config `use.baseURL` only reaches contexts created via the built-in
+    // `page`/`context` fixtures; contexts created with browser.newContext()
+    // get no baseURL, so relative navigations (e.g. page.goto('/admin/login'))
+    // would fail. Set it explicitly to keep the fixture deterministic.
+    const context = await browser.newContext({ baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000' });
     await context.addInitScript(HIDE_WIDGET_SCRIPT);
 
     const page = await context.newPage();
