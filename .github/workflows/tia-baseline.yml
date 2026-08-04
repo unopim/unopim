@@ -6,7 +6,7 @@ name: TIA Baseline
 
 on:
   push:
-    branches: [master, '2.1']
+    branches: [master, '3.0']
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
