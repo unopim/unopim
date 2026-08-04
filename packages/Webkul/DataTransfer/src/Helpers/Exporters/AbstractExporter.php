@@ -639,8 +639,7 @@ abstract class AbstractExporter
     public function copyMedia(string $sourcePath, string $destinationPath): void
     {
         if (Storage::exists($sourcePath)) {
-            // Copy the file
-            Storage::copy($sourcePath, $destinationPath);
+            Storage::disk('private')->put($destinationPath, Storage::get($sourcePath));
         }
     }
 }
