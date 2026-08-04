@@ -83,7 +83,7 @@ class VariantValueResolver implements VariantValueResolverContract
                 $ancestor = $ancestorCache[$ancestorId] ?? null;
 
                 if (! $ancestor) {
-                    unset($nextParentId[$rowId]);
+                    unset($nextParentId[$rowId], $rowsWithParent[$rowId]);
 
                     continue;
                 }

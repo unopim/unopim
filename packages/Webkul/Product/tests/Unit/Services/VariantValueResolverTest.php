@@ -143,6 +143,23 @@ it('resolveBatch omits a row whose own values are null and has no parent, preser
     expect($batch)->not->toHaveKey($simple->id);
 });
 
+it('resolveBatch omits a row whose parent_id points at a deleted/orphaned product, preserving its own values for the caller', function () {
+    $orphan = Product::factory()->create([
+        'parent_id' => null,
+        'values'    => ['common' => ['sku' => 'ORPHANED-CHILD', 'name' => 'Kept As-Is']],
+    ]);
+
+    $missingAncestorId = $orphan->id + 1_000_000;
+
+    $resolver = app(Webkul\Product\Contracts\VariantValueResolver::class);
+
+    $batch = $resolver->resolveBatch([
+        ['id' => $orphan->id, 'parent_id' => $missingAncestorId, 'values' => $orphan->values],
+    ]);
+
+    expect($batch)->not->toHaveKey($orphan->id);
+});
+
 it('resolveBatch fetches a shared ancestor only once for many rows on the same page', function () {
     $parent = Product::factory()->configurable()->create([
         'values' => ['common' => ['name' => 'Shared Parent Name']],

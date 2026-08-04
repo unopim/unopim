@@ -206,6 +206,18 @@ describe('association type custom fields', function () {
             ->assertStatus(422);
     });
 
+    it('rejects creating a field with a non-boolean status', function () {
+        $typeCode = createUserDefinedAssociationTypeForFieldTests();
+
+        $this->withHeaders($this->headers)
+            ->json('POST', route('admin.api.association-types-fields.store', ['code' => $typeCode]), [
+                'code'   => 'quantity',
+                'type'   => 'text',
+                'status' => 'not-a-boolean',
+            ])
+            ->assertStatus(422);
+    });
+
     it('rejects creating a field with a code already used on the same association type', function () {
         $typeCode = createUserDefinedAssociationTypeForFieldTests();
         $associationType = app(AssociationTypeRepository::class)->findByCode($typeCode);

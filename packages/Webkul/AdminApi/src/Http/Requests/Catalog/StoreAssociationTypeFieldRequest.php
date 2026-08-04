@@ -26,6 +26,7 @@ class StoreAssociationTypeFieldRequest extends ApiFormRequest
                 ),
             ],
             'type'             => ['required', new AssociationFieldTypes],
+            'status'           => ['sometimes', 'boolean'],
             'validation'       => ['sometimes', 'nullable', new ValidationTypes],
             'is_required'      => ['sometimes', 'boolean'],
             'is_unique'        => ['sometimes', 'boolean'],
