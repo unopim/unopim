@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Assoziationstyp konnte nicht gelöscht werden',
             'user-define-error' => 'Systemassoziationstyp kann nicht gelöscht werden',
             'unknown-fields'    => 'Assoziationstyp-Feld mit Code „:fields“ konnte nicht gefunden werden',
+            'not-found'         => 'Assoziationstyp mit Code „:code“ konnte nicht gefunden werden',
+            'immutable-fields'  => 'Die folgenden Felder können nicht geändert werden: :fields.',
 
             'create' => [
                 'title'      => 'Zuordnungstyp erstellen',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Feld speichern',
                 'same-code-error'      => 'Der Feldcode muss eindeutig sein.',
                 'add-fields-info'      => 'Um benutzerdefinierte Felder für diesen Zuordnungstyp zu erstellen.',
+                'create-success'       => 'Assoziationstyp-Feld erfolgreich erstellt',
+                'update-success'       => 'Assoziationstyp-Feld erfolgreich aktualisiert',
+                'delete-success'       => 'Assoziationstyp-Feld erfolgreich gelöscht',
+                'not-found'            => 'Assoziationstyp-Feld mit Code „:code“ konnte nicht gefunden werden',
             ],
         ],
 
@@ -2966,6 +2972,7 @@ return [
         'user-management'          => 'Benutzerverwaltung',
         'category_fields'          => 'Kategoriefelder',
         'association_types'        => 'Assoziationstypen',
+        'association_type_fields' => 'Assoziationstyp-Felder',
         'view'                     => 'Anzeigen',
         'execute'                  => 'Job ausführen',
         'history'                  => 'Verlauf',

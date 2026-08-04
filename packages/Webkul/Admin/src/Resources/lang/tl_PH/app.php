@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Nabigong tanggalin ang uri ng asosasyon',
             'user-define-error' => 'Hindi maaaring tanggalin ang uri ng asosasyon ng sistema',
             'unknown-fields'    => 'Hindi natagpuan ang field ng uri ng asosasyon na may kodigong ":fields"',
+            'not-found'         => 'Hindi natagpuan ang uri ng asosasyon na may code ":code"',
+            'immutable-fields'  => 'Ang mga sumusunod na field ay hindi maaaring baguhin: :fields.',
 
             'create' => [
                 'title'      => 'Gumawa ng Uri ng Asosasyon',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'I-save ang Field',
                 'same-code-error'      => 'Ang code ng field ay dapat natatangi.',
                 'add-fields-info'      => 'Upang lumikha ng mga custom na field para sa uri ng asosasyong ito.',
+                'create-success'       => 'Matagumpay na nalikha ang field ng uri ng asosasyon',
+                'update-success'       => 'Matagumpay na na-update ang field ng uri ng asosasyon',
+                'delete-success'       => 'Matagumpay na natanggal ang field ng uri ng asosasyon',
+                'not-found'            => 'Hindi natagpuan ang field ng uri ng asosasyon na may kodigong ":code"',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Pamamahala ng Gumagamit',
         'category_fields'          => 'Mga Field ng Kategorya',
         'association_types'        => 'Mga Uri ng Asosasyon',
+        'association_type_fields' => 'Mga Field ng Uri ng Asosasyon',
         'view'                     => 'Tingnan',
         'execute'                  => 'Isagawa',
         'history'                  => 'Kasaysayan',

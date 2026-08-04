@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'فشل حذف نوع الارتباط',
             'user-define-error' => 'لا يمكن حذف نوع ارتباط النظام',
             'unknown-fields'    => 'لم يتم العثور على حقل نوع الارتباط برمز ":fields"',
+            'not-found'         => 'لم يتم العثور على نوع الارتباط برمز ":code"',
+            'immutable-fields'  => 'لا يمكن تعديل الحقول التالية: :fields.',
 
             'create' => [
                 'title'      => 'إنشاء نوع ارتباط',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'حفظ الحقل',
                 'same-code-error'      => 'يجب أن يكون رمز الحقل فريدًا.',
                 'add-fields-info'      => 'لإنشاء حقول مخصصة لنوع الارتباط هذا.',
+                'create-success'       => 'تم إنشاء حقل نوع الارتباط بنجاح',
+                'update-success'       => 'تم تحديث حقل نوع الارتباط بنجاح',
+                'delete-success'       => 'تم حذف حقل نوع الارتباط بنجاح',
+                'not-found'            => 'لم يتم العثور على حقل نوع الارتباط برمز ":code"',
             ],
         ],
 
@@ -2965,6 +2971,7 @@ return [
         'user-management'          => 'إدارة المستخدمين',
         'category_fields'          => 'حقول الفئة',
         'association_types'        => 'أنواع الارتباط',
+        'association_type_fields' => 'حقول نوع الارتباط',
         'view'                     => 'منظر',
         'execute'                  => 'تنفيذ الوظيفة',
         'history'                  => 'تاريخ',

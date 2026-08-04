@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => '關聯類型刪除失敗',
             'user-define-error' => '無法刪除系統預設關聯類型',
             'unknown-fields'    => '找不到代碼為":fields"的關聯類型欄位',
+            'not-found'         => '找不到代碼為":code"的關聯類型',
+            'immutable-fields'  => '以下欄位無法修改：:fields。',
 
             'create' => [
                 'title'      => '建立關聯類型',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => '儲存欄位',
                 'same-code-error'      => '欄位代碼必須是唯一的。',
                 'add-fields-info'      => '為此關聯類型建立自訂欄位。',
+                'create-success'       => '關聯類型欄位創建成功',
+                'update-success'       => '關聯類型欄位更新成功',
+                'delete-success'       => '關聯類型欄位刪除成功',
+                'not-found'            => '找不到代碼為":code"的關聯類型欄位',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => '使用者管理',
         'category_fields'          => '分類字段',
         'association_types'        => '關聯類型',
+        'association_type_fields' => '關聯類型欄位',
         'view'                     => '查看',
         'execute'                  => '執行',
         'history'                  => '歷史記錄',

@@ -1072,6 +1072,8 @@ return [
             'delete-failed'     => 'Usunięcie typu powiązania nie powiodło się',
             'user-define-error' => 'Nie można usunąć systemowego typu powiązania',
             'unknown-fields'    => 'Nie znaleziono pola typu powiązania o kodzie ":fields"',
+            'not-found'         => 'Nie znaleziono typu powiązania o kodzie ":code"',
+            'immutable-fields'  => 'Następujących pól nie można zmodyfikować: :fields.',
 
             'create' => [
                 'title'      => 'Utwórz typ powiązania',
@@ -1096,6 +1098,10 @@ return [
                 'save-field-btn'       => 'Zapisz pole',
                 'same-code-error'      => 'Kod pola musi być unikalny.',
                 'add-fields-info'      => 'Aby utworzyć niestandardowe pola dla tego typu powiązania.',
+                'create-success'       => 'Pole typu powiązania zostało pomyślnie utworzone',
+                'update-success'       => 'Pole typu powiązania zostało zaktualizowane',
+                'delete-success'       => 'Pole typu powiązania zostało pomyślnie usunięte',
+                'not-found'            => 'Nie znaleziono pola typu powiązania o kodzie ":code"',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Zarządzanie użytkownikami',
         'category_fields'          => 'Pole kategorii',
         'association_types'        => 'Typy powiązań',
+        'association_type_fields' => 'Pola typu powiązania',
         'view'                     => 'Podgląd',
         'execute'                  => 'Wykonaj',
         'history'                  => 'Historia',

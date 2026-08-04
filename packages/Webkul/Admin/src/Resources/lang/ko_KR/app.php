@@ -1072,6 +1072,8 @@ return [
             'delete-failed'     => '연관 유형 삭제 실패',
             'user-define-error' => '시스템 연관 유형은 삭제할 수 없습니다.',
             'unknown-fields'    => '필드 코드 ":fields"인 연관 유형 필드를 찾을 수 없습니다.',
+            'not-found'         => '코드 ":code"에 해당하는 연관 유형을 찾을 수 없습니다',
+            'immutable-fields'  => '다음 필드는 수정할 수 없습니다: :fields.',
 
             'create' => [
                 'title'      => '연관 유형 생성',
@@ -1096,6 +1098,10 @@ return [
                 'save-field-btn'       => '필드 저장',
                 'same-code-error'      => '필드 코드는 고유해야 합니다.',
                 'add-fields-info'      => '이 연관 유형에 대한 사용자 지정 필드를 만들려면.',
+                'create-success'       => '연관 유형 필드가 성공적으로 생성되었습니다.',
+                'update-success'       => '연관 유형 필드 업데이트 성공',
+                'delete-success'       => '연관 유형 필드 삭제 성공',
+                'not-found'            => '필드 코드 ":code"인 연관 유형 필드를 찾을 수 없습니다.',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => '사용자 관리',
         'category_fields'          => '카테고리 필드',
         'association_types'        => '연관 유형',
+        'association_type_fields' => '연관 유형 필드',
         'view'                     => '보기',
         'execute'                  => '실행',
         'history'                  => '기록',

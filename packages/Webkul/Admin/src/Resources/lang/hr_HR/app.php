@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Brisanje Vrste Povezivanja Nije Uspjelo',
             'user-define-error' => 'Ne možete obrisati sistemsku Vrstu Povezivanja',
             'unknown-fields'    => 'Polje vrste povezivanja s kodom ":fields" nije pronađeno',
+            'not-found'         => 'Vrsta povezivanja s kodom ":code" nije pronađena',
+            'immutable-fields'  => 'Sljedeća polja ne mogu se mijenjati: :fields.',
 
             'create' => [
                 'title'      => 'Izradi vrstu povezivanja',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Spremi polje',
                 'same-code-error'      => 'Kod polja mora biti jedinstven.',
                 'add-fields-info'      => 'Za izradu prilagođenih polja za ovu vrstu povezivanja.',
+                'create-success'       => 'Polje Vrste Povezivanja Stvoreno Uspješno',
+                'update-success'       => 'Polje Vrste Povezivanja Ažurirano Uspješno',
+                'delete-success'       => 'Polje Vrste Povezivanja Izbrisano Uspješno',
+                'not-found'            => 'Polje vrste povezivanja s kodom ":code" nije pronađeno',
             ],
         ],
 
@@ -2966,6 +2972,7 @@ return [
         'user-management'          => 'Upravljanje korisnicima',
         'category_fields'          => 'Polja kategorija',
         'association_types'        => 'Vrste povezivanja',
+        'association_type_fields' => 'Polja vrste povezivanja',
         'view'                     => 'Pogled',
         'execute'                  => 'Izvrši',
         'history'                  => 'Povijest',

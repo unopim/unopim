@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Échec de la suppression du type d\'association',
             'user-define-error' => 'Impossible de supprimer un type d\'association système',
             'unknown-fields'    => 'Le champ de type d\'association avec le code ":fields" est introuvable',
+            'not-found'         => 'Le type d\'association avec le code ":code" est introuvable',
+            'immutable-fields'  => 'Les champs suivants ne peuvent pas être modifiés : :fields.',
 
             'create' => [
                 'title'      => 'Créer un type d\'association',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Enregistrer le champ',
                 'same-code-error'      => 'Le code du champ doit être unique.',
                 'add-fields-info'      => 'Pour créer des champs personnalisés pour ce type d\'association.',
+                'create-success'       => 'Champ de type d\'association créé avec succès',
+                'update-success'       => 'Champ de type d\'association mis à jour avec succès',
+                'delete-success'       => 'Champ de type d\'association supprimé avec succès',
+                'not-found'            => 'Le champ de type d\'association avec le code ":code" est introuvable',
             ],
         ],
 
@@ -2964,6 +2970,7 @@ return [
         'user-management'          => 'Gestion des utilisateurs',
         'category_fields'          => 'Champs de catégorie',
         'association_types'        => 'Types d\'association',
+        'association_type_fields' => 'Champs de type d\'association',
         'view'                     => 'Voir',
         'execute'                  => 'Exécution de tâche',
         'history'                  => 'Historique',

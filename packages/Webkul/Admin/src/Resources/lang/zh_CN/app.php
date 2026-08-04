@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => '关联类型删除失败',
             'user-define-error' => '无法删除系统关联类型',
             'unknown-fields'    => '无法找到代码为":fields"的关联类型字段',
+            'not-found'         => '无法找到代码为":code"的关联类型',
+            'immutable-fields'  => '以下字段无法修改：:fields。',
 
             'create' => [
                 'title'      => '创建关联类型',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => '保存字段',
                 'same-code-error'      => '字段代码必须唯一。',
                 'add-fields-info'      => '为此关联类型创建自定义字段。',
+                'create-success'       => '关联类型字段成功创建',
+                'update-success'       => '关联类型字段成功更新',
+                'delete-success'       => '关联类型字段成功删除',
+                'not-found'            => '无法找到代码为":code"的关联类型字段',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => '用户管理',
         'category_fields'          => '类别字段',
         'association_types'        => '关联类型',
+        'association_type_fields' => '关联类型字段',
         'view'                     => '看法',
         'execute'                  => '作业执行',
         'history'                  => '历史',

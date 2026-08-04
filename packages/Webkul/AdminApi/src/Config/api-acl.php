@@ -286,6 +286,55 @@ return [
         'sort'  => 3,
     ],
 
+    [
+        'key'   => 'api.catalog.association_types',
+        'name'  => 'admin::app.acl.association_types',
+        'route' => 'admin.api.association-types.index',
+        'sort'  => 3,
+    ], [
+        'key'   => 'api.catalog.association_types.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.association-types.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.association-types.delete',
+        'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'api.catalog.association_types.fields',
+        'name'  => 'admin::app.acl.association_type_fields',
+        'route' => 'admin.api.association-types-fields.get',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.association-types-fields.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types-fields.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.association-types-fields.delete',
+        'sort'  => 3,
+    ],
+
     // ── Attributes ──────────────────────────────────────────
     [
         'key'   => 'api.catalog.attributes',

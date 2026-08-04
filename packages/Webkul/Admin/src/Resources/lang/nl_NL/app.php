@@ -1072,6 +1072,8 @@ return [
             'delete-failed'     => 'Verwijderen van associatietype mislukt.',
             'user-define-error' => 'Kan het systeemassociatietype niet verwijderen.',
             'unknown-fields'    => 'Associatietype-veld met code ":fields" kon niet worden gevonden.',
+            'not-found'         => 'Associatietype met code ":code" kon niet worden gevonden.',
+            'immutable-fields'  => 'De volgende velden kunnen niet worden gewijzigd: :fields.',
 
             'create' => [
                 'title'      => 'Associatietype aanmaken',
@@ -1096,6 +1098,10 @@ return [
                 'save-field-btn'       => 'Veld opslaan',
                 'same-code-error'      => 'De veldcode moet uniek zijn.',
                 'add-fields-info'      => 'Om aangepaste velden voor dit associatietype te maken.',
+                'create-success'       => 'Associatietype-veld succesvol aangemaakt.',
+                'update-success'       => 'Associatietype-veld succesvol bijgewerkt.',
+                'delete-success'       => 'Associatietype-veld succesvol verwijderd.',
+                'not-found'            => 'Associatietype-veld met code ":code" kon niet worden gevonden.',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Gebruikersbeheer',
         'category_fields'          => 'Categorievelden',
         'association_types'        => 'Associatietypen',
+        'association_type_fields' => 'Associatietype-velden',
         'view'                     => 'Weergave',
         'execute'                  => 'Taak uitvoeren',
         'history'                  => 'Geschiedenis',

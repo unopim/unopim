@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => '関連タイプの削除に失敗しました',
             'user-define-error' => 'システム関連タイプを削除できません',
             'unknown-fields'    => 'コード ":fields" の関連タイプフィールドが見つかりませんでした',
+            'not-found'         => 'コード ":code" の関連タイプが見つかりませんでした',
+            'immutable-fields'  => '次のフィールドは変更できません: :fields。',
 
             'create' => [
                 'title'      => '関連タイプを作成',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'フィールドを保存',
                 'same-code-error'      => 'フィールドコードは一意である必要があります。',
                 'add-fields-info'      => 'この関連タイプのカスタムフィールドを作成するには。',
+                'create-success'       => '関連タイプフィールドが正常に作成されました',
+                'update-success'       => '関連タイプフィールドが正常に更新されました',
+                'delete-success'       => '関連タイプフィールドが正常に削除されました',
+                'not-found'            => 'コード ":code" の関連タイプフィールドが見つかりませんでした',
             ],
         ],
 
@@ -2966,6 +2972,7 @@ return [
         'user-management'          => 'ユーザー管理',
         'category_fields'          => 'カテゴリ フィールド',
         'association_types'        => '関連タイプ',
+        'association_type_fields' => '関連タイプフィールド',
         'view'                     => '表示',
         'execute'                  => 'ジョブ実行',
         'history'                  => '履歴',

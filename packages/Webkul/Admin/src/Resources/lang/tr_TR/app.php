@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'İlişki Türü silinemedi',
             'user-define-error' => 'Sistem tanımlı ilişki türü silinemez',
             'unknown-fields'    => '":fields" koduna sahip ilişki türü alanı bulunamadı',
+            'not-found'         => '":code" koduna sahip ilişki türü bulunamadı',
+            'immutable-fields'  => 'Şu alanlar değiştirilemez: :fields.',
 
             'create' => [
                 'title'      => 'İlişki Türü Oluştur',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Alanı Kaydet',
                 'same-code-error'      => 'Alan kodu benzersiz olmalıdır.',
                 'add-fields-info'      => 'Bu ilişki türü için özel alanlar oluşturmak üzere.',
+                'create-success'       => 'İlişki Türü Alanı başarıyla oluşturuldu',
+                'update-success'       => 'İlişki Türü Alanı başarıyla güncellendi',
+                'delete-success'       => 'İlişki Türü Alanı başarıyla silindi',
+                'not-found'            => '":code" koduna sahip ilişki türü alanı bulunamadı',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Kullanıcı Yönetimi',
         'category_fields'          => 'Kategori Alanları',
         'association_types'        => 'İlişki Türleri',
+        'association_type_fields' => 'İlişki Türü Alanları',
         'view'                     => 'Görünüm',
         'execute'                  => 'Çalıştır',
         'history'                  => 'Geçmiş',

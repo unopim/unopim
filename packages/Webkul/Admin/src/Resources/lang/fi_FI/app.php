@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Assosiaatiotyypin poistaminen epäonnistui',
             'user-define-error' => 'Ei voida poistaa järjestelmän assosiaatiotyyppiä',
             'unknown-fields'    => 'Assosiaatiotyypin kenttää koodilla ":fields" ei löytynyt',
+            'not-found'         => 'Assosiaatiotyyppiä koodilla ":code" ei löytynyt',
+            'immutable-fields'  => 'Seuraavia kenttiä ei voi muokata: :fields.',
 
             'create' => [
                 'title'      => 'Luo assosiaatiotyyppi',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Tallenna kenttä',
                 'same-code-error'      => 'Kentän koodin on oltava yksilöllinen.',
                 'add-fields-info'      => 'Luodaksesi mukautettuja kenttiä tälle assosiaatiotyypille.',
+                'create-success'       => 'Assosiaatiotyypin kenttä luotiin onnistuneesti',
+                'update-success'       => 'Assosiaatiotyypin kenttä päivitettiin onnistuneesti',
+                'delete-success'       => 'Assosiaatiotyypin kenttä poistettiin onnistuneesti',
+                'not-found'            => 'Assosiaatiotyypin kenttää koodilla ":code" ei löytynyt',
             ],
         ],
 
@@ -2966,6 +2972,7 @@ return [
         'user-management'          => 'Käyttäjähallinta',
         'category_fields'          => 'Kategoriakentät',
         'association_types'        => 'Assosiaatiotyypit',
+        'association_type_fields' => 'Assosiaatiotyypin kentät',
         'view'                     => 'Näytä',
         'execute'                  => 'Suorita työ',
         'history'                  => 'Historia',

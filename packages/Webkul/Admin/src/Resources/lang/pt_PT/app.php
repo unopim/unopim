@@ -1072,6 +1072,8 @@ return [
             'delete-failed'     => 'Falha ao Excluir Tipo de Associação',
             'user-define-error' => 'Não é possível excluir um Tipo de Associação do sistema',
             'unknown-fields'    => 'Campo do tipo de associação com código ":fields" não encontrado',
+            'not-found'         => 'Tipo de Associação com código ":code" não encontrado',
+            'immutable-fields'  => 'Os seguintes campos não podem ser modificados: :fields.',
 
             'create' => [
                 'title'      => 'Criar tipo de associação',
@@ -1096,6 +1098,10 @@ return [
                 'save-field-btn'       => 'Guardar campo',
                 'same-code-error'      => 'O código do campo tem de ser único.',
                 'add-fields-info'      => 'Para criar campos personalizados para este tipo de associação.',
+                'create-success'       => 'Campo do Tipo de Associação Criado com Sucesso',
+                'update-success'       => 'Campo do Tipo de Associação Atualizado com Sucesso',
+                'delete-success'       => 'Campo do Tipo de Associação Excluído com Sucesso',
+                'not-found'            => 'Campo do tipo de associação com código ":code" não encontrado',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Gestão de utilizadores',
         'category_fields'          => 'Campos da Categoria',
         'association_types'        => 'Tipos de Associação',
+        'association_type_fields' => 'Campos de Tipo de Associação',
         'view'                     => 'Visualizar',
         'execute'                  => 'Executar',
         'history'                  => 'Histórico',

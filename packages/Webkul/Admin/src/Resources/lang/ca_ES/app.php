@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'No s\'ha pogut eliminar el Tipus d\'Associació',
             'user-define-error' => 'No es pot eliminar un Tipus d\'Associació del sistema',
             'unknown-fields'    => 'No s\'ha pogut trobar el camp de tipus d\'associació amb codi ":fields"',
+            'not-found'         => 'No s\'ha trobat el Tipus d\'Associació amb codi ":code"',
+            'immutable-fields'  => 'No es poden modificar els camps següents: :fields.',
 
             'create' => [
                 'title'      => 'Crear tipus d\'associació',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Desar camp',
                 'same-code-error'      => 'El codi del camp ha de ser únic.',
                 'add-fields-info'      => 'Per crear camps personalitzats per a aquest tipus d\'associació.',
+                'create-success'       => 'Camp de Tipus d\'Associació Creat Correctament',
+                'update-success'       => 'Camp de Tipus d\'Associació Actualitzat Correctament',
+                'delete-success'       => 'Camp de Tipus d\'Associació Eliminat Correctament',
+                'not-found'            => 'No s\'ha pogut trobar el camp de tipus d\'associació amb codi ":code"',
             ],
         ],
 
@@ -2966,6 +2972,7 @@ return [
         'user-management'          => 'Gestió d\'usuaris',
         'category_fields'          => 'Campaments de categoria',
         'association_types'        => 'Tipus d\'associació',
+        'association_type_fields' => 'Camps de tipus d\'associació',
         'view'                     => 'Vista',
         'execute'                  => 'Executar treball',
         'history'                  => 'Historial',

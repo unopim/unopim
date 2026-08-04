@@ -1072,6 +1072,8 @@ return [
             'delete-failed'     => 'Assosiasjonstype Sletting Feilet',
             'user-define-error' => 'Kan ikke slette system Assosiasjonstype',
             'unknown-fields'    => 'Assosiasjonstype-felt med kode ":fields" ble ikke funnet',
+            'not-found'         => 'Fant ikke assosiasjonstype med kode ":code"',
+            'immutable-fields'  => 'Følgende felter kan ikke endres: :fields.',
 
             'create' => [
                 'title'      => 'Opprett assosiasjonstype',
@@ -1096,6 +1098,10 @@ return [
                 'save-field-btn'       => 'Lagre felt',
                 'same-code-error'      => 'Feltkoden må være unik.',
                 'add-fields-info'      => 'For å opprette egendefinerte felt for denne assosiasjonstypen.',
+                'create-success'       => 'Assosiasjonstype-felt Opprettet',
+                'update-success'       => 'Assosiasjonstype-felt Oppdatert',
+                'delete-success'       => 'Assosiasjonstype-felt Slettet',
+                'not-found'            => 'Assosiasjonstype-felt med kode ":code" ble ikke funnet',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Brukeradministrasjon',
         'category_fields'          => 'Kategori felt',
         'association_types'        => 'Assosiasjonstyper',
+        'association_type_fields' => 'Assosiasjonstype-felt',
         'view'                     => 'Visning',
         'execute'                  => 'Utfør',
         'history'                  => 'Historie',

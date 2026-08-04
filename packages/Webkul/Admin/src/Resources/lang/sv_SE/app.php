@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Det gick inte att radera associationstyp',
             'user-define-error' => 'Det går inte att radera systemdefinierad associationstyp',
             'unknown-fields'    => 'Fält för associationstyp med kod ":fields" kunde inte hittas',
+            'not-found'         => 'Associationstyp med kod ":code" hittades inte',
+            'immutable-fields'  => 'Följande fält kan inte ändras: :fields.',
 
             'create' => [
                 'title'      => 'Skapa associationstyp',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Spara fält',
                 'same-code-error'      => 'Fältkoden måste vara unik.',
                 'add-fields-info'      => 'För att skapa anpassade fält för denna associationstyp.',
+                'create-success'       => 'Associationstyp-fält skapades framgångsrikt',
+                'update-success'       => 'Associationstyp-fält uppdaterades framgångsrikt',
+                'delete-success'       => 'Associationstyp-fält raderades framgångsrikt',
+                'not-found'            => 'Fält för associationstyp med kod ":code" kunde inte hittas',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Användarhantering',
         'category_fields'          => 'Kategori-fält',
         'association_types'        => 'Associationstyper',
+        'association_type_fields' => 'Associationstypfält',
         'view'                     => 'Visa',
         'execute'                  => 'Utföra',
         'history'                  => 'Historik',

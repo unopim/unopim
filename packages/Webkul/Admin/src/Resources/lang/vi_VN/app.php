@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Xóa Loại Liên Kết Thất Bại',
             'user-define-error' => 'Không thể xóa Loại Liên Kết hệ thống',
             'unknown-fields'    => 'Không tìm thấy trường Loại Liên Kết với mã ":fields"',
+            'not-found'         => 'Không tìm thấy Loại Liên Kết với mã ":code"',
+            'immutable-fields'  => 'Không thể sửa các trường sau: :fields.',
 
             'create' => [
                 'title'      => 'Tạo loại liên kết',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Lưu trường',
                 'same-code-error'      => 'Mã trường phải là duy nhất.',
                 'add-fields-info'      => 'Để tạo các trường tùy chỉnh cho loại liên kết này.',
+                'create-success'       => 'Trường Loại Liên Kết Tạo Thành Công',
+                'update-success'       => 'Cập Nhật Trường Loại Liên Kết Thành Công',
+                'delete-success'       => 'Xóa Trường Loại Liên Kết Thành Công',
+                'not-found'            => 'Không tìm thấy trường Loại Liên Kết với mã ":code"',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Quản lý người dùng',
         'category_fields'          => 'Các trường danh mục',
         'association_types'        => 'Loại liên kết',
+        'association_type_fields' => 'Trường Loại liên kết',
         'view'                     => 'Xem',
         'execute'                  => 'Thực hiện',
         'history'                  => 'Lịch sử',

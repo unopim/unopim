@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Jenis Asosiasi Dihapus Gagal',
             'user-define-error' => 'Tidak dapat menghapus jenis asosiasi sistem',
             'unknown-fields'    => 'Bidang jenis asosiasi dengan kode ":fields" tidak dapat ditemukan',
+            'not-found'         => 'Jenis asosiasi dengan kode ":code" tidak dapat ditemukan',
+            'immutable-fields'  => 'Field berikut tidak dapat diubah: :fields.',
 
             'create' => [
                 'title'      => 'Buat Jenis Asosiasi',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Simpan Bidang',
                 'same-code-error'      => 'Kode bidang harus unik.',
                 'add-fields-info'      => 'Untuk membuat bidang khusus untuk jenis asosiasi ini.',
+                'create-success'       => 'Bidang jenis asosiasi berhasil dibuat',
+                'update-success'       => 'Bidang jenis asosiasi berhasil diperbarui',
+                'delete-success'       => 'Bidang jenis asosiasi berhasil dihapus',
+                'not-found'            => 'Bidang jenis asosiasi dengan kode ":code" tidak dapat ditemukan',
             ],
         ],
 
@@ -2966,6 +2972,7 @@ return [
         'user-management'          => 'Manajemen Pengguna',
         'category_fields'          => 'Bidang kategori',
         'association_types'        => 'Jenis Asosiasi',
+        'association_type_fields' => 'Bidang Jenis Asosiasi',
         'view'                     => 'Melihat',
         'execute'                  => 'Eksekusi Pekerjaan',
         'history'                  => 'Sejarah',

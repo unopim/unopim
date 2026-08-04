@@ -1072,6 +1072,8 @@ return [
             'delete-failed'     => 'Ștergere tip de asociere eșuată',
             'user-define-error' => 'Nu se poate șterge tipul de asociere sistem',
             'unknown-fields'    => 'Câmpul tipului de asociere cu codul ":fields" nu a fost găsit',
+            'not-found'         => 'Tipul de asociere cu codul ":code" nu a fost găsit',
+            'immutable-fields'  => 'Următoarele câmpuri nu pot fi modificate: :fields.',
 
             'create' => [
                 'title'      => 'Creați tip de asociere',
@@ -1096,6 +1098,10 @@ return [
                 'save-field-btn'       => 'Salvați câmpul',
                 'same-code-error'      => 'Codul câmpului trebuie să fie unic.',
                 'add-fields-info'      => 'Pentru a crea câmpuri personalizate pentru acest tip de asociere.',
+                'create-success'       => 'Câmp de tip de asociere creat cu succes',
+                'update-success'       => 'Câmp de tip de asociere actualizat cu succes',
+                'delete-success'       => 'Câmp de tip de asociere șters cu succes',
+                'not-found'            => 'Câmpul tipului de asociere cu codul ":code" nu a fost găsit',
             ],
         ],
 
@@ -2969,6 +2975,7 @@ return [
         'user-management'          => 'Gestionare utilizatori',
         'category_fields'          => 'Câmpuri categorie',
         'association_types'        => 'Tipuri de asociere',
+        'association_type_fields' => 'Câmpuri tip de asociere',
         'view'                     => 'Vizualizare',
         'execute'                  => 'Executare',
         'history'                  => 'Istoric',

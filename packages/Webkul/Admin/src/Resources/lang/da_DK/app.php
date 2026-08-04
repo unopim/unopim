@@ -1071,6 +1071,8 @@ return [
             'delete-failed'     => 'Associationstype Sletning Mislykkedes',
             'user-define-error' => 'Kan ikke slette system Associationstype',
             'unknown-fields'    => 'Associationstype-felt med kode ":fields" kunne ikke findes',
+            'not-found'         => 'Associationstype med kode ":code" blev ikke fundet',
+            'immutable-fields'  => 'Følgende felter kan ikke ændres: :fields.',
 
             'create' => [
                 'title'      => 'Opret associeringstype',
@@ -1095,6 +1097,10 @@ return [
                 'save-field-btn'       => 'Gem felt',
                 'same-code-error'      => 'Feltkoden skal være unik.',
                 'add-fields-info'      => 'For at oprette brugerdefinerede felter til denne associeringstype.',
+                'create-success'       => 'Associationstype-felt Oprettet Med Succes',
+                'update-success'       => 'Associationstype-felt Opdateret Med Succes',
+                'delete-success'       => 'Associationstype-felt Slettet Med Succes',
+                'not-found'            => 'Associationstype-felt med kode ":code" kunne ikke findes',
             ],
         ],
 
@@ -2966,6 +2972,7 @@ return [
         'user-management'          => 'Brugeradministration',
         'category_fields'          => 'Kategori felter',
         'association_types'        => 'Associationstyper',
+        'association_type_fields' => 'Associationstype-felter',
         'view'                     => 'Vis',
         'execute'                  => 'Job udføre',
         'history'                  => 'Historie',

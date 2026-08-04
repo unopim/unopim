@@ -1138,6 +1138,8 @@ return [
             'delete-failed'     => 'Association Type Deleted Failed',
             'user-define-error' => 'Can not delete system Association Type',
             'unknown-fields'    => 'Association Type Field with code ":fields" could not be found',
+            'not-found'         => 'Association type with code ":code" could not be found',
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
 
             'create' => [
                 'title'      => 'Create Association Type',
@@ -1162,6 +1164,10 @@ return [
                 'save-field-btn'       => 'Save Field',
                 'same-code-error'      => 'The field code must be unique.',
                 'add-fields-info'      => 'To create custom fields for this association type.',
+                'create-success'       => 'Association Type Field Created Successfully',
+                'update-success'       => 'Association Type Field Updated Successfully',
+                'delete-success'       => 'Association Type Field Deleted Successfully',
+                'not-found'            => 'Association Type Field with code ":code" could not be found',
             ],
         ],
 
@@ -3158,6 +3164,7 @@ return [
         'user-management'          => 'User Management',
         'category_fields'          => 'Category Fields',
         'association_types'        => 'Association Types',
+        'association_type_fields' => 'Association Type Fields',
         'view'                     => 'View',
         'execute'                  => 'Job Execute',
         'history'                  => 'History',
