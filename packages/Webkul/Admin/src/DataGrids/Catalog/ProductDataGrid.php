@@ -1150,82 +1150,21 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     /**
      * A common attribute set only on a row's ancestor (root parent, or a
      * variant group one level below it) must still surface as that row's
-     * value in the grid. Batched per page, not per row: every distinct
-     * `parent_id` at each depth is fetched with one `whereIn` query, capped
-     * at the same 10-level guard `VariantValueResolver::resolve()` uses, so
-     * an ancestor shared by many rows on the page (e.g. a variant group
-     * with many children) is only ever fetched once.
+     * value in the grid. Delegates the batched, per-page ancestor-chain walk
+     * to `VariantValueResolver::resolveBatch()` -- shared with the AdminApi
+     * and export paths so there is one merge implementation, not several.
      *
      * @return array<int, array>
      */
     protected function resolveMergedValuesForPage(iterable $records): array
     {
-        $chains = [];
+        $rows = collect($records)->map(fn ($record) => [
+            'id'        => $record->product_id,
+            'parent_id' => $record->parent_id ?? null,
+            'values'    => $record->raw_values ?? null,
+        ]);
 
-        $nextParentId = [];
-
-        foreach ($records as $record) {
-            $chains[$record->product_id] = [$this->decodeRawValues($record->raw_values)];
-
-            if (! empty($record->parent_id)) {
-                $nextParentId[$record->product_id] = (int) $record->parent_id;
-            }
-        }
-
-        $ancestorCache = [];
-
-        $guard = 0;
-
-        while (! empty($nextParentId) && $guard++ < 10) {
-            $idsToFetch = array_diff(array_unique(array_values($nextParentId)), array_keys($ancestorCache));
-
-            if (! empty($idsToFetch)) {
-                DB::table('products')
-                    ->whereIn('id', $idsToFetch)
-                    ->get(['id', 'parent_id', 'values'])
-                    ->each(function ($ancestor) use (&$ancestorCache) {
-                        $ancestorCache[$ancestor->id] = [
-                            'values'    => $this->decodeRawValues($ancestor->values),
-                            'parent_id' => $ancestor->parent_id,
-                        ];
-                    });
-            }
-
-            foreach ($nextParentId as $productId => $ancestorId) {
-                $ancestor = $ancestorCache[$ancestorId] ?? null;
-
-                if (! $ancestor) {
-                    unset($nextParentId[$productId]);
-
-                    continue;
-                }
-
-                $chains[$productId][] = $ancestor['values'];
-
-                if (empty($ancestor['parent_id'])) {
-                    unset($nextParentId[$productId]);
-                } else {
-                    $nextParentId[$productId] = (int) $ancestor['parent_id'];
-                }
-            }
-        }
-
-        return array_map(
-            fn (array $chainLeafToRoot) => $this->variantValueResolver->mergeChain(array_reverse($chainLeafToRoot)),
-            $chains
-        );
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function decodeRawValues(mixed $raw): array
-    {
-        if (empty($raw)) {
-            return [];
-        }
-
-        return is_string($raw) ? (json_decode($raw, true) ?? []) : (array) $raw;
+        return $this->variantValueResolver->resolveBatch($rows);
     }
 
     /**

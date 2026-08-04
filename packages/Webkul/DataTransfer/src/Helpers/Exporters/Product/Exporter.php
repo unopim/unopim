@@ -21,6 +21,7 @@ use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Exporter extends AbstractExporter
@@ -90,6 +91,7 @@ class Exporter extends AbstractExporter
         protected ChannelRepository $channelRepository,
         protected AttributeRepository $attributeRepository,
         protected ProductSource $productSource,
+        protected VariantValueResolver $variantValueResolver,
     ) {
         parent::__construct($exportBatchRepository, $exportFileBuffer);
     }
@@ -386,6 +388,14 @@ class Exporter extends AbstractExporter
 
         $productsByIds = $this->getItemsFromIds($flatIds);
 
+        $mergedValuesById = $this->variantValueResolver->resolveBatch(
+            $productsByIds->map(fn ($product) => [
+                'id'        => $product->id,
+                'parent_id' => $product->parent_id,
+                'values'    => $product->values,
+            ])
+        );
+
         // Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns are opt-in
         // (default off) so the product export stays clean by default. The dedicated
         // association export job is the rich, row-per-link alternative for this data.
@@ -396,7 +406,7 @@ class Exporter extends AbstractExporter
             // Calling $product->toArray() triggers attribute_family->toArray() which invokes
             // Astrotomic Translatable::getTranslation() for every configured locale (~8ms/product).
             // Direct property access avoids that entirely.
-            $productValues = $product->values ?? [];
+            $productValues = $mergedValuesById[$product->id] ?? ($product->values ?? []);
 
             $rowData = [
                 'type'             => $product->type,

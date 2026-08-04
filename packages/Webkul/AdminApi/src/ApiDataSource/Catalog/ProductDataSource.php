@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
@@ -29,7 +30,8 @@ class ProductDataSource extends ApiDataSource
         protected ProductRepository $productRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductCompletenessScoreRepository $productCompletenessScoreRepository,
-        protected ProductAssociationRepository $productAssociationRepository
+        protected ProductAssociationRepository $productAssociationRepository,
+        protected VariantValueResolver $variantValueResolver
     ) {}
 
     /**
@@ -82,8 +84,10 @@ class ProductDataSource extends ApiDataSource
             ? $this->completenessScoresByProduct(array_column($rows, 'id'))
             : null;
 
+        $mergedValuesById = $this->variantValueResolver->resolveBatch($rows);
+
         return array_map(
-            fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct),
+            fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct, mergedValues: $mergedValuesById[$item['id']] ?? null),
             $rows,
         );
     }
@@ -120,13 +124,15 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
+        $mergedValues = $this->variantValueResolver->resolveBatch([$product])[$product['id']] ?? null;
+
         // Single-product GET always includes the `associations` block (all
         // types, including custom ones + `additional_data`) — unlike
         // `with_completeness`, this isn't behind an opt-in flag since a
         // single extra query per request (vs. per-row on a listing) is
         // negligible; `formatData()` (the listing) does NOT request it, to
         // avoid an N+1 query per row there.
-        return $this->normalizeProduct($product, $withCompleteness, withAssociations: true);
+        return $this->normalizeProduct($product, $withCompleteness, withAssociations: true, mergedValues: $mergedValues);
     }
 
     public function getSuperAttributes($data)
@@ -282,8 +288,12 @@ class ProductDataSource extends ApiDataSource
      */
     /**
      * @param  array<string, list<array<string, mixed>>>|null  $completenessByProduct
+     * @param  array|null  $mergedValues  This row's `values`, already merged with its
+     *                                    ancestor chain by `VariantValueResolver::resolveBatch()`.
+     *                                    Falls back to the row's own `values` when absent
+     *                                    (e.g. a row with no parent).
      */
-    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null, bool $withAssociations = false): array
+    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null, bool $withAssociations = false, ?array $mergedValues = null): array
     {
         $responseData = [
             'sku'        => $product['sku'],
@@ -294,7 +304,7 @@ class ProductDataSource extends ApiDataSource
             'additional' => $product['additional'],
             'created_at' => $product['created_at'],
             'updated_at' => $product['updated_at'],
-            'values'     => $product['values'],
+            'values'     => $mergedValues ?? $product['values'],
         ];
 
         if (config('product_types.configurable.key') == $product['type']) {

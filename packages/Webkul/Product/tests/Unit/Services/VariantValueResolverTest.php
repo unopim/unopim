@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Services\VariantValueResolver;
 
@@ -80,4 +81,95 @@ it('returns own values unchanged for a product with no parent', function () {
     $resolved = app(Webkul\Product\Contracts\VariantValueResolver::class)->resolve($simple);
 
     expect($resolved['common'])->toMatchArray(['sku' => 'STANDALONE', 'name' => 'Solo']);
+});
+
+it('resolveBatch resolves a 2-level chain the same way resolve() does', function () {
+    $parent = Product::factory()->configurable()->create([
+        'values' => ['common' => ['name' => 'Parent Name', 'brand' => 'Nike']],
+    ]);
+
+    $group = Product::factory()->create([
+        'parent_id' => $parent->id,
+        'values'    => ['common' => ['color' => 'red']],
+    ]);
+
+    $leaf = Product::factory()->create([
+        'parent_id' => $group->id,
+        'values'    => ['common' => ['size' => 'S', 'sku' => $parent->sku.'-red-S']],
+    ]);
+
+    $resolver = app(Webkul\Product\Contracts\VariantValueResolver::class);
+
+    $batch = $resolver->resolveBatch([
+        ['id' => $leaf->id, 'parent_id' => $leaf->parent_id, 'values' => $leaf->values],
+        ['id' => $group->id, 'parent_id' => $group->parent_id, 'values' => $group->values],
+    ]);
+
+    expect($batch[$leaf->id]['common'])->toMatchArray([
+        'name'  => 'Parent Name',
+        'brand' => 'Nike',
+        'color' => 'red',
+        'size'  => 'S',
+    ])->and($batch[$group->id]['common'])->toMatchArray([
+        'name'  => 'Parent Name',
+        'brand' => 'Nike',
+        'color' => 'red',
+    ]);
+});
+
+it('resolveBatch omits a row with no parent so the caller falls back to its own values', function () {
+    $simple = Product::factory()->create([
+        'values' => ['common' => ['sku' => 'STANDALONE', 'name' => 'Solo']],
+    ]);
+
+    $resolver = app(Webkul\Product\Contracts\VariantValueResolver::class);
+
+    $batch = $resolver->resolveBatch([
+        ['id' => $simple->id, 'parent_id' => null, 'values' => $simple->values],
+    ]);
+
+    expect($batch)->not->toHaveKey($simple->id);
+});
+
+it('resolveBatch omits a row whose own values are null and has no parent, preserving that null for the caller', function () {
+    $simple = Product::factory()->create(['values' => null]);
+
+    $resolver = app(Webkul\Product\Contracts\VariantValueResolver::class);
+
+    $batch = $resolver->resolveBatch([
+        ['id' => $simple->id, 'parent_id' => null, 'values' => null],
+    ]);
+
+    expect($batch)->not->toHaveKey($simple->id);
+});
+
+it('resolveBatch fetches a shared ancestor only once for many rows on the same page', function () {
+    $parent = Product::factory()->configurable()->create([
+        'values' => ['common' => ['name' => 'Shared Parent Name']],
+    ]);
+
+    $children = Product::factory()->count(5)->create([
+        'parent_id' => $parent->id,
+        'values'    => ['common' => []],
+    ]);
+
+    DB::enableQueryLog();
+
+    $resolver = app(Webkul\Product\Contracts\VariantValueResolver::class);
+
+    $batch = $resolver->resolveBatch(
+        $children->map(fn ($child) => ['id' => $child->id, 'parent_id' => $child->parent_id, 'values' => $child->values])
+    );
+
+    $ancestorLookups = collect(DB::getQueryLog())->filter(
+        fn ($entry) => str_contains($entry['query'], 'products') && str_contains(strtolower($entry['query']), ' in (')
+    );
+
+    DB::disableQueryLog();
+
+    foreach ($children as $child) {
+        expect($batch[$child->id]['common']['name'])->toBe('Shared Parent Name');
+    }
+
+    expect($ancestorLookups->count())->toBe(1);
 });
