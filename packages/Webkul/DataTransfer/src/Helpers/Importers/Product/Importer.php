@@ -1388,10 +1388,18 @@ class Importer extends AbstractImporter
                 continue;
             }
 
+            if ($imageDirPath === '') {
+                unset($rowData[$code]);
+
+                continue;
+            }
+
             $value = $this->fieldProcessor->handleMediaField($rowData[$code], $imageDirPath);
 
             if ($value) {
                 $rowData[$code] = is_array($value) ? implode(',', $value) : $value;
+            } else {
+                unset($rowData[$code]);
             }
         }
     }
@@ -2054,6 +2062,13 @@ class Importer extends AbstractImporter
             }
 
             $value = $this->fieldProcessor->handleField($attribute, $value, $imageDirPath);
+
+            if (
+                in_array($attribute->type, ['image', 'file', 'gallery'], true)
+                && $value === null
+            ) {
+                continue;
+            }
 
             if ($attribute->type === 'price') {
                 $value = $this->formatPriceValueWithCurrency($currencyCode, $value, $attribute->getValueFromProductValues($attributeValues, $channel, $locale));
