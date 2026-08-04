@@ -96,13 +96,25 @@ class ProductController extends ApiController
     }
 
     /**
-     * Rich-syncs the resolved unified `associations` payload (from
-     * `resolveRichAssociations()`) to `product_associations` AFTER the
-     * product row has been saved. The caller must pass the SAME sections
-     * (`array_keys($data['associations'])`) to `syncAssociationLinks()`'s
-     * `$excludeSections` so a type is never synced twice for the same
-     * request -- mirroring `AbstractType::update()`'s `$excludeSections`
-     * handling.
+     * A section absent from the legacy `values.associations` payload must
+     * stay excluded from `syncAssociationLinks()`, or it reads as "no
+     * links" and the section's `product_associations` rows get deleted.
+     *
+     * @return array<int, string>
+     */
+    private function excludedLegacyAssociationSections(array $data): array
+    {
+        $providedSections = array_keys($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY] ?? []);
+
+        return array_diff(ProductAbstractType::ASSOCIATION_SECTIONS, $providedSections);
+    }
+
+    /**
+     * Rich-syncs the resolved unified `associations` payload to
+     * `product_associations`, then mirrors the tuple's legacy section =>
+     * sku list into `product->values['associations']` (as
+     * `AbstractType::update()` does), so a later request that omits
+     * `associations` doesn't read these rows as "no links" and delete them.
      *
      * @param  array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}|null  $richAssociations
      */
@@ -112,9 +124,22 @@ class ProductController extends ApiController
             return;
         }
 
-        [, $resolvedRichAssociations] = $richAssociations;
+        [$legacySkuLists, $resolvedRichAssociations] = $richAssociations;
 
         $product->getTypeInstance()->syncRichAssociations($product->id, $resolvedRichAssociations);
+
+        if (empty($legacySkuLists)) {
+            return;
+        }
+
+        $values = $product->values ?? [];
+
+        foreach ($legacySkuLists as $section => $skus) {
+            $values[ProductAbstractType::ASSOCIATION_VALUES_KEY][$section] = $skus;
+        }
+
+        $product->values = $values;
+        $product->save();
     }
 
     /**
@@ -190,7 +215,7 @@ class ProductController extends ApiController
         $product->refresh();
 
         if ($product->id) {
-            $excludedSections = $richAssociations ? array_keys($data[ProductAbstractType::ASSOCIATION_VALUES_KEY]) : [];
+            $excludedSections = $this->excludedLegacyAssociationSections($data);
 
             $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
 
@@ -277,7 +302,7 @@ class ProductController extends ApiController
         $product->saveOrFail();
 
         if ($product->id) {
-            $excludedSections = $richAssociations ? array_keys($data[ProductAbstractType::ASSOCIATION_VALUES_KEY]) : [];
+            $excludedSections = $this->excludedLegacyAssociationSections($data);
 
             $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
 
