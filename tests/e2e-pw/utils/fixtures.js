@@ -71,6 +71,31 @@ exports.test = base.test.extend({
   },
 
   /**
+   * Unauthenticated admin page fixture (widget hidden), with its own browser
+   * context and therefore its own server-side session.
+   *
+   * Login-page tests log in and out, which destroys the session they run
+   * against. Using this instead of the shared `adminPage` keeps those tests
+   * from de-authenticating the session every other suite reuses via
+   * `.state/admin-auth.json`.
+   */
+  guestPage: async ({ browser }, use) => {
+    // Config `use.baseURL` only reaches contexts created via the built-in
+    // `page`/`context` fixtures; contexts created with browser.newContext()
+    // get no baseURL, so relative navigations (e.g. page.goto('/admin/login'))
+    // would fail. Set it explicitly to keep the fixture deterministic.
+    const context = await browser.newContext({ baseURL: process.env.BASE_URL || 'http://127.0.0.1:8000' });
+    await context.addInitScript(HIDE_WIDGET_SCRIPT);
+
+    const page = await context.newPage();
+
+    await use(page);
+
+    await page.close();
+    await context.close();
+  },
+
+  /**
    * Widget-visible fixture WITHOUT the per-navigation sessionStorage re-seed.
    * `adminPageWithWidget` re-injects `{ isOpen: false }` on every navigation,
    * which masks any regression in the widget's own cross-page state persistence.
@@ -80,6 +105,7 @@ exports.test = base.test.extend({
    */
   adminPageWithWidgetNoSeed: async ({ browser }, use) => {
     const context = await browser.newContext({ storageState: STORAGE_STATE });
+
     const page = await context.newPage();
 
     await use(page);

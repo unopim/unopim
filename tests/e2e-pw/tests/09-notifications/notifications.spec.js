@@ -25,12 +25,13 @@ async function navigateToNotifications(page) {
     await page.goto('/admin/notifications', { waitUntil: 'networkidle' });
   }
 
-  // Wait for Vue component to mount — either notifications list or empty state will appear
+  // Wait for the admin shell to render. `.icon-notification` is the header
+  // bell, always present once the page loads (the same wait 03-dashboard's
+  // notification-history test uses successfully).
   await page.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
 }
 
 // ─── Notification Page Tests ────────────────────────────────────────
-
 test.describe('Notification Page', () => {
   test('1 - should load the notifications page', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);

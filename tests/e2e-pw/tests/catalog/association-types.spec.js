@@ -101,14 +101,42 @@ async function ensureAssociationTypeAbsent(page, code) {
 	await page.goto(INDEX_URL, { waitUntil: 'load' });
 	await searchInDataGrid(page, code);
 
-	const deleteBtn = page.locator('span[title="Delete"]').first();
+	// Scope the delete to the row that actually contains the code. A global
+	// `.first()` delete button can belong to a different row when the search
+	// filter hasn't been applied yet, silently deleting the wrong type and
+	// leaving `code` behind — which then breaks the next create with a
+	// "code has already been taken" validation error.
+	const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: code }).first();
+	const deleteBtn = row.locator('span[title="Delete"]').first();
 
-	if (await deleteBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
-		await deleteBtn.click();
-		await page.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
-		await page.waitForLoadState('load');
-		await page.waitForTimeout(500);
+	// `isVisible()` is a snapshot check that returns immediately without
+	// waiting, so right after the search-triggered grid refresh the row can
+	// still report hidden and the cleanup silently no-ops. `waitFor()` retries
+	// until the row is actually rendered and visible.
+	try {
+		await deleteBtn.waitFor({ state: 'visible', timeout: 5000 });
+	} catch {
+		return;
 	}
+
+	await deleteBtn.click();
+
+	// Wait for the confirmation modal's button to become actionable before
+	// clicking it: the modal mounts via a Vue transition, and an immediate
+	// click can resolve against the still-detached/hidden node and silently
+	// no-op (no DELETE request is ever sent), leaving the type behind.
+	const confirmBtn = page
+		.locator('.max-w-\\[400px\\]')
+		.getByRole('button', { name: 'Delete', exact: true });
+	await confirmBtn.waitFor({ state: 'visible', timeout: 10000 });
+	await confirmBtn.click();
+
+	// Prove the request completed rather than assuming it did — if the
+	// delete is rejected, the leftover type would otherwise break the next
+	// create with "code has already been taken".
+	await expect(page.locator('#app').getByText(/Association Type Deleted Successfully/i).first()).toBeVisible({ timeout: 10000 });
+
+	await page.waitForLoadState('load');
 }
 
 test.describe('UnoPim Association Type Tests', () => {
@@ -211,7 +239,7 @@ test.describe('UnoPim Association Type Tests', () => {
 			await adminPage.goto(INDEX_URL, { waitUntil: 'load' });
 			await searchInDataGrid(adminPage, 'bundle_kit');
 
-			const row = adminPage.locator('div', { hasText: 'bundle_kit' }).first();
+			const row = adminPage.locator('div.row.grid.cursor-pointer').filter({ hasText: 'bundle_kit' }).first();
 			await row.locator('span[title="Delete"]').first().click();
 			await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
 
