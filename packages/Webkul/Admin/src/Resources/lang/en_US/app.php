@@ -377,6 +377,7 @@ return [
                         'variant-attribute-option-not-found' => 'Variant attribute or option with value ":attributes" not found',
                         'supper-attribute-not-found'         => 'Supper attribute  with value ":attribute" not found',
                         'variant-given-exists'               => 'This variant with value ":variants" already exists',
+                        'variant-group-has-children'         => 'This variant group still has variants. Remove or reassign them before deleting it.',
 
                         'create' => [
                             'description'            => 'Description',
@@ -594,6 +595,10 @@ return [
             'parent-not-found'        => 'Parent with sku ":sku" could not be found',
             'upload-success'          => 'Product file uploaded successfully.',
             'update-failure'          => 'Product could not be updated.',
+            'immutable-fields'        => 'The following fields cannot be modified: :fields.',
+
+            'variant-structure-not-found'     => 'Variant structure with code ":code" could not be found in family ":family"',
+            'variant-structure-axis-mismatch' => 'The given super attributes do not match the axes of variant structure ":code". Expected: :axes',
         ],
 
         'attributes' => [
