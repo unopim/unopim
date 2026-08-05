@@ -100,7 +100,7 @@ jobs:
           baseline="$(vendor/bin/pest --baseline)"
 
           record() {
-            vendor/bin/pest --parallel --processes=1 --tia "$@" --colors=always
+            vendor/bin/pest --tia "$@" --colors=always
             rm -f "$baseline/coverage.bin.gz"
           }
 
