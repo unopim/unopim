@@ -244,6 +244,37 @@ describe('isUniqueVariantForProduct', function () {
 
         expect($result)->toBeFalse();
     });
+
+    it('keeps the sku check scoped to the same parent and type when both are given', function () {
+        $parent = Product::factory()->configurable()->create();
+
+        Product::factory()->create([
+            'parent_id' => $parent->id,
+            'type'      => 'simple',
+            'sku'       => 'shared-sku',
+            'values'    => [
+                'common' => ['color' => 'red'],
+            ],
+        ]);
+
+        Product::factory()->create([
+            'type'   => 'simple',
+            'sku'    => 'shared-sku-elsewhere',
+            'values' => [
+                'common' => ['color' => 'blue'],
+            ],
+        ]);
+
+        $result = $this->productRepository->isUniqueVariantForProduct(
+            $parent->id,
+            ['color' => 'green'],
+            'shared-sku-elsewhere',
+            '',
+            'simple'
+        );
+
+        expect($result)->toBeTrue();
+    });
 });
 
 describe('updateWithValues', function () {
