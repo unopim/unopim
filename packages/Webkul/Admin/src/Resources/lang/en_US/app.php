@@ -3164,7 +3164,7 @@ return [
         'user-management'          => 'User Management',
         'category_fields'          => 'Category Fields',
         'association_types'        => 'Association Types',
-        'association_type_fields' => 'Association Type Fields',
+        'association_type_fields'  => 'Association Type Fields',
         'view'                     => 'View',
         'execute'                  => 'Job Execute',
         'history'                  => 'History',

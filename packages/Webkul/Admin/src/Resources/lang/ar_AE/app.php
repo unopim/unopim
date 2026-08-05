@@ -2971,7 +2971,7 @@ return [
         'user-management'          => 'إدارة المستخدمين',
         'category_fields'          => 'حقول الفئة',
         'association_types'        => 'أنواع الارتباط',
-        'association_type_fields' => 'حقول نوع الارتباط',
+        'association_type_fields'  => 'حقول نوع الارتباط',
         'view'                     => 'منظر',
         'execute'                  => 'تنفيذ الوظيفة',
         'history'                  => 'تاريخ',

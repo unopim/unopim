@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'Gestione utenti',
         'category_fields'          => 'Campi di categoria',
         'association_types'        => 'Tipi di associazione',
-        'association_type_fields' => 'Campi tipo di associazione',
+        'association_type_fields'  => 'Campi tipo di associazione',
         'view'                     => 'Visualizza',
         'execute'                  => 'Esegui',
         'history'                  => 'Storia',

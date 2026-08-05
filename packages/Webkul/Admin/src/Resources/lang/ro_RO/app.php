@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Gestionare utilizatori',
         'category_fields'          => 'Câmpuri categorie',
         'association_types'        => 'Tipuri de asociere',
-        'association_type_fields' => 'Câmpuri tip de asociere',
+        'association_type_fields'  => 'Câmpuri tip de asociere',
         'view'                     => 'Vizualizare',
         'execute'                  => 'Executare',
         'history'                  => 'Istoric',

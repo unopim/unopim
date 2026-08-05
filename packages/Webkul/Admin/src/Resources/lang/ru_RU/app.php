@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Управление пользователями',
         'category_fields'          => 'Поля категории',
         'association_types'        => 'Типы связей',
-        'association_type_fields' => 'Поля типа связи',
+        'association_type_fields'  => 'Поля типа связи',
         'view'                     => 'Вид',
         'execute'                  => 'Выполнение задания',
         'history'                  => 'История',

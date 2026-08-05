@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Quản lý người dùng',
         'category_fields'          => 'Các trường danh mục',
         'association_types'        => 'Loại liên kết',
-        'association_type_fields' => 'Trường Loại liên kết',
+        'association_type_fields'  => 'Trường Loại liên kết',
         'view'                     => 'Xem',
         'execute'                  => 'Thực hiện',
         'history'                  => 'Lịch sử',

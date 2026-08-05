@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Pamamahala ng Gumagamit',
         'category_fields'          => 'Mga Field ng Kategorya',
         'association_types'        => 'Mga Uri ng Asosasyon',
-        'association_type_fields' => 'Mga Field ng Uri ng Asosasyon',
+        'association_type_fields'  => 'Mga Field ng Uri ng Asosasyon',
         'view'                     => 'Tingnan',
         'execute'                  => 'Isagawa',
         'history'                  => 'Kasaysayan',

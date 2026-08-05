@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'Käyttäjähallinta',
         'category_fields'          => 'Kategoriakentät',
         'association_types'        => 'Assosiaatiotyypit',
-        'association_type_fields' => 'Assosiaatiotyypin kentät',
+        'association_type_fields'  => 'Assosiaatiotyypin kentät',
         'view'                     => 'Näytä',
         'execute'                  => 'Suorita työ',
         'history'                  => 'Historia',

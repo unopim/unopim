@@ -2970,7 +2970,7 @@ return [
         'user-management'          => 'Gestion des utilisateurs',
         'category_fields'          => 'Champs de catégorie',
         'association_types'        => 'Types d\'association',
-        'association_type_fields' => 'Champs de type d\'association',
+        'association_type_fields'  => 'Champs de type d\'association',
         'view'                     => 'Voir',
         'execute'                  => 'Exécution de tâche',
         'history'                  => 'Historique',

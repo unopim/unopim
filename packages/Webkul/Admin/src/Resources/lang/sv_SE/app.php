@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Användarhantering',
         'category_fields'          => 'Kategori-fält',
         'association_types'        => 'Associationstyper',
-        'association_type_fields' => 'Associationstypfält',
+        'association_type_fields'  => 'Associationstypfält',
         'view'                     => 'Visa',
         'execute'                  => 'Utföra',
         'history'                  => 'Historik',

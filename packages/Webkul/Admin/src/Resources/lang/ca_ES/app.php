@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'Gestió d\'usuaris',
         'category_fields'          => 'Campaments de categoria',
         'association_types'        => 'Tipus d\'associació',
-        'association_type_fields' => 'Camps de tipus d\'associació',
+        'association_type_fields'  => 'Camps de tipus d\'associació',
         'view'                     => 'Vista',
         'execute'                  => 'Executar treball',
         'history'                  => 'Historial',

@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'उपयोगकर्ता प्रबंधन',
         'category_fields'          => 'श्रेणी क्षेत्र',
         'association_types'        => 'एसोसिएशन प्रकार',
-        'association_type_fields' => 'एसोसिएशन प्रकार फ़ील्ड',
+        'association_type_fields'  => 'एसोसिएशन प्रकार फ़ील्ड',
         'view'                     => 'देखना',
         'execute'                  => 'कार्य निष्पादित करें',
         'history'                  => 'इतिहास',

@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Brukeradministrasjon',
         'category_fields'          => 'Kategori felt',
         'association_types'        => 'Assosiasjonstyper',
-        'association_type_fields' => 'Assosiasjonstype-felt',
+        'association_type_fields'  => 'Assosiasjonstype-felt',
         'view'                     => 'Visning',
         'execute'                  => 'Utfør',
         'history'                  => 'Historie',

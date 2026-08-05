@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Керування користувачами',
         'category_fields'          => 'Поля категорій',
         'association_types'        => 'Типи асоціацій',
-        'association_type_fields' => 'Поля типу асоціації',
+        'association_type_fields'  => 'Поля типу асоціації',
         'view'                     => 'Перегляд',
         'execute'                  => 'Виконати',
         'history'                  => 'Історія',

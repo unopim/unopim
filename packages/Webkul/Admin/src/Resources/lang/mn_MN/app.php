@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Хэрэглэгчийн удирдлага',
         'category_fields'          => 'Ангилалын талбар',
         'association_types'        => 'Холбооны төрлүүд',
-        'association_type_fields' => 'Холбооны төрлийн талбарууд',
+        'association_type_fields'  => 'Холбооны төрлийн талбарууд',
         'view'                     => 'Харагдац',
         'execute'                  => 'Ажлыг гүйцэтгэх',
         'history'                  => 'Түүх',

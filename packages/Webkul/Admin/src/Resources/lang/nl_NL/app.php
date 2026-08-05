@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Gebruikersbeheer',
         'category_fields'          => 'Categorievelden',
         'association_types'        => 'Associatietypen',
-        'association_type_fields' => 'Associatietype-velden',
+        'association_type_fields'  => 'Associatietype-velden',
         'view'                     => 'Weergave',
         'execute'                  => 'Taak uitvoeren',
         'history'                  => 'Geschiedenis',

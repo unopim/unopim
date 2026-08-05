@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Kullanıcı Yönetimi',
         'category_fields'          => 'Kategori Alanları',
         'association_types'        => 'İlişki Türleri',
-        'association_type_fields' => 'İlişki Türü Alanları',
+        'association_type_fields'  => 'İlişki Türü Alanları',
         'view'                     => 'Görünüm',
         'execute'                  => 'Çalıştır',
         'history'                  => 'Geçmiş',

@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'Benutzerverwaltung',
         'category_fields'          => 'Kategoriefelder',
         'association_types'        => 'Assoziationstypen',
-        'association_type_fields' => 'Assoziationstyp-Felder',
+        'association_type_fields'  => 'Assoziationstyp-Felder',
         'view'                     => 'Anzeigen',
         'execute'                  => 'Job ausführen',
         'history'                  => 'Verlauf',

@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'ユーザー管理',
         'category_fields'          => 'カテゴリ フィールド',
         'association_types'        => '関連タイプ',
-        'association_type_fields' => '関連タイプフィールド',
+        'association_type_fields'  => '関連タイプフィールド',
         'view'                     => '表示',
         'execute'                  => 'ジョブ実行',
         'history'                  => '履歴',

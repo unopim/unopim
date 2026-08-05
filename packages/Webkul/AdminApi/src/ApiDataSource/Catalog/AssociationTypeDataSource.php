@@ -123,7 +123,7 @@ class AssociationTypeDataSource extends ApiDataSource
             'code'            => $data['code'],
             'status'          => (bool) $data['status'],
             'position'        => $data['position'],
-            'is_user_defined' => $data['is_user_defined'],
+            'is_user_defined' => (bool) $data['is_user_defined'],
             'labels'          => $this->getTranslations($data),
         ];
     }

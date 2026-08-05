@@ -2975,7 +2975,7 @@ return [
         'user-management'          => '사용자 관리',
         'category_fields'          => '카테고리 필드',
         'association_types'        => '연관 유형',
-        'association_type_fields' => '연관 유형 필드',
+        'association_type_fields'  => '연관 유형 필드',
         'view'                     => '보기',
         'execute'                  => '실행',
         'history'                  => '기록',

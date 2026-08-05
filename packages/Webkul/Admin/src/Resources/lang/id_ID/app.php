@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'Manajemen Pengguna',
         'category_fields'          => 'Bidang kategori',
         'association_types'        => 'Jenis Asosiasi',
-        'association_type_fields' => 'Bidang Jenis Asosiasi',
+        'association_type_fields'  => 'Bidang Jenis Asosiasi',
         'view'                     => 'Melihat',
         'execute'                  => 'Eksekusi Pekerjaan',
         'history'                  => 'Sejarah',

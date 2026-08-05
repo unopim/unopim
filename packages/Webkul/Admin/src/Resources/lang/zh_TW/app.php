@@ -2975,7 +2975,7 @@ return [
         'user-management'          => '使用者管理',
         'category_fields'          => '分類字段',
         'association_types'        => '關聯類型',
-        'association_type_fields' => '關聯類型欄位',
+        'association_type_fields'  => '關聯類型欄位',
         'view'                     => '查看',
         'execute'                  => '執行',
         'history'                  => '歷史記錄',

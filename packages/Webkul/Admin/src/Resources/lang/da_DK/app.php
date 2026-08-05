@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'Brugeradministration',
         'category_fields'          => 'Kategori felter',
         'association_types'        => 'Associationstyper',
-        'association_type_fields' => 'Associationstype-felter',
+        'association_type_fields'  => 'Associationstype-felter',
         'view'                     => 'Vis',
         'execute'                  => 'Job udføre',
         'history'                  => 'Historie',

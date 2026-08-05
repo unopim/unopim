@@ -2975,7 +2975,7 @@ return [
         'user-management'          => 'Zarządzanie użytkownikami',
         'category_fields'          => 'Pole kategorii',
         'association_types'        => 'Typy powiązań',
-        'association_type_fields' => 'Pola typu powiązania',
+        'association_type_fields'  => 'Pola typu powiązania',
         'view'                     => 'Podgląd',
         'execute'                  => 'Wykonaj',
         'history'                  => 'Historia',

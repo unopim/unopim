@@ -2975,7 +2975,7 @@ return [
         'user-management'          => '用户管理',
         'category_fields'          => '类别字段',
         'association_types'        => '关联类型',
-        'association_type_fields' => '关联类型字段',
+        'association_type_fields'  => '关联类型字段',
         'view'                     => '看法',
         'execute'                  => '作业执行',
         'history'                  => '历史',

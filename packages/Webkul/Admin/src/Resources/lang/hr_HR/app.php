@@ -2972,7 +2972,7 @@ return [
         'user-management'          => 'Upravljanje korisnicima',
         'category_fields'          => 'Polja kategorija',
         'association_types'        => 'Vrste povezivanja',
-        'association_type_fields' => 'Polja vrste povezivanja',
+        'association_type_fields'  => 'Polja vrste povezivanja',
         'view'                     => 'Pogled',
         'execute'                  => 'Izvrši',
         'history'                  => 'Povijest',
