@@ -15,14 +15,24 @@ class ExportTrackBatch implements ShouldQueue
 
     public $tries = 3;
 
-    public $timeout = 300; // Adjust as needed
+    public $timeout = 300;
 
     /**
      * Create a new job instance.
      *
+     * Supervises every batch of the export, so its timeout has to scale with
+     * the catalog the way ExportBatch's already does. A fixed 300s expires
+     * mid-run on a large export, and the three retries then re-enter a job
+     * that cannot finish either — leaving the batches orphaned as pending.
+     *
      * @param  mixed  $exportBatch
      */
-    public function __construct(protected $exportBatch) {}
+    public function __construct(protected $exportBatch)
+    {
+        $count = (int) ($exportBatch->summary['total'] ?? $exportBatch->totalCount ?? 0);
+
+        $this->timeout = max(3600, $count);
+    }
 
     /**
      * Execute the job.

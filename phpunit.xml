@@ -116,6 +116,10 @@
         <env name="APP_ENV" value="testing" force="true"/>
         <env name="APP_DEBUG" value="true" force="true"/>
 
+        <!-- Keeps a local run off the working database. Not forced, so CI's own
+             DB_DATABASE still wins. -->
+        <env name="DB_DATABASE" value="unopim_test"/>
+
         <!-- Forced so container environments (docker-compose env_file) cannot pull
              tests onto the real Redis, queue or mail transports. -->
         <env name="BCRYPT_ROUNDS" value="4"/>
