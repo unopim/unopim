@@ -95,11 +95,21 @@ jobs:
           sudo swapon /mnt/swapfile
           swapon --show
 
-      # Single worker for the same reason the impacted job runs one: each worker
-      # holds its own resident coverage map, so a second one is killed even with
-      # the swap above in place.
       - name: Record the baseline
-        run: vendor/bin/pest --parallel --processes=1 --tia --fresh --colors=always
+        run: |
+          baseline="$(vendor/bin/pest --baseline)"
+
+          record() {
+            vendor/bin/pest --tia "$@" --colors=always
+            rm -f "$baseline/coverage.bin.gz"
+          }
+
+          record --fresh packages/Webkul/Admin/tests/Feature/Catalog
+          record --coverage packages/Webkul/Admin/tests/Feature/{Account,Acl,AiAgent,Auth,Components,Configuration,Dashboard,DataTransfer}
+          record --coverage packages/Webkul/Admin/tests/Feature/{Fields,Help,MagicAi,MagicAI,Notification,Security,Settings,SystemSettings,User,Webhook} packages/Webkul/Admin/tests/Feature/*Test.php
+          record --coverage --testsuite "Api Feature Test,User Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Measurement Feature Test"
+          record --coverage --testsuite "Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,DataTransfer Unit Test,DataTransfer Feature Test"
+          record --coverage --testsuite "Core Unit Test,AiAgent Unit Test,AppUrlGuard Unit Test,AppUrlGuard Feature Test,Webhook Unit Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
 
       - name: Resolve the baseline path
         id: baseline
