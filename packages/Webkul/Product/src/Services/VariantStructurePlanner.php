@@ -51,6 +51,12 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
         return $structure;
     }
 
+    /** Pre-seeds the per-product structure memo, letting a caller that already knows a product's structure avoid a redundant {@see resolveStructure()} query. */
+    public function primeStructure(int $productId, ?VariantStructure $structure): void
+    {
+        $this->structureMemo[$productId] = $structure;
+    }
+
     protected function resolveStructure(Product $product): ?VariantStructure
     {
         $node = $product;

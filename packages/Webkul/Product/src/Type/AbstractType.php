@@ -130,11 +130,9 @@ abstract class AbstractType
 
         if (! empty($data[self::PRODUCT_VALUES_KEY])) {
             $data = $this->prepareProductValues($data, $product);
-
-            $product->values = $data[self::PRODUCT_VALUES_KEY];
         }
 
-        $productValues = $product->values;
+        $productValues = ! empty($data[self::PRODUCT_VALUES_KEY]) ? $data[self::PRODUCT_VALUES_KEY] : ($product->values ?? []);
 
         if (! empty($data[self::CATEGORY_VALUES_KEY])) {
             $productValues[self::CATEGORY_VALUES_KEY] = $data[self::CATEGORY_VALUES_KEY];
@@ -190,14 +188,22 @@ abstract class AbstractType
             $productValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'] ?? $product->sku;
         }
 
-        $product->values = $productValues;
+        $persist = function () use ($product, $productValues, $data): void {
+            $product->values = $productValues;
 
-        $product->fill($data);
+            $product->fill($data);
 
-        $product->wasDirtyOnUpdate = $product->isDirty();
+            $product->wasDirtyOnUpdate = $product->isDirty();
 
-        if ($product->wasDirtyOnUpdate) {
-            $product->save();
+            if ($product->wasDirtyOnUpdate) {
+                $product->save();
+            }
+        };
+
+        if ($product->parent_id && ! empty($productValues[self::COMMON_VALUES_KEY])) {
+            $this->productRepository->guardVariantLevelWrite($product, $productValues[self::COMMON_VALUES_KEY], $persist);
+        } else {
+            $persist();
         }
 
         if ($product->id) {
