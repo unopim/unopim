@@ -61,7 +61,7 @@ jobs:
           node-version: '22'
 
       - name: Cache Node dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
@@ -164,7 +164,7 @@ jobs:
           node-version: '22'
 
       - name: Cache Node dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
@@ -267,7 +267,7 @@ jobs:
           node-version: '22'
 
       - name: Cache Node dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
@@ -282,7 +282,7 @@ jobs:
         run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
 
       - name: Restore the test impact graph
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: ${{ steps.tia.outputs.path }}
           key: pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ github.run_id }}
