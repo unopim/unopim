@@ -117,7 +117,7 @@ jobs:
           record() {
             chunk=$((chunk + 1))
             local home="$RUNNER_TEMP/tia-home-$chunk"
-            HOME="$home" PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh "$@" --colors=always
+            HOME="$home" PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh "$@" --colors=always || true
             cp "$(HOME="$home" vendor/bin/pest --baseline)/graph.json" "$RUNNER_TEMP/tia-graph-$chunk.json"
           }
 
