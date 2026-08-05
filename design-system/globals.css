@@ -1,0 +1,409 @@
+/* app/globals.css
+   Generated from UnoPim admin design system reverse-engineering
+   ----------------------------------------------------------------
+   Font: Inter (Google Fonts) + custom icomoon icon font
+   Dark mode: class-based (html.dark)
+*/
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── Icon Font (icomoon / unopim-admin) ────────────────────────────────────
+   Copy unopim-admin.woff to /public/fonts/ in your project.
+   All icons use prefix: icon-
+   Usage: <i class="icon-edit text-2xl text-gray-600 dark:text-slate-50" />
+*/
+@font-face {
+  font-family: "icomoon";
+  src: url("/fonts/unopim-admin.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+/* ─── CSS Variables (Shadcn-compatible) ─────────────────────────────────────*/
+@layer base {
+  :root {
+    /* Light mode */
+    --background:          0 0% 100%;
+    --foreground:          222 47% 11%;
+
+    --card:                0 0% 100%;
+    --card-foreground:     222 47% 11%;
+
+    --popover:             0 0% 100%;
+    --popover-foreground:  222 47% 11%;
+
+    --primary:             263 70% 58%;   /* violet-600 #7c3aed */
+    --primary-foreground:  210 40% 98%;
+
+    --secondary:           210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted:               210 40% 96%;
+    --muted-foreground:    215 16% 47%;
+
+    --accent:              210 40% 96%;
+    --accent-foreground:   222 47% 11%;
+
+    --destructive:         0 84% 60%;     /* red-500 #EF4444 */
+    --destructive-foreground: 210 40% 98%;
+
+    --border:              214 32% 91%;   /* gray-200 equivalent */
+    --input:               214 32% 91%;
+    --ring:                263 70% 58%;   /* violet-600 */
+
+    --radius:              0.375rem;      /* 6px — matches rounded-md */
+  }
+
+  .dark {
+    --background:          240 15% 15%;  /* cherry-800 #1F1C30 */
+    --foreground:          210 40% 98%;  /* slate-50 */
+
+    --card:                240 14% 18%;  /* cherry-900 #26283D */
+    --card-foreground:     210 40% 98%;
+
+    --popover:             240 14% 18%;
+    --popover-foreground:  210 40% 98%;
+
+    --primary:             263 70% 58%;
+    --primary-foreground:  210 40% 98%;
+
+    --secondary:           240 12% 22%;  /* cherry-700 #28273F */
+    --secondary-foreground: 210 40% 98%;
+
+    --muted:               240 12% 22%;
+    --muted-foreground:    215 20% 65%;
+
+    --accent:              240 12% 22%;
+    --accent-foreground:   210 40% 98%;
+
+    --destructive:         0 62% 30%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border:              240 12% 25%;
+    --input:               240 12% 25%;
+    --ring:                263 70% 58%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    font-family: Inter, sans-serif;
+  }
+
+  body {
+    @apply bg-background text-foreground text-sm;
+  }
+
+  /* Light mode page background tint (UnoPim uses violet-50 at 50% opacity) */
+  body:not(.dark body) {
+    background-color: rgb(245 243 255 / 0.5); /* violet-50/50 */
+  }
+}
+
+/* ─── Custom Component Utilities ────────────────────────────────────────────*/
+@layer utilities {
+  /* Card / panel elevation */
+  .shadow-card {
+    box-shadow:
+      0px 0px 0px 0px rgba(0,0,0,0.03),
+      0px 1px 1px 0px rgba(0,0,0,0.03),
+      0px 3px 3px 0px rgba(0,0,0,0.03),
+      0px 6px 4px 0px rgba(0,0,0,0.02),
+      0px 11px 4px 0px rgba(0,0,0,0.00),
+      0px 17px 5px 0px rgba(0,0,0,0.00);
+  }
+
+  /* Dropdown / popover shadow */
+  .shadow-dropdown {
+    box-shadow:
+      0px 8px 10px 0px rgba(0,0,0,0.20),
+      0px 6px 30px 0px rgba(0,0,0,0.12),
+      0px 16px 24px 0px rgba(0,0,0,0.14);
+  }
+
+  /* Sidebar shadow */
+  .shadow-sidebar {
+    box-shadow: 0px 8px 10px 0px rgba(0,0,0,0.20);
+  }
+
+  /* Text utilities */
+  .overflow-wrap { overflow-wrap: break-word; }
+  .word-break    { word-break: break-word; }
+
+  /* Drag ghost */
+  .draggable-ghost {
+    @apply opacity-50 bg-indigo-100;
+  }
+
+  /* RTL/LTR direction helpers */
+  .direction-ltr { direction: ltr; }
+  .direction-rtl { direction: rtl; }
+}
+
+/* ─── Button Variants ────────────────────────────────────────────────────────
+   Matches UnoPim's .primary-button, .secondary-button, etc.
+*/
+@layer components {
+  /* Shared base */
+  .btn {
+    @apply inline-flex items-center gap-x-1 rounded-md px-3 py-1.5
+           text-sm font-semibold cursor-pointer transition-all select-none
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Primary — violet filled */
+  .btn-primary {
+    @apply btn
+           bg-violet-600 border border-violet-700 text-slate-50
+           hover:bg-violet-500 hover:border-violet-500;
+  }
+
+  /* Secondary — outline */
+  .btn-secondary {
+    @apply btn
+           bg-white border-2 border-violet-600 text-violet-600
+           hover:text-violet-500 hover:border-violet-500 hover:bg-violet-100
+           dark:bg-cherry-900 dark:border-violet-500 dark:text-violet-400
+           dark:hover:bg-cherry-800;
+  }
+
+  /* Ghost / transparent */
+  .btn-ghost {
+    @apply btn
+           border-2 border-transparent text-violet-600
+           hover:text-violet-500 hover:bg-violet-50
+           dark:text-slate-50 dark:hover:bg-cherry-900;
+  }
+
+  /* Danger — red filled */
+  .btn-danger {
+    @apply btn
+           bg-red-600 border border-red-700 text-slate-50
+           hover:opacity-90;
+  }
+
+  /* ─── Form Inputs ─────────────────────────────────────────────────────────*/
+  .input {
+    @apply w-full rounded-md border border-gray-400 px-3 py-2.5 text-sm text-gray-600
+           transition-colors
+           hover:border-gray-400
+           focus:border-gray-400 focus:outline-none
+           dark:bg-cherry-900 dark:text-gray-300 dark:border-gray-600
+           dark:hover:border-slate-300 dark:focus:border-slate-300;
+  }
+
+  .input-error {
+    @apply !border-red-600;
+  }
+
+  .input-label {
+    @apply flex items-center gap-1 mb-1.5 text-xs text-gray-800 dark:text-white font-medium;
+  }
+
+  /* Localizable field badge (shows locale code next to label) */
+  .input-locale-badge {
+    @apply bg-gray-100 border border-gray-200 rounded px-1 text-[10px] text-gray-600 font-semibold;
+  }
+
+  /* ─── Card ────────────────────────────────────────────────────────────────*/
+  .card {
+    @apply bg-white dark:bg-cherry-900
+           rounded-md border border-gray-200 dark:border-cherry-800
+           shadow-card;
+  }
+
+  /* ─── Status / Badge Labels ───────────────────────────────────────────────*/
+  .badge {
+    @apply inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold;
+  }
+
+  .badge-pending    { @apply badge bg-yellow-100  text-yellow-800; }
+  .badge-processing { @apply badge bg-cyan-100    text-cyan-800; }
+  .badge-completed  { @apply badge bg-green-100   text-green-800; }
+  .badge-active     { @apply badge bg-green-100   text-green-800; }
+  .badge-closed     { @apply badge bg-blue-100    text-blue-800; }
+  .badge-canceled   { @apply badge bg-red-100     text-red-800; }
+  .badge-fraud      { @apply badge bg-red-100     text-red-800; }
+  .badge-info       { @apply badge bg-slate-100   text-slate-600; }
+
+  /* Pill severity (priority indicators) */
+  .pill { @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold border text-white; }
+  .pill-low    { @apply pill bg-red-600    border-red-700; }
+  .pill-medium { @apply pill bg-yellow-500 border-yellow-600; }
+  .pill-high   { @apply pill bg-green-600  border-green-700; }
+
+  /* ─── Header / Navbar ─────────────────────────────────────────────────────*/
+  .header {
+    @apply sticky top-0 z-[10001] flex items-center justify-between gap-4
+           border-b bg-white dark:bg-cherry-700 dark:border-cherry-800
+           px-4 py-2.5;
+  }
+
+  .header-icon-btn {
+    @apply rounded-md p-1.5 text-2xl text-gray-600 dark:text-slate-200
+           hover:bg-violet-50 dark:hover:bg-cherry-800 transition-colors cursor-pointer;
+  }
+
+  /* ─── Sidebar ─────────────────────────────────────────────────────────────*/
+  .sidebar {
+    @apply fixed h-full bg-white dark:bg-cherry-700
+           transition-all duration-300 overflow-hidden;
+    /* expanded:  width set via JS/class → w-[270px]  */
+    /* collapsed: width set via JS/class → w-[70px]   */
+    /* mobile:    width → w-full                       */
+  }
+
+  .sidebar-item {
+    @apply flex items-center gap-2 px-3 py-2 rounded-md
+           text-sm font-medium cursor-pointer
+           text-gray-600 dark:text-slate-300
+           hover:bg-violet-50 dark:hover:bg-cherry-800
+           transition-colors;
+  }
+
+  /* data-[active=true]:... — apply via JS or Tailwind data variant */
+  .sidebar-item-active {
+    @apply bg-violet-100 text-violet-700 dark:bg-cherry-800 dark:text-violet-400;
+  }
+
+  /* ─── Modal ───────────────────────────────────────────────────────────────*/
+  .modal-backdrop {
+    @apply fixed inset-0 z-[10002] flex items-center justify-center
+           bg-black/60;
+  }
+
+  .modal {
+    @apply bg-white dark:bg-gray-900 rounded-lg shadow-dropdown overflow-hidden;
+  }
+
+  .modal-sm  { @apply w-[400px]; }
+  .modal-md  { @apply w-[568px]; }
+  .modal-lg  { @apply w-[900px]; }
+  .modal-full { width: calc(100vw - 100px); }
+
+  .modal-header {
+    @apply flex items-center justify-between gap-2.5 px-4 py-3 border-b
+           dark:border-cherry-800;
+  }
+  .modal-body   { @apply px-4 py-2.5 border-b dark:border-cherry-800; }
+  .modal-footer { @apply flex justify-end gap-2 px-4 py-2.5; }
+
+  /* ─── Dropdown / Popover ──────────────────────────────────────────────────*/
+  .dropdown {
+    @apply absolute z-10 w-max rounded
+           bg-white dark:bg-cherry-900
+           shadow-dropdown;
+  }
+
+  /* ─── Drawer ──────────────────────────────────────────────────────────────*/
+  .drawer {
+    @apply fixed inset-y-0 z-[10002] flex flex-col
+           bg-white dark:bg-cherry-800
+           shadow-sidebar overflow-hidden
+           transition-all duration-200 ease-in-out;
+  }
+
+  .drawer-header  { @apply grid gap-y-2.5 p-3 border-b dark:border-cherry-800; }
+  .drawer-body    { @apply flex-1 overflow-auto p-3; }
+
+  /* ─── Table ───────────────────────────────────────────────────────────────*/
+  .table-container {
+    @apply bg-white dark:bg-cherry-900 rounded border border-gray-200 dark:border-cherry-800;
+  }
+
+  .table-header {
+    @apply flex items-center min-h-[47px] px-4 py-2.5
+           bg-violet-50 dark:bg-cherry-900
+           border-b border-gray-200 dark:border-cherry-800
+           text-xs font-medium text-gray-600 dark:text-gray-300;
+  }
+
+  .table-row {
+    @apply flex items-center px-4 py-4
+           border-b border-gray-100 dark:border-cherry-800
+           text-sm text-gray-600 dark:text-gray-300
+           hover:bg-violet-50/30 dark:hover:bg-cherry-800/30
+           transition-colors;
+  }
+
+  .table-action-btn {
+    @apply p-1.5 rounded-md text-2xl text-gray-600 dark:text-slate-300
+           hover:bg-violet-100 dark:hover:bg-gray-800
+           transition-colors cursor-pointer;
+  }
+
+  /* ─── Tabs ────────────────────────────────────────────────────────────────*/
+  .tabs-list {
+    @apply flex gap-4 border-b border-gray-200 dark:border-cherry-800;
+  }
+
+  .tab {
+    @apply px-1 pb-2 text-base font-medium text-gray-500 dark:text-gray-400
+           border-b-2 border-transparent -mb-px
+           hover:text-gray-700 dark:hover:text-gray-200
+           transition-colors cursor-pointer;
+  }
+
+  .tab-active {
+    @apply text-violet-700 dark:text-violet-400 border-violet-700 dark:border-violet-400;
+  }
+
+  /* ─── Toggle / Switch ─────────────────────────────────────────────────────*/
+  .switch {
+    @apply relative inline-flex h-6 w-11 cursor-pointer rounded-full
+           bg-gray-300 transition-colors duration-200;
+  }
+  .switch-checked { @apply bg-violet-700; }
+
+  .switch-thumb {
+    @apply pointer-events-none absolute top-1 left-1
+           h-4 w-4 rounded-full bg-white shadow
+           transition-transform duration-200;
+  }
+  .switch-thumb-checked { @apply translate-x-5; }
+
+  /* ─── Accordion ───────────────────────────────────────────────────────────*/
+  .accordion {
+    @apply card overflow-hidden;
+  }
+
+  .accordion-header {
+    @apply flex items-center justify-between p-1.5 cursor-pointer
+           hover:bg-gray-50 dark:hover:bg-cherry-800 transition-colors;
+  }
+
+  .accordion-body { @apply px-4 pb-4; }
+
+  /* ─── Shimmer / Skeleton loading ──────────────────────────────────────────*/
+  .shimmer {
+    @apply animate-pulse bg-gray-200 dark:bg-cherry-700 rounded;
+  }
+
+  /* Full gradient shimmer animation */
+  @keyframes shimmer {
+    0%   { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+  }
+
+  .shimmer-animated {
+    animation: shimmer 2.2s infinite linear;
+    background: linear-gradient(to right, #f6f7f8 4%, #edeef1 25%, #f6f7f8 36%);
+    background-size: 1000px 100%;
+  }
+
+  /* ─── Custom Scrollbar ────────────────────────────────────────────────────*/
+  .scrollbar-journal::-webkit-scrollbar { width: 14px; }
+  .scrollbar-journal::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-journal::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-cherry-600 rounded-[12px];
+    border: 3px solid transparent;
+    background-clip: padding-box;
+  }
+}
