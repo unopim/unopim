@@ -307,7 +307,7 @@ class ProductDataSource extends ApiDataSource
             'values'     => $mergedValues ?? $product['values'],
         ];
 
-        if (config('product_types.configurable.key') == $product['type']) {
+        if (in_array($product['type'], [config('product_types.configurable.key'), config('product_types.variant_group.key')], true)) {
             $superAttributes = $this->getSuperAttributes($product);
 
             $responseData['super_attributes'] = $superAttributes;
