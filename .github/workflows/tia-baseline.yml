@@ -65,6 +65,21 @@ jobs:
         with:
           composer-options: "--optimize-autoloader"
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+
       - name: Setting Environment
         run: |
           cp .env.example .env
@@ -100,7 +115,7 @@ jobs:
           baseline="$(vendor/bin/pest --baseline)"
 
           record() {
-            vendor/bin/pest --tia "$@" --colors=always
+            php -d memory_limit=-1 vendor/bin/pest --tia "$@" --colors=always
             rm -f "$baseline/coverage.bin.gz"
           }
 
