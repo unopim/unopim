@@ -1257,7 +1257,7 @@ class ProductController extends Controller
         }
 
         try {
-            $this->valuesValidator->validate(data: $data[AbstractType::PRODUCT_VALUES_KEY], productId: $id);
+            $this->valuesValidator->validate(data: $data[AbstractType::PRODUCT_VALUES_KEY] ?? [], productId: $id);
         } catch (ValidationException $e) {
             $messages = [];
 

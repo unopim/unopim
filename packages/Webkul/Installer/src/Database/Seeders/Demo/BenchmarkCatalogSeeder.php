@@ -338,7 +338,8 @@ class BenchmarkCatalogSeeder extends Seeder
                    %3$s,
                    NULL,
                    src.attribute_family_id,
-                   JSON_SET(src.`values`,
+                   JSON_SET(
+                     JSON_REMOVE(src.`values`, "$.common.image", "$.common.gallery", "$.common.spec_sheet"),
                      "$.common.sku",     CONCAT(%1$s, %2$d + n.i),
                      "$.common.url_key", CONCAT(%1$s, %2$d + n.i),
                      "$.common.ean",     LPAD((%2$d + n.i) %% 10000000000000, 13, "0"),
