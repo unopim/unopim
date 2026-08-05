@@ -847,7 +847,7 @@ class ProductController extends Controller
             if (in_array($attribute->code, $allAxisCodes, true)) {
                 $axisDepth = $axisDepths[$attribute->code] ?? 1;
 
-                if ($axisDepth <= $fixedAxisDepth) {
+                if ($axisDepth < $fixedAxisDepth) {
                     $axisLevel = (int) $structure->levels === 2
                         ? ($axisDepth === 1 ? 'sub_parent' : 'variant')
                         : null;
@@ -858,7 +858,7 @@ class ProductController extends Controller
                         'ownerId' => $axisLevel === 'sub_parent' ? $groupAncestor?->id : null,
                         'value'   => $attribute->getValueFromProductValues($resolvedValues, $channelCode, $localeCode),
                     ];
-                } else {
+                } elseif ($axisDepth > $fixedAxisDepth) {
                     $hidden[] = $attribute->code;
                 }
 
