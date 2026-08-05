@@ -77,7 +77,7 @@ jobs:
           sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
 
       - name: Running UnoPim Installer
-        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
       - name: Set Passport OAuth key permissions
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
