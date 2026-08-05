@@ -5,6 +5,7 @@ namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -17,7 +18,9 @@ use Webkul\Product\Facades\ValueSetter;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
+use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Type\AbstractType as ProductAbstractType;
+use Webkul\Product\Type\Configurable;
 use Webkul\Product\Validator\ProductValuesValidator;
 
 class ProductController extends ApiController
@@ -151,82 +154,95 @@ class ProductController extends ApiController
      */
     protected function updateProduct(array $data, Product $product): Product
     {
-        $attributes = $product->getEditableAttributes()
-            ->where('enable_wysiwyg', '==', 1)
-            ->where('type', '==', 'textarea');
+        $submittedCommon = $data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY] ?? [];
 
-        $data['values'] = $this->sanitizeData($data['values'], $attributes);
+        $persist = function () use ($product, $data): Product {
+            $attributes = $product->getEditableAttributes()
+                ->where('enable_wysiwyg', '==', 1)
+                ->where('type', '==', 'textarea');
 
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY])) {
-            ValueSetter::setCommon($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY]);
+            $data['values'] = $this->sanitizeData($data['values'], $attributes);
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY])) {
+                ValueSetter::setCommon($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY]);
+            }
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::LOCALE_VALUES_KEY])) {
+                ValueSetter::setLocaleSpecific($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::LOCALE_VALUES_KEY]);
+            }
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_VALUES_KEY])) {
+                ValueSetter::setChannelSpecific($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_VALUES_KEY]);
+            }
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_LOCALE_VALUES_KEY])) {
+                ValueSetter::setChannelLocaleSpecific($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_LOCALE_VALUES_KEY]);
+            }
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CATEGORY_VALUES_KEY])) {
+                ValueSetter::setCategories($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CATEGORY_VALUES_KEY]);
+            }
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::UP_SELLS_ASSOCIATION_KEY])) {
+                ValueSetter::setUpSellsAssociation($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::UP_SELLS_ASSOCIATION_KEY]);
+            }
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::CROSS_SELLS_ASSOCIATION_KEY])) {
+                ValueSetter::setCrossSellsAssociation($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::CROSS_SELLS_ASSOCIATION_KEY]);
+            }
+
+            if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::RELATED_ASSOCIATION_KEY])) {
+                ValueSetter::setRelatedAssociation($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::RELATED_ASSOCIATION_KEY]);
+            }
+
+            $data['values'] = ValueSetter::getValues();
+
+            $product->values = ValueSetter::getValues();
+
+            if (isset($data['status'])) {
+                $product->status = (int) $data['status'];
+            }
+
+            $richAssociations = $this->resolveRichAssociations($data, $product);
+
+            $wasDirty = $product->isDirty();
+
+            if ($wasDirty) {
+                $product->update($data);
+            }
+
+            if ($product->type == 'configurable') {
+                $this->updateVaraints($product, $data);
+            }
+
+            $product->refresh();
+
+            if ($product->id) {
+                $excludedSections = $this->excludedLegacyAssociationSections($data);
+
+                $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
+
+                $this->applyRichAssociations($product, $richAssociations);
+            }
+
+            if ($wasDirty) {
+                Event::dispatch('catalog.product.update.after', $product);
+            }
+
+            return $product;
+        };
+
+        if ($product->parent_id && ! empty($submittedCommon)) {
+            $result = $product;
+
+            $this->productRepository->guardVariantLevelWrite($product, $submittedCommon, function () use (&$result, $persist): void {
+                $result = $persist();
+            });
+
+            return $result;
         }
 
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::LOCALE_VALUES_KEY])) {
-            ValueSetter::setLocaleSpecific($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::LOCALE_VALUES_KEY]);
-        }
-
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_VALUES_KEY])) {
-            ValueSetter::setChannelSpecific($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_VALUES_KEY]);
-        }
-
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_LOCALE_VALUES_KEY])) {
-            ValueSetter::setChannelLocaleSpecific($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CHANNEL_LOCALE_VALUES_KEY]);
-        }
-
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CATEGORY_VALUES_KEY])) {
-            ValueSetter::setCategories($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::CATEGORY_VALUES_KEY]);
-        }
-
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::UP_SELLS_ASSOCIATION_KEY])) {
-            ValueSetter::setUpSellsAssociation($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::UP_SELLS_ASSOCIATION_KEY]);
-        }
-
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::CROSS_SELLS_ASSOCIATION_KEY])) {
-            ValueSetter::setCrossSellsAssociation($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::CROSS_SELLS_ASSOCIATION_KEY]);
-        }
-
-        if (isset($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::RELATED_ASSOCIATION_KEY])) {
-            ValueSetter::setRelatedAssociation($data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::ASSOCIATION_VALUES_KEY][ProductAbstractType::RELATED_ASSOCIATION_KEY]);
-        }
-
-        $data['values'] = ValueSetter::getValues();
-
-        $product->values = ValueSetter::getValues();
-
-        if (isset($data['status'])) {
-            $product->status = (int) $data['status'];
-        }
-
-        // Resolved + validated BEFORE the product row is touched below, so an
-        // invalid link's `additional_data` aborts here with nothing
-        // persisted (see `resolveRichAssociations()`).
-        $richAssociations = $this->resolveRichAssociations($data, $product);
-
-        $wasDirty = $product->isDirty();
-
-        if ($wasDirty) {
-            $product->update($data);
-        }
-
-        if ($product->type == 'configurable') {
-            $this->updateVaraints($product, $data);
-        }
-
-        $product->refresh();
-
-        if ($product->id) {
-            $excludedSections = $this->excludedLegacyAssociationSections($data);
-
-            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
-
-            $this->applyRichAssociations($product, $richAssociations);
-        }
-
-        if ($wasDirty) {
-            Event::dispatch('catalog.product.update.after', $product);
-        }
-
-        return $product;
+        return $persist();
     }
 
     public function sanitizeData($product, $attributes): ?array
@@ -273,47 +289,60 @@ class ProductController extends ApiController
      */
     public function patchProduct(Product $product, array $data): Product
     {
-        foreach (['additional', 'status'] as $key) {
-            if (isset($data[$key])) {
-                $product->{$key} = $data[$key];
+        $submittedCommon = $data['values']['common'] ?? [];
+
+        $persist = function () use ($product, $data): Product {
+            foreach (['additional', 'status'] as $key) {
+                if (isset($data[$key])) {
+                    $product->{$key} = $data[$key];
+                }
             }
+
+            $attributes = $product->getEditableAttributes()
+                ->where('enable_wysiwyg', '==', 1)
+                ->where('type', '==', 'textarea')
+                ->keyBy('code');
+
+            if (isset($data['values'])) {
+                $existingValues = is_string($product->values) ? json_decode($product->values, true) ?? [] : $product->values ?? [];
+
+                $updatedValues = $this->mergeValues($existingValues, $data[ProductAbstractType::PRODUCT_VALUES_KEY], $attributes);
+
+                $product->values = $updatedValues;
+            }
+
+            $richAssociations = $this->resolveRichAssociations($data, $product);
+
+            $wasDirty = $product->isDirty();
+
+            $product->saveOrFail();
+
+            if ($product->id) {
+                $excludedSections = $this->excludedLegacyAssociationSections($data);
+
+                $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
+
+                $this->applyRichAssociations($product, $richAssociations);
+            }
+
+            if ($wasDirty) {
+                Event::dispatch('catalog.product.update.after', $product);
+            }
+
+            return $product;
+        };
+
+        if ($product->parent_id && ! empty($submittedCommon)) {
+            $result = $product;
+
+            $this->productRepository->guardVariantLevelWrite($product, $submittedCommon, function () use (&$result, $persist): void {
+                $result = $persist();
+            });
+
+            return $result;
         }
 
-        $attributes = $product->getEditableAttributes()
-            ->where('enable_wysiwyg', '==', 1)
-            ->where('type', '==', 'textarea')
-            ->keyBy('code');
-
-        if (isset($data['values'])) {
-            $existingValues = is_string($product->values) ? json_decode($product->values, true) ?? [] : $product->values ?? [];
-
-            $updatedValues = $this->mergeValues($existingValues, $data[ProductAbstractType::PRODUCT_VALUES_KEY], $attributes);
-
-            $product->values = $updatedValues;
-        }
-
-        // Resolved + validated BEFORE `saveOrFail()` below, so an invalid
-        // link's `additional_data` aborts here with nothing persisted (see
-        // `resolveRichAssociations()`).
-        $richAssociations = $this->resolveRichAssociations($data, $product);
-
-        $wasDirty = $product->isDirty();
-
-        $product->saveOrFail();
-
-        if ($product->id) {
-            $excludedSections = $this->excludedLegacyAssociationSections($data);
-
-            $product->getTypeInstance()->syncAssociationLinks($product, $product->values ?? [], $excludedSections);
-
-            $this->applyRichAssociations($product, $richAssociations);
-        }
-
-        if ($wasDirty) {
-            Event::dispatch('catalog.product.update.after', $product);
-        }
-
-        return $product;
+        return $persist();
     }
 
     private function mergeValues(array $existing, array $new, Collection $attributes)
@@ -388,12 +417,22 @@ class ProductController extends ApiController
     /**
      * Creates or updates a variant product based on the provided data.
      *
+     * A `variant_group` parent takes a dedicated route: it owns no
+     * `product_super_attributes` rows, so the configurable-parent flow below
+     * would validate nothing and then skip the create entirely, leaving the
+     * caller with a 404 for a sku that was never written.
+     *
      * @param  array  $data  The input data containing variant and super attribute information.
      * @return Product The updated or created variant product.
      */
     protected function createOrUpdateVariant(array $data): mixed
     {
         $parentProduct = $this->findParentProductOr404($data['parent']);
+
+        if ($parentProduct->type === config('product_types.variant_group.key')) {
+            return $this->createVariantUnderGroup($parentProduct, $data);
+        }
+
         $superAttributes = $parentProduct->super_attributes->pluck('code')?->toArray();
         $this->validateVariantConfiguration($parentProduct, $superAttributes, $data);
         $data['super_attributes'] = $superAttributes;
@@ -404,6 +443,96 @@ class ProductController extends ApiController
         $parentProduct = $this->updateProduct($parentData, $parentProduct);
 
         return $this->findProductOr404($data['sku']);
+    }
+
+    /**
+     * Creates a `simple` leaf under a `variant_group` node.
+     *
+     * A `variant_group` carries no `product_super_attributes` rows and its own
+     * type instance cannot create variants, so the leaf is materialized
+     * through the governing configurable ancestor's type instance with
+     * `parent_id` pointing at the group -- the same route
+     * {@see Configurable::updateVariantGroups()} takes for
+     * the admin UI. What distinguishes a leaf from its siblings is the
+     * structure's level-2 axes, so those are the codes required on the
+     * payload and checked for a duplicate combination, scoped to the group's
+     * own `simple` children and taken under the same lock that guards the
+     * subsequent write.
+     *
+     * @throws ModelNotFoundException
+     * @throws UnprocessableEntityHttpException
+     */
+    protected function createVariantUnderGroup(Product $group, array $data): Product
+    {
+        $configurable = $group->parent;
+
+        if (! $configurable) {
+            throw new ModelNotFoundException(
+                trans('admin::app.catalog.products.parent-not-found', ['sku' => $data['parent']])
+            );
+        }
+
+        $planner = app(VariantStructurePlanner::class);
+
+        $structure = $planner->structureFor($group);
+
+        $leafAxisCodes = $structure ? ($planner->axisCodesByLevel($structure)['level_2'] ?? []) : [];
+
+        $submittedAttributes = $data['variant']['attributes'] ?? [];
+
+        $missingAxisCodes = array_values(array_diff($leafAxisCodes, array_keys($submittedAttributes)));
+
+        if ($missingAxisCodes !== []) {
+            throw new UnprocessableEntityHttpException(
+                trans('admin::app.catalog.products.edit.types.configurable.supper-attribute-not-found', ['attribute' => implode(', ', $missingAxisCodes)])
+            );
+        }
+
+        $axisTuple = [];
+
+        foreach ($leafAxisCodes as $axisCode) {
+            $this->validateVariantOption($axisCode, $submittedAttributes);
+
+            $axisTuple[$axisCode] = $submittedAttributes[$axisCode];
+        }
+
+        $axisAttributes = $structure
+            ? $structure->axes
+                ->filter(fn ($axis): bool => in_array($axis->attribute?->code, $leafAxisCodes, true))
+                ->map(fn ($axis) => $axis->attribute)
+                ->values()
+            : collect();
+
+        if ($axisAttributes->isEmpty()) {
+            $axisAttributes = $configurable->super_attributes;
+        }
+
+        $variantData = [
+            'sku'                                   => $data['sku'],
+            'parent_id'                             => $group->id,
+            ProductAbstractType::PRODUCT_VALUES_KEY => [
+                ProductAbstractType::COMMON_VALUES_KEY => array_merge(
+                    $data[ProductAbstractType::PRODUCT_VALUES_KEY][ProductAbstractType::COMMON_VALUES_KEY] ?? $submittedAttributes,
+                    ['sku' => $data['sku']]
+                ),
+            ],
+        ];
+
+        return DB::transaction(function () use ($group, $configurable, $axisTuple, $axisAttributes, $variantData): Product {
+            $this->productRepository->getModel()::query()->whereKey($group->id)->lockForUpdate()->first();
+
+            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($group->id, $axisTuple, null, '', 'simple')) {
+                throw new UnprocessableEntityHttpException(
+                    trans('admin::app.catalog.products.edit.types.configurable.variant-given-exists', ['variants' => json_encode($axisTuple)])
+                );
+            }
+
+            $variant = $configurable->getTypeInstance()->createVariant($configurable, $axisAttributes, $variantData);
+
+            Event::dispatch('catalog.product.create.after', $variant);
+
+            return $variant;
+        });
     }
 
     /**
