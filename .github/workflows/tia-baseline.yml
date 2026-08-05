@@ -115,7 +115,7 @@ jobs:
           baseline="$(vendor/bin/pest --baseline)"
 
           record() {
-            php -d memory_limit=-1 vendor/bin/pest --tia "$@" --colors=always
+            PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia "$@" --colors=always
             rm -f "$baseline/coverage.bin.gz"
           }
 
