@@ -1432,6 +1432,19 @@ app.component('v-agenting-pim', {
                 files.forEach((f, i) => { if (f.type === 'image') fd.append('images[' + i + ']', f.file); else fd.append('files[' + i + ']', f.file); });
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
+                // Catalog scope of the page the user is looking at. The backend
+                // prefers widget-provided codes and otherwise falls back to the
+                // default locale, so without this a locale-scoped edit lands on
+                // the wrong translation while the user is viewing another one.
+                const scopeParams = new URLSearchParams(window.location.search);
+                const scopeLocale = scopeParams.get('locale')
+                    || document.querySelector('input[name="locale"]')?.value
+                    || '';
+                const scopeChannel = scopeParams.get('channel')
+                    || document.querySelector('input[name="channel"]')?.value
+                    || '';
+                if (scopeLocale) fd.append('context[locale]', scopeLocale);
+                if (scopeChannel) fd.append('context[channel]', scopeChannel);
                 if (this.productContext) {
                     fd.append('context[product_id]', this.productContext.id);
                     if (this.productContext.sku) fd.append('context[product_sku]', this.productContext.sku);
