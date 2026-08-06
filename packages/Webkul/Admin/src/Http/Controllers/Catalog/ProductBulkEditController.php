@@ -82,7 +82,9 @@ class ProductBulkEditController extends Controller
     }
 
     /**
-     * Show the bulk edit page with filtered products and attributes.
+     * Show the bulk edit page with filtered products and attributes. Columns follow
+     * the order the attributes were selected in, with sku first: a whereIn carries no
+     * ordering of its own, so the rows come back in whatever order the table holds.
      */
     public function index(): View|RedirectResponse
     {
@@ -99,7 +101,13 @@ class ProductBulkEditController extends Controller
             array_unshift($attributeIds, $sku->id);
         }
 
-        $columns = $this->attributeRepository->whereIn('id', $attributeIds)->with('translations')->get()->toArray();
+        $columns = $this->attributeRepository
+            ->whereIn('id', $attributeIds)
+            ->with('translations')
+            ->get()
+            ->sortBy(fn ($attribute) => array_search($attribute->id, $attributeIds, true))
+            ->values()
+            ->toArray();
 
         $products = $this->productRepository
             ->with('parent.parent')

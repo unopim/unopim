@@ -167,6 +167,31 @@ it('should fetch only attributes belonging to the selected products families', f
     expect($codes)->not->toContain($attrB->code);
 });
 
+it('orders the columns by the order the attributes were selected in, with sku first', function () {
+    $product = Product::factory()->create();
+
+    $selected = Attribute::whereIn('code', ['image', 'name', 'description'])->pluck('id')->all();
+
+    $this->postJson(route('admin.catalog.products.bulkedit.filters'), [
+        'indices' => [$product->id],
+        'filter'  => [
+            'filtered_attributes' => array_map(fn ($id) => ['id' => $id], $selected),
+        ],
+    ])->assertOk();
+
+    $response = $this->get(route('admin.catalog.products.bulkedit'));
+    $response->assertOk();
+
+    $codes = collect($response->original->getData()['columns'])->pluck('code')->all();
+
+    $expected = collect($selected)
+        ->map(fn ($id) => Attribute::find($id)->code)
+        ->prepend('sku')
+        ->all();
+
+    expect($codes)->toBe($expected);
+});
+
 it('still offers attributes when the session holds product ids that no longer exist', function () {
     $product = Product::factory()->create();
 
