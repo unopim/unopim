@@ -65,6 +65,21 @@ jobs:
         with:
           composer-options: "--optimize-autoloader"
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+
       - name: Setting Environment
         run: |
           cp .env.example .env
@@ -77,7 +92,7 @@ jobs:
           sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
 
       - name: Running UnoPim Installer
-        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
       - name: Set Passport OAuth key permissions
         run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
@@ -97,19 +112,23 @@ jobs:
 
       - name: Record the baseline
         run: |
-          baseline="$(vendor/bin/pest --baseline)"
+          chunk=0
 
           record() {
-            vendor/bin/pest --tia "$@" --colors=always
-            rm -f "$baseline/coverage.bin.gz"
+            chunk=$((chunk + 1))
+            local home="$RUNNER_TEMP/tia-home-$chunk"
+            HOME="$home" PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh "$@" --colors=always || true
+            cp "$(HOME="$home" vendor/bin/pest --baseline)/graph.json" "$RUNNER_TEMP/tia-graph-$chunk.json"
           }
 
-          record --fresh packages/Webkul/Admin/tests/Feature/Catalog
-          record --coverage packages/Webkul/Admin/tests/Feature/{Account,Acl,AiAgent,Auth,Components,Configuration,Dashboard,DataTransfer}
-          record --coverage packages/Webkul/Admin/tests/Feature/{Fields,Help,MagicAi,MagicAI,Notification,Security,Settings,SystemSettings,User,Webhook} packages/Webkul/Admin/tests/Feature/*Test.php
-          record --coverage --testsuite "Api Feature Test,User Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Measurement Feature Test"
-          record --coverage --testsuite "Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,DataTransfer Unit Test,DataTransfer Feature Test"
-          record --coverage --testsuite "Core Unit Test,AiAgent Unit Test,AppUrlGuard Unit Test,AppUrlGuard Feature Test,Webhook Unit Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+          record packages/Webkul/Admin/tests/Feature/Catalog
+          record packages/Webkul/Admin/tests/Feature/{Account,Acl,AiAgent,Auth,Components,Configuration,Dashboard,DataTransfer}
+          record packages/Webkul/Admin/tests/Feature/{Fields,Help,MagicAi,MagicAI,Notification,Security,Settings,SystemSettings,User,Webhook} packages/Webkul/Admin/tests/Feature/*Test.php
+          record --testsuite "Api Feature Test,User Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Measurement Feature Test"
+          record --testsuite "Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,DataTransfer Unit Test,DataTransfer Feature Test"
+          record --testsuite "Core Unit Test,AiAgent Unit Test,AppUrlGuard Unit Test,AppUrlGuard Feature Test,Webhook Unit Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+
+          php .github/scripts/merge-tia-graphs.php "$(vendor/bin/pest --baseline)/graph.json" "$RUNNER_TEMP"/tia-graph-*.json
 
       - name: Resolve the baseline path
         id: baseline
