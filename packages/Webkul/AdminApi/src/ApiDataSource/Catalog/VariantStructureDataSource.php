@@ -190,7 +190,9 @@ class VariantStructureDataSource extends ApiDataSource
     }
 
     /**
-     * The family's attribute codes in family order, each listed once.
+     * The family's attribute codes in family order, each listed once. Both position
+     * columns tie freely, and neither MySQL nor PostgreSQL orders a tie predictably,
+     * so the attribute id settles it and keeps effective_placements stable.
      *
      * @return array<int, string>
      */
@@ -200,6 +202,7 @@ class VariantStructureDataSource extends ApiDataSource
             $this->attributeFamily->customAttributes()
                 ->orderBy('attribute_family_group_mappings.position')
                 ->orderBy('attribute_group_mappings.position')
+                ->orderBy('attributes.id')
                 ->pluck('attributes.code')
                 ->all()
         ));
