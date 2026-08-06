@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Không tìm thấy siêu thuộc tính :attribute',
                         'variant-given-exists'               => 'Biến thể này đã tồn tại :variants',
                         'variant-group-has-children'         => 'Nhóm biến thể này vẫn còn biến thể. Hãy xóa hoặc chuyển chúng sang nhóm khác trước khi xóa nhóm này.',
+                        'variant-group-combination-exists'   => 'Nhóm biến thể với :values đã tồn tại trong sản phẩm này. Hãy chọn tổ hợp khác.',
+                        'variant-combination-exists'         => 'Biến thể với :values đã tồn tại trong sản phẩm này. Hãy chọn tổ hợp khác.',
                         'create'                             => [
                             'description'            => 'Mô tả',
                             'name'                   => 'Tên',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Mẫu tùy chỉnh không hợp lệ.',
                     'numeric'                    => 'Giá trị cho thuộc tính số ":attribute" phải là một số hợp lệ.',
                     'select-attribute-or-family' => 'Vui lòng chọn ít nhất một thuộc tính hoặc một nhóm thuộc tính.',
+                    'duplicate-axis'             => 'Hai biến thể thuộc cùng một sản phẩm cha không thể có cùng tổ hợp trục, vì vậy thao tác lưu này sẽ bị từ chối.',
                     'failed'                     => 'Xác thực không thành công.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Bộ lọc quá lớn để lưu',
                 'variant-saved'                    => 'Đã lưu cấu trúc biến thể.',
                 'variant-structure-locked'         => 'Cấu trúc biến thể này đã có biến thể nên không thể thay đổi trục và cấp độ nữa. Hãy xóa các biến thể hiện có trước.',
+                'variant-structure-deleted'        => 'Đã xóa cấu trúc biến thể.',
+                'variant-structure-in-use'         => 'Cấu trúc biến thể này vẫn được các sản phẩm tham chiếu nên không thể xóa. Hãy gán lại hoặc xóa các sản phẩm đó trước.',
                 'no-axis-options'                  => 'Thêm ít nhất một thuộc tính lựa chọn không giới hạn phạm vi vào họ này trước khi tạo biến thể.',
                 'parent-child'                     => 'Cha → Con',
                 'parent-sub-parent-child'          => 'Cha → Cha phụ → Con',

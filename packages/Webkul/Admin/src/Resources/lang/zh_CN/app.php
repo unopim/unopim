@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => '未找到值为“:attribute”的附加属性',
                         'variant-given-exists'               => '值为“:variants”的变体已存在',
                         'variant-group-has-children'         => '该变体组下仍有变体。请先删除这些变体或将其移至其他变体组，然后再删除该变体组。',
+                        'variant-group-combination-exists'   => '该产品下已存在包含 :values 的变体组。请选择其他组合。',
+                        'variant-combination-exists'         => '该产品下已存在包含 :values 的变体。请选择其他组合。',
                         'create'                             => [
                             'description'            => '描述',
                             'name'                   => '姓名',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => '提供了无效的自定义模式。',
                     'numeric'                    => '数字属性":attribute"的值必须为有效的数字。',
                     'select-attribute-or-family' => '请选择至少一个属性或一个属性族。',
+                    'duplicate-axis'             => '同一父产品下的两个变体不能使用相同的轴组合，因此本次保存将被拒绝。',
                     'failed'                     => '验证失败。',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => '筛选过大，无法保存',
                 'variant-saved'                    => '变体结构已保存。',
                 'variant-structure-locked'         => '该变体结构已存在变体，因此无法再更改其轴和层级。请先删除现有变体。',
+                'variant-structure-deleted'        => '变体结构已删除。',
+                'variant-structure-in-use'         => '该变体结构仍被产品引用，因此无法删除。请先重新分配或删除这些产品。',
                 'no-axis-options'                  => '在创建变体之前，请至少向该属性族添加一个非作用域的选择属性。',
                 'parent-child'                     => '父级 → 子级',
                 'parent-sub-parent-child'          => '父级 → 子父级 → 子级',

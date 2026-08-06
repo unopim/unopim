@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => '未找到超屬性 :attribute',
                         'variant-given-exists'               => '此變體已經存在 :variants',
                         'variant-group-has-children'         => '此變體群組下仍有變體。請先刪除這些變體或將其移至其他變體群組，再刪除此群組。',
+                        'variant-group-combination-exists'   => '此商品下已存在包含 :values 的變體群組。請選擇其他組合。',
+                        'variant-combination-exists'         => '此商品下已存在包含 :values 的變體。請選擇其他組合。',
                         'create'                             => [
                             'description'            => '描述',
                             'name'                   => '名稱',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => '提供了無效的自訂模式。',
                     'numeric'                    => '數字屬性「:attribute」的值必須為有效的數字。',
                     'select-attribute-or-family' => '請至少選擇一個屬性或屬性族。',
+                    'duplicate-axis'             => '同一父產品下的兩個變體不能使用相同的軸組合，因此本次儲存將被拒絕。',
                     'failed'                     => '驗證失敗。',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => '篩選過大，無法儲存',
                 'variant-saved'                    => '變體結構已儲存。',
                 'variant-structure-locked'         => '此變體結構已有變體，因此無法再變更其軸與層級。請先刪除現有變體。',
+                'variant-structure-deleted'        => '已刪除變體結構。',
+                'variant-structure-in-use'         => '此變體結構仍被產品引用，因此無法刪除。請先重新指派或刪除這些產品。',
                 'no-axis-options'                  => '在建立變體之前，請至少為此屬性家族新增一個非範圍的選擇屬性。',
                 'parent-child'                     => '父層 → 子層',
                 'parent-sub-parent-child'          => '父層 → 子父層 → 子層',

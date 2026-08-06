@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Atribut makan malam dengan nilai ":attribute" tidak ditemukan',
                         'variant-given-exists'               => 'Varian ini dengan nilai ":variants" sudah ada',
                         'variant-group-has-children'         => 'Grup varian ini masih memiliki varian. Hapus atau pindahkan varian tersebut ke grup lain sebelum menghapusnya.',
+                        'variant-group-combination-exists'   => 'Grup varian dengan :values sudah ada pada produk ini. Pilih kombinasi yang berbeda.',
+                        'variant-combination-exists'         => 'Varian dengan :values sudah ada pada produk ini. Pilih kombinasi yang berbeda.',
                         'create'                             => [
                             'description'            => 'Keterangan',
                             'name'                   => 'Nama',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Pola khusus tidak valid.',
                     'numeric'                    => 'Nilai untuk atribut numerik ":attribute" harus berupa angka yang valid.',
                     'select-attribute-or-family' => 'Silakan pilih setidaknya satu atribut atau satu keluarga atribut.',
+                    'duplicate-axis'             => 'Dua varian di bawah induk yang sama tidak boleh memiliki kombinasi sumbu yang sama, sehingga penyimpanan ini akan ditolak.',
                     'failed'                     => 'Validasi gagal.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Filter terlalu besar untuk disimpan',
                 'variant-saved'                    => 'Struktur varian disimpan.',
                 'variant-structure-locked'         => 'Struktur varian ini sudah memiliki varian, sehingga sumbu dan levelnya tidak dapat diubah lagi. Hapus varian yang ada terlebih dahulu.',
+                'variant-structure-deleted'        => 'Struktur varian dihapus.',
+                'variant-structure-in-use'         => 'Struktur varian ini masih dirujuk oleh produk, sehingga tidak dapat dihapus. Tetapkan ulang atau hapus produk tersebut terlebih dahulu.',
                 'no-axis-options'                  => 'Tambahkan setidaknya satu atribut pilihan tanpa cakupan ke famili ini sebelum membuat varian.',
                 'parent-child'                     => 'Induk → Anak',
                 'parent-sub-parent-child'          => 'Induk → Sub-induk → Anak',

@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Süper attribute bulunamadı :attribute',
                         'variant-given-exists'               => 'Bu varyasyon zaten var :variants',
                         'variant-group-has-children'         => 'Bu varyasyon grubu hâlâ varyasyonlar içeriyor. Silmeden önce bunları kaldırın veya başka bir gruba taşıyın.',
+                        'variant-group-combination-exists'   => ':values değerlerine sahip bir varyasyon grubu bu üründe zaten mevcut. Farklı bir kombinasyon seçin.',
+                        'variant-combination-exists'         => ':values değerlerine sahip bir varyasyon bu üründe zaten mevcut. Farklı bir kombinasyon seçin.',
                         'create'                             => [
                             'description'            => 'Açıklama',
                             'name'                   => 'Ad',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Geçersiz özel desen sağlandı.',
                     'numeric'                    => '":attribute" sayısal özelliğinin değeri geçerli bir sayı olmalıdır.',
                     'select-attribute-or-family' => 'Lütfen en az bir özellik veya özellik ailesi seçin.',
+                    'duplicate-axis'             => 'Aynı üst ürüne bağlı iki varyant aynı eksen kombinasyonunu paylaşamaz, bu nedenle bu kayıt reddedilecek.',
                     'failed'                     => 'Doğrulama başarısız oldu.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Filtre kaydedilemeyecek kadar büyük',
                 'variant-saved'                    => 'Varyant yapısı kaydedildi.',
                 'variant-structure-locked'         => 'Bu varyant yapısında zaten varyantlar var, bu nedenle eksenleri ve seviyeleri artık değiştirilemez. Önce mevcut varyantları silin.',
+                'variant-structure-deleted'        => 'Varyant yapısı silindi.',
+                'variant-structure-in-use'         => 'Bu varyant yapısı hâlâ ürünler tarafından kullanılıyor, bu nedenle silinemez. Önce bu ürünleri yeniden atayın veya silin.',
                 'no-axis-options'                  => 'Varyant oluşturmadan önce bu aileye kapsam dışı en az bir seçim özniteliği ekleyin.',
                 'parent-child'                     => 'Üst → Alt',
                 'parent-sub-parent-child'          => 'Üst → Alt-üst → Alt',

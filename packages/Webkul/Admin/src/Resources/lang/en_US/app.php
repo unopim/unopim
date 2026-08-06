@@ -378,6 +378,8 @@ return [
                         'supper-attribute-not-found'         => 'Supper attribute  with value ":attribute" not found',
                         'variant-given-exists'               => 'This variant with value ":variants" already exists',
                         'variant-group-has-children'         => 'This variant group still has variants. Remove or reassign them before deleting it.',
+                        'variant-group-combination-exists'   => 'A variant group with :values already exists under this product. Choose a different combination.',
+                        'variant-combination-exists'         => 'A variant with :values already exists under this product. Choose a different combination.',
 
                         'create' => [
                             'description'            => 'Description',
@@ -514,6 +516,7 @@ return [
 
                     'numeric'                    => 'Value for the numeric attribute ":attribute" must be a valid number.',
                     'select-attribute-or-family' => 'Please select at least one attribute or an attribute family.',
+                    'duplicate-axis'             => 'Two variants under the same parent cannot share an axis combination, so this save will be rejected.',
                     'failed'                     => 'Validation failed.',
                 ],
 
@@ -1271,6 +1274,8 @@ return [
                 'too-large'                        => 'Filter is too large to save',
                 'variant-saved'                    => 'Variant structure saved.',
                 'variant-structure-locked'         => 'This variant structure already has variants, so its axes and levels can no longer be changed. Delete the existing variants first.',
+                'variant-structure-deleted'        => 'Variant structure deleted.',
+                'variant-structure-in-use'         => 'This variant structure is still referenced by products, so it cannot be deleted. Reassign or delete those products first.',
                 'group-code-already-exists'        => 'An attribute group code already exists.',
                 'group-contains-system-attributes' => 'This group contains SKU. Move SKU to another group before removing this group from the family.',
                 'group-name-already-exists'        => 'An attribute group name already exists.',

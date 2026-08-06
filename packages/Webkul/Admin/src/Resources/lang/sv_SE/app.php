@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Superattribut hittades inte :attribute',
                         'variant-given-exists'               => 'Denna variation finns redan :variants',
                         'variant-group-has-children'         => 'Den här variationsgruppen innehåller fortfarande variationer. Ta bort dem eller flytta dem till en annan grupp innan du raderar den.',
+                        'variant-group-combination-exists'   => 'Det finns redan en variationsgrupp med :values under den här produkten. Välj en annan kombination.',
+                        'variant-combination-exists'         => 'Det finns redan en variation med :values under den här produkten. Välj en annan kombination.',
                         'create'                             => [
                             'description'            => 'Beskrivning',
                             'name'                   => 'Namn',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Ogiltigt anpassat mönster angivet.',
                     'numeric'                    => 'Värdet för det numeriska attributet ":attribute" måste vara ett giltigt tal.',
                     'select-attribute-or-family' => 'Välj minst ett attribut eller en attributfamilj.',
+                    'duplicate-axis'             => 'Två varianter under samma överordnade produkt kan inte dela en axelkombination, så denna sparning kommer att avvisas.',
                     'failed'                     => 'Valideringen misslyckades.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Filtret är för stort för att sparas',
                 'variant-saved'                    => 'Variantstruktur sparad.',
                 'variant-structure-locked'         => 'Den här variantstrukturen har redan varianter, så dess axlar och nivåer kan inte längre ändras. Ta bort de befintliga varianterna först.',
+                'variant-structure-deleted'        => 'Variantstrukturen har tagits bort.',
+                'variant-structure-in-use'         => 'Den här variantstrukturen refereras fortfarande av produkter och kan därför inte tas bort. Omfördela eller ta bort dessa produkter först.',
                 'no-axis-options'                  => 'Lägg till minst ett icke-omfångsbundet valattribut i den här familjen innan du skapar varianter.',
                 'parent-child'                     => 'Överordnad → Underordnad',
                 'parent-sub-parent-child'          => 'Överordnad → Mellanliggande → Underordnad',

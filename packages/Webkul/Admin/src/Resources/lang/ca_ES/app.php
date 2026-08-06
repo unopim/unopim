@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'L\'atribut superior amb el valor ":attribute" no es pot trobar',
                         'variant-given-exists'               => 'Aquesta variant amb el valor ":variants" ja existeix',
                         'variant-group-has-children'         => 'Aquest grup de variants encara conté variants. Elimineu-les o reassigneu-les a un altre grup abans d\'eliminar-lo.',
+                        'variant-group-combination-exists'   => 'Ja existeix un grup de variants amb :values sota aquest producte. Trieu una combinació diferent.',
+                        'variant-combination-exists'         => 'Ja existeix una variant amb :values sota aquest producte. Trieu una combinació diferent.',
                         'create'                             => [
                             'description'            => 'Descripció',
                             'name'                   => 'Nom',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'S\'ha proporcionat un patró personalitzat no vàlid.',
                     'numeric'                    => 'El valor de l\'atribut numèric ":attribute" ha de ser un número vàlid.',
                     'select-attribute-or-family' => 'Si us plau, seleccioneu almenys un atribut o una família d’atributs.',
+                    'duplicate-axis'             => 'Dues variants amb el mateix pare no poden compartir una combinació d\'eixos, així que aquest desament es rebutjarà.',
                     'failed'                     => 'La validació ha fallat.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'El filtre és massa gran per desar-lo',
                 'variant-saved'                    => 'Estructura de variant desada.',
                 'variant-structure-locked'         => 'Aquesta estructura de variants ja té variants, de manera que els seus eixos i nivells ja no es poden canviar. Elimineu primer les variants existents.',
+                'variant-structure-deleted'        => 'Estructura de variants eliminada.',
+                'variant-structure-in-use'         => 'Aquesta estructura de variants encara està referenciada per productes, de manera que no es pot eliminar. Reassigneu o elimineu primer aquests productes.',
                 'no-axis-options'                  => 'Afegiu almenys un atribut de selecció sense àmbit a aquesta família abans de crear variants.',
                 'parent-child'                     => 'Pare → Fill',
                 'parent-sub-parent-child'          => 'Pare → Subpare → Fill',

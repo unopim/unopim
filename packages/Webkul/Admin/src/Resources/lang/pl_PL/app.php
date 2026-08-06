@@ -337,6 +337,8 @@ return [
                         'supper-attribute-not-found'         => 'Nie znaleziono superatrybutu :attribute',
                         'variant-given-exists'               => 'Ten wariant już istnieje :variants',
                         'variant-group-has-children'         => 'Ta grupa wariantów nadal zawiera warianty. Usuń je lub przypisz do innej grupy przed jej usunięciem.',
+                        'variant-group-combination-exists'   => 'Grupa wariantów o wartościach :values już istnieje w tym produkcie. Wybierz inną kombinację.',
+                        'variant-combination-exists'         => 'Wariant o wartościach :values już istnieje w tym produkcie. Wybierz inną kombinację.',
                         'create'                             => [
                             'description'            => 'Opis',
                             'name'                   => 'Nazwa',
@@ -485,6 +487,7 @@ return [
                     'invalid-pattern'            => 'Podano nieprawidłowy własny wzorzec.',
                     'numeric'                    => 'Wartość numerycznego atrybutu „:attribute” musi być prawidłową liczbą.',
                     'select-attribute-or-family' => 'Proszę wybrać co najmniej jeden atrybut lub rodzinę atrybutów.',
+                    'duplicate-axis'             => 'Dwa warianty tego samego produktu nadrzędnego nie mogą mieć tej samej kombinacji osi, dlatego ten zapis zostanie odrzucony.',
                     'failed'                     => 'Walidacja nie powiodła się.',
                 ],
                 'modal' => [
@@ -1165,6 +1168,8 @@ return [
                 'too-large'                        => 'Filtr jest zbyt duży, aby go zapisać',
                 'variant-saved'                    => 'Struktura wariantów została zapisana.',
                 'variant-structure-locked'         => 'Ta struktura wariantów ma już warianty, więc jej osie i poziomy nie mogą być już zmieniane. Najpierw usuń istniejące warianty.',
+                'variant-structure-deleted'        => 'Struktura wariantów została usunięta.',
+                'variant-structure-in-use'         => 'Ta struktura wariantów jest nadal używana przez produkty, więc nie można jej usunąć. Najpierw przypisz ponownie lub usuń te produkty.',
                 'no-axis-options'                  => 'Dodaj do tej rodziny co najmniej jeden nieobjęty zakresem atrybut typu wybór, zanim utworzysz warianty.',
                 'parent-child'                     => 'Nadrzędny → Podrzędny',
                 'parent-sub-parent-child'          => 'Nadrzędny → Podnadrzędny → Podrzędny',

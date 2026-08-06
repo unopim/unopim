@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => '値 ":attribute" のスーパー属性が見つかりません',
                         'variant-given-exists'               => '値 ":variants" のこのバリアントは既に存在します',
                         'variant-group-has-children'         => 'このバリアントグループにはまだバリアントが存在します。削除する前に、それらを削除するか別のグループに移動してください。',
+                        'variant-group-combination-exists'   => ':values のバリアントグループはこの商品にすでに存在します。別の組み合わせを選択してください。',
+                        'variant-combination-exists'         => ':values のバリアントはこの商品にすでに存在します。別の組み合わせを選択してください。',
                         'create'                             => [
                             'description'            => '説明',
                             'name'                   => '名前',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => '無効なカスタムパターンが指定されました。',
                     'numeric'                    => '数値属性「:attribute」の値は有効な数値である必要があります。',
                     'select-attribute-or-family' => '少なくとも1つの属性または属性ファミリーを選択してください。',
+                    'duplicate-axis'             => '同じ親の下にある 2 つのバリアントが同じ軸の組み合わせを持つことはできないため、この保存は拒否されます。',
                     'failed'                     => '検証に失敗しました。',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'フィルターが大きすぎて保存できません',
                 'variant-saved'                    => 'バリエーション構造を保存しました。',
                 'variant-structure-locked'         => 'このバリアント構造にはすでにバリアントが存在するため、軸とレベルを変更できません。先に既存のバリアントを削除してください。',
+                'variant-structure-deleted'        => 'バリアント構造を削除しました。',
+                'variant-structure-in-use'         => 'このバリアント構造はまだ製品から参照されているため、削除できません。先にそれらの製品を再割り当てするか削除してください。',
                 'no-axis-options'                  => 'バリエーションを作成する前に、このファミリーにスコープ指定なしの選択属性を少なくとも1つ追加してください。',
                 'parent-child'                     => '親 → 子',
                 'parent-sub-parent-child'          => '親 → サブ親 → 子',

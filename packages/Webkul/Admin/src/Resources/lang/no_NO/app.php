@@ -337,6 +337,8 @@ return [
                         'supper-attribute-not-found'         => 'Superattributt ikke funnet :attribute',
                         'variant-given-exists'               => 'Denne varianten eksisterer allerede :variants',
                         'variant-group-has-children'         => 'Denne variantgruppen inneholder fortsatt varianter. Slett dem eller flytt dem til en annen gruppe før du sletter den.',
+                        'variant-group-combination-exists'   => 'Det finnes allerede en variantgruppe med :values under dette produktet. Velg en annen kombinasjon.',
+                        'variant-combination-exists'         => 'Det finnes allerede en variant med :values under dette produktet. Velg en annen kombinasjon.',
                         'create'                             => [
                             'description'            => 'Beskrivelse',
                             'name'                   => 'Navn',
@@ -485,6 +487,7 @@ return [
                     'invalid-pattern'            => 'Ugyldig egendefinert mønster angitt.',
                     'numeric'                    => 'Verdien for det numeriske attributtet «:attribute» må være et gyldig tall.',
                     'select-attribute-or-family' => 'Vennligst velg minst ett attributt eller en attributtfamilie.',
+                    'duplicate-axis'             => 'To varianter under samme overordnede produkt kan ikke dele en aksekombinasjon, så denne lagringen vil bli avvist.',
                     'failed'                     => 'Validering mislyktes.',
                 ],
                 'modal' => [
@@ -1165,6 +1168,8 @@ return [
                 'too-large'                        => 'Filteret er for stort til å lagre',
                 'variant-saved'                    => 'Variantstruktur lagret.',
                 'variant-structure-locked'         => 'Denne variantstrukturen har allerede varianter, så aksene og nivåene kan ikke lenger endres. Slett de eksisterende variantene først.',
+                'variant-structure-deleted'        => 'Variantstruktur slettet.',
+                'variant-structure-in-use'         => 'Denne variantstrukturen er fremdeles referert av produkter, så den kan ikke slettes. Tildel eller slett disse produktene først.',
                 'no-axis-options'                  => 'Legg til minst ett ikke-omfangsbestemt valgattributt i denne familien før du oppretter varianter.',
                 'parent-child'                     => 'Overordnet → Underordnet',
                 'parent-sub-parent-child'          => 'Overordnet → Mellomliggende → Underordnet',

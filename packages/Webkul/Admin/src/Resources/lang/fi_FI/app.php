@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Super-ominaisuutta ei löytynyt :attribute',
                         'variant-given-exists'               => 'Tämä variantti on jo olemassa :variants',
                         'variant-group-has-children'         => 'Tässä varianttiryhmässä on vielä variantteja. Poista ne tai siirrä ne toiseen ryhmään ennen ryhmän poistamista.',
+                        'variant-group-combination-exists'   => 'Tämän tuotteen alla on jo varianttiryhmä arvoilla :values. Valitse eri yhdistelmä.',
+                        'variant-combination-exists'         => 'Tämän tuotteen alla on jo variantti arvoilla :values. Valitse eri yhdistelmä.',
                         'create'                             => [
                             'description'            => 'Kuvaus',
                             'name'                   => 'Nimi',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Virheellinen mukautettu kaava annettu.',
                     'numeric'                    => 'Numeerisen määritteen ":attribute" arvon on oltava kelvollinen luku.',
                     'select-attribute-or-family' => 'Valitse vähintään yksi attribuutti tai attribuuttiperhe.',
+                    'duplicate-axis'             => 'Kaksi saman ylätuotteen varianttia eivät voi jakaa samaa akseliyhdistelmää, joten tämä tallennus hylätään.',
                     'failed'                     => 'Validointi epäonnistui.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Suodatin on liian suuri tallennettavaksi',
                 'variant-saved'                    => 'Varianttirakenne tallennettu.',
                 'variant-structure-locked'         => 'Tällä varianttirakenteella on jo variantteja, joten sen akseleita ja tasoja ei voi enää muuttaa. Poista ensin olemassa olevat variantit.',
+                'variant-structure-deleted'        => 'Varianttirakenne poistettu.',
+                'variant-structure-in-use'         => 'Tähän varianttirakenteeseen viitataan yhä tuotteista, joten sitä ei voi poistaa. Siirrä tai poista ensin kyseiset tuotteet.',
                 'no-axis-options'                  => 'Lisää tähän perheeseen vähintään yksi ei-kohdennettu valinta-attribuutti ennen varianttien luomista.',
                 'parent-child'                     => 'Ylätaso → Alataso',
                 'parent-sub-parent-child'          => 'Ylätaso → Välitaso → Alataso',

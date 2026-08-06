@@ -337,6 +337,8 @@ return [
                         'supper-attribute-not-found'         => '슈퍼 속성을 찾을 수 없습니다. :attribute',
                         'variant-given-exists'               => '이 변형은 이미 존재합니다 :variants',
                         'variant-group-has-children'         => '이 변형 그룹에는 아직 변형이 남아 있습니다. 삭제하기 전에 해당 변형을 삭제하거나 다른 그룹으로 옮기세요.',
+                        'variant-group-combination-exists'   => ':values 조합의 변형 그룹이 이 제품에 이미 존재합니다. 다른 조합을 선택하세요.',
+                        'variant-combination-exists'         => ':values 조합의 변형이 이 제품에 이미 존재합니다. 다른 조합을 선택하세요.',
                         'create'                             => [
                             'description'            => '설명',
                             'name'                   => '이름',
@@ -485,6 +487,7 @@ return [
                     'invalid-pattern'            => '잘못된 사용자 지정 패턴입니다.',
                     'numeric'                    => '숫자 속성 ":attribute"의 값은 유효한 숫자여야 합니다.',
                     'select-attribute-or-family' => '하나 이상의 속성 또는 속성 패밀리를 선택하세요.',
+                    'duplicate-axis'             => '동일한 상위 제품의 두 변형은 같은 축 조합을 가질 수 없으므로 이 저장은 거부됩니다.',
                     'failed'                     => '유효성 검사 실패.',
                 ],
                 'modal' => [
@@ -1165,6 +1168,8 @@ return [
                 'too-large'                        => '필터가 너무 커서 저장할 수 없습니다',
                 'variant-saved'                    => '변형 구조가 저장되었습니다.',
                 'variant-structure-locked'         => '이 배리언트 구조에는 이미 배리언트가 있어 축과 레벨을 더 이상 변경할 수 없습니다. 기존 배리언트를 먼저 삭제하세요.',
+                'variant-structure-deleted'        => '배리언트 구조가 삭제되었습니다.',
+                'variant-structure-in-use'         => '이 배리언트 구조는 아직 제품에서 참조하고 있어 삭제할 수 없습니다. 먼저 해당 제품을 재할당하거나 삭제하세요.',
                 'no-axis-options'                  => '변형을 만들기 전에 이 패밀리에 범위가 지정되지 않은 선택 속성을 하나 이상 추가하세요.',
                 'parent-child'                     => '상위 → 자식',
                 'parent-sub-parent-child'          => '상위 → 하위 상위 → 자식',

@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Super svojstvo nije pronađeno :attribute',
                         'variant-given-exists'               => 'Ova varijanta već postoji :variants',
                         'variant-group-has-children'         => 'Ova grupa varijanti još uvijek sadrži varijante. Uklonite ih ili premjestite u drugu grupu prije nego što je izbrišete.',
+                        'variant-group-combination-exists'   => 'Grupa varijanti s :values već postoji unutar ovog proizvoda. Odaberite drugu kombinaciju.',
+                        'variant-combination-exists'         => 'Varijanta s :values već postoji unutar ovog proizvoda. Odaberite drugu kombinaciju.',
                         'create'                             => [
                             'description'            => 'Opis',
                             'name'                   => 'Ime',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Unesen je nevažeći prilagođeni obrazac.',
                     'numeric'                    => 'Vrijednost numeričkog atributa „:attribute“ mora biti valjani broj.',
                     'select-attribute-or-family' => 'Molimo odaberite barem jedan atribut ili obitelj atributa.',
+                    'duplicate-axis'             => 'Dvije varijante pod istim nadređenim proizvodom ne mogu dijeliti istu kombinaciju osi, pa će ovo spremanje biti odbijeno.',
                     'failed'                     => 'Provjera valjanosti nije uspjela.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Filtar je prevelik za spremanje',
                 'variant-saved'                    => 'Struktura varijanti spremljena.',
                 'variant-structure-locked'         => 'Ova struktura varijanti već ima varijante, pa se njezine osi i razine više ne mogu mijenjati. Najprije izbrišite postojeće varijante.',
+                'variant-structure-deleted'        => 'Struktura varijanti izbrisana.',
+                'variant-structure-in-use'         => 'Na ovu strukturu varijanti još se pozivaju proizvodi, pa se ne može izbrisati. Najprije prerasporedite ili izbrišite te proizvode.',
                 'no-axis-options'                  => 'Dodajte ovoj obitelji barem jedan atribut tipa odabir bez opsega prije stvaranja varijanti.',
                 'parent-child'                     => 'Nadređeni → Podređeni',
                 'parent-sub-parent-child'          => 'Nadređeni → Podnadređeni → Podređeni',

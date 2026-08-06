@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Hindi nakita ang super attribute :attribute',
                         'variant-given-exists'               => 'Ang variation na ito ay umiiral na :variants',
                         'variant-group-has-children'         => 'May mga variation pa rin ang variation group na ito. Alisin o ilipat muna ang mga ito sa ibang group bago ito burahin.',
+                        'variant-group-combination-exists'   => 'May variation group na may :values na sa ilalim ng produktong ito. Pumili ng ibang kombinasyon.',
+                        'variant-combination-exists'         => 'May variation na may :values na sa ilalim ng produktong ito. Pumili ng ibang kombinasyon.',
                         'create'                             => [
                             'description'            => 'Deskripsyon',
                             'name'                   => 'Pangalan',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Di-wastong pasadyang pattern ang ibinigay.',
                     'numeric'                    => 'Ang halaga ng numerikong attribute na ":attribute" ay dapat maging wastong numero.',
                     'select-attribute-or-family' => 'Mangyaring pumili ng kahit isang attribute o isang pamilya ng attribute.',
+                    'duplicate-axis'             => 'Hindi maaaring magkapareho ng kombinasyon ng axis ang dalawang variant sa ilalim ng parehong parent, kaya tatanggihan ang pag-save na ito.',
                     'failed'                     => 'Nabigo ang pagpapatunay.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Masyadong malaki ang filter para i-save',
                 'variant-saved'                    => 'Na-save ang istraktura ng variant.',
                 'variant-structure-locked'         => 'May mga variant na ang variant structure na ito, kaya hindi na mababago ang mga axis at level nito. Burahin muna ang mga kasalukuyang variant.',
+                'variant-structure-deleted'        => 'Natanggal ang variant structure.',
+                'variant-structure-in-use'         => 'Ginagamit pa rin ang variant structure na ito ng mga produkto, kaya hindi ito maaaring tanggalin. Muling italaga o burahin muna ang mga produktong iyon.',
                 'no-axis-options'                  => 'Magdagdag ng hindi bababa sa isang non-scoped na select attribute sa pamilyang ito bago gumawa ng mga variant.',
                 'parent-child'                     => 'Magulang → Anak',
                 'parent-sub-parent-child'          => 'Magulang → Sub-parent → Anak',

@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Super attribut avec la valeur ":attribute" introuvable',
                         'variant-given-exists'               => 'Cette variation avec la valeur ":variants" existe déjà',
                         'variant-group-has-children'         => 'Ce groupe de variations contient encore des variations. Supprimez-les ou réaffectez-les avant de le supprimer.',
+                        'variant-group-combination-exists'   => 'Un groupe de variations avec :values existe déjà sous ce produit. Choisissez une autre combinaison.',
+                        'variant-combination-exists'         => 'Une variation avec :values existe déjà sous ce produit. Choisissez une autre combinaison.',
                         'create'                             => [
                             'description'            => 'Description',
                             'name'                   => 'Nom',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Modèle personnalisé invalide fourni.',
                     'numeric'                    => 'La valeur de l\'attribut numérique « :attribute » doit être un nombre valide.',
                     'select-attribute-or-family' => 'Veuillez sélectionner au moins un attribut ou une famille d’attributs.',
+                    'duplicate-axis'             => 'Deux variantes ayant le même parent ne peuvent pas partager une combinaison d\'axes ; cet enregistrement sera donc rejeté.',
                     'failed'                     => 'La validation a échoué.',
                 ],
                 'modal' => [
@@ -1244,6 +1247,8 @@ return [
                 'too-large'                        => 'Le filtre est trop volumineux pour être enregistré',
                 'variant-saved'                    => 'Structure de variante enregistrée.',
                 'variant-structure-locked'         => 'Cette structure de variantes possède déjà des variantes, ses axes et niveaux ne peuvent donc plus être modifiés. Supprimez d’abord les variantes existantes.',
+                'variant-structure-deleted'        => 'Structure de variantes supprimée.',
+                'variant-structure-in-use'         => 'Cette structure de variantes est encore référencée par des produits, elle ne peut donc pas être supprimée. Réaffectez ou supprimez d’abord ces produits.',
                 'group-code-already-exists'        => 'Le code de groupe d\'attributs existe déjà.',
                 'group-contains-system-attributes' => 'Ce groupe contient des attributs système. Déplacez d\'abord les attributs système vers un autre groupe puis réessayez.',
                 'group-name-already-exists'        => 'Le nom de groupe d\'attributs existe déjà.',

@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'No se encontraron super atributos :attribute',
                         'variant-given-exists'               => 'Esta variación ya existe :variants',
                         'variant-group-has-children'         => 'Este grupo de variaciones todavía tiene variaciones. Elimínelas o reasígnelas antes de eliminarlo.',
+                        'variant-group-combination-exists'   => 'Ya existe un grupo de variaciones con :values en este producto. Elija otra combinación.',
+                        'variant-combination-exists'         => 'Ya existe una variación con :values en este producto. Elija otra combinación.',
                         'create'                             => [
                             'description'            => 'Descripción',
                             'name'                   => 'Nombre',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Patrón personalizado inválido.',
                     'numeric'                    => 'El valor del atributo numérico ":attribute" debe ser un número válido.',
                     'select-attribute-or-family' => 'Por favor seleccione al menos un atributo o una familia de atributos.',
+                    'duplicate-axis'             => 'Dos variantes con el mismo producto padre no pueden compartir una combinación de ejes, por lo que este guardado será rechazado.',
                     'failed'                     => 'La validación falló.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'El filtro es demasiado grande para guardarlo',
                 'variant-saved'                    => 'Estructura de variante guardada.',
                 'variant-structure-locked'         => 'Esta estructura de variantes ya tiene variantes, por lo que sus ejes y niveles ya no se pueden cambiar. Elimine primero las variantes existentes.',
+                'variant-structure-deleted'        => 'Estructura de variantes eliminada.',
+                'variant-structure-in-use'         => 'Esta estructura de variantes todavía está referenciada por productos, por lo que no se puede eliminar. Reasigne o elimine primero esos productos.',
                 'no-axis-options'                  => 'Agregue al menos un atributo de selección no contextualizado a esta familia antes de crear variantes.',
                 'parent-child'                     => 'Padre → Hijo',
                 'parent-sub-parent-child'          => 'Padre → Subpadre → Hijo',

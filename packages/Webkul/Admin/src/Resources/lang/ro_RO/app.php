@@ -337,6 +337,8 @@ return [
                         'supper-attribute-not-found'         => 'Super atribut nu găsit :attribute',
                         'variant-given-exists'               => 'Această variație există deja :variants',
                         'variant-group-has-children'         => 'Acest grup de variații conține încă variații. Ștergeți-le sau reatribuiți-le altui grup înainte de a-l șterge.',
+                        'variant-group-combination-exists'   => 'Un grup de variații cu :values există deja pentru acest produs. Alegeți altă combinație.',
+                        'variant-combination-exists'         => 'O variație cu :values există deja pentru acest produs. Alegeți altă combinație.',
                         'create'                             => [
                             'description'            => 'Descriere',
                             'name'                   => 'Nume',
@@ -485,6 +487,7 @@ return [
                     'invalid-pattern'            => 'Model personalizat invalid furnizat.',
                     'numeric'                    => 'Valoarea atributului numeric „:attribute” trebuie să fie un număr valid.',
                     'select-attribute-or-family' => 'Vă rugăm să selectați cel puțin un atribut sau o familie de atribute.',
+                    'duplicate-axis'             => 'Două variante ale aceluiași produs părinte nu pot avea aceeași combinație de axe, așa că această salvare va fi respinsă.',
                     'failed'                     => 'Validarea a eșuat.',
                 ],
                 'modal' => [
@@ -1165,6 +1168,8 @@ return [
                 'too-large'                        => 'Filtrul este prea mare pentru a fi salvat',
                 'variant-saved'                    => 'Structura variantei a fost salvată.',
                 'variant-structure-locked'         => 'Această structură de variante are deja variante, așa că axele și nivelurile sale nu mai pot fi modificate. Ștergeți mai întâi variantele existente.',
+                'variant-structure-deleted'        => 'Structura de variante a fost ștearsă.',
+                'variant-structure-in-use'         => 'Această structură de variante este încă referențiată de produse, deci nu poate fi ștearsă. Reatribuiți sau ștergeți mai întâi acele produse.',
                 'no-axis-options'                  => 'Adăugați cel puțin un atribut de tip listă fără domeniu la această familie înainte de a crea variante.',
                 'parent-child'                     => 'Părinte → Copil',
                 'parent-sub-parent-child'          => 'Părinte → Sub-părinte → Copil',

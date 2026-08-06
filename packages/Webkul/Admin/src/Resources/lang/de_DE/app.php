@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Supper-Attribut mit Wert „:attribute“ nicht gefunden',
                         'variant-given-exists'               => 'Diese Variante mit Wert „:variants“ existiert bereits',
                         'variant-group-has-children'         => 'Diese Variantengruppe enthält noch Varianten. Entfernen Sie diese oder weisen Sie sie einer anderen Gruppe zu, bevor Sie sie löschen.',
+                        'variant-group-combination-exists'   => 'Eine Variantengruppe mit :values existiert bereits unter diesem Produkt. Wählen Sie eine andere Kombination.',
+                        'variant-combination-exists'         => 'Eine Variante mit :values existiert bereits unter diesem Produkt. Wählen Sie eine andere Kombination.',
                         'create'                             => [
                             'description'            => 'Beschreibung',
                             'name'                   => 'Name',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Ungültiges benutzerdefiniertes Muster angegeben.',
                     'numeric'                    => 'Der Wert für das numerische Attribut „:attribute“ muss eine gültige Zahl sein.',
                     'select-attribute-or-family' => 'Bitte wählen Sie mindestens ein Attribut oder eine Attributfamilie aus.',
+                    'duplicate-axis'             => 'Zwei Varianten unter demselben übergeordneten Produkt können keine Achsenkombination teilen, daher wird dieses Speichern abgelehnt.',
                     'failed'                     => 'Validierung fehlgeschlagen.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Filter ist zu groß zum Speichern',
                 'variant-saved'                    => 'Variantenstruktur gespeichert.',
                 'variant-structure-locked'         => 'Diese Variantenstruktur hat bereits Varianten, daher können ihre Achsen und Ebenen nicht mehr geändert werden. Löschen Sie zuerst die vorhandenen Varianten.',
+                'variant-structure-deleted'        => 'Variantenstruktur gelöscht.',
+                'variant-structure-in-use'         => 'Diese Variantenstruktur wird noch von Produkten referenziert und kann daher nicht gelöscht werden. Weisen Sie diese Produkte zuerst neu zu oder löschen Sie sie.',
                 'no-axis-options'                  => 'Fügen Sie dieser Familie mindestens ein nicht bereichsbezogenes Auswahlattribut hinzu, bevor Sie Varianten erstellen.',
                 'parent-child'                     => 'Übergeordnet → Untergeordnet',
                 'parent-sub-parent-child'          => 'Übergeordnet → Zwischenebene → Untergeordnet',

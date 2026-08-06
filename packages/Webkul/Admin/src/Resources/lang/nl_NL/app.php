@@ -337,6 +337,8 @@ return [
                         'supper-attribute-not-found'         => 'Configureerbaar attribuut ":attribute" niet gevonden.',
                         'variant-given-exists'               => 'Variant ":variants" bestaat al.',
                         'variant-group-has-children'         => 'Deze variantgroep bevat nog varianten. Verwijder ze of wijs ze aan een andere groep toe voordat u de groep verwijdert.',
+                        'variant-group-combination-exists'   => 'Er bestaat al een variantgroep met :values onder dit product. Kies een andere combinatie.',
+                        'variant-combination-exists'         => 'Er bestaat al een variant met :values onder dit product. Kies een andere combinatie.',
                         'create'                             => [
                             'description'            => 'Beschrijving',
                             'name'                   => 'Naam',
@@ -485,6 +487,7 @@ return [
                     'invalid-pattern'            => 'Ongeldig aangepast patroon opgegeven.',
                     'numeric'                    => 'De waarde voor het numerieke attribuut ":attribute" moet een geldig getal zijn.',
                     'select-attribute-or-family' => 'Selecteer ten minste één attribuut of een attribuutset.',
+                    'duplicate-axis'             => 'Twee varianten onder hetzelfde bovenliggende product kunnen geen ascombinatie delen, dus deze opslag wordt geweigerd.',
                     'failed'                     => 'Validatie mislukt.',
                 ],
                 'modal' => [
@@ -1165,6 +1168,8 @@ return [
                 'too-large'                        => 'Filter is te groot om op te slaan',
                 'variant-saved'                    => 'Variantstructuur opgeslagen.',
                 'variant-structure-locked'         => 'Deze variantstructuur heeft al varianten, dus de assen en niveaus kunnen niet meer worden gewijzigd. Verwijder eerst de bestaande varianten.',
+                'variant-structure-deleted'        => 'Variantstructuur verwijderd.',
+                'variant-structure-in-use'         => 'Naar deze variantstructuur wordt nog door producten verwezen, dus kan deze niet worden verwijderd. Wijs die producten eerst opnieuw toe of verwijder ze.',
                 'no-axis-options'                  => 'Voeg minimaal één niet-scopegebonden selectieattribuut toe aan deze familie voordat u varianten aanmaakt.',
                 'parent-child'                     => 'Bovenliggend → Onderliggend',
                 'parent-sub-parent-child'          => 'Bovenliggend → Tussenliggend → Onderliggend',

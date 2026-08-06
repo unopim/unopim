@@ -336,6 +336,8 @@ return [
                         'supper-attribute-not-found'         => 'Attributo super non trovato :attribute',
                         'variant-given-exists'               => 'Questa variante esiste già :variants',
                         'variant-group-has-children'         => 'Questo gruppo di varianti contiene ancora delle varianti. Rimuovile o riassegnale a un altro gruppo prima di eliminarlo.',
+                        'variant-group-combination-exists'   => 'Esiste già un gruppo di varianti con :values in questo prodotto. Scegli una combinazione diversa.',
+                        'variant-combination-exists'         => 'Esiste già una variante con :values in questo prodotto. Scegli una combinazione diversa.',
                         'create'                             => [
                             'description'            => 'Descrizione',
                             'name'                   => 'Nome',
@@ -484,6 +486,7 @@ return [
                     'invalid-pattern'            => 'Formato personalizzato non valido.',
                     'numeric'                    => 'Il valore per l\'attributo numerico ":attribute" deve essere un numero valido.',
                     'select-attribute-or-family' => 'Seleziona almeno un attributo o una famiglia di attributi.',
+                    'duplicate-axis'             => 'Due varianti con lo stesso prodotto padre non possono condividere una combinazione di assi, quindi questo salvataggio verrà rifiutato.',
                     'failed'                     => 'Validazione non riuscita.',
                 ],
                 'modal' => [
@@ -1164,6 +1167,8 @@ return [
                 'too-large'                        => 'Il filtro è troppo grande per essere salvato',
                 'variant-saved'                    => 'Struttura della variante salvata.',
                 'variant-structure-locked'         => 'Questa struttura di varianti ha già delle varianti, quindi i suoi assi e livelli non possono più essere modificati. Elimina prima le varianti esistenti.',
+                'variant-structure-deleted'        => 'Struttura di varianti eliminata.',
+                'variant-structure-in-use'         => 'Questa struttura di varianti è ancora referenziata da prodotti, quindi non può essere eliminata. Riassegna o elimina prima quei prodotti.',
                 'no-axis-options'                  => 'Aggiungi almeno un attributo di selezione non contestualizzato a questa famiglia prima di creare le varianti.',
                 'parent-child'                     => 'Padre → Figlio',
                 'parent-sub-parent-child'          => 'Padre → Sotto-padre → Figlio',
