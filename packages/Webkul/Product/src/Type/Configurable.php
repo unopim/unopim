@@ -223,6 +223,8 @@ class Configurable extends AbstractType
                 ]));
 
                 $planner->primeStructure($group->id, $loadedStructure);
+
+                Event::dispatch('catalog.product.create.after', $group);
             } else {
                 if (! $group = $existingGroups->pull($groupKey)) {
                     continue;

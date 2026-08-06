@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -343,4 +344,34 @@ it('excludes variant_group nodes when resolving the default variant', function (
     $configurable->save();
 
     expect($type->getDefaultVariant())->toBeNull();
+});
+
+it('announces a variant group created from the configurable edit form', function () {
+    [$configurable, $colorCode, $sizeCode] = makeTwoLevelConfigurable();
+
+    Event::fake(['catalog.product.create.after']);
+
+    app(ProductRepository::class)->update([
+        'sku'            => $configurable->sku,
+        'channel'        => 'default',
+        'locale'         => 'en_US',
+        'variant_groups' => [
+            'group_1' => [
+                'group_axis_option' => 'red',
+                'group_values'      => [],
+                'sku'               => $configurable->sku.'-RED',
+                'variants'          => [
+                    'variant_1' => [
+                        'sku'    => $configurable->sku.'-RED-S',
+                        'values' => ['common' => [$sizeCode => 's']],
+                    ],
+                ],
+            ],
+        ],
+    ], $configurable->id);
+
+    Event::assertDispatched(
+        'catalog.product.create.after',
+        fn ($event, $product): bool => $product->type === 'variant_group'
+    );
 });

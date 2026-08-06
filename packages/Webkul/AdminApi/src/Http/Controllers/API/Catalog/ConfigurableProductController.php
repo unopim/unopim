@@ -224,6 +224,8 @@ class ConfigurableProductController extends ProductController
             ]);
         }
 
+        Event::dispatch('catalog.product.create.after', $node);
+
         return $this->successResponse(
             trans('admin::app.catalog.products.create-success'),
             Response::HTTP_CREATED
