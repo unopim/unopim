@@ -29,6 +29,7 @@
                     :column="col"
                     :entityId="entityId"
                     :attribute="attribute"
+                    :locked="locked"
                 />
             </div>
             <div
