@@ -10,10 +10,9 @@ class StoreConfigurableProductRequest extends ApiFormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * `super_attributes` stops being required once `variant_structure`
-     * references an existing structure: the controller then derives the axis
-     * codes from that structure, so demanding both would force the client to
-     * restate what the structure already declares.
+     * `super_attributes` stops being required once `variant_structure` names an
+     * existing structure: the controller derives the axis codes from it, so
+     * demanding both would force the client to restate what it already declares.
      *
      * @return array<string, array<int, mixed>>
      */
@@ -32,7 +31,7 @@ class StoreConfigurableProductRequest extends ApiFormRequest
             'family'            => [Rule::requiredIf(! $isVariantGroup), 'string'],
             'additional'        => ['nullable', 'array'],
             'values'            => ['required', 'array'],
-            'values.common.sku' => ['required'],
+            'values.common.sku' => ['required', 'unique:products,sku'],
             'variant_structure' => ['nullable', 'string'],
             'super_attributes'  => [Rule::requiredIf(! $isVariantGroup && ! $hasVariantStructure), 'array'],
             'associations'      => ['nullable', 'array'],

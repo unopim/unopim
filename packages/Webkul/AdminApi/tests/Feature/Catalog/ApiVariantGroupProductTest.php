@@ -467,3 +467,46 @@ it('keeps creating a variant directly under a single-level configurable parent',
         'variant' => ['attributes' => [$color->code => $colorOption]],
     ])->assertStatus(422);
 });
+
+it('rejects a duplicate sku on configurable create with 422 rather than a server error', function () {
+    $family = AttributeFamily::factory()->create();
+
+    app(ProductRepository::class)->create([
+        'sku' => 'dup-config-sku', 'type' => 'configurable', 'attribute_family_id' => $family->id,
+    ]);
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
+        'type'             => 'configurable',
+        'family'           => $family->code,
+        'super_attributes' => ['color'],
+        'values'           => ['common' => ['sku' => 'dup-config-sku']],
+    ])->assertStatus(422);
+});
+
+it('rejects a duplicate sku on variant_group create with 422 rather than a server error', function () {
+    $family = AttributeFamily::factory()->create();
+    $color = Attribute::factory()->create(['code' => 'dupvg_color_'.uniqid(), 'type' => 'select']);
+
+    $structure = VariantStructure::create([
+        'attribute_family_id' => $family->id, 'code' => 'dupvg_structure_'.uniqid(), 'levels' => 2,
+    ]);
+    VariantStructureAxis::insert([
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $color->id, 'level' => 'level_1', 'position' => 0],
+    ]);
+
+    $configurable = app(ProductRepository::class)->create([
+        'sku'                  => 'dupvg-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'variant_structure_id' => $structure->id,
+    ]);
+
+    Product::factory()->create([
+        'parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'dup-group-sku',
+        'values'    => ['common' => ['sku' => 'dup-group-sku']],
+    ]);
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
+        'type'   => 'variant_group',
+        'parent' => $configurable->sku,
+        'values' => ['common' => ['sku' => 'dup-group-sku', $color->code => 'red']],
+    ])->assertStatus(422);
+});
