@@ -10,6 +10,7 @@ use Webkul\AdminApi\Http\Controllers\API\Catalog\CategoryFieldController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\ConfigurableProductController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\MediaFileController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\SimpleProductController;
+use Webkul\AdminApi\Http\Controllers\API\Catalog\VariantStructureController;
 
 Route::group([
     'middleware' => [
@@ -49,6 +50,16 @@ Route::group([
         Route::put('{code}', 'update')->name('admin.api.families.update');
         Route::patch('{code}', 'partialUpdate')->name('admin.api.families.patch');
         Route::delete('{code}', 'delete')->name('admin.api.families.delete');
+    });
+
+    /** Attribute Family Variant Structures API Routes */
+    Route::controller(VariantStructureController::class)->prefix('families')->group(function () {
+        Route::get('{code}/variant-structures', 'index')->name('admin.api.families-variant-structures.index');
+        Route::get('{code}/variant-structures/{structureCode}', 'get')->name('admin.api.families-variant-structures.get');
+        Route::post('{code}/variant-structures', 'store')->name('admin.api.families-variant-structures.store');
+        Route::put('{code}/variant-structures/{structureCode}', 'update')->name('admin.api.families-variant-structures.update');
+        Route::patch('{code}/variant-structures/{structureCode}', 'partialUpdate')->name('admin.api.families-variant-structures.patch');
+        Route::delete('{code}/variant-structures/{structureCode}', 'delete')->name('admin.api.families-variant-structures.delete');
     });
 
     /** Category Fields API Routes */
