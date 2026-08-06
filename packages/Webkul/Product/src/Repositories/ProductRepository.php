@@ -159,9 +159,22 @@ class ProductRepository extends Repository
 
     /**
      * Checks variant configurable attributes uniqueness according to configurable product
+     *
+     * Each key of `$configAttributes` is concatenated into a `values->common->…` JSON
+     * path, and the Postgres grammar wraps a path segment without escaping it, so a key
+     * is rejected here unless it has the plain `^\w+$` attribute-code shape the core Code
+     * rule enforces — before the query is built, so a hostile key never reaches the grammar.
+     *
+     * @throws \InvalidArgumentException
      */
     public function isUniqueVariantForProduct(string|int $productId, array $configAttributes, ?string $sku = null, string|int|null $variantId = '', ?string $type = null): bool
     {
+        foreach (array_keys($configAttributes) as $variantAttribute) {
+            if (! preg_match('/^[A-Za-z0-9_]+$/', (string) $variantAttribute)) {
+                throw new \InvalidArgumentException('Malformed variant attribute code supplied to the variant uniqueness check.');
+            }
+        }
+
         $query = $this->where('parent_id', $productId);
 
         if ($type !== null) {
@@ -194,23 +207,10 @@ class ProductRepository extends Repository
     }
 
     /**
-     * Guards a variant-level write: rejects a change to an ancestor-owned attribute,
-     * allows an own-level (including own-axis) change, and on an own-axis rename runs
-     * the sibling-scoped duplicate check and the given persist closure inside the same
-     * locked transaction, so a concurrent rename to the same axis-tuple cannot slip
-     * past the uniqueness check between the check and the actual write.
-     *
-     * For the root configurable product itself (no ancestor), every sub_parent/variant
-     * level attribute is reported via the same "ancestor-owned" rejection message even
-     * though, relative to the configurable, it is really "not owned at this node's own
-     * (common) level" rather than owned by an ancestor — there is no ancestor above it.
-     *
-     * That root-configurable rejection is only reached when this method is called
-     * directly, as `tests/Unit/Repositories/ProductRepositoryGuardVariantLevelWriteTest.php`
-     * does. {@see AbstractType::update()} intentionally skips this guard for a parentless
-     * (root configurable) product to avoid an extra, always-moot structure-resolution
-     * query on every root-level update, so a root configurable's own `update()` call
-     * does not currently validate this case via that path.
+     * Guard a variant-level write: reject a change to an ancestor-owned attribute,
+     * allow an own-level one. An own-axis rename runs the duplicate check and the
+     * persist closure in one locked transaction, so a concurrent rename cannot slip
+     * between check and write. {@see AbstractType::update()} skips a root configurable.
      *
      * @return array<string, mixed>
      */

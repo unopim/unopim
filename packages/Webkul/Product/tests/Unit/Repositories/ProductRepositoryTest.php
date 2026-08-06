@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
@@ -271,6 +272,46 @@ describe('isUniqueVariantForProduct', function () {
             'shared-sku-elsewhere',
             '',
             'simple'
+        );
+
+        expect($result)->toBeTrue();
+    });
+
+    it('rejects a variant attribute code that is not a plain attribute code', function () {
+        $parent = Product::factory()->configurable()->create();
+
+        $this->productRepository->isUniqueVariantForProduct(
+            $parent->id,
+            ["color'||(select current_setting('is_superuser'))||'" => 'red']
+        );
+    })->throws(InvalidArgumentException::class);
+
+    it('never compiles a malformed variant attribute code into a json path', function () {
+        $parent = Product::factory()->configurable()->create();
+
+        $statements = [];
+
+        DB::listen(function ($query) use (&$statements): void {
+            $statements[] = $query->sql;
+        });
+
+        expect(fn () => $this->productRepository->isUniqueVariantForProduct(
+            $parent->id,
+            ["color'||(select current_setting('is_superuser'))||'" => 'red']
+        ))->toThrow(InvalidArgumentException::class);
+
+        expect(array_values(array_filter(
+            $statements,
+            fn (string $sql): bool => str_contains($sql, 'current_setting')
+        )))->toBe([]);
+    });
+
+    it('accepts every legitimate attribute code shape', function () {
+        $parent = Product::factory()->configurable()->create();
+
+        $result = $this->productRepository->isUniqueVariantForProduct(
+            $parent->id,
+            ['color' => 'red', 'size_1' => 'xl', 'Brand2' => 'acme']
         );
 
         expect($result)->toBeTrue();
