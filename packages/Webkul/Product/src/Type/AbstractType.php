@@ -120,6 +120,10 @@ abstract class AbstractType
     /**
      * Update product.
      *
+     * A submitted `associations` payload supersedes the legacy flat keys for the
+     * types it carries; it is validated and sku-resolved here, BEFORE the save,
+     * so an invalid link aborts the whole update with nothing persisted.
+     *
      * @param  int  $id
      * @param  string  $attribute
      * @return Product
@@ -138,15 +142,6 @@ abstract class AbstractType
             $productValues[self::CATEGORY_VALUES_KEY] = $data[self::CATEGORY_VALUES_KEY];
         }
 
-        /**
-         * Optional unified associations payload: `associations => { <typeCode> => [ { sku, additional_data? }, ... ] }`.
-         *
-         * When present, it supersedes the legacy flat keys (`up_sells`, etc.) for
-         * any type it submits: validation happens here, BEFORE the product is
-         * saved, so an invalid link aborts the whole update with nothing
-         * persisted; sku -> related product id resolution also happens here so
-         * the rich sync after save has everything it needs.
-         */
         $unifiedAssociations = $data[self::ASSOCIATION_VALUES_KEY] ?? [];
 
         if (! is_array($unifiedAssociations)) {
@@ -218,42 +213,11 @@ abstract class AbstractType
     }
 
     /**
-     * Resolves and validates the optional unified `associations` payload
-     * (Plan 3): for each submitted type, validates every link's
-     * `additional_data` against that type's custom fields via
-     * `AssociationValidator` (Task 2) — a failure throws `ValidationException`
-     * here, BEFORE the product is saved — then resolves each link's `sku` to
-     * a `related_product_id` (skipping unresolved SKUs and self-links), the
-     * same way `ProductAssociationRepository::syncFromSkuList` does for the
-     * legacy path.
+     * Validate each link's `additional_data` and resolve its `sku` to a product id.
      *
-     * A type key present in `$associations` is treated as AUTHORITATIVE for
-     * that association type, even when it carries zero link rows: the
-     * product edit UI (`links.blade.php`) always submits an
-     * `associations[<typeCode>][__present]=1` sentinel for every active type
-     * it renders, precisely so removing the last link of a type still keeps
-     * that type's key in the payload (native form submission otherwise omits
-     * a key with no rows, which used to leave that type's `product_associations`
-     * rows — and, for the 3 legacy sections, the legacy JSON list — stale).
-     * The sentinel itself is stripped below before link rows are processed,
-     * and never resolved as a link/sku. This authoritative-when-present
-     * behavior only ever triggers from the `associations` key existing at
-     * all: the REST/import write path never sends that key, so it keeps
-     * relying on the legacy `! empty($data[section])` fallback in `update()`
-     * unchanged.
-     *
-     * Returns a two-element tuple:
-     * - `[0]` legacy section (up_sells/cross_sells/related_products) => sku
-     *   list, for mirroring into the legacy `values['associations']` JSON.
-     * - `[1]` typeCode => `['association_type_id' => int, 'links' => resolved rows]`,
-     *   ready for `syncRichAssociations()`.
-     *
-     * Public (not just used by `update()`): write paths that persist product
-     * data directly instead of going through `update()` — currently the
-     * AdminApi product controllers (`Webkul\AdminApi\...\ProductController`)
-     * — call this directly so they can validate + resolve a rich
-     * `associations` payload BEFORE writing anything to the database, same
-     * as `update()` does.
+     * A type key present with zero rows is authoritative (the form's `__present`
+     * sentinel), so clearing the last link clears the type. Public: write paths
+     * bypassing `update()` call it to validate BEFORE persisting anything.
      *
      * @return array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}
      */
@@ -336,20 +300,11 @@ abstract class AbstractType
     }
 
     /**
-     * Rich, per-link sync for the unified `associations` payload (Plan 3):
-     * writes `additional_data` for each link via
-     * `ProductAssociationRepository::syncTypeWithData` (Task 1), preserving
-     * per-link custom-field values instead of only SKU membership like
-     * `syncAssociationLinks()`'s legacy path does.
+     * Sync resolved links per type, preserving each link's `additional_data`.
      *
-     * Kept resilient like `syncAssociationLinks()`: a sync failure for one
-     * type is reported, not rethrown, and must not affect the others or the
-     * product save that already happened.
-     *
-     * Public for the same reason as `prepareRichAssociations()` above: write
-     * paths that bypass `update()` (the AdminApi product controllers) call
-     * this directly, after they've saved the product row, to persist the
-     * resolved links.
+     * A failure for one type is reported, not rethrown: the other types and the
+     * product save that already happened must not be affected. Public for the
+     * same reason as `prepareRichAssociations()`.
      *
      * @param  array<string,array{association_type_id:int,links:array}>  $resolvedAssociations
      */
@@ -371,20 +326,10 @@ abstract class AbstractType
     }
 
     /**
-     * Mirrors the legacy JSON `values['associations']` into the
-     * `product_associations` link table (dual-write).
-     *
-     * Kept resilient: a sync failure is logged but must not abort the
-     * product save that has already happened.
-     *
-     * Public so that write paths other than `update()` — e.g. the AdminApi
-     * controllers, which persist `values` directly on the model instead of
-     * going through this class's `update()` — can also mirror the link
-     * table after they save.
-     *
-     * `$excludeSections` skips sections already handled by the unified
-     * `associations` payload's rich sync (`syncRichAssociations()`), so a
-     * type is never synced twice for the same `update()` call.
+     * Mirror the legacy JSON `values['associations']` into the `product_associations`
+     * link table (dual-write), skipping `$excludeSections` already synced richly so
+     * no type is synced twice. A failure is reported, not rethrown: the product save
+     * has already happened. Public so write paths bypassing `update()` can mirror too.
      */
     public function syncAssociationLinks(Product $product, array $productValues, array $excludeSections = []): void
     {
@@ -408,34 +353,11 @@ abstract class AbstractType
     }
 
     /**
-     * Modifies the Product values in product data
+     * Modifies the Product values in product data.
      *
-     * Reference has been used in this to avoid redundant access of array
-     *
-     * Additional Values Format
-     *
-     * 'values' => [
-     *     'common' => [
-     *          'attribute_code' => 'value',
-     *      ],
-     *      'channel_locale_specific' => [
-     *          'channelCode' => [
-     *              'localeCode' => [
-     *                  'attribute_code' => 'value',
-     *              ],
-     *          ],
-     *      ],
-     *      'channel_specific' => [
-     *          'channelCode' => [
-     *              'attribute_code' => 'value',
-     *          ],
-     *      ],
-     *      'locale_specific' => [
-     *          'localeCode' => [
-     *              'attribute_code' => 'value',
-     *          ],
-     *      ],
-     * ]
+     * Values arrive keyed by scope — `common`, `channel_specific`, `locale_specific`
+     * and `channel_locale_specific` — and are walked by reference so the nested arrays
+     * are not looked up repeatedly.
      */
     public function prepareProductValues(
         array $data,

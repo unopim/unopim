@@ -11,11 +11,13 @@ use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Repositories\ProductRepository;
 
+/**
+ * Attribute codes are randomly suffixed throughout: this suite runs against a live,
+ * seeded database that already owns "color", "size" and "swatch".
+ */
 uses(DatabaseTransactions::class);
 
 it('materializes configurable → variant_group → simple and resolves the chain', function () {
-    // Codes are suffixed with a random string because this suite runs against a
-    // seeded database that already has attributes named "color", "size", "swatch", etc.
     $colorCode = 'color_'.Str::random(8);
     $sizeCode = 'size_'.Str::random(8);
     $swatchCode = 'swatch_'.Str::random(8);
@@ -215,10 +217,6 @@ it('rejects an own-axis rename through updateVariantGroupValues() that collides 
 });
 
 it('fails loudly when a legacy 1-level createVariant call omits a required axis', function () {
-    // Legacy / 1-level configurable: no variant_structure_id, no parent_id on
-    // the variant payload. The 2-level "axis lives on the ancestor group" skip
-    // must NOT apply here - a missing axis is a malformed payload and should
-    // throw, not silently create a variant missing that axis value.
     $colorCode = 'color_'.Str::random(8);
     $sizeCode = 'size_'.Str::random(8);
 
@@ -238,8 +236,6 @@ it('fails loudly when a legacy 1-level createVariant call omits a required axis'
 
     expect(fn () => $type->createVariant($configurable, $configurable->super_attributes, [
         'sku'    => $configurable->sku.'-RED',
-        // $sizeCode is intentionally omitted - the payload only supplies one
-        // of the two required axes.
         'values' => ['common' => [$colorCode => 'red']],
     ]))->toThrow(ErrorException::class);
 });

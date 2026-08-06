@@ -95,6 +95,9 @@ class ProductDataSource extends ApiDataSource
     /**
      * Get category field by its code.
      *
+     * Always includes the `associations` block — one extra query per request, unlike
+     * the listing in `formatData()`, which omits it to avoid an N+1 query per row.
+     *
      * @param  string  $code  The unique code of the category field.
      * @return array An associative array containing the category field's code, status, and label.
      *
@@ -126,12 +129,6 @@ class ProductDataSource extends ApiDataSource
 
         $mergedValues = $this->variantValueResolver->resolveBatch([$product])[$product['id']] ?? null;
 
-        // Single-product GET always includes the `associations` block (all
-        // types, including custom ones + `additional_data`) — unlike
-        // `with_completeness`, this isn't behind an opt-in flag since a
-        // single extra query per request (vs. per-row on a listing) is
-        // negligible; `formatData()` (the listing) does NOT request it, to
-        // avoid an N+1 query per row there.
         return $this->normalizeProduct($product, $withCompleteness, withAssociations: true, mergedValues: $mergedValues);
     }
 
@@ -223,6 +220,8 @@ class ProductDataSource extends ApiDataSource
     /**
      * Retrieves the ID of a product based on its code.
      *
+     * The lookup must match a configurable product AND the given SKU: matching on type
+     * alone returns any configurable product and masks an invalid SKU.
      *
      * @return int|null
      *
@@ -231,8 +230,6 @@ class ProductDataSource extends ApiDataSource
     protected function getParentIdByCode(Builder $queryBuilder, string $sku)
     {
         $parentQuery = clone $queryBuilder;
-        // Parent lookup must match BOTH a configurable product AND the given SKU — previously an
-        // `orWhere` on type alone returned any configurable product, masking invalid SKUs.
         $parentQuery->where('products.sku', $sku)
             ->where('products.type', config('product_types.configurable.key'));
         $parentId = $parentQuery->first()?->id;
@@ -328,15 +325,10 @@ class ProductDataSource extends ApiDataSource
     }
 
     /**
-     * Builds the `associations` response block for a single product: every
-     * link the product has, across ALL association types (the 3 legacy
-     * sections AND custom types alike), grouped by the type's `code`, each
-     * carrying the related product's `sku` and the link's `additional_data`
-     * (e.g. `quantity`) -- the rich, per-link data the legacy
-     * `values.associations.<section>` flat SKU lists don't carry.
-     *
-     * This is purely additive: the legacy `values.associations` output
-     * above is untouched, so existing API consumers keep working.
+     * Builds the `associations` response block: every link across ALL association
+     * types (legacy sections and custom types alike), grouped by type `code`, each
+     * carrying the related product's `sku` and the link's `additional_data` — the
+     * per-link data the legacy flat SKU lists cannot carry. Purely additive.
      *
      * @return array<string, array<int, array{related_sku: ?string, additional_data: ?array}>>
      */

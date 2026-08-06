@@ -9,10 +9,9 @@ class PartialUpdateConfigurableProductRequest extends ApiFormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * `variant_structure` is create-only and therefore prohibited here rather
-     * than silently ignored: repointing a product's structure once variants
-     * exist would invalidate every descendant's level ownership, and the admin
-     * UI likewise refuses to change a structure that already has variants.
+     * `variant_structure` is create-only and prohibited here rather than silently
+     * ignored: repointing it once variants exist would invalidate every descendant's
+     * level ownership, as the admin UI also refuses to do.
      *
      * @return array<string, array<int, mixed>>
      */

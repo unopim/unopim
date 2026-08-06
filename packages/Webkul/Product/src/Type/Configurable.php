@@ -52,15 +52,13 @@ class Configurable extends AbstractType
     protected $attributesById = [];
 
     /**
-     * Get default variant.
+     * Get default variant, excluding `variant_group` nodes: those are internal
+     * grouping records, not a leaf variant a consumer can render.
      *
      * @return Product
      */
     public function getDefaultVariant()
     {
-        // Excludes `variant_group` nodes: they are internal grouping records,
-        // not a leaf variant a storefront/API consumer can render as "the"
-        // default variant.
         return $this->product->variants()
             ->where('type', '!=', 'variant_group')
             ->find($this->getDefaultVariantId());
@@ -193,11 +191,10 @@ class Configurable extends AbstractType
     }
 
     /**
-     * Save the 3-tier `variant_groups` payload for a 2-level variant
-     * structure: create/update each `variant_group` node and its nested
-     * `simple` variants, then prune groups (and their orphaned children) no
-     * longer present in the payload. Mirrors the flat `variants` pruning in
-     * `update()`, one level deeper.
+     * Save the 3-tier `variant_groups` payload: create/update each group node and
+     * its nested `simple` variants, then prune groups (and orphaned children) no
+     * longer in the payload — the flat `variants` pruning in `update()`, one level
+     * deeper.
      *
      * @param  \Webkul\Product\Contracts\Product  $product
      * @param  Collection  $productSuperAttributes
@@ -340,7 +337,10 @@ class Configurable extends AbstractType
     }
 
     /**
-     * Create variant.
+     * Create variant. It stores only what it owns (axis options, sku); the rest
+     * resolves at read time from the ancestor chain, so an axis fixed at the group
+     * level is skipped, not failed — for 2-level callers only; a legacy 1-level
+     * payload missing an axis still fails below.
      *
      * @param  \Webkul\Product\Contracts\Product  $product
      * @param  array  $productSuperAttributes
@@ -355,10 +355,6 @@ class Configurable extends AbstractType
             'sku'                 => $data['sku'],
         ]);
 
-        // Inheritance is resolved at read time (see VariantValueResolver); a
-        // variant stores only what it owns - its axis options and sku - instead
-        // of copying the parent's values. This removes storage/write duplication
-        // and keeps a single source of truth on the ancestor chain.
         $variantValues = [];
 
         foreach ($productSuperAttributes as $attribute) {
@@ -366,13 +362,6 @@ class Configurable extends AbstractType
 
             $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
 
-            // In a 2-level structure the axis fixed at the group level (e.g. color)
-            // is not present in the leaf variant's payload - only the axis that
-            // differentiates it within the group (e.g. size) is. Skip that axis
-            // instead of failing; it resolves from the ancestor chain at read
-            // time (see VariantValueResolver). Legacy 1-level callers (no
-            // parent_id / no variant structure) get no such pass - a missing
-            // axis there still fails loudly below on a malformed payload.
             if (
                 ! array_key_exists($attrCode, $suppliedCommonValues)
                 && ! empty($data['parent_id'])
@@ -465,13 +454,10 @@ class Configurable extends AbstractType
     }
 
     /**
-     * Persist the structure's `variant`-level, common-scope, non-axis
-     * attributes submitted on the leaf's payload. Axis/super-attribute codes
-     * are already written by the caller's axis loop above and must not be
-     * duplicated here; `sku` is handled separately. A code absent from the
-     * submitted `values.common` payload is skipped rather than failed - a
-     * leaf may legitimately omit some variant-level attributes. Only
-     * `common` scope is resolved (Phase-1 resolver only handles common).
+     * Persist the structure's `variant`-level, common-scope, non-axis attributes.
+     * Axis codes are already written by the caller's loop and must not be
+     * duplicated here; a code absent from the payload is skipped rather than
+     * failed, since a leaf may legitimately omit variant-level attributes.
      *
      * @param  array<string, array<string, mixed>>  $variantValues
      * @param  array<int, string>  $axisCodes

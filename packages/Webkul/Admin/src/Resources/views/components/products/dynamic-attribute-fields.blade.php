@@ -25,7 +25,6 @@
 @endphp
 
 @php
-    // Batch selected-option labels for all select/multiselect fields into one query (only pre-selected codes, not the full set).
     $selectedCodesByAttribute = [];
 
     foreach ($fields as $selectField) {
@@ -43,7 +42,6 @@
             $selected = $lockedFields[$selectField->code]['value'] ?? null;
         }
 
-        // Multiselect values are stored comma-joined; split them so each code matches.
         if (is_string($selected) && str_contains($selected, ',')) {
             $selected = explode(',', $selected);
         }
@@ -275,7 +273,6 @@
                 @endphp
 
                 @if (! empty($value))
-                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -309,7 +306,6 @@
                 @endphp
 
                 @if (! empty($value))
-                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -339,7 +335,6 @@
                 @endphp
 
                 @if (! empty($value))
-                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -381,7 +376,6 @@
                 </div>
             @break
             @case('multiselect')
-                {{-- NO BREAK --}}
                 @php
                     if (! is_array($value)) {
                         $value = str_contains((string) $value, ',')
@@ -390,7 +384,6 @@
                     }
                 @endphp
             @case('select')
-                {{-- NO BREAK --}}
                 @php
                     $selectedValue = [];
 

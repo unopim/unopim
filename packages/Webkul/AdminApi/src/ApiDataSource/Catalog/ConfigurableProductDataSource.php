@@ -49,10 +49,9 @@ class ConfigurableProductDataSource extends ProductDataSource
 
     /**
      * Narrows the endpoint's two served types down to the one named by the optional
-     * `type` query parameter, mirroring how `limit` and `page` are read straight off
-     * the request rather than through the `filters` JSON payload. Omitting the
-     * parameter returns both types; naming a type this endpoint does not serve is a
-     * client error rather than a silently empty page.
+     * `type` query parameter, read straight off the request like `limit` and `page`
+     * rather than through the `filters` JSON. Omitting it returns both types; naming
+     * a type this endpoint does not serve is a client error, not an empty page.
      *
      * @return array<int, string>
      */

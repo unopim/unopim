@@ -21,12 +21,10 @@ use Webkul\Product\Type\Configurable;
 class ConfigurableProductController extends ProductController
 {
     /**
-     * Resolves the `variant_structure` code sent on a create request to a
-     * structure owned by the resolved family, and reconciles it with the
-     * optional `super_attributes` list. Returns the validation-failure
-     * response when the code is unknown for that family or the two disagree,
-     * and null once `$data` carries `variant_structure_id` plus a
-     * `super_attributes` list consistent with the structure's axes.
+     * Resolves the `variant_structure` code on a create request to a structure owned
+     * by the resolved family and reconciles it with the optional `super_attributes`
+     * list. Returns the validation-failure response when the code is unknown for that
+     * family or the two disagree, and null once `$data` is consistent.
      */
     protected function applyVariantStructureReference(array &$data, string $structureCode, string $familyCode, int $familyId): ?JsonResponse
     {
@@ -90,6 +88,9 @@ class ConfigurableProductController extends ProductController
 
     /**
      * Store a newly created resource in storage.
+     *
+     * A rich `associations` payload is validated before the product row is created,
+     * so an invalid link's `additional_data` aborts with nothing persisted.
      */
     public function store(StoreConfigurableProductRequest $request): JsonResponse
     {
@@ -149,9 +150,6 @@ class ConfigurableProductController extends ProductController
                 }
             }
 
-            // Validated BEFORE the product row is created below, so an
-            // invalid link's `additional_data` aborts here with nothing
-            // persisted -- see `validateRichAssociationsBeforeCreate()`.
             $this->validateRichAssociationsBeforeCreate($data);
 
             Event::dispatch('catalog.product.create.before');
@@ -172,13 +170,9 @@ class ConfigurableProductController extends ProductController
     /**
      * Store a newly created variant_group resource under its parent configurable product.
      *
-     * A structure may fix more than one axis at level 1, so the group is
-     * identified among its siblings by the full ordered level-1 axis tuple:
-     * every level-1 axis code must be supplied, and uniqueness is checked on
-     * the whole tuple rather than on a single axis. All axis values ride in
-     * `group_values`, which {@see Configurable::createVariantGroup()} writes
-     * verbatim into the group's common values -- leaving that method, shared
-     * with the admin UI path, untouched.
+     * A structure may fix more than one axis at level 1, so a group is identified
+     * among its siblings by the full ordered level-1 axis tuple: every level-1 code
+     * must be supplied and uniqueness is checked on the whole tuple.
      */
     protected function storeVariantGroup(StoreConfigurableProductRequest $request): JsonResponse
     {

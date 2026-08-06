@@ -38,20 +38,10 @@ class ProductController extends ApiController
     ) {}
 
     /**
-     * Resolves + validates the optional rich, unified `associations` payload
-     * (same shape `AbstractType::prepareRichAssociations()` consumes: `{
-     * <typeCode>: [ {sku, additional_data?} ] }`) via the product's type
-     * instance, BEFORE any product row is written by the caller. An invalid
-     * link's `additional_data` throws a `ValidationException` right here --
-     * caught by the caller's existing `catch (\Exception $e) {
-     * storeExceptionLog($e) }` as a 422, with nothing persisted -- mirroring
-     * `AbstractType::update()`'s "validate before save" guarantee for this
-     * write path, which persists product data directly on the model instead
-     * of going through that method.
-     *
-     * Returns null when the payload carries no non-empty rich `associations`
-     * key: callers keep relying on the legacy ValueSetter +
-     * `syncAssociationLinks()` path, byte-unchanged.
+     * Resolves and validates the optional rich `associations` payload through the
+     * product's type instance, BEFORE the caller writes any product row: an invalid
+     * link throws here and surfaces as a 422 with nothing persisted. Returns null
+     * when there is no such payload, leaving the legacy sync path untouched.
      *
      * @return array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}|null
      */
@@ -67,29 +57,10 @@ class ProductController extends ApiController
     }
 
     /**
-     * Validates the rich `associations` payload BEFORE any product row is
-     * written by a CREATE-path caller (`SimpleProductController::store()`
-     * -- both its plain-create branch and its `parent`-variant branch that
-     * persists via `createOrUpdateVariant()` -- and
-     * `ConfigurableProductController::store()`). Without this, an invalid
-     * link's `additional_data` would only be caught later, inside
-     * `updateProduct()`'s own `resolveRichAssociations()` call, by which
-     * point `$this->productRepository->create($data)` (or the variant
-     * create) has already committed a bare sku/type/family row -- and
-     * since `StoreSimpleProductRequest`/`StoreConfigurableProductRequest`
-     * enforce `values.common.sku` unique, the client can't even retry the
-     * same sku, permanently locking it.
-     *
-     * Reuses the existing `resolveRichAssociations()` (and therefore
-     * `AbstractType::prepareRichAssociations()`) against a throwaway,
-     * unsaved `Product` -- with only `type` set, which is all
-     * `getTypeInstance()` needs to resolve the type class. Safe because
-     * `prepareRichAssociations()` only dereferences `$product->id` for
-     * self-link exclusion (`$relatedProductId === (int) $product->id`),
-     * a harmless no-op when `id` is null. When the payload carries no
-     * non-empty rich `associations` key, `resolveRichAssociations()`
-     * short-circuits before ever touching `$product`, so this is a no-op
-     * for the legacy create path -- byte-unchanged.
+     * Validates the rich `associations` payload BEFORE a create-path caller writes
+     * any row: otherwise the bare sku row is already committed when the link fails,
+     * and the unique-sku rule then locks that sku out of every retry. Resolves against
+     * a throwaway unsaved `Product` — only its `type` and a null `id` are ever read.
      *
      * @throws ValidationException
      */
@@ -113,11 +84,10 @@ class ProductController extends ApiController
     }
 
     /**
-     * Rich-syncs the resolved unified `associations` payload to
-     * `product_associations`, then mirrors the tuple's legacy section =>
-     * sku list into `product->values['associations']` (as
-     * `AbstractType::update()` does), so a later request that omits
-     * `associations` doesn't read these rows as "no links" and delete them.
+     * Rich-syncs the resolved `associations` payload to `product_associations`, then
+     * mirrors the tuple's legacy section => sku list into `values['associations']`
+     * (as `AbstractType::update()` does), so a later request that omits
+     * `associations` does not read these rows as "no links" and delete them.
      *
      * @param  array{0: array<string,array<int,string>>, 1: array<string,array{association_type_id:int,links:array}>}|null  $richAssociations
      */
@@ -418,9 +388,8 @@ class ProductController extends ApiController
      * Creates or updates a variant product based on the provided data.
      *
      * A `variant_group` parent takes a dedicated route: it owns no
-     * `product_super_attributes` rows, so the configurable-parent flow below
-     * would validate nothing and then skip the create entirely, leaving the
-     * caller with a 404 for a sku that was never written.
+     * `product_super_attributes` rows, so the configurable-parent flow below would
+     * validate nothing and skip the create, 404ing on a sku that was never written.
      *
      * @param  array  $data  The input data containing variant and super attribute information.
      * @return Product The updated or created variant product.
@@ -448,16 +417,9 @@ class ProductController extends ApiController
     /**
      * Creates a `simple` leaf under a `variant_group` node.
      *
-     * A `variant_group` carries no `product_super_attributes` rows and its own
-     * type instance cannot create variants, so the leaf is materialized
-     * through the governing configurable ancestor's type instance with
-     * `parent_id` pointing at the group -- the same route
-     * {@see Configurable::updateVariantGroups()} takes for
-     * the admin UI. What distinguishes a leaf from its siblings is the
-     * structure's level-2 axes, so those are the codes required on the
-     * payload and checked for a duplicate combination, scoped to the group's
-     * own `simple` children and taken under the same lock that guards the
-     * subsequent write.
+     * A `variant_group` owns no `product_super_attributes`, so the leaf is created
+     * through the configurable ancestor's type instance. Level-2 axes distinguish
+     * siblings: required, and duplicate-checked among the children under one lock.
      *
      * @throws ModelNotFoundException
      * @throws UnprocessableEntityHttpException
