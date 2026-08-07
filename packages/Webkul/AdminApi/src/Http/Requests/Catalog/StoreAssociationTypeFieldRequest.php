@@ -31,7 +31,6 @@ class StoreAssociationTypeFieldRequest extends ApiFormRequest
             'is_required'      => ['sometimes', 'boolean'],
             'is_unique'        => ['sometimes', 'boolean'],
             'value_per_locale' => ['sometimes', 'boolean'],
-            'section'          => ['sometimes', Rule::in(['left', 'right'])],
         ];
 
         foreach (core()->getAllActiveLocales() as $locale) {

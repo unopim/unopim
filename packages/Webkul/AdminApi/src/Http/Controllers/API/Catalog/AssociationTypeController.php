@@ -181,7 +181,6 @@ class AssociationTypeController extends ApiController
         $requestData['is_required'] = $requestData['is_required'] ?? false;
         $requestData['is_unique'] = $requestData['is_unique'] ?? false;
         $requestData['value_per_locale'] = $requestData['value_per_locale'] ?? false;
-        $requestData['section'] = $requestData['section'] ?? 'left';
         $requestData['validation'] = $requestData['validation'] ?? null;
         $requestData['association_type_id'] = $associationType->id;
 

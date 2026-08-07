@@ -29,7 +29,6 @@ function addQuantityFieldToAssociationType(int $associationTypeId): void
         'validation'          => 'number',
         'is_required'         => 1,
         'status'              => 1,
-        'section'             => 'left',
         'en_US'               => ['name' => 'Quantity'],
     ]);
 }
@@ -53,7 +52,6 @@ function createBundleKitAssociationType(): int
                 'validation'  => 'number',
                 'is_required' => 1,
                 'status'      => 1,
-                'section'     => 'left',
                 'en_US'       => ['name' => 'Quantity'],
             ],
         ],
@@ -162,7 +160,6 @@ it('allows re-saving a product unchanged when a link sets an `is_unique` field -
                 'is_required' => 1,
                 'is_unique'   => 1,
                 'status'      => 1,
-                'section'     => 'left',
                 'en_US'       => ['name' => 'Serial Number'],
             ],
         ],

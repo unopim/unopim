@@ -109,7 +109,6 @@ class AssociationTypeDataSource extends ApiDataSource
             'is_required'      => (int) $data['is_required'],
             'is_unique'        => (int) $data['is_unique'],
             'value_per_locale' => (int) $data['value_per_locale'],
-            'section'          => $data['section'],
             'labels'           => $this->getTranslations($data),
         ], $fields);
     }
