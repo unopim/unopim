@@ -238,3 +238,48 @@ it('builds a full two-level variant tree through the REST API', function () {
     expect($leaf->type)->toBe('simple');
     expect($leaf->values['common'][$size->code])->toBe($sizeOption);
 });
+
+it('resolves a leaf axis from variant attributes over values common, and checks uniqueness on what it persists', function () {
+    [$family, $structure, $color, $brand, $size, $configurable] = vsrTwoAxisTree('vsr12');
+
+    $colorOption = $color->options->first()->code;
+    $brandOption = $brand->options->first()->code;
+    $sizeOptions = $size->options->take(2)->pluck('code')->all();
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
+        'family'            => $family->code,
+        'variant_structure' => $structure->code,
+        'values'            => ['common' => ['sku' => 'vsr12-config']],
+    ])->assertStatus(201);
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
+        'type'   => 'variant_group',
+        'parent' => 'vsr12-config',
+        'values' => ['common' => ['sku' => 'vsr12-group', $color->code => $colorOption, $brand->code => $brandOption]],
+    ])->assertStatus(201);
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.products.store'), [
+        'parent'  => 'vsr12-group',
+        'family'  => $family->code,
+        'values'  => ['common' => ['sku' => 'vsr12-leaf-a']],
+        'variant' => ['attributes' => [$size->code => $sizeOptions[0]]],
+    ])->assertStatus(201);
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.products.store'), [
+        'parent'  => 'vsr12-group',
+        'family'  => $family->code,
+        'values'  => ['common' => ['sku' => 'vsr12-leaf-b', $size->code => $sizeOptions[0]]],
+        'variant' => ['attributes' => [$size->code => $sizeOptions[1]]],
+    ])->assertStatus(201);
+
+    expect(Product::where('sku', 'vsr12-leaf-b')->first()->values['common'][$size->code])->toBe($sizeOptions[1]);
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.products.store'), [
+        'parent'  => 'vsr12-group',
+        'family'  => $family->code,
+        'values'  => ['common' => ['sku' => 'vsr12-leaf-c', $size->code => $sizeOptions[1]]],
+        'variant' => ['attributes' => [$size->code => $sizeOptions[0]]],
+    ])->assertStatus(422);
+
+    expect(Product::where('sku', 'vsr12-leaf-c')->exists())->toBeFalse();
+});

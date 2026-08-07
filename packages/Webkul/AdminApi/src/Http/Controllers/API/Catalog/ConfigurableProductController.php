@@ -184,6 +184,12 @@ class ConfigurableProductController extends ProductController
             );
         }
 
+        try {
+            $this->valuesValidator->validate(data: $request->input(AbstractType::PRODUCT_VALUES_KEY, []));
+        } catch (ValidationException $e) {
+            return $this->validateErrorResponse($e->validator->errors()->messages());
+        }
+
         $common = $request->input('values.common', []);
         $sku = $common['sku'];
         $axisCodes = app(VariantStructurePlanner::class)->axisCodesByLevel($parent->variantStructure)['level_1'] ?? [];
@@ -211,6 +217,15 @@ class ConfigurableProductController extends ProductController
 
             $groupValues = $common;
             unset($groupValues['sku']);
+
+            $wysiwygAttributes = $parent->getEditableAttributes()
+                ->where('enable_wysiwyg', '==', 1)
+                ->where('type', '==', 'textarea');
+
+            $groupValues = $this->sanitizeData(
+                [AbstractType::COMMON_VALUES_KEY => $groupValues],
+                $wysiwygAttributes
+            )[AbstractType::COMMON_VALUES_KEY] ?? $groupValues;
 
             return $parent->getTypeInstance()->createVariantGroup($parent, [
                 'sku'          => $sku,

@@ -209,7 +209,7 @@ it('creates a variant_group via the configurable-products POST endpoint', functi
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
         'type'   => 'variant_group',
         'parent' => $configurable->sku,
-        'values' => ['common' => ['sku' => 'vgp-group', $color->code => 'red']],
+        'values' => ['common' => ['sku' => 'vgp-group', $color->code => $color->options->first()->code]],
     ])->assertStatus(201);
 
     expect(Product::where('sku', 'vgp-group')->first())
@@ -542,7 +542,7 @@ it('announces a variant group created through the REST endpoint', function () {
             'values' => [
                 'common' => [
                     'sku'         => 'vg-evt-group-'.uniqid(),
-                    $color->code  => 'red',
+                    $color->code  => $color->options->first()->code,
                 ],
             ],
         ])
@@ -552,4 +552,53 @@ it('announces a variant group created through the REST endpoint', function () {
         'catalog.product.create.after',
         fn ($event, $product): bool => $product->type === 'variant_group'
     );
+});
+
+it('purifies wysiwyg values when a variant group is created', function () {
+    $family = AttributeFamily::factory()->create();
+    $color = Attribute::factory()->create(['code' => 'vgp_color_'.uniqid(), 'type' => 'select']);
+    $notes = Attribute::factory()->create([
+        'code'              => 'vgp_notes_'.uniqid(),
+        'type'              => 'textarea',
+        'enable_wysiwyg'    => 1,
+        'value_per_locale'  => 0,
+        'value_per_channel' => 0,
+    ]);
+
+    $structure = VariantStructure::create([
+        'attribute_family_id' => $family->id,
+        'code'                => 'vgp_structure_'.uniqid(),
+        'levels'              => 2,
+    ]);
+
+    VariantStructureAxis::insert([
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $color->id, 'level' => 'level_1', 'position' => 0],
+    ]);
+
+    AttributeFamily::factory()->linkAttributeGroupToFamily($family);
+    AttributeFamily::factory()->linkAttributesToFamily($family, Attribute::whereIn('id', [$color->id, $notes->id])->get());
+
+    $configurable = app(ProductRepository::class)->create([
+        'sku'                  => 'vgp-config-'.uniqid(),
+        'type'                 => 'configurable',
+        'attribute_family_id'  => $family->id,
+        'variant_structure_id' => $structure->id,
+    ]);
+
+    $this->withHeaders($this->headers)
+        ->json('POST', route('admin.api.configurable_products.store'), [
+            'type'   => 'variant_group',
+            'parent' => $configurable->sku,
+            'values' => ['common' => [
+                'sku'          => 'vgp-group-'.uniqid(),
+                $color->code   => $color->options->first()->code,
+                $notes->code   => '<p>keep</p><script>alert(1)</script>',
+            ]],
+        ])
+        ->assertStatus(201);
+
+    $group = Product::where('type', 'variant_group')->latest('id')->first();
+
+    expect($group->values['common'][$notes->code])->not->toContain('<script>')
+        ->and($group->values['common'][$notes->code])->toContain('keep');
 });
