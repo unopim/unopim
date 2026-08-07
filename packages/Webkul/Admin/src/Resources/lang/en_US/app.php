@@ -377,6 +377,9 @@ return [
                         'variant-attribute-option-not-found' => 'Variant attribute or option with value ":attributes" not found',
                         'supper-attribute-not-found'         => 'Supper attribute  with value ":attribute" not found',
                         'variant-given-exists'               => 'This variant with value ":variants" already exists',
+                        'variant-group-has-children'         => 'This variant group still has variants. Remove or reassign them before deleting it.',
+                        'variant-group-combination-exists'   => 'A variant group with :values already exists under this product. Choose a different combination.',
+                        'variant-combination-exists'         => 'A variant with :values already exists under this product. Choose a different combination.',
 
                         'create' => [
                             'description'            => 'Description',
@@ -513,6 +516,7 @@ return [
 
                     'numeric'                    => 'Value for the numeric attribute ":attribute" must be a valid number.',
                     'select-attribute-or-family' => 'Please select at least one attribute or an attribute family.',
+                    'duplicate-axis'             => 'Two variants under the same parent cannot share an axis combination, so this save will be rejected.',
                     'failed'                     => 'Validation failed.',
                 ],
 
@@ -594,6 +598,10 @@ return [
             'parent-not-found'        => 'Parent with sku ":sku" could not be found',
             'upload-success'          => 'Product file uploaded successfully.',
             'update-failure'          => 'Product could not be updated.',
+            'immutable-fields'        => 'The following fields cannot be modified: :fields.',
+
+            'variant-structure-not-found'     => 'Variant structure with code ":code" could not be found in family ":family"',
+            'variant-structure-axis-mismatch' => 'The given super attributes do not match the axes of variant structure ":code". Expected: :axes',
         ],
 
         'attributes' => [
@@ -1138,6 +1146,8 @@ return [
             'delete-failed'     => 'Association Type Deleted Failed',
             'user-define-error' => 'Can not delete system Association Type',
             'unknown-fields'    => 'Association Type Field with code ":fields" could not be found',
+            'not-found'         => 'Association type with code ":code" could not be found',
+            'immutable-fields'  => 'The following fields cannot be modified: :fields.',
 
             'create' => [
                 'title'      => 'Create Association Type',
@@ -1162,6 +1172,10 @@ return [
                 'save-field-btn'       => 'Save Field',
                 'same-code-error'      => 'The field code must be unique.',
                 'add-fields-info'      => 'To create custom fields for this association type.',
+                'create-success'       => 'Association Type Field Created Successfully',
+                'update-success'       => 'Association Type Field Updated Successfully',
+                'delete-success'       => 'Association Type Field Deleted Successfully',
+                'not-found'            => 'Association Type Field with code ":code" could not be found',
             ],
         ],
 
@@ -1260,6 +1274,8 @@ return [
                 'too-large'                        => 'Filter is too large to save',
                 'variant-saved'                    => 'Variant structure saved.',
                 'variant-structure-locked'         => 'This variant structure already has variants, so its axes and levels can no longer be changed. Delete the existing variants first.',
+                'variant-structure-deleted'        => 'Variant structure deleted.',
+                'variant-structure-in-use'         => 'This variant structure is still referenced by products, so it cannot be deleted. Reassign or delete those products first.',
                 'group-code-already-exists'        => 'An attribute group code already exists.',
                 'group-contains-system-attributes' => 'This group contains SKU. Move SKU to another group before removing this group from the family.',
                 'group-name-already-exists'        => 'An attribute group name already exists.',
@@ -3158,6 +3174,7 @@ return [
         'user-management'          => 'User Management',
         'category_fields'          => 'Category Fields',
         'association_types'        => 'Association Types',
+        'association_type_fields'  => 'Association Type Fields',
         'view'                     => 'View',
         'execute'                  => 'Job Execute',
         'history'                  => 'History',

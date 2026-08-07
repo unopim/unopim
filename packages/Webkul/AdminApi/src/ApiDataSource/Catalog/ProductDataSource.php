@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
 use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
@@ -20,6 +21,8 @@ class ProductDataSource extends ApiDataSource
      */
     protected $sortColumn = 'products.id';
 
+    protected ?VariantValueResolver $variantValueResolver = null;
+
     /**
      * Create a new DataSource instance.
      *
@@ -31,6 +34,11 @@ class ProductDataSource extends ApiDataSource
         protected ProductCompletenessScoreRepository $productCompletenessScoreRepository,
         protected ProductAssociationRepository $productAssociationRepository
     ) {}
+
+    protected function variantValueResolver(): VariantValueResolver
+    {
+        return $this->variantValueResolver ??= app(VariantValueResolver::class);
+    }
 
     /**
      * Prepares the query builder for API requests.
@@ -82,14 +90,19 @@ class ProductDataSource extends ApiDataSource
             ? $this->completenessScoresByProduct(array_column($rows, 'id'))
             : null;
 
+        $mergedValuesById = $this->variantValueResolver()->resolveBatch($rows);
+
         return array_map(
-            fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct),
+            fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct, mergedValues: $mergedValuesById[$item['id']] ?? null),
             $rows,
         );
     }
 
     /**
      * Get category field by its code.
+     *
+     * Always includes the `associations` block — one extra query per request, unlike
+     * the listing in `formatData()`, which omits it to avoid an N+1 query per row.
      *
      * @param  string  $code  The unique code of the category field.
      * @return array An associative array containing the category field's code, status, and label.
@@ -120,13 +133,9 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
-        // Single-product GET always includes the `associations` block (all
-        // types, including custom ones + `additional_data`) — unlike
-        // `with_completeness`, this isn't behind an opt-in flag since a
-        // single extra query per request (vs. per-row on a listing) is
-        // negligible; `formatData()` (the listing) does NOT request it, to
-        // avoid an N+1 query per row there.
-        return $this->normalizeProduct($product, $withCompleteness, withAssociations: true);
+        $mergedValues = $this->variantValueResolver()->resolveBatch([$product])[$product['id']] ?? null;
+
+        return $this->normalizeProduct($product, $withCompleteness, withAssociations: true, mergedValues: $mergedValues);
     }
 
     public function getSuperAttributes($data)
@@ -217,6 +226,8 @@ class ProductDataSource extends ApiDataSource
     /**
      * Retrieves the ID of a product based on its code.
      *
+     * The lookup must match a configurable product AND the given SKU: matching on type
+     * alone returns any configurable product and masks an invalid SKU.
      *
      * @return int|null
      *
@@ -225,8 +236,6 @@ class ProductDataSource extends ApiDataSource
     protected function getParentIdByCode(Builder $queryBuilder, string $sku)
     {
         $parentQuery = clone $queryBuilder;
-        // Parent lookup must match BOTH a configurable product AND the given SKU — previously an
-        // `orWhere` on type alone returned any configurable product, masking invalid SKUs.
         $parentQuery->where('products.sku', $sku)
             ->where('products.type', config('product_types.configurable.key'));
         $parentId = $parentQuery->first()?->id;
@@ -282,8 +291,12 @@ class ProductDataSource extends ApiDataSource
      */
     /**
      * @param  array<string, list<array<string, mixed>>>|null  $completenessByProduct
+     * @param  array|null  $mergedValues  This row's `values`, already merged with its
+     *                                    ancestor chain by `VariantValueResolver::resolveBatch()`.
+     *                                    Falls back to the row's own `values` when absent
+     *                                    (e.g. a row with no parent).
      */
-    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null, bool $withAssociations = false): array
+    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null, bool $withAssociations = false, ?array $mergedValues = null): array
     {
         $responseData = [
             'sku'        => $product['sku'],
@@ -294,10 +307,10 @@ class ProductDataSource extends ApiDataSource
             'additional' => $product['additional'],
             'created_at' => $product['created_at'],
             'updated_at' => $product['updated_at'],
-            'values'     => $product['values'],
+            'values'     => $mergedValues ?? $product['values'],
         ];
 
-        if (config('product_types.configurable.key') == $product['type']) {
+        if (in_array($product['type'], [config('product_types.configurable.key'), config('product_types.variant_group.key')], true)) {
             $superAttributes = $this->getSuperAttributes($product);
 
             $responseData['super_attributes'] = $superAttributes;
@@ -318,15 +331,10 @@ class ProductDataSource extends ApiDataSource
     }
 
     /**
-     * Builds the `associations` response block for a single product: every
-     * link the product has, across ALL association types (the 3 legacy
-     * sections AND custom types alike), grouped by the type's `code`, each
-     * carrying the related product's `sku` and the link's `additional_data`
-     * (e.g. `quantity`) -- the rich, per-link data the legacy
-     * `values.associations.<section>` flat SKU lists don't carry.
-     *
-     * This is purely additive: the legacy `values.associations` output
-     * above is untouched, so existing API consumers keep working.
+     * Builds the `associations` response block: every link across ALL association
+     * types (legacy sections and custom types alike), grouped by type `code`, each
+     * carrying the related product's `sku` and the link's `additional_data` — the
+     * per-link data the legacy flat SKU lists cannot carry. Purely additive.
      *
      * @return array<string, array<int, array{related_sku: ?string, additional_data: ?array}>>
      */

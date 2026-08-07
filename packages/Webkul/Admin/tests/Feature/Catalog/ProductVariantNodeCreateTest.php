@@ -378,24 +378,6 @@ it('queues exactly one product webhook for a leaf variant created from the sideb
     expect(Product::find($response->json('data.id'))->type)->toBe('simple');
 });
 
-it('stays silent when a variant group node is created', function () {
-    $this->withoutMiddleware(PreventRequestForgery::class);
-
-    [$configurable, $colorCode, , $redOptionCode] = makeConfigurableForVariantNodeCreate();
-
-    Event::fake(['catalog.product.create.after']);
-
-    $this->actingAs(Admin::factory()->create(), 'admin')
-        ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
-            'parent_id' => null,
-            'role'      => 'variant_group',
-            'values'    => [$colorCode => $redOptionCode],
-        ])
-        ->assertOk();
-
-    Event::assertNotDispatched('catalog.product.create.after');
-});
-
 it('stays silent when the requested variant node already exists', function () {
     $this->withoutMiddleware(PreventRequestForgery::class);
 
@@ -425,4 +407,27 @@ it('stays silent when the requested variant node already exists', function () {
         ->assertStatus(422);
 
     Event::assertNotDispatched('catalog.product.create.after');
+});
+
+it('announces a variant group created from the variations sidebar', function () {
+    $this->withoutMiddleware(PreventRequestForgery::class);
+
+    [$configurable, $colorCode, $sizeCode, $redOptionCode, $sizeOptionCode] = makeConfigurableForVariantNodeCreate();
+
+    Event::fake(['catalog.product.create.after']);
+
+    $response = $this->actingAs(Admin::factory()->create(), 'admin')
+        ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
+            'parent_id' => $configurable->id,
+            'role'      => 'variant_group',
+            'values'    => [$colorCode => $redOptionCode],
+        ])
+        ->assertOk();
+
+    $newId = $response->json('data.id');
+
+    Event::assertDispatched(
+        'catalog.product.create.after',
+        fn ($event, $product): bool => $product->id === $newId && $product->type === 'variant_group'
+    );
 });

@@ -2,7 +2,9 @@
 
 namespace Webkul\AdminApi\Http\Controllers\API\Catalog;
 
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -11,10 +13,55 @@ use Webkul\AdminApi\ApiDataSource\Catalog\ConfigurableProductDataSource;
 use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateConfigurableProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreConfigurableProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateConfigurableProductRequest;
+use Webkul\Product\Repositories\VariantStructureRepository;
+use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Type\AbstractType;
+use Webkul\Product\Type\Configurable;
 
 class ConfigurableProductController extends ProductController
 {
+    /**
+     * Resolves the `variant_structure` code on a create request to a structure owned
+     * by the resolved family and reconciles it with the optional `super_attributes`
+     * list. Returns the validation-failure response when the code is unknown for that
+     * family or the two disagree, and null once `$data` is consistent.
+     */
+    protected function applyVariantStructureReference(array &$data, string $structureCode, string $familyCode, int $familyId): ?JsonResponse
+    {
+        $structure = app(VariantStructureRepository::class)->findOneWhere([
+            'attribute_family_id' => $familyId,
+            'code'                => $structureCode,
+        ]);
+
+        if (! $structure) {
+            return $this->validateErrorResponse([
+                'variant_structure' => [trans('admin::app.catalog.products.variant-structure-not-found', ['code' => $structureCode, 'family' => $familyCode])],
+            ]);
+        }
+
+        $structure->load('axes.attribute');
+
+        $axisCodes = app(VariantStructurePlanner::class)->allAxisCodes($structure);
+
+        if (empty($data['super_attributes'])) {
+            $data['super_attributes'] = $axisCodes;
+        } elseif (
+            array_diff($axisCodes, $data['super_attributes']) !== []
+            || array_diff($data['super_attributes'], $axisCodes) !== []
+        ) {
+            return $this->validateErrorResponse([
+                'super_attributes' => [trans('admin::app.catalog.products.variant-structure-axis-mismatch', [
+                    'code' => $structureCode,
+                    'axes' => implode(', ', $axisCodes),
+                ])],
+            ]);
+        }
+
+        $data['variant_structure_id'] = $structure->id;
+
+        return null;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -41,9 +88,20 @@ class ConfigurableProductController extends ProductController
 
     /**
      * Store a newly created resource in storage.
+     *
+     * A rich `associations` payload is validated before the product row is created,
+     * so an invalid link's `additional_data` aborts with nothing persisted.
      */
     public function store(StoreConfigurableProductRequest $request): JsonResponse
     {
+        if ($request->input('type') === 'variant_group') {
+            try {
+                return $this->storeVariantGroup($request);
+            } catch (\Exception $e) {
+                return $this->storeExceptionLog($e);
+            }
+        }
+
         $data = $request->only([
             'status',
             'parent',
@@ -51,6 +109,7 @@ class ConfigurableProductController extends ProductController
             'additional',
             'values',
             'super_attributes',
+            'variant_structure',
             'variants',
             'associations',
         ]);
@@ -58,6 +117,18 @@ class ConfigurableProductController extends ProductController
         try {
             $family = $this->findFamilyOr404($data['family']);
             $data['type'] = config('product_types.configurable.key');
+
+            $structureCode = $data['variant_structure'] ?? null;
+
+            unset($data['variant_structure']);
+
+            if (filled($structureCode)) {
+                $failure = $this->applyVariantStructureReference($data, $structureCode, $family->code, $family->id);
+
+                if ($failure) {
+                    return $failure;
+                }
+            }
 
             $this->validateSuperAttributes($data, $family);
 
@@ -79,9 +150,6 @@ class ConfigurableProductController extends ProductController
                 }
             }
 
-            // Validated BEFORE the product row is created below, so an
-            // invalid link's `additional_data` aborts here with nothing
-            // persisted -- see `validateRichAssociationsBeforeCreate()`.
             $this->validateRichAssociationsBeforeCreate($data);
 
             Event::dispatch('catalog.product.create.before');
@@ -97,6 +165,86 @@ class ConfigurableProductController extends ProductController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
+    }
+
+    /**
+     * Store a newly created variant_group resource under its parent configurable product.
+     *
+     * A structure may fix more than one axis at level 1, so a group is identified
+     * among its siblings by the full ordered level-1 axis tuple: every level-1 code
+     * must be supplied and uniqueness is checked on the whole tuple.
+     */
+    protected function storeVariantGroup(StoreConfigurableProductRequest $request): JsonResponse
+    {
+        $parent = $this->findParentProductOr404($request->input('parent'));
+
+        if ($parent->type !== config('product_types.configurable.key') || (int) ($parent->variantStructure?->levels ?? 1) !== 2) {
+            throw new ModelNotFoundException(
+                trans('admin::app.catalog.products.product-not-found', ['sku' => $request->input('parent')])
+            );
+        }
+
+        try {
+            $this->valuesValidator->validate(data: $request->input(AbstractType::PRODUCT_VALUES_KEY, []));
+        } catch (ValidationException $e) {
+            return $this->validateErrorResponse($e->validator->errors()->messages());
+        }
+
+        $common = $request->input('values.common', []);
+        $sku = $common['sku'];
+        $axisCodes = app(VariantStructurePlanner::class)->axisCodesByLevel($parent->variantStructure)['level_1'] ?? [];
+
+        $missingAxisCodes = array_values(array_diff($axisCodes, array_keys($common)));
+
+        if ($missingAxisCodes !== []) {
+            return $this->validateErrorResponse([
+                'axis' => [trans('admin::app.catalog.products.edit.types.configurable.supper-attribute-not-found', ['attribute' => implode(', ', $missingAxisCodes)])],
+            ]);
+        }
+
+        $axisTuple = [];
+
+        foreach ($axisCodes as $axisCode) {
+            $axisTuple[$axisCode] = $common[$axisCode];
+        }
+
+        $node = DB::transaction(function () use ($parent, $sku, $axisTuple, $common) {
+            $this->productRepository->getModel()::query()->whereKey($parent->id)->lockForUpdate()->first();
+
+            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($parent->id, $axisTuple, null, '', 'variant_group')) {
+                return null;
+            }
+
+            $groupValues = $common;
+            unset($groupValues['sku']);
+
+            $wysiwygAttributes = $parent->getEditableAttributes()
+                ->where('enable_wysiwyg', '==', 1)
+                ->where('type', '==', 'textarea');
+
+            $groupValues = $this->sanitizeData(
+                [AbstractType::COMMON_VALUES_KEY => $groupValues],
+                $wysiwygAttributes
+            )[AbstractType::COMMON_VALUES_KEY] ?? $groupValues;
+
+            return $parent->getTypeInstance()->createVariantGroup($parent, [
+                'sku'          => $sku,
+                'group_values' => $groupValues,
+            ]);
+        });
+
+        if (! $node) {
+            return $this->validateErrorResponse([
+                'axis' => [trans('admin::app.catalog.products.edit.types.configurable.variant-given-exists', ['variants' => json_encode($axisTuple)])],
+            ]);
+        }
+
+        Event::dispatch('catalog.product.create.after', $node);
+
+        return $this->successResponse(
+            trans('admin::app.catalog.products.create-success'),
+            Response::HTTP_CREATED
+        );
     }
 
     /**
@@ -124,8 +272,10 @@ class ConfigurableProductController extends ProductController
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
 
-            $data['super_attributes'] = $product->super_attributes->pluck('code')?->toArray();
-            $data['variants'] = $this->setVaraints($product, $data, $data['sku']);
+            if ($product->type === config('product_types.configurable.key')) {
+                $data['super_attributes'] = $product->super_attributes->pluck('code')?->toArray();
+                $data['variants'] = $this->setVaraints($product, $data, $data['sku']);
+            }
 
             Event::dispatch('catalog.product.update.before', $id);
 
@@ -182,6 +332,34 @@ class ConfigurableProductController extends ProductController
     {
         try {
             $product = $this->findProductOr404($code);
+
+            if ($product->type === config('product_types.variant_group.key')) {
+                $deleted = DB::transaction(function () use ($product) {
+                    $this->productRepository->getModel()::query()->whereKey($product->id)->lockForUpdate()->first();
+
+                    if ($product->variants()->exists()) {
+                        return false;
+                    }
+
+                    Event::dispatch('catalog.product.delete.before', $product->sku);
+                    $product->delete();
+                    Event::dispatch('catalog.product.delete.after', $product->sku);
+
+                    return true;
+                });
+
+                if (! $deleted) {
+                    return $this->validateErrorResponse([
+                        'children' => [trans('admin::app.catalog.products.edit.types.configurable.variant-group-has-children')],
+                    ]);
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => trans('admin::app.catalog.products.delete-success'),
+                    'sku'     => $code,
+                ], JsonResponse::HTTP_OK);
+            }
 
             Event::dispatch('catalog.product.delete.before', $code);
 

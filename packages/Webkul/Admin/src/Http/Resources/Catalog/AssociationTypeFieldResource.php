@@ -27,7 +27,6 @@ class AssociationTypeFieldResource extends JsonResource
             'value_per_locale' => (bool) $this->value_per_locale,
             'validation'       => $this->validation,
             'regex_pattern'    => $this->regex_pattern,
-            'section'          => $this->section,
             'rules'            => $this->veeValidateRules(),
             'options'          => $this->options
                 ->map(fn ($option) => [
