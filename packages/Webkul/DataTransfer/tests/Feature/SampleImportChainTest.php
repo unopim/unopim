@@ -26,22 +26,6 @@ function reduceToStockInstallation(): void
     DB::table('locales')->where('code', '!=', 'en_US')->update(['status' => 0]);
 }
 
-function forgetSampleProducts(): void
-{
-    $skus = DB::table('products')
-        ->where('sku', 'like', 'configurable-product-%')
-        ->orWhere('sku', 'like', 'simple-product-%')
-        ->orWhere('sku', 'like', 'variant-product-%')
-        ->pluck('id');
-
-    if ($skus->isEmpty()) {
-        return;
-    }
-
-    DB::table('products')->whereIn('parent_id', $skus)->delete();
-    DB::table('products')->whereIn('id', $skus)->delete();
-}
-
 function seedSampleVariantStructures(): void
 {
     $family = AttributeFamily::query()->where('code', 'default')->firstOrFail();
@@ -136,7 +120,6 @@ $chain = [
 
 it('imports every shipped sample against a stock installation', function () use ($chain) {
     reduceToStockInstallation();
-    forgetSampleProducts();
 
     foreach ($chain as $type) {
         if ($type === 'products') {
@@ -151,7 +134,6 @@ it('imports every shipped sample against a stock installation', function () use 
 
 it('deletes with every shipped delete sample', function () use ($chain) {
     reduceToStockInstallation();
-    forgetSampleProducts();
 
     foreach ($chain as $type) {
         if ($type === 'products') {
