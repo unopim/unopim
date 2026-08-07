@@ -17,7 +17,7 @@
                     :locked="isLocked(col)"
                     :entityId="row.id"
                     :col="col"
-                    :attribute="attributeFor(col)"
+                    :attribute="columns[col.id]"
                     :locale="col.locale"
                     :channel="col.channel"
                 />
@@ -57,16 +57,7 @@
                 };
             },
 
-            computed: {
-                attributesById() {
-                    return Object.fromEntries(this.columns.map(attribute => [attribute.id, attribute]));
-                },
-            },
-
             methods: {
-                attributeFor(col) {
-                    return this.attributesById[col.id] ?? null;
-                },
 
                 lockState(col) {
                     return this.row.locks?.[col.code] ?? 'own';
