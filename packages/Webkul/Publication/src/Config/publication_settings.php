@@ -5,12 +5,12 @@
 | Publication Core Config Tree
 |--------------------------------------------------------------------------
 |
-| Merged into the `core` namespace. Every ancestor of the package's leaf key
-| is declared here, `general` included, even though `Webkul\Admin` already
-| registers its own `general` entry: `Core\Tree`/`Core::getConfigField()`
-| reconstruct the settings tree by scanning every merged entry regardless of
-| source, and a leaf registered without its ancestors produces an
-| `Undefined array key "key"` warning and a tree keyed by `''`.
+| Merged into the `core` namespace. The settings group has no browsable page of
+| its own — it is edited from the `digital_product_passport.publication` system
+| settings row — so only the field group is declared, plus the `general` ancestor
+| it hangs from. `Core::getConfigField()` and `SystemSettings::formGroup()` look
+| the group up by a flat scan of the merged entries, not through the tree, so the
+| fields stay reachable without a section entry.
 |
 */
 
@@ -19,11 +19,6 @@ return [
         'key'  => 'general',
         'name' => 'admin::app.settings.system-settings.system.title',
         'sort' => 1,
-    ], [
-        'key'  => 'general.publication',
-        'name' => 'publication::app.configuration.publication.title',
-        'info' => 'publication::app.configuration.publication.info',
-        'sort' => 8,
     ], [
         'key'    => 'general.publication.settings',
         'name'   => 'publication::app.configuration.publication.settings.title',
