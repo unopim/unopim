@@ -82,6 +82,8 @@ class Exporter extends AbstractExporter
      */
     protected $optionLabelMaps = [];
 
+    protected ?VariantValueResolver $variantValueResolver = null;
+
     /**
      * Create a new instance.
      */
@@ -91,9 +93,13 @@ class Exporter extends AbstractExporter
         protected ChannelRepository $channelRepository,
         protected AttributeRepository $attributeRepository,
         protected ProductSource $productSource,
-        protected VariantValueResolver $variantValueResolver,
     ) {
         parent::__construct($exportBatchRepository, $exportFileBuffer);
+    }
+
+    protected function variantValueResolver(): VariantValueResolver
+    {
+        return $this->variantValueResolver ??= app(VariantValueResolver::class);
     }
 
     /**
@@ -268,9 +274,6 @@ class Exporter extends AbstractExporter
 
         $this->prepareProducts($batch, $filePath);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);
@@ -381,6 +384,11 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare products from current batch
+     *
+     * Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns stay opt-in (default off);
+     * the dedicated association export job is the rich, row-per-link alternative. Row data is built
+     * from model properties rather than `toArray()`, which triggers Astrotomic Translatable's
+     * `getTranslation()` for every configured locale (~8ms/product).
      */
     public function prepareProducts(JobTrackBatchContract $batch, $filePath): void
     {
@@ -388,7 +396,7 @@ class Exporter extends AbstractExporter
 
         $productsByIds = $this->getItemsFromIds($flatIds);
 
-        $mergedValuesById = $this->variantValueResolver->resolveBatch(
+        $mergedValuesById = $this->variantValueResolver()->resolveBatch(
             $productsByIds->map(fn ($product) => [
                 'id'        => $product->id,
                 'parent_id' => $product->parent_id,
@@ -396,16 +404,9 @@ class Exporter extends AbstractExporter
             ])
         );
 
-        // Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns are opt-in
-        // (default off) so the product export stays clean by default. The dedicated
-        // association export job is the rich, row-per-link alternative for this data.
         $withAssociations = (bool) ($this->getFilters()['with_associations'] ?? false);
 
         foreach ($productsByIds as $product) {
-            // Build rowData directly from model properties instead of calling toArray().
-            // Calling $product->toArray() triggers attribute_family->toArray() which invokes
-            // Astrotomic Translatable::getTranslation() for every configured locale (~8ms/product).
-            // Direct property access avoids that entirely.
             $productValues = $mergedValuesById[$product->id] ?? ($product->values ?? []);
 
             $rowData = [

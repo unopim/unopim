@@ -21,6 +21,8 @@ class ProductDataSource extends ApiDataSource
      */
     protected $sortColumn = 'products.id';
 
+    protected ?VariantValueResolver $variantValueResolver = null;
+
     /**
      * Create a new DataSource instance.
      *
@@ -30,9 +32,13 @@ class ProductDataSource extends ApiDataSource
         protected ProductRepository $productRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
         protected ProductCompletenessScoreRepository $productCompletenessScoreRepository,
-        protected ProductAssociationRepository $productAssociationRepository,
-        protected VariantValueResolver $variantValueResolver
+        protected ProductAssociationRepository $productAssociationRepository
     ) {}
+
+    protected function variantValueResolver(): VariantValueResolver
+    {
+        return $this->variantValueResolver ??= app(VariantValueResolver::class);
+    }
 
     /**
      * Prepares the query builder for API requests.
@@ -84,7 +90,7 @@ class ProductDataSource extends ApiDataSource
             ? $this->completenessScoresByProduct(array_column($rows, 'id'))
             : null;
 
-        $mergedValuesById = $this->variantValueResolver->resolveBatch($rows);
+        $mergedValuesById = $this->variantValueResolver()->resolveBatch($rows);
 
         return array_map(
             fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct, mergedValues: $mergedValuesById[$item['id']] ?? null),
@@ -127,7 +133,7 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
-        $mergedValues = $this->variantValueResolver->resolveBatch([$product])[$product['id']] ?? null;
+        $mergedValues = $this->variantValueResolver()->resolveBatch([$product])[$product['id']] ?? null;
 
         return $this->normalizeProduct($product, $withCompleteness, withAssociations: true, mergedValues: $mergedValues);
     }
