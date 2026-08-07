@@ -1,3 +1,28 @@
+# 3.0.1
+
+## Bug fixes
+
+- Restricted the variant uniqueness check to the axis codes the parent's structure declares, closing an unescaped JSON path.
+- Fixed the product edit form locking an axis attribute at the level that owns it.
+- Fixed configurable product creation returning a server error on a duplicate SKU.
+- Fixed the REST locale, currency and channel endpoints answering an unknown code with 400 instead of 404.
+- Fixed bulk edit leaving inherited axis cells blank, resolved from placement rows that axes never carry.
+- Fixed bulk edit media cells staying empty until clicked, and locked cells keeping their upload and delete controls.
+- Fixed bulk edit columns ignoring the order the attributes were selected in.
+- Fixed variant structure effective placements returning in an unstable order.
+- Fixed product webhooks losing a slow write and reporting a creation in place of an update.
+- Fixed product webhooks omitting a SKU rename, which produced an empty difference.
+- Fixed variant groups never announcing themselves as created products.
+- Fixed the category export failing when a job carries no `with_media` filter.
+
+## New features
+
+- Added attribute family variant structures to the REST API with full CRUD; only the name and placements are writable, and a referenced structure cannot be deleted.
+- Added `effective_placements` to the variant structure payload, reporting the tier that governs every attribute of the family.
+- Added variant groups to the configurable products REST API, with a `type` parameter for listing either tier.
+- Added a variant-level write guard shared by every save path, so an attribute is writable only at the level that owns it and a colliding axis rename is rejected in the transaction that persists it.
+- Added variant-level awareness to bulk edit: ancestor-owned cells are locked and show the owner's value, lower-level cells are locked and empty.
+
 # 3.0.0 — July 31st, 2026
 
 ## Bug fixes
