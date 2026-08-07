@@ -1203,19 +1203,27 @@ class Importer extends AbstractImporter
             default                          => 'variant',
         };
 
-        $codes = [];
+        $levelByCode = [];
 
         foreach ($structure->placements as $placement) {
-            if ($placement->level !== $rowLevel && ($code = $placement->attribute?->code)) {
-                $codes[] = $code;
+            if ($code = $placement->attribute?->code) {
+                $levelByCode[$code] = $placement->level;
             }
         }
 
         $axisLevel = (int) $structure->levels === 2 ? ['level_1' => 'sub_parent', 'level_2' => 'variant'] : ['level_1' => 'variant', 'level_2' => 'variant'];
 
         foreach ($structure->axes as $axis) {
-            if (($axisLevel[$axis->level] ?? 'variant') !== $rowLevel && ($code = $axis->attribute?->code)) {
-                $codes[] = $code;
+            if ($code = $axis->attribute?->code) {
+                $levelByCode[$code] = $axisLevel[$axis->level] ?? 'variant';
+            }
+        }
+
+        $codes = [];
+
+        foreach ($this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]) as $attribute) {
+            if (($levelByCode[$attribute->code] ?? 'common') !== $rowLevel) {
+                $codes[] = $attribute->code;
             }
         }
 
