@@ -210,3 +210,40 @@ it('runs the persist closure directly, without the collision-check transaction, 
     expect($result)->toBe([$colorCode => 'red'])
         ->and($persisted)->toBeTrue();
 });
+
+it('allows a structured variant to be renamed, since the sku is its identity and not a level-owned attribute', function () {
+    [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
+
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'grp-sku']);
+    $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-sku']];
+    $group->save();
+
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => 'simple', 'sku' => 'grp-sku-s']);
+    $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-sku-s']];
+    $simple->save();
+
+    $repository = app(ProductRepository::class);
+
+    $result = $repository->guardVariantLevelWrite($simple->fresh(), ['sku' => 'grp-sku-s-renamed']);
+
+    expect($result)->toBe(['sku' => 'grp-sku-s-renamed']);
+});
+
+it('still rejects an ancestor-owned attribute submitted alongside a rename', function () {
+    [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
+
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'grp-both']);
+    $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-both']];
+    $group->save();
+
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => 'simple', 'sku' => 'grp-both-s']);
+    $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-both-s']];
+    $simple->save();
+
+    $repository = app(ProductRepository::class);
+
+    expect(fn () => $repository->guardVariantLevelWrite($simple->fresh(), [
+        'sku'       => 'grp-both-s-renamed',
+        $colorCode  => 'green',
+    ]))->toThrow(ValidationException::class);
+});

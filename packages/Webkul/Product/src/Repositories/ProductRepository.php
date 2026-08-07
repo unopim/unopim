@@ -239,6 +239,10 @@ class ProductRepository extends Repository
         $renamed = [];
 
         foreach ($submittedCommon as $code => $newValue) {
+            if ($code === 'sku') {
+                continue;
+            }
+
             if (! $planner->ownsAtOwnLevel($product, $code)) {
                 $currentValue = $resolved[$code] ?? null;
 
