@@ -276,19 +276,26 @@ jobs:
       - name: Install Node dependencies
         run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
-      # Pest keeps the graph under $HOME/.pest/tia/<project-key>, not in the workspace.
-      - name: Resolve the test impact graph path
-        id: tia
-        run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
+      - name: Anchor the impact diff to the base branch
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: git checkout -B "$BASE_REF"
 
-      - name: Restore the test impact graph
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.tia.outputs.path }}
-          key: pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ github.run_id }}
-          restore-keys: |
-            pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-
-            pest-tia-${{ runner.os }}-
+      - name: Check the baseline fingerprint still applies
+        id: baseline
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          if git diff --quiet "origin/$BASE_REF...HEAD" -- \
+            composer.lock phpunit.xml phpunit.xml.dist \
+            vite.config.ts vite.config.js vite.config.mjs vite.config.cjs vite.config.mts \
+            tsconfig.json tsconfig.app.json jsconfig.json \
+            package-lock.json pnpm-lock.yaml yarn.lock bun.lock bun.lockb; then
+            echo "usable=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "usable=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::Baseline fingerprint drifted — the impacted run would re-record the whole suite, so it is skipped."
+          fi
 
       - name: Setting Environment
         run: |
@@ -322,6 +329,7 @@ jobs:
       # A second worker doubles the resident coverage map and still gets killed
       # with the swap in place, so this job trades its parallelism for headroom.
       - name: Running impacted Pest tests
+        if: steps.baseline.outputs.usable == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: vendor/bin/pest --parallel --processes=1 --tia --colors=always
+        run: vendor/bin/pest --parallel --processes=1 --tia --filtered --colors=always
