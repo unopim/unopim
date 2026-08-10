@@ -38,10 +38,7 @@ tests/e2e-pw/test-results/
 test-results
 /*.png
 .agents
-.claude/*
-!.claude/hooks/
-!.claude/settings.json
-.claude/settings.local.json
+.claude/
 .codex
 .superpowers
 
