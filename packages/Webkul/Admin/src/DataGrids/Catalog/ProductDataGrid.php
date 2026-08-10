@@ -17,6 +17,7 @@ use Webkul\DataGrid\Column;
 use Webkul\DataGrid\Contracts\ExportableInterface;
 use Webkul\DataGrid\DataGrid;
 use Webkul\ElasticSearch\Enums\FilterOperators;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Factories\ElasticSearch\Cursor\ResultCursorFactory;
 use Webkul\Product\Factories\ProductQueryBuilderFactory;
 use Webkul\Product\Models\VariantStructure;
@@ -103,6 +104,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
         protected ProductAttributeValuesNormalizer $valuesNormalizer,
         protected AttributeService $attributeService,
         protected AttributeValueNormalizer $attributeValueNormalizer,
+        protected VariantValueResolver $variantValueResolver,
     ) {}
 
     public function prepareQueryBuilder()
@@ -122,6 +124,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             ->select(
                 'products.sku',
                 'products.id as product_id',
+                'products.parent_id',
                 'products.status',
                 'products.type',
                 'products.created_at',
@@ -135,9 +138,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                         ELSE {$tablePrefix}attribute_family_name.name
                     END) as attribute_family"
                 ),
-                DB::raw('
-                    COALESCE('.$tablePrefix.'products.values, '.$tablePrefix.'parent_products.values) as raw_values
-                '),
+                'products.values as raw_values',
                 'products.avg_completeness_score as completeness',
             );
 
@@ -1081,6 +1082,8 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             $column->options = $column->getFormOptions();
         }
 
+        $mergedValuesByProductId = $this->resolveMergedValuesForPage($paginator['data']);
+
         foreach ($paginator['data'] as $record) {
             $record = $this->sanitizeRow($record);
 
@@ -1096,7 +1099,9 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 }
             }
 
-            $this->processRawValues($record);
+            $this->processRawValues($record, $mergedValuesByProductId[$record->product_id] ?? null);
+
+            unset($record->parent_id);
 
             $record->actions = [];
 
@@ -1143,15 +1148,40 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
     }
 
     /**
-     * Process raw values and update record.
+     * A common attribute set only on a row's ancestor (root parent, or a
+     * variant group one level below it) must still surface as that row's
+     * value in the grid. Delegates the batched, per-page ancestor-chain walk
+     * to `VariantValueResolver::resolveBatch()` -- shared with the AdminApi
+     * and export paths so there is one merge implementation, not several.
+     *
+     * @return array<int, array>
      */
-    protected function processRawValues(object &$record): void
+    protected function resolveMergedValuesForPage(iterable $records): array
+    {
+        $rows = collect($records)->map(fn ($record) => [
+            'id'        => $record->product_id,
+            'parent_id' => $record->parent_id ?? null,
+            'values'    => $record->raw_values ?? null,
+        ]);
+
+        return $this->variantValueResolver->resolveBatch($rows);
+    }
+
+    /**
+     * Process raw values and update record.
+     *
+     * @param  array|null  $mergedValues  The row's `values`, already merged with its
+     *                                    ancestor chain by `resolveMergedValuesForPage()`.
+     *                                    Falls back to the row's own `raw_values` when
+     *                                    absent (e.g. a row with no parent).
+     */
+    protected function processRawValues(object &$record, ?array $mergedValues = null): void
     {
         if (empty($this->attributeColumns)) {
             return;
         }
 
-        $rawValues = json_decode($record->raw_values, true);
+        $rawValues = $mergedValues ?? json_decode($record->raw_values, true);
         $values = $this->attributeValueNormalizer->normalize($rawValues, [
             'locale'                 => core()->getRequestedLocaleCode(),
             'channel'                => core()->getRequestedChannelCode(),
