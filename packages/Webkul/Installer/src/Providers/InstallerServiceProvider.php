@@ -7,7 +7,6 @@ use Illuminate\Support\ServiceProvider;
 use Webkul\Installer\Console\Commands\DefaultUser as DefaultUserCommand;
 use Webkul\Installer\Console\Commands\Installer as InstallerCommand;
 use Webkul\Installer\Console\Commands\PurgeUnusedImages as PurgeUnusedImagesCommand;
-use Webkul\Installer\Console\Commands\SeedBenchmarkCatalog as SeedBenchmarkCatalogCommand;
 use Webkul\Installer\Console\Commands\SeedDemoData as SeedDemoDataCommand;
 use Webkul\Installer\Console\Commands\Upgrade as UpgradeCommand;
 use Webkul\Installer\Http\Middleware\CanInstall;
@@ -56,7 +55,6 @@ class InstallerServiceProvider extends ServiceProvider
                 InstallerCommand::class,
                 DefaultUserCommand::class,
                 PurgeUnusedImagesCommand::class,
-                SeedBenchmarkCatalogCommand::class,
                 SeedDemoDataCommand::class,
                 UpgradeCommand::class,
             ]);
