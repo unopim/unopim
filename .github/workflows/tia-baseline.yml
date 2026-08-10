@@ -71,7 +71,7 @@ jobs:
           node-version: '22'
 
       - name: Cache Node dependencies
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: node_modules
           key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
