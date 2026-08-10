@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Webhook\Console\Commands\PruneWebhookLogs;
 use Webkul\Webhook\Registry\EventRegistry;
+use Webkul\Webhook\Services\RecentProductAudits;
 
 class WebhookServiceProvider extends ServiceProvider
 {
@@ -40,6 +41,8 @@ class WebhookServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->registerConfig();
+
+        $this->app->scoped(RecentProductAudits::class);
 
         $this->app->singleton(EventRegistry::class, fn (): EventRegistry => new EventRegistry(
             config('webhook.events', [])

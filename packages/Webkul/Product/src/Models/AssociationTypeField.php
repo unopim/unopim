@@ -52,7 +52,6 @@ class AssociationTypeField extends TranslatableModel implements AssociationTypeF
         'enable_wysiwyg',
         'position',
         'status',
-        'section',
         'is_required',
         'is_unique',
         'validation',

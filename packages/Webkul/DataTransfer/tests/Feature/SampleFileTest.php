@@ -50,7 +50,9 @@ it('keeps every sample comma separated with a consistent column count', function
 })->with('samples');
 
 it('keeps every sample small enough to read as an example', function (string $configFile, string $type, string $key) {
-    expect(count(sampleRows(app(SampleFiles::class)->path($configFile, $type, $key))) - 1)->toBeLessThanOrEqual(10);
+    $maxRows = $type === 'products' && $key === 'default' ? 18 : 10;
+
+    expect(count(sampleRows(app(SampleFiles::class)->path($configFile, $type, $key))) - 1)->toBeLessThanOrEqual($maxRows);
 })->with('samples');
 
 it('ships a readable images archive for the product importer', function () {

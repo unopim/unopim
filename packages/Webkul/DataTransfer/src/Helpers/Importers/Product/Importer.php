@@ -1203,19 +1203,27 @@ class Importer extends AbstractImporter
             default                          => 'variant',
         };
 
-        $codes = [];
+        $levelByCode = [];
 
         foreach ($structure->placements as $placement) {
-            if ($placement->level !== $rowLevel && ($code = $placement->attribute?->code)) {
-                $codes[] = $code;
+            if ($code = $placement->attribute?->code) {
+                $levelByCode[$code] = $placement->level;
             }
         }
 
         $axisLevel = (int) $structure->levels === 2 ? ['level_1' => 'sub_parent', 'level_2' => 'variant'] : ['level_1' => 'variant', 'level_2' => 'variant'];
 
         foreach ($structure->axes as $axis) {
-            if (($axisLevel[$axis->level] ?? 'variant') !== $rowLevel && ($code = $axis->attribute?->code)) {
-                $codes[] = $code;
+            if ($code = $axis->attribute?->code) {
+                $levelByCode[$code] = $axisLevel[$axis->level] ?? 'variant';
+            }
+        }
+
+        $codes = [];
+
+        foreach ($this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]) as $attribute) {
+            if (($levelByCode[$attribute->code] ?? 'common') !== $rowLevel) {
+                $codes[] = $attribute->code;
             }
         }
 
@@ -1388,10 +1396,18 @@ class Importer extends AbstractImporter
                 continue;
             }
 
+            if ($imageDirPath === '') {
+                unset($rowData[$code]);
+
+                continue;
+            }
+
             $value = $this->fieldProcessor->handleMediaField($rowData[$code], $imageDirPath);
 
             if ($value) {
                 $rowData[$code] = is_array($value) ? implode(',', $value) : $value;
+            } else {
+                unset($rowData[$code]);
             }
         }
     }
@@ -2054,6 +2070,13 @@ class Importer extends AbstractImporter
             }
 
             $value = $this->fieldProcessor->handleField($attribute, $value, $imageDirPath);
+
+            if (
+                in_array($attribute->type, ['image', 'file', 'gallery'], true)
+                && $value === null
+            ) {
+                continue;
+            }
 
             if ($attribute->type === 'price') {
                 $value = $this->formatPriceValueWithCurrency($currencyCode, $value, $attribute->getValueFromProductValues($attributeValues, $channel, $locale));

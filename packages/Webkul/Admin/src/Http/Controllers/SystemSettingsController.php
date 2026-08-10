@@ -6,6 +6,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\View\View;
+use Webkul\Admin\Http\Requests\ConfigurationForm;
 use Webkul\Admin\SystemSettings;
 use Webkul\Core\Repositories\CoreConfigRepository;
 
@@ -49,7 +50,7 @@ class SystemSettingsController extends Controller
     /**
      * Persist a `fields` row to DB core-config (never `.env`).
      */
-    public function update(Request $request, string $key): RedirectResponse
+    public function update(ConfigurationForm $request, string $key): RedirectResponse
     {
         $entry = $this->systemSettings->find($key);
 

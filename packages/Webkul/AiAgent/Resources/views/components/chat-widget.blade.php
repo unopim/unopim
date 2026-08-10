@@ -190,7 +190,7 @@
                                 style="width:8px;height:8px;border-radius:50%;background:rgb(var(--c-primary-600));flex-shrink:0;"></div>
 
                             {{-- Delete button --}}
-                            <button v-else @click.stop="deleteSession(session.id)"
+                            <button v-else @click.stop="confirmDeleteSession(session.id)"
                                 :title="trans.deleteSession"
                                 :aria-label="trans.deleteSession"
                                 class="ap-session-delete"
@@ -1292,16 +1292,25 @@ app.component('v-agenting-pim', {
             this.$nextTick(() => { this.scrollBottom(); this.$refs.textInput?.focus(); });
         },
 
-        async deleteSession(sessionId) {
-            this.sessions = this.sessions.filter(s => s.id !== sessionId);
-            this.persistSessions();
+        confirmDeleteSession(sessionId) {
+            this.$emitter.emit('open-delete-modal', {
+                agree: () => this.deleteSession(sessionId),
+            });
+        },
 
-            // Also delete from DB if numeric ID
+        async deleteSession(sessionId) {
             if (typeof sessionId === 'number') {
                 try {
                     await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
-                } catch (e) { /* ignore */ }
+                } catch (e) {
+                    this.$emitter.emit('add-flash', { type: 'error', message: this.trans.errorGeneric });
+
+                    return;
+                }
             }
+
+            this.sessions = this.sessions.filter(s => s.id !== sessionId);
+            this.persistSessions();
         },
 
         persistSessions() {
