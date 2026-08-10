@@ -48,6 +48,7 @@
                     $fieldNames = collect($exporterConfig[$export->entity_type]['filters']['fields'] ?? [])->pluck('name');
                     $scopeFields = $fieldNames->intersect(['channels', 'locales', 'currencies', 'attributes']);
                     $productFilterFields = $fieldNames->intersect(['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku']);
+                    $outputFields = $fieldNames->intersect(['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path']);
                     $supportsConditions = $fieldNames->contains('custom_attributes');
                     $supportsCategories = $fieldNames->contains('categories');
                 @endphp
@@ -206,18 +207,20 @@
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.befor') !!}
 
-                        <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
-                            <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
-                                @lang('admin::app.settings.data-transfer.exports.create.output')
-                            </p>
+                        @if ($outputFields->isNotEmpty())
+                            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                    @lang('admin::app.settings.data-transfer.exports.create.output')
+                                </p>
 
-                            <x-admin::data-transfer.filter-fields
-                                :entity-type="$export->entity_type"
-                                :values="$exportFilters"
-                                :exporter-config="$exporterConfig"
-                                only="file_format,with_media,with_associations,header_row,use_labels,date_format,file_path"
-                            />
-                        </div>
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="file_format,with_media,with_associations,header_row,use_labels,date_format,file_path"
+                                />
+                            </div>
+                        @endif
 
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.after') !!}
 

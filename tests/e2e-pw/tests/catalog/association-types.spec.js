@@ -72,14 +72,7 @@ async function addAssociationTypeField(page, { name, code, type, validation }) {
 	await expect(page.getByText(code, { exact: true }).first()).toBeVisible();
 }
 
-async function configureAssociationTypeField(page, { required, section }) {
-	// The field-builder edit modal has no Display Section control (it only
-	// exposes Code/Type/Label/Input Validation/flags); the section is shown
-	// as a read-only column on the fields table instead.
-	if (section) {
-		await expect(page.locator('td').filter({ hasText: section }).first()).toBeVisible();
-	}
-
+async function configureAssociationTypeField(page, { required }) {
 	await page.locator('span.icon-edit').first().click();
 
 	const modal = fieldModal(page);
@@ -165,7 +158,6 @@ test.describe('UnoPim Association Type Tests', () => {
 
 			await configureAssociationTypeField(adminPage, {
 				required: true,
-				section: 'General Section',
 			});
 
 			await saveViaUnsavedChangesBar(adminPage, /Association Type Updated Successfully/i);
@@ -186,9 +178,7 @@ test.describe('UnoPim Association Type Tests', () => {
 			await adminPage.reload({ waitUntil: 'load' });
 			await expect(adminPage.getByText('quantity', { exact: true }).first()).toBeVisible();
 
-			// Section is a read-only column on the fields table; the edit modal has
-			// no Display Section control.
-			await expect(adminPage.locator('td').filter({ hasText: 'General Section' }).first()).toBeVisible();
+			await expect(adminPage.getByRole('columnheader', { name: 'Actions' }).first()).toBeVisible();
 
 			await adminPage.locator('span.icon-edit').first().click();
 

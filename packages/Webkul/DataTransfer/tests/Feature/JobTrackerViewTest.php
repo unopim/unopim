@@ -8,22 +8,24 @@ use Webkul\DataTransfer\Models\JobTrack;
 function trackedJob(string $type): array
 {
     $jobInstance = JobInstances::create([
-        'code'        => 'tracker-view-'.uniqid(),
-        'entity_type' => 'products',
-        'type'        => $type,
-        'action'      => $type === 'export' ? 'export' : 'append',
-        'file_path'   => $type.'s/test.csv',
+        'code'                => 'tracker-view-'.uniqid(),
+        'entity_type'         => 'products',
+        'type'                => $type,
+        'action'              => $type === 'export' ? 'export' : 'append',
+        'validation_strategy' => 'skip-erros',
+        'file_path'           => $type.'s/test.csv',
     ]);
 
     $jobTrack = JobTrack::create([
-        'state'            => Import::STATE_PROCESSING,
-        'type'             => $type,
-        'action'           => $type === 'export' ? 'export' : 'append',
-        'file_path'        => $type.'s/test.csv',
-        'meta'             => json_encode($jobInstance->toArray()),
-        'job_instances_id' => $jobInstance->id,
-        'user_id'          => auth('admin')->id(),
-        'started_at'       => now(),
+        'state'               => Import::STATE_PROCESSING,
+        'type'                => $type,
+        'action'              => $type === 'export' ? 'export' : 'append',
+        'validation_strategy' => 'skip-erros',
+        'file_path'           => $type.'s/test.csv',
+        'meta'                => json_encode($jobInstance->toArray()),
+        'job_instances_id'    => $jobInstance->id,
+        'user_id'             => auth('admin')->id(),
+        'started_at'          => now(),
     ]);
 
     return [$jobInstance, $jobTrack];

@@ -4,6 +4,7 @@ namespace Webkul\DataTransfer\Jobs\System;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
@@ -35,6 +36,11 @@ class BulkProductUpdate implements ShouldQueue
      * Repository for tracking job execution.
      */
     protected JobTrackRepository $jobTrackRepository;
+
+    /**
+     * Repository owning the variant-level write guard.
+     */
+    protected ProductRepository $productRepository;
 
     /**
      * Service for managing product attributes.
@@ -99,6 +105,7 @@ class BulkProductUpdate implements ShouldQueue
 
         $this->jobInstancesRepository = resolve(JobInstancesRepository::class);
         $this->jobTrackRepository = resolve(JobTrackRepository::class);
+        $this->productRepository = resolve(ProductRepository::class);
         $this->attributeService = resolve(AttributeService::class);
         $this->valuesValidator = resolve(ProductValuesValidator::class);
         $this->variantStructurePlanner = resolve(VariantStructurePlanner::class);
@@ -121,10 +128,12 @@ class BulkProductUpdate implements ShouldQueue
 
         $this->jobLogger = JobLogger::make($this->jobTrackInstance->id);
 
-        $products = resolve(ProductRepository::class)
+        $products = $this->productRepository
             ->with('parent.parent')
             ->findWhereIn('id', array_keys($this->updateProducts))
             ->keyBy('id');
+
+        $this->variantStructurePlanner->primeStructuresFor($products);
 
         try {
             $this->started();
@@ -152,6 +161,10 @@ class BulkProductUpdate implements ShouldQueue
     /**
      * Save updated attribute values for products.
      *
+     * One bulk event carries every processed id, so listeners run once rather than
+     * per product. Its payload is wrapped in a named key because `call_user_func_array`
+     * would otherwise spread the ids as separate arguments.
+     *
      * @param  array  $updateProducts  Product updates keyed by product ID.
      * @param  Collection<int, Product>  $products  Preloaded products, keyed by id, with their ancestor chain eager loaded.
      * @return void
@@ -170,9 +183,9 @@ class BulkProductUpdate implements ShouldQueue
                 continue;
             }
 
-            $productIds[] = $productId;
-
             $values = $product->values;
+
+            $submittedCommon = [];
 
             $familyAttributeCodes = $this->getFamilyAttribute($productId, $products);
 
@@ -235,17 +248,17 @@ class BulkProductUpdate implements ShouldQueue
                         }
 
                         $attribute->setProductValue($value, $values);
+
+                        $submittedCommon[$attributeCode] = $value;
                         break;
                 }
             }
 
-            $product->values = $values;
-
-            if ($product->isDirty()) {
-                $product->save();
-
-                Event::dispatch('catalog.product.update.after', [$product, true]);
+            if (! $this->persistProduct($product, $values, $submittedCommon)) {
+                continue;
             }
+
+            $productIds[] = $productId;
 
             $processed++;
 
@@ -254,15 +267,59 @@ class BulkProductUpdate implements ShouldQueue
             }
         }
 
-        // Dispatch a single bulk-edit event so listeners (e.g. webhook) can
-        // handle all processed products in one shot without per-product overhead.
-        // Payload is wrapped in a named key so call_user_func_array passes the
-        // full ID array as the first argument, not spread as individual ints.
         if ($productIds !== []) {
             Event::dispatch('catalog.product.bulk.edit.after', ['ids' => $productIds]);
         }
 
         $this->updateProgress($processed);
+    }
+
+    /**
+     * Persist a product's rebuilt value set through
+     * {@see ProductRepository::guardVariantLevelWrite()}. Values are assigned only
+     * inside the persist closure because the guard compares the submission against
+     * the product's stored values. A refusal warns and the batch carries on.
+     *
+     * @param  array<string, mixed>|null  $values  Rebuilt product value set, ready to assign; null for a product that has none.
+     * @param  array<string, mixed>  $submittedCommon  Bulk-edited common values, keyed by attribute code.
+     * @return bool Whether the product passed the guard.
+     */
+    protected function persistProduct(Product $product, ?array $values, array $submittedCommon): bool
+    {
+        $persist = function () use ($product, $values): void {
+            $product->values = $values;
+
+            if (! $product->isDirty()) {
+                return;
+            }
+
+            $product->save();
+
+            Event::dispatch('catalog.product.update.after', [$product, true]);
+        };
+
+        if (! $product->parent_id || $submittedCommon === []) {
+            $persist();
+
+            return true;
+        }
+
+        try {
+            $this->productRepository->guardVariantLevelWrite(
+                $product,
+                $submittedCommon,
+                $persist,
+                $this->variantStructurePlanner
+            );
+        } catch (ValidationException $e) {
+            foreach (Arr::flatten($e->errors()) as $message) {
+                $this->warnings[] = "Product ID {$product->id}: {$message}";
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     protected function normalizeMediaPaths(array &$updateProducts, $products): void
@@ -554,9 +611,10 @@ class BulkProductUpdate implements ShouldQueue
     }
 
     /**
-     * Whether a bulk-edited attribute is off limits for this product: not
-     * maintained at its own variant structure level, or an axis attribute
-     * (which defines the variant's identity and is never bulk-editable).
+     * Ownership screen for a bulk-edited attribute: one maintained above or below this
+     * product's own level is skipped, so an ancestor's value is never materialised onto
+     * the node. Own-level attributes are left to the write guard, which reads the same
+     * {@see \Webkul\Product\Services\VariantStructurePlanner}, so the two cannot drift.
      */
     protected function isBulkEditRestricted(Product $product, string $attributeCode): bool
     {
@@ -564,14 +622,7 @@ class BulkProductUpdate implements ShouldQueue
             return false;
         }
 
-        if (! $this->variantStructurePlanner->ownsAtOwnLevel($product, $attributeCode)) {
-            return true;
-        }
-
-        $structure = $this->variantStructurePlanner->structureFor($product);
-
-        return $structure
-            && in_array($attributeCode, $this->variantStructurePlanner->allAxisCodes($structure), true);
+        return ! $this->variantStructurePlanner->ownsAtOwnLevel($product, $attributeCode);
     }
 
     /**

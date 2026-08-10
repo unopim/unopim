@@ -164,8 +164,8 @@ class PassportPanelComposer
             'passportEnabled'        => true,
             'passportAutoPublish'    => $this->feature->autoPublishEnabledFor($channel),
             'passportPublicAccess'   => $this->publicAccess->enabledForChannel($channel->code),
-            'passportSettingsUrl'    => bouncer()->hasPermission('configuration')
-                ? route('admin.configuration.edit', ['general', 'publication'])
+            'passportSettingsUrl'    => bouncer()->hasPermission('configuration.system_settings.publication')
+                ? route('admin.settings.system.edit', ['key' => 'digital_product_passport.publication'])
                 : null,
         ]);
     }

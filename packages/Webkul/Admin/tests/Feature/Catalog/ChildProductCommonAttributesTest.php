@@ -1,12 +1,15 @@
 <?php
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Models\Locale;
+use Webkul\Measurement\Models\AttributeMeasurement;
+use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -230,6 +233,190 @@ describe('catalog locale diverging from the locale the page renders in', functio
 
         expect(rendersControlValue($content, 'PARENT-COMMON-VALUE'))->toBeTrue()
             ->and(rendersControlValue($content, 'PARENT-EN-US-VALUE'))->toBeTrue();
+    });
+});
+
+function twoLevelVariantGroupFixture(): array
+{
+    $colorCode = 'color_'.Str::random(8);
+    $sizeCode = 'size_'.Str::random(8);
+
+    $color = Attribute::factory()->create(['code' => $colorCode, 'type' => 'select']);
+    $size = Attribute::factory()->create(['code' => $sizeCode, 'type' => 'select']);
+
+    $family = AttributeFamily::factory()->create();
+
+    AttributeFamily::factory()->linkAttributeGroupToFamily($family);
+    AttributeFamily::factory()->linkAttributesToFamily($family, Attribute::whereIn('code', [
+        $colorCode,
+        $sizeCode,
+    ])->get());
+
+    $structure = VariantStructure::create([
+        'attribute_family_id' => $family->id,
+        'code'                => 'vs_'.Str::random(8),
+        'name'                => 'VS',
+        'levels'              => 2,
+    ]);
+
+    VariantStructureAxis::insert([
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $color->id, 'level' => 'level_1', 'position' => 0],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $size->id, 'level' => 'level_2', 'position' => 0],
+    ]);
+
+    $configurable = app(ProductRepository::class)->create([
+        'type'                 => 'configurable',
+        'attribute_family_id'  => $family->id,
+        'sku'                  => 'CFG2-'.Str::random(8),
+        'variant_structure_id' => $structure->id,
+        'super_attributes'     => [$colorCode, $sizeCode],
+    ]);
+
+    $group = $configurable->getTypeInstance()->createVariantGroup($configurable, [
+        'sku'               => $configurable->sku.'-RED',
+        'group_axis_code'   => $colorCode,
+        'group_axis_option' => 'red',
+    ]);
+
+    return [
+        'configurable' => $configurable->fresh(),
+        'group'        => $group->fresh(),
+        'colorCode'    => $colorCode,
+        'sizeCode'     => $sizeCode,
+    ];
+}
+
+function measurementVariantGroupFixture(): array
+{
+    $colorCode = 'color_'.Str::random(8);
+    $sizeCode = 'size_'.Str::random(8);
+    $weightCode = 'weight_'.Str::random(8);
+
+    $color = Attribute::factory()->create(['code' => $colorCode, 'type' => 'select']);
+    $size = Attribute::factory()->create(['code' => $sizeCode, 'type' => 'select']);
+    $weight = Attribute::factory()->create(['code' => $weightCode, 'type' => 'measurement']);
+
+    $measurementFamily = MeasurementFamily::factory()->create([
+        'code'  => 'weight_'.Str::random(8),
+        'units' => [
+            ['code' => 'KILOGRAM', 'labels' => ['en_US' => 'Kilogram']],
+            ['code' => 'GRAM', 'labels' => ['en_US' => 'Gram']],
+        ],
+    ]);
+
+    AttributeMeasurement::create([
+        'attribute_id' => $weight->id,
+        'family_code'  => $measurementFamily->code,
+        'unit_code'    => 'KILOGRAM',
+    ]);
+
+    $family = AttributeFamily::factory()->create();
+
+    AttributeFamily::factory()->linkAttributeGroupToFamily($family);
+    AttributeFamily::factory()->linkAttributesToFamily($family, Attribute::whereIn('code', [
+        $colorCode,
+        $sizeCode,
+        $weightCode,
+    ])->get());
+
+    $structure = VariantStructure::create([
+        'attribute_family_id' => $family->id,
+        'code'                => 'vs_'.Str::random(8),
+        'name'                => 'VS',
+        'levels'              => 2,
+    ]);
+
+    VariantStructureAxis::insert([
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $color->id, 'level' => 'level_1', 'position' => 0],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $size->id, 'level' => 'level_2', 'position' => 0],
+    ]);
+
+    $configurable = app(ProductRepository::class)->create([
+        'type'                 => 'configurable',
+        'attribute_family_id'  => $family->id,
+        'sku'                  => 'CFG3-'.Str::random(8),
+        'variant_structure_id' => $structure->id,
+        'super_attributes'     => [$colorCode, $sizeCode],
+    ]);
+
+    $configurable->values = [
+        'common' => [
+            'sku'       => $configurable->sku,
+            $weightCode => ['value' => '12', 'unit' => 'KILOGRAM'],
+        ],
+    ];
+
+    $configurable->save();
+
+    $group = $configurable->getTypeInstance()->createVariantGroup($configurable, [
+        'sku'               => $configurable->sku.'-RED',
+        'group_axis_code'   => $colorCode,
+        'group_axis_option' => 'red',
+    ]);
+
+    return [
+        'configurable' => $configurable->fresh(),
+        'group'        => $group->fresh(),
+        'weight'       => $weight,
+        'weightCode'   => $weightCode,
+    ];
+}
+
+describe('a locked control the switch does not render itself', function () {
+    it('renders a locked measurement control inside the disabled fieldset so it is not submitted', function () {
+        $this->loginAsAdmin();
+
+        $fixture = measurementVariantGroupFixture();
+
+        $locks = invokeVariantFieldLocks($fixture['group']);
+
+        expect($locks['locks'])->toHaveKey($fixture['weightCode']);
+
+        $html = Blade::render(
+            '<x-admin::products.dynamic-attribute-fields :fields="$fields" :field-values="$fieldValues" :locked-fields="$lockedFields" />',
+            [
+                'fields'       => collect([$fixture['weight']]),
+                'fieldValues'  => $fixture['group']->values,
+                'lockedFields' => $locks['locks'],
+            ]
+        );
+
+        $fieldsetOpensAt = strpos($html, '<fieldset disabled');
+        $fieldsetClosesAt = strpos($html, '</fieldset>');
+        $valueInputAt = strpos($html, 'name="values[common]['.$fixture['weightCode'].'][value]"');
+        $unitInputAt = strpos($html, 'name="values[common]['.$fixture['weightCode'].'][unit]"');
+
+        expect($fieldsetOpensAt)->not->toBeFalse()
+            ->and($fieldsetClosesAt)->not->toBeFalse()
+            ->and($valueInputAt)->not->toBeFalse()
+            ->and($unitInputAt)->not->toBeFalse()
+            ->and($fieldsetOpensAt)->toBeLessThan($valueInputAt)
+            ->and($fieldsetOpensAt)->toBeLessThan($unitInputAt)
+            ->and($valueInputAt)->toBeLessThan($fieldsetClosesAt)
+            ->and($unitInputAt)->toBeLessThan($fieldsetClosesAt);
+    });
+});
+
+describe('own-axis attribute is never locked at the node that owns it', function () {
+    it('does not lock a variant_group\'s own axis attribute', function () {
+        $this->loginAsAdmin();
+
+        $fixture = twoLevelVariantGroupFixture();
+
+        $locks = invokeVariantFieldLocks($fixture['group']);
+
+        expect($locks['locks'])->not->toHaveKey($fixture['colorCode'])
+            ->and($locks['hidden'])->not->toContain($fixture['colorCode']);
+    });
+
+    it('still locks the deeper axis attribute a variant_group does not own', function () {
+        $this->loginAsAdmin();
+
+        $fixture = twoLevelVariantGroupFixture();
+
+        $locks = invokeVariantFieldLocks($fixture['group']);
+
+        expect($locks['hidden'])->toContain($fixture['sizeCode']);
     });
 });
 

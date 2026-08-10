@@ -39,6 +39,10 @@ it('should index product in elastic search', function () {
         ],
     ]);
 
+    ElasticSearch::shouldReceive('openPointInTime')->andReturn(['id' => 'pit-test-id']);
+
+    ElasticSearch::shouldReceive('closePointInTime')->andReturn(['succeeded' => true]);
+
     $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
 
     ElasticSearch::shouldReceive('indices')->andReturn($indicesMock);
