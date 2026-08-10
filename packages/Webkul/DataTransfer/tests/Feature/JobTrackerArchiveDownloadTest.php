@@ -8,11 +8,12 @@ use Webkul\DataTransfer\Models\JobTrack;
 function exportedJob(array $files): array
 {
     $jobInstance = JobInstances::create([
-        'code'        => 'archive-'.uniqid(),
-        'entity_type' => 'products',
-        'type'        => 'export',
-        'action'      => 'export',
-        'file_path'   => 'exports/archive.csv',
+        'code'                => 'archive-'.uniqid(),
+        'entity_type'         => 'products',
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'stop-on-errors',
+        'file_path'           => 'exports/archive.csv',
     ]);
 
     $folder = 'exports/'.$jobInstance->id.'/uno-pim';
@@ -22,15 +23,16 @@ function exportedJob(array $files): array
     }
 
     $jobTrack = JobTrack::create([
-        'state'            => Export::STATE_COMPLETED,
-        'type'             => 'export',
-        'action'           => 'export',
-        'file_path'        => $folder,
-        'meta'             => json_encode($jobInstance->toArray()),
-        'job_instances_id' => $jobInstance->id,
-        'user_id'          => auth('admin')->id(),
-        'started_at'       => now(),
-        'completed_at'     => now(),
+        'state'               => Export::STATE_COMPLETED,
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'stop-on-errors',
+        'file_path'           => $folder,
+        'meta'                => json_encode($jobInstance->toArray()),
+        'job_instances_id'    => $jobInstance->id,
+        'user_id'             => auth('admin')->id(),
+        'started_at'          => now(),
+        'completed_at'        => now(),
     ]);
 
     return [$jobInstance, $jobTrack, $folder];

@@ -174,7 +174,10 @@
                     <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.accordion.filters.befor') !!}
 
-                        <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                        <div
+                            v-if="hasOutputFields"
+                            class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
+                        >
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.create.output')
                             </p>
@@ -261,6 +264,10 @@
 
                     hasProductFilters() {
                         return this.filterFields.some(field => ['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku'].includes(field.name));
+                    },
+
+                    hasOutputFields() {
+                        return this.filterFields.some(field => ['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path'].includes(field.name));
                     },
 
                     supportsConditions() {

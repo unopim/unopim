@@ -400,6 +400,9 @@ abstract class DataGrid
 
     /**
      * Process request.
+     *
+     * The `export` flag is read with `isset()` plus a bool cast rather than `empty()`, since
+     * `validatedRequest()` lets it through as the string "0" or "1".
      */
     public function processRequest(): void
     {
@@ -415,10 +418,6 @@ abstract class DataGrid
             $this->queryBuilder = $this->processRequestedSorting($requestedParams['sort'] ?? []);
         }
 
-        /**
-         * The `export` parameter is validated as a boolean in the `validatedRequest`. An `empty` function will not work,
-         * as it will always be treated as true because of "0" and "1".
-         */
         if (isset($requestedParams['export']) && (bool) $requestedParams['export']) {
             $this->exportable = true;
 
