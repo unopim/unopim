@@ -139,7 +139,13 @@ class FileOrImageValidValue implements ValidationRule
             return;
         }
 
-        if (! $this->hasAllowedPathPrefix($value) || ! $this->validateStoredFileType($value)) {
+        if (! $this->hasAllowedPathPrefix($value)) {
+            $fail('core::validation.file-outside-attribute-path')->translate(['value' => $value]);
+
+            return;
+        }
+
+        if (! $this->validateStoredFileType($value)) {
             $fail('validation.extensions')->translate(['values' => implode(', ', $this->allowedExtensions)]);
         }
     }

@@ -6,28 +6,55 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
 use Webkul\Admin\Helpers\Dashboard;
 
+/**
+ * Recomputes the dashboard aggregates off the request path. Clearing the keys
+ * without warming them hands a catalog-wide scan to the next page load, and
+ * every request arriving during it starts another copy of the same scan.
+ */
 class RefreshDashboardCacheCommand extends Command
 {
     protected $signature = 'unopim:dashboard:refresh';
 
-    protected $description = 'Refresh the dashboard statistics cache so the next page load sees fresh data.';
+    protected $description = 'Recompute the dashboard statistics cache so page loads never pay for a catalog-wide scan.';
 
     public function handle(Dashboard $dashboardHelper): int
     {
-        $keys = [
-            'dashboard.total_catalogs',
-            'dashboard.total_configurations',
-            'dashboard.product_stats',
-            'dashboard.needs_attention',
-            'dashboard.channel_readiness',
+        $warmers = [
+            'dashboard.total_catalogs'       => fn () => $dashboardHelper->getTotalCatalogs(),
+            'dashboard.total_configurations' => fn () => $dashboardHelper->getTotalConfigurations(),
+            'dashboard.product_stats'        => fn () => $dashboardHelper->getProductStats(),
+            'dashboard.needs_attention'      => fn () => $dashboardHelper->getNeedsAttention(),
+            'dashboard.channel_readiness'    => fn () => $dashboardHelper->getChannelReadiness(),
         ];
 
-        foreach ($keys as $key) {
+        $failed = 0;
+
+        foreach ($warmers as $key => $warmer) {
             Cache::forget($key);
+
+            $started = microtime(true);
+
+            try {
+                $warmer();
+
+                $this->components->twoColumnDetail($key, round(microtime(true) - $started, 2).'s');
+            } catch (\Throwable $e) {
+                $failed++;
+
+                $this->components->twoColumnDetail($key, '<fg=red>failed</>');
+
+                $this->components->error($key.': '.$e->getMessage());
+            }
         }
 
-        $this->info('Dashboard cache cleared. Fresh data will be loaded on next request.');
+        if ($failed > 0) {
+            $this->components->warn($failed.' dashboard entry/entries could not be recomputed and remain cold.');
 
-        return Command::SUCCESS;
+            return self::FAILURE;
+        }
+
+        $this->components->info('Dashboard cache warmed.');
+
+        return self::SUCCESS;
     }
 }
