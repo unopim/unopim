@@ -95,6 +95,10 @@ class ProductIndexer extends Command
                 $this->info('Product indexing completed.');
                 Log::channel('elasticsearch')->info('Product indexing completed.');
 
+                if (! $fresh) {
+                    $this->pruneStaleDocuments($productIndex);
+                }
+
                 $this->info('The operation took '.round(microtime(true) - $start, 4).' seconds to complete.');
 
                 return;
@@ -272,6 +276,9 @@ class ProductIndexer extends Command
      * a single process saturates one core and leaves the rest of the box idle,
      * so a full rebuild of a large catalog is core-count limited, not
      * Elasticsearch limited.
+     *
+     * A range whose fork fails, and every range when pcntl is unavailable, is
+     * indexed in the parent instead: slower, but never silently unindexed.
      */
     protected function indexInParallel(string $productIndex, int $workers, bool $fresh): void
     {
@@ -281,8 +288,15 @@ class ProductIndexer extends Command
             return;
         }
 
+        $forkable = function_exists('pcntl_fork') && function_exists('pcntl_waitpid');
+
+        if (! $forkable) {
+            $this->warn('The pcntl extension is unavailable — indexing in a single process.');
+        }
+
         $span = (int) ceil((($bounds->hi - $bounds->lo) + 1) / $workers);
         $children = [];
+        $failed = 0;
 
         for ($w = 0; $w < $workers; $w++) {
             $lo = $bounds->lo + ($w * $span);
@@ -292,16 +306,28 @@ class ProductIndexer extends Command
                 continue;
             }
 
-            $pid = pcntl_fork();
+            $pid = $forkable ? pcntl_fork() : -1;
+
+            if ($pid === -1) {
+                if ($forkable) {
+                    $this->warn('Could not fork worker '.$w.' — indexing its range in this process.');
+                }
+
+                if ($this->indexRange($productIndex, $lo, $hi, $fresh) !== []) {
+                    $failed++;
+                }
+
+                continue;
+            }
 
             if ($pid === 0) {
                 DB::purge();
                 DB::reconnect();
 
                 try {
-                    $failed = $this->indexRange($productIndex, $lo, $hi, $fresh);
+                    $failedIds = $this->indexRange($productIndex, $lo, $hi, $fresh);
 
-                    exit($failed === [] ? 0 : 1);
+                    exit($failedIds === [] ? 0 : 1);
                 } catch (\Throwable $e) {
                     fwrite(STDERR, 'indexer worker '.$w.': '.$e->getMessage().PHP_EOL);
                     exit(1);
@@ -311,12 +337,10 @@ class ProductIndexer extends Command
             $children[] = $pid;
         }
 
-        $failed = 0;
-
         foreach ($children as $pid) {
             pcntl_waitpid($pid, $status);
 
-            if (pcntl_wexitstatus($status) !== 0) {
+            if (! pcntl_wifexited($status) || pcntl_wexitstatus($status) !== 0) {
                 $failed++;
             }
         }
@@ -368,7 +392,11 @@ class ProductIndexer extends Command
 
                 $ids = array_map(fn ($hit): int => (int) $hit['_id'], $hits);
 
-                $alive = DB::table('products')->whereIn('id', $ids)->pluck('id')->all();
+                $alive = [];
+
+                foreach (array_chunk($ids, 1000) as $idChunk) {
+                    $alive = array_merge($alive, DB::table('products')->whereIn('id', $idChunk)->pluck('id')->all());
+                }
 
                 $stale = array_diff($ids, $alive);
 

@@ -15,25 +15,47 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->index(['type', 'status'], 'products_type_status_idx');
-            $table->index('created_at', 'products_created_at_idx');
-            $table->index(['updated_at', 'created_at'], 'products_updated_created_idx');
-            $table->index('avg_completeness_score', 'products_completeness_idx');
+            if (! Schema::hasIndex('products', 'products_type_status_idx')) {
+                $table->index(['type', 'status'], 'products_type_status_idx');
+            }
+
+            if (! Schema::hasIndex('products', 'products_created_at_idx')) {
+                $table->index('created_at', 'products_created_at_idx');
+            }
+
+            if (! Schema::hasIndex('products', 'products_updated_created_idx')) {
+                $table->index(['updated_at', 'created_at'], 'products_updated_created_idx');
+            }
+
+            if (! Schema::hasIndex('products', 'products_completeness_idx')) {
+                $table->index('avg_completeness_score', 'products_completeness_idx');
+            }
         });
 
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropIndex('products_updated_at_idx');
-        });
+        if (Schema::hasIndex('products', 'products_updated_at_idx')) {
+            Schema::table('products', function (Blueprint $table) {
+                $table->dropIndex('products_updated_at_idx');
+            });
+        }
     }
 
     public function down(): void
     {
         Schema::table('products', function (Blueprint $table) {
-            $table->index('updated_at', 'products_updated_at_idx');
-            $table->dropIndex('products_type_status_idx');
-            $table->dropIndex('products_created_at_idx');
-            $table->dropIndex('products_updated_created_idx');
-            $table->dropIndex('products_completeness_idx');
+            if (! Schema::hasIndex('products', 'products_updated_at_idx')) {
+                $table->index('updated_at', 'products_updated_at_idx');
+            }
+
+            foreach ([
+                'products_type_status_idx',
+                'products_created_at_idx',
+                'products_updated_created_idx',
+                'products_completeness_idx',
+            ] as $index) {
+                if (Schema::hasIndex('products', $index)) {
+                    $table->dropIndex($index);
+                }
+            }
         });
     }
 };

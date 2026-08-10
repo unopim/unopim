@@ -55,6 +55,12 @@ class BenchmarkCatalogSeeder extends Seeder
     ): array {
         $this->report = $report ?? fn (string $m) => null;
 
+        $driver = DB::connection()->getDriverName();
+
+        if ($driver !== 'mysql') {
+            throw new \RuntimeException("The benchmark catalog generator builds its rows with MySQL JSON functions and only runs on MySQL; this connection is [{$driver}].");
+        }
+
         if ($fresh) {
             $this->purge();
         }
@@ -108,12 +114,22 @@ class BenchmarkCatalogSeeder extends Seeder
     }
 
     /**
+     * The physical name of a table, so raw statements keep working on an
+     * install that sets DB_PREFIX. The query builder applies the prefix
+     * itself, so this is only for SQL this class writes by hand.
+     */
+    protected function table(string $name): string
+    {
+        return DB::getTablePrefix().$name;
+    }
+
+    /**
      * A persistent 0..BATCH-1 numbers table. Cheaper and less fragile than a
      * recursive CTE, which is capped by cte_max_recursion_depth.
      */
     protected function buildNumbersTable(): void
     {
-        DB::statement('CREATE TABLE IF NOT EXISTS bench_seq (i INT UNSIGNED NOT NULL PRIMARY KEY)');
+        DB::statement('CREATE TABLE IF NOT EXISTS '.$this->table('bench_seq').' (i INT UNSIGNED NOT NULL PRIMARY KEY)');
 
         if ((int) DB::table('bench_seq')->count() >= self::BATCH) {
             return;
@@ -132,16 +148,16 @@ class BenchmarkCatalogSeeder extends Seeder
      */
     protected function buildSourcePool(): void
     {
-        DB::statement('DROP TABLE IF EXISTS bench_source');
-        DB::statement('CREATE TABLE bench_source (
+        DB::statement('DROP TABLE IF EXISTS '.$this->table('bench_source'));
+        DB::statement('CREATE TABLE '.$this->table('bench_source').' (
             rn INT UNSIGNED NOT NULL PRIMARY KEY,
             attribute_family_id INT UNSIGNED NULL,
             `values` JSON NULL
         )');
 
-        DB::statement('INSERT INTO bench_source (rn, attribute_family_id, `values`)
+        DB::statement('INSERT INTO '.$this->table('bench_source').' (rn, attribute_family_id, `values`)
             SELECT ROW_NUMBER() OVER (ORDER BY id), attribute_family_id, `values`
-            FROM products
+            FROM '.$this->table('products').'
             WHERE parent_id IS NULL AND sku NOT LIKE ?', [self::PREFIX.'%']);
 
         $count = (int) DB::table('bench_source')->count();
@@ -173,6 +189,12 @@ class BenchmarkCatalogSeeder extends Seeder
         $sources = DB::table('attribute_families')->where('code', 'not like', self::FAMILY_PREFIX.'%')->get(['id', 'code']);
         $existing = (int) DB::table('attribute_families')->count();
 
+        if ($sources->isEmpty()) {
+            $this->say('No template attribute family to clone — leaving the family count as it is.');
+
+            return;
+        }
+
         for ($i = $existing; $i < $target; $i++) {
             $source = $sources[($i - $existing) % $sources->count()];
             $code = self::FAMILY_PREFIX.($i + 1);
@@ -188,8 +210,8 @@ class BenchmarkCatalogSeeder extends Seeder
                     'position'            => $group->position,
                 ]);
 
-                DB::statement('INSERT INTO attribute_group_mappings (attribute_id, attribute_family_group_id, position)
-                    SELECT attribute_id, ?, position FROM attribute_group_mappings WHERE attribute_family_group_id = ?', [$mappingId, $group->id]);
+                DB::statement('INSERT INTO '.$this->table('attribute_group_mappings').' (attribute_id, attribute_family_group_id, position)
+                    SELECT attribute_id, ?, position FROM '.$this->table('attribute_group_mappings').' WHERE attribute_family_group_id = ?', [$mappingId, $group->id]);
             }
         }
 
@@ -226,9 +248,9 @@ class BenchmarkCatalogSeeder extends Seeder
             $size = min(self::BATCH, $target - $from);
 
             DB::statement(sprintf(
-                'INSERT INTO categories (code, _lft, _rgt, parent_id, created_at, updated_at)
+                'INSERT INTO '.$this->table('categories').' (code, _lft, _rgt, parent_id, created_at, updated_at)
                  SELECT CONCAT(%s, %d + n.i + 1), %d + (2 * (%d + n.i)) + 1, %d + (2 * (%d + n.i)) + 2, %d, NOW(), NOW()
-                 FROM bench_seq n WHERE n.i < %d',
+                 FROM '.$this->table('bench_seq').' n WHERE n.i < %d',
                 DB::getPdo()->quote(self::CATEGORY_PREFIX),
                 $from,
                 $offset, $from,
@@ -256,13 +278,14 @@ class BenchmarkCatalogSeeder extends Seeder
         $workers = max(1, min($workers, (int) ceil($total / $granularity)));
         $per = (int) ceil($total / $workers);
 
-        if ($workers === 1 || ! function_exists('pcntl_fork')) {
+        if ($workers === 1 || ! function_exists('pcntl_fork') || ! function_exists('pcntl_waitpid')) {
             $work(0, $total);
 
             return;
         }
 
         $children = [];
+        $failed = 0;
 
         for ($w = 0; $w < $workers; $w++) {
             $from = $w * $per;
@@ -273,6 +296,14 @@ class BenchmarkCatalogSeeder extends Seeder
             }
 
             $pid = pcntl_fork();
+
+            if ($pid === -1) {
+                $this->say('Could not fork worker '.$w.' — generating its range in this process.');
+
+                $work($from, $to);
+
+                continue;
+            }
 
             if ($pid === 0) {
                 DB::purge();
@@ -290,12 +321,10 @@ class BenchmarkCatalogSeeder extends Seeder
             $children[] = $pid;
         }
 
-        $failed = 0;
-
         foreach ($children as $pid) {
             pcntl_waitpid($pid, $status);
 
-            if (pcntl_wexitstatus($status) !== 0) {
+            if (! pcntl_wifexited($status) || pcntl_wexitstatus($status) !== 0) {
                 $failed++;
             }
         }
@@ -331,7 +360,7 @@ class BenchmarkCatalogSeeder extends Seeder
             $size = min(self::BATCH, $to - $offset);
 
             DB::statement(sprintf(
-                'INSERT INTO products (sku, status, type, parent_id, attribute_family_id, `values`, created_at, updated_at)
+                'INSERT INTO '.$this->table('products').' (sku, status, type, parent_id, attribute_family_id, `values`, created_at, updated_at)
                  SELECT
                    CONCAT(%1$s, %2$d + n.i),
                    1,
@@ -349,8 +378,8 @@ class BenchmarkCatalogSeeder extends Seeder
                      )
                    ),
                    NOW(), NOW()
-                 FROM bench_seq n
-                 JOIN bench_source src ON src.rn = ((%2$d + n.i) %% %6$d) + 1
+                 FROM '.$this->table('bench_seq').' n
+                 JOIN '.$this->table('bench_source').' src ON src.rn = ((%2$d + n.i) %% %6$d) + 1
                  WHERE n.i < %7$d',
                 $prefix,
                 $offset,
@@ -398,7 +427,7 @@ class BenchmarkCatalogSeeder extends Seeder
                     $chunkHi = min($hi, $chunkLo + 1999);
 
                     DB::statement(sprintf(
-                        'INSERT INTO products (sku, status, type, parent_id, attribute_family_id, `values`, created_at, updated_at)
+                        'INSERT INTO '.$this->table('products').' (sku, status, type, parent_id, attribute_family_id, `values`, created_at, updated_at)
                          SELECT
                            CONCAT(%1$s, p.id, "-", n.i),
                            1, "simple", p.id, p.attribute_family_id,
@@ -408,8 +437,8 @@ class BenchmarkCatalogSeeder extends Seeder
                              "$.common.ean",     LPAD((p.id * 10 + n.i) %% 10000000000000, 13, "0")
                            ),
                            NOW(), NOW()
-                         FROM products p
-                         JOIN bench_seq n ON n.i < 3 + (p.id %% 6)
+                         FROM '.$this->table('products').' p
+                         JOIN '.$this->table('bench_seq').' n ON n.i < 3 + (p.id %% 6)
                          WHERE p.id BETWEEN %2$d AND %3$d AND p.type = "configurable"',
                         $prefix,
                         $chunkLo,

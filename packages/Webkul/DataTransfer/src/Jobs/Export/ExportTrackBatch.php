@@ -13,6 +13,8 @@ class ExportTrackBatch implements ShouldQueue
     use Batchable;
     use Queueable;
 
+    public const MAX_TIMEOUT = 86400;
+
     public $tries = 3;
 
     public $timeout = 300;
@@ -25,13 +27,16 @@ class ExportTrackBatch implements ShouldQueue
      * mid-run on a large export, and the three retries then re-enter a job
      * that cannot finish either — leaving the batches orphaned as pending.
      *
+     * Capped at a day: beyond that the worker is stuck, not slow, and an
+     * uncapped row-derived timeout would disable stuck-job detection outright.
+     *
      * @param  mixed  $exportBatch
      */
     public function __construct(protected $exportBatch)
     {
         $count = (int) ($exportBatch->summary['total'] ?? $exportBatch->totalCount ?? 0);
 
-        $this->timeout = max(3600, $count);
+        $this->timeout = min(max(3600, $count), self::MAX_TIMEOUT);
     }
 
     /**
