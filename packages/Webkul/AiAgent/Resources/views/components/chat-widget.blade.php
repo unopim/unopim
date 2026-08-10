@@ -189,29 +189,8 @@
                             <div v-if="session.id === activeSessionId"
                                 style="width:8px;height:8px;border-radius:50%;background:rgb(var(--c-primary-600));flex-shrink:0;"></div>
 
-                            {{-- Delete: first click arms, second confirms. Deleting a
-                                 conversation is destructive and irreversible, so it must
-                                 not happen on a single stray click. --}}
-                            <template v-else-if="confirmingDeleteId === session.id">
-                                <div style="display:flex;gap:4px;flex-shrink:0;" @click.stop>
-                                    <button @click.stop="deleteSession(session.id)"
-                                        :title="trans.confirmDelete"
-                                        :aria-label="trans.confirmDelete"
-                                        class="ap-session-delete"
-                                        style="color:rgb(var(--c-danger));">
-                                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-                                    </button>
-                                    <button @click.stop="confirmingDeleteId = null"
-                                        :title="trans.cancel"
-                                        :aria-label="trans.cancel"
-                                        class="ap-session-delete">
-                                        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                    </button>
-                                </div>
-                            </template>
-
                             {{-- Delete button --}}
-                            <button v-else @click.stop="confirmingDeleteId = session.id"
+                            <button v-else @click.stop="confirmDeleteSession(session.id)"
                                 :title="trans.deleteSession"
                                 :aria-label="trans.deleteSession"
                                 class="ap-session-delete"
@@ -896,9 +875,6 @@ app.component('v-agenting-pim', {
             noSessions: `@lang('ai-agent::app.widget.no-sessions')`,
             sessionDefaultName: `@lang('ai-agent::app.widget.session-default-name')`,
             deleteSession: `@lang('ai-agent::app.widget.delete-session')`,
-            confirmDelete: `@lang('ai-agent::app.widget.confirm-delete')`,
-            cancel: `@lang('ai-agent::app.widget.cancel')`,
-            deleteSessionFailed: `@lang('ai-agent::app.widget.delete-session-failed')`,
             renameSession: `@lang('ai-agent::app.widget.rename-session')`,
             readyFor: `@lang('ai-agent::app.widget.ready-for')`,
             catalogHelp: `@lang('ai-agent::app.widget.catalog-help')`,
@@ -986,7 +962,6 @@ app.component('v-agenting-pim', {
             // Session management
             sessions: [],
             activeSessionId: null,
-            confirmingDeleteId: null,
             showSessions: false,
             platforms: platforms,
             defaultPlatformId: defaultPlatformId,
@@ -1317,17 +1292,19 @@ app.component('v-agenting-pim', {
             this.$nextTick(() => { this.scrollBottom(); this.$refs.textInput?.focus(); });
         },
 
-        async deleteSession(sessionId) {
-            this.confirmingDeleteId = null;
+        confirmDeleteSession(sessionId) {
+            this.$emitter.emit('open-delete-modal', {
+                agree: () => this.deleteSession(sessionId),
+            });
+        },
 
-            // A server-side conversation must be removed there first. If that call
-            // fails, keep the session in the list and tell the user, rather than
-            // hiding it locally and leaving an orphaned record behind.
+        async deleteSession(sessionId) {
             if (typeof sessionId === 'number') {
                 try {
                     await this.$axios.delete("{{ url(config('app.admin_url') . '/ai-agent/conversations') }}/" + sessionId);
                 } catch (e) {
-                    this.$emitter?.emit?.('add-flash', { type: 'error', message: this.trans.deleteSessionFailed });
+                    this.$emitter.emit('add-flash', { type: 'error', message: this.trans.errorGeneric });
+
                     return;
                 }
             }
