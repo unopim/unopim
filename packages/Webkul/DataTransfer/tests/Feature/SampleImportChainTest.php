@@ -3,10 +3,13 @@
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Import;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Services\SampleFiles;
+use Webkul\Product\Models\VariantStructure;
+use Webkul\Product\Services\VariantStructureWriter;
 
 /**
  * The shipped samples are only meant to import against a stock installation:
@@ -21,6 +24,28 @@ function reduceToStockInstallation(): void
     DB::table('channel_currencies')->whereIn('currency_id', $currencyIds)->delete();
     DB::table('currencies')->whereIn('id', $currencyIds)->update(['status' => 0]);
     DB::table('locales')->where('code', '!=', 'en_US')->update(['status' => 0]);
+}
+
+function seedSampleVariantStructures(): void
+{
+    $family = AttributeFamily::query()->where('code', 'default')->firstOrFail();
+
+    $structures = [
+        'color'            => ['levels' => 1, 'axes' => ['level_1' => ['color']]],
+        'size'             => ['levels' => 1, 'axes' => ['level_1' => ['size']]],
+        'color_size'       => ['levels' => 1, 'axes' => ['level_1' => ['color', 'size']]],
+        'color_group_size' => ['levels' => 2, 'axes' => ['level_1' => ['color'], 'level_2' => ['size']]],
+    ];
+
+    $writer = app(VariantStructureWriter::class);
+
+    foreach ($structures as $code => $desired) {
+        if (VariantStructure::query()->where('attribute_family_id', $family->id)->where('code', $code)->exists()) {
+            continue;
+        }
+
+        $writer->create($family, ['code' => $code, 'name' => $code] + $desired);
+    }
 }
 
 function importSample(string $entityType, string $samplePath, string $action = Import::ACTION_APPEND, string $imagesDirectory = ''): array
@@ -97,6 +122,10 @@ it('imports every shipped sample against a stock installation', function () use 
     reduceToStockInstallation();
 
     foreach ($chain as $type) {
+        if ($type === 'products') {
+            seedSampleVariantStructures();
+        }
+
         expect(importSample($type, samplePath($type)))->toBe([], "$type sample failed to import");
     }
 
@@ -107,6 +136,10 @@ it('deletes with every shipped delete sample', function () use ($chain) {
     reduceToStockInstallation();
 
     foreach ($chain as $type) {
+        if ($type === 'products') {
+            seedSampleVariantStructures();
+        }
+
         importSample($type, samplePath($type));
     }
 

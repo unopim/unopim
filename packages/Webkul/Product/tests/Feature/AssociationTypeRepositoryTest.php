@@ -12,7 +12,7 @@ it('creates a type with translations and a field via the repository', function (
         'is_user_defined' => 1,
         'en_US'           => ['name' => 'Spare Parts'],
         'fields'          => [
-            ['code' => 'position', 'type' => 'text', 'validation' => 'number', 'status' => 1, 'section' => 'left', 'en_US' => ['name' => 'Position']],
+            ['code' => 'position', 'type' => 'text', 'validation' => 'number', 'status' => 1, 'en_US' => ['name' => 'Position']],
         ],
     ]);
 
@@ -72,7 +72,7 @@ it('updates a type, its translation, and manages fields (new/update/delete)', fu
         'is_user_defined' => 1,
         'en_US'           => ['name' => 'Cross Sell'],
         'fields'          => [
-            ['code' => 'note', 'type' => 'text', 'validation' => null, 'status' => 1, 'section' => 'left', 'en_US' => ['name' => 'Note']],
+            ['code' => 'note', 'type' => 'text', 'validation' => null, 'status' => 1, 'en_US' => ['name' => 'Note']],
         ],
     ]);
 
@@ -94,7 +94,6 @@ it('updates a type, its translation, and manages fields (new/update/delete)', fu
                 'code'       => 'priority',
                 'type'       => 'text',
                 'status'     => 1,
-                'section'    => 'right',
                 'en_US'      => ['name' => 'Priority'],
             ],
         ],
@@ -155,7 +154,6 @@ it('does not duplicate a field when the same still-new payload is submitted twic
                 'code'     => 'feature',
                 'type'     => 'multiselect',
                 'status'   => 1,
-                'section'  => 'left',
                 'position' => 0,
                 'en_US'    => ['name' => 'Feature'],
                 'options'  => [

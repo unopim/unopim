@@ -52,15 +52,13 @@ class Configurable extends AbstractType
     protected $attributesById = [];
 
     /**
-     * Get default variant.
+     * Get default variant, excluding `variant_group` nodes: those are internal
+     * grouping records, not a leaf variant a consumer can render.
      *
      * @return Product
      */
     public function getDefaultVariant()
     {
-        // Excludes `variant_group` nodes: they are internal grouping records,
-        // not a leaf variant a storefront/API consumer can render as "the"
-        // default variant.
         return $this->product->variants()
             ->where('type', '!=', 'variant_group')
             ->find($this->getDefaultVariantId());
@@ -193,11 +191,10 @@ class Configurable extends AbstractType
     }
 
     /**
-     * Save the 3-tier `variant_groups` payload for a 2-level variant
-     * structure: create/update each `variant_group` node and its nested
-     * `simple` variants, then prune groups (and their orphaned children) no
-     * longer present in the payload. Mirrors the flat `variants` pruning in
-     * `update()`, one level deeper.
+     * Save the 3-tier `variant_groups` payload: create/update each group node and
+     * its nested `simple` variants, then prune groups (and orphaned children) no
+     * longer in the payload — the flat `variants` pruning in `update()`, one level
+     * deeper.
      *
      * @param  \Webkul\Product\Contracts\Product  $product
      * @param  Collection  $productSuperAttributes
@@ -215,19 +212,27 @@ class Configurable extends AbstractType
             ->get()
             ->keyBy('id');
 
-        $this->product->loadMissing('variantStructure.placements.attribute');
+        $this->product->loadMissing(['variantStructure.axes.attribute', 'variantStructure.placements.attribute']);
+
+        $loadedStructure = $this->product->variantStructure;
 
         foreach ($data['variant_groups'] as $groupKey => $groupData) {
             if (Str::contains($groupKey, 'group_')) {
                 $group = $this->createVariantGroup($product, array_merge($groupData, [
                     'group_axis_code' => $groupAxis,
                 ]));
+
+                $planner->primeStructure($group->id, $loadedStructure);
+
+                Event::dispatch('catalog.product.create.after', $group);
             } else {
                 if (! $group = $existingGroups->pull($groupKey)) {
                     continue;
                 }
 
-                $this->updateVariantGroupValues($group, $groupAxis, $groupData);
+                $planner->primeStructure($group->id, $loadedStructure);
+
+                $this->updateVariantGroupValues($group, $groupAxis, $groupData, $planner);
             }
 
             $previousGroupVariantIds = $group->variants->pluck('id');
@@ -238,6 +243,8 @@ class Configurable extends AbstractType
 
                     $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
 
+                    $planner->primeStructure($variant->id, $loadedStructure);
+
                     Event::dispatch('catalog.product.create.after', $variant);
                 } else {
                     if (is_numeric($index = $previousGroupVariantIds->search($variantId))) {
@@ -246,7 +253,9 @@ class Configurable extends AbstractType
 
                     $variantData['super_attributes'] = $productSuperAttributes;
 
-                    $this->updateVariant($variantData, $variantId);
+                    $planner->primeStructure((int) $variantId, $loadedStructure);
+
+                    $this->updateVariant($variantData, $variantId, $planner);
                 }
             }
 
@@ -266,19 +275,36 @@ class Configurable extends AbstractType
 
     /**
      * Merge submitted sub_parent/common values into an existing variant_group
-     * node. The L1 axis option itself (`group_axis_option`) is set once at
-     * creation time and is not currently re-editable through this path.
+     * node, including an own-axis rename via `group_axis_option`, guarded by
+     * `ProductRepository::guardVariantLevelWrite()` for a sibling-scoped
+     * duplicate-combination check.
      */
-    protected function updateVariantGroupValues(Product $group, ?string $groupAxis, array $groupData): void
+    public function updateVariantGroupValues(Product $group, ?string $groupAxis, array $groupData, ?VariantStructurePlanner $planner = null): void
     {
-        $values = $group->values;
+        $submitted = $groupData['group_values'] ?? [];
 
-        foreach ($groupData['group_values'] ?? [] as $code => $value) {
-            $values[self::COMMON_VALUES_KEY][$code] = $value;
+        if ($groupAxis && array_key_exists('group_axis_option', $groupData)) {
+            $submitted[$groupAxis] = $groupData['group_axis_option'];
         }
 
-        $group->values = $values;
-        $group->save();
+        $persist = function () use ($group, $submitted): void {
+            $values = $group->values;
+
+            foreach ($submitted as $code => $value) {
+                $values[self::COMMON_VALUES_KEY][$code] = $value;
+            }
+
+            $group->values = $values;
+            $group->save();
+        };
+
+        if ($group->parent_id && $submitted !== []) {
+            $this->productRepository->guardVariantLevelWrite($group, $submitted, $persist, $planner);
+
+            return;
+        }
+
+        $persist();
     }
 
     /**
@@ -313,7 +339,10 @@ class Configurable extends AbstractType
     }
 
     /**
-     * Create variant.
+     * Create variant. It stores only what it owns (axis options, sku); the rest
+     * resolves at read time from the ancestor chain, so an axis fixed at the group
+     * level is skipped, not failed — for 2-level callers only; a legacy 1-level
+     * payload missing an axis still fails below.
      *
      * @param  \Webkul\Product\Contracts\Product  $product
      * @param  array  $productSuperAttributes
@@ -328,10 +357,6 @@ class Configurable extends AbstractType
             'sku'                 => $data['sku'],
         ]);
 
-        // Inheritance is resolved at read time (see VariantValueResolver); a
-        // variant stores only what it owns - its axis options and sku - instead
-        // of copying the parent's values. This removes storage/write duplication
-        // and keeps a single source of truth on the ancestor chain.
         $variantValues = [];
 
         foreach ($productSuperAttributes as $attribute) {
@@ -339,13 +364,6 @@ class Configurable extends AbstractType
 
             $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
 
-            // In a 2-level structure the axis fixed at the group level (e.g. color)
-            // is not present in the leaf variant's payload - only the axis that
-            // differentiates it within the group (e.g. size) is. Skip that axis
-            // instead of failing; it resolves from the ancestor chain at read
-            // time (see VariantValueResolver). Legacy 1-level callers (no
-            // parent_id / no variant structure) get no such pass - a missing
-            // axis there still fails loudly below on a malformed payload.
             if (
                 ! array_key_exists($attrCode, $suppliedCommonValues)
                 && ! empty($data['parent_id'])
@@ -381,62 +399,67 @@ class Configurable extends AbstractType
      * @param  int  $id
      * @return \Webkul\Product\Contracts\Product
      */
-    public function updateVariant(array $data, $id)
+    public function updateVariant(array $data, $id, ?VariantStructurePlanner $planner = null)
     {
         $variant = $this->productRepository->find($id);
 
-        $variantValues = $variant->values;
-
         $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
 
-        // Same scoped exception as createVariant(): in a 2-level structure the
-        // axis fixed at the group level is not resubmitted on every leaf
-        // variant update - only the axis that differentiates it within the
-        // group is. Skip it here too, but only when this variant is actually
-        // group-owned (or the configurable is a 2-level structure); legacy
-        // 1-level updates must keep failing loudly on a malformed payload.
-        $isTwoLevelVariant = $variant->parent?->type === 'variant_group'
-            || ($this->product->variant_structure_id && $this->product->variantStructure?->levels === 2);
+        $persist = function () use ($variant, $data, $suppliedCommonValues): Product {
+            $variantValues = $variant->values;
 
-        foreach ($data['super_attributes'] ?? [] as $attribute) {
-            $attrCode = $attribute->code;
+            $isTwoLevelVariant = $variant->parent?->type === 'variant_group'
+                || ($this->product->variant_structure_id && $this->product->variantStructure?->levels === 2);
 
-            if (
-                ! array_key_exists($attrCode, $suppliedCommonValues)
-                && $isTwoLevelVariant
-            ) {
-                continue;
+            foreach ($data['super_attributes'] ?? [] as $attribute) {
+                $attrCode = $attribute->code;
+
+                if (
+                    ! array_key_exists($attrCode, $suppliedCommonValues)
+                    && $isTwoLevelVariant
+                ) {
+                    continue;
+                }
+
+                $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $suppliedCommonValues[$attrCode];
             }
 
-            $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $suppliedCommonValues[$attrCode];
+            $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
+
+            if ($structure = $this->product->variantStructure) {
+                $this->applyVariantLevelAttributes(
+                    $variantValues,
+                    $structure,
+                    $data,
+                    collect($data['super_attributes'] ?? [])->pluck('code')->all()
+                );
+            }
+
+            $variant->values = $variantValues;
+
+            $variant->update(['sku' => $data['sku']]);
+
+            return $variant;
+        };
+
+        if ($variant->parent_id && $suppliedCommonValues !== []) {
+            $result = $variant;
+
+            $this->productRepository->guardVariantLevelWrite($variant, $suppliedCommonValues, function () use (&$result, $persist): void {
+                $result = $persist();
+            }, $planner);
+
+            return $result;
         }
 
-        $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
-
-        if ($structure = $this->product->variantStructure) {
-            $this->applyVariantLevelAttributes(
-                $variantValues,
-                $structure,
-                $data,
-                collect($data['super_attributes'] ?? [])->pluck('code')->all()
-            );
-        }
-
-        $variant->values = $variantValues;
-
-        $variant->update(['sku' => $data['sku']]);
-
-        return $variant;
+        return $persist();
     }
 
     /**
-     * Persist the structure's `variant`-level, common-scope, non-axis
-     * attributes submitted on the leaf's payload. Axis/super-attribute codes
-     * are already written by the caller's axis loop above and must not be
-     * duplicated here; `sku` is handled separately. A code absent from the
-     * submitted `values.common` payload is skipped rather than failed - a
-     * leaf may legitimately omit some variant-level attributes. Only
-     * `common` scope is resolved (Phase-1 resolver only handles common).
+     * Persist the structure's `variant`-level, common-scope, non-axis attributes.
+     * Axis codes are already written by the caller's loop and must not be
+     * duplicated here; a code absent from the payload is skipped rather than
+     * failed, since a leaf may legitimately omit variant-level attributes.
      *
      * @param  array<string, array<string, mixed>>  $variantValues
      * @param  array<int, string>  $axisCodes

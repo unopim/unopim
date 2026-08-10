@@ -33,6 +33,10 @@ it('should index category in elastic search', function () {
         ],
     ]);
 
+    ElasticSearch::shouldReceive('openPointInTime')->andReturn(['id' => 'pit-test-id']);
+
+    ElasticSearch::shouldReceive('closePointInTime')->andReturn(['succeeded' => true]);
+
     ElasticSearch::shouldReceive('bulk')->between(1, 10000)->withArgs(function ($args) {
         $this->assertIsArray($args);
 

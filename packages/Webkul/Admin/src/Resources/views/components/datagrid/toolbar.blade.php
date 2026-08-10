@@ -5,7 +5,7 @@
 <template v-else>
     <div class="datagrid-toolbar mt-7 flex items-center justify-between gap-4 flex-wrap">
         <!-- Left Toolbar -->
-        <div class="flex gap-x-1">
+        <div class="flex flex-1 min-w-[240px] gap-x-1">
             <div
                 class="flex w-full items-center gap-x-1"
                 v-if="applied.massActions.indices.length"
@@ -108,7 +108,7 @@
                 class="flex w-full items-center gap-x-1"
                 v-else
             >
-                <div class="flex max-w-[445px] items-center max-sm:w-full max-sm:max-w-full">
+                <div class="flex w-full max-w-xs items-center max-sm:w-full max-sm:max-w-full">
                     <x-admin::search
                         name="search"
                         ::value="getAppliedColumnValues('all')"
@@ -125,7 +125,8 @@
             </div>
         </div>
 
-        <div class="flex flex-wrap items-center justify-end gap-4">
+        <div class="flex grow flex-wrap items-center justify-between gap-4">
+            <div class="flex flex-wrap items-center gap-4">
              <template v-if="available.meta.managedColumn?.enabled">
                 <x-admin::datagrid.manage-columns />
              </template>
@@ -387,6 +388,7 @@
                     </div>
                 </x-slot>
             </x-admin::drawer>
+            </div>
 
             <div class="flex items-center gap-x-2">
                 <x-admin::dropdown>
@@ -413,13 +415,13 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                <p class="whitespace-nowrap text-gray-600 dark:text-gray-300 max-sm:hidden">
+                <p class="max-w-[44px] text-center leading-tight text-gray-600 dark:text-gray-300 max-sm:hidden">
                     @lang('admin::app.components.datagrid.toolbar.per-page')
                 </p>
 
                 <input
                     type="text"
-                    class="inline-flex min-h-[38px] max-w-[60px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-3 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400 max-sm:hidden"
+                    class="inline-flex min-h-[38px] max-w-[46px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-2 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400 max-sm:hidden"
                     :value="available.meta.current_page"
                     @change="changePage(parseInt($event.target.value))"
                     aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')"
