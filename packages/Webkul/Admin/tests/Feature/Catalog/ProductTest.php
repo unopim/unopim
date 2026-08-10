@@ -40,7 +40,6 @@ it('should return the product datagrid', function () {
 
             ElasticSearch::indices()->refresh(['index' => $productIndex]);
         } catch (Exception $e) {
-            // ES not available, skip refresh
         }
     }
 
@@ -339,8 +338,12 @@ it('should return validation error when setting duplicate variant configurable a
         ],
     ];
 
+    $expected = trans('admin::app.catalog.products.edit.types.configurable.variant-combination-exists', [
+        'values' => ($attribute->name ?: $attribute->code).': '.$attribute->options->first()->code,
+    ]);
+
     $this->put(route('admin.catalog.products.update', $newProduct->id), $data)
-        ->assertSessionHas('warning', trans('admin::app.catalog.products.edit.types.configurable.create.variant-already-exists'));
+        ->assertSessionHas('warning', $expected);
 
     $newProduct->refresh();
 
@@ -548,8 +551,6 @@ it('should render product edit page header with sticky top offset so save button
 
     $content = $response->getContent();
 
-    // The product page header uses a sticky wrapper (js-sticky-header) with an inline
-    // top offset so it sits below the main header and the save bar stays visible.
     $this->assertStringContainsString(
         'js-sticky-header',
         $content,
@@ -654,7 +655,11 @@ it('should return a json message instead of redirecting when an ajax update hits
         ],
     ];
 
+    $expected = trans('admin::app.catalog.products.edit.types.configurable.variant-combination-exists', [
+        'values' => ($attribute->name ?: $attribute->code).': '.$attribute->options->first()->code,
+    ]);
+
     $this->putJson(route('admin.catalog.products.update', $newProduct->id), $data, ['X-Ajax-Form' => 'true'])
         ->assertUnprocessable()
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.products.edit.types.configurable.create.variant-already-exists')]);
+        ->assertJsonFragment(['message' => $expected]);
 });
