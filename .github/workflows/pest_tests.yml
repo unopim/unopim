@@ -276,19 +276,35 @@ jobs:
       - name: Install Node dependencies
         run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
-      # Pest keeps the graph under $HOME/.pest/tia/<project-key>, not in the workspace.
-      - name: Resolve the test impact graph path
-        id: tia
-        run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
+      - name: Anchor the impact diff to the base branch
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: git checkout -B "$BASE_REF"
 
-      - name: Restore the test impact graph
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.tia.outputs.path }}
-          key: pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ github.run_id }}
-          restore-keys: |
-            pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-
-            pest-tia-${{ runner.os }}-
+      - name: Decide whether an impacted run is worth recording
+        id: baseline
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          skip() {
+            echo "usable=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::$1 The full matrices cover this pull request instead."
+            exit 0
+          }
+
+          if ! git diff --quiet "origin/$BASE_REF...HEAD" -- \
+            composer.lock phpunit.xml phpunit.xml.dist \
+            vite.config.ts vite.config.js vite.config.mjs vite.config.cjs vite.config.mts \
+            tsconfig.json tsconfig.app.json jsconfig.json \
+            package-lock.json pnpm-lock.yaml yarn.lock bun.lock bun.lockb; then
+            skip "The baseline fingerprint drifted, so the graph would be discarded and the whole suite re-recorded."
+          fi
+
+          if git diff --name-only "origin/$BASE_REF...HEAD" | grep -qE 'src/(Resources/(lang|views|assets)|Config|Database/Migrations?)/|^database/seeders/'; then
+            skip "A watched asset changed, which marks every test in its package as impacted."
+          fi
+
+          echo "usable=true" >> "$GITHUB_OUTPUT"
 
       - name: Setting Environment
         run: |
@@ -323,6 +339,7 @@ jobs:
       # and one worker is no parallelism anyway, so the run drops it entirely:
       # a single process is what keeps the recording under the OOM killer.
       - name: Running impacted Pest tests
+        if: steps.baseline.outputs.usable == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: vendor/bin/pest --tia --colors=always
+        run: vendor/bin/pest --tia --filtered --colors=always

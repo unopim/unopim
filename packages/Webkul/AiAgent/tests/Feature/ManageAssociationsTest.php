@@ -35,7 +35,6 @@ function seedBundleKitAssociationTypeForAiTool(): AssociationType
                 'validation'  => 'number',
                 'is_required' => 1,
                 'status'      => 1,
-                'section'     => 'left',
                 'en_US'       => ['name' => 'Quantity'],
             ],
         ],

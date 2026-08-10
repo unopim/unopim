@@ -111,14 +111,6 @@ class AssociationTypeFieldRepository extends Repository
     }
 
     /**
-     * Retrieves active association type fields by section
-     */
-    public function getActiveFieldsBySection(string $section = 'left'): Collection
-    {
-        return $this->where(['status' => 1, 'section' => $section])->with(['translations', 'options', 'options.translations'])->orderBy('position')->get();
-    }
-
-    /**
      * Retrieves active association type fields
      */
     public function getActiveFields(): Collection

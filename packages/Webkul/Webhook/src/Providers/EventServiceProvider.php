@@ -4,8 +4,11 @@ namespace Webkul\Webhook\Providers;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
+use OwenIt\Auditing\Events\Audited;
+use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Webhook\Listeners\ImportBatch;
 use Webkul\Webhook\Listeners\Product;
+use Webkul\Webhook\Services\RecentProductAudits;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -14,6 +17,14 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Event::listen(Audited::class, function (Audited $event): void {
+            if (! $event->audit || ! $event->model instanceof ProductContract) {
+                return;
+            }
+
+            app(RecentProductAudits::class)->remember($event->model->getKey(), $event->audit);
+        });
+
         Event::listen('catalog.product.update.after', [Product::class, 'afterUpdate']);
 
         Event::listen('catalog.product.create.after', [Product::class, 'afterCreate']);
