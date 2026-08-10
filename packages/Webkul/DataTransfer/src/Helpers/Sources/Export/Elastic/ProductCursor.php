@@ -36,15 +36,17 @@ class ProductCursor extends AbstractElasticCursor
     {
         $options = self::resolveOptions($this->options);
         $filters = $requestParams['filters'] ?? [];
+        $isFirstFetch = $this->searchAfter === [];
+
         $query = [
-            'track_total_hits' => true,
+            'track_total_hits' => $isFirstFetch,
             '_source'          => false,
             'size'             => $size ?? $this->batchSize,
             'sort'             => ['id' => 'desc'],
             'stored_fields'    => [],
         ];
 
-        if ($this->searchAfter !== []) {
+        if (! $isFirstFetch) {
             $query['search_after'] = $this->searchAfter;
         }
 
@@ -63,7 +65,10 @@ class ProductCursor extends AbstractElasticCursor
 
             $response = ElasticSearch::search($request);
             $hits = $response['hits']['hits'] ?? [];
-            $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
+
+            if ($isFirstFetch) {
+                $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
+            }
 
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];

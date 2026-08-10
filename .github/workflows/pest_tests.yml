@@ -329,16 +329,17 @@ jobs:
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
-          sudo fallocate -l 8G /mnt/swapfile
+          sudo fallocate -l 16G /mnt/swapfile
           sudo chmod 600 /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
           swapon --show
 
-      # A second worker doubles the resident coverage map and still gets killed
-      # with the swap in place, so this job trades its parallelism for headroom.
+      # Paratest holds its own copy of the coverage map alongside the worker's,
+      # and one worker is no parallelism anyway, so the run drops it entirely:
+      # a single process is what keeps the recording under the OOM killer.
       - name: Running impacted Pest tests
         if: steps.baseline.outputs.usable == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: vendor/bin/pest --parallel --processes=1 --tia --filtered --colors=always
+        run: vendor/bin/pest --tia --filtered --colors=always
