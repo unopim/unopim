@@ -212,6 +212,7 @@ describe('User Exporter', function () {
 
     it('copies exported user images using their stored relative path when with_media is enabled', function () {
         Storage::fake('public');
+        Storage::fake('private');
 
         Storage::disk('public')->put('admins/1/avatar.jpg', 'fake-image');
 
@@ -237,6 +238,6 @@ describe('User Exporter', function () {
         $preparedData = $this->exporter->prepareUsers($batch, $filePath);
 
         expect($preparedData[0]['image'])->toBe('admins/1/avatar.jpg');
-        expect(Storage::disk('public')->exists('exports/tmp/admins/1/avatar.jpg'))->toBeTrue();
+        expect(Storage::disk('private')->exists('exports/tmp/admins/1/avatar.jpg'))->toBeTrue();
     });
 });

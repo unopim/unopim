@@ -105,8 +105,10 @@ it('should return validation error when filtering based on any other field than 
 
 it('should return error message when code does not exists', function () {
     $this->withHeaders($this->headers)->json('GET', route('admin.api.currencies.get', ['code' => 'US2']))
-        ->assertBadRequest()
+        ->assertNotFound()
+        ->assertJsonPath('success', false)
         ->assertJsonStructure([
-            'error',
+            'success',
+            'message',
         ]);
 });

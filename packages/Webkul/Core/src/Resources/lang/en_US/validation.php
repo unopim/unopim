@@ -19,6 +19,7 @@ return [
     'file-type'                       => 'The file must be of type csv,xls,xlsx',
     'file-mime-extension-mismatch'    => 'The file extension and mime type do not match for field :attribute. The file extension is :extension and the mime type is :mimeType.',
     'file-not-exists'                 => 'The selected file does not exist :value for the field :attribute.',
+    'file-outside-attribute-path'     => 'The file :value does not belong to this record. Upload it again for the :attribute field.',
     'password-surrounding-whitespace' => 'The :attribute cannot begin or end with a space.',
     'password-whitespace-only'        => 'The :attribute cannot consist only of spaces.',
 ];

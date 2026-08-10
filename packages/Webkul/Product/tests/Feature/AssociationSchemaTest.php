@@ -35,6 +35,9 @@ it('has the expected key columns on the association_type_fields table', function
         'is_required',
         'is_unique',
         'value_per_locale',
-        'section',
     ]))->toBeTrue();
+});
+
+it('no longer carries a display section column on the association_type_fields table', function () {
+    expect(Schema::hasColumn('association_type_fields', 'section'))->toBeFalse();
 });

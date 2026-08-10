@@ -42,6 +42,21 @@ class ProductComparer
             }
         }
 
+        $hasOldSku = is_array($oldValues) && array_key_exists('sku', $oldValues);
+        $hasNewSku = is_array($newValues) && array_key_exists('sku', $newValues);
+
+        if ($hasOldSku || $hasNewSku) {
+            $old = $hasOldSku ? $oldValues['sku'] : null;
+            $new = $hasNewSku ? $newValues['sku'] : null;
+
+            if ($old !== $new) {
+                $diff['changed']['sku'] = [
+                    'old' => $old,
+                    'new' => $new,
+                ];
+            }
+        }
+
         return $diff;
     }
 

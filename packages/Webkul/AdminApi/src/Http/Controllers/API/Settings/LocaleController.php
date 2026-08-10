@@ -36,9 +36,7 @@ class LocaleController extends ApiController
         try {
             return response()->json(app(LocaleDataSource::class)->getByCode($code));
         } catch (\Exception $e) {
-            return response()->json([
-                'error' => $e->getMessage(),
-            ], Response::HTTP_BAD_REQUEST);
+            return $this->storeExceptionLog($e);
         }
     }
 

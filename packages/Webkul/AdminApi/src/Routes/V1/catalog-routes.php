@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\AdminApi\Http\Controllers\API\Catalog\AssociationTypeController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\AttributeController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\AttributeFamilyController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\AttributeGroupController;
@@ -9,6 +10,7 @@ use Webkul\AdminApi\Http\Controllers\API\Catalog\CategoryFieldController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\ConfigurableProductController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\MediaFileController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\SimpleProductController;
+use Webkul\AdminApi\Http\Controllers\API\Catalog\VariantStructureController;
 
 Route::group([
     'middleware' => [
@@ -50,6 +52,16 @@ Route::group([
         Route::delete('{code}', 'delete')->name('admin.api.families.delete');
     });
 
+    /** Attribute Family Variant Structures API Routes */
+    Route::controller(VariantStructureController::class)->prefix('families')->group(function () {
+        Route::get('{code}/variant-structures', 'index')->name('admin.api.families-variant-structures.index');
+        Route::get('{code}/variant-structures/{structureCode}', 'get')->name('admin.api.families-variant-structures.get');
+        Route::post('{code}/variant-structures', 'store')->name('admin.api.families-variant-structures.store');
+        Route::put('{code}/variant-structures/{structureCode}', 'update')->name('admin.api.families-variant-structures.update');
+        Route::patch('{code}/variant-structures/{structureCode}', 'partialUpdate')->name('admin.api.families-variant-structures.patch');
+        Route::delete('{code}/variant-structures/{structureCode}', 'delete')->name('admin.api.families-variant-structures.delete');
+    });
+
     /** Category Fields API Routes */
     Route::controller(CategoryFieldController::class)->prefix('category-fields')->group(function () {
         Route::get('', 'index')->name('admin.api.category-fields.index');
@@ -63,6 +75,21 @@ Route::group([
         Route::post('{code}/options', 'storeOption')->name('admin.api.category-fields-options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.category-fields-options.update_option');
         Route::delete('{code}/options/{optionCode}', 'deleteOption')->name('admin.api.category-fields-options.delete_option');
+    });
+
+    /** Association Types API Routes */
+    Route::controller(AssociationTypeController::class)->prefix('association-types')->group(function () {
+        Route::get('', 'index')->name('admin.api.association-types.index');
+        Route::get('{code}', 'get')->name('admin.api.association-types.get');
+        Route::post('', 'store')->name('admin.api.association-types.store');
+        Route::put('{code}', 'update')->name('admin.api.association-types.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.association-types.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.association-types.delete');
+
+        Route::get('{code}/fields', 'getFields')->name('admin.api.association-types-fields.get');
+        Route::post('{code}/fields', 'storeField')->name('admin.api.association-types-fields.store');
+        Route::put('{code}/fields/{fieldCode}', 'updateField')->name('admin.api.association-types-fields.update');
+        Route::delete('{code}/fields/{fieldCode}', 'deleteField')->name('admin.api.association-types-fields.delete');
     });
 
     /** Categories API Routes */

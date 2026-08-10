@@ -91,7 +91,6 @@ it('should create an association type with fields successfully', function () {
                 'code'    => 'note',
                 'type'    => 'text',
                 'status'  => 1,
-                'section' => 'left',
                 'en_US'   => ['name' => 'Note'],
             ],
         ],
@@ -129,14 +128,12 @@ it('should reject creating an association type with duplicate field codes with a
                 'code'    => 'note',
                 'type'    => 'text',
                 'status'  => 1,
-                'section' => 'left',
                 'en_US'   => ['name' => 'Note'],
             ],
             [
                 'code'    => 'note',
                 'type'    => 'text',
                 'status'  => 1,
-                'section' => 'left',
                 'en_US'   => ['name' => 'Note Duplicate'],
             ],
         ],
@@ -164,14 +161,12 @@ it('should create an association type when field codes are all distinct', functi
                 'code'    => 'note',
                 'type'    => 'text',
                 'status'  => 1,
-                'section' => 'left',
                 'en_US'   => ['name' => 'Note'],
             ],
             [
                 'code'    => 'remark',
                 'type'    => 'text',
                 'status'  => 1,
-                'section' => 'left',
                 'en_US'   => ['name' => 'Remark'],
             ],
         ],
@@ -206,7 +201,6 @@ it('should reject creating an association type when a fields entry omits code or
         'fields'   => [
             [
                 'status'  => 1,
-                'section' => 'left',
                 'en_US'   => ['name' => 'No Code Field'],
             ],
         ],
@@ -499,7 +493,7 @@ it('returns association types with their active field definitions in the picker 
     $this->post(route('admin.catalog.association_types.store'), [
         'code'   => $code,
         'fields' => [
-            ['code' => 'note', 'type' => 'text', 'status' => 1, 'section' => 'left'] + associationTypeNames('Note'),
+            ['code' => 'note', 'type' => 'text', 'status' => 1] + associationTypeNames('Note'),
         ],
     ] + associationTypeNames('With Fields'))->assertRedirect();
 
@@ -546,7 +540,6 @@ it('should render the edit page with the quantity field prefilled', function () 
                 'code'    => 'quantity',
                 'type'    => 'text',
                 'status'  => 1,
-                'section' => 'left',
                 'en_US'   => ['name' => 'Quantity'],
             ],
         ],
