@@ -141,7 +141,7 @@
                     <template v-else>
                         <template v-if="$parent.available.records.length">
                             <div
-                                class="row grid gap-2.5 items-center px-4 py-4 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                class="row grid gap-2.5 items-center px-4 py-2.5 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                                 v-for="record in $parent.available.records"
                                 :key="record[$parent.available.meta.primary_column]"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
