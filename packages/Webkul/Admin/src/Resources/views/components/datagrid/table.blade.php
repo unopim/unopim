@@ -317,3 +317,93 @@
         });
     </script>
 @endpushOnce
+
+{{--
+    Hover a datagrid thumbnail to preview it enlarged, without opening the row.
+    Event-delegated so it works on the AJAX-rendered grid; the preview is
+    position:fixed and appended to <body>, so the grid's overflow never clips it.
+--}}
+@pushOnce('scripts')
+    <style>
+        #datagrid-thumbnail-preview {
+            position: fixed;
+            z-index: 9999;
+            max-width: 340px;
+            max-height: 340px;
+            padding: 4px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .dark #datagrid-thumbnail-preview {
+            border-color: #4b5563;
+            background: #1f2937;
+        }
+    </style>
+
+    <script>
+        (function () {
+            let preview = null;
+
+            const thumb = (t) =>
+                (t && t.tagName === 'IMG' && t.closest('.table-responsive .row.grid')) ? t : null;
+
+            const place = (img, rect) => {
+                const pad = 12;
+                let x = rect.right + pad;
+                let y = rect.top + rect.height / 2 - img.offsetHeight / 2;
+
+                if (x + img.offsetWidth > window.innerWidth - 8) {
+                    x = rect.left - img.offsetWidth - pad;
+                }
+                if (x < 8) {
+                    x = 8;
+                }
+                y = Math.min(Math.max(8, y), window.innerHeight - img.offsetHeight - 8);
+
+                img.style.left = x + 'px';
+                img.style.top = y + 'px';
+            };
+
+            document.addEventListener('mouseover', (e) => {
+                const t = thumb(e.target);
+                if (!t) {
+                    return;
+                }
+
+                const src = t.currentSrc || t.src;
+                if (!src) {
+                    return;
+                }
+
+                if (preview) {
+                    preview.remove();
+                }
+
+                preview = document.createElement('img');
+                preview.id = 'datagrid-thumbnail-preview';
+                preview.alt = '';
+
+                const rect = t.getBoundingClientRect();
+                preview.addEventListener('load', () => place(preview, rect));
+                preview.src = src;
+                document.body.appendChild(preview);
+
+                if (preview.complete) {
+                    place(preview, rect);
+                }
+            });
+
+            document.addEventListener('mouseout', (e) => {
+                if (thumb(e.target) && preview) {
+                    preview.remove();
+                    preview = null;
+                }
+            });
+        })();
+    </script>
+@endpushOnce
