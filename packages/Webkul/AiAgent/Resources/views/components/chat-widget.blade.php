@@ -1128,6 +1128,22 @@ app.component('v-agenting-pim', {
         // pick it back up so it lands here instead of being lost on navigation.
         this.resumePendingReply();
 
+        // A chat image URL can 404 (e.g. the agent pointed at a path that isn't
+        // there). The `error` event doesn't bubble, so catch it in the capture
+        // phase and swap the broken <img> for a small caption instead of a
+        // broken-image icon. Delegated once here, covers every rendered image.
+        this.$el.addEventListener('error', (e) => {
+            const t = e.target;
+            if (t && t.tagName === 'IMG' && t.classList?.contains('ap-ai-img') && !t.dataset.failed) {
+                t.dataset.failed = '1';
+                const note = document.createElement('span');
+                note.className = 'text-[11px] text-gray-400 dark:text-gray-500 italic';
+                const alt = t.getAttribute('alt');
+                note.textContent = alt ? (alt + ' (image unavailable)') : 'Image unavailable';
+                t.replaceWith(note);
+            }
+        }, true);
+
         // The isOpen watcher only fires on change, so the initial-open state
         // (either from sessionStorage or from the config-driven default) needs
         // to run its side effects explicitly: shift #app margin, scroll to
@@ -1828,9 +1844,54 @@ app.component('v-agenting-pim', {
             return text;
         },
 
+        // Convert GitHub-style markdown tables (| a | b | rows with a |---|---|
+        // separator) into an HTML table. Runs BEFORE the inline rules so cell
+        // text still gets bold/links/etc. Non-table lines pass through untouched.
+        renderTables(text) {
+            if (text.indexOf('|') === -1) return text;
+            const isSep = (l) => {
+                const t = l.trim();
+                return t.indexOf('-') !== -1 && t.replace(/[|\s:-]/g, '') === '';
+            };
+            const cells = (l) => {
+                let t = l.trim();
+                if (t.startsWith('|')) t = t.slice(1);
+                if (t.endsWith('|')) t = t.slice(0, -1);
+                return t.split('|').map(c => c.trim());
+            };
+            const isRow = (l) => /^\s*\|.*\|\s*$/.test(l);
+            const th = 'border border-gray-200 dark:border-gray-700 px-2 py-1 text-left font-semibold bg-gray-50 dark:bg-cherry-800';
+            const td = 'border border-gray-200 dark:border-gray-700 px-2 py-1 align-top';
+            const lines = text.split('\n');
+            const out = [];
+            let i = 0;
+            while (i < lines.length) {
+                if (isRow(lines[i]) && i + 1 < lines.length && isSep(lines[i + 1])) {
+                    const head = cells(lines[i]);
+                    i += 2;
+                    const body = [];
+                    while (i < lines.length && isRow(lines[i]) && !isSep(lines[i])) {
+                        body.push(cells(lines[i]));
+                        i++;
+                    }
+                    out.push(
+                        '<table class="w-full my-2 text-[12px] border-collapse"><thead><tr>' +
+                        head.map(h => `<th class="${th}">${h}</th>`).join('') +
+                        '</tr></thead><tbody>' +
+                        body.map(r => '<tr>' + head.map((_, c) => `<td class="${td}">${r[c] || ''}</td>`).join('') + '</tr>').join('') +
+                        '</tbody></table>'
+                    );
+                } else {
+                    out.push(lines[i]);
+                    i++;
+                }
+            }
+            return out.join('\n');
+        },
+
         renderMarkdown(text) {
             if (!text) return '';
-            const html = text
+            const html = this.renderTables(text)
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-primary-700 dark:text-primary-400">$1</code>')
