@@ -176,13 +176,13 @@
                                             alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                             width="74"
                                             height="74"
-                                            class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                            class="h-[80px] max-w-[40px] min-w-[40px] max-h-[40px] min-h-[40px] rounded-lg border border-gray-300 shadow-sm object-cover"
                                         />
                                     </template>
 
                                     <template v-else-if="column.type === 'gallery'">
                                         <template v-if="record[column.index]?.type === 'video'">
-                                            <div class="relative h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px]">
+                                            <div class="relative h-[80px] max-w-[40px] min-w-[40px] max-h-[40px] min-h-[40px]">
                                                 <video
                                                     :src="record[column.index].url"
                                                     width="74"
@@ -201,7 +201,7 @@
                                                 alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                                 width="74"
                                                 height="74"
-                                                class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                                class="h-[80px] max-w-[40px] min-w-[40px] max-h-[40px] min-h-[40px] rounded-lg border border-gray-300 shadow-sm object-cover"
                                             />
                                         </template>
                                     </template>
