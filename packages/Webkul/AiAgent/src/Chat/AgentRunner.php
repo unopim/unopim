@@ -106,93 +106,15 @@ class AgentRunner
                 ob_end_flush();
             }
 
-            $statusMsg = $context->hasImages()
-                ? trans('ai-agent::app.common.status-analyzing-image')
-                : trans('ai-agent::app.common.status-thinking');
-            $this->sendSSE('status', ['message' => $statusMsg]);
-
             try {
-                $aiProvider = AiProvider::from($context->platform->provider);
-
-                $result = ScopedProviderConfig::run(
-                    $aiProvider->configKey(),
-                    $this->providerOverrides($context),
-                    function () use ($context, $aiProvider): array {
-                        $agent = $this->buildAgent($context);
-
-                        $stream = $agent->stream(
-                            $context->message,
-                            attachments: $this->buildAttachments($context),
-                            provider: $aiProvider->toLab(),
-                            model: $context->model,
-                            timeout: 120,
-                        );
-
-                        $textBuffer = '';
-                        $stepCount = 0;
-                        $statusSent = false;
-
-                        foreach ($stream as $event) {
-                            if ($event instanceof ToolCall) {
-                                $stepCount++;
-                                $this->sendSSE('tool_call', [
-                                    'step' => $stepCount,
-                                    'tool' => $event->toolCall->name,
-                                ]);
-
-                                continue;
-                            }
-
-                            if ($event instanceof TextDelta) {
-                                if (! $statusSent && $stepCount > 0) {
-                                    $this->sendSSE('status', ['message' => trans('ai-agent::app.common.status-generating')]);
-                                    $statusSent = true;
-                                }
-
-                                $textBuffer .= $event->delta;
-                                $this->sendSSE('text_delta', ['chunk' => $event->delta]);
-                            }
-                        }
-
-                        // After stream completes, the StreamableAgentResponse holds
-                        // final usage + text. Fall back to buffer if usage is null.
-                        $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
-                        $usage = $stream->usage;
-                        $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
-
-                        $this->recordStreamingTokens($context, $tokensUsed);
-
-                        $result = [
-                            'reply'  => $finalText,
-                            'action' => 'agent_response',
-                            'data'   => [
-                                'steps'       => $stepCount,
-                                'tokens_used' => $tokensUsed,
-                            ],
-                        ];
-
-                        $this->extractStreamActionResults($stream, $result, $context);
-
-                        return $result;
-                    },
-                );
+                $result = $this->generate($context, fn (string $event, array $data) => $this->sendSSE($event, $data));
 
                 // Already streamed as text_delta; strip from final payload.
                 unset($result['reply']);
                 $this->sendSSE('complete', $result);
             } catch (\Throwable $e) {
-                $resolved = AiErrorResolver::resolve($e);
-
-                if ($resolved['is_known']) {
-                    Log::warning('AI Agent stream provider error', [
-                        'type'    => $e::class,
-                        'message' => $e->getMessage(),
-                    ]);
-                } else {
-                    Log::error('AI Agent stream error', ['exception' => $e]);
-                }
-
-                $this->sendSSE('error', ['message' => $resolved['message']]);
+                $this->logStreamError($e);
+                $this->sendSSE('error', ['message' => AiErrorResolver::resolve($e)['message']]);
             }
         }, 200, [
             'Content-Type'      => 'text/event-stream',
@@ -200,6 +122,107 @@ class AgentRunner
             'Connection'        => 'keep-alive',
             'X-Accel-Buffering' => 'no',
         ]);
+    }
+
+    /**
+     * Run the agent and emit generation events through $emit, so the live SSE
+     * stream and the async queue job (which persists the reply so it survives a
+     * page reload) share exactly one generation loop.
+     *
+     * $emit(string $event, array $data) is called with:
+     *   status     {message}     — a human status label
+     *   tool_call  {step, tool}  — a tool invocation
+     *   text_delta {chunk}       — a chunk of assistant text
+     *
+     * Returns the final result array {reply, action, data, ...actions}.
+     */
+    public function generate(ChatContext $context, callable $emit): array
+    {
+        $statusMsg = $context->hasImages()
+            ? trans('ai-agent::app.common.status-analyzing-image')
+            : trans('ai-agent::app.common.status-thinking');
+        $emit('status', ['message' => $statusMsg]);
+
+        $aiProvider = AiProvider::from($context->platform->provider);
+
+        return ScopedProviderConfig::run(
+            $aiProvider->configKey(),
+            $this->providerOverrides($context),
+            function () use ($context, $aiProvider, $emit): array {
+                $agent = $this->buildAgent($context);
+
+                $stream = $agent->stream(
+                    $context->message,
+                    attachments: $this->buildAttachments($context),
+                    provider: $aiProvider->toLab(),
+                    model: $context->model,
+                    timeout: 120,
+                );
+
+                $textBuffer = '';
+                $stepCount = 0;
+                $statusSent = false;
+
+                foreach ($stream as $event) {
+                    if ($event instanceof ToolCall) {
+                        $stepCount++;
+                        $emit('tool_call', [
+                            'step' => $stepCount,
+                            'tool' => $event->toolCall->name,
+                        ]);
+
+                        continue;
+                    }
+
+                    if ($event instanceof TextDelta) {
+                        if (! $statusSent && $stepCount > 0) {
+                            $emit('status', ['message' => trans('ai-agent::app.common.status-generating')]);
+                            $statusSent = true;
+                        }
+
+                        $textBuffer .= $event->delta;
+                        $emit('text_delta', ['chunk' => $event->delta]);
+                    }
+                }
+
+                // After stream completes, the StreamableAgentResponse holds
+                // final usage + text. Fall back to buffer if usage is null.
+                $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
+                $usage = $stream->usage;
+                $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
+
+                $this->recordStreamingTokens($context, $tokensUsed);
+
+                $result = [
+                    'reply'  => $finalText,
+                    'action' => 'agent_response',
+                    'data'   => [
+                        'steps'       => $stepCount,
+                        'tokens_used' => $tokensUsed,
+                    ],
+                ];
+
+                $this->extractStreamActionResults($stream, $result, $context);
+
+                return $result;
+            },
+        );
+    }
+
+    /**
+     * Log a streaming/generation error, distinguishing a known provider error
+     * (warning) from an unexpected one (error).
+     */
+    protected function logStreamError(\Throwable $e): void
+    {
+        if (AiErrorResolver::resolve($e)['is_known']) {
+            Log::warning('AI Agent stream provider error', [
+                'type'    => $e::class,
+                'message' => $e->getMessage(),
+            ]);
+        } else {
+            Log::error('AI Agent stream error', ['exception' => $e]);
+        }
     }
 
     /**
