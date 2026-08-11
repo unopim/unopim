@@ -1129,10 +1129,13 @@ app.component('v-agenting-pim', {
         this.resumePendingReply();
 
         // A chat image URL can 404 (e.g. the agent pointed at a path that isn't
-        // there). The `error` event doesn't bubble, so catch it in the capture
-        // phase and swap the broken <img> for a small caption instead of a
-        // broken-image icon. Delegated once here, covers every rendered image.
-        this.$el.addEventListener('error', (e) => {
+        // there). Swap the broken <img> for a small caption instead of a
+        // broken-image icon. `error` doesn't bubble, so listen in the capture
+        // phase; the widget is a multi-root fragment so $el is not a reliable
+        // ancestor — listen on document and filter strictly by the ap-ai-img
+        // class (chat images only). Removed in beforeUnmount to avoid stacking
+        // a listener on every PJAX remount.
+        this._imgErrorHandler = (e) => {
             const t = e.target;
             if (t && t.tagName === 'IMG' && t.classList?.contains('ap-ai-img') && !t.dataset.failed) {
                 t.dataset.failed = '1';
@@ -1142,7 +1145,8 @@ app.component('v-agenting-pim', {
                 note.textContent = alt ? (alt + ' (image unavailable)') : 'Image unavailable';
                 t.replaceWith(note);
             }
-        }, true);
+        };
+        document.addEventListener('error', this._imgErrorHandler, true);
 
         // The isOpen watcher only fires on change, so the initial-open state
         // (either from sessionStorage or from the config-driven default) needs
@@ -2028,6 +2032,10 @@ app.component('v-agenting-pim', {
     beforeUnmount() {
         const appEl = document.getElementById('app');
         if (appEl) appEl.style.marginRight = '';
+
+        // Match the document-level image-error listener added in mounted() so it
+        // does not stack across PJAX remounts.
+        if (this._imgErrorHandler) document.removeEventListener('error', this._imgErrorHandler, true);
 
         // NOTE: do NOT clear storage here. Admin navigation is PJAX
         // (navigation.js unmount/remount the Vue app on every page change), so
