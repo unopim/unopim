@@ -14,6 +14,13 @@
     // Default panel state for fresh sessions. Stored user preference in
     // sessionStorage still wins — see restoreState() below.
     $openByDefault = (bool) (core()->getConfigData('general.magic_ai.agentic_pim.open_by_default') ?? false);
+
+    // Hosts (besides same-origin) whose images the chat may render inline:
+    // the app URL host plus a configured S3/CDN disk. Anything else -> plain link.
+    $allowedImageHosts = collect([
+        parse_url((string) config('app.url'), PHP_URL_HOST),
+        parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST),
+    ])->filter()->unique()->values();
 @endphp
 
 <v-agenting-pim></v-agenting-pim>
@@ -971,10 +978,9 @@ app.component('v-agenting-pim', {
             // Extra hosts (besides same-origin) allowed to render <img> in chat.
             // Same-origin covers app-served /storage; a configured S3/CDN disk
             // covers cloud-hosted media. Anything else renders as a plain link.
-            allowedImageHosts: @json(collect([
-                parse_url((string) config('app.url'), PHP_URL_HOST),
-                parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST),
-            ])->filter()->unique()->values()),
+            // Computed in the PHP block at the top of this file and passed here as
+            // a plain variable (a complex inline expression trips Blade's parser).
+            allowedImageHosts: @json($allowedImageHosts),
             capabilities: [
                 // Row 1: Product creation & updates
                 { key: 'create_from_image', label: `@lang('ai-agent::app.widget.capabilities-list.create-from-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-desc')`,
