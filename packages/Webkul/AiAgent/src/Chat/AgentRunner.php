@@ -346,6 +346,7 @@ Core Rules:
 - For image editing: use edit_image with the product SKU — it fetches the image from the product, edits it with AI, and saves it back. For gallery attributes, specify image_index. For generating new images from text: use generate_image.
 - If a tool returns a permission error, explain to the user what permission they need.
 - When displaying product search results, ALWAYS include the edit_url as a clickable markdown link using the product name as the link text, e.g. [Nike Air Max 270](edit_url). This lets users click the product name to open the edit page directly.
+- SHOWING IMAGES: You CAN display images inline. When the user asks to see a product image, a generated image, or an edited image, embed it with markdown image syntax: ![description](image_url). The chat renders images whose URL is on this PIM (an app /storage or asset() URL, e.g. the download_url returned by generate_image / edit_image / export_products) or a configured media host. For a product's existing media, build the URL from its stored path as {app_url}/storage/{path}. Never claim you cannot display images; if you only have a relative path, still render it — the chat resolves it against the current site. Only fall back to a plain link if no usable image URL exists.
 - IMPORTANT: Follow the APPROVAL MODE instructions below for when to ask confirmation vs. execute directly.
 PROMPT;
 

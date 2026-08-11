@@ -968,6 +968,13 @@ app.component('v-agenting-pim', {
             selectedPlatformId: initialPlatform ? initialPlatform.id : null,
             selectedModel: pickTextModel(initialModels),
             trans: trans,
+            // Extra hosts (besides same-origin) allowed to render <img> in chat.
+            // Same-origin covers app-served /storage; a configured S3/CDN disk
+            // covers cloud-hosted media. Anything else renders as a plain link.
+            allowedImageHosts: @json(collect([
+                parse_url((string) config('app.url'), PHP_URL_HOST),
+                parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST),
+            ])->filter()->unique()->values()),
             capabilities: [
                 // Row 1: Product creation & updates
                 { key: 'create_from_image', label: `@lang('ai-agent::app.widget.capabilities-list.create-from-image')`, description: `@lang('ai-agent::app.widget.capabilities-list.create-from-image-desc')`,
@@ -1110,6 +1117,10 @@ app.component('v-agenting-pim', {
         if (!this.activeSessionId) {
             this.activeSessionId = this.generateSessionId();
         }
+
+        // A reply may still be generating server-side from a previous page —
+        // pick it back up so it lands here instead of being lost on navigation.
+        this.resumePendingReply();
 
         // The isOpen watcher only fires on change, so the initial-open state
         // (either from sessionStorage or from the config-driven default) needs
@@ -1446,51 +1457,43 @@ app.component('v-agenting-pim', {
                     if (this.productContext.sku) fd.append('context[product_sku]', this.productContext.sku);
                     if (this.productContext.name) fd.append('context[product_name]', this.productContext.name);
                 }
-                // Try SSE streaming first, fallback to blocking JSON endpoint
-                let data = null;
+                // Enqueue the reply on the server so generation outlives this page,
+                // then poll for it. This is what makes the reply survive navigation:
+                // if the user leaves mid-answer, mounted() resumes polling on the
+                // next page (the reply id is stored on the streaming message).
+                this.pendingFiles = [];
+                const msgIndex = this.messages.length;
+                this.messages.push({ role: 'assistant', content: '', isStreaming: true, replyId: null });
+
                 try {
-                    const streamRes = await fetch("{{ route('ai-agent.chat.stream') }}", {
+                    const res = await fetch("{{ route('ai-agent.chat.send-async') }}", {
                         method: 'POST',
                         body: fd,
                         credentials: 'same-origin',
                         headers: {
-                            'Accept': 'text/event-stream',
+                            'Accept': 'application/json',
                             'X-Requested-With': 'XMLHttpRequest',
                             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
                         },
                     });
 
-                    const ct = streamRes.headers.get('content-type') || '';
+                    if (! res.ok) throw new Error('enqueue-failed');
 
-                    if (streamRes.ok && ct.includes('text/event-stream')) {
-                        // SSE streaming works — process the stream
-                        await this.processStream(streamRes, files);
-                        return; // processStream handles everything
-                    } else if (streamRes.ok && ct.includes('application/json')) {
-                        data = await streamRes.json();
-                    } else {
-                        throw new Error('stream-fallback');
-                    }
-                } catch (streamErr) {
-                    // Streaming failed — fallback to blocking JSON endpoint
+                    const payload = await res.json();
+                    this.messages[msgIndex].replyId = payload.reply_id;
+                    // Persist now so navigating right after sending still resumes.
+                    this.saveState();
+
+                    await this.pollReply(payload.reply_id, msgIndex);
+                } catch (enqueueErr) {
+                    // Queue path unavailable — fall back to the blocking endpoint.
                     this.streamingStatus = this.trans.processing;
-                    const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
-                    data = res.data;
-                }
-
-                // Handle JSON response (from either stream JSON or blocking fallback)
-                this.pendingFiles = [];
-                this.messages.push({ role: 'assistant', content: data.reply || this.trans.noResponse, action: data.action || null, result: data.result || null, product_url: data.product_url || null, download_url: data.download_url || null });
-
-                // Auto-navigate to the created product page
-                if (data.product_url && this.activeCapability?.key === 'create_from_image') {
-                    this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
-                    this.saveState();
-                    setTimeout(() => { window.location.href = data.product_url; }, 1500);
-                } else if (this.shouldAutoRefreshAfterAction(data)) {
-                    this.saveState();
-                    this.streamingStatus = this.trans.refreshingPage;
-                    setTimeout(() => { window.location.reload(); }, 1500);
+                    try {
+                        const res = await this.$axios.post("{{ route('ai-agent.chat.send') }}", fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+                        this.finalizeReply(msgIndex, { status: 'done', content: res.data.reply, actions: res.data });
+                    } catch (err) {
+                        this.messages[msgIndex] = { role: 'assistant', content: err.response?.data?.reply || err.response?.data?.message || this.trans.errorGeneric, isStreaming: false };
+                    }
                 }
             } catch (err) {
                 if (files.length > 0 && this.pendingFiles.length === 0) this.pendingFiles = files;
@@ -1501,6 +1504,97 @@ app.component('v-agenting-pim', {
                 this.scrollBottom();
                 this.focusInput();
             }
+        },
+
+        // Poll one async reply until it finishes, streaming its text into the
+        // placeholder message (same typing render). Resilient to transient
+        // errors; stops on done / error / 404 / timeout.
+        async pollReply(replyId, msgIndex) {
+            this.isLoading = true;
+            const base = "{{ url(config('app.admin_url') . '/ai-agent/chat/reply') }}/";
+            const maxTries = 450; // ~6 min at 800ms
+            let tries = 0;
+
+            while (tries < maxTries) {
+                await new Promise(r => setTimeout(r, 800));
+                tries++;
+
+                let data;
+                try {
+                    const res = await this.$axios.get(base + replyId);
+                    data = res.data;
+                } catch (e) {
+                    if (e.response?.status === 404) break; // reply gone (cleaned up)
+                    continue; // transient — keep polling
+                }
+
+                const msg = this.messages[msgIndex];
+                if (! msg || msg.replyId !== replyId) { this.isLoading = false; return; }
+
+                if (data.content) { msg.content = data.content; this.scrollBottom(); }
+                if (data.agent_status) this.streamingStatus = data.agent_status;
+
+                if (data.done) {
+                    this.finalizeReply(msgIndex, data);
+                    this.isLoading = false;
+                    this.streamingStatus = '';
+                    return;
+                }
+            }
+
+            // Timed out or the reply vanished.
+            const msg = this.messages[msgIndex];
+            if (msg) {
+                msg.isStreaming = false;
+                delete msg.replyId;
+                if (! msg.content) msg.content = this.trans.errorGeneric;
+            }
+            this.isLoading = false;
+            this.streamingStatus = '';
+            this.saveState();
+        },
+
+        // Turn the streaming placeholder into a finished message and run any
+        // post-action navigation/refresh (same behaviour as the old stream path).
+        finalizeReply(msgIndex, data) {
+            const msg = this.messages[msgIndex];
+            if (! msg) return;
+
+            if (data.status === 'error') {
+                msg.content = data.error || data.content || this.trans.errorGeneric;
+                msg.isStreaming = false;
+                delete msg.replyId;
+                this.saveState();
+                return;
+            }
+
+            const actions = data.actions || {};
+            msg.content = data.content || this.trans.noResponse;
+            msg.action = actions.action || 'agent_response';
+            msg.result = actions.result || null;
+            msg.product_url = actions.product_url || null;
+            msg.download_url = actions.download_url || null;
+            msg.isStreaming = false;
+            delete msg.replyId;
+            this.saveState();
+
+            if (actions.product_url && this.activeCapability?.key === 'create_from_image') {
+                this.messages.push({ role: 'assistant', content: this.trans.openingProduct, isRedirect: true });
+                this.saveState();
+                setTimeout(() => { window.location.href = actions.product_url; }, 1500);
+            } else if (this.shouldAutoRefreshAfterAction(actions)) {
+                this.saveState();
+                this.streamingStatus = this.trans.refreshingPage;
+                setTimeout(() => { window.location.reload(); }, 1500);
+            }
+        },
+
+        // On (re)mount, resume any reply that was still generating when the page
+        // was left. The reply kept generating server-side, so it shows up here.
+        resumePendingReply() {
+            const idx = this.messages.findIndex(m => m && m.isStreaming && m.replyId);
+            if (idx === -1) return;
+            this.pollReply(this.messages[idx].replyId, idx);
         },
 
         async processStream(response, files) {
@@ -1734,6 +1828,14 @@ app.component('v-agenting-pim', {
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-primary-700 dark:text-primary-400">$1</code>')
+                // Images: ![alt](url) — must run BEFORE the link rule (image = "!" + link).
+                // Only app/media-hosted URLs become an <img>; anything else degrades
+                // to a plain link so the agent can never point <img> at a hostile host.
+                .replace(/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g, (_, alt, url) => {
+                    return this.isAllowedImageUrl(url)
+                        ? `<img src="${url}" alt="${alt}" loading="lazy" class="ap-ai-img rounded-lg my-1.5 max-w-full h-auto border border-gray-200 dark:border-gray-700" />`
+                        : `<a href="${url}" class="text-primary-600 underline hover:no-underline" target="_blank">${alt || url}</a>`;
+                })
                 .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {
                     const isInternal = url.includes('/admin/');
                     return isInternal
@@ -1750,17 +1852,45 @@ app.component('v-agenting-pim', {
 
             // Sanitize HTML to prevent XSS from AI-generated or injected content.
             if (typeof DOMPurify !== 'undefined') {
-                return DOMPurify.sanitize(html, {
-                    ALLOWED_TAGS: ['strong', 'em', 'code', 'a', 'p', 'br', 'span', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td'],
-                    ALLOWED_ATTR: ['href', 'target', 'class', 'style'],
+                // Defense-in-depth: even though the image rule above only emits
+                // <img> for allowed hosts, strip any <img> (e.g. one the agent
+                // wrote as raw HTML) whose src is off the allowlist.
+                const dropForeignImg = (node) => {
+                    if (node.tagName === 'IMG' && ! this.isAllowedImageUrl(node.getAttribute('src') || '')) {
+                        node.remove();
+                    }
+                };
+                DOMPurify.addHook('afterSanitizeAttributes', dropForeignImg);
+                const clean = DOMPurify.sanitize(html, {
+                    ALLOWED_TAGS: ['strong', 'em', 'code', 'a', 'p', 'br', 'span', 'ul', 'ol', 'li', 'table', 'thead', 'tbody', 'tr', 'th', 'td', 'img'],
+                    ALLOWED_ATTR: ['href', 'target', 'class', 'style', 'src', 'alt', 'loading'],
                     ADD_ATTR: ['data-internal-link'],
                 });
+                DOMPurify.removeHook('afterSanitizeAttributes');
+                return clean;
             }
 
             // Fail SAFE, not open: with no sanitizer available this string still
             // flows into v-html, so returning it raw is an XSS sink. Strip every
             // tag to plain (escaped) text instead — formatting is lost, safety isn't.
             return this.stripToText(html);
+        },
+
+        // An image URL is renderable only if it is same-origin (app-served
+        // /storage, asset()) or on a configured media/CDN host. Relative paths
+        // resolve against the current origin. Everything else (other hosts,
+        // data:, javascript:) is rejected so <img> can't be a tracking/SSRF sink.
+        isAllowedImageUrl(url) {
+            if (! url) return false;
+            let u;
+            try {
+                u = new URL(url, window.location.origin);
+            } catch (e) {
+                return false;
+            }
+            if (u.protocol !== 'https:' && u.protocol !== 'http:') return false;
+            if (u.host === window.location.host) return true;
+            return this.allowedImageHosts.includes(u.host);
         },
 
         sanitizeSvg(svgHtml) {
@@ -1795,7 +1925,7 @@ app.component('v-agenting-pim', {
                     selectedPlatformId: this.selectedPlatformId,
                     selectedModel: this.selectedModel,
                     activeSessionId: this.activeSessionId,
-                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false })),
+                    messages: this.messages.filter(m => !m.isRedirect).map(m => ({ role: m.role, content: m.content, result: m.result || null, product_url: m.product_url || null, download_url: m.download_url || null, _confirmed: m._confirmed || false, isStreaming: m.isStreaming || false, replyId: m.replyId || null })),
                 }));
 
                 // Auto-save current session to localStorage
