@@ -62,6 +62,15 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             ->middleware('throttle:30,1')
             ->name('chat.stream');
 
+        // Async reply that survives page navigation: enqueue, then poll by id.
+        Route::post('chat/send-async', [ChatController::class, 'sendAsync'])
+            ->middleware('throttle:30,1')
+            ->name('chat.send-async');
+
+        Route::get('chat/reply/{id}', [ChatController::class, 'replyStatus'])
+            ->middleware('throttle:240,1')
+            ->name('chat.reply');
+
         Route::post('chat/rate', [ChatController::class, 'rate'])
             ->middleware('throttle:60,1')
             ->name('chat.rate');

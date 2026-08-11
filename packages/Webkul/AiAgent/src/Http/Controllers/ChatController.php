@@ -12,6 +12,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Jobs\ChatReplyJob;
+use Webkul\AiAgent\Models\ChatReply;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Support\ModelRecommender;
@@ -91,6 +93,76 @@ class ChatController extends Controller
         }
 
         return $this->agentRunner->runStreaming($chatContext);
+    }
+
+    /**
+     * Start generating a reply on the queue and return its id immediately.
+     *
+     * The reply is produced by ChatReplyJob on a worker and written to the
+     * ai_agent_chat_replies row as it streams, so it survives a full page
+     * reload — the widget polls replyStatus() and resumes on the next page
+     * instead of holding a live SSE connection that navigation would kill.
+     */
+    public function sendAsync(Request $request): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
+        $chatContext = $this->buildChatContext($request);
+
+        if ($chatContext instanceof JsonResponse) {
+            return $chatContext;
+        }
+
+        $reply = ChatReply::create([
+            'user_id'    => $chatContext->user?->id ?? auth()->guard('admin')->id(),
+            'session_id' => $request->input('session_id'),
+            'status'     => ChatReply::STATUS_QUEUED,
+        ]);
+
+        ChatReplyJob::dispatch($reply->id, [
+            'message'            => $chatContext->message,
+            'history'            => $chatContext->history,
+            'productId'          => $chatContext->productId,
+            'productSku'         => $chatContext->productSku,
+            'productName'        => $chatContext->productName,
+            'locale'             => $chatContext->locale,
+            'channel'            => $chatContext->channel,
+            'platform_id'        => $chatContext->platform->id,
+            'model'              => $chatContext->model,
+            'uploadedImagePaths' => $chatContext->uploadedImagePaths,
+            'uploadedFilePaths'  => $chatContext->uploadedFilePaths,
+            'currentPage'        => $chatContext->currentPage,
+            'admin_id'           => $chatContext->user?->id,
+        ]);
+
+        return new JsonResponse(['reply_id' => $reply->id, 'status' => $reply->status]);
+    }
+
+    /**
+     * Poll one async reply's current state (status + text so far).
+     */
+    public function replyStatus(Request $request, string $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
+        $reply = ChatReply::query()
+            ->where('id', $id)
+            ->where('user_id', auth()->guard('admin')->id())
+            ->first();
+
+        if (! $reply) {
+            return new JsonResponse(['status' => 'error', 'error' => 'not_found'], 404);
+        }
+
+        return new JsonResponse([
+            'status'       => $reply->status,
+            'content'      => $reply->content ?? '',
+            'agent_status' => $reply->agent_status,
+            'actions'      => $reply->actions,
+            'tokens_used'  => $reply->tokens_used,
+            'error'        => $reply->error,
+            'done'         => $reply->isFinished(),
+        ]);
     }
 
     /**
