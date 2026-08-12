@@ -72,7 +72,7 @@ class AgentRunner
         $tokensUsed = ($usage->promptTokens ?? 0) + ($usage->completionTokens ?? 0);
 
         $result = [
-            'reply'  => $this->stripUnresolvableImages($response->text ?: trans('ai-agent::app.common.operation-completed')),
+            'reply'  => $this->stripUnresolvableImages($this->guardProductGrounding($response->text ?: trans('ai-agent::app.common.operation-completed'), null)),
             'action' => 'agent_response',
             'data'   => [
                 'steps'       => $response->steps->count(),
@@ -163,10 +163,12 @@ class AgentRunner
                 $textBuffer = '';
                 $stepCount = 0;
                 $statusSent = false;
+                $toolsUsed = [];
 
                 foreach ($stream as $event) {
                     if ($event instanceof ToolCall) {
                         $stepCount++;
+                        $toolsUsed[] = $event->toolCall->name;
                         $emit('tool_call', [
                             'step' => $stepCount,
                             'tool' => $event->toolCall->name,
@@ -188,7 +190,8 @@ class AgentRunner
 
                 // After stream completes, the StreamableAgentResponse holds
                 // final usage + text. Fall back to buffer if usage is null.
-                $finalText = $this->stripUnresolvableImages($stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed'));
+                $rawText   = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
+                $finalText = $this->stripUnresolvableImages($this->guardProductGrounding($rawText, $toolsUsed));
                 $usage = $stream->usage;
                 $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
 
@@ -224,6 +227,59 @@ class AgentRunner
         } else {
             Log::error('AI Agent stream error', ['exception' => $e]);
         }
+    }
+
+    /**
+     * Guard against product references the model did not actually look up.
+     *
+     * The model is capable of calling the catalog tools and usually does, but a
+     * tool call is optional at each step, so it occasionally invents a plausible
+     * product (brand, SKU, price, image path) instead of searching. Two
+     * deterministic checks catch that, independent of the model:
+     *   1. A product edit-link pointing at an id that does not exist is a
+     *      fabrication.
+     *   2. If the reply presents a specific product (an edit-link or a product
+     *      image) but the model called ZERO tools this turn, it was produced
+     *      with no grounding at all.
+     * Either way the whole reply is replaced with an honest fallback rather than
+     * showing a product that is not in the catalog.
+     *
+     * @param  array<int, string>|null  $toolsUsed  Tool names called this turn,
+     *                                              or null when unknown (which
+     *                                              skips the zero-tool check).
+     */
+    protected function guardProductGrounding(string $text, ?array $toolsUsed): string
+    {
+        $fallback = "I couldn't confirm a real product for that request, so I'm not showing one. Give me a specific SKU or a keyword and I'll pull the exact details from the catalog.";
+
+        // 1. Every product edit-link must point at a product that exists.
+        if (preg_match_all('#/catalog/products/(\d+)/edit#', $text, $m)) {
+            foreach (array_unique($m[1]) as $id) {
+                if (! DB::table('products')->where('id', (int) $id)->exists()) {
+                    Log::warning('AI Agent replaced reply linking a non-existent product', ['product_id' => $id]);
+
+                    return $fallback;
+                }
+            }
+        }
+
+        // 2. A specific product shown with no tool call at all was not grounded.
+        //    Skipped when $toolsUsed is null (the tool set for this turn is
+        //    unknown) or non-empty (the model did some real work, so give it the
+        //    benefit of the doubt — checks 1 and stripUnresolvableImages still
+        //    guard the concrete artifacts).
+        if ($toolsUsed === []) {
+            $presentsProduct = preg_match('#/catalog/products/\d+/edit#', $text)
+                || preg_match('#!\[[^\]]*\]\([^)]*?/storage/#', $text);
+
+            if ($presentsProduct) {
+                Log::warning('AI Agent replaced ungrounded product reply (no tools called)');
+
+                return $fallback;
+            }
+        }
+
+        return $text;
     }
 
     /**
