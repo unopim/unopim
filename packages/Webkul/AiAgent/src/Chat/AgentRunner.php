@@ -71,8 +71,12 @@ class AgentRunner
         $usage = $response->usage;
         $tokensUsed = ($usage->promptTokens ?? 0) + ($usage->completionTokens ?? 0);
 
+        $groundedSkus = $this->skusFromRawResults(
+            collect($response->toolResults)->map(fn ($r) => $r->result ?? null)->all()
+        );
+
         $result = [
-            'reply'  => $this->stripUnresolvableImages($this->guardProductGrounding($response->text ?: trans('ai-agent::app.common.operation-completed'), null)),
+            'reply'  => $this->stripUnresolvableImages($this->guardProductGrounding($response->text ?: trans('ai-agent::app.common.operation-completed'), null, $groundedSkus)),
             'action' => 'agent_response',
             'data'   => [
                 'steps'       => $response->steps->count(),
@@ -190,8 +194,16 @@ class AgentRunner
 
                 // After stream completes, the StreamableAgentResponse holds
                 // final usage + text. Fall back to buffer if usage is null.
+                $rawResults = [];
+                foreach ($stream->events as $ev) {
+                    if (isset($ev->toolResult)) {
+                        $rawResults[] = $ev->toolResult->result ?? null;
+                    }
+                }
+                $groundedSkus = $this->skusFromRawResults($rawResults);
+
                 $rawText   = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
-                $finalText = $this->stripUnresolvableImages($this->guardProductGrounding($rawText, $toolsUsed));
+                $finalText = $this->stripUnresolvableImages($this->guardProductGrounding($rawText, $toolsUsed, $groundedSkus));
                 $usage = $stream->usage;
                 $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
 
@@ -244,11 +256,13 @@ class AgentRunner
      * Either way the whole reply is replaced with an honest fallback rather than
      * showing a product that is not in the catalog.
      *
-     * @param  array<int, string>|null  $toolsUsed  Tool names called this turn,
-     *                                              or null when unknown (which
-     *                                              skips the zero-tool check).
+     * @param  array<int, string>|null  $toolsUsed     Tool names called this turn,
+     *                                                 or null when unknown (which
+     *                                                 skips the zero-tool check).
+     * @param  array<int, string>        $groundedSkus  SKUs the tools actually
+     *                                                 returned this turn.
      */
-    protected function guardProductGrounding(string $text, ?array $toolsUsed): string
+    protected function guardProductGrounding(string $text, ?array $toolsUsed, array $groundedSkus = []): string
     {
         $fallback = "I couldn't confirm a real product for that request, so I'm not showing one. Give me a specific SKU or a keyword and I'll pull the exact details from the catalog.";
 
@@ -279,7 +293,94 @@ class AgentRunner
             }
         }
 
+        // 3. Every SKU the reply presents must be a real product. The tools that
+        //    ran this turn returned real SKUs; their shape tells us what a SKU
+        //    looks like in this catalog, so we can spot same-shaped tokens in the
+        //    reply (without matching dates/dimensions) and require each to exist.
+        //    This catches the case where the model DID call a tool but still put
+        //    an invented SKU in the prose.
+        if ($groundedSkus !== []) {
+            $groundedSet = array_flip($groundedSkus);
+            $patterns = [];
+            foreach (array_slice(array_values(array_unique($groundedSkus)), 0, 5) as $sku) {
+                $patterns[$this->skuShapeRegex($sku)] = true;
+            }
+
+            $candidates = [];
+            foreach (array_keys($patterns) as $pattern) {
+                if ($pattern !== '' && @preg_match_all('/(?<![A-Za-z0-9])'.$pattern.'(?![A-Za-z0-9])/', $text, $mm)) {
+                    foreach ($mm[0] as $token) {
+                        $candidates[$token] = true;
+                    }
+                }
+            }
+
+            foreach (array_keys($candidates) as $sku) {
+                if (isset($groundedSet[$sku])) {
+                    continue; // a tool returned this SKU this turn — real
+                }
+                if (DB::table('products')->where('sku', $sku)->exists()) {
+                    continue; // a real product (e.g. referenced from history)
+                }
+
+                Log::warning('AI Agent replaced reply presenting a fabricated SKU', ['sku' => $sku]);
+
+                return $fallback;
+            }
+        }
+
         return $text;
+    }
+
+    /**
+     * Build a regex that matches tokens shaped like the given SKU (digit for
+     * digit, letter for letter, separators literal). Lets us recognise both real
+     * and invented SKUs of the same shape while ignoring dates and dimensions.
+     */
+    protected function skuShapeRegex(string $sku): string
+    {
+        return (string) preg_replace_callback('/./u', function (array $m): string {
+            $c = $m[0];
+
+            if (ctype_digit($c)) {
+                return '\d';
+            }
+            if (ctype_alpha($c)) {
+                return '[A-Za-z]';
+            }
+
+            return preg_quote($c, '/');
+        }, $sku);
+    }
+
+    /**
+     * Collect the SKUs that tool results carried this turn.
+     *
+     * @param  array<int, mixed>  $rawResults  Raw tool-result payloads (JSON
+     *                                         strings or arrays).
+     * @return array<int, string>
+     */
+    protected function skusFromRawResults(array $rawResults): array
+    {
+        $skus = [];
+
+        foreach ($rawResults as $raw) {
+            $decoded = is_string($raw) || $raw instanceof \Stringable
+                ? json_decode((string) $raw, true)
+                : (is_array($raw) ? $raw : null);
+
+            if (! is_array($decoded)) {
+                continue;
+            }
+
+            array_walk_recursive($decoded, function ($value, $key) use (&$skus): void {
+                if ($key === 'sku' && is_string($value) && $value !== '') {
+                    $skus[$value] = true;
+                }
+            });
+        }
+
+        return array_keys($skus);
     }
 
     /**
