@@ -6,6 +6,7 @@ use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Ai\AnonymousAgent;
 use Laravel\Ai\Files\Image;
 use Laravel\Ai\Messages\AssistantMessage;
@@ -71,7 +72,7 @@ class AgentRunner
         $tokensUsed = ($usage->promptTokens ?? 0) + ($usage->completionTokens ?? 0);
 
         $result = [
-            'reply'  => $response->text ?: trans('ai-agent::app.common.operation-completed'),
+            'reply'  => $this->stripUnresolvableImages($response->text ?: trans('ai-agent::app.common.operation-completed')),
             'action' => 'agent_response',
             'data'   => [
                 'steps'       => $response->steps->count(),
@@ -187,7 +188,7 @@ class AgentRunner
 
                 // After stream completes, the StreamableAgentResponse holds
                 // final usage + text. Fall back to buffer if usage is null.
-                $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
+                $finalText = $this->stripUnresolvableImages($stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed'));
                 $usage = $stream->usage;
                 $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
 
@@ -223,6 +224,86 @@ class AgentRunner
         } else {
             Log::error('AI Agent stream error', ['exception' => $e]);
         }
+    }
+
+    /**
+     * Remove markdown images whose URL does not resolve to a real stored file.
+     *
+     * The chat only renders same-origin (/storage) or configured-media-host
+     * images, so a fabricated or wrong path would 404. Validating the file here
+     * means such an image never reaches the widget, rather than relying on the
+     * client to hide a broken load. The broken model habit this guards against
+     * is inventing a product and a plausible-looking image path for it. A failed
+     * image is replaced with a short note so the surrounding text still reads.
+     */
+    protected function stripUnresolvableImages(string $text): string
+    {
+        if (strpos($text, '![') === false) {
+            return $text;
+        }
+
+        $appHost = parse_url((string) config('app.url'), PHP_URL_HOST) ?: null;
+        $s3Host  = parse_url((string) (config('filesystems.disks.s3.url') ?: ''), PHP_URL_HOST) ?: null;
+
+        return preg_replace_callback(
+            '/!\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/',
+            function (array $m) use ($appHost, $s3Host): string {
+                $resolves = $this->imageUrlResolves($m[2], $appHost, $s3Host);
+
+                // Keep verified images, and leave URLs we cannot cheaply check
+                // (the client-side host allowlist is the backstop for those).
+                if ($resolves === true || $resolves === null) {
+                    return $m[0];
+                }
+
+                Log::warning('AI Agent stripped unresolvable chat image', ['url' => $m[2]]);
+
+                return $m[1] !== '' ? "{$m[1]} (image unavailable)" : '(image unavailable)';
+            },
+            $text
+        ) ?? $text;
+    }
+
+    /**
+     * Whether an image URL points at a file that actually exists.
+     *
+     * @return bool|null  true = exists, false = validated and missing,
+     *                    null = not cheaply validatable (leave it alone).
+     */
+    protected function imageUrlResolves(string $url, ?string $appHost, ?string $s3Host): ?bool
+    {
+        $parts = parse_url($url);
+
+        if ($parts === false) {
+            return false;
+        }
+
+        $host = $parts['host'] ?? null;
+        $path = $parts['path'] ?? '';
+
+        // Same-origin (or a relative /storage/... path) -> the public disk.
+        if ($host === null || $host === $appHost) {
+            if (preg_match('#/storage/(.+)$#', $path, $mm)) {
+                return Storage::disk('public')->exists(urldecode($mm[1]));
+            }
+
+            return null;
+        }
+
+        // The configured media host -> the DAM/object-storage disk. Accept both
+        // the raw key and a path-style URL that carries a leading bucket segment.
+        if ($s3Host !== null && $host === $s3Host) {
+            $key = urldecode(ltrim($path, '/'));
+
+            try {
+                return Storage::disk('s3')->exists($key)
+                    || Storage::disk('s3')->exists(preg_replace('#^[^/]+/#', '', $key));
+            } catch (\Throwable $e) {
+                return null;
+            }
+        }
+
+        return null;
     }
 
     /**
