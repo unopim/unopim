@@ -97,11 +97,17 @@
 
                     appliedViewLabel: null,
 
+                    appliedViewShared: false,
+
+                    appliedViewOwner: false,
+
                     viewName: '',
 
                     viewShared: false,
 
                     viewSnapshot: null,
+
+                    defaultPerPage: 10,
 
                     viewSearch: '',
 
@@ -313,6 +319,8 @@
 
                             this.appliedViewId = currentDatagrid.appliedViewId ?? null;
                             this.appliedViewLabel = currentDatagrid.appliedViewLabel ?? null;
+                            this.appliedViewShared = currentDatagrid.appliedViewShared ?? false;
+                            this.appliedViewOwner = currentDatagrid.appliedViewOwner ?? false;
                             this.viewSnapshot = currentDatagrid.viewSnapshot ?? null;
                             this.viewScope = currentDatagrid.viewScope ?? null;
 
@@ -646,6 +654,8 @@
                     this.applied.pagination.page = 1;
 
                     this.get();
+
+                    this.autosaveAppliedView();
                 },
 
                 applyFilter(column, requestedValue, additional = {}) {
@@ -780,6 +790,48 @@
                 managedColumns(columns) {
                     this.available.meta.managedColumn.columns = columns;
                     this.get();
+
+                    this.autosaveAppliedView();
+                },
+
+                autosaveAppliedView() {
+                    if (! this.appliedViewId || ! this.appliedViewOwner || ! this.viewsSrc) {
+                        return;
+                    }
+
+                    const signature = this.dirtySignature();
+
+                    if (signature === this.viewSnapshot) {
+                        return;
+                    }
+
+                    const name = this.appliedViewLabel;
+
+                    this.$axios.post(this.viewsSrc, {
+                        name: name,
+                        is_shared: this.appliedViewShared,
+                        payload: this.currentViewPayload(),
+                    })
+                        .then(response => {
+                            const saved = response.data.view;
+
+                            this.appliedViewId = saved?.id ?? this.appliedViewId;
+                            this.viewSnapshot = signature;
+
+                            const cached = this.savedViews.find(view => view.id === this.appliedViewId);
+
+                            if (cached && saved) {
+                                cached.payload = saved.payload;
+                            }
+
+                            this.updateDatagrids();
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error.response?.data?.message ?? '',
+                            });
+                        });
                 },
 
                 //================================================================
@@ -899,6 +951,8 @@
                     this.applied.filters.columns = this.applied.filters.columns.filter(column => column.index !== columnIndex);
 
                     this.get();
+
+                    this.autosaveAppliedView();
                 },
 
                 //================================================================
@@ -1156,6 +1210,8 @@
                                         addedFilterColumns: this.addedFilterColumns,
                                         appliedViewId: this.appliedViewId,
                                         appliedViewLabel: this.appliedViewLabel,
+                                        appliedViewShared: this.appliedViewShared,
+                                        appliedViewOwner: this.appliedViewOwner,
                                         viewSnapshot: this.viewSnapshot,
                                         viewScope: this.viewScope,
                                     };
@@ -1193,6 +1249,8 @@
                         addedFilterColumns: this.addedFilterColumns,
                         appliedViewId: this.appliedViewId,
                         appliedViewLabel: this.appliedViewLabel,
+                        appliedViewShared: this.appliedViewShared,
+                        appliedViewOwner: this.appliedViewOwner,
                         viewSnapshot: this.viewSnapshot,
                         viewScope: this.viewScope,
                     };
@@ -1330,9 +1388,10 @@
                 },
 
                 /**
-                 * Signature of only the meaningful applied filter values (+ scope). Paging,
-                 * sorting, column changes or opening an empty filter row must NOT read as
-                 * "unsaved changes" against an applied saved filter.
+                 * Signature of the applied filter values, the column selection and the
+                 * scope. Paging, sorting or opening an empty filter row must NOT read as
+                 * "unsaved changes" against an applied saved filter; the columns must,
+                 * since a saved filter carries them and restores them when cleared.
                  */
                 dirtySignature() {
                     const filters = this.applied.filters.columns
@@ -1342,14 +1401,15 @@
 
                     return JSON.stringify({
                         filters,
+                        columns: this.available.meta?.managedColumn?.columns ?? [],
                         channel: this.viewScope?.channel ?? this.scopeChannel ?? null,
                         locale: this.viewScope?.locale ?? this.scopeLocale ?? null,
                     });
                 },
 
                 hasUnsavedFilters() {
-                    if (this.viewSnapshot) {
-                        return this.dirtySignature() !== this.viewSnapshot;
+                    if (this.appliedViewId) {
+                        return ! this.appliedViewOwner && this.dirtySignature() !== this.viewSnapshot;
                     }
 
                     return this.hasAppliedFilters();
@@ -1378,15 +1438,35 @@
 
                     this.attributeConditions = {};
 
+                    const hadView = !! this.appliedViewId;
+
                     this.appliedViewId = null;
                     this.appliedViewLabel = null;
+                    this.appliedViewShared = false;
+                    this.appliedViewOwner = false;
                     this.viewSnapshot = null;
+
+                    if (hadView) {
+                        this.resetGridLayout();
+                    }
 
                     this.applied.pagination.page = 1;
 
                     this.closeSavedFilters();
 
                     this.get();
+                },
+
+                resetGridLayout() {
+                    if (this.available.meta?.managedColumn) {
+                        this.available.meta.managedColumn.columns = undefined;
+                    }
+
+                    this.activeFilterIndices = [];
+                    this.addedFilterColumns = {};
+                    this.applied.sort = { column: null, order: null };
+                    this.applied.pagination.perPage = this.defaultPerPage;
+                    this.viewScope = null;
                 },
 
                 closeSavedFilters() {
@@ -1465,6 +1545,8 @@
 
                     this.appliedViewId = view.id;
                     this.appliedViewLabel = view.name;
+                    this.appliedViewShared = !! view.is_shared;
+                    this.appliedViewOwner = !! view.is_owner;
                     this.viewSnapshot = this.dirtySignature();
 
                     this.closeSavedFilters();
@@ -1507,6 +1589,8 @@
 
                             this.appliedViewId = response.data.view?.id ?? null;
                             this.appliedViewLabel = response.data.view?.name ?? name;
+                            this.appliedViewShared = !! response.data.view?.is_shared;
+                            this.appliedViewOwner = true;
                             this.viewSnapshot = this.dirtySignature();
                             this.viewName = '';
                             this.viewShared = false;
@@ -1537,11 +1621,7 @@
                             this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
 
                             if (this.appliedViewId === view.id) {
-                                this.appliedViewId = null;
-                                this.appliedViewLabel = null;
-                                this.viewSnapshot = null;
-
-                                this.updateDatagrids();
+                                this.clearAllFilters();
                             }
 
                             this.loadViews();

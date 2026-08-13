@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Core\Rules\Code;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
 
 /**
@@ -175,5 +176,27 @@ describe('demo dataset integrity', function () {
 
     it('loads the whole catalog through the product seeder', function () {
         expect(resolve(DemoProductSeeder::class)->catalog())->toHaveCount(count(demoCatalog()));
+    });
+
+    it('derives variant structure codes the family form accepts', function () {
+        $seeder = resolve(DemoProductSeeder::class);
+        $rule = new Code;
+        $codes = [];
+
+        foreach (demoCatalog() as $product) {
+            if (($product['axes'] ?? []) === []) {
+                continue;
+            }
+
+            $code = $seeder->structureCode($product['sku']);
+            $codes[] = $code;
+
+            $rule->validate('structure.code', $code, function (string $message) use ($product): void {
+                throw new Exception("{$product['sku']} yields an invalid structure code: $message");
+            });
+        }
+
+        expect($codes)->not->toBeEmpty()
+            ->and(array_unique($codes))->toHaveCount(count($codes));
     });
 });

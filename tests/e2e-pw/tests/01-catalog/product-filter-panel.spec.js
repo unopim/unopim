@@ -294,7 +294,7 @@ test.describe('Product DataGrid saved filters', () => {
     await expect(adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME })).toHaveCount(1);
   });
 
-  test('Drops the selection once the filters are edited by hand', async ({ adminPage }) => {
+  test('Absorbs a hand-edited filter into the applied saved filter', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await deleteSavedFilter(adminPage);
 
@@ -314,12 +314,22 @@ test.describe('Product DataGrid saved filters', () => {
     await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
-    await expect(adminPage.locator('[data-grid-views]')).not.toContainText(FILTER_NAME);
+    await expect(adminPage.locator('[data-grid-views]')).toContainText(FILTER_NAME);
+
+    await expect.poll(async () => {
+      const views = await adminPage.request.get('/admin/catalog/products/grid-views', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      }).then((res) => res.json());
+
+      return views.views
+        .find((view) => view.name === FILTER_NAME)
+        ?.payload?.filters?.some((filter) => filter.index === 'type');
+    }).toBe(true);
 
     await openSavedFilters(adminPage);
 
-    await expect(adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME })).not.toHaveClass(/font-medium/);
-    await expect(adminPage.locator('[data-save-filter-form]')).toBeVisible();
+    await expect(adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME })).toHaveClass(/font-medium/);
+    await expect(adminPage.locator('[data-save-filter-form]')).toHaveCount(0);
   });
 
   test('Marks the applied filter and keeps it selected across a reload', async ({ adminPage }) => {
