@@ -45,6 +45,25 @@ Plan for this: after the upgrade, every integration must obtain new tokens.
 Integrations are also migrated to dedicated robot users, and their credentials
 are revealed once in the admin panel.
 
+This is the last upgrade that invalidates tokens. The key pair now lives in
+`storage/app/private/oauth` instead of the application source tree, so it is no
+longer destroyed when the code is replaced. On Docker that means the volume
+keeps it across image upgrades; on a release-archive install it survives
+swapping the release directory.
+
+A file-based install that upgrades in place keeps its existing pair — the
+upgrade command copies it to the new location. If you upgrade by hand and skip
+`unopim:upgrade`, the old pair is still read from where it has always been, so
+the API keeps working until you run the command. A container upgrade cannot do
+either: the old image layer holding the keys is gone before the upgrade runs,
+so a new pair is generated and clients re-authenticate once.
+
+The pair is created by `php artisan unopim:passport:keys`, which
+`unopim:install` and `unopim:upgrade` both run. It never overwrites existing
+keys. Set `UNOPIM_OAUTH_KEY_PATH` to relocate it, or supply
+`PASSPORT_PRIVATE_KEY` and `PASSPORT_PUBLIC_KEY` to load the keys from your
+secret manager instead of from disk.
+
 ### Extensions and custom code
 
 If you maintain custom packages or theme overrides, check them against the

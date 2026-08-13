@@ -123,6 +123,9 @@ class Installer extends Command
         $this->warn('Step: Generating key...');
         $this->call('key:generate');
 
+        $this->warn('Step: Generating API signing keys...');
+        $this->call('unopim:passport:keys');
+
         if (config('elasticsearch.enabled') == 'true') {
             $this->warn('Step: Testing ElasticSearch Connection...');
             if (! ElasticSearch::testConnection()) {
