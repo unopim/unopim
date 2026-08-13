@@ -71,7 +71,7 @@ jobs:
           node-version: '22'
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -142,7 +142,6 @@ jobs:
           INSTALLER_ADMIN_PASSWORD: ${{ secrets.INSTALLER_ADMIN_PASSWORD || 'admin123' }}
         run: |
           php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
-          chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
           php artisan unopim:passport:install-preset
           php artisan db:seed --class=DiscardQaFixtureSeeder
           php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
