@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -83,9 +83,6 @@ jobs:
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
-
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
         # Each worker owns a database clone. The suite runs as two halves so
@@ -145,7 +142,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -196,9 +193,6 @@ jobs:
           php artisan unopim:product:index
           php artisan unopim:category:index
 
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
-
       - name: Running Pest Tests
         # Each worker owns a database clone. The suite runs as two halves so
         # every half starts with fresh workers: per-process memory grows over
@@ -244,7 +238,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -319,9 +313,6 @@ jobs:
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
-
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       # Coverage recording peaks past the runner's 7 GB (exit 137); swap absorbs
       # the spike. The runner already holds /swapfile open, so the extra file

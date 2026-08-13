@@ -24,6 +24,7 @@ $overrides = [
     'TRUSTED_PROXIES'   => '127.0.0.1',
     // Restore the real low limit that throttle tests need; the e2e .env raises it for Playwright's many logins.
     'ADMIN_LOGIN_RATE_LIMIT' => '5',
+    'UNOPIM_OAUTH_KEY_PATH'  => __DIR__.'/../storage/framework/testing/oauth',
 ];
 
 foreach ($overrides as $key => $value) {
@@ -31,6 +32,32 @@ foreach ($overrides as $key => $value) {
 
     $_ENV[$key] = $value;
     $_SERVER[$key] = $value;
+}
+
+/**
+ * Passport refuses to boot without a signing keypair. Generating it here keeps
+ * the suite independent of whether the installer has ever run on this machine,
+ * and keeps the throwaway pair out of the developer's real storage directory.
+ */
+$oauthKeyPath = $overrides['UNOPIM_OAUTH_KEY_PATH'];
+
+if (! file_exists($oauthKeyPath.'/oauth-private.key')) {
+    if (! is_dir($oauthKeyPath)) {
+        mkdir($oauthKeyPath, 0700, true);
+    }
+
+    $resource = openssl_pkey_new([
+        'private_key_bits' => 2048,
+        'private_key_type' => OPENSSL_KEYTYPE_RSA,
+    ]);
+
+    openssl_pkey_export($resource, $privateKey);
+
+    file_put_contents($oauthKeyPath.'/oauth-private.key', $privateKey, LOCK_EX);
+    file_put_contents($oauthKeyPath.'/oauth-public.key', openssl_pkey_get_details($resource)['key'], LOCK_EX);
+
+    chmod($oauthKeyPath.'/oauth-private.key', 0600);
+    chmod($oauthKeyPath.'/oauth-public.key', 0600);
 }
 
 require __DIR__.'/../vendor/autoload.php';

@@ -2,10 +2,17 @@
 # Migrates, seeds on first run, links storage and builds search indexes. Only
 # the application container runs this. Set UNOPIM_SKIP_MIGRATIONS=true where the
 # deployment owns the schema, since scaled replicas would otherwise race it.
+#
+# Signing keys are created ahead of that flag: they are not schema, so a
+# deployment managing migrations elsewhere still needs a pair, and the workers
+# read this one from the shared storage volume.
 
 setup_app() {
     local root="${1:-/var/www/html}"
     local lock_file="${root}/storage/unopim.lock"
+
+    echo "→ Ensuring API signing keys..."
+    php artisan unopim:passport:keys --no-interaction || return 1
 
     if [ "${UNOPIM_SKIP_MIGRATIONS:-false}" = "true" ]; then
         echo "→ UNOPIM_SKIP_MIGRATIONS=true — schema is managed outside the container."
