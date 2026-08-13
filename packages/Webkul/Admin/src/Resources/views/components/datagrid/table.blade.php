@@ -99,6 +99,7 @@
                             <p
                                 v-for="column in visibleColumns"
                                 :key="column.index"
+                                :data-grid-column="column.index"
                                 class="flex gap-1.5 items-center min-w-0"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
