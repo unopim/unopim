@@ -94,9 +94,6 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
-
       # Coverage recording peaks past the runner's 7 GB with several workers
       # (exit 137); swap absorbs the spike and two workers keep it tolerable.
       # The runner already holds /swapfile open, so the extra file goes on /mnt,
