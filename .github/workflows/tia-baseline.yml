@@ -19,12 +19,11 @@ permissions:
   contents: read
 
 jobs:
-  # Advisory: baseline recording is an optimization experiment and must not
-  # redden the release branches while its memory profile is being tamed.
+  # Pest resolves the baseline through `gh run list --status success --limit 1`, so a run that
+  # records nothing must not report success: it would mask the newest run that did publish one.
   baseline:
     runs-on: ubuntu-24.04
     name: Record the test impact baseline
-    continue-on-error: true
 
     services:
       mysql:
@@ -47,9 +46,10 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -94,10 +94,9 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-      # Coverage recording peaks past the runner's 7 GB with several workers
-      # (exit 137); swap absorbs the spike and two workers keep it tolerable.
-      # The runner already holds /swapfile open, so the extra file goes on /mnt,
-      # which is both free and the larger disk.
+      # Coverage recording peaks past the runner's 7 GB (exit 137); swap absorbs
+      # the spike. The runner already holds /swapfile open, so the extra file
+      # goes on /mnt, which is both free and the larger disk.
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
@@ -107,25 +106,19 @@ jobs:
           sudo swapon /mnt/swapfile
           swapon --show
 
+      # Pest disables impact analysis for partial runs — a path argument or a
+      # `--testsuite` filter records nothing at all — so the graph has to come
+      # from one run over the whole suite.
       - name: Record the baseline
         run: |
-          chunk=0
+          PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh --colors=always
 
-          record() {
-            chunk=$((chunk + 1))
-            local home="$RUNNER_TEMP/tia-home-$chunk"
-            HOME="$home" PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh "$@" --colors=always || true
-            cp "$(HOME="$home" vendor/bin/pest --baseline)/graph.json" "$RUNNER_TEMP/tia-graph-$chunk.json"
-          }
+          graph="$(vendor/bin/pest --baseline)/graph.json"
 
-          record packages/Webkul/Admin/tests/Feature/Catalog
-          record packages/Webkul/Admin/tests/Feature/{Account,Acl,AiAgent,Auth,Components,Configuration,Dashboard,DataTransfer}
-          record packages/Webkul/Admin/tests/Feature/{Fields,Help,MagicAi,MagicAI,Notification,Security,Settings,SystemSettings,User,Webhook} packages/Webkul/Admin/tests/Feature/*Test.php
-          record --testsuite "Api Feature Test,User Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Measurement Feature Test"
-          record --testsuite "Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,DataTransfer Unit Test,DataTransfer Feature Test"
-          record --testsuite "Core Unit Test,AiAgent Unit Test,AppUrlGuard Unit Test,AppUrlGuard Feature Test,Webhook Unit Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
-
-          php .github/scripts/merge-tia-graphs.php "$(vendor/bin/pest --baseline)/graph.json" "$RUNNER_TEMP"/tia-graph-*.json
+          if [ ! -f "$graph" ]; then
+            echo "::error::the run recorded no graph at $graph"
+            exit 1
+          fi
 
       - name: Resolve the baseline path
         id: baseline
