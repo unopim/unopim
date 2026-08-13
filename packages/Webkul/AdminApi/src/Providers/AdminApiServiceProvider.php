@@ -14,12 +14,14 @@ use Laravel\Passport\ClientRepository;
 use Laravel\Passport\Passport;
 use Webkul\AdminApi\Cache\StructureCache;
 use Webkul\AdminApi\Console\ApiClientCommand;
+use Webkul\AdminApi\Console\PassportKeysCommand;
 use Webkul\AdminApi\Http\Middleware\DeprecatedRoute;
 use Webkul\AdminApi\Http\Middleware\EnsureAcceptsJson;
 use Webkul\AdminApi\Http\Middleware\LocaleMiddleware;
 use Webkul\AdminApi\Http\Middleware\ScopeMiddleware;
 use Webkul\AdminApi\Models\Client;
 use Webkul\AdminApi\Repositories\UserRepository;
+use Webkul\AdminApi\Services\OauthKeyStore;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeFamilyGroupMapping;
@@ -193,22 +195,24 @@ class AdminApiServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 ApiClientCommand::class,
+                PassportKeysCommand::class,
             ]);
         }
     }
 
     /**
-     * Register the Installer Commands of this package.
+     * Configures Passport for the admin API.
+     *
+     * Keys are created by unopim:passport:keys rather than here, so a request
+     * never writes to disk and containers booting in parallel cannot race each
+     * other into a mismatched pair. Their permissions vary by host umask, so
+     * league/oauth2-server v9's 600/660 check is skipped to keep the API
+     * bootable.
      */
     protected function activatePassportApiClient(): void
     {
-        $this->ensureOauthKeys(__DIR__.'/../Secrets/Oauth');
+        Passport::loadKeysFrom($this->app->make(OauthKeyStore::class)->resolvedPath());
 
-        Passport::loadKeysFrom(__DIR__.'/../Secrets/Oauth');
-
-        // Keys are generated per environment (see ensureOauthKeys) and are never
-        // committed, so their on-disk permissions can vary by host umask. Skip
-        // league/oauth2-server v9's 600/660 check to keep the API bootable.
         Passport::$validateKeyPermissions = false;
 
         Passport::$passwordGrantEnabled = true;
@@ -229,41 +233,6 @@ class AdminApiServiceProvider extends ServiceProvider
         Passport::refreshTokensExpireIn(CarbonInterval::seconds($refreshTokenTtl));
 
         $this->app->bind(ClientRepository::class, \Webkul\AdminApi\Repositories\ClientRepository::class);
-    }
-
-    /**
-     * Generates a per-environment Passport signing keypair when absent so the
-     * key never has to be committed. Existing keys are left untouched.
-     */
-    protected function ensureOauthKeys(string $path): void
-    {
-        $privateKeyPath = $path.'/oauth-private.key';
-        $publicKeyPath = $path.'/oauth-public.key';
-
-        if (file_exists($privateKeyPath) && file_exists($publicKeyPath)) {
-            return;
-        }
-
-        if (! is_dir($path)) {
-            mkdir($path, 0755, true);
-        }
-
-        $resource = openssl_pkey_new([
-            'private_key_bits' => 4096,
-            'private_key_type' => OPENSSL_KEYTYPE_RSA,
-        ]);
-
-        if ($resource === false) {
-            return;
-        }
-
-        openssl_pkey_export($resource, $privateKey);
-
-        file_put_contents($privateKeyPath, $privateKey, LOCK_EX);
-        file_put_contents($publicKeyPath, openssl_pkey_get_details($resource)['key'], LOCK_EX);
-
-        chmod($privateKeyPath, 0600);
-        chmod($publicKeyPath, 0600);
     }
 
     /**
