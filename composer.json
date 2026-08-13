@@ -133,10 +133,10 @@
             "./vendor/bin/pest"
         ],
         "test:tia": [
-            "./vendor/bin/pest --tia"
+            "./vendor/bin/pest --tia --filtered"
         ],
         "test:tia:parallel": [
-            "./vendor/bin/pest --tia --parallel"
+            "./vendor/bin/pest --tia --filtered --parallel --processes=3"
         ]
     },
     "scripts-descriptions": {

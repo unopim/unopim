@@ -7,6 +7,11 @@ function adminStylesheet(): string
     );
 }
 
+function multiselectStylesheetPath(): string
+{
+    return base_path('node_modules/vue-multiselect/dist/vue-multiselect.css');
+}
+
 function dropdownStackingLevel(): int
 {
     preg_match(
@@ -43,13 +48,16 @@ it('keeps the dropdown below the overlays that must cover it', function (string 
 ]);
 
 it('leaves the library default behind, which was below every one of those', function () {
-    $library = file_get_contents(base_path('node_modules/vue-multiselect/dist/vue-multiselect.css'));
+    $library = file_get_contents(multiselectStylesheetPath());
 
     preg_match('/\.multiselect--active\s*\{\s*z-index:\s*(\d+)/', $library, $matches);
 
     expect((int) ($matches[1] ?? 0))->toBe(50)
         ->and(dropdownStackingLevel())->toBeGreaterThan(50);
-});
+})->skip(
+    fn (): bool => ! file_exists(multiselectStylesheetPath()),
+    'vue-multiselect is not installed',
+);
 
 it('ships the rule in the built stylesheet the admin actually loads', function () {
     $manifest = json_decode(

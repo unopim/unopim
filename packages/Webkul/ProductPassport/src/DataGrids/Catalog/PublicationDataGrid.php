@@ -196,13 +196,13 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
                 'url'     => route('admin.catalog.passports.mass_transition'),
                 'method'  => 'POST',
                 'options' => [
-                       [
-                           'label' => trans('passport::app.publications.datagrid.withdraw'),
-                           'value' => PublicationStatus::Withdrawn->value,
-                       ], [
-                           'label' => trans('passport::app.publications.datagrid.reinstate'),
-                           'value' => PublicationStatus::Published->value,
-                       ],
+                    [
+                        'label' => trans('passport::app.publications.datagrid.withdraw'),
+                        'value' => PublicationStatus::Withdrawn->value,
+                    ], [
+                        'label' => trans('passport::app.publications.datagrid.reinstate'),
+                        'value' => PublicationStatus::Published->value,
+                    ],
                 ],
             ]);
         }
