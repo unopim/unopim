@@ -94,10 +94,9 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-      # Coverage recording peaks past the runner's 7 GB with several workers
-      # (exit 137); swap absorbs the spike and two workers keep it tolerable.
-      # The runner already holds /swapfile open, so the extra file goes on /mnt,
-      # which is both free and the larger disk.
+      # Coverage recording peaks past the runner's 7 GB (exit 137); swap absorbs
+      # the spike. The runner already holds /swapfile open, so the extra file
+      # goes on /mnt, which is both free and the larger disk.
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
@@ -107,38 +106,19 @@ jobs:
           sudo swapon /mnt/swapfile
           swapon --show
 
+      # Pest disables impact analysis for partial runs — a path argument or a
+      # `--testsuite` filter records nothing at all — so the graph has to come
+      # from one run over the whole suite.
       - name: Record the baseline
         run: |
-          chunk=0
+          PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh --colors=always
 
-          # Pest only keys the baseline per project when HOME resolves to an
-          # existing directory; without the mkdir every chunk silently shares
-          # the project-local fallback and overwrites the previous graph.
-          record() {
-            chunk=$((chunk + 1))
-            local home="$RUNNER_TEMP/tia-home-$chunk"
-            mkdir -p "$home"
-            HOME="$home" PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh "$@" --colors=always || true
+          graph="$(vendor/bin/pest --baseline)/graph.json"
 
-            local graph
-            graph="$(HOME="$home" vendor/bin/pest --baseline)/graph.json"
-
-            if [ ! -f "$graph" ]; then
-              echo "::error::chunk $chunk recorded no graph at $graph"
-              exit 1
-            fi
-
-            cp "$graph" "$RUNNER_TEMP/tia-graph-$chunk.json"
-          }
-
-          record packages/Webkul/Admin/tests/Feature/Catalog
-          record packages/Webkul/Admin/tests/Feature/{Account,Acl,AiAgent,Auth,Components,Configuration,Dashboard,DataTransfer}
-          record packages/Webkul/Admin/tests/Feature/{Fields,Help,MagicAi,MagicAI,Notification,Security,Settings,SystemSettings,User,Webhook} packages/Webkul/Admin/tests/Feature/*Test.php
-          record --testsuite "Api Feature Test,User Feature Test,Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Measurement Feature Test"
-          record --testsuite "Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,DataTransfer Unit Test,DataTransfer Feature Test"
-          record --testsuite "Core Unit Test,AiAgent Unit Test,AppUrlGuard Unit Test,AppUrlGuard Feature Test,Webhook Unit Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
-
-          php .github/scripts/merge-tia-graphs.php "$(vendor/bin/pest --baseline)/graph.json" "$RUNNER_TEMP"/tia-graph-*.json
+          if [ ! -f "$graph" ]; then
+            echo "::error::the run recorded no graph at $graph"
+            exit 1
+          fi
 
       - name: Resolve the baseline path
         id: baseline
