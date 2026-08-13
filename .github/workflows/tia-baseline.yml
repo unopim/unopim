@@ -19,12 +19,11 @@ permissions:
   contents: read
 
 jobs:
-  # Advisory: baseline recording is an optimization experiment and must not
-  # redden the release branches while its memory profile is being tamed.
+  # Pest resolves the baseline through `gh run list --status success --limit 1`, so a run that
+  # records nothing must not report success: it would mask the newest run that did publish one.
   baseline:
     runs-on: ubuntu-24.04
     name: Record the test impact baseline
-    continue-on-error: true
 
     services:
       mysql:
@@ -47,6 +46,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: Setup PHP
         uses: shivammathur/setup-php@2.37.2
@@ -111,11 +111,24 @@ jobs:
         run: |
           chunk=0
 
+          # Pest only keys the baseline per project when HOME resolves to an
+          # existing directory; without the mkdir every chunk silently shares
+          # the project-local fallback and overwrites the previous graph.
           record() {
             chunk=$((chunk + 1))
             local home="$RUNNER_TEMP/tia-home-$chunk"
+            mkdir -p "$home"
             HOME="$home" PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh "$@" --colors=always || true
-            cp "$(HOME="$home" vendor/bin/pest --baseline)/graph.json" "$RUNNER_TEMP/tia-graph-$chunk.json"
+
+            local graph
+            graph="$(HOME="$home" vendor/bin/pest --baseline)/graph.json"
+
+            if [ ! -f "$graph" ]; then
+              echo "::error::chunk $chunk recorded no graph at $graph"
+              exit 1
+            fi
+
+            cp "$graph" "$RUNNER_TEMP/tia-graph-$chunk.json"
           }
 
           record packages/Webkul/Admin/tests/Feature/Catalog
