@@ -118,6 +118,10 @@ jobs:
       # `--testsuite` filter records nothing at all — so the graph has to come
       # from one run over the whole suite.
       - name: Record the baseline
+        env:
+          # tests/Pest.php caps memory at 1024M unless this says otherwise, and it
+          # runs late enough to overwrite whatever php.ini carries.
+          PEST_MEMORY_LIMIT: '-1'
         run: |
           # Nothing survives the kill to report the peak, so sample it alongside.
           ( while true; do
