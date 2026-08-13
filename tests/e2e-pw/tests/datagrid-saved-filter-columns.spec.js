@@ -29,7 +29,10 @@ const gridColumns = async (page) => {
 /** Click something that reloads the grid and wait for that request to land. */
 const actAndReload = async (page, action) => {
   const response = page.waitForResponse(
-    (res) => res.url().includes(GRID_URL) && res.request().resourceType() === 'xhr'
+    (res) => res.url().includes(GRID_URL)
+      && ! res.url().includes('/grid-views')
+      && res.request().method() === 'GET'
+      && res.request().resourceType() === 'xhr'
   );
 
   await action();

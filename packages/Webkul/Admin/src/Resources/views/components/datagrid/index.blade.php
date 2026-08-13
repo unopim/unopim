@@ -1388,9 +1388,10 @@
                 },
 
                 /**
-                 * Signature of only the meaningful applied filter values (+ scope). Paging,
-                 * sorting, column changes or opening an empty filter row must NOT read as
-                 * "unsaved changes" against an applied saved filter.
+                 * Signature of the applied filter values, the column selection and the
+                 * scope. Paging, sorting or opening an empty filter row must NOT read as
+                 * "unsaved changes" against an applied saved filter; the columns must,
+                 * since a saved filter carries them and restores them when cleared.
                  */
                 dirtySignature() {
                     const filters = this.applied.filters.columns
