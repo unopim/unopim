@@ -27,7 +27,8 @@ class WebhookService
     public function __construct(
         protected WebhookRepository $webhookRepository,
         protected LogsRepository $logsRepository,
-        protected ProductRepository $productRepository
+        protected ProductRepository $productRepository,
+        protected RecentProductAudits $recentProductAudits
     ) {}
 
     /**
@@ -355,22 +356,23 @@ class WebhookService
         return $response;
     }
 
+    /**
+     * The diff a webhook should report for a product.
+     *
+     * The audit is the one written for this product during this request where there is
+     * one, so a slow write cannot lose its payload. Queued batches have no such record
+     * and fall back to the newest audit by id, still bounded by product freshness.
+     */
     public function getProductChangesForWebhook(Product $product): array
     {
-        $latestChanges = $product->audits()->latest()->first();
+        $latestChanges = $this->recentProductAudits->for($product->getKey())
+            ?? $product->audits()->orderByDesc('id')->first();
 
         if (! $latestChanges) {
             return [];
         }
 
-        $changeTime = $latestChanges->updated_at;
-        $productTime = $product->updated_at;
-
-        if (abs($productTime->diffInMinutes(now())) > 60) {
-            return [];
-        }
-
-        if (abs($changeTime->diffInSeconds($productTime)) > 2) {
+        if (abs($product->updated_at->diffInMinutes(now())) > 60) {
             return [];
         }
 

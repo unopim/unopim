@@ -27,9 +27,10 @@ class JobInstanceFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'            => fake()->unique()->word,
-            'entity_type'     => 'products',
-            'field_separator' => ',',
+            'code'                => fake()->unique()->word,
+            'entity_type'         => 'products',
+            'field_separator'     => ',',
+            'validation_strategy' => 'skip-erros',
         ];
     }
 

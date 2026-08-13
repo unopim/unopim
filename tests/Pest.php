@@ -18,7 +18,7 @@ use Webkul\Publication\Tests\PublicationTestCase;
 use Webkul\Resource\Tests\ResourceTestCase;
 use Webkul\User\Tests\UserTestCase;
 
-ini_set('memory_limit', '1024M');
+ini_set('memory_limit', getenv('PEST_MEMORY_LIMIT') ?: '1024M');
 
 /*
 |--------------------------------------------------------------------------

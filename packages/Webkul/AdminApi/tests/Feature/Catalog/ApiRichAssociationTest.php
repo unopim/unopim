@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Contracts\AssociationType;
+use Webkul\Product\Facades\ValueSetter;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\AssociationTypeRepository;
 use Webkul\Product\Repositories\ProductAssociationRepository;
@@ -39,7 +40,6 @@ function seedBundleKitAssociationType(): AssociationType
                 'validation'  => 'number',
                 'is_required' => 1,
                 'status'      => 1,
-                'section'     => 'left',
                 'en_US'       => ['name' => 'Quantity'],
             ],
         ],
@@ -307,4 +307,140 @@ it('returns a 422 (not a 500) and persists nothing when a rich association link 
     $product->refresh();
 
     expect((bool) $product->status)->toBe($originalStatus);
+});
+
+it('keeps a related_products association set via the rich associations API after a later PATCH that omits associations', function () {
+    $product = Product::factory()->simple()->create();
+    $related = Product::factory()->simple()->create();
+
+    $relatedProductsType = app(AssociationTypeRepository::class)->findByCode('related_products');
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), [
+            'associations' => [
+                'related_products' => [
+                    ['sku' => $related->sku],
+                ],
+            ],
+        ])
+        ->assertStatus(200)
+        ->assertJsonFragment(['success' => true]);
+
+    expect(
+        DB::table('product_associations')
+            ->where('product_id', $product->id)
+            ->where('association_type_id', $relatedProductsType->id)
+            ->where('related_product_id', $related->id)
+            ->exists()
+    )->toBeTrue();
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), [
+            'status' => ! (bool) $product->status,
+        ])
+        ->assertStatus(200)
+        ->assertJsonFragment(['success' => true]);
+
+    expect(
+        DB::table('product_associations')
+            ->where('product_id', $product->id)
+            ->where('association_type_id', $relatedProductsType->id)
+            ->where('related_product_id', $related->id)
+            ->exists()
+    )->toBeTrue();
+});
+
+it('keeps a legacy up_sells association after a later PUT that omits values.associations entirely', function () {
+    $product = Product::factory()->simple()->create();
+    $family = AttributeFamily::find($product->attribute_family_id);
+    $upSell = Product::factory()->simple()->create();
+
+    $upSellsType = app(AssociationTypeRepository::class)->findByCode('up_sells');
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.products.update', ['code' => $product->sku]), [
+            'sku'    => $product->sku,
+            'parent' => null,
+            'family' => $family->code,
+            'values' => [
+                'common'       => ['sku' => $product->sku],
+                'associations' => [
+                    'up_sells' => [$upSell->sku],
+                ],
+            ],
+        ])
+        ->assertStatus(200)
+        ->assertJsonFragment(['success' => true]);
+
+    expect(
+        DB::table('product_associations')
+            ->where('product_id', $product->id)
+            ->where('association_type_id', $upSellsType->id)
+            ->where('related_product_id', $upSell->id)
+            ->exists()
+    )->toBeTrue();
+
+    app()->forgetInstance('value_setter');
+    ValueSetter::clearResolvedInstance('value_setter');
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.products.update', ['code' => $product->sku]), [
+            'sku'    => $product->sku,
+            'parent' => null,
+            'family' => $family->code,
+            'values' => [
+                'common' => ['sku' => $product->sku],
+            ],
+        ])
+        ->assertStatus(200)
+        ->assertJsonFragment(['success' => true]);
+
+    expect(
+        DB::table('product_associations')
+            ->where('product_id', $product->id)
+            ->where('association_type_id', $upSellsType->id)
+            ->where('related_product_id', $upSell->id)
+            ->exists()
+    )->toBeTrue();
+});
+
+it('keeps a legacy up_sells association after a later PATCH that omits values.associations entirely', function () {
+    $product = Product::factory()->simple()->create();
+    $family = AttributeFamily::find($product->attribute_family_id);
+    $upSell = Product::factory()->simple()->create();
+
+    $upSellsType = app(AssociationTypeRepository::class)->findByCode('up_sells');
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.products.update', ['code' => $product->sku]), [
+            'sku'    => $product->sku,
+            'parent' => null,
+            'family' => $family->code,
+            'values' => [
+                'common'       => ['sku' => $product->sku],
+                'associations' => [
+                    'up_sells' => [$upSell->sku],
+                ],
+            ],
+        ])
+        ->assertStatus(200)
+        ->assertJsonFragment(['success' => true]);
+
+    app()->forgetInstance('value_setter');
+    ValueSetter::clearResolvedInstance('value_setter');
+
+    $this->withHeaders($this->headers)
+        ->json('PATCH', route('admin.api.products.patch', ['sku' => $product->sku]), [
+            'status' => ! (bool) $product->status,
+        ])
+        ->assertStatus(200)
+        ->assertJsonFragment(['success' => true]);
+
+    expect(
+        DB::table('product_associations')
+            ->where('product_id', $product->id)
+            ->where('association_type_id', $upSellsType->id)
+            ->where('related_product_id', $upSell->id)
+            ->exists()
+    )->toBeTrue();
 });

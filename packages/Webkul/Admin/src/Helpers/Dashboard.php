@@ -17,9 +17,11 @@ use Webkul\Admin\Helpers\Reporting\Product;
 class Dashboard
 {
     /**
-     * Cache TTL in seconds (5 minutes).
+     * Cache TTL in seconds. Must exceed the runtime of the catalog-wide
+     * queries below, or the entry expires before the value arrives and the
+     * cache can never warm. Use `unopim:dashboard:refresh` for fresher data.
      */
-    protected const CACHE_TTL = 300;
+    protected const CACHE_TTL = 3600;
 
     /**
      * Cache keys that depend on product data.
