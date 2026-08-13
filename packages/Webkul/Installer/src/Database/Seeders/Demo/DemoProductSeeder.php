@@ -194,6 +194,16 @@ class DemoProductSeeder extends Seeder
     }
 
     /**
+     * Structure code for a configurable's sku. SKUs are hyphenated, which the
+     * Code rule the family form validates against rejects, so every non-word
+     * character collapses to an underscore.
+     */
+    public function structureCode(string $sku): string
+    {
+        return preg_replace('/\W+/', '_', $sku).'_structure';
+    }
+
+    /**
      * Create the variant structure and its axes for a configurable product.
      *
      * @param  array<string, mixed>  $product
@@ -211,7 +221,7 @@ class DemoProductSeeder extends Seeder
 
         $structureId = DB::table('variant_structures')->insertGetId([
             'attribute_family_id' => $familyId,
-            'code'                => $product['sku'].'-structure',
+            'code'                => $this->structureCode($product['sku']),
             'name'                => $product['locales']['en_US']['name'] ?? $product['sku'],
             'levels'              => $levels,
             'created_at'          => $now,
