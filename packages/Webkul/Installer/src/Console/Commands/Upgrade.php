@@ -184,6 +184,8 @@ class Upgrade extends Command
         $this->call('down', ['--render' => 'errors::503']);
 
         try {
+            $this->runStep('unopim:passport:keys');
+
             $this->runStep('migrate', ['--force' => true]);
 
             $this->runStep('storage:link', ['--relative' => true]);
