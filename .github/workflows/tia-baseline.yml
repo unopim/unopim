@@ -53,10 +53,15 @@ jobs:
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          # Pest re-execs PHP to pin `pcov.directory` (see PcovRestarter), and
+          # that child is rebuilt from the pest arguments alone — every `-d` flag
+          # on the original command line is dropped. Anything the recording run
+          # needs has to live in php.ini, which is what `ini-values` writes.
+          #
           # pcov instruments every file it loads, and the graph only cares about
           # our own source, so keeping vendor out of it is what keeps the
           # recording inside the runner's memory.
-          ini-values: error_reporting=E_ALL, pcov.exclude="~(vendor|node_modules|storage)~"
+          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           coverage: pcov
 
@@ -94,24 +99,65 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-      # Coverage recording peaks past the runner's 7 GB (exit 137); swap absorbs
-      # the spike. The runner already holds /swapfile open, so the extra file
-      # goes on /mnt, which is both free and the larger disk.
+      # Recording the whole suite has been SIGKILLed at ~8m in with 16G of RAM
+      # and 11G of swap, so the ceiling is well past what a spike explains. The
+      # runner already holds /swapfile open, so the extra file goes on /mnt,
+      # which is both free and the larger disk.
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
-          sudo fallocate -l 8G /mnt/swapfile
+          sudo fallocate -l 24G /mnt/swapfile
           sudo chmod 600 /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
           swapon --show
+          free -h
+          df -h /mnt /
 
       # Pest disables impact analysis for partial runs — a path argument or a
       # `--testsuite` filter records nothing at all — so the graph has to come
       # from one run over the whole suite.
       - name: Record the baseline
+        env:
+          # tests/Pest.php caps memory at 1024M unless this says otherwise, and it
+          # runs late enough to overwrite whatever php.ini carries.
+          PEST_MEMORY_LIMIT: '-1'
         run: |
-          PEST_MEMORY_LIMIT=-1 php -d memory_limit=-1 vendor/bin/pest --tia --fresh --colors=always
+          # Nothing survives the kill to report the peak, so sample it alongside.
+          ( while true; do
+              printf '%s rss=%sk avail=%s swapfree=%s\n' \
+                "$(date -u +%H:%M:%S)" \
+                "$(ps -eo rss,comm --sort=-rss | awk '$2 ~ /php/ {s+=$1} END {print s+0}')" \
+                "$(awk '/MemAvailable/ {print $2}' /proc/meminfo)" \
+                "$(awk '/SwapFree/ {print $2}' /proc/meminfo)"
+              sleep 15
+            done ) > "$RUNNER_TEMP/memory.log" 2>&1 &
+          sampler=$!
+
+          set +e
+          php vendor/bin/pest --tia --fresh --colors=always
+          status=$?
+          set -e
+
+          kill "$sampler" 2>/dev/null || true
+
+          echo '--- peak memory during recording ---'
+          sort -t= -k2 -n "$RUNNER_TEMP/memory.log" | tail -5
+
+          # Pest re-execs PHP for pcov and returns `proc_close()` verbatim, which
+          # for a signalled child is the raw wait status rather than 128+signal.
+          # A bare 9 is therefore SIGKILL — the OOM killer — and says nothing
+          # about the tests, so name it before the log scrolls away.
+          if [ "$status" -eq 9 ]; then
+            echo "::error::the recording process was SIGKILLed (out of memory), not a test failure"
+            free -h || true
+            swapon --show || true
+            exit "$status"
+          fi
+
+          if [ "$status" -ne 0 ]; then
+            exit "$status"
+          fi
 
           graph="$(vendor/bin/pest --baseline)/graph.json"
 
