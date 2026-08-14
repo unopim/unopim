@@ -189,10 +189,10 @@
                             <x-admin::form.control-group.control
                                 type="hidden"
                                 name="id"
-                                v-model="locale.id"
+                                v-model="unit.id"
                             />
 
-                            <div class="grid grid-cols-3 gap-4">
+                            <div class="grid grid-cols-2 gap-4">
                                 <x-admin::form.control-group class="mb-0">
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.settings.locales.index.create.code')
@@ -203,7 +203,7 @@
                                         id="code"
                                         name="code"
                                         rules="required"
-                                        v-model="locale.code"
+                                        v-model="unit.code"
                                         :label="trans('admin::app.settings.locales.index.create.code')"
                                         :placeholder="trans('admin::app.settings.locales.index.create.code')"
                                         ::readonly="selectedLocales === 1"
@@ -211,23 +211,6 @@
 
                                     <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
-
-                                @foreach ($locales as $locale)
-                                    <x-admin::form.control-group class="mb-0">
-                                        <x-admin::form.control-group.label>
-                                            {{ $locale->name }}
-                                        </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="text"
-                                            id="label"
-                                            ::name="`labels[{{ $locale->code }}]`"
-                                            v-model="locale.labels['{{ $locale->code }}']"
-                                        />
-
-                                        <x-admin::form.control-group.error control-name="labels[{{ $locale->code }}]" />
-                                    </x-admin::form.control-group>
-                                @endforeach
 
                                 <x-admin::form.control-group class="mb-0">
                                     <x-admin::form.control-group.label class="required">
@@ -239,12 +222,37 @@
                                         id="symbol"
                                         name="symbol"
                                         rules="required"
-                                        v-model="locale.symbol"
+                                        v-model="unit.symbol"
                                         :placeholder="trans('measurement::app.measurement.edit.enter_symbol')"
                                     />
 
                                     <x-admin::form.control-group.error control-name="symbol" />
                                 </x-admin::form.control-group>
+                            </div>
+
+                            <div class="mt-4">
+                                <x-admin::form.translatable-fields
+                                    class="mb-0"
+                                    :locales="$locales"
+                                    :label="trans('measurement::app.measurement.edit.label')"
+                                >
+                                    @foreach ($locales as $locale)
+                                        <x-admin::form.control-group
+                                            class="mb-0"
+                                            v-show="locale === '{{ $locale->code }}'"
+                                        >
+                                            <x-admin::form.control-group.control
+                                                type="text"
+                                                id="label"
+                                                ::name="`labels[{{ $locale->code }}]`"
+                                                :label="$locale->name"
+                                                v-model="unit.labels['{{ $locale->code }}']"
+                                            />
+
+                                            <x-admin::form.control-group.error control-name="labels[{{ $locale->code }}]" />
+                                        </x-admin::form.control-group>
+                                    @endforeach
+                                </x-admin::form.translatable-fields>
                             </div>
 
                             <div class="mt-4">
@@ -255,7 +263,7 @@
                                 </x-admin::form.control-group>
 
                                 <div
-                                    v-for="(conversion, index) in locale.conversions"
+                                    v-for="(conversion, index) in unit.conversions"
                                     :key="index"
                                     class="flex items-start gap-2"
                                 >
@@ -312,7 +320,7 @@
                                         type="button"
                                         class="mt-1.5 flex items-center justify-center rounded"
                                         @click="removeConversion(index)"
-                                        :disabled="locale.conversions.length === 1 || isConversionDisabled"
+                                        :disabled="unit.conversions.length === 1 || isConversionDisabled"
                                     >
                                         <span
                                             class="icon-delete cursor-pointer rounded-md text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800"
@@ -326,7 +334,7 @@
                                         type="button"
                                         class="secondary-button"
                                         @click="addConversion"
-                                        :disabled="locale.conversions.length >= 5 || isConversionDisabled"
+                                        :disabled="unit.conversions.length >= 5 || isConversionDisabled"
                                     >
                                         @lang('measurement::app.measurement.unit.add_new_operation')
                                     </button>
@@ -356,7 +364,7 @@
 
                 data() {
                     return {
-                        locale: {
+                        unit: {
                             id: null,
                             code: null,
                             name: null,
@@ -399,8 +407,8 @@
                         }
 
                         return this.familyUsedInProducts
-                            || this.locale.is_used_in_products
-                            || this.locale.is_standard;
+                            || this.unit.is_used_in_products
+                            || this.unit.is_standard;
                     },
                 },
 
@@ -419,9 +427,9 @@
 
                         let url = "{{ route('admin.measurement.families.units.store', $family->id) }}";
 
-                        if (this.selectedLocales && this.locale.code) {
+                        if (this.selectedLocales && this.unit.code) {
                             url = "{{ route('admin.measurement.families.units.update', ['familyId' => $family->id, 'code' => '__CODE__']) }}"
-                                .replace('__CODE__', this.locale.code);
+                                .replace('__CODE__', this.unit.code);
 
                             formData.append('_method', 'PUT');
                         }
@@ -477,7 +485,7 @@
                                 ];
                             }
 
-                            this.locale = {
+                            this.unit = {
                                 code: response.data.data.code,
                                 labels: response.data.data.labels ?? {},
                                 symbol: response.data.data.symbol ?? null,
@@ -504,22 +512,22 @@
                     },
 
                     addConversion() {
-                        if (this.locale.conversions.length >= 5) {
+                        if (this.unit.conversions.length >= 5) {
                             return;
                         }
 
-                        this.locale.conversions.push({
+                        this.unit.conversions.push({
                             operator: 'mul',
                             value: null,
                         });
                     },
 
                     removeConversion(index) {
-                        if (this.locale.conversions.length === 1) {
+                        if (this.unit.conversions.length === 1) {
                             return;
                         }
 
-                        this.locale.conversions.splice(index, 1);
+                        this.unit.conversions.splice(index, 1);
                     },
 
                     /**
@@ -561,7 +569,7 @@
                     },
 
                     resetForm() {
-                        this.locale = {
+                        this.unit = {
                             code: null,
                             labels: {},
                             symbol: null,

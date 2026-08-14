@@ -412,22 +412,24 @@
 
                             <!-- Locales Inputs -->
                             <template v-if="! isFieldNew">
-                                <p class="mb-2.5 text-sm text-gray-800 dark:text-white font-semibold">
-                                    @lang('admin::app.catalog.category_fields.create.label')
-                                </p>
-
-                                <div class="grid grid-cols-2 gap-4 mb-2.5">
-                                    <template v-for="locale in locales" :key="'field-modal-locale-' + locale.code">
-                                        <x-admin::form.control-group class="w-full mb-2.5">
-                                            <x-admin::form.control-group.label>@{{ locale.name }}</x-admin::form.control-group.label>
-
+                                <x-admin::form.translatable-fields
+                                    class="mb-2.5"
+                                    :locales="$activeLocales"
+                                    :label="trans('admin::app.catalog.category_fields.create.label')"
+                                >
+                                    @foreach ($activeLocales as $locale)
+                                        <x-admin::form.control-group
+                                            class="w-full mb-2.5"
+                                            v-show="locale === '{{ $locale->code }}'"
+                                        >
                                             <x-admin::form.control-group.control
                                                 type="text"
-                                                ::name="locale.code"
+                                                name="{{ $locale->code }}"
+                                                :label="$locale->name"
                                             />
                                         </x-admin::form.control-group>
-                                    </template>
-                                </div>
+                                    @endforeach
+                                </x-admin::form.translatable-fields>
                             </template>
 
                             <!-- Input Validation -->
