@@ -52,3 +52,7 @@
         @endif
     </div>
 </div>
+
+@if ($sticky)
+    <x-admin::layouts.sticky-header-dropdown-guard />
+@endif

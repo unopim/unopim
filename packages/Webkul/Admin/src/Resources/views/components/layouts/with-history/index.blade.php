@@ -138,6 +138,8 @@
                         </x-admin::layouts.edit-tabs>
                     </div>
 
+                    <x-admin::layouts.sticky-header-dropdown-guard />
+
                     <div class="pt-4">
                         @if ($activeTab === 'general')
                             {{ $slot }}
