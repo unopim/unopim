@@ -123,18 +123,25 @@
                     >
                         <x-admin::form.searchable-menu
                             ::items="overflowMenuItems"
+                            ::model-value="activeTypeCode"
                             search-placeholder="{{ trans('admin::app.catalog.products.edit.links.search-types') }}"
                             @update:model-value="selectType($event)"
                         >
                             <x-slot:toggle>
                                 <button
                                     type="button"
-                                    class="whitespace-nowrap px-3 py-2 text-sm font-medium border-b-2"
+                                    class="flex items-center gap-1 whitespace-nowrap px-3 py-2 text-sm font-medium border-b-2"
                                     :class="isOverflowActive
                                         ? 'border-primary-600 text-primary-600 dark:text-primary-400'
                                         : 'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white'"
                                 >
                                     @lang('admin::app.catalog.products.edit.links.more-types')
+
+                                    <span
+                                        class="shrink-0 text-2xl"
+                                        :class="toggle.isOpen ? 'icon-chevron-up' : 'icon-chevron-down'"
+                                        aria-hidden="true"
+                                    ></span>
                                 </button>
                             </x-slot>
                         </x-admin::form.searchable-menu>
