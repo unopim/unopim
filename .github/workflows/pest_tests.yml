@@ -279,12 +279,25 @@ jobs:
         id: baseline
         env:
           BASE_REF: ${{ github.base_ref }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           skip() {
             echo "usable=false" >> "$GITHUB_OUTPUT"
             echo "::notice::$1 The full matrices cover this pull request instead."
             exit 0
           }
+
+          # Pest resolves the baseline through the newest successful run of the
+          # recording workflow and records the whole suite when that turns up
+          # nothing — which is the one thing this job has no memory headroom for.
+          baseline_run="$(gh run list -R "$GITHUB_REPOSITORY" --workflow tia-baseline.yml \
+            --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+
+          if [ -z "$baseline_run" ] || [ "$(gh api \
+            "repos/$GITHUB_REPOSITORY/actions/runs/$baseline_run/artifacts" \
+            --jq '[.artifacts[] | select(.name == "pest-tia-baseline")] | length')" = "0" ]; then
+            skip "No recorded baseline is published, so the run would record the whole suite rather than replay it."
+          fi
 
           if ! git diff --quiet "origin/$BASE_REF...HEAD" -- \
             composer.lock phpunit.xml phpunit.xml.dist \
