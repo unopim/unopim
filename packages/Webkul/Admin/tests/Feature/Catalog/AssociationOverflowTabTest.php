@@ -51,7 +51,7 @@ it('marks the selected row in the menu and keeps every label aligned', function 
 it('reserves the selected column ahead of the badge', function () {
     $markup = associationTabMarkup();
 
-    $marker = strpos($markup, 'shrink-0 text-lg text-primary-700');
+    $marker = strpos($markup, 'shrink-0 icon-done text-lg text-primary-700');
     $badge = strpos($markup, 'v-if="item.badge"');
 
     expect($marker)->not->toBeFalse()
