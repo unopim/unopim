@@ -54,8 +54,11 @@ jobs:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           # PcovRestarter rebuilds the child from Pest's argv, dropping every `-d`,
-          # so anything the recording needs has to come from php.ini.
-          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.exclude="~(vendor|node_modules|storage)~"
+          # so anything the recording needs has to come from php.ini. Pinning
+          # pcov.directory to what it would pick anyway also keeps it from
+          # re-execing, and proc_close() reports 9 for both a signalled child and
+          # a plain exit(9) — the shell tells them apart, that wrapper cannot.
+          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.directory=${{ github.workspace }}, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           coverage: pcov
 
@@ -147,6 +150,11 @@ jobs:
 
             echo '--- kernel log (an OOM kill is recorded here) ---'
             sudo dmesg | tail -50 || true
+
+            # A cgroup kill counts here even when it leaves no ring buffer entry.
+            echo '--- cgroup memory events ---'
+            cat /sys/fs/cgroup/memory.events 2>/dev/null || true
+            cat /sys/fs/cgroup/memory.peak 2>/dev/null || true
 
             exit "$status"
           fi
