@@ -9,7 +9,7 @@
     {{ $attributes }}
 >
     @isset($toggle)
-        <template v-slot:toggle>
+        <template v-slot:toggle="toggle">
             {{ $toggle }}
         </template>
     @endisset
@@ -25,7 +25,7 @@
                 ref="toggle"
                 @click.stop="toggle"
             >
-                <slot name="toggle"></slot>
+                <slot name="toggle" :is-open="isOpen"></slot>
             </div>
 
             {{--
@@ -35,6 +35,7 @@
             --}}
             <teleport to="body">
                 <div
+                    ref="panel"
                     class="fixed w-72 rounded-md border bg-white box-shadow dark:border-cherry-800 dark:bg-cherry-900"
                     v-if="isOpen"
                     :style="panelStyle"
@@ -59,11 +60,18 @@
                             class="flex gap-2.5 justify-between items-center w-full px-4 py-2 ltr:text-left rtl:text-right text-sm text-gray-600 dark:text-gray-300 cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
                             v-for="item in filteredItems"
                             :key="'searchable-menu-' + item.id"
-                            :class="{'bg-gray-100 dark:bg-cherry-800': item.id === modelValue}"
+                            :class="item.id === modelValue
+                                ? 'bg-primary-50 font-medium text-primary-700 dark:bg-cherry-800 dark:text-primary-400'
+                                : ''"
                             @click="select(item.id)"
                         >
                             <span
-                                class="min-w-0"
+                                class="shrink-0 icon-done text-lg text-primary-700 dark:text-primary-400"
+                                :class="item.id === modelValue || item.checked ? '' : 'opacity-0'"
+                            ></span>
+
+                            <span
+                                class="min-w-0 flex-1"
                                 v-text="item.label"
                             ></span>
 
@@ -71,11 +79,6 @@
                                 class="shrink-0 px-1.5 rounded-full bg-gray-100 dark:bg-cherry-800 text-xs"
                                 v-if="item.badge"
                                 v-text="item.badge"
-                            ></span>
-
-                            <span
-                                class="shrink-0 icon-done text-lg"
-                                v-else-if="item.checked"
                             ></span>
                         </button>
 
@@ -179,9 +182,19 @@
                     const rect = this.$refs.toggle.getBoundingClientRect();
                     const width = 288;
                     const margin = 8;
+                    const gap = 4;
+
+                    const height = this.$refs.panel?.offsetHeight ?? 0;
+
+                    const spaceBelow = window.innerHeight - rect.bottom - gap - margin;
+                    const spaceAbove = rect.top - gap - margin;
+
+                    const above = height > spaceBelow && spaceAbove > spaceBelow;
+
+                    const top = above ? rect.top - height - gap : rect.bottom + gap;
 
                     this.panelStyle = {
-                        top: (rect.bottom + 4) + 'px',
+                        top: Math.max(margin, Math.min(top, window.innerHeight - height - margin)) + 'px',
                         left: Math.max(margin, Math.min(rect.right - width, window.innerWidth - width - margin)) + 'px',
                         zIndex: 10010,
                     };
