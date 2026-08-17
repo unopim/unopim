@@ -19,8 +19,8 @@ permissions:
   contents: read
 
 jobs:
-  # Pest resolves the baseline through `gh run list --status success --limit 1`, so a run that
-  # records nothing must not report success: it would mask the newest run that did publish one.
+  # A run that records nothing must not report success: Pest takes the newest
+  # successful run, so an empty one masks the last that published a graph.
   baseline:
     runs-on: ubuntu-24.04
     name: Record the test impact baseline
@@ -53,14 +53,8 @@ jobs:
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          # Pest re-execs PHP to pin `pcov.directory` (see PcovRestarter), and
-          # that child is rebuilt from the pest arguments alone — every `-d` flag
-          # on the original command line is dropped. Anything the recording run
-          # needs has to live in php.ini, which is what `ini-values` writes.
-          #
-          # pcov instruments every file it loads, and the graph only cares about
-          # our own source, so keeping vendor out of it is what keeps the
-          # recording inside the runner's memory.
+          # PcovRestarter rebuilds the child from Pest's argv, dropping every `-d`,
+          # so anything the recording needs has to come from php.ini.
           ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           coverage: pcov
@@ -99,10 +93,7 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-      # Recording the whole suite has been SIGKILLed at ~8m in with 16G of RAM
-      # and 11G of swap, so the ceiling is well past what a spike explains. The
-      # runner already holds /swapfile open, so the extra file goes on /mnt,
-      # which is both free and the larger disk.
+      # The runner already holds /swapfile open, so the extra file goes on /mnt.
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
@@ -114,17 +105,13 @@ jobs:
           free -h
           df -h /mnt /
 
-      # Pest disables impact analysis for partial runs — a path argument or a
-      # `--testsuite` filter records nothing at all — so the graph has to come
-      # from one run over the whole suite.
+      # Pest records nothing for a partial run, so this cannot be split up.
       - name: Record the baseline
         env:
-          # tests/Pest.php caps memory at 1024M unless this says otherwise, and it
-          # runs late enough to overwrite whatever php.ini carries.
+          # tests/Pest.php caps memory at 1024M unless this says otherwise.
           PEST_MEMORY_LIMIT: '-1'
         run: |
-          # A 15s cadence left the kill inside an unsampled gap: the last reading
-          # was 800M against 14G free, which only rules out a slow climb.
+          # 1s, or the kill lands inside an unsampled gap.
           ( while true; do
               printf '%s rss=%sk avail=%s swapfree=%s\n' \
                 "$(date -u +%H:%M:%S)" \
@@ -145,11 +132,8 @@ jobs:
           echo '--- peak memory during recording ---'
           sort -t= -k2 -n "$RUNNER_TEMP/memory.log" | tail -5
 
-          # Pest re-execs PHP for pcov and returns `proc_close()` verbatim, which
-          # for a signalled child is the raw wait status rather than 128+signal,
-          # so a bare 9 means the child was signalled rather than that the tests
-          # failed. Whether that signal came from the OOM killer is what the
-          # kernel ring buffer settles — the sampled memory has never supported it.
+          # proc_close() is returned verbatim, so a bare 9 is a signalled child
+          # rather than a failing test.
           if [ "$status" -eq 9 ]; then
             echo "::error::the recording process was killed by a signal, not by a failing test"
             free -h || true
