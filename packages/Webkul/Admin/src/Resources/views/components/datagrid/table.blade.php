@@ -142,7 +142,7 @@
                     <template v-else>
                         <template v-if="$parent.available.records.length">
                             <div
-                                class="row grid gap-2.5 items-center px-4 py-4 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                class="row grid gap-2.5 items-center px-4 py-2.5 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
                                 v-for="record in $parent.available.records"
                                 :key="record[$parent.available.meta.primary_column]"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
@@ -177,13 +177,13 @@
                                             alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                             width="74"
                                             height="74"
-                                            class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                            class="h-[80px] max-w-[40px] min-w-[40px] max-h-[40px] min-h-[40px] rounded-lg border border-gray-300 shadow-sm object-cover"
                                         />
                                     </template>
 
                                     <template v-else-if="column.type === 'gallery'">
                                         <template v-if="record[column.index]?.type === 'video'">
-                                            <div class="relative h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px]">
+                                            <div class="relative h-[80px] max-w-[40px] min-w-[40px] max-h-[40px] min-h-[40px]">
                                                 <video
                                                     :src="record[column.index].url"
                                                     width="74"
@@ -202,7 +202,7 @@
                                                 alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                                 width="74"
                                                 height="74"
-                                                class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
+                                                class="h-[80px] max-w-[40px] min-w-[40px] max-h-[40px] min-h-[40px] rounded-lg border border-gray-300 shadow-sm object-cover"
                                             />
                                         </template>
                                     </template>
