@@ -2,6 +2,7 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers\Product;
 
+use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -22,6 +23,7 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Completeness\Observers\Product as CompletenessProductObserver;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
@@ -34,6 +36,8 @@ use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
+use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Repositories\ProductAssociationRepository;
@@ -278,6 +282,14 @@ class Importer extends AbstractImporter
     protected array $fileParentRows = [];
 
     /**
+     * Row number and declared parent of every sku in the file, captured in the
+     * pass that already walks it so the numbering matches validation's.
+     *
+     * @var array<string, array{row: int, parent: string|null}>
+     */
+    protected array $fileRowsBySku = [];
+
+    /**
      * Resolved variant structures, keyed by "familyId|code".
      *
      * @var array<string, VariantStructure|null>
@@ -485,6 +497,13 @@ class Importer extends AbstractImporter
 
             $skuChunk[] = $rowData['sku'];
 
+            if (! empty($rowData['sku'])) {
+                $this->fileRowsBySku[$rowData['sku']] = [
+                    'row'    => $source->getCurrentRowNumber(),
+                    'parent' => $rowData['parent'] ?? null,
+                ];
+            }
+
             if (! empty($rowData['parent'])) {
                 $skuChunk[] = $rowData['parent'];
             }
@@ -556,11 +575,83 @@ class Importer extends AbstractImporter
         $this->existingProductsCache = [];
 
         /**
+         * A row whose parent's own row failed is unimportable too. Marking it
+         * here rather than at save time is what puts it in the error report:
+         * errors are only persisted once validation returns.
+         */
+        $this->invalidateOrphanRows();
+
+        /**
          * Create batch records for valid rows.
          */
         $this->createBatchesFromValidRows($source);
 
         return $this;
+    }
+
+    /**
+     * Skip every row left hanging by a parent row that failed validation.
+     */
+    protected function invalidateOrphanRows(): void
+    {
+        $rows = [];
+
+        foreach ($this->fileRowsBySku as $sku => $row) {
+            $rows[$row['row']] = ['sku' => $sku, 'parent' => $row['parent']];
+        }
+
+        $invalid = [];
+
+        foreach (array_keys($rows) as $rowNumber) {
+            if ($this->errorHelper->isRowInvalid($rowNumber)) {
+                $invalid[$rowNumber] = true;
+            }
+        }
+
+        foreach ($this->orphanRowNumbers($rows, $invalid) as $rowNumber) {
+            $this->skipRow($rowNumber, self::ERROR_PARENT_DOES_NOT_EXIST, 'parent');
+        }
+    }
+
+    /**
+     * Row numbers whose parent chain reaches a row that failed, walked until it
+     * settles so a grandchild goes with the branch its grandparent lost.
+     *
+     * @param  array<int, array{sku: string, parent: string|null}>  $rows
+     * @param  array<int, bool>  $invalid
+     * @return array<int, int>
+     */
+    public function orphanRowNumbers(array $rows, array $invalid): array
+    {
+        $rowBySku = [];
+
+        foreach ($rows as $rowNumber => $row) {
+            $rowBySku[$row['sku']] = $rowNumber;
+        }
+
+        $orphans = [];
+
+        do {
+            $found = false;
+
+            foreach ($rows as $rowNumber => $row) {
+                if (empty($row['parent']) || isset($invalid[$rowNumber])) {
+                    continue;
+                }
+
+                $parentRow = $rowBySku[$row['parent']] ?? null;
+
+                if ($parentRow === null || ! isset($invalid[$parentRow])) {
+                    continue;
+                }
+
+                $invalid[$rowNumber] = true;
+                $orphans[] = $rowNumber;
+                $found = true;
+            }
+        } while ($found);
+
+        return $orphans;
     }
 
     /**
@@ -1382,10 +1473,7 @@ class Importer extends AbstractImporter
         /**
          * Cache media attributes once instead of filtering per row
          */
-        if ($this->mediaAttributes === null) {
-            $mediaTypes = ['image', 'file', 'gallery'];
-            $this->mediaAttributes = $this->attributes->whereIn('type', $mediaTypes)->all();
-        }
+        $this->loadMediaAttributes();
 
         $imageDirPath = $this->import->images_directory_path ?? '';
 
@@ -1732,6 +1820,10 @@ class Importer extends AbstractImporter
 
         $ids = array_merge($updatedIds, $createdIds);
 
+        $this->stripUnownedValues($ids);
+
+        $this->relocateMediaValues($ids);
+
         /**
          * Mirror the legacy association sections (related_products/up_sells/cross_sells)
          * written above into the `product_associations` link table.
@@ -1762,6 +1854,261 @@ class Importer extends AbstractImporter
                 'product_id' => $updatedIds,
             ]);
         }
+    }
+
+    /**
+     * Media attributes, cached once instead of filtered per row.
+     */
+    protected function loadMediaAttributes(): void
+    {
+        if ($this->mediaAttributes !== null) {
+            return;
+        }
+
+        $this->mediaAttributes = $this->attributes->whereIn('type', ['image', 'file', 'gallery'])->all();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function mediaAttributeCodes(): array
+    {
+        $this->loadMediaAttributes();
+
+        return array_values(array_map(
+            static fn ($attribute): string => $attribute->code,
+            $this->mediaAttributes ?? [],
+        ));
+    }
+
+    /**
+     * Drop the values an imported row is not allowed to own.
+     *
+     * A row carries every column of its line, but a variant structure decides
+     * which level maintains each attribute. Writing them all leaves a child
+     * shadowing what it should inherit, so editing the configurable appears to
+     * do nothing. The product form and the API already refuse such a value.
+     *
+     * @param  array<int, int>  $ids
+     */
+    public function stripUnownedValues(array $ids): void
+    {
+        if ($ids === []) {
+            return;
+        }
+
+        $planner = resolve(VariantStructurePlannerContract::class);
+
+        $products = Product::query()->whereIn('id', $ids)->get();
+
+        $planner->primeStructuresFor($products);
+
+        foreach ($products as $product) {
+            if (! $planner->structureFor($product) instanceof VariantStructure) {
+                continue;
+            }
+
+            $values = $product->values ?? [];
+
+            if (! $this->stripUnownedScopes($values, $product, $planner)) {
+                continue;
+            }
+
+            DB::table('products')
+                ->where('id', $product->id)
+                ->update(['values' => json_encode($values, JSON_UNESCAPED_UNICODE)]);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     */
+    protected function stripUnownedScopes(array &$values, Product $product, $planner): bool
+    {
+        $changed = false;
+
+        foreach ($values as $scope => &$scoped) {
+            if (! is_array($scoped) || $scope === 'categories' || $scope === 'associations') {
+                continue;
+            }
+
+            if ($scope === 'common') {
+                $changed = $this->stripUnownedBag($scoped, $product, $planner) || $changed;
+
+                continue;
+            }
+
+            foreach ($scoped as &$inner) {
+                if (! is_array($inner)) {
+                    continue;
+                }
+
+                $changed = $this->stripUnownedBag($inner, $product, $planner) || $changed;
+
+                foreach ($inner as &$deeper) {
+                    if (is_array($deeper) && ! array_is_list($deeper)) {
+                        $changed = $this->stripUnownedBag($deeper, $product, $planner) || $changed;
+                    }
+                }
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
+     * @param  array<string, mixed>  $bag
+     */
+    protected function stripUnownedBag(array &$bag, Product $product, $planner): bool
+    {
+        $changed = false;
+
+        foreach (array_keys($bag) as $code) {
+            if ($code === 'sku' || ! is_string($code)) {
+                continue;
+            }
+
+            if ($planner->ownsAtOwnLevel($product, $code)) {
+                continue;
+            }
+
+            unset($bag[$code]);
+
+            $changed = true;
+        }
+
+        return $changed;
+    }
+
+    /**
+     * Move imported media under the product that owns it.
+     *
+     * A row's media value is resolved against the job's images directory, which
+     * leaves it pointing inside the extraction folder. The product form stores
+     * through FileStorer under `product/{id}/{code}`, so an imported product
+     * would otherwise carry a path no other part of the application produces.
+     *
+     * @param  array<int, int>  $ids
+     */
+    public function relocateMediaValues(array $ids): void
+    {
+        if ($ids === []) {
+            return;
+        }
+
+        $codes = $this->mediaAttributeCodes();
+
+        if ($codes === []) {
+            return;
+        }
+
+        $disk = Storage::disk('public');
+
+        foreach (Product::query()->whereIn('id', $ids)->get(['id', 'values']) as $product) {
+            $values = $product->values ?? [];
+
+            if (! $this->relocateMediaScopes($values, $codes, (int) $product->id, $disk)) {
+                continue;
+            }
+
+            DB::table('products')
+                ->where('id', $product->id)
+                ->update(['values' => json_encode($values, JSON_UNESCAPED_UNICODE)]);
+        }
+    }
+
+    /**
+     * Walk every scope of a product's values, relocating the media it holds.
+     * Returns whether anything moved.
+     *
+     * @param  array<string, mixed>  $values
+     * @param  array<int, string>  $codes
+     */
+    protected function relocateMediaScopes(array &$values, array $codes, int $productId, $disk): bool
+    {
+        $changed = false;
+
+        foreach ($values as $scope => &$scoped) {
+            if (! is_array($scoped)) {
+                continue;
+            }
+
+            if ($scope === 'common') {
+                $changed = $this->relocateMediaBag($scoped, $codes, $productId, $disk) || $changed;
+
+                continue;
+            }
+
+            foreach ($scoped as &$inner) {
+                if (! is_array($inner)) {
+                    continue;
+                }
+
+                $changed = $this->relocateMediaBag($inner, $codes, $productId, $disk) || $changed;
+
+                foreach ($inner as &$deeper) {
+                    if (is_array($deeper) && ! array_is_list($deeper)) {
+                        $changed = $this->relocateMediaBag($deeper, $codes, $productId, $disk) || $changed;
+                    }
+                }
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
+     * @param  array<string, mixed>  $bag
+     * @param  array<int, string>  $codes
+     */
+    protected function relocateMediaBag(array &$bag, array $codes, int $productId, $disk): bool
+    {
+        $changed = false;
+
+        foreach ($codes as $code) {
+            if (! isset($bag[$code])) {
+                continue;
+            }
+
+            $value = $bag[$code];
+
+            if (is_array($value)) {
+                $moved = array_map(
+                    fn ($path): string => $this->relocateMediaFile((string) $path, $productId, $code, $disk),
+                    $value,
+                );
+            } else {
+                $moved = $this->relocateMediaFile((string) $value, $productId, $code, $disk);
+            }
+
+            if ($moved !== $value) {
+                $bag[$code] = $moved;
+
+                $changed = true;
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
+     * Copy one file under `product/{id}/{code}`, returning its new path. The
+     * value is handed back untouched when it already sits there, or when the
+     * file the row named never reached storage.
+     */
+    protected function relocateMediaFile(string $path, int $productId, string $code, $disk): string
+    {
+        $prefix = 'product/'.$productId.'/'.$code.'/';
+
+        if ($path === '' || str_starts_with($path, $prefix) || ! $disk->exists($path)) {
+            return $path;
+        }
+
+        return resolve(FileStorer::class)->store(
+            rtrim($prefix, '/'),
+            new File($disk->path($path)),
+            [FileStorer::HASHED_FOLDER_NAME_KEY => true],
+        );
     }
 
     /**
@@ -1800,7 +2147,34 @@ class Importer extends AbstractImporter
                 continue;
             }
 
-            $insertProducts[$sku]['parent_id'] = $this->skuStorage->get($productData['parent'])['id'] ?? null;
+            /**
+             * The batch storage only holds the skus of this batch, so a parent
+             * imported earlier or already in the catalogue is looked up second.
+             */
+            $parentId = $this->skuStorage->get($productData['parent'])['id']
+                ?? $this->getExistingProduct($productData['parent'])?->id;
+
+            /**
+             * The row named a parent that never made it in — its own row was
+             * rejected, or it is absent from the file. Inserting the child would
+             * hang a variant group or simple outside any tree, so it is skipped
+             * the same way the validator skips a row naming an unknown parent.
+             */
+            if (! $parentId) {
+                unset($insertProducts[$sku]);
+
+                if (isset($this->errorHelper)) {
+                    $this->skipRow(
+                        $this->fileRowsBySku[$sku]['row'] ?? null,
+                        self::ERROR_PARENT_DOES_NOT_EXIST,
+                        'parent',
+                    );
+                }
+
+                continue;
+            }
+
+            $insertProducts[$sku]['parent_id'] = $parentId;
         }
 
         return $insertProducts;
