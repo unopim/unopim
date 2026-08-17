@@ -132,19 +132,22 @@ jobs:
           echo '--- peak memory during recording ---'
           sort -t= -k2 -n "$RUNNER_TEMP/memory.log" | tail -5
 
-          # proc_close() is returned verbatim, so a bare 9 is a signalled child
-          # rather than a failing test.
-          if [ "$status" -eq 9 ]; then
-            echo "::error::the recording process was killed by a signal, not by a failing test"
+          if [ "$status" -ne 0 ]; then
+            # A signalled child reaches here two ways: proc_close() hands back a
+            # bare 9 from the pcov re-exec, the shell reports 137 for the process
+            # it started itself. Neither means a test failed.
+            case "$status" in
+              9|13[0-9]) echo "::error::the recording process was killed by a signal, not by a failing test" ;;
+              *)         echo "::error::the recording run exited with $status" ;;
+            esac
+
             free -h || true
             swapon --show || true
+            df -h /mnt / || true
 
             echo '--- kernel log (an OOM kill is recorded here) ---'
             sudo dmesg | tail -50 || true
-            exit "$status"
-          fi
 
-          if [ "$status" -ne 0 ]; then
             exit "$status"
           fi
 
