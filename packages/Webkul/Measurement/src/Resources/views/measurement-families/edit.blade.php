@@ -243,7 +243,7 @@
                                         >
                                             <x-admin::form.control-group.control
                                                 type="text"
-                                                id="label"
+                                                id="label-{{ $locale->code }}"
                                                 ::name="`labels[{{ $locale->code }}]`"
                                                 :label="$locale->name"
                                                 v-model="unit.labels['{{ $locale->code }}']"

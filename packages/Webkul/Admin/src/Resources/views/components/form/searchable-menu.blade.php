@@ -66,7 +66,7 @@
                             @click="select(item.id)"
                         >
                             <span
-                                class="shrink-0 text-lg text-primary-700 dark:text-primary-400"
+                                class="shrink-0 icon-done text-lg text-primary-700 dark:text-primary-400"
                                 :class="item.id === modelValue || item.checked ? '' : 'opacity-0'"
                             ></span>
 
