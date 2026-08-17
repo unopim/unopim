@@ -123,14 +123,15 @@ jobs:
           # runs late enough to overwrite whatever php.ini carries.
           PEST_MEMORY_LIMIT: '-1'
         run: |
-          # Nothing survives the kill to report the peak, so sample it alongside.
+          # A 15s cadence left the kill inside an unsampled gap: the last reading
+          # was 800M against 14G free, which only rules out a slow climb.
           ( while true; do
               printf '%s rss=%sk avail=%s swapfree=%s\n' \
                 "$(date -u +%H:%M:%S)" \
                 "$(ps -eo rss,comm --sort=-rss | awk '$2 ~ /php/ {s+=$1} END {print s+0}')" \
                 "$(awk '/MemAvailable/ {print $2}' /proc/meminfo)" \
                 "$(awk '/SwapFree/ {print $2}' /proc/meminfo)"
-              sleep 15
+              sleep 1
             done ) > "$RUNNER_TEMP/memory.log" 2>&1 &
           sampler=$!
 
@@ -145,13 +146,17 @@ jobs:
           sort -t= -k2 -n "$RUNNER_TEMP/memory.log" | tail -5
 
           # Pest re-execs PHP for pcov and returns `proc_close()` verbatim, which
-          # for a signalled child is the raw wait status rather than 128+signal.
-          # A bare 9 is therefore SIGKILL — the OOM killer — and says nothing
-          # about the tests, so name it before the log scrolls away.
+          # for a signalled child is the raw wait status rather than 128+signal,
+          # so a bare 9 means the child was signalled rather than that the tests
+          # failed. Whether that signal came from the OOM killer is what the
+          # kernel ring buffer settles — the sampled memory has never supported it.
           if [ "$status" -eq 9 ]; then
-            echo "::error::the recording process was SIGKILLed (out of memory), not a test failure"
+            echo "::error::the recording process was killed by a signal, not by a failing test"
             free -h || true
             swapon --show || true
+
+            echo '--- kernel log (an OOM kill is recorded here) ---'
+            sudo dmesg | tail -50 || true
             exit "$status"
           fi
 
