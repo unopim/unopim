@@ -1706,13 +1706,13 @@ class Importer extends AbstractImporter
     }
 
     /**
-     * Toggle MySQL-only bulk-mode session vars. No-ops on non-MySQL drivers
-     * (e.g. pgsql, sqlite) since `unique_checks` and `foreign_key_checks`
-     * are MySQL-specific.
+     * Toggle the MySQL-family bulk-mode session vars. No-ops on drivers without
+     * them (e.g. pgsql, sqlite) since `unique_checks` and `foreign_key_checks`
+     * are specific to MySQL and MariaDB.
      */
     protected function toggleMysqlBulkMode(bool $enable): void
     {
-        if (DB::connection()->getDriverName() !== 'mysql') {
+        if (! $this->supportsBulkModeToggles()) {
             return;
         }
 
@@ -1720,6 +1720,16 @@ class Importer extends AbstractImporter
 
         DB::statement("SET SESSION unique_checks={$value}");
         DB::statement("SET SESSION foreign_key_checks={$value}");
+    }
+
+    /**
+     * MariaDB honours both session vars but reports its own driver name, so
+     * testing for the literal `mysql` string would drop the optimisation for
+     * every MariaDB install without any visible failure.
+     */
+    protected function supportsBulkModeToggles(): bool
+    {
+        return in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true);
     }
 
     /**\n     * Prepare products from current batch.\n     *\n     * Optimized: Uses indexed attribute family lookup (O(1)) instead of\n     * Collection->where()->first() (O(n)) per row.\n     */

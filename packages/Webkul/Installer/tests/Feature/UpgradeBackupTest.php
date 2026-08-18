@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Process\Process;
 use Webkul\Installer\Helpers\Upgrade\BackupManager;
 
 /**
@@ -23,6 +24,32 @@ it('refuses to back up a driver it has no dump command for', function () {
 
     expect(fn () => app(BackupManager::class)->dump($this->directory))
         ->toThrow(RuntimeException::class, trans('installer::app.upgrade.backup.unsupported-driver', ['driver' => 'sqlite']));
+});
+
+it('dumps a mariadb connection with the mariadb client arguments', function () {
+    $manager = new class extends BackupManager
+    {
+        /**
+         * @param  array<string, mixed>  $config
+         */
+        public function exposeProcessFor(string $driver, array $config, string $path): Process
+        {
+            return $this->processFor($driver, $config, $path);
+        }
+    };
+
+    $process = $manager->exposeProcessFor('mariadb', [
+        'host'     => '127.0.0.1',
+        'port'     => '3306',
+        'database' => 'unopim',
+        'username' => 'unopim',
+        'password' => 'secret',
+    ], $this->directory.'/unopim.sql');
+
+    expect($process->getCommandLine())->toMatch('/(mariadb-dump|mysqldump)/')
+        ->not->toContain('--no-tablespaces');
+
+    expect($process->getEnv())->toHaveKey('MYSQL_PWD');
 });
 
 it('throws and leaves no file behind when the dump command fails', function () {
