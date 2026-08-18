@@ -8,6 +8,7 @@
     'multiple'     => false,
     'compact'      => false,
     'triggerModal' => false,
+    'readOnly'     => false,
 ])
 
 <v-media-add-tile
@@ -20,22 +21,23 @@
     :multiple="@json($multiple)"
     :compact="@json($compact)"
     :trigger-modal="@json($triggerModal)"
+    :read-only="@json($readOnly)"
     {{ $attributes }}
 ></v-media-add-tile>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-add-tile-template">
         <label
-            class="group flex min-h-[176px] w-full cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-gray-300 bg-gray-50 p-3.5 text-center transition-colors hover:border-unopim-primary hover:bg-gray-100 dark:border-gray-600 dark:bg-cherry-800 dark:hover:border-unopim-primary dark:hover:bg-cherry-700"
-            :class="isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-700 shadow-md' : ''"
-            :for="triggerModal ? null : inputId"
+            class="group flex min-h-[176px] w-full flex-col items-center justify-center rounded-md border border-dashed border-gray-300 bg-gray-50 p-3.5 text-center transition-colors dark:border-gray-600 dark:bg-cherry-800"
+            :class="[isDragging ? '!border-primary-500 !bg-primary-50 dark:!bg-cherry-700 shadow-md' : '', readOnly ? 'cursor-not-allowed' : 'cursor-pointer hover:border-unopim-primary hover:bg-gray-100 dark:hover:border-unopim-primary dark:hover:bg-cherry-700']"
+            :for="readOnly ? null : (triggerModal ? null : inputId)"
             :aria-label="title"
             :title="allowedTypes"
-            @click="triggerModal && $emit('trigger')"
-            @dragover.prevent="isDragging = true"
-            @dragenter.prevent="isDragging = true"
+            @click="! readOnly && triggerModal && $emit('trigger')"
+            @dragover.prevent="! readOnly && (isDragging = true)"
+            @dragenter.prevent="! readOnly && (isDragging = true)"
             @dragleave.prevent="isDragging = false"
-            @drop.prevent="onDrop"
+            @drop.prevent="! readOnly && onDrop($event)"
         >
             <span
                 class="flex items-center justify-center rounded-md border border-gray-200 bg-white text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-900 dark:text-gray-300"
@@ -49,7 +51,7 @@
             <slot></slot>
 
             <input
-                v-if="! triggerModal"
+                v-if="! triggerModal && ! readOnly"
                 ref="input"
                 type="file"
                 class="hidden"
@@ -74,6 +76,7 @@
                 multiple: Boolean,
                 compact: Boolean,
                 triggerModal: Boolean,
+                readOnly: Boolean,
             },
             emits: ['change', 'drop', 'trigger'],
             data() {

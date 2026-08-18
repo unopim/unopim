@@ -8,6 +8,8 @@
     'acceptedTypes'    => ['image/*', 'video/*'],
     'acceptedExtensions' => [],
     'instructions'       => '',
+    'readOnly'           => false,
+    'allowDownload'      => false,
 ])
 
 @php
@@ -22,6 +24,8 @@
     name="{{ $name }}"
     v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
+    v-bind:read-only="{{ $readOnly ? 'true' : 'false' }}"
+    v-bind:allow-download="{{ $allowDownload ? 'true' : 'false' }}"
     @if ($dynamicUploadedImages)
         :uploaded-images="{{ $dynamicUploadedImages }}"
     @else
@@ -52,6 +56,7 @@
                     title="@lang('admin::app.components.media.images.add-media-btn')"
                     hint="@lang('admin::app.components.media.images.drag-drop-hint')"
                     allowed-types="@lang('admin::app.components.media.images.allowed-types'), @lang('admin::app.components.media.videos.allowed-types')"
+                    :read-only="readOnly"
                     @trigger="resetAIModal(); $refs.choiceImageModal.open()"
                     @drop="onDrop"
                 ></v-media-add-tile>
@@ -66,6 +71,7 @@
                     allowed-types="@lang('admin::app.components.media.images.allowed-types'), @lang('admin::app.components.media.videos.allowed-types')"
                     :accept="acceptAttribute"
                     :input-id="$.uid + '_imageInput'"
+                    :read-only="readOnly"
                     @change="add"
                     @drop="onDrop"
                 ></v-media-add-tile>
@@ -78,6 +84,7 @@
                     :list="images"
                     item-key="id"
                     handle=".icon-drag"
+                    :disabled="readOnly"
                 >
                     <template #item="{ element, index }">
                         <v-media-gallery-item
@@ -89,6 +96,8 @@
                             :height="height"
                             :accepted-types="acceptedTypes"
                             :accepted-extensions="acceptedExtensions"
+                            :read-only="readOnly"
+                            :allow-download="allowDownload"
                             @onRemove="remove($event)"
                         >
                         </v-media-gallery-item>
@@ -439,10 +448,11 @@
                 height="176px"
                 object-fit="cover"
                 :allow-preview="true"
-                :allow-replace="true"
-                :allow-remove="true"
+                :allow-replace="! readOnly"
+                :allow-remove="! readOnly"
+                :allow-download="allowDownload"
                 :allow-drag="true"
-                :show-drag-handle="true"
+                :show-drag-handle="! readOnly"
                 :show-extension="false"
                 :invalid="isInvalid"
                 @preview="previewMedia"
@@ -450,9 +460,10 @@
                 @remove="remove"
             ></v-media-card>
 
-            <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-            <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name + '[' + image.id + ']'" v-if="! readOnly && allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name" v-if="! readOnly && ! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
             <input
+                v-if="! readOnly"
                 type="file"
                 :name="name + '[]'"
                 class="hidden"
@@ -536,7 +547,17 @@
                 errors: {
                     type: Object,
                     default: () => {}
-                }
+                },
+
+                readOnly: {
+                    type: Boolean,
+                    default: false,
+                },
+
+                allowDownload: {
+                    type: Boolean,
+                    default: false,
+                },
             },
 
             data() {
@@ -950,7 +971,7 @@
         app.component('v-media-gallery-item', {
             template: '#v-media-gallery-item-template',
 
-            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'acceptedTypes', 'acceptedExtensions'],
+            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'acceptedTypes', 'acceptedExtensions', 'readOnly', 'allowDownload'],
 
             computed: {
                 acceptAttribute() {

@@ -136,6 +136,11 @@ class AdminServiceProvider extends ServiceProvider
             dirname(__DIR__).'/Config/sso.php',
             'sso'
         );
+
+        $this->mergeConfigFrom(
+            dirname(__DIR__).'/Config/media.php',
+            'admin.media'
+        );
     }
 
     /**
