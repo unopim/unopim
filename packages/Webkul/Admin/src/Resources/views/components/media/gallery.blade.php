@@ -85,6 +85,7 @@
                     item-key="id"
                     handle=".icon-drag"
                     :disabled="readOnly"
+                    @change="signalChange"
                 >
                     <template #item="{ element, index }">
                         <v-media-gallery-item
@@ -460,7 +461,7 @@
                 @remove="remove"
             ></v-media-card>
 
-            <input type="hidden" :name="name + '[' + image.id + ']'" v-if="! readOnly && allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name + '[' + index + ']'" v-if="! readOnly && allowMultiple && ! image.is_new && image.value" :value="image.value"/>
             <input type="hidden" :name="name" v-if="! readOnly && ! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
             <input
                 v-if="! readOnly"

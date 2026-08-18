@@ -525,6 +525,8 @@ abstract class AbstractType
                                 : $val;
                         }, $fieldValue);
 
+                        ksort($values[$field]);
+
                         $values[$field] = array_values($values[$field]);
                     } elseif ($fieldValue !== [] && current($fieldValue) instanceof UploadedFile) {
                         $uploadedFile = current($fieldValue);
