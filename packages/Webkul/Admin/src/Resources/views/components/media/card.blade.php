@@ -5,6 +5,7 @@
     'height'             => null,
     'allowReplace'       => false,
     'allowRemove'        => false,
+    'allowDownload'      => false,
     'allowPreview'       => true,
     'allowDrag'          => false,
     'allowSelect'        => false,
@@ -25,6 +26,7 @@
     :height='@json($height)'
     :allow-replace="@json($allowReplace)"
     :allow-remove="@json($allowRemove)"
+    :allow-download="@json($allowDownload)"
     :allow-preview="@json($allowPreview)"
     :allow-drag="@json($allowDrag)"
     :allow-select="@json($allowSelect)"
@@ -84,15 +86,22 @@
                 </div>
 
                 <div
-                    class="absolute flex items-center justify-center gap-2 opacity-0 transition-opacity group-hover:opacity-100"
+                    class="absolute flex flex-wrap items-center justify-center gap-1.5 px-1 opacity-0 transition-opacity group-hover:opacity-100"
                     :class="actionsLayout === 'center'
                         ? 'inset-0 bg-black/80 dark:bg-cherry-800/90'
                         : 'inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-2'"
                 >
-                    <button v-if="allowDrag && showDragHandle" type="button" class="icon-drag rounded bg-white/20 p-1.5 text-white" @click.stop="$emit('drag-handle', media)"></button>
-                    <button v-if="allowPreview" type="button" class="icon-view rounded bg-white/20 p-1.5 text-white" aria-label="@lang('admin::app.components.media.images.preview-image')" @click.stop="$emit('preview', media)"></button>
-                    <button v-if="allowReplace" type="button" class="icon-edit rounded bg-white/20 p-1.5 text-white" aria-label="@lang('admin::app.components.media.images.replace-image')" @click.stop="$emit('replace', media)"></button>
-                    <button v-if="allowRemove" type="button" class="icon-delete rounded bg-white/20 p-1.5 text-white" aria-label="@lang('admin::app.components.media.images.delete-image')" @click.stop="$emit('remove', media)"></button>
+                    <button v-if="allowDrag && showDragHandle" type="button" class="icon-drag rounded bg-black/55 p-1.5 text-white ring-1 ring-white/70 shadow-sm" @click.stop="$emit('drag-handle', media)"></button>
+                    <button v-if="allowPreview" type="button" class="icon-view rounded bg-black/55 p-1.5 text-white ring-1 ring-white/70 shadow-sm" aria-label="@lang('admin::app.components.media.images.preview-image')" @click.stop="$emit('preview', media)"></button>
+                    <button v-if="allowReplace" type="button" class="icon-edit rounded bg-black/55 p-1.5 text-white ring-1 ring-white/70 shadow-sm" aria-label="@lang('admin::app.components.media.images.replace-image')" @click.stop="$emit('replace', media)"></button>
+                    <button v-if="allowRemove" type="button" class="icon-delete rounded bg-black/55 p-1.5 text-white ring-1 ring-white/70 shadow-sm" aria-label="@lang('admin::app.components.media.images.delete-image')" @click.stop="$emit('remove', media)"></button>
+                    <a
+                        v-if="allowDownload && downloadHref"
+                        :href="downloadHref"
+                        class="icon-down-stat rounded bg-black/55 p-1.5 text-white ring-1 ring-white/70 shadow-sm"
+                        aria-label="@lang('admin::app.export.download')"
+                        @click.stop
+                    ></a>
                     <slot name="actions" :media="media"></slot>
                 </div>
             </div>
@@ -124,6 +133,8 @@
     </script>
 
     <script type="module">
+        const mediaDownloadRoute = @json(route('admin.media.download'));
+
         app.component('v-media-card', {
             template: '#v-media-card-template',
             props: {
@@ -133,6 +144,7 @@
                 height: { type: [String, Number], default: null },
                 allowReplace: Boolean,
                 allowRemove: Boolean,
+                allowDownload: Boolean,
                 allowPreview: { type: Boolean, default: true },
                 allowDrag: Boolean,
                 allowSelect: Boolean,
@@ -204,6 +216,13 @@
                         width: this.width || undefined,
                         height: this.height || undefined,
                     };
+                },
+                downloadHref() {
+                    if (this.media.is_new || ! this.media.value) {
+                        return null;
+                    }
+
+                    return mediaDownloadRoute + '?path=' + encodeURIComponent(this.media.value);
                 },
             },
         });
