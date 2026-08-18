@@ -27,7 +27,11 @@ class MediaController extends Controller
             abort_if($segment === '.' || $segment === '..' || $segment === '', 404);
         }
 
-        abort_unless(in_array($segments[0], (array) config('admin.media.downloadable_roots', []), true), 404);
+        $roots = (array) config('admin.media.downloadable_roots', []);
+
+        abort_unless(array_key_exists($segments[0], $roots), 404);
+
+        abort_unless(bouncer()->hasPermission($roots[$segments[0]]), Response::HTTP_FORBIDDEN, trans('admin::app.common.unauthorized'));
 
         $extension = strtolower((string) pathinfo($path, PATHINFO_EXTENSION));
 
