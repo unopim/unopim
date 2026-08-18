@@ -33,11 +33,11 @@
             :for="readOnly ? null : (triggerModal ? null : inputId)"
             :aria-label="title"
             :title="allowedTypes"
-            @click="! readOnly && triggerModal && $emit('trigger')"
-            @dragover.prevent="! readOnly && (isDragging = true)"
-            @dragenter.prevent="! readOnly && (isDragging = true)"
+            @click="onTrigger"
+            @dragover.prevent="onDragEnter"
+            @dragenter.prevent="onDragEnter"
             @dragleave.prevent="isDragging = false"
-            @drop.prevent="! readOnly && onDrop($event)"
+            @drop.prevent="onDrop"
         >
             <span
                 class="flex items-center justify-center rounded-md border border-gray-200 bg-white text-gray-500 transition-colors group-hover:border-unopim-primary/30 group-hover:text-unopim-primary dark:border-cherry-700 dark:bg-cherry-900 dark:text-gray-300"
@@ -88,8 +88,29 @@
                 onChange(event) {
                     this.$emit('change', event.target.files);
                 },
+
+                onTrigger() {
+                    if (this.readOnly || ! this.triggerModal) {
+                        return;
+                    }
+
+                    this.$emit('trigger');
+                },
+
+                onDragEnter() {
+                    if (this.readOnly) {
+                        return;
+                    }
+
+                    this.isDragging = true;
+                },
+
                 onDrop(event) {
                     this.isDragging = false;
+
+                    if (this.readOnly) {
+                        return;
+                    }
 
                     const files = event.dataTransfer ? event.dataTransfer.files : null;
 
