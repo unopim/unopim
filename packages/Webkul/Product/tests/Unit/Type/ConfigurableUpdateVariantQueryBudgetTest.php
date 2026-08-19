@@ -89,7 +89,7 @@ function makeConfigurableWithLeaves(int $leaves): array
 function countPlacementQueriesOnResubmit($configurable, string $sizeCode, string $materialCode): int
 {
     $group = $configurable->variants()->where('type', 'variant_group')->first();
-    $leaves = $group->variants()->where('type', 'simple')->get();
+    $leaves = $group->variants()->where('type', 'simple')->orderBy('id')->get();
 
     $variantNodes = [];
 
@@ -126,8 +126,8 @@ function countPlacementQueriesOnResubmit($configurable, string $sizeCode, string
 }
 
 it('resolves the variant structure placements once regardless of leaf count', function () {
-    [$small, $sizeS, $materialS] = makeConfigurableWithLeaves(2);
-    [$large, $sizeL, $materialL] = makeConfigurableWithLeaves(5);
+    [$small, , $sizeS, $materialS] = makeConfigurableWithLeaves(2);
+    [$large, , $sizeL, $materialL] = makeConfigurableWithLeaves(5);
 
     $smallQueries = countPlacementQueriesOnResubmit($small, $sizeS, $materialS);
     $largeQueries = countPlacementQueriesOnResubmit($large, $sizeL, $materialL);

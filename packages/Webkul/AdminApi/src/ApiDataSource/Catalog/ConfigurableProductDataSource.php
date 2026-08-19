@@ -2,6 +2,7 @@
 
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\Product\Database\Eloquent\Builder;
 
 class ConfigurableProductDataSource extends ProductDataSource
@@ -31,17 +32,52 @@ class ConfigurableProductDataSource extends ProductDataSource
     }
 
     /**
-     * Sets default filters for the product query builder.
-     *
-     * This function adds a filter to the query builder to only retrieve simple products.
+     * Restricts this endpoint to the two types it serves: `configurable` roots and the
+     * `variant_group` nodes of a 2-level variant tree, which are configurable products
+     * in their own right. Applied to the listing and to `getByCode()` alike, so a
+     * variant group is both enumerable and addressable here.
      *
      * @param  Builder  $queryBuilder  The query builder for the product repository.
      * @return void
      */
     public function setDefaultFilters($queryBuilder)
     {
-        $queryBuilder->where('products.type', config('product_types.configurable.key'));
+        $queryBuilder->whereIn('products.type', $this->requestedTypes());
 
         $this->queryBuilder = $queryBuilder;
+    }
+
+    /**
+     * Narrows the endpoint's two served types down to the one named by the optional
+     * `type` query parameter, read straight off the request like `limit` and `page`
+     * rather than through the `filters` JSON. Omitting it returns both types; naming
+     * a type this endpoint does not serve is a client error, not an empty page.
+     *
+     * @return array<int, string>
+     */
+    protected function requestedTypes(): array
+    {
+        $supported = [
+            config('product_types.configurable.key'),
+            config('product_types.variant_group.key'),
+        ];
+
+        $requested = request()->input('type');
+
+        if ($requested === null || $requested === '') {
+            return $supported;
+        }
+
+        if (! is_string($requested) || ! in_array($requested, $supported, true)) {
+            throw new UnprocessableEntityHttpException(
+                sprintf(
+                    'Type filter value %s is not supported by this endpoint. Use one of: %s.',
+                    json_encode($requested),
+                    implode(', ', $supported)
+                )
+            );
+        }
+
+        return [$requested];
     }
 }

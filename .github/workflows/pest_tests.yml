@@ -4,7 +4,7 @@ name: Pest Tests
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
-    branches: [master, '2.1']
+    branches: [master, '3.0']
   pull_request:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -83,9 +83,6 @@ jobs:
 
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
-
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
 
       - name: Running Pest Tests
         # Each worker owns a database clone. The suite runs as two halves so
@@ -145,7 +142,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -196,9 +193,6 @@ jobs:
           php artisan unopim:product:index
           php artisan unopim:category:index
 
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
-
       - name: Running Pest Tests
         # Each worker owns a database clone. The suite runs as two halves so
         # every half starts with fresh workers: per-process memory grows over
@@ -244,7 +238,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
@@ -276,19 +270,48 @@ jobs:
       - name: Install Node dependencies
         run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
-      # Pest keeps the graph under $HOME/.pest/tia/<project-key>, not in the workspace.
-      - name: Resolve the test impact graph path
-        id: tia
-        run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
+      - name: Anchor the impact diff to the base branch
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: git checkout -B "$BASE_REF"
 
-      - name: Restore the test impact graph
-        uses: actions/cache@v4
-        with:
-          path: ${{ steps.tia.outputs.path }}
-          key: pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-${{ github.run_id }}
-          restore-keys: |
-            pest-tia-${{ runner.os }}-${{ hashFiles('composer.lock') }}-
-            pest-tia-${{ runner.os }}-
+      - name: Decide whether an impacted run is worth recording
+        id: baseline
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          skip() {
+            echo "usable=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::$1 The full matrices cover this pull request instead."
+            exit 0
+          }
+
+          # Pest resolves the baseline through the newest successful run of the
+          # recording workflow and records the whole suite when that turns up
+          # nothing — which is the one thing this job has no memory headroom for.
+          baseline_run="$(gh run list -R "$GITHUB_REPOSITORY" --workflow tia-baseline.yml \
+            --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')"
+
+          if [ -z "$baseline_run" ] || [ "$(gh api \
+            "repos/$GITHUB_REPOSITORY/actions/runs/$baseline_run/artifacts" \
+            --jq '[.artifacts[] | select(.name == "pest-tia-baseline")] | length')" = "0" ]; then
+            skip "No recorded baseline is published, so the run would record the whole suite rather than replay it."
+          fi
+
+          if ! git diff --quiet "origin/$BASE_REF...HEAD" -- \
+            composer.lock phpunit.xml phpunit.xml.dist \
+            vite.config.ts vite.config.js vite.config.mjs vite.config.cjs vite.config.mts \
+            tsconfig.json tsconfig.app.json jsconfig.json \
+            package-lock.json pnpm-lock.yaml yarn.lock bun.lock bun.lockb; then
+            skip "The baseline fingerprint drifted, so the graph would be discarded and the whole suite re-recorded."
+          fi
+
+          if git diff --name-only "origin/$BASE_REF...HEAD" | grep -qE 'src/(Resources/(lang|views|assets)|Config|Database/Migrations?)/|^database/seeders/'; then
+            skip "A watched asset changed, which marks every test in its package as impacted."
+          fi
+
+          echo "usable=true" >> "$GITHUB_OUTPUT"
 
       - name: Setting Environment
         run: |
@@ -304,24 +327,23 @@ jobs:
       - name: Running UnoPim Installer
         run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
 
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
-
       # Coverage recording peaks past the runner's 7 GB (exit 137); swap absorbs
       # the spike. The runner already holds /swapfile open, so the extra file
       # goes on /mnt, which is both free and the larger disk.
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
-          sudo fallocate -l 8G /mnt/swapfile
+          sudo fallocate -l 16G /mnt/swapfile
           sudo chmod 600 /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
           swapon --show
 
-      # A second worker doubles the resident coverage map and still gets killed
-      # with the swap in place, so this job trades its parallelism for headroom.
+      # Paratest holds its own copy of the coverage map alongside the worker's,
+      # and one worker is no parallelism anyway, so the run drops it entirely:
+      # a single process is what keeps the recording under the OOM killer.
       - name: Running impacted Pest tests
+        if: steps.baseline.outputs.usable == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
-        run: vendor/bin/pest --parallel --processes=1 --tia --colors=always
+        run: vendor/bin/pest --tia --filtered --colors=always

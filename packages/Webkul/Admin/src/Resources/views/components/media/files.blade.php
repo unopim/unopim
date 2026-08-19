@@ -5,6 +5,8 @@
     'height'             => '120px',
     'acceptedExtensions' => \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION,
     'instructions'         => '',
+    'readOnly'           => false,
+    'allowDownload'      => false,
 ])
 
 <x-admin::media.field type="files" :name="$name" :instructions="$instructions">
@@ -16,6 +18,8 @@
     height="{{ $height }}"
     :accepted-extensions='@json($acceptedExtensions)'
     :errors="errors"
+    v-bind:read-only="{{ $readOnly ? 'true' : 'false' }}"
+    v-bind:allow-download="{{ $allowDownload ? 'true' : 'false' }}"
     class="{{ $attributes->get('class') }}"
 >
 </v-media-files>
@@ -37,6 +41,7 @@
                     :accept="acceptAttribute"
                     :input-id="$.uid + '_fileInput'"
                     icon="icon-file"
+                    :read-only="readOnly"
                     @change="add"
                     @drop="onDrop"
                 ></v-media-add-tile>
@@ -47,6 +52,7 @@
                     v-bind="{animation: 200}"
                     :list="inputFiles"
                     item-key="id"
+                    :disabled="readOnly"
                 >
                     <template #item="{ element, index }">
                         <v-media-files-item
@@ -56,6 +62,8 @@
                             :width="width"
                             :height="height"
                             :accepted-extensions="acceptedExtensions"
+                            :read-only="readOnly"
+                            :allow-download="allowDownload"
                             @onRemove="remove($event)"
                             @onChange="change($event)"
                         >
@@ -74,27 +82,20 @@
                 width="100%"
                 height="176px"
                 :allow-preview="true"
-                :allow-replace="true"
-                :allow-remove="true"
+                :allow-replace="! readOnly"
+                :allow-remove="! readOnly"
+                :allow-download="allowDownload"
+                :show-drag-handle="! readOnly"
                 :show-badge="true"
                 :show-extension="false"
                 @preview="preview"
                 @replace="replace"
                 @remove="remove"
-            >
-                <template #actions="{ media }">
-                    <a
-                        :href="media.url"
-                        target="_blank"
-                        class="icon-down-stat rounded bg-white/20 p-1.5 text-white"
-                        aria-label="@lang('admin::app.export.download')"
-                        @click.stop
-                    ></a>
-                </template>
-            </v-media-card>
+            ></v-media-card>
 
-            <input type="hidden" :name="name" v-if="! inputFile.is_new && inputFile.value" :value="inputFile.value"/>
+            <input type="hidden" :name="name" v-if="! readOnly && ! inputFile.is_new && inputFile.value" :value="inputFile.value"/>
             <input
+                v-if="! readOnly"
                 type="file"
                 :name="name + '[]'"
                 class="hidden"
@@ -148,7 +149,17 @@
                 errors: {
                     type: Object,
                     default: () => {}
-                }
+                },
+
+                readOnly: {
+                    type: Boolean,
+                    default: false,
+                },
+
+                allowDownload: {
+                    type: Boolean,
+                    default: false,
+                },
             },
 
             data() {
@@ -262,7 +273,7 @@
         app.component('v-media-files-item', {
             template: '#v-media-files-item-template',
 
-            props: ['index', 'inputFile', 'name', 'width', 'height', 'acceptedExtensions'],
+            props: ['index', 'inputFile', 'name', 'width', 'height', 'acceptedExtensions', 'readOnly', 'allowDownload'],
 
             computed: {
                 cardMedia() {
@@ -273,6 +284,8 @@
                         name: fileName,
                         type: this.inputFile?.file?.type ?? 'application/pdf',
                         extension: (fileName.split('.').pop() || 'pdf').toLowerCase(),
+                        value: this.inputFile?.value,
+                        is_new: this.inputFile?.is_new,
                     };
                 },
 

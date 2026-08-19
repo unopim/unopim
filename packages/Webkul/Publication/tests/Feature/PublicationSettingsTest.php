@@ -5,16 +5,23 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Publication\Services\Publisher;
 use Webkul\Publication\Tests\Support\StubPayloadBuilder;
 
-it('registers all three levels of the publication settings tree', function (): void {
+it('registers the publication settings group without a browsable section of its own', function (): void {
     $keys = collect(config('core'))->pluck('key');
 
     expect($keys)->toContain('general')
-        ->and($keys)->toContain('general.publication')
-        ->and($keys)->toContain('general.publication.settings');
+        ->and($keys)->toContain('general.publication.settings')
+        ->and($keys)->not->toContain('general.publication');
 });
 
 it('exposes the section through the system settings hub', function (): void {
     expect(collect(config('system_settings'))->pluck('key'))->toContain('digital_product_passport.publication');
+});
+
+it('no longer serves the retired publication configuration page', function (): void {
+    $this->loginAsAdmin();
+
+    $this->get(route('admin.configuration.edit', ['general', 'publication']))
+        ->assertRedirect();
 });
 
 it('defaults every field before any core_config row exists', function (): void {

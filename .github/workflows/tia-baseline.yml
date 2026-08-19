@@ -6,7 +6,7 @@ name: TIA Baseline
 
 on:
   push:
-    branches: [master, '2.1']
+    branches: [master, '3.0']
   schedule:
     - cron: '0 3 * * *'
   workflow_dispatch:
@@ -19,12 +19,11 @@ permissions:
   contents: read
 
 jobs:
-  # Advisory: baseline recording is an optimization experiment and must not
-  # redden the release branches while its memory profile is being tamed.
+  # A run that records nothing must not report success: Pest takes the newest
+  # successful run, so an empty one masks the last that published a graph.
   baseline:
     runs-on: ubuntu-24.04
     name: Record the test impact baseline
-    continue-on-error: true
 
     services:
       mysql:
@@ -47,16 +46,16 @@ jobs:
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          ref: ${{ github.ref_name }}
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@2.37.1
+        uses: shivammathur/setup-php@2.37.2
         with:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
-          # pcov instruments every file it loads, and the graph only cares about
-          # our own source, so keeping vendor out of it is what keeps the
-          # recording inside the runner's memory.
-          ini-values: error_reporting=E_ALL, pcov.exclude="~(vendor|node_modules|storage)~"
+          # PcovRestarter rebuilds the child from Pest's argv, dropping every `-d`,
+          # so anything the recording needs has to come from php.ini.
+          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           coverage: pcov
 
@@ -64,6 +63,21 @@ jobs:
         uses: ramsey/composer-install@v3
         with:
           composer-options: "--optimize-autoloader"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
 
       - name: Setting Environment
         run: |
@@ -77,29 +91,72 @@ jobs:
           sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
 
       - name: Running UnoPim Installer
-        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation
 
-      - name: Set Passport OAuth key permissions
-        run: chmod 0600 packages/Webkul/AdminApi/src/Secrets/Oauth/oauth-*.key
-
-      # Coverage recording peaks past the runner's 7 GB with several workers
-      # (exit 137); swap absorbs the spike and two workers keep it tolerable.
-      # The runner already holds /swapfile open, so the extra file goes on /mnt,
-      # which is both free and the larger disk.
+      # The runner already holds /swapfile open, so the extra file goes on /mnt.
       - name: Add swap headroom for coverage recording
         run: |
           sudo rm -f /mnt/swapfile
-          sudo fallocate -l 8G /mnt/swapfile
+          sudo fallocate -l 24G /mnt/swapfile
           sudo chmod 600 /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
           swapon --show
+          free -h
+          df -h /mnt /
 
-      # Single worker for the same reason the impacted job runs one: each worker
-      # holds its own resident coverage map, so a second one is killed even with
-      # the swap above in place.
+      # Pest records nothing for a partial run, so this cannot be split up.
       - name: Record the baseline
-        run: vendor/bin/pest --parallel --processes=1 --tia --fresh --colors=always
+        env:
+          # tests/Pest.php caps memory at 1024M unless this says otherwise.
+          PEST_MEMORY_LIMIT: '-1'
+        run: |
+          # 1s, or the kill lands inside an unsampled gap.
+          ( while true; do
+              printf '%s rss=%sk avail=%s swapfree=%s\n' \
+                "$(date -u +%H:%M:%S)" \
+                "$(ps -eo rss,comm --sort=-rss | awk '$2 ~ /php/ {s+=$1} END {print s+0}')" \
+                "$(awk '/MemAvailable/ {print $2}' /proc/meminfo)" \
+                "$(awk '/SwapFree/ {print $2}' /proc/meminfo)"
+              sleep 1
+            done ) > "$RUNNER_TEMP/memory.log" 2>&1 &
+          sampler=$!
+
+          set +e
+          php vendor/bin/pest --tia --fresh --colors=always
+          status=$?
+          set -e
+
+          kill "$sampler" 2>/dev/null || true
+
+          echo '--- peak memory during recording ---'
+          sort -t= -k2 -n "$RUNNER_TEMP/memory.log" | tail -5
+
+          if [ "$status" -ne 0 ]; then
+            # A signalled child reaches here two ways: proc_close() hands back a
+            # bare 9 from the pcov re-exec, the shell reports 137 for the process
+            # it started itself. Neither means a test failed.
+            case "$status" in
+              9|13[0-9]) echo "::error::the recording process was killed by a signal, not by a failing test" ;;
+              *)         echo "::error::the recording run exited with $status" ;;
+            esac
+
+            free -h || true
+            swapon --show || true
+            df -h /mnt / || true
+
+            echo '--- kernel log (an OOM kill is recorded here) ---'
+            sudo dmesg | tail -50 || true
+
+            exit "$status"
+          fi
+
+          graph="$(vendor/bin/pest --baseline)/graph.json"
+
+          if [ ! -f "$graph" ]; then
+            echo "::error::the run recorded no graph at $graph"
+            exit 1
+          fi
 
       - name: Resolve the baseline path
         id: baseline

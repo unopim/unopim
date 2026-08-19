@@ -25,7 +25,6 @@
 @endphp
 
 @php
-    // Batch selected-option labels for all select/multiselect fields into one query (only pre-selected codes, not the full set).
     $selectedCodesByAttribute = [];
 
     foreach ($fields as $selectField) {
@@ -43,7 +42,6 @@
             $selected = $lockedFields[$selectField->code]['value'] ?? null;
         }
 
-        // Multiselect values are stored comma-joined; split them so each code matches.
         if (is_string($selected) && str_contains($selected, ',')) {
             $selected = explode(',', $selected);
         }
@@ -92,6 +90,8 @@
         $value = old($flatFieldName) ?? $value;
 
         $isLocked = isset($lockedFields[$field->code]);
+
+        $isReadOnlyMedia = $isLocked && in_array($field->type, ['image', 'gallery', 'file'], true);
 
         $lockLevel = $isLocked ? ($lockedFields[$field->code]['level'] ?? null) : null;
 
@@ -205,12 +205,12 @@
             </div>
         </div>
 
-        {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.control.'.$fieldType.'.before', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
-
-        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-60 cursor-not-allowed' : '' }}">
-        @if ($isLocked)
+        <fieldset @disabled($isLocked && ! $isReadOnlyMedia) class="border-0 p-0 m-0 min-w-0 {{ $isLocked && ! $isReadOnlyMedia ? 'opacity-60 cursor-not-allowed' : '' }}">
+        @if ($isLocked && ! $isReadOnlyMedia)
             <div class="pointer-events-none">
         @endif
+
+        {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.control.'.$fieldType.'.before', ['field' => $field, 'value' => $value, 'fieldName' => $fieldName]) !!}
         @switch ($fieldType)
             @case ('checkbox')
                 @if (! empty($value))
@@ -274,8 +274,7 @@
                     ] : [];
                 @endphp
 
-                @if (! empty($value))
-                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -290,6 +289,8 @@
                     height="140px"
                     :has-context="true"
                     :full-preview="true"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('gallery')
@@ -308,8 +309,7 @@
                     }, (array)$value, array_keys((array)$value)) : [];
                 @endphp
 
-                @if (! empty($value))
-                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -323,6 +323,8 @@
                     :allow-multiple=true
                     width="270px"
                     height="140px"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('file')
@@ -338,8 +340,7 @@
                     ] : [];
                 @endphp
 
-                @if (! empty($value))
-                    {{-- Empty value sent when value is deleted need to send empty value for this field --}}
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -353,6 +354,8 @@
                     :instructions="$fieldInstructions"
                     value="{{$value}}"
                     class="mt-3"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('price')
@@ -381,7 +384,6 @@
                 </div>
             @break
             @case('multiselect')
-                {{-- NO BREAK --}}
                 @php
                     if (! is_array($value)) {
                         $value = str_contains((string) $value, ',')
@@ -390,7 +392,6 @@
                     }
                 @endphp
             @case('select')
-                {{-- NO BREAK --}}
                 @php
                     $selectedValue = [];
 
@@ -533,7 +534,7 @@
                 </x-admin::form.control-group.control>
 
         @endswitch
-        @if ($isLocked)
+        @if ($isLocked && ! $isReadOnlyMedia)
             </div>
         @endif
         </fieldset>

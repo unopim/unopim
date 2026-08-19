@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 use Webkul\Core\Rules\FileOrImageValidValue;
 use Webkul\Installer\Database\Seeders\Demo\Concerns\LoadsDemoData;
@@ -53,11 +54,11 @@ class DemoProductSeeder extends Seeder
     /** @var array<string, int> */
     protected array $attributeIds = [];
 
-    /** @var array<string, array<string, array<string, string>>> */
-    protected array $optionLabels = [];
-
     /** @var array<string, Attribute> */
     protected array $measurementAttributes = [];
+
+    /** @var array<int, array<int, string>> Unique attribute codes per family id. */
+    protected array $familyUniqueCodes = [];
 
     public function run(): void
     {
@@ -65,12 +66,12 @@ class DemoProductSeeder extends Seeder
 
         $this->familyIds = DB::table('attribute_families')->pluck('id', 'code')->all();
         $this->attributeIds = DB::table('attributes')->pluck('id', 'code')->all();
-        $this->optionLabels = $this->loadOptionLabels();
         $this->measurementAttributes = Attribute::query()
             ->where('type', 'measurement')
             ->get()
             ->keyBy('code')
             ->all();
+        $this->familyUniqueCodes = $this->loadFamilyUniqueCodes();
 
         $channels = DB::table('channels')->pluck('code')->all();
 
@@ -169,8 +170,12 @@ class DemoProductSeeder extends Seeder
             return;
         }
 
+        $placements = $product['type'] === 'configurable'
+            ? $this->placementMap($product, $this->familyUniqueCodes[$familyId] ?? [])
+            : [];
+
         $structureId = $product['type'] === 'configurable'
-            ? $this->seedStructure($product, $familyId)
+            ? $this->seedStructure($product, $familyId, $placements)
             : null;
 
         $parentId = DB::table('products')->insertGetId([
@@ -179,7 +184,7 @@ class DemoProductSeeder extends Seeder
             'status'                => 1,
             'attribute_family_id'   => $familyId,
             'variant_structure_id'  => $structureId,
-            'values'                => $this->encodeValues($this->buildValues($product, $channels, $channelLocales)),
+            'values'                => $this->encodeValues($this->buildValues($product, $channels, $channelLocales, $placements)),
             'created_at'            => $now,
             'updated_at'            => $now,
         ]);
@@ -190,15 +195,110 @@ class DemoProductSeeder extends Seeder
 
         $this->seedSuperAttributes($parentId, $product['axes'] ?? []);
 
-        $this->seedVariantTree($product, $parentId, $familyId, $channels, $channelLocales);
+        $this->seedVariantTree($product, $parentId, $familyId, $channels, $channelLocales, $placements);
+    }
+
+    /**
+     * Structure code for a configurable's sku. SKUs are hyphenated, which the
+     * Code rule the family form validates against rejects, so every non-word
+     * character collapses to an underscore.
+     */
+    public function structureCode(string $sku): string
+    {
+        return preg_replace('/\W+/', '_', $sku).'_structure';
+    }
+
+    /**
+     * Attribute code to structure level for a configurable, empty for anything
+     * without axes.
+     *
+     * Unique attributes go to the variant, the level the family form forces
+     * them to. Price joins them so each sellable row is priced on its own,
+     * while the main image stays common for every row below to inherit and the
+     * gallery sits wherever the axis it illustrates is decided.
+     *
+     * @param  array<string, mixed>  $product
+     * @param  array<int, string>  $uniqueCodes
+     * @return array<string, string>
+     */
+    public function placementMap(array $product, array $uniqueCodes): array
+    {
+        $axes = array_values($product['axes'] ?? []);
+
+        if ($axes === []) {
+            return [];
+        }
+
+        $levels = min(count($axes), 2);
+        $map = [];
+
+        foreach ($axes as $index => $code) {
+            $map[$code] = $levels === 2 && $index === 0 ? 'sub_parent' : 'variant';
+        }
+
+        foreach ($uniqueCodes as $code) {
+            $map[$code] ??= 'variant';
+        }
+
+        $map['price'] = 'variant';
+        $map['image'] = 'common';
+        $map['gallery'] = $levels === 2 ? 'sub_parent' : 'variant';
+
+        return $map;
+    }
+
+    /**
+     * The values a row at the given level may carry. Anything placed elsewhere
+     * belongs to another row and is inherited from it, sku excepted: it
+     * identifies every row and is written to all of them.
+     *
+     * @param  array<string, mixed>  $values
+     * @param  array<string, string>  $placements
+     * @return array<string, mixed>
+     */
+    public function ownedValues(array $values, array $placements, string $level): array
+    {
+        if ($placements === []) {
+            return $values;
+        }
+
+        return array_filter(
+            $values,
+            static fn (string $code): bool => $code === 'sku' || ($placements[$code] ?? 'common') === $level,
+            ARRAY_FILTER_USE_KEY,
+        );
+    }
+
+    /**
+     * Unique attribute codes each family carries, over the joins
+     * {@see AttributeFamily::customAttributes()} uses.
+     *
+     * @return array<int, array<int, string>>
+     */
+    protected function loadFamilyUniqueCodes(): array
+    {
+        $rows = DB::table('attributes')
+            ->join('attribute_group_mappings', 'attributes.id', '=', 'attribute_group_mappings.attribute_id')
+            ->join('attribute_family_group_mappings', 'attribute_group_mappings.attribute_family_group_id', '=', 'attribute_family_group_mappings.id')
+            ->where('attributes.is_unique', 1)
+            ->get(['attribute_family_group_mappings.attribute_family_id as family_id', 'attributes.code']);
+
+        $map = [];
+
+        foreach ($rows as $row) {
+            $map[(int) $row->family_id][$row->code] = $row->code;
+        }
+
+        return array_map(array_values(...), $map);
     }
 
     /**
      * Create the variant structure and its axes for a configurable product.
      *
      * @param  array<string, mixed>  $product
+     * @param  array<string, string>  $placements
      */
-    protected function seedStructure(array $product, int $familyId): ?int
+    protected function seedStructure(array $product, int $familyId, array $placements): ?int
     {
         $axes = $product['axes'] ?? [];
 
@@ -211,7 +311,7 @@ class DemoProductSeeder extends Seeder
 
         $structureId = DB::table('variant_structures')->insertGetId([
             'attribute_family_id' => $familyId,
-            'code'                => $product['sku'].'-structure',
+            'code'                => $this->structureCode($product['sku']),
             'name'                => $product['locales']['en_US']['name'] ?? $product['sku'],
             'levels'              => $levels,
             'created_at'          => $now,
@@ -231,27 +331,23 @@ class DemoProductSeeder extends Seeder
             ]);
         }
 
-        $this->seedStructurePlacements($structureId, $levels);
+        $this->seedStructurePlacements($structureId, $placements, array_values($axes));
 
         return $structureId;
     }
 
     /**
-     * Pin the attributes that are maintained below the configurable: identity
-     * data always sits on the variant, imagery on the level-1 group when there
-     * is one, because that is where colour or finish is decided.
+     * Record where each attribute is maintained. Axes are left out: they carry
+     * their level on their own row, and the family form keeps them out of the
+     * placement lists for the same reason.
+     *
+     * @param  array<string, string>  $placements
+     * @param  array<int, string>  $axes
      */
-    protected function seedStructurePlacements(int $structureId, int $levels): void
+    protected function seedStructurePlacements(int $structureId, array $placements, array $axes): void
     {
-        $placements = [
-            'ean'            => 'variant',
-            'product_number' => 'variant',
-            'image'          => $levels === 2 ? 'sub_parent' : 'variant',
-            'gallery'        => $levels === 2 ? 'sub_parent' : 'variant',
-        ];
-
         foreach ($placements as $code => $level) {
-            if (! isset($this->attributeIds[$code])) {
+            if (in_array($code, $axes, true) || ! isset($this->attributeIds[$code])) {
                 continue;
             }
 
@@ -292,8 +388,9 @@ class DemoProductSeeder extends Seeder
      * @param  array<string, mixed>  $product
      * @param  array<int, string>  $channels
      * @param  array<string, array<int, string>>  $channelLocales
+     * @param  array<string, string>  $placements
      */
-    protected function seedVariantTree(array $product, int $parentId, int $familyId, array $channels, array $channelLocales): void
+    protected function seedVariantTree(array $product, int $parentId, int $familyId, array $channels, array $channelLocales, array $placements): void
     {
         $axes = $product['axes'] ?? [];
         $variants = $product['variants'] ?? [];
@@ -304,7 +401,7 @@ class DemoProductSeeder extends Seeder
 
         if (count($axes) === 1) {
             foreach ($variants as $index => $variant) {
-                $this->insertVariantRow($product, $variant, $parentId, $familyId, 'simple', $index, $channels, $channelLocales);
+                $this->insertVariantRow($product, $variant, $parentId, $familyId, 'simple', $index, $channels, $channelLocales, $placements);
             }
 
             return;
@@ -336,6 +433,7 @@ class DemoProductSeeder extends Seeder
                 $groupIndex++,
                 $channels,
                 $channelLocales,
+                $placements,
             );
 
             foreach ($children as $childIndex => $child) {
@@ -352,22 +450,22 @@ class DemoProductSeeder extends Seeder
                     $childIndex,
                     $channels,
                     $channelLocales,
+                    $placements,
                 );
             }
         }
     }
 
     /**
-     * Insert one row below the configurable.
-     *
-     * The gallery stays at the level the variant structure assigns it to,
-     * while the main image goes on every row: the product grid renders rows
-     * independently and shows a placeholder for anything without one.
+     * Insert one row below the configurable, carrying only what the variant
+     * structure places at that row's level. Everything else — the name, the
+     * main image, the descriptive copy — resolves down from the configurable.
      *
      * @param  array<string, mixed>  $product
      * @param  array<string, mixed>  $variant
      * @param  array<int, string>  $channels
      * @param  array<string, array<int, string>>  $channelLocales
+     * @param  array<string, string>  $placements
      */
     protected function insertVariantRow(
         array $product,
@@ -378,27 +476,31 @@ class DemoProductSeeder extends Seeder
         int $index,
         array $channels,
         array $channelLocales,
+        array $placements,
     ): int {
         $now = Date::now();
 
         $sku = $variant['sku'] ?? $product['sku'].'-'.$variant['suffix'];
 
-        $media = $this->mediaValues($product);
-
-        $rowMedia = $type === 'variant_group' || count($product['axes'] ?? []) === 1
-            ? $media
-            : array_intersect_key($media, ['image' => true]);
+        $level = $type === 'variant_group' ? 'sub_parent' : 'variant';
 
         $values = [
-            'common' => array_merge(
-                ['sku' => $sku, 'url_key' => $sku],
-                $variant['axis'],
-                $type === 'simple' ? ['ean' => $this->variantEan($product, $index)] : [],
-                $rowMedia,
+            'common' => $this->ownedValues(
+                array_merge(
+                    ['sku' => $sku, 'url_key' => $sku],
+                    $variant['axis'],
+                    $type === 'simple' ? [
+                        'ean'            => $this->variantEan($product, $index),
+                        'product_number' => $this->variantProductNumber($product, $sku),
+                    ] : [],
+                    $this->mediaValues($product),
+                ),
+                $placements,
+                $level,
             ),
         ];
 
-        $values['channel_locale_specific'] = $this->variantCopy($product, $variant, $type, $channels, $channelLocales);
+        $values['channel_locale_specific'] = $this->variantCopy($product, $channels, $channelLocales, $placements, $level);
 
         return (int) DB::table('products')->insertGetId([
             'sku'                  => $sku,
@@ -414,6 +516,19 @@ class DemoProductSeeder extends Seeder
     }
 
     /**
+     * Derive a product number per variant from the parent's. It is unique, so
+     * the configurable cannot hold it and each row below needs its own.
+     *
+     * @param  array<string, mixed>  $product
+     */
+    protected function variantProductNumber(array $product, string $sku): string
+    {
+        $base = (string) ($product['common']['product_number'] ?? mb_strtoupper($product['sku']));
+
+        return $base.'-'.mb_strtoupper((string) preg_replace('/^'.preg_quote($product['sku'], '/').'-/', '', $sku));
+    }
+
+    /**
      * Derive a unique, checksum-shaped EAN per variant from the parent's.
      *
      * @param  array<string, mixed>  $product
@@ -426,32 +541,34 @@ class DemoProductSeeder extends Seeder
     }
 
     /**
-     * Name and price for a row below the configurable. Without its own name a
-     * variant shows up as a blank row in the product grid, so each one is
-     * labelled with the axis values that distinguish it.
+     * Channel and locale scoped values for a row below the configurable. The
+     * name is maintained on the configurable and resolves down, so only what
+     * the structure places at this row's level is written.
      *
      * @param  array<string, mixed>  $product
-     * @param  array<string, mixed>  $variant
      * @param  array<int, string>  $channels
      * @param  array<string, array<int, string>>  $channelLocales
+     * @param  array<string, string>  $placements
      * @return array<string, array<string, array<string, mixed>>>
      */
-    protected function variantCopy(array $product, array $variant, string $type, array $channels, array $channelLocales): array
+    protected function variantCopy(array $product, array $channels, array $channelLocales, array $placements, string $level): array
     {
         $values = [];
 
         foreach ($channels as $channel) {
             foreach ($channelLocales[$channel] ?? [] as $locale) {
-                $copy = $product['locales'][$locale] ?? null;
-
-                if ($copy === null) {
+                if (! isset($product['locales'][$locale])) {
                     continue;
                 }
 
-                $values[$channel][$locale]['name'] = trim($copy['name'].' — '.$this->axisLabel($variant['axis'], $locale));
+                $owned = $this->ownedValues(
+                    ['price' => $this->prices($product['prices'] ?? [])],
+                    $placements,
+                    $level,
+                );
 
-                if ($type === 'simple') {
-                    $values[$channel][$locale]['price'] = $this->prices($product['prices'] ?? []);
+                if ($owned !== []) {
+                    $values[$channel][$locale] = $owned;
                 }
             }
         }
@@ -460,63 +577,15 @@ class DemoProductSeeder extends Seeder
     }
 
     /**
-     * Human-readable label for a variant's axis values in the given locale,
-     * falling back to the option code when a translation is missing.
-     *
-     * @param  array<string, string>  $axis
-     */
-    protected function axisLabel(array $axis, string $locale): string
-    {
-        $labels = [];
-
-        foreach ($axis as $attributeCode => $optionCode) {
-            $labels[] = $this->optionLabels[$attributeCode][$optionCode][$locale]
-                ?? $this->optionLabels[$attributeCode][$optionCode]['en_US']
-                ?? $optionCode;
-        }
-
-        return implode(' / ', $labels);
-    }
-
-    /**
-     * Option labels indexed by attribute code, option code and locale.
-     *
-     * @return array<string, array<string, array<string, string>>>
-     */
-    protected function loadOptionLabels(): array
-    {
-        $rows = DB::table('attribute_options')
-            ->join('attributes', 'attributes.id', '=', 'attribute_options.attribute_id')
-            ->leftJoin('attribute_option_translations', 'attribute_option_translations.attribute_option_id', '=', 'attribute_options.id')
-            ->get([
-                'attributes.code as attribute_code',
-                'attribute_options.code as option_code',
-                'attribute_option_translations.locale',
-                'attribute_option_translations.label',
-            ]);
-
-        $labels = [];
-
-        foreach ($rows as $row) {
-            if ($row->locale === null) {
-                continue;
-            }
-
-            $labels[$row->attribute_code][$row->option_code][$row->locale] = $row->label;
-        }
-
-        return $labels;
-    }
-
-    /**
      * Assemble the full values payload for a parent product.
      *
      * @param  array<string, mixed>  $product
      * @param  array<int, string>  $channels
      * @param  array<string, array<int, string>>  $channelLocales
+     * @param  array<string, string>  $placements
      * @return array<string, mixed>
      */
-    protected function buildValues(array $product, array $channels, array $channelLocales): array
+    protected function buildValues(array $product, array $channels, array $channelLocales, array $placements): array
     {
         $common = $this->normaliseMeasurements(array_merge(
             [
@@ -529,7 +598,7 @@ class DemoProductSeeder extends Seeder
         $media = $this->mediaValues($product);
 
         $values = [
-            'common'     => array_merge($common, $media),
+            'common'     => $this->ownedValues(array_merge($common, $media), $placements, 'common'),
             'categories' => $product['categories'] ?? [],
         ];
 
@@ -553,7 +622,11 @@ class DemoProductSeeder extends Seeder
                     continue;
                 }
 
-                $values['channel_locale_specific'][$channel][$locale] = $this->channelLocaleValues($copy, $product);
+                $values['channel_locale_specific'][$channel][$locale] = $this->ownedValues(
+                    $this->channelLocaleValues($copy, $product),
+                    $placements,
+                    'common',
+                );
             }
         }
 

@@ -20,14 +20,9 @@ return [
             'labels'          => ['en_US' => 'Spare parts', 'de_DE' => 'Ersatzteile', 'fr_FR' => 'Pièces détachées'],
             'fields'          => [
                 [
-                    'code'    => 'part_role',
-                    'type'    => 'select',
-                    'labels'  => ['en_US' => 'Part role', 'de_DE' => 'Teilerolle', 'fr_FR' => 'Rôle de la pièce'],
-                    'options' => [
-                        ['code' => 'wear_part', 'labels' => ['en_US' => 'Wear part', 'de_DE' => 'Verschleißteil', 'fr_FR' => 'Pièce d’usure']],
-                        ['code' => 'accessory', 'labels' => ['en_US' => 'Accessory', 'de_DE' => 'Zubehör', 'fr_FR' => 'Accessoire']],
-                        ['code' => 'consumable', 'labels' => ['en_US' => 'Consumable', 'de_DE' => 'Verbrauchsmaterial', 'fr_FR' => 'Consommable']],
-                    ],
+                    'code'   => 'part_role',
+                    'type'   => 'text',
+                    'labels' => ['en_US' => 'Part role', 'de_DE' => 'Teilerolle', 'fr_FR' => 'Rôle de la pièce'],
                 ],
                 [
                     'code'        => 'is_covered_by_warranty',
@@ -41,7 +36,7 @@ return [
                 ],
                 [
                     'code'             => 'fitting_note',
-                    'type'             => 'textarea',
+                    'type'             => 'text',
                     'value_per_locale' => true,
                     'labels'           => ['en_US' => 'Fitting note', 'de_DE' => 'Einbauhinweis', 'fr_FR' => 'Note de montage'],
                 ],
@@ -59,7 +54,7 @@ return [
                 ],
                 [
                     'code'   => 'bundle_from',
-                    'type'   => 'date',
+                    'type'   => 'text',
                     'labels' => ['en_US' => 'In bundle from', 'de_DE' => 'Im Bundle ab', 'fr_FR' => 'Dans le lot à partir du'],
                 ],
                 [
@@ -77,11 +72,11 @@ return [
             'up_sells'         => ['aurex-vertex-shelf-speaker', 'aurex-echo-soundbar'],
             'cross_sells'      => ['aurex-halo-carry-case', 'aurex-usb-c-cable-2m', 'aurex-desk-stand'],
             'spare_parts'      => [
-                ['sku' => 'aurex-halo-ear-pads', 'data' => ['part_role' => 'wear_part', 'is_covered_by_warranty' => false, 'service_interval' => '12 months'], 'locale_data' => [
-                    'en_US' => ['fitting_note' => '<p>Twist the old pad anticlockwise to release, align the new pad with the driver notch and twist until it clicks.</p>'],
-                    'de_DE' => ['fitting_note' => '<p>Altes Polster gegen den Uhrzeigersinn lösen, neues an der Treibernut ausrichten und bis zum Klicken drehen.</p>'],
+                ['sku' => 'aurex-halo-ear-pads', 'data' => ['part_role' => 'Wear part', 'is_covered_by_warranty' => false, 'service_interval' => '12 months'], 'locale_data' => [
+                    'en_US' => ['fitting_note' => 'Twist the old pad anticlockwise to release, align the new pad with the driver notch and twist until it clicks.'],
+                    'de_DE' => ['fitting_note' => 'Altes Polster gegen den Uhrzeigersinn lösen, neues an der Treibernut ausrichten und bis zum Klicken drehen.'],
                 ]],
-                ['sku' => 'aurex-halo-cable-spare', 'data' => ['part_role' => 'accessory', 'is_covered_by_warranty' => true, 'service_interval' => '—']],
+                ['sku' => 'aurex-halo-cable-spare', 'data' => ['part_role' => 'Accessory', 'is_covered_by_warranty' => true, 'service_interval' => '—']],
             ],
         ],
         'aurex-nimbus-tws' => [
@@ -116,8 +111,8 @@ return [
             'up_sells'         => ['nordvale-storm-shell'],
             'cross_sells'      => ['verano-liner-gloves', 'verano-packable-cap'],
             'spare_parts'      => [
-                ['sku' => 'nordvale-repair-kit', 'data' => ['part_role' => 'consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'As needed'], 'locale_data' => [
-                    'en_US' => ['fitting_note' => '<p>Clean the area with alcohol, round the patch corners and press for 30 seconds. Cures fully in 24 hours.</p>'],
+                ['sku' => 'nordvale-repair-kit', 'data' => ['part_role' => 'Consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'As needed'], 'locale_data' => [
+                    'en_US' => ['fitting_note' => 'Clean the area with alcohol, round the patch corners and press for 30 seconds. Cures fully in 24 hours.'],
                 ]],
             ],
         ],
@@ -135,9 +130,9 @@ return [
             'up_sells'         => ['casaluna-terra-saucepan-set'],
             'cross_sells'      => ['casaluna-oak-chopping-board', 'casaluna-chef-knife', 'casaluna-linen-tea-towels'],
             'spare_parts'      => [
-                ['sku' => 'casaluna-terra-pan-lid', 'data' => ['part_role' => 'accessory', 'is_covered_by_warranty' => true, 'service_interval' => '—'], 'locale_data' => [
-                    'en_US' => ['fitting_note' => '<p>Fits the 28 cm pan only. Check the rim diameter before ordering.</p>'],
-                    'fr_FR' => ['fitting_note' => '<p>Compatible uniquement avec la poêle de 28 cm. Vérifier le diamètre du bord avant de commander.</p>'],
+                ['sku' => 'casaluna-terra-pan-lid', 'data' => ['part_role' => 'Accessory', 'is_covered_by_warranty' => true, 'service_interval' => '—'], 'locale_data' => [
+                    'en_US' => ['fitting_note' => 'Fits the 28 cm pan only. Check the rim diameter before ordering.'],
+                    'fr_FR' => ['fitting_note' => 'Compatible uniquement avec la poêle de 28 cm. Vérifier le diamètre du bord avant de commander.'],
                 ]],
             ],
         ],
@@ -146,7 +141,7 @@ return [
             'up_sells'         => ['casaluna-brew-grinder'],
             'cross_sells'      => ['terrafina-single-origin-coffee', 'casaluna-lume-carafe'],
             'spare_parts'      => [
-                ['sku' => 'casaluna-brew-filters', 'data' => ['part_role' => 'consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'Every brew']],
+                ['sku' => 'casaluna-brew-filters', 'data' => ['part_role' => 'Consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'Every brew']],
             ],
             'bundle_items' => [
                 ['sku' => 'casaluna-brew-grinder', 'data' => ['quantity' => '1', 'bundle_from' => '2026-02-10', 'is_substitutable' => false]],
@@ -167,15 +162,15 @@ return [
             'up_sells'         => ['nordvale-fjell-45-travel-pack'],
             'cross_sells'      => ['nordvale-vann-bottle', 'nordvale-dry-bag-set', 'nordvale-headlamp'],
             'spare_parts'      => [
-                ['sku' => 'nordvale-repair-kit', 'data' => ['part_role' => 'wear_part', 'is_covered_by_warranty' => false, 'service_interval' => 'As needed']],
+                ['sku' => 'nordvale-repair-kit', 'data' => ['part_role' => 'Wear part', 'is_covered_by_warranty' => false, 'service_interval' => 'As needed']],
             ],
         ],
         'nordvale-skare-2p-tent' => [
             'related_products' => ['nordvale-lumen-sleeping-bag', 'nordvale-camp-stove'],
             'cross_sells'      => ['nordvale-trail-poles', 'nordvale-headlamp'],
             'spare_parts'      => [
-                ['sku' => 'nordvale-repair-kit', 'data' => ['part_role' => 'wear_part', 'is_covered_by_warranty' => false, 'service_interval' => 'Per season'], 'locale_data' => [
-                    'en_US' => ['fitting_note' => '<p>The pole splint slides over a broken section and clamps with the supplied tape; replace the section at home afterwards.</p>'],
+                ['sku' => 'nordvale-repair-kit', 'data' => ['part_role' => 'Wear part', 'is_covered_by_warranty' => false, 'service_interval' => 'Per season'], 'locale_data' => [
+                    'en_US' => ['fitting_note' => 'The pole splint slides over a broken section and clamps with the supplied tape; replace the section at home afterwards.'],
                 ]],
             ],
             'bundle_items' => [
@@ -187,7 +182,7 @@ return [
             'related_products' => ['nordvale-vann-filter-cap'],
             'cross_sells'      => ['nordvale-fjell-28-daypack'],
             'spare_parts'      => [
-                ['sku' => 'nordvale-vann-filter-cap', 'data' => ['part_role' => 'accessory', 'is_covered_by_warranty' => true, 'service_interval' => '1000 litres']],
+                ['sku' => 'nordvale-vann-filter-cap', 'data' => ['part_role' => 'Accessory', 'is_covered_by_warranty' => true, 'service_interval' => '1000 litres']],
             ],
         ],
         'nordvale-storm-shell' => [
@@ -200,9 +195,9 @@ return [
             'up_sells'         => ['lumea-vitamin-c-serum'],
             'cross_sells'      => ['lumea-mineral-spf50'],
             'spare_parts'      => [
-                ['sku' => 'lumea-clarify-refill', 'data' => ['part_role' => 'consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'Every 2 bottles'], 'locale_data' => [
-                    'en_US' => ['fitting_note' => '<p>Rinse the bottle with warm water before refilling; do not top up over old product.</p>'],
-                    'de_DE' => ['fitting_note' => '<p>Die Flasche vor dem Nachfüllen mit warmem Wasser ausspülen, nicht über Restprodukt auffüllen.</p>'],
+                ['sku' => 'lumea-clarify-refill', 'data' => ['part_role' => 'Consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'Every 2 bottles'], 'locale_data' => [
+                    'en_US' => ['fitting_note' => 'Rinse the bottle with warm water before refilling; do not top up over old product.'],
+                    'de_DE' => ['fitting_note' => 'Die Flasche vor dem Nachfüllen mit warmem Wasser ausspülen, nicht über Restprodukt auffüllen.'],
                 ]],
             ],
         ],
@@ -217,7 +212,7 @@ return [
         'lumea-safety-razor' => [
             'related_products' => ['lumea-body-lotion'],
             'spare_parts'      => [
-                ['sku' => 'lumea-razor-blades', 'data' => ['part_role' => 'consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'Every 5–7 shaves']],
+                ['sku' => 'lumea-razor-blades', 'data' => ['part_role' => 'Consumable', 'is_covered_by_warranty' => false, 'service_interval' => 'Every 5–7 shaves']],
             ],
         ],
 
@@ -244,9 +239,9 @@ return [
             'up_sells'         => ['kinetiq-forge-barbell'],
             'cross_sells'      => ['kinetiq-training-gloves', 'kinetiq-gym-towel', 'kinetiq-flow-yoga-mat'],
             'spare_parts'      => [
-                ['sku' => 'kinetiq-forge-selector-spare', 'data' => ['part_role' => 'wear_part', 'is_covered_by_warranty' => true, 'service_interval' => '5 years'], 'locale_data' => [
-                    'en_US' => ['fitting_note' => '<p>Remove the four M5 bolts on the cradle side, lift out the dial assembly and reverse. Torque to 4 Nm.</p>'],
-                    'de_DE' => ['fitting_note' => '<p>Die vier M5-Schrauben an der Ablageseite lösen, die Wähleinheit herausnehmen und in umgekehrter Reihenfolge montieren. Mit 4 Nm anziehen.</p>'],
+                ['sku' => 'kinetiq-forge-selector-spare', 'data' => ['part_role' => 'Wear part', 'is_covered_by_warranty' => true, 'service_interval' => '5 years'], 'locale_data' => [
+                    'en_US' => ['fitting_note' => 'Remove the four M5 bolts on the cradle side, lift out the dial assembly and reverse. Torque to 4 Nm.'],
+                    'de_DE' => ['fitting_note' => 'Die vier M5-Schrauben an der Ablageseite lösen, die Wähleinheit herausnehmen und in umgekehrter Reihenfolge montieren. Mit 4 Nm anziehen.'],
                 ]],
             ],
         ],
@@ -268,9 +263,9 @@ return [
             'up_sells'         => ['halden-arc-office-chair'],
             'cross_sells'      => ['halden-cable-tray', 'halden-lumen-table-lamp', 'aurex-desk-stand'],
             'spare_parts'      => [
-                ['sku' => 'halden-cable-tray', 'data' => ['part_role' => 'accessory', 'is_covered_by_warranty' => false, 'service_interval' => '—'], 'locale_data' => [
-                    'en_US' => ['fitting_note' => '<p>Clamps fit tops from 25 to 32 mm. No drilling required.</p>'],
-                    'fr_FR' => ['fitting_note' => '<p>Les pinces conviennent aux plateaux de 25 à 32 mm. Aucun perçage nécessaire.</p>'],
+                ['sku' => 'halden-cable-tray', 'data' => ['part_role' => 'Accessory', 'is_covered_by_warranty' => false, 'service_interval' => '—'], 'locale_data' => [
+                    'en_US' => ['fitting_note' => 'Clamps fit tops from 25 to 32 mm. No drilling required.'],
+                    'fr_FR' => ['fitting_note' => 'Les pinces conviennent aux plateaux de 25 à 32 mm. Aucun perçage nécessaire.'],
                 ]],
             ],
         ],
