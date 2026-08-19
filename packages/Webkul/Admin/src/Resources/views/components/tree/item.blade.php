@@ -13,9 +13,12 @@
             <i :class="folderIconClasses"></i>
 
             <span
-                class="flex-1 ltr:ml-1 rtl:mr-1 py-1.5 text-sm truncate cursor-pointer"
+                class="flex-1 ltr:ml-1 rtl:mr-1 py-1.5 text-sm truncate"
                 v-if="categorytree.navigateOnSelect"
-                :class="hasSelectedValue ? 'text-primary-700 dark:text-white font-semibold' : 'text-gray-600 dark:text-gray-300'"
+                :class="[
+                    hasSelectedValue ? 'text-primary-700 dark:text-white font-semibold' : 'text-gray-600 dark:text-gray-300',
+                    categorytree.allowEdit ? 'cursor-pointer' : '',
+                ]"
                 :title="label"
                 v-text="label"
                 @click="onInputChange"
@@ -169,9 +172,13 @@
                     return '';
                 }
 
-                return this.hasSelectedValue
-                    ? 'bg-primary-50 dark:bg-cherry-800'
-                    : 'hover:bg-primary-50 dark:hover:bg-cherry-800';
+                if (this.hasSelectedValue) {
+                    return 'bg-primary-50 dark:bg-cherry-800';
+                }
+
+                return this.categorytree.allowEdit
+                    ? 'hover:bg-primary-50 dark:hover:bg-cherry-800'
+                    : '';
             },
 
             itemClasses() {
