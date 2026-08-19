@@ -128,6 +128,7 @@ test.describe('Login Page', () => {
     await adminPage.getByRole('textbox', { name: 'Email Address' }).fill(loginCredentials.email);
     await adminPage.getByRole('textbox', { name: 'Password' }).fill(loginCredentials.password);
     await adminPage.getByRole('textbox', { name: 'Password' }).press('Enter');
+    await expect(adminPage).not.toHaveURL(/\/admin\/login/);
     await expect(adminPage).toHaveURL(/\/admin\//);
   });
 });

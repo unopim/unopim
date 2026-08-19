@@ -1,7 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
 const path = require('path');
 
-const STORAGE_STATE = path.resolve(__dirname, '../../.state/admin-auth.json');
+const STORAGE_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
+const loginCredentials = {
+  email: process.env.ADMIN_USERNAME || process.env.ADMIN_EMAIL || 'admin@example.com',
+  password: process.env.ADMIN_PASSWORD || 'admin123',
+};
 
 /**
  * Navigate to the notifications page and wait for Vue component to render.
@@ -17,8 +21,8 @@ async function navigateToNotifications(page) {
   // name also substring-matches the "Sign in with Microsoft" SSO button, which
   // makes getByRole('button', { name: 'Sign In' }) ambiguous.
   if (page.url().includes('/admin/login')) {
-    await page.locator('input[name="email"]').fill('admin@example.com');
-    await page.locator('input[name="password"]').fill('admin123');
+    await page.locator('input[name="email"]').fill(loginCredentials.email);
+    await page.locator('input[name="password"]').fill(loginCredentials.password);
     await page.locator('.primary-button').click();
     await page.waitForURL(/\/admin\/(?!login)/, { timeout: 15000 });
     await page.context().storageState({ path: STORAGE_STATE });
@@ -31,7 +35,6 @@ async function navigateToNotifications(page) {
   await page.waitForSelector('.icon-notification, a[href*="viewed-notifications"]', { timeout: 15000 });
 }
 
-// ─── Notification Page Tests ────────────────────────────────────────
 test.describe('Notification Page', () => {
   test('1 - should load the notifications page', async ({ adminPage }) => {
     await navigateToNotifications(adminPage);
