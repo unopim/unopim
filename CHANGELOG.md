@@ -38,6 +38,7 @@
 - Fixed the bulk edit select-cell attribute lookup using a column's position instead of its attribute id, so the dropdown never populated and typing found nothing.
 - Fixed the Digital Product Passport settings link pointing at a page that no longer exists, and the datagrid toolbar wrapping onto a second row and stranding pagination when the side panel or sidebar was open.
 - Fixed the product exporter's constructor requiring an extra argument, breaking packages that extended it or the product API data source.
+- Fixed importers that source their data over an API instead of an uploaded file being impossible to create with a valid validation strategy, and impossible to run once created.
 
 # 3.0.0 — July 31st, 2026
 
