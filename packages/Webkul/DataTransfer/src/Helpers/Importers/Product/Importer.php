@@ -1732,7 +1732,12 @@ class Importer extends AbstractImporter
         return in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true);
     }
 
-    /**\n     * Prepare products from current batch.\n     *\n     * Optimized: Uses indexed attribute family lookup (O(1)) instead of\n     * Collection->where()->first() (O(n)) per row.\n     */
+    /**
+     * Prepare products from current batch.
+     *
+     * Uses an indexed attribute-family lookup rather than scanning the
+     * collection for every row.
+     */
     public function prepareProducts(array $rowData, array &$products, ?bool $isExisting = null): void
     {
         /**

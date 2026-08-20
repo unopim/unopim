@@ -24,9 +24,9 @@ return new class extends Migration
 
         // BLOB caps at 64 KB; MEDIUMBLOB gives 16 MB. MySQL family only — Postgres bytea is untiered.
         if (in_array(Schema::getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
-            $table = Schema::getConnection()->getTablePrefix().'publication_version_payloads';
+            $tableName = Schema::getConnection()->getTablePrefix().'publication_version_payloads';
 
-            DB::statement('ALTER TABLE `'.$table.'` MODIFY payload MEDIUMBLOB NULL');
+            DB::statement('ALTER TABLE `'.$tableName.'` MODIFY payload MEDIUMBLOB NULL');
         }
     }
 
