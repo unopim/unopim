@@ -101,8 +101,9 @@ class ImportController extends Controller
         }
 
         $fileData = [
-            'type'   => self::TYPE,
-            'action' => 'append',
+            'type'                => self::TYPE,
+            'action'              => 'append',
+            'validation_strategy' => Import::VALIDATION_STRATEGY_SKIP_ERRORS,
         ];
 
         if (isset($importerConfig[$data['entity_type']]['has_file_options']) && $importerConfig[$data['entity_type']]['has_file_options'] == 'true') {
@@ -267,7 +268,9 @@ class ImportController extends Controller
         try {
             $import = $this->jobInstancesRepository->findOrFail($id);
 
-            if (empty($import->file_path)) {
+            $requiresFile = (bool) config(self::IMPORTERS.'.'.$import->entity_type.'.has_file_options', false);
+
+            if ($requiresFile && empty($import->file_path)) {
                 return redirect()
                     ->route('admin.settings.data_transfer.imports.import-view', $import->id)
                     ->with('error', trans('admin::app.settings.data-transfer.imports.rerun-no-file'));
