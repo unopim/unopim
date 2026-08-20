@@ -102,7 +102,8 @@ it('does not expose a row edit action when the edit permission is missing', func
     string $indexRoute,
     array $viewPermissions,
     string $editPermission,
-    callable $seed
+    callable $seed,
+    string $editRoute
 ) {
     $this->loginWithPermissions('custom', [...$viewPermissions, 'dashboard']);
 
@@ -121,7 +122,8 @@ it('exposes a row edit action when the edit permission is granted', function (
     string $indexRoute,
     array $viewPermissions,
     string $editPermission,
-    callable $seed
+    callable $seed,
+    string $editRoute
 ) {
     $this->loginWithPermissions('custom', [...$viewPermissions, 'dashboard', $editPermission]);
 
@@ -140,7 +142,8 @@ it('never emits a row action without a usable url', function (
     string $indexRoute,
     array $viewPermissions,
     string $editPermission,
-    callable $seed
+    callable $seed,
+    string $editRoute
 ) {
     $this->loginWithPermissions('custom', [...$viewPermissions, 'dashboard']);
 
