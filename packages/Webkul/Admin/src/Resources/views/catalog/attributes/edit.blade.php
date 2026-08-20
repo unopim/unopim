@@ -634,6 +634,8 @@
 
                                     <v-media-image
                                         name="swatch_value"
+                                        :allow-download="true"
+                                        :full-preview="true"
                                         :uploaded-images='swatchValue.image'
                                     >
                                     </v-media-image>
@@ -870,7 +872,7 @@
 
                         this.swatchValue = {
                             image: cloned.swatch_value_url
-                            ? [{ id: cloned.id, url: cloned.swatch_value_url }]
+                            ? [{ id: cloned.id, url: cloned.swatch_value_url, value: cloned.swatch_value }]
                             : [],
                         };
 

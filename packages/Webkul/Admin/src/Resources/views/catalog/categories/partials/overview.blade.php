@@ -2,6 +2,8 @@
     $roots = $overview['roots'];
 
     $channelRootIds = $overview['channelRootIds'];
+
+    $canEditCategory = bouncer()->hasPermission('catalog.categories.edit');
 @endphp
 
 <div class="flex flex-col gap-4 p-6 bg-white dark:bg-cherry-900 rounded box-shadow">
@@ -25,8 +27,10 @@
                 @php $descendants = (int) (($root->_rgt - $root->_lft - 1) / 2); @endphp
 
                 <a
-                    href="{{ route('admin.catalog.categories.index', ['category' => $root->id]) }}"
-                    class="flex gap-2.5 items-center px-2 py-2.5 border-b dark:border-cherry-800 rounded-md hover:bg-primary-50 dark:hover:bg-cherry-800"
+                    @if ($canEditCategory)
+                        href="{{ route('admin.catalog.categories.index', ['category' => $root->id]) }}"
+                    @endif
+                    class="flex gap-2.5 items-center px-2 py-2.5 border-b dark:border-cherry-800 rounded-md {{ $canEditCategory ? 'hover:bg-primary-50 dark:hover:bg-cherry-800' : '' }}"
                 >
                     <span class="icon-folder shrink-0 text-2xl text-gray-500 dark:text-gray-300"></span>
 
@@ -44,7 +48,9 @@
                         @lang('admin::app.catalog.categories.browse.subcategories-count', ['count' => number_format($descendants)])
                     </span>
 
-                    <span class="icon-chevron-right shrink-0 text-2xl text-gray-400 dark:text-gray-300"></span>
+                    @if ($canEditCategory)
+                        <span class="icon-chevron-right shrink-0 text-2xl text-gray-400 dark:text-gray-300"></span>
+                    @endif
                 </a>
             @endforeach
         </div>

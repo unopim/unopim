@@ -8,6 +8,7 @@ use Webkul\Admin\Http\Controllers\MagicAI\MagicAIController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAIPlatformController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController;
 use Webkul\Admin\Http\Controllers\ManageColumnController;
+use Webkul\Admin\Http\Controllers\MediaController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
 use Webkul\Admin\Http\Controllers\User\AclVersionController;
@@ -20,6 +21,8 @@ use Webkul\HistoryControl\Http\Controllers\HistoryController;
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
     Route::get('acl-version', [AclVersionController::class, 'show'])->name('admin.acl.version');
+
+    Route::get('media/download', [MediaController::class, 'download'])->name('admin.media.download');
 
     /**
      * Dashboard routes.
