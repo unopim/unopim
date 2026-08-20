@@ -289,7 +289,7 @@ class CategoryController extends Controller
      */
     private function savedDestination(CategoryRequest $request, int $categoryId, string $route, array $params = []): array
     {
-        if (! $request->boolean('panel')) {
+        if (! $request->boolean('panel') || ! bouncer()->hasPermission('catalog.categories.edit')) {
             return [$route, $params];
         }
 

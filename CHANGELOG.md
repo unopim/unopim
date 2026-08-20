@@ -19,6 +19,25 @@
 - Fixed configurable product REST API handling for variant groups and their tier information.
 - Added a consistent variant-level write guard across all save paths to prevent attributes from being modified at the wrong ownership level and to reject conflicting axis renames during persistence.
 - Fixed bulk edit variant-level handling so ancestor-owned cells are locked and display the owner's value, while lower-level cells remain locked and empty.
+- Fixed edit surfaces not being gated on the module's edit permission: datagrid rows stayed clickable, rows on some settings and Magic AI grids navigated to an undefined URL, the users grid rendered dead edit and delete icons, an administrator with only copy permission could duplicate a product by clicking its row, one with only delete permission on Magic AI platforms was taken to delete instead of edit, and the category tree, tree overview, and category edit panel URL were reachable without it.
+- Fixed saving a Magic AI system prompt logging a status-change audit entry even when the enabled flag had not changed.
+- Fixed media handling on product, category, and attribute forms: gallery image order was lost when reordering, read-only tiles still accepted dragged files, downloads were available regardless of permission on the owning module, and locked media on a variant group's child could be neither previewed nor downloaded.
+- Fixed Docker deployments where the queue and scheduler containers crash-looped without write access to the cache directory, and image upgrades regenerated the API OAuth signing keys, invalidating every issued token.
+- Fixed product saves showing a generic invalid-extension error when media pointed at another product's folder, and returning a server error instead of a validation error when the values field was omitted.
+- Fixed the searchable dropdown opening off-screen, losing its selected-item checkmark, and rendering beneath the pinned page header, and fixed association types selected from the overflow menu leaving every tab unselected.
+- Fixed the association type and measurement unit modals showing one label input per locale, which became unusable on catalogs with many locales, by moving the labels behind the locale switcher.
+- Fixed product import storing media under the wrong product, allowing a row to set a value it does not own, silently creating orphan variant rows when the named parent did not exist, failing the row or wiping values when a media reference could not be resolved, and requiring non-axis attributes on structures with no placement rows.
+- Fixed the attribute option grid rendering labels blank on PostgreSQL because a per-locale column alias was case-folded.
+- Fixed demo installation data that failed on a fresh install with demo data enabled: sample import profiles resolved to no file, seeded variant structure codes were rejected by validation, seeded values were placed at the wrong ownership level, association fields used types the field builder cannot create or edit, and saved grid filters and views did not apply correctly.
+- Fixed clearing or deleting an applied saved grid filter leaving its columns, sort, and paging in place instead of restoring the grid's default layout, and the product passport datagrid omitting bulk withdraw and reinstate from its mass actions.
+- Added a confirmation step before deleting an AI Agent conversation, and fixed a failed deletion silently removing the conversation from the visible list while it remained on the server.
+- Fixed the REST product associations write path silently deleting association links that a PUT or PATCH request did not include.
+- Fixed the product grid, CSV export, and REST API showing a blank value for a common attribute set only on a parent product, for variant groups and their children.
+- Fixed exported product media being copied to a disk the export archiver did not read from, leaving media out of the downloaded export.
+- Fixed a structured variant's SKU being treated as an ancestor-owned attribute, blocking it from being renamed.
+- Fixed the bulk edit select-cell attribute lookup using a column's position instead of its attribute id, so the dropdown never populated and typing found nothing.
+- Fixed the Digital Product Passport settings link pointing at a page that no longer exists, and the datagrid toolbar wrapping onto a second row and stranding pagination when the side panel or sidebar was open.
+- Fixed the product exporter's constructor requiring an extra argument, breaking packages that extended it or the product API data source.
 
 # 3.0.0 — July 31st, 2026
 

@@ -85,13 +85,14 @@
                     </div>
                 </template>
 
-                <template #body="{ columns, records, performAction }">
+                <template #body="{ columns, records, performAction, handleRowClick }">
                     <div
                         v-for="record in records"
                         :key="record.id"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all"
+                        :class="{'cursor-pointer hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800': record.actions.some(action => action.index === 'edit')}"
                         :style="'grid-template-columns: repeat(' + (record.actions.length ? 6 : 5) + ', minmax(0, 1fr));'"
-                        @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
+                        @click="handleRowClick($event, record)"
                     >
                         <p v-text="record.user_id"></p>
 
@@ -140,7 +141,10 @@
                         <p v-text="record.role_name" class="truncate" :title="record.role_name"></p>
 
                         <div class="flex justify-end" @click.stop>
-                            <a @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)">
+                            <a
+                                v-if="record.actions.find(action => action.index === 'edit')"
+                                @click="id=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
+                            >
                                 <span
                                     :class="record.actions.find(action => action.index === 'edit')?.icon"
                                     title="@lang('admin::app.settings.users.index.datagrid.edit')"
@@ -149,7 +153,10 @@
                                 </span>
                             </a>
 
-                            <a @click="performAction(record.actions.find(action => action.index === 'delete'))">
+                            <a
+                                v-if="record.actions.find(action => action.index === 'delete')"
+                                @click="performAction(record.actions.find(action => action.index === 'delete'))"
+                            >
                                 <span
                                     :class="record.actions.find(action => action.index === 'delete')?.icon"
                                     title="@lang('admin::app.settings.users.index.datagrid.delete')"
