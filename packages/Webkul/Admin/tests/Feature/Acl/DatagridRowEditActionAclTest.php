@@ -53,7 +53,7 @@ dataset('editable datagrids', [
         'admin.settings.locales.index',
         ['settings', 'settings.locales'],
         'settings.locales.edit',
-        fn () => Locale::query()->value('id'),
+        fn () => Locale::query()->value('id') ?? Locale::factory()->create()->id,
         'admin.settings.locales.edit',
     ],
 
@@ -61,7 +61,7 @@ dataset('editable datagrids', [
         'admin.settings.currencies.index',
         ['settings', 'settings.currencies'],
         'settings.currencies.edit',
-        fn () => Currency::query()->value('id'),
+        fn () => Currency::query()->value('id') ?? Currency::factory()->create()->id,
         'admin.settings.currencies.edit',
     ],
 
