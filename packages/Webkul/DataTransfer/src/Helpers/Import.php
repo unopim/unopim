@@ -226,14 +226,19 @@ class Import
         $state = self::STATE_VALIDATED;
 
         try {
-            $source = $this->getSource();
+            $entityType = $this->resolveEntityType($this->import->jobInstance->entity_type);
 
-            if (! $source) {
-                throw new \RuntimeException('The import source file is missing or unreadable, so this job cannot be validated.');
+            if (config('importers.'.$entityType.'.has_file_options')) {
+                $source = $this->getSource();
+
+                if (! $source) {
+                    throw new \RuntimeException('The import source file is missing or unreadable, so this job cannot be validated.');
+                }
+
+                $this->getTypeImporter()->setSource($source)->validateData();
+            } else {
+                $this->getTypeImporter()->validateData();
             }
-
-            $typeImporter = $this->getTypeImporter()->setSource($source);
-            $typeImporter->validateData();
         } catch (\Throwable $e) {
             $state = self::STATE_FAILED;
             $this->errorHelper->addError(

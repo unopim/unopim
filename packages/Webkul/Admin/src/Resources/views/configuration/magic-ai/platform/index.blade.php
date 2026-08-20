@@ -90,9 +90,10 @@
                     <div
                         v-for="record in records"
                         :key="record.id"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all"
+                        :class="{'cursor-pointer hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800': record.actions.some(a => a.index === 'edit')}"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
-                        @click="editModal(record.actions.find(a => a.index === 'action_1')?.url)"
+                        @click="editRow(record)"
                     >
                         <p v-text="record.label" class="truncate" :title="record.label"></p>
                         <p v-html="record.provider"></p>
@@ -601,6 +602,16 @@
                                     });
                                 }
                             });
+                    },
+
+                    editRow(record) {
+                        const action = record.actions.find(a => a.index === 'edit');
+
+                        if (! action) {
+                            return;
+                        }
+
+                        this.editModal(action.url);
                     },
 
                     editModal(url) {

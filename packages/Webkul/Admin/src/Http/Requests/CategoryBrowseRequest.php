@@ -14,6 +14,14 @@ class CategoryBrowseRequest extends FormRequest
     {
         abort_unless(bouncer()->hasPermission('catalog.categories'), 403, trans('admin::app.common.unauthorized'));
 
+        if ($this->filled('category')) {
+            abort_unless(bouncer()->hasPermission('catalog.categories.edit'), 403, trans('admin::app.common.unauthorized'));
+        }
+
+        if ($this->input('panel') === 'create') {
+            abort_unless(bouncer()->hasPermission('catalog.categories.create'), 403, trans('admin::app.common.unauthorized'));
+        }
+
         return true;
     }
 

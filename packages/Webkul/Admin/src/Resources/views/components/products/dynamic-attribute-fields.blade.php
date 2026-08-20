@@ -91,6 +91,8 @@
 
         $isLocked = isset($lockedFields[$field->code]);
 
+        $isReadOnlyMedia = $isLocked && in_array($field->type, ['image', 'gallery', 'file'], true);
+
         $lockLevel = $isLocked ? ($lockedFields[$field->code]['level'] ?? null) : null;
 
         $isAxisLock = $isLocked && ! empty($lockedFields[$field->code]['axis']);
@@ -203,8 +205,8 @@
             </div>
         </div>
 
-        <fieldset @disabled($isLocked) class="border-0 p-0 m-0 min-w-0 {{ $isLocked ? 'opacity-60 cursor-not-allowed' : '' }}">
-        @if ($isLocked)
+        <fieldset @disabled($isLocked && ! $isReadOnlyMedia) class="border-0 p-0 m-0 min-w-0 {{ $isLocked && ! $isReadOnlyMedia ? 'opacity-60 cursor-not-allowed' : '' }}">
+        @if ($isLocked && ! $isReadOnlyMedia)
             <div class="pointer-events-none">
         @endif
 
@@ -272,7 +274,7 @@
                     ] : [];
                 @endphp
 
-                @if (! empty($value))
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -287,6 +289,8 @@
                     height="140px"
                     :has-context="true"
                     :full-preview="true"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('gallery')
@@ -305,7 +309,7 @@
                     }, (array)$value, array_keys((array)$value)) : [];
                 @endphp
 
-                @if (! empty($value))
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -319,6 +323,8 @@
                     :allow-multiple=true
                     width="270px"
                     height="140px"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('file')
@@ -334,7 +340,7 @@
                     ] : [];
                 @endphp
 
-                @if (! empty($value))
+                @if (! empty($value) && ! $isReadOnlyMedia)
                     <input type="hidden" name="{{ $fieldName }}" value="">
                 @endIf
 
@@ -348,6 +354,8 @@
                     :instructions="$fieldInstructions"
                     value="{{$value}}"
                     class="mt-3"
+                    :read-only="$isReadOnlyMedia"
+                    :allow-download="true"
                 />
                 @break
             @case('price')
@@ -526,7 +534,7 @@
                 </x-admin::form.control-group.control>
 
         @endswitch
-        @if ($isLocked)
+        @if ($isLocked && ! $isReadOnlyMedia)
             </div>
         @endif
         </fieldset>
