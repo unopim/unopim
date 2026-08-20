@@ -430,7 +430,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
 
         if (bouncer()->hasPermission('catalog.products.copy')) {
             $this->addAction([
-                'index'  => 'edit',
+                'index'  => 'copy',
                 'icon'   => 'icon-copy',
                 'title'  => trans('admin::app.catalog.products.index.datagrid.copy'),
                 'method' => 'POST',

@@ -35,6 +35,13 @@ class MagicAISystemPrompt extends Model implements HistoryAuditable, MagicAISyst
         return MagicAISystemPromptFactory::new();
     }
 
+    protected function casts(): array
+    {
+        return [
+            'is_enabled' => 'boolean',
+        ];
+    }
+
     protected static function booted()
     {
         static::saving(function ($model): void {

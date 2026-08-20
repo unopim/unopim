@@ -112,6 +112,7 @@ class MagicAIPlatformDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('ai-agent.platform.edit')) {
             $this->addAction([
+                'index'  => 'edit',
                 'icon'   => 'icon-edit',
                 'title'  => trans('admin::app.configuration.platform.datagrid.edit'),
                 'method' => 'GET',
@@ -121,6 +122,7 @@ class MagicAIPlatformDataGrid extends DataGrid
 
         if (bouncer()->hasPermission('ai-agent.platform.delete')) {
             $this->addAction([
+                'index'  => 'delete',
                 'icon'   => 'icon-delete',
                 'title'  => trans('admin::app.configuration.platform.datagrid.delete'),
                 'method' => 'DELETE',

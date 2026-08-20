@@ -68,6 +68,7 @@
                         ::show-toolbar="true"
                         ::show-search="true"
                         ::navigate-on-select="true"
+                        ::allow-edit="{{ bouncer()->hasPermission('catalog.categories.edit') ? 'true' : 'false' }}"
                         ::allow-create="{{ $canCreate ? 'true' : 'false' }}"
                         ::allow-delete="{{ bouncer()->hasPermission('catalog.categories.delete') ? 'true' : 'false' }}"
                         :expanded-branch="json_encode($branchToParent)"
