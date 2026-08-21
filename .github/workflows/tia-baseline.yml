@@ -54,8 +54,11 @@ jobs:
           php-version: '8.4'
           extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
           # PcovRestarter rebuilds the child from Pest's argv, dropping every `-d`,
-          # so anything the recording needs has to come from php.ini.
-          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.exclude="~(vendor|node_modules|storage)~"
+          # so anything the recording needs has to come from php.ini. Pinning
+          # pcov.directory to what it would pick anyway also keeps it from
+          # re-execing, and proc_close() reports 9 for both a signalled child and
+          # a plain exit(9) — the shell tells them apart, that wrapper cannot.
+          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.directory=${{ github.workspace }}, pcov.exclude="~(vendor|node_modules|storage)~"
           tools: composer:v2
           coverage: pcov
 
@@ -133,13 +136,17 @@ jobs:
           sort -t= -k2 -n "$RUNNER_TEMP/memory.log" | tail -5
 
           if [ "$status" -ne 0 ]; then
-            # A signalled child reaches here two ways: proc_close() hands back a
-            # bare 9 from the pcov re-exec, the shell reports 137 for the process
-            # it started itself. Neither means a test failed.
-            case "$status" in
-              9|13[0-9]) echo "::error::the recording process was killed by a signal, not by a failing test" ;;
-              *)         echo "::error::the recording run exited with $status" ;;
-            esac
+            # With pcov.directory pinned there is no re-exec left to launder a
+            # signal into a plain number, so the shell's status can be taken at
+            # face value: >128 is a signal, and 9 is now something that really
+            # chose to exit 9.
+            if [ "$status" -gt 128 ] && [ "$status" -lt 192 ]; then
+              echo "::error::the recording process was killed by signal $((status - 128)), not by a failing test"
+            elif [ "$status" -eq 9 ]; then
+              echo "::error::the recording process exited 9 of its own accord — no re-exec remains to disguise a signal, and Pest returns only 0, 1 or 2, so the source is outside the runner"
+            else
+              echo "::error::the recording run exited with $status"
+            fi
 
             free -h || true
             swapon --show || true
@@ -147,6 +154,15 @@ jobs:
 
             echo '--- kernel log (an OOM kill is recorded here) ---'
             sudo dmesg | tail -50 || true
+
+            # A cgroup kill counts here even when it leaves no ring buffer entry.
+            # The counters live in the step's own cgroup; the root has none.
+            echo '--- cgroup memory events ---'
+            cgroup="$(cut -d: -f3 /proc/self/cgroup | head -1)"
+            cat "/sys/fs/cgroup${cgroup}/memory.events" 2>/dev/null \
+              || cat /sys/fs/cgroup/memory.events 2>/dev/null || true
+            cat "/sys/fs/cgroup${cgroup}/memory.peak" 2>/dev/null \
+              || cat /sys/fs/cgroup/memory.peak 2>/dev/null || true
 
             exit "$status"
           fi
