@@ -22,11 +22,11 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // BLOB caps at 64 KB; MEDIUMBLOB gives 16 MB. MySQL only — Postgres bytea is untiered.
-        if (Schema::getConnection()->getDriverName() === 'mysql') {
-            $table = Schema::getConnection()->getTablePrefix().'publication_version_payloads';
+        // BLOB caps at 64 KB; MEDIUMBLOB gives 16 MB. MySQL family only — Postgres bytea is untiered.
+        if (in_array(Schema::getConnection()->getDriverName(), ['mysql', 'mariadb'], true)) {
+            $tableName = Schema::getConnection()->getTablePrefix().'publication_version_payloads';
 
-            DB::statement('ALTER TABLE `'.$table.'` MODIFY payload MEDIUMBLOB NULL');
+            DB::statement('ALTER TABLE `'.$tableName.'` MODIFY payload MEDIUMBLOB NULL');
         }
     }
 

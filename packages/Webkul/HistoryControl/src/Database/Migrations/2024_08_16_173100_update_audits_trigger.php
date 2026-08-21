@@ -15,6 +15,7 @@ return new class extends Migration
 
         switch ($driver) {
             case 'mysql':
+            case 'mariadb':
                 // Drop existing trigger if exists
                 DB::unprepared('DROP TRIGGER IF EXISTS `audit_before_insert`');
 
@@ -108,6 +109,7 @@ return new class extends Migration
 
         switch ($driver) {
             case 'mysql':
+            case 'mariadb':
                 DB::unprepared('DROP TRIGGER IF EXISTS `audit_before_insert`');
                 break;
 
