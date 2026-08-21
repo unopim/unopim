@@ -4,6 +4,8 @@ namespace Webkul\DataTransfer\Helpers\Importers;
 
 use Illuminate\Support\Facades\Storage as StorageFacade;
 use Webkul\Core\Traits\HtmlPurifier;
+use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 
 class FieldProcessor
 {
@@ -17,6 +19,21 @@ class FieldProcessor
     protected static array $pathExistsCache = [];
 
     /**
+     * Resolved once per instance rather than per field, since handleField runs
+     * for every column of every imported row.
+     */
+    protected ?MeasurementHelper $measurementHelper = null;
+
+    /**
+     * Resolve the measurement helper lazily, so an installation without any
+     * measurement attribute never builds it.
+     */
+    protected function measurementHelper(): MeasurementHelper
+    {
+        return $this->measurementHelper ??= resolve(MeasurementHelper::class);
+    }
+
+    /**
      * Processes a field value based on its type.
      *
      * @param  object  $field  The field object.
@@ -26,6 +43,10 @@ class FieldProcessor
      */
     public function handleField($field, mixed $value, ?string $path)
     {
+        if ($field->type === 'measurement' && ! empty($value)) {
+            return $this->handleMeasurementField($field, $value);
+        }
+
         if (empty($value)) {
             return;
         }
@@ -58,6 +79,41 @@ class FieldProcessor
         }
 
         return $value;
+    }
+
+    /**
+     * Build the stored measurement structure from an import cell.
+     *
+     * Accepts "<unit>,<amount>" / "<unit>|<amount>" strings and ['value' => …,
+     * 'unit' => …] arrays; anything else is handed back untouched so the row
+     * validator reports it rather than this method guessing.
+     */
+    protected function handleMeasurementField($field, mixed $value): mixed
+    {
+        $measurementValue = null;
+        $measurementUnit = null;
+
+        if (is_string($value)) {
+            $value = str_replace('|', ',', $value);
+            [$unit, $amount] = array_map(trim(...), explode(',', $value, 2));
+            $measurementValue = $amount;
+            $measurementUnit = $unit;
+        } elseif (is_array($value) && array_key_exists('value', $value) && array_key_exists('unit', $value)) {
+            $measurementValue = $value['value'];
+            $measurementUnit = $value['unit'];
+        }
+
+        if ($measurementValue === null || $measurementUnit === null || $measurementUnit === '') {
+            return $value;
+        }
+
+        $measurementHelper = $this->measurementHelper();
+
+        return $measurementHelper->getMeasurementValueStructure(
+            (float) EscapeFormulaOperators::unescapeValue($measurementValue),
+            $measurementHelper->resolveUnitCode($measurementUnit, $field),
+            $field
+        );
     }
 
     /**

@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produkty',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Jednostka ":unit" nie jest prawidłową jednostką dla atrybutu pomiaru ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Klucz URL: \'%s\' został już wygenerowany dla przedmiotu o SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Nieprawidłowa wartość dla kolumny rodziny atrybutów (rodzina atrybutów nie istnieje?)',
                     'invalid-type'                             => 'Typ produktu jest nieprawidłowy lub nieobsługiwany',

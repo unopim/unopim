@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Proizvodi',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Jedinica ":unit" nije valjana jedinica za mjerni atribut ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL ključ: \'%s\' već je generiran za stavku sa SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Neispravna vrijednost za kolonu obitelji atributa (obitelj atributa ne postoji?)',
                     'invalid-type'                             => 'Vrsta proizvoda je neispravna ili nije podržana',

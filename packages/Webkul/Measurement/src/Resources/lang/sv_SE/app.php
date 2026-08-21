@@ -135,14 +135,6 @@ return [
         'max_units'        => 'En mätningsfamilj kan inte ha fler än :max enheter.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'Enheten ":unit" är inte en giltig enhet för mätattributet ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Mätfamiljen har skapats framgångsrikt.',

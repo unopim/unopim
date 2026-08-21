@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => '제품',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '":unit" 단위는 ":attribute" 측정 속성에 유효한 단위가 아닙니다.',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL 키: \'%s\'는 SKU: \'%s\'를 가진 항목에 이미 생성되었습니다.',
                     'invalid-attribute-family'                 => '속성 가족 열에 유효하지 않은 값(속성 가족이 존재하지 않음?)',
                     'invalid-type'                             => '제품 유형이 잘못되었거나 지원되지 않음',

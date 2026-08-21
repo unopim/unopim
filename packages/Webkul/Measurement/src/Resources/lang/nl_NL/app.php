@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Een meetfamilie kan niet meer dan :max eenheden hebben.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'De eenheid ":unit" is geen geldige eenheid voor het meetkenmerk ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Meetfamilie is succesvol aangemaakt.',

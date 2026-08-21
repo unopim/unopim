@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Bir ölçüm ailesi :max taneden fazla birime sahip olamaz.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => '":unit" birimi, ":attribute" ölçüm özelliği için geçerli bir birim değil.',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Ölçüm ailesi başarıyla oluşturuldu.',
