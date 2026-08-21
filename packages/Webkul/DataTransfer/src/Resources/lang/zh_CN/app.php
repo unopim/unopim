@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => '产品',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '单位 ":unit" 不是测量属性 ":attribute" 的有效单位。',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
                     'invalid-attribute-family'                 => '属性系列列的值无效（属性系列不存在？）',
                     'invalid-type'                             => '产品类型无效或不受支持',

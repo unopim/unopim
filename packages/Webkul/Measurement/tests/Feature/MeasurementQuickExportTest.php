@@ -3,8 +3,8 @@
 use Webkul\Attribute\Contracts\Attribute as AttributeContract;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\Measurement\Helpers\MeasurementHelper;
-use Webkul\Measurement\Normalizer\ProductAttributeValuesNormalizer;
 use Webkul\Measurement\Repositories\AttributeMeasurementRepository;
+use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 
 it('formats measurement values for product quick export', function () {
     $attribute = Mockery::mock(AttributeContract::class);
@@ -22,7 +22,9 @@ it('formats measurement values for product quick export', function () {
         ->with('kg', $attribute, 'en_US')
         ->andReturn('Kilogram');
 
-    $normalizer = new ProductAttributeValuesNormalizer($attributeService, $measurementHelper);
+    app()->instance(MeasurementHelper::class, $measurementHelper);
+
+    $normalizer = new ProductAttributeValuesNormalizer($attributeService);
 
     $values = $normalizer->normalizeAttributes([
         'measurement' => [

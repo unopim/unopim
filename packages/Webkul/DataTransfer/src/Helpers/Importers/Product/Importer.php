@@ -36,6 +36,7 @@ use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
+use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\Product as ProductModel;
@@ -325,6 +326,11 @@ class Importer extends AbstractImporter
     protected array $validColumnNames = self::BASE_COLUMN_NAMES;
 
     /**
+     * Resolved once per importer instance rather than per row or per cell.
+     */
+    protected ?MeasurementHelper $measurementHelper = null;
+
+    /**
      * Create a new helper instance.
      */
     public function __construct(
@@ -413,8 +419,34 @@ class Importer extends AbstractImporter
                 continue;
             }
 
+            if ($attribute->type === 'measurement') {
+                $this->addMeasurementAttributesColumns($attribute->code);
+
+                continue;
+            }
+
             $this->validColumnNames[] = $attribute->code;
         }
+    }
+
+    /**
+     * Resolve the measurement helper lazily, so an import with no measurement
+     * attribute never builds it.
+     */
+    protected function measurementHelper(): MeasurementHelper
+    {
+        return $this->measurementHelper ??= resolve(MeasurementHelper::class);
+    }
+
+    /**
+     * Add valid column names for the measurement attribute
+     */
+    public function addMeasurementAttributesColumns(string $attributeCode): void
+    {
+        $this->validColumnNames[] = $attributeCode;
+        $this->validColumnNames[] = $attributeCode.'(unit)';
+        $this->validColumnNames[] = $attributeCode.'_value';
+        $this->validColumnNames[] = $attributeCode.'_unit';
     }
 
     /**
@@ -1548,7 +1580,89 @@ class Importer extends AbstractImporter
             $rules[$attributeCode] = $validations;
         }
 
+        $this->addMeasurementValidationRules($rules, $rowData);
+
         return $rules;
+    }
+
+    /**
+     * Layer the measurement column rules on top of the generic ones.
+     *
+     * A measurement attribute occupies four possible columns; the amount may
+     * arrive in "<code>" or "<code>_value" and the unit in "<code>(unit)" or
+     * "<code>_unit", so each pair is validated independently.
+     */
+    protected function addMeasurementValidationRules(array &$rules, array $rowData): void
+    {
+        $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
+
+        $skipAttributes = $rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
+        $skipAttributes = array_map(trim(...), $skipAttributes);
+        $skipAttributes[] = 'sku';
+
+        foreach ($attributes as $attribute) {
+            $attributeCode = $attribute->code;
+
+            if ($attribute->type !== 'measurement') {
+                continue;
+            }
+
+            if (in_array($attributeCode, $skipAttributes)) {
+                continue;
+            }
+
+            $validations = $attribute->getValidationRules(withUniqueValidation: false);
+
+            $rules[$attributeCode] = $validations;
+
+            if (in_array('required', $validations, true)) {
+                $rules[$attributeCode][] = "required_without:{$attributeCode}_value";
+            }
+
+            $rules[$attributeCode.'_value'] = $this->getMeasurementValueValidationRules($validations);
+            $rules[$attributeCode.'(unit)'] = $this->getMeasurementUnitValidationRules($attributeCode, $attribute);
+            $rules[$attributeCode.'_unit'] = $this->getMeasurementUnitValidationRules($attributeCode, $attribute);
+        }
+    }
+
+    /**
+     * Returns validation rules for measurement value columns.
+     */
+    protected function getMeasurementValueValidationRules(array $validations): array
+    {
+        $rules = array_values(array_filter($validations, fn ($rule) => $rule !== 'required'));
+
+        if (! in_array('nullable', $rules, true)) {
+            array_unshift($rules, 'nullable');
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Returns validation rules for measurement unit columns.
+     *
+     * The closure rejects any unit that does not belong to the attribute's
+     * measurement family, so an unknown/foreign unit fails the row with a message.
+     */
+    protected function getMeasurementUnitValidationRules(string $attributeCode, $attribute): array
+    {
+        return [
+            'nullable',
+            "required_with:{$attributeCode}_value",
+            function ($column, $value, $fail) use ($attribute): void {
+                if ($value === null || $value === '') {
+                    return;
+                }
+
+                if (! $this->measurementHelper()->isValidUnit($value, $attribute)) {
+                    $fail(trans('data_transfer::app.importers.products.validation.invalid-unit', [
+                        'unit'      => $value,
+                        'attribute' => $attribute->code,
+                    ]));
+                }
+            },
+        ];
     }
 
     /**
@@ -2410,6 +2524,84 @@ class Importer extends AbstractImporter
      * instead of Collection->where('code', ...)->first() per field per row.
      */
     public function prepareAttributeValues(array $rowData, array &$attributeValues): void
+    {
+        $measurementAttributes = $this->getProductTypeFamilyAttributes(
+            $rowData['type'],
+            $rowData[self::ATTRIBUTE_FAMILY_CODE]
+        )->where('type', 'measurement')->keyBy('code');
+
+        $this->prepareNonMeasurementAttributeValues(
+            $this->withoutMeasurementColumns($rowData, $measurementAttributes),
+            $attributeValues
+        );
+
+        if ($measurementAttributes->isEmpty()) {
+            return;
+        }
+
+        $measurementHelper = $this->measurementHelper();
+
+        foreach ($measurementAttributes as $attributeCode => $attribute) {
+            $value = $rowData[$attributeCode] ?? $rowData[$attributeCode.'_value'] ?? null;
+
+            if ($value === null) {
+                continue;
+            }
+
+            if ($value === '') {
+                continue;
+            }
+
+            $unit = $rowData[$attributeCode.'(unit)'] ?? $rowData[$attributeCode.'_unit'] ?? null;
+
+            $structured = $this->fieldProcessor->handleField(
+                $attribute,
+                [
+                    'value' => $value,
+                    'unit'  => $measurementHelper->resolveUnitCode($unit, $attribute, $rowData['locale'] ?? null),
+                ],
+                $this->import->images_directory_path
+            );
+
+            if (! is_array($structured)) {
+                continue;
+            }
+
+            if (! array_key_exists('amount', $structured)) {
+                continue;
+            }
+
+            $attribute->setProductValue(
+                $structured,
+                $attributeValues,
+                $rowData['channel'] ?? null,
+                $rowData['locale'] ?? null
+            );
+        }
+    }
+
+    /**
+     * Strip the measurement value and unit columns so the generic pass does not
+     * mistake "<code>(unit)" for a currency-scoped column of "<code>".
+     */
+    protected function withoutMeasurementColumns(array $rowData, $measurementAttributes): array
+    {
+        foreach ($measurementAttributes as $attributeCode => $attribute) {
+            unset(
+                $rowData[$attributeCode],
+                $rowData[$attributeCode.'_value'],
+                $rowData[$attributeCode.'(unit)'],
+                $rowData[$attributeCode.'_unit']
+            );
+        }
+
+        return $rowData;
+    }
+
+    /**
+     * Save every non-measurement attribute value from the current row.
+     */
+    protected function prepareNonMeasurementAttributeValues(array $rowData, array &$attributeValues): void
     {
         $type = $rowData['type'];
         $familyCode = $rowData[self::ATTRIBUTE_FAMILY_CODE];
