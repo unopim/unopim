@@ -1,4 +1,4 @@
-export const unprotectedModules = new Set([
+export const protectedModules = new Set([
   'attribute-groups',
   'attribute-families',
   'data-transfer-imports',

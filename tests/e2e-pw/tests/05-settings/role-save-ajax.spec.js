@@ -92,22 +92,22 @@ test.describe('Role save posts over AJAX', () => {
 
     await togglePermission(adminPage, 'settings');
 
-    const beforeUrl = adminPage.url();
-
     await saveRoleUpdateAndWait(adminPage);
 
     const errors = (await readFlashes(adminPage)).filter((flash) => flash.type === 'error');
 
     expect(errors, `unexpected error toast(s): ${JSON.stringify(errors)}`).toEqual([]);
 
-    await expect.poll(() => adminPage.url(), { timeout: 30000 }).toBe(beforeUrl);
+    // Verify page did not reload using the __pwNoReload flag set in instrumentFlashes
+    const noReload = await adminPage.evaluate(() => window.__pwNoReload);
+    expect(noReload).toBeTruthy();
 
     await navigateTo(adminPage, 'roles');
     await searchInDataGrid(adminPage, name);
 
     const deleteBtn = adminPage.locator('#app').locator('span[title="Delete"]').first();
 
-    await deleteBtn.click({ timeout: 10000 }).catch(() => {});
-    await adminPage.getByRole('button', { name: 'Delete' }).click().catch(() => {});
+    await deleteBtn.click({ timeout: 10000 }).catch(() => { });
+    await adminPage.getByRole('button', { name: 'Delete' }).click().catch(() => { });
   });
 });

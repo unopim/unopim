@@ -1,14 +1,14 @@
 import { test, expect } from '../../fixtures/base-test';
 import { modules } from '../../constants/modules';
 import { environment } from '../../config/environment';
-import { unprotectedModules } from '../../constants/protectedModules';
+import { protectedModules } from '../../constants/protectedModules';
 
 test.describe('Authorization', () => {
   for (const module of modules.filter(
     (item) =>
       item.path?.startsWith('/admin') &&
       !item.path.includes('{') &&
-      !unprotectedModules.has(item.key)
+      !protectedModules.has(item.key)
   )) {
     test(`@authorization unauthenticated user is blocked from ${module.name}`, async ({ browser }) => {
       const context = await browser.newContext({ storageState: undefined });
