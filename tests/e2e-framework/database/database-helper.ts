@@ -26,7 +26,17 @@ export class DatabaseHelper {
     return Number((rows as Array<{ total: number }>)[0].total);
   }
 
+  async query<T = Record<string, unknown>>(sql: string, params: unknown[] = []): Promise<T[]> {
+    const [rows] = await this.connection.query(sql, params);
+    return rows as T[];
+  }
+
+  async exists(table: string, where: Record<string, string | number | boolean>): Promise<boolean> {
+    return (await this.count(table, where)) > 0;
+  }
+
   async close(): Promise<void> {
     await this.pool?.end();
   }
 }
+

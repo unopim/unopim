@@ -5,7 +5,7 @@ import { environment } from '../config/environment';
 export class ApiClient {
   private token?: string;
 
-  constructor(private readonly request: APIRequestContext) {}
+  constructor(private readonly request: APIRequestContext) { }
 
   async authenticate(): Promise<string | null> {
     if (this.token) {
@@ -22,9 +22,7 @@ export class ApiClient {
         Accept: 'application/json'
       },
       data: {
-        grant_type: 'password',
-        username: environment.adminEmail,
-        password: environment.adminPassword
+        grant_type: 'client_credentials'
       }
     });
 

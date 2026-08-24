@@ -10,7 +10,7 @@ export default async function globalSetup(_config: FullConfig): Promise<void> {
 
   const browser = await chromium.launch({ channel: 'chrome' });
   const page = await browser.newPage({ baseURL: environment.baseUrl });
-  // Navigation and explicit waits removed; LoginPage.login handles login flow.
+
 
   await new LoginPage(page).login();
   await page.context().storageState({ path: environment.storageStatePath });
