@@ -353,9 +353,22 @@ test.describe('Product Edit — rich association Links (bundle_kit custom type)'
 				// rendered DOM never gets a real `placeholder` attribute (see task report).
 				const searchInput = typeSearchDrawer.locator('input[type="text"]').first();
 				await searchInput.fill(BUNDLE_KIT_CODE);
-				await adminPage.waitForTimeout(600);
 
-				await typeSearchDrawer.locator('[role="checkbox"]').filter({ hasText: BUNDLE_KIT_NAME }).first().click();
+				// The drawer debounces its server search (`v-debounce="500"`) and
+				// REBUILDS `searchedTypes` on every response, resetting each row's
+				// `selected` flag. A late response arriving between the checkbox
+				// click and the "Add" click therefore silently un-ticks the row and
+				// `added` comes back empty — "No Associations Added", no tab. Waiting
+				// until the list actually narrowed to exactly the two checkbox rows
+				// (Select All + bundle_kit) guarantees the search has settled before
+				// we tick it.
+				await expect(typeSearchDrawer.locator('[role="checkbox"]')).toHaveCount(2, { timeout: 10000 });
+
+				const bundleKitRow = typeSearchDrawer.locator('[role="checkbox"]').filter({ hasText: BUNDLE_KIT_NAME }).first();
+				await bundleKitRow.click();
+
+				await expect(bundleKitRow).toHaveAttribute('aria-checked', 'true');
+
 				await typeSearchDrawer.getByText('Add', { exact: true }).click();
 
 				await expect(bundleKitTab).toBeVisible();

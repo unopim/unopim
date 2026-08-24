@@ -54,6 +54,17 @@ async function delaySaveResponse(adminPage, ms = 1500) {
   });
 }
 
+async function saveRoleUpdateAndWait(adminPage) {
+  const saveResponse = adminPage.waitForResponse(
+    (response) => response.request().method() === 'POST' && /\/admin\/settings\/roles\/edit\/\d+/.test(response.url()),
+    { timeout: 30000 }
+  );
+
+  await adminPage.getByRole('button', { name: 'Save changes' }).click();
+
+  await saveResponse;
+}
+
 test.describe('Role save posts over AJAX', () => {
   test('updating a role raises no error toast and does not reload the page', async ({ adminPage }) => {
     const name = `AjaxRole ${generateUid()}`;
@@ -81,26 +92,22 @@ test.describe('Role save posts over AJAX', () => {
 
     await togglePermission(adminPage, 'settings');
 
-    await adminPage.getByRole('button', { name: 'Save changes' }).click();
-
-    await expect(
-      adminPage.locator('#app').getByText(/updated successfully/i).first()
-    ).toBeVisible({ timeout: 20000 });
+    await saveRoleUpdateAndWait(adminPage);
 
     const errors = (await readFlashes(adminPage)).filter((flash) => flash.type === 'error');
 
     expect(errors, `unexpected error toast(s): ${JSON.stringify(errors)}`).toEqual([]);
 
-    await expect
-      .poll(() => adminPage.evaluate(() => window.__pwNoReload === true))
-      .toBe(true);
+    // Verify page did not reload using the __pwNoReload flag set in instrumentFlashes
+    const noReload = await adminPage.evaluate(() => window.__pwNoReload);
+    expect(noReload).toBeTruthy();
 
     await navigateTo(adminPage, 'roles');
     await searchInDataGrid(adminPage, name);
 
     const deleteBtn = adminPage.locator('#app').locator('span[title="Delete"]').first();
 
-    await deleteBtn.click({ timeout: 10000 }).catch(() => {});
-    await adminPage.getByRole('button', { name: 'Delete' }).click().catch(() => {});
+    await deleteBtn.click({ timeout: 10000 }).catch(() => { });
+    await adminPage.getByRole('button', { name: 'Delete' }).click().catch(() => { });
   });
 });

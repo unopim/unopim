@@ -1,0 +1,51 @@
+import { expect } from '@playwright/test';
+import type { Page } from '@playwright/test';
+import { environment } from '../../config/environment';
+import { BasePage } from '../base-page';
+
+export class LoginPage extends BasePage {
+  constructor(page: Page) {
+    super(page);
+  }
+
+  readonly email = this.page.getByRole('textbox', { name: /email/i });
+  readonly password = this.page.getByRole('textbox', { name: /password/i });
+  readonly submit = this.page.getByRole('button', { name: /sign in|login/i });
+
+  async open(): Promise<void> {
+    await this.goto(`${environment.adminPath}/login`);
+  }
+
+  async login(email = environment.adminEmail, password = environment.adminPassword): Promise<void> {
+    await this.open();
+    await this.email.fill(email);
+    await this.password.fill(password);
+
+    await this.password.press('Enter');
+    // Never swallow navigation failures here: globalSetup saves the storage
+    // state from this page, so a silent failed login would seed an
+    // unauthenticated session for every test in the run.
+    await this.page.waitForURL((url) => /\/admin\//.test(url.toString()) && !url.pathname.endsWith('/login'), { timeout: 30_000 });
+    await this.page.waitForLoadState('load');
+  }
+
+  /**
+   * Server-side rejection after a well-formed but wrong login attempt.
+   * UnoPim flashes "Please check your credentials and try again." and
+   * redirects back to the login route.
+   */
+  async expectInvalidCredentialsError(): Promise<void> {
+    await expect(this.page.getByText(/check your credentials/i)).toBeVisible();
+    await expect(this.page).toHaveURL(/\/login/);
+  }
+
+  /**
+   * Client-side VeeValidate errors shown when mandatory fields are empty.
+   * These render as `<p class="text-red-600">` next to each control, so we
+   * assert on the error element rather than the whole page (which always
+   * contains the word "password" via the field label).
+   */
+  async expectFieldValidationErrors(): Promise<void> {
+    await expect(this.page.locator('.text-red-600').first()).toBeVisible();
+  }
+}
