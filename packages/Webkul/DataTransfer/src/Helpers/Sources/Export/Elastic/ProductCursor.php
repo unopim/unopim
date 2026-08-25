@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Sources\Export\Elastic;
 
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
@@ -76,7 +77,7 @@ class ProductCursor extends AbstractElasticCursor
                 return array_map(fn (array $hit): array => ['id' => $hit['_id']], $hits);
             }
         } catch (\Throwable $e) {
-            \Log::error('Elasticsearch search error: '.$e->getMessage());
+            Log::error('Elasticsearch search error: '.$e->getMessage());
             throw $e;
         }
 

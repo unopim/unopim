@@ -283,7 +283,7 @@ class ExportController extends Controller
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
         } catch (\Exception $e) {
             // Log the error and redirect with an error message
-            \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
+            Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
             return redirect()->route('admin.settings.data_transfer.tracker.view', $id)
                 ->with('error', 'Failed to start the export process. Please try again.');

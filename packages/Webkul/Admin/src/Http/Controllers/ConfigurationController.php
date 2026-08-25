@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -202,7 +203,7 @@ class ConfigurationController extends Controller
 
             return redirect()->back();
         } catch (\Throwable $th) {
-            \Log::info($th);
+            Log::error($th->getMessage());
             session()->flash('error', trans('admin::app.catalog.products.index.magic-ai-validate-error'));
 
             return redirect()->back();
