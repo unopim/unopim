@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "astrotomic/laravel-translatable",
-            "version": "v11.17.0",
+            "version": "v11.17.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Astrotomic/laravel-translatable.git",
-                "reference": "e29bb7d66017033337e0271a103a940d2d745681"
+                "reference": "b7896348eeaf1038417b32131109515675a84432"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Astrotomic/laravel-translatable/zipball/e29bb7d66017033337e0271a103a940d2d745681",
-                "reference": "e29bb7d66017033337e0271a103a940d2d745681",
+                "url": "https://api.github.com/repos/Astrotomic/laravel-translatable/zipball/b7896348eeaf1038417b32131109515675a84432",
+                "reference": "b7896348eeaf1038417b32131109515675a84432",
                 "shasum": ""
             },
             "require": {
@@ -89,7 +89,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-03-27T14:41:10+00:00"
+            "time": "2026-08-14T20:39:45+00:00"
         },
         {
             "name": "aws/aws-crt-php",

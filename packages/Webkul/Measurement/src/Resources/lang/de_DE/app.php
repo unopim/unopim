@@ -136,14 +136,6 @@ return [
         'max_units'        => 'Eine Messfamilie darf nicht mehr als :max Einheiten haben.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'Die Einheit ":unit" ist keine gültige Einheit für das Maßattribut ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Messfamilie wurde erfolgreich erstellt.',

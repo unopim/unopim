@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Products',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'The unit ":unit" is not a valid unit for the ":attribute" measurement attribute.',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL key: \'%s\' was already generated for an item with the SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Invalid value for attribute family column (attribute family doesn\'t exist?)',
                     'invalid-type'                             => 'Product type is invalid or not supported',
