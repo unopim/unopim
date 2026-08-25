@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Tuotteet',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Yksikkö ":unit" ei ole kelvollinen yksikkö mittausmääritteelle ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
                     'invalid-attribute-family'                 => 'Virheellinen arvo attribuuttiperheen sarakkeelle (attribuuttiperhe ei ehkä ole olemassa?)',
                     'invalid-type'                             => 'Tuotetyyppi on virheellinen tai ei tuettu',

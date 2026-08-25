@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'منتجات',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'الوحدة ":unit" ليست وحدة صالحة لسمة القياس ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'قيمة غير صالحة لعمود عائلة السمات (عائلة السمات غير موجودة؟)',
                     'invalid-type'                             => 'نوع المنتج غير صالح أو غير مدعوم',

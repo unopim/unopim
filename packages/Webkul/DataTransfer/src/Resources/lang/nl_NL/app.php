@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Producten',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'De eenheid ":unit" is geen geldige eenheid voor het meetkenmerk ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-sleutel: \'%s\' is al gegenereerd voor een item met de SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ongeldige waarde voor de attribuutsetkolom (attribuutset bestaat niet?).',
                     'invalid-type'                             => 'Producttype is ongeldig of wordt niet ondersteund.',

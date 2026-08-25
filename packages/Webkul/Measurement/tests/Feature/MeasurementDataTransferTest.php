@@ -141,18 +141,18 @@ it('exports non-measurement attribute columns alongside the measurement pair', f
 
     $attributesCollection = collect([$measurement, $plain]);
 
-    $attributes = $reflection->getParentClass()->getProperty('attributes');
+    $attributes = $reflection->getProperty('attributes');
     $attributes->setAccessible(true);
     $attributes->setValue($exporter, $attributesCollection);
 
-    $buildMeta = $reflection->getParentClass()->getMethod('buildAttributeMeta');
+    $buildMeta = $reflection->getMethod('buildAttributeMeta');
     $buildMeta->setAccessible(true);
 
-    $attributeMeta = $reflection->getParentClass()->getProperty('attributeMeta');
+    $attributeMeta = $reflection->getProperty('attributeMeta');
     $attributeMeta->setAccessible(true);
     $attributeMeta->setValue($exporter, $buildMeta->invoke($exporter, $attributesCollection));
 
-    $currencies = $reflection->getParentClass()->getProperty('currencies');
+    $currencies = $reflection->getProperty('currencies');
     $currencies->setAccessible(true);
     $currencies->setValue($exporter, ['USD']);
 
