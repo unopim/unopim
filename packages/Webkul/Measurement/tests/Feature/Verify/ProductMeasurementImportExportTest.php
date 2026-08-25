@@ -86,18 +86,18 @@ function verifyImpExpExportColumns(array $attributes, array $values, ?string $lo
     $reflection = new ReflectionClass($exporter);
     $collection = collect($attributes);
 
-    $attributesProp = $reflection->getParentClass()->getProperty('attributes');
+    $attributesProp = $reflection->getProperty('attributes');
     $attributesProp->setAccessible(true);
     $attributesProp->setValue($exporter, $collection);
 
-    $buildMeta = $reflection->getParentClass()->getMethod('buildAttributeMeta');
+    $buildMeta = $reflection->getMethod('buildAttributeMeta');
     $buildMeta->setAccessible(true);
 
-    $metaProp = $reflection->getParentClass()->getProperty('attributeMeta');
+    $metaProp = $reflection->getProperty('attributeMeta');
     $metaProp->setAccessible(true);
     $metaProp->setValue($exporter, $buildMeta->invoke($exporter, $collection));
 
-    $currencies = $reflection->getParentClass()->getProperty('currencies');
+    $currencies = $reflection->getProperty('currencies');
     $currencies->setAccessible(true);
     $currencies->setValue($exporter, ['USD']);
 

@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => '產品',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '單位「:unit」不是測量屬性「:attribute」的有效單位。',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL 鍵: \'%s\' 已經為 SKU: \'%s\' 的項目生成。',
                     'invalid-attribute-family'                 => '屬性家族的列值無效 (屬性家族不存在?)',
                     'invalid-type'                             => '產品類型無效或不支持',

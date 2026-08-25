@@ -135,14 +135,6 @@ return [
         'max_units'        => '測定ファミリーは:max件を超える単位を持つことはできません。',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => '単位「:unit」は測定属性「:attribute」の有効な単位ではありません。',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => '測定ファミリーが正常に作成されました。',

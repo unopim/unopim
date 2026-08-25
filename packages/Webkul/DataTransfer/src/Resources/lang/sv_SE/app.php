@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produkter',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Enheten ":unit" är inte en giltig enhet för mätattributet ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-suffix: \'%s\' har redan skapats för en artikel med SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ogiltigt värde för attributfamiljens kolumn (attributfamiljen finns inte?)',
                     'invalid-type'                             => 'Produktens typ är ogiltig eller inte stöds',
