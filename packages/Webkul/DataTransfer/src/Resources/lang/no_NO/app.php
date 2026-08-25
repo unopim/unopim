@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produkter',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Enheten ":unit" er ikke en gyldig enhet for måleattributtet ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-nøkkel: \'%s\' ble allerede generert for en vare med SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ugyldig verdi for attributtfamiliekolonnen (attributtfamilien eksisterer ikke?)',
                     'invalid-type'                             => 'Produkttype er ugyldig eller ikke støttet',

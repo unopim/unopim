@@ -2,9 +2,9 @@
 
 namespace Webkul\Measurement\Tests\Support;
 
-use Webkul\Measurement\Helpers\Exporters\ProductExporter;
+use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter as CoreExporter;
 
-class ChannelScopeMeasurementSpyExporter extends ProductExporter
+class ChannelScopeMeasurementSpyExporter extends CoreExporter
 {
     public array $extractMeasurementInputs = [];
 
