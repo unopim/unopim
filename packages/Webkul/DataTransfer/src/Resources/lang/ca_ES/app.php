@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Productes',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'La unitat ":unit" no és una unitat vàlida per a l\'atribut de mesura ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Clau URL: \'%s\' ja ha estat generada per un element amb l\'SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Valor incorrecte per a la família d\'atributs (la família d\'atributs no existeix?).',
                     'invalid-type'                             => 'Tipus de producte no vàlid o no compatible',

@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Productos',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'La unidad ":unit" no es una unidad válida para el atributo de medida ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Clave URL: \'%s\' ya se ha generado para un artículo con SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Valor no válido para la columna de familia de atributos (¿la familia de atributos no existe?)',
                     'invalid-type'                             => 'El tipo de producto no es válido o no está soportado',

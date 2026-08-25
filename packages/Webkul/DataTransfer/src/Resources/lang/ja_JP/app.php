@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => '製品',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '単位「:unit」は測定属性「:attribute」の有効な単位ではありません。',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URLキー「%s」は、SKU「%s」のアイテムに対して既に生成されています。',
                     'invalid-attribute-family'                 => '属性ファミリー列の値が無効です（属性ファミリーが存在しない可能性があります）',
                     'invalid-type'                             => '製品タイプが無効またはサポートされていません',

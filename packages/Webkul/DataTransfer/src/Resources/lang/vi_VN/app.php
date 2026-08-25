@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Các sản phẩm',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Đơn vị ":unit" không phải là đơn vị hợp lệ cho thuộc tính đo lường ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL key: \'%s\' đã được tạo cho một mục có SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Giá trị không hợp lệ cho cột gia đình thuộc tính (gia đình thuộc tính không tồn tại?)',
                     'invalid-type'                             => 'Loại sản phẩm không hợp lệ hoặc không được hỗ trợ',

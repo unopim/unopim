@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produse',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Unitatea ":unit" nu este o unitate validă pentru atributul de măsură ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Cheie URL: \'%s\' a fost deja generată pentru un articol cu SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Valoare invalidă pentru coloana familiei de atribute (familia de atribute nu există?)',
                     'invalid-type'                             => 'Tip de produs invalid sau neacceptat',

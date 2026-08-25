@@ -5,18 +5,12 @@ namespace Webkul\Measurement\Providers;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Webkul\Attribute\Services\AttributeNormalizerFactory;
-use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
-use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
-use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\Measurement\Console\Commands\RecalculateMeasurementValues;
 use Webkul\Measurement\Filter\Database\MeasurementFilter;
 use Webkul\Measurement\Filter\ElasticSearch\MeasurementFilter as MeasurementElasticSearchFilter;
-use Webkul\Measurement\Helpers\Exporters\ProductExporter;
-use Webkul\Measurement\Normalizer\ProductAttributeValuesNormalizer as MeasurementProductAttributeValuesNormalizer;
 use Webkul\Measurement\Observers\ProductObserver;
 use Webkul\Measurement\Services\Normalizers\MeasurementNormalizer;
 use Webkul\Product\Models\Product;
-use Webkul\Product\Normalizer\ProductAttributeValuesNormalizer;
 
 class MeasurementServiceProvider extends ServiceProvider
 {
@@ -74,26 +68,6 @@ class MeasurementServiceProvider extends ServiceProvider
 
             return $factory;
         });
-
-        $this->app->bind(
-            FieldProcessor::class,
-            \Webkul\Measurement\Helpers\Importers\FieldProcessor::class
-        );
-
-        $this->app->bind(
-            Exporter::class,
-            ProductExporter::class
-        );
-
-        $this->app->bind(
-            ProductAttributeValuesNormalizer::class,
-            MeasurementProductAttributeValuesNormalizer::class
-        );
-
-        $this->app->bind(
-            Importer::class,
-            \Webkul\Measurement\Helpers\Importers\Product\Importer::class
-        );
 
         $this->app->tag(
             [MeasurementFilter::class],
