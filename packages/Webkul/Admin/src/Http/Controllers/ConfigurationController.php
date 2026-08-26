@@ -203,7 +203,7 @@ class ConfigurationController extends Controller
 
             return redirect()->back();
         } catch (\Throwable $th) {
-            Log::error($th->getMessage());
+            Log::error($th->getMessage(), ['exception' => $th]);
             session()->flash('error', trans('admin::app.catalog.products.index.magic-ai-validate-error'));
 
             return redirect()->back();
