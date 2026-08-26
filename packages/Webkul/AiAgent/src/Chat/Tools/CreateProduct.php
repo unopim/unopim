@@ -5,6 +5,7 @@ namespace Webkul\AiAgent\Chat\Tools;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
@@ -329,7 +330,7 @@ class CreateProduct implements PimTool
                             }
                         } catch (\Throwable $e) {
                             $imageAttachError = $e->getMessage();
-                            \Log::warning('CreateProduct: Image attach failed', [
+                            Log::warning('CreateProduct: Image attach failed', [
                                 'product_id' => $product->id,
                                 'image_path' => $imagePath,
                                 'error'      => $e->getMessage(),

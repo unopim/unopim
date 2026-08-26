@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers\Settings\DataTransfer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -300,7 +301,7 @@ class ImportController extends Controller
 
             return redirect()->route('admin.settings.data_transfer.tracker.view', $jobTrackInstance->id);
         } catch (\Throwable $e) {
-            \Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
+            Log::error('Import failed for job instance '.$id.': '.$e->getMessage());
 
             $batchId = $jobTrackInstance?->id ?? $id;
 
