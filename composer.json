@@ -43,7 +43,7 @@
         "prettus/l5-repository": "^4.0",
         "pusher/pusher-php-server": "^7.0",
         "shetabit/visitor": "^4.1",
-        "symfony/intl": "^7.0"
+        "symfony/intl": "^8.1"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^4.2",
