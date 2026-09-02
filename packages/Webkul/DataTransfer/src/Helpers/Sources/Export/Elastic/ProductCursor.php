@@ -3,6 +3,7 @@
 namespace Webkul\DataTransfer\Helpers\Sources\Export\Elastic;
 
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
@@ -36,15 +37,17 @@ class ProductCursor extends AbstractElasticCursor
     {
         $options = self::resolveOptions($this->options);
         $filters = $requestParams['filters'] ?? [];
+        $isFirstFetch = $this->searchAfter === [];
+
         $query = [
-            'track_total_hits' => true,
+            'track_total_hits' => $isFirstFetch,
             '_source'          => false,
             'size'             => $size ?? $this->batchSize,
             'sort'             => ['id' => 'desc'],
             'stored_fields'    => [],
         ];
 
-        if ($this->searchAfter !== []) {
+        if (! $isFirstFetch) {
             $query['search_after'] = $this->searchAfter;
         }
 
@@ -63,7 +66,10 @@ class ProductCursor extends AbstractElasticCursor
 
             $response = ElasticSearch::search($request);
             $hits = $response['hits']['hits'] ?? [];
-            $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
+
+            if ($isFirstFetch) {
+                $this->retrievedCount = $response['hits']['total']['value'] ?? 0;
+            }
 
             if (! empty($hits)) {
                 $this->searchAfter = end($hits)['sort'];
@@ -71,7 +77,7 @@ class ProductCursor extends AbstractElasticCursor
                 return array_map(fn (array $hit): array => ['id' => $hit['_id']], $hits);
             }
         } catch (\Throwable $e) {
-            \Log::error('Elasticsearch search error: '.$e->getMessage());
+            Log::error('Elasticsearch search error: '.$e->getMessage());
             throw $e;
         }
 

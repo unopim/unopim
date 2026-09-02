@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Ürünler',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '":unit" birimi, ":attribute" ölçüm özelliği için geçerli bir birim değil.',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL anahtar: \'%s\' SKU: \'%s\' için zaten bir öğe için oluşturuldu.',
                     'invalid-attribute-family'                 => 'Attribut ailesinin kolonundaki değer geçersiz (attribut ailesi mevcut değil mi?)',
                     'invalid-type'                             => 'Ürün türü geçersiz veya desteklenmiyor',

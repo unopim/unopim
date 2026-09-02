@@ -292,10 +292,21 @@ async function setMeasurementValue(page, amount) {
   await unitSelect.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 10000 });
   await page.waitForTimeout(900);
 
-  const firstOption = unitSelect.locator('li.multiselect__element').first();
-  await firstOption.waitFor({ state: 'visible', timeout: 12000 });
-  const unitLabel = cleanOptionLabel(await firstOption.innerText());
-  await firstOption.click();
+  const options = unitSelect.locator('li.multiselect__element');
+  await options.first().waitFor({ state: 'visible', timeout: 12000 });
+
+  const reachable = await unitSelect.evaluate((select) => {
+    const header = document.querySelector('.js-sticky-header');
+    const limit = header ? header.getBoundingClientRect().bottom : 0;
+
+    return [...select.querySelectorAll('li.multiselect__element')]
+      .findIndex((option) => option.getBoundingClientRect().top >= limit);
+  });
+
+  const option = options.nth(Math.max(reachable, 0));
+  const unitLabel = cleanOptionLabel(await option.innerText());
+
+  await option.click();
   await page.keyboard.press('Escape').catch(() => {});
 
   return unitLabel;

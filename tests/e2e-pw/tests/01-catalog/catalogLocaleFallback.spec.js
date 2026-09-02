@@ -21,7 +21,7 @@ test.describe('Catalog Locale - Fallback When Not Configured (#1247)', () => {
 
     await expect(activeLocale).toBeVisible();
 
-    const body = await adminPage.textContent('body');
+    const body = await adminPage.innerText('body');
 
     expect(body).not.toContain('(de_DE)');
   });

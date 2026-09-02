@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Mga Produkto',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Ang yunit na ":unit" ay hindi wastong yunit para sa katangiang panukat na ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Ang URL key: \'%s\' ay na-generate na para sa isang item na may SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Walang katanggap-tanggap na halaga para sa kolum ng pamilya ng mga attribute (ang pamilya ng mga attribute ay wala?)',
                     'invalid-type'                             => 'Ang uri ng produkto ay hindi wasto o hindi suportado',

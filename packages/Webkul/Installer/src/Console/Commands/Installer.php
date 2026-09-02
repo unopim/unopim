@@ -32,6 +32,13 @@ use function Laravel\Prompts\text;
 class Installer extends Command
 {
     /**
+     * Server-based drivers the wizard can configure. Kept in step with the
+     * connections in `config/database.php` — a driver missing here is a driver
+     * nobody can install onto.
+     */
+    public const DATABASE_DRIVERS = ['mysql', 'mariadb', 'pgsql', 'sqlsrv'];
+
+    /**
      * Locales list.
      *
      * @var array
@@ -122,6 +129,9 @@ class Installer extends Command
 
         $this->warn('Step: Generating key...');
         $this->call('key:generate');
+
+        $this->warn('Step: Generating API signing keys...');
+        $this->call('unopim:passport:keys');
 
         if (config('elasticsearch.enabled') == 'true') {
             $this->warn('Step: Testing ElasticSearch Connection...');
@@ -525,8 +535,8 @@ class Installer extends Command
         $databaseDetails = [
             'DB_CONNECTION' => select(
                 'Please select the database connection',
-                ['mysql', 'pgsql', 'sqlsrv'],
-                default: in_array(static::envDefault('DB_CONNECTION'), ['mysql', 'pgsql', 'sqlsrv'], true)
+                static::DATABASE_DRIVERS,
+                default: in_array(static::envDefault('DB_CONNECTION'), static::DATABASE_DRIVERS, true)
                     ? static::envDefault('DB_CONNECTION')
                     : 'mysql'
             ),

@@ -16,6 +16,7 @@ return new class extends Migration
 
         switch ($driver) {
             case 'mysql':
+            case 'mariadb':
                 Schema::table('oauth_personal_access_clients', function (Blueprint $table) {
                     $table->uuid('client_id')->change();
                 });
@@ -41,6 +42,7 @@ return new class extends Migration
 
         switch ($driver) {
             case 'mysql':
+            case 'mariadb':
                 Schema::table('oauth_personal_access_clients', function (Blueprint $table) {
                     $table->unsignedBigInteger('client_id')->change();
                 });

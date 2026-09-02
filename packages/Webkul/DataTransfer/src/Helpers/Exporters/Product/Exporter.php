@@ -21,6 +21,8 @@ use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
+use Webkul\Measurement\Helpers\MeasurementHelper;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Exporter extends AbstractExporter
@@ -66,6 +68,11 @@ class Exporter extends AbstractExporter
     protected array $attributeMeta = [];
 
     /**
+     * Resolved once per exporter instance rather than per exported row.
+     */
+    protected ?MeasurementHelper $measurementHelper = null;
+
+    /**
      * Attribute codes selected in the export profile. When empty every
      * attribute value is exported.
      *
@@ -81,6 +88,8 @@ class Exporter extends AbstractExporter
      */
     protected $optionLabelMaps = [];
 
+    protected ?VariantValueResolver $variantValueResolver = null;
+
     /**
      * Create a new instance.
      */
@@ -92,6 +101,11 @@ class Exporter extends AbstractExporter
         protected ProductSource $productSource,
     ) {
         parent::__construct($exportBatchRepository, $exportFileBuffer);
+    }
+
+    protected function variantValueResolver(): VariantValueResolver
+    {
+        return $this->variantValueResolver ??= app(VariantValueResolver::class);
     }
 
     /**
@@ -266,9 +280,6 @@ class Exporter extends AbstractExporter
 
         $this->prepareProducts($batch, $filePath);
 
-        /**
-         * Update export batch process state summary
-         */
         $this->updateBatchState($batch->id, Export::STATE_PROCESSED);
 
         Event::dispatch('data_transfer.exports.batch.export.after', $batch);
@@ -379,6 +390,11 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare products from current batch
+     *
+     * Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns stay opt-in (default off);
+     * the dedicated association export job is the rich, row-per-link alternative. Row data is built
+     * from model properties rather than `toArray()`, which triggers Astrotomic Translatable's
+     * `getTranslation()` for every configured locale (~8ms/product).
      */
     public function prepareProducts(JobTrackBatchContract $batch, $filePath): void
     {
@@ -386,17 +402,18 @@ class Exporter extends AbstractExporter
 
         $productsByIds = $this->getItemsFromIds($flatIds);
 
-        // Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns are opt-in
-        // (default off) so the product export stays clean by default. The dedicated
-        // association export job is the rich, row-per-link alternative for this data.
+        $mergedValuesById = $this->variantValueResolver()->resolveBatch(
+            $productsByIds->map(fn ($product) => [
+                'id'        => $product->id,
+                'parent_id' => $product->parent_id,
+                'values'    => $product->values,
+            ])
+        );
+
         $withAssociations = (bool) ($this->getFilters()['with_associations'] ?? false);
 
         foreach ($productsByIds as $product) {
-            // Build rowData directly from model properties instead of calling toArray().
-            // Calling $product->toArray() triggers attribute_family->toArray() which invokes
-            // Astrotomic Translatable::getTranslation() for every configured locale (~8ms/product).
-            // Direct property access avoids that entirely.
-            $productValues = $product->values ?? [];
+            $productValues = $mergedValuesById[$product->id] ?? ($product->values ?? []);
 
             $rowData = [
                 'type'             => $product->type,
@@ -596,9 +613,84 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Sets attribute values for a product. If an attribute is not present in the given values array,
+     * Sets attribute values for a product.
+     *
+     * Measurement attributes are withheld from the generic pass so it emits an
+     * empty placeholder column in its usual position, then filled in here as the
+     * amount plus a companion "<code>(unit)" column holding the unit label.
      */
     protected function setAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
+    {
+        $measurementMeta = array_filter(
+            $this->attributeMeta,
+            fn (array $meta): bool => ($meta['type'] ?? null) === 'measurement'
+        );
+
+        if ($measurementMeta === []) {
+            return $this->setNonMeasurementAttributesValues($values, $filePath, $locale);
+        }
+
+        $attributeValues = $this->setNonMeasurementAttributesValues(
+            array_diff_key($values, array_fill_keys(array_column($measurementMeta, 'code'), true)),
+            $filePath,
+            $locale
+        );
+
+        $measurementHelper = $this->measurementHelper();
+
+        foreach ($measurementMeta as $meta) {
+            $code = $meta['code'];
+
+            if (! $this->isAttributeValueExported($code)) {
+                $attributeValues[$code] = null;
+                $attributeValues["{$code}(unit)"] = null;
+
+                continue;
+            }
+
+            [$amount, $unit] = $this->extractMeasurement($values[$code] ?? null);
+
+            $attributeValues[$code] = EscapeFormulaOperators::escapeValue($amount);
+
+            $attributeValues["{$code}(unit)"] = EscapeFormulaOperators::escapeValue(
+                $measurementHelper->getUnitLabel($unit, $meta['attribute'], $locale)
+            );
+        }
+
+        return $attributeValues;
+    }
+
+    /**
+     * Resolve the measurement helper lazily, so an export with no measurement
+     * attribute never builds it.
+     */
+    protected function measurementHelper(): MeasurementHelper
+    {
+        return $this->measurementHelper ??= resolve(MeasurementHelper::class);
+    }
+
+    /**
+     * Resolve the amount and unit from a stored measurement value.
+     */
+    protected function extractMeasurement(mixed $value): array
+    {
+        $data = is_array($value) ? $value : [];
+
+        if (isset($data['<all_channels>']['<all_locales>'])) {
+            $data = $data['<all_channels>']['<all_locales>'];
+        }
+
+        return [
+            $data['amount'] ?? null,
+            $data['unit'] ?? null,
+        ];
+    }
+
+    /**
+     * Sets attribute values for every non-measurement attribute. If an attribute is
+     * not present in the given values array,
+     */
+    protected function setNonMeasurementAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
     {
         $attributeValues = [];
         $filters = $this->getFilters();

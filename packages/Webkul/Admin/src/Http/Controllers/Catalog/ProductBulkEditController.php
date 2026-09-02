@@ -7,12 +7,14 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\BulkEditRequest;
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Filesystem\FileStorer;
@@ -80,7 +82,9 @@ class ProductBulkEditController extends Controller
     }
 
     /**
-     * Show the bulk edit page with filtered products and attributes.
+     * Show the bulk edit page with filtered products and attributes. Columns follow
+     * the order the attributes were selected in, with sku first: a whereIn carries no
+     * ordering of its own, so the rows come back in whatever order the table holds.
      */
     public function index(): View|RedirectResponse
     {
@@ -97,11 +101,19 @@ class ProductBulkEditController extends Controller
             array_unshift($attributeIds, $sku->id);
         }
 
-        $columns = $this->attributeRepository->whereIn('id', $attributeIds)->with('translations')->get()->toArray();
+        $columns = $this->attributeRepository
+            ->whereIn('id', $attributeIds)
+            ->with('translations')
+            ->get()
+            ->sortBy(fn ($attribute) => array_search($attribute->id, $attributeIds, true))
+            ->values()
+            ->toArray();
 
         $products = $this->productRepository
             ->with('parent.parent')
             ->findWhereIn('id', $productIds);
+
+        $this->variantStructurePlanner->primeStructuresFor($products);
 
         $attributeCodes = array_column($columns, 'code');
 
@@ -113,32 +125,16 @@ class ProductBulkEditController extends Controller
     }
 
     /**
-     * A product's own values, the values it inherits from its real
-     * ancestors (for locked cells — same owner-resolution as the
-     * single-product edit page's {@see ProductController::buildVariantFieldLocks()}),
-     * and each selected attribute's state at this product's own structure level:
-     * - "own": editable here.
-     * - "inherited": owned by an ancestor; locked, shows the owner's value.
-     * - "na": owned by a level below this product; locked, no value to show.
+     * Own values, values inherited from real ancestors, and each code's state here:
+     * "own" (editable), "inherited" (locked, shows the owner's value) or "na"
+     * (owned below this level). Owners come from {@see VariantStructurePlanner::ownsAtOwnLevel()},
+     * not a placement lookup, because axes carry no placement row.
      */
     protected function buildBulkEditRow(Product $product, array $attributeCodes): array
     {
         $structure = $this->variantStructurePlanner->structureFor($product);
 
-        $configurableAncestor = $product;
-
-        while ($configurableAncestor && $configurableAncestor->type !== 'configurable') {
-            $configurableAncestor = $configurableAncestor->parent;
-        }
-
-        $groupAncestor = $product->type === 'simple' && $product->parent?->type === 'variant_group'
-            ? $product->parent
-            : null;
-
-        $ownerByLevel = [
-            'common'     => $configurableAncestor,
-            'sub_parent' => $groupAncestor,
-        ];
+        $ancestors = $this->ancestorsOf($product);
 
         $locks = [];
         $inheritedValues = [
@@ -163,13 +159,21 @@ class ProductBulkEditController extends Controller
 
             $locks[$code] = 'inherited';
 
-            $placement = $structure ? $this->variantStructurePlanner->placementOf($structure, $code) : 'common';
-            $owner = $ownerByLevel[$placement] ?? null;
+            foreach ($ancestors as $ancestor) {
+                if ($this->variantStructurePlanner->ownsAtOwnLevel($ancestor, $code)) {
+                    $this->copyAttributeValue($ancestor->values ?? [], $inheritedValues, $code);
 
-            if ($owner) {
-                $this->copyAttributeValue($owner->values ?? [], $inheritedValues, $code);
+                    break;
+                }
             }
         }
+
+        $ownAxisCodes = $structure
+            ? array_values(array_filter(
+                $this->variantStructurePlanner->allAxisCodes($structure),
+                fn (string $code): bool => $this->variantStructurePlanner->ownsAtOwnLevel($product, $code)
+            ))
+            : [];
 
         return [
             'id'                   => $product->id,
@@ -179,7 +183,29 @@ class ProductBulkEditController extends Controller
             'values'               => $product->values,
             'inheritedValues'      => $inheritedValues,
             'locks'                => $locks,
+            'axes'                 => $ownAxisCodes,
         ];
+    }
+
+    /**
+     * A product's real ancestors, nearest first. The same chain
+     * {@see VariantValueResolver::resolve()} merges over, walked with the same
+     * depth guard so a cycle in parent_id cannot spin here either.
+     *
+     * @return array<int, Product>
+     */
+    protected function ancestorsOf(Product $product): array
+    {
+        $ancestors = [];
+        $node = $product->parent;
+        $guard = 0;
+
+        while ($node && $guard++ < 10) {
+            $ancestors[] = $node;
+            $node = $node->parent;
+        }
+
+        return $ancestors;
     }
 
     /**
@@ -298,6 +324,10 @@ class ProductBulkEditController extends Controller
 
         $errors = $this->validateNumericAttributeValues($data['data'] ?? []);
 
+        if (empty($errors)) {
+            $errors = $this->validateVariantLevelValues($data['data'] ?? []);
+        }
+
         if (! empty($errors)) {
             return response()->json([
                 'message' => trans('admin::app.catalog.products.bulk-edit.validation.failed'),
@@ -387,6 +417,108 @@ class ProductBulkEditController extends Controller
     }
 
     /**
+     * Pre-flight variant-level check so a forbidden write is reported in this request
+     * rather than as a job-tracker warning. Runs {@see ProductRepository::guardVariantLevelWrite()}
+     * with no persist closure, so it writes nothing. Fast feedback only —
+     * {@see BulkProductUpdate} still guards at write time and must keep doing so.
+     *
+     * @param  array<int|string, mixed>  $data  Bulk-edit payload, keyed by product id.
+     * @return array<string, array<int, string>>
+     */
+    protected function validateVariantLevelValues(array $data): array
+    {
+        $productIds = array_filter(array_keys($data), 'is_numeric');
+
+        if ($productIds === []) {
+            return [];
+        }
+
+        $attributeCodes = [];
+
+        foreach ($data as $perProduct) {
+            if (is_array($perProduct)) {
+                $attributeCodes += array_flip(array_keys($perProduct));
+            }
+        }
+
+        unset($attributeCodes['sku']);
+
+        if ($attributeCodes === []) {
+            return [];
+        }
+
+        $attributes = $this->attributeRepository
+            ->whereIn('code', array_keys($attributeCodes))
+            ->get()
+            ->keyBy('code');
+
+        $products = $this->productRepository
+            ->with('parent.parent')
+            ->findWhereIn('id', $productIds)
+            ->filter(fn (Product $product): bool => (bool) $product->parent_id);
+
+        $this->variantStructurePlanner->primeStructuresFor($products);
+
+        $errors = [];
+
+        foreach ($products as $product) {
+            $submittedCommon = $this->submittedCommonValues($data[$product->id] ?? [], $attributes);
+
+            if ($submittedCommon === []) {
+                continue;
+            }
+
+            try {
+                $this->productRepository->guardVariantLevelWrite(
+                    $product,
+                    $submittedCommon,
+                    null,
+                    $this->variantStructurePlanner
+                );
+            } catch (ValidationException $e) {
+                foreach ($e->errors() as $key => $messages) {
+                    foreach ($messages as $message) {
+                        $errors[$key][] = $product->sku.': '.$message;
+                    }
+                }
+            }
+        }
+
+        return $errors;
+    }
+
+    /**
+     * The scope-less values from one product's bulk-edit row, the shape
+     * {@see ProductRepository::guardVariantLevelWrite()} expects. Channel- and
+     * locale-scoped attributes are dropped because their payload is bucketed by
+     * scope; what a product may write is left to the guard.
+     *
+     * @param  mixed  $row  One product's submitted attribute code => value pairs.
+     * @param  Collection<string, Attribute>  $attributes  Submitted attributes, keyed by code.
+     * @return array<string, mixed>
+     */
+    protected function submittedCommonValues(mixed $row, Collection $attributes): array
+    {
+        if (! is_array($row)) {
+            return [];
+        }
+
+        $common = [];
+
+        foreach ($row as $code => $value) {
+            $attribute = $attributes->get($code);
+
+            if (! $attribute || $attribute->isLocaleBasedAttribute() || $attribute->isChannelBasedAttribute()) {
+                continue;
+            }
+
+            $common[$code] = $value;
+        }
+
+        return $common;
+    }
+
+    /**
      * Yield every scalar leaf from an arbitrarily-nested array.
      */
     protected function flattenScalarValues(mixed $value): \Generator
@@ -419,33 +551,11 @@ class ProductBulkEditController extends Controller
     }
 
     /**
-     * Axis attribute ids for every variant structure the given products
-     * belong to. Axis attributes define a variant's identity, so they are
-     * never offered as a bulk-edit column.
-     */
-    protected function axisAttributeIdsForProducts(array $productIds): array
-    {
-        $products = $this->productRepository
-            ->with('parent.parent')
-            ->findWhereIn('id', $productIds);
-
-        $axisCodes = [];
-
-        foreach ($products as $product) {
-            if ($structure = $this->variantStructurePlanner->structureFor($product)) {
-                $axisCodes = array_merge($axisCodes, $this->variantStructurePlanner->allAxisCodes($structure));
-            }
-        }
-
-        if (empty($axisCodes)) {
-            return [];
-        }
-
-        return $this->attributeRepository->whereIn('code', array_unique($axisCodes))->pluck('id')->all();
-    }
-
-    /**
-     * Retrieve attributes for bulk edit.
+     * Retrieve attributes for bulk edit. Axis attributes are offered like any other
+     * because {@see ProductRepository::guardVariantLevelWrite()} accepts an axis write
+     * on the node owning it and rejects only a sibling tuple collision. The family
+     * filter is skipped when it resolves nothing, so a stale session of deleted
+     * product ids leaves the picker unfiltered rather than empty.
      */
     public function getAttributes(Request $request): JsonResponse
     {
@@ -465,12 +575,8 @@ class ProductBulkEditController extends Controller
                 ->pluck('a.id')
                 ->toArray();
 
-            $query = $query->whereIn('id', $familyAttributeIds);
-
-            $axisAttributeIds = $this->axisAttributeIdsForProducts($productIds);
-
-            if (! empty($axisAttributeIds)) {
-                $query = $query->whereNotIn('id', $axisAttributeIds);
+            if ($familyAttributeIds !== []) {
+                $query = $query->whereIn('id', $familyAttributeIds);
             }
         }
 

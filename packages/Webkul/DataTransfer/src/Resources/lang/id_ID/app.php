@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produk',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Satuan ":unit" bukan satuan yang valid untuk atribut pengukuran ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Kunci URL: \'%s\' telah dibuat untuk item dengan SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Nilai tidak valid untuk kolom keluarga atribut (keluarga atribut tidak ada?)',
                     'invalid-type'                             => 'Jenis produk tidak valid atau tidak didukung',

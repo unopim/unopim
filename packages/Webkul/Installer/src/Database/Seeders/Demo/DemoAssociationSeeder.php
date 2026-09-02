@@ -158,7 +158,6 @@ class DemoAssociationSeeder extends Seeder
                 'is_required'      => $field['is_required'] ?? false,
                 'is_unique'        => false,
                 'status'           => true,
-                'section'          => $field['section'] ?? 'left',
                 'value_per_locale' => $field['value_per_locale'] ?? false,
                 'enable_wysiwyg'   => $field['enable_wysiwyg'] ?? false,
                 'updated_at'       => $now,

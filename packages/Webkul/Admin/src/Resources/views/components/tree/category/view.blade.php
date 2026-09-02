@@ -93,7 +93,8 @@
                     </p>
 
                     <div
-                        class="flex flex-col gap-0.5 px-2 py-1.5 rounded-md cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800"
+                        class="flex flex-col gap-0.5 px-2 py-1.5 rounded-md"
+                        :class="canChooseResult ? 'cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800' : ''"
                         v-for="result in searchResults"
                         :key="result.id"
                         @click="chooseResult(result)"
@@ -207,6 +208,10 @@
                     type: Boolean,
                     default: false
                 },
+                allowEdit: {
+                    type: Boolean,
+                    default: false
+                },
                 allowDelete: {
                     type: Boolean,
                     default: false
@@ -276,10 +281,18 @@
                 isSearching() {
                     return this.searchTerm.trim().length > 0;
                 },
+
+                canChooseResult() {
+                    return ! this.navigateOnSelect || this.allowEdit;
+                },
             },
 
             methods: {
                 navigateTo(categoryId) {
+                    if (! this.allowEdit) {
+                        return;
+                    }
+
                     const url = new URL(this.createUrl, window.location.origin);
 
                     url.searchParams.set('category', categoryId);

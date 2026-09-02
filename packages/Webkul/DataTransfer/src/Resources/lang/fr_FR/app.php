@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produits',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'L\'unité ":unit" n\'est pas une unité valide pour l\'attribut de mesure ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-Schlüssel: \'%s\' wurde bereits für einen Artikel mit der SKU: \'%s\' generiert.',
                     'invalid-attribute-family'                 => 'Ungültiger Wert für die Spalte „Attributfamilie“ (Attributfamilie existiert nicht?)',
                     'invalid-type'                             => 'Der Produkttyp ist ungültig oder wird nicht unterstützt',

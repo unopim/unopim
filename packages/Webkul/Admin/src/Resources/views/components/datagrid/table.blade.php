@@ -99,6 +99,7 @@
                             <p
                                 v-for="column in visibleColumns"
                                 :key="column.index"
+                                :data-grid-column="column.index"
                                 class="flex gap-1.5 items-center min-w-0"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
@@ -141,9 +142,10 @@
                     <template v-else>
                         <template v-if="$parent.available.records.length">
                             <div
-                                class="row grid gap-2.5 items-center px-4 py-4 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all"
                                 v-for="record in $parent.available.records"
                                 :key="record[$parent.available.meta.primary_column]"
+                                :class="{'cursor-pointer hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800': isRowEditable(record)}"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
                                 @click="handleRowClick($event, record)"
                             >
@@ -302,6 +304,10 @@
             },
 
             methods: {
+                isRowEditable(record) {
+                    return (record.actions ?? []).some(action => action.index === 'edit');
+                },
+
                 handleRowClick(event, record) {
                     this.$parent.handleRowClick(event, record);
                 },

@@ -1,3 +1,97 @@
+# 3.1.0 — August 27th, 2026
+
+## Bug fixes
+
+- Restricted the variant uniqueness check to the axis codes declared by the parent structure, fixing an unescaped JSON path.
+- Fixed the product edit form incorrectly locking an axis attribute at the level that owns it.
+- Fixed configurable product creation returning a server error when a duplicate SKU is used.
+- Fixed REST locale, currency, and channel endpoints returning 400 instead of 404 for unknown codes.
+- Fixed bulk edit leaving inherited axis cells blank by resolving values from the appropriate placement rows.
+- Fixed bulk edit media cells remaining empty until clicked, and locked cells incorrectly showing upload and delete controls.
+- Fixed bulk edit columns ignoring the order in which attributes were selected.
+- Fixed variant structure effective placements being returned in an unstable order.
+- Fixed product webhooks losing slow writes and reporting a creation instead of an update.
+- Fixed product webhooks omitting SKU renames, resulting in an empty difference.
+- Fixed variant groups not being announced as created products.
+- Fixed category export failing when a job does not include the `with_media` filter.
+- Fixed variant structure REST API handling for attribute family structures, including CRUD operations and deletion restrictions.
+- Fixed variant structure payloads to correctly return `effective_placements` and identify the tier governing each attribute.
+- Fixed configurable product REST API handling for variant groups and their tier information.
+- Added a consistent variant-level write guard across all save paths to prevent attributes from being modified at the wrong ownership level and to reject conflicting axis renames during persistence.
+- Fixed bulk edit variant-level handling so ancestor-owned cells are locked and display the owner's value, while lower-level cells remain locked and empty.
+- Fixed edit surfaces not being gated on the module's edit permission: datagrid rows stayed clickable, rows on some settings and Magic AI grids navigated to an undefined URL, the users grid rendered dead edit and delete icons, an administrator with only copy permission could duplicate a product by clicking its row, one with only delete permission on Magic AI platforms was taken to delete instead of edit, and the category tree, tree overview, and category edit panel URL were reachable without it.
+- Fixed saving a Magic AI system prompt logging a status-change audit entry even when the enabled flag had not changed.
+- Fixed media handling on product, category, and attribute forms: gallery image order was lost when reordering, read-only tiles still accepted dragged files, downloads were available regardless of permission on the owning module, and locked media on a variant group's child could be neither previewed nor downloaded.
+- Fixed Docker deployments where the queue and scheduler containers crash-looped without write access to the cache directory, and image upgrades regenerated the API OAuth signing keys, invalidating every issued token.
+- Fixed product saves showing a generic invalid-extension error when media pointed at another product's folder, and returning a server error instead of a validation error when the values field was omitted.
+- Fixed the searchable dropdown opening off-screen, losing its selected-item checkmark, and rendering beneath the pinned page header, and fixed association types selected from the overflow menu leaving every tab unselected.
+- Fixed the association type and measurement unit modals showing one label input per locale, which became unusable on catalogs with many locales, by moving the labels behind the locale switcher.
+- Fixed product import storing media under the wrong product, allowing a row to set a value it does not own, silently creating orphan variant rows when the named parent did not exist, failing the row or wiping values when a media reference could not be resolved, and requiring non-axis attributes on structures with no placement rows.
+- Fixed the attribute option grid rendering labels blank on PostgreSQL because a per-locale column alias was case-folded.
+- Fixed demo installation data that failed on a fresh install with demo data enabled: sample import profiles resolved to no file, seeded variant structure codes were rejected by validation, seeded values were placed at the wrong ownership level, association fields used types the field builder cannot create or edit, and saved grid filters and views did not apply correctly.
+- Fixed clearing or deleting an applied saved grid filter leaving its columns, sort, and paging in place instead of restoring the grid's default layout, and the product passport datagrid omitting bulk withdraw and reinstate from its mass actions.
+- Added a confirmation step before deleting an AI Agent conversation, and fixed a failed deletion silently removing the conversation from the visible list while it remained on the server.
+- Fixed the REST product associations write path silently deleting association links that a PUT or PATCH request did not include.
+- Fixed the product grid, CSV export, and REST API showing a blank value for a common attribute set only on a parent product, for variant groups and their children.
+- Fixed exported product media being copied to a disk the export archiver did not read from, leaving media out of the downloaded export.
+- Fixed a structured variant's SKU being treated as an ancestor-owned attribute, blocking it from being renamed.
+- Fixed the bulk edit select-cell attribute lookup using a column's position instead of its attribute id, so the dropdown never populated and typing found nothing.
+- Fixed the Digital Product Passport settings link pointing at a page that no longer exists, and the datagrid toolbar wrapping onto a second row and stranding pagination when the side panel or sidebar was open.
+- Fixed the product exporter's constructor requiring an extra argument, breaking packages that extended it or the product API data source.
+- Fixed importers that source their data over an API instead of an uploaded file being impossible to create with a valid validation strategy, and impossible to run once created.
+- Fixed every query routed through the shared grammar failing on MariaDB, which Laravel reports under its own driver name rather than as MySQL.
+- Fixed the OAuth migrations silently doing nothing on MariaDB, leaving `oauth_clients.id` a bigint where the REST API expects a UUID.
+- Fixed publication version payloads keeping a 64 KB column on MariaDB, truncating larger payloads with no error.
+- Fixed the audit triggers never being created on MariaDB, so the audit trail recorded nothing.
+- Fixed a fresh MariaDB installation failing because the database was never created, and the installation wizard never offering MariaDB as a choice.
+- Fixed the upgrade backup aborting on MariaDB 11, which ships `mariadb-dump` and only a deprecated `mysqldump` shim, and the upgrade preflight reporting a database size of zero there.
+- Fixed product import losing its bulk-mode optimisation on MariaDB, and import/export profile values going unnormalised on any driver other than MySQL and PostgreSQL.
+- Fixed a full Elasticsearch reindex paging without a stable order, so rows could be skipped or indexed twice, and re-scanning every preceding row, which made the walk degrade quadratically as the catalog grew.
+- Fixed the product and category indexers reconciling stale documents by requesting the whole index in a single search, so the response had to fit in PHP's memory limit.
+- Fixed parallel indexing dropping any range whose worker failed to fork, treating a child killed by a signal as a success, and leaving deleted products searchable because only the serial path pruned stale documents.
+- Fixed the dashboard statistics cache never warming, because its lifetime was shorter than the queries that fill it, and `unopim:dashboard:refresh` clearing the keys without recomputing them, handing a catalog-wide scan to whichever request arrived next.
+- Fixed the export batch supervisor timing out mid-run on large exports and orphaning batches as pending, and its retries re-entering a job that could not finish either.
+
+## New features
+
+- Association types are now managed over the REST API: list, read, create, update and delete a type under `api/v1/rest/association-types`, and manage its fields under the same prefix, with ACL entries of their own.
+- Attribute family variant structures and variant groups are now managed over the REST API — structure CRUD under `api/v1/rest/families/{code}/variant-structures`, and variant groups through `?type=` on the configurable products endpoint — returning a deterministic `effective_placements` ordering and refusing to delete a structure a product still references.
+- MariaDB is supported as a first-class database driver, offered by the installation wizard alongside MySQL and PostgreSQL, and guarded by a test that fails the build when a file decides on the MySQL driver without naming MariaDB.
+- Media on products, categories and attribute options can be downloaded from the admin through an authenticated endpoint that allow-lists the path segment, the extension and the permission governing each root, configurable in `admin::media.downloadable_roots`, replacing the previous new-tab link.
+- The Elasticsearch product indexer accepts `--workers`, indexing disjoint id ranges in parallel processes and falling back to the parent process where forking is unavailable or fails.
+- `unopim:passport:keys` provisions the API signing key pair into `storage/app/private/oauth`, configurable through `api.oauth_key_path` or `UNOPIM_OAUTH_KEY_PATH`, and runs from installation, upgrade and the Docker entrypoint so a container upgrade no longer regenerates it.
+
+## Improvements
+
+- A full Elasticsearch reindex walks the catalog by keyset instead of `OFFSET` and can shard across forked workers: measured against ten million products, 470 to 5,526 documents per second, a complete reindex in 30 minutes rather than a projected six hours.
+- The dashboard aggregates are covered by indexes on `(type, status)`, `created_at`, `(updated_at, created_at)` and `avg_completeness_score`: measured against ten million products, product statistics fall from 1,159 s to 4.6 s, activity from 1,159 s and 433 s to 4.6 s and 3.6 s, and needs-attention from 348 s to 1.3 s.
+- The dashboard statistics cache now lives for an hour, and `unopim:dashboard:refresh` recomputes it on the scheduler instead of leaving the keys cold, reporting the time each aggregate took.
+- The export batch supervisor derives its timeout from the size of the export, capped at a day so a large catalog cannot produce a timeout that disables stuck-job detection.
+- The Elasticsearch export cursor asks for the total hit count once per cursor instead of once per page.
+- A rejected media path now reports which file was rejected and why, instead of reporting a path-prefix violation as an unsupported extension.
+- The installation wizard offers the optional connector packages by default, `INSTALLER_OPTIONAL_PACKAGES` having changed from off to on, and no longer lists the Bagisto connector.
+
+## Technical Improvements
+
+- Measurement import, export and normalisation moved into the core data-transfer classes. They were previously four subclasses bound over the core ones in the container, where any other package binding the same class silently won and the loser's columns disappeared without an error. Runtime behaviour is unchanged.
+- `DatabaseDriverCoverageTest` fails the build when a file under `packages/` branches on the `mysql` driver without naming `mariadb`, the failure mode that let eleven MariaDB defects accumulate unnoticed.
+- The `Log` facade is imported explicitly rather than resolved through the root alias, which PHPStan 2.2.9 no longer resolves, and a swallowed configuration error is logged at error level with its exception context.
+- CI records the test-impact-analysis baseline in per-suite chunks and reports how a recording ended, runs the suites against `3.0`, and routes major dependency bumps to `master` so `3.0` receives only minor and patch updates.
+
+## BC Breaks
+
+### Classes
+
+- Removed `Webkul\Measurement\Helpers\Exporters\ProductExporter`, `Webkul\Measurement\Helpers\Importers\FieldProcessor`, `Webkul\Measurement\Helpers\Importers\Product\Importer` and `Webkul\Measurement\Normalizer\ProductAttributeValuesNormalizer`, along with the container bindings that installed them. Their behaviour now lives in the `Webkul\DataTransfer` and `Webkul\Product` classes they used to override — extend those instead.
+
+### Database
+
+- Dropped the `section` column from `association_type_fields`. The form control that set it was removed, so every row held the default and nothing read it; reversing the migration restores the default rather than any stored placement.
+
+### Translations
+
+- The invalid measurement unit message moved from `measurement::app.importers.products.validation.invalid-unit` to `data_transfer::app.importers.products.validation.invalid-unit`, carried over verbatim in all 33 locales.
+
 # 3.0.0 — July 31st, 2026
 
 ## Bug fixes
