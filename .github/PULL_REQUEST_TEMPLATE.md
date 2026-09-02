@@ -15,7 +15,7 @@
 - [ ] `vendor/bin/pint --test` reports no style issues
 - [ ] Tailwind classes are reordered
 - [ ] New user-facing strings use translation keys (all 33 locales)
-- [ ] Target branch is `master` (unless a maintainer requested a backport)
+- [ ] Target branch is `3.x`, the current release line (`master` targets the next major)
 
 ## Documentation
 - [ ] My pull request requires an update on the documentation repository.

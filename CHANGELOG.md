@@ -1,4 +1,4 @@
-# 3.0.1
+# 3.1.0 — August 27th, 2026
 
 ## Bug fixes
 
@@ -39,6 +39,58 @@
 - Fixed the Digital Product Passport settings link pointing at a page that no longer exists, and the datagrid toolbar wrapping onto a second row and stranding pagination when the side panel or sidebar was open.
 - Fixed the product exporter's constructor requiring an extra argument, breaking packages that extended it or the product API data source.
 - Fixed importers that source their data over an API instead of an uploaded file being impossible to create with a valid validation strategy, and impossible to run once created.
+- Fixed every query routed through the shared grammar failing on MariaDB, which Laravel reports under its own driver name rather than as MySQL.
+- Fixed the OAuth migrations silently doing nothing on MariaDB, leaving `oauth_clients.id` a bigint where the REST API expects a UUID.
+- Fixed publication version payloads keeping a 64 KB column on MariaDB, truncating larger payloads with no error.
+- Fixed the audit triggers never being created on MariaDB, so the audit trail recorded nothing.
+- Fixed a fresh MariaDB installation failing because the database was never created, and the installation wizard never offering MariaDB as a choice.
+- Fixed the upgrade backup aborting on MariaDB 11, which ships `mariadb-dump` and only a deprecated `mysqldump` shim, and the upgrade preflight reporting a database size of zero there.
+- Fixed product import losing its bulk-mode optimisation on MariaDB, and import/export profile values going unnormalised on any driver other than MySQL and PostgreSQL.
+- Fixed a full Elasticsearch reindex paging without a stable order, so rows could be skipped or indexed twice, and re-scanning every preceding row, which made the walk degrade quadratically as the catalog grew.
+- Fixed the product and category indexers reconciling stale documents by requesting the whole index in a single search, so the response had to fit in PHP's memory limit.
+- Fixed parallel indexing dropping any range whose worker failed to fork, treating a child killed by a signal as a success, and leaving deleted products searchable because only the serial path pruned stale documents.
+- Fixed the dashboard statistics cache never warming, because its lifetime was shorter than the queries that fill it, and `unopim:dashboard:refresh` clearing the keys without recomputing them, handing a catalog-wide scan to whichever request arrived next.
+- Fixed the export batch supervisor timing out mid-run on large exports and orphaning batches as pending, and its retries re-entering a job that could not finish either.
+
+## New features
+
+- Association types are now managed over the REST API: list, read, create, update and delete a type under `api/v1/rest/association-types`, and manage its fields under the same prefix, with ACL entries of their own.
+- Attribute family variant structures and variant groups are now managed over the REST API — structure CRUD under `api/v1/rest/families/{code}/variant-structures`, and variant groups through `?type=` on the configurable products endpoint — returning a deterministic `effective_placements` ordering and refusing to delete a structure a product still references.
+- MariaDB is supported as a first-class database driver, offered by the installation wizard alongside MySQL and PostgreSQL, and guarded by a test that fails the build when a file decides on the MySQL driver without naming MariaDB.
+- Media on products, categories and attribute options can be downloaded from the admin through an authenticated endpoint that allow-lists the path segment, the extension and the permission governing each root, configurable in `admin::media.downloadable_roots`, replacing the previous new-tab link.
+- The Elasticsearch product indexer accepts `--workers`, indexing disjoint id ranges in parallel processes and falling back to the parent process where forking is unavailable or fails.
+- `unopim:passport:keys` provisions the API signing key pair into `storage/app/private/oauth`, configurable through `api.oauth_key_path` or `UNOPIM_OAUTH_KEY_PATH`, and runs from installation, upgrade and the Docker entrypoint so a container upgrade no longer regenerates it.
+
+## Improvements
+
+- A full Elasticsearch reindex walks the catalog by keyset instead of `OFFSET` and can shard across forked workers: measured against ten million products, 470 to 5,526 documents per second, a complete reindex in 30 minutes rather than a projected six hours.
+- The dashboard aggregates are covered by indexes on `(type, status)`, `created_at`, `(updated_at, created_at)` and `avg_completeness_score`: measured against ten million products, product statistics fall from 1,159 s to 4.6 s, activity from 1,159 s and 433 s to 4.6 s and 3.6 s, and needs-attention from 348 s to 1.3 s.
+- The dashboard statistics cache now lives for an hour, and `unopim:dashboard:refresh` recomputes it on the scheduler instead of leaving the keys cold, reporting the time each aggregate took.
+- The export batch supervisor derives its timeout from the size of the export, capped at a day so a large catalog cannot produce a timeout that disables stuck-job detection.
+- The Elasticsearch export cursor asks for the total hit count once per cursor instead of once per page.
+- A rejected media path now reports which file was rejected and why, instead of reporting a path-prefix violation as an unsupported extension.
+- The installation wizard offers the optional connector packages by default, `INSTALLER_OPTIONAL_PACKAGES` having changed from off to on, and no longer lists the Bagisto connector.
+
+## Technical Improvements
+
+- Measurement import, export and normalisation moved into the core data-transfer classes. They were previously four subclasses bound over the core ones in the container, where any other package binding the same class silently won and the loser's columns disappeared without an error. Runtime behaviour is unchanged.
+- `DatabaseDriverCoverageTest` fails the build when a file under `packages/` branches on the `mysql` driver without naming `mariadb`, the failure mode that let eleven MariaDB defects accumulate unnoticed.
+- The `Log` facade is imported explicitly rather than resolved through the root alias, which PHPStan 2.2.9 no longer resolves, and a swallowed configuration error is logged at error level with its exception context.
+- CI records the test-impact-analysis baseline in per-suite chunks and reports how a recording ended, runs the suites against `3.0`, and routes major dependency bumps to `master` so `3.0` receives only minor and patch updates.
+
+## BC Breaks
+
+### Classes
+
+- Removed `Webkul\Measurement\Helpers\Exporters\ProductExporter`, `Webkul\Measurement\Helpers\Importers\FieldProcessor`, `Webkul\Measurement\Helpers\Importers\Product\Importer` and `Webkul\Measurement\Normalizer\ProductAttributeValuesNormalizer`, along with the container bindings that installed them. Their behaviour now lives in the `Webkul\DataTransfer` and `Webkul\Product` classes they used to override — extend those instead.
+
+### Database
+
+- Dropped the `section` column from `association_type_fields`. The form control that set it was removed, so every row held the default and nothing read it; reversing the migration restores the default rather than any stored placement.
+
+### Translations
+
+- The invalid measurement unit message moved from `measurement::app.importers.products.validation.invalid-unit` to `data_transfer::app.importers.products.validation.invalid-unit`, carried over verbatim in all 33 locales.
 
 # 3.0.0 — July 31st, 2026
 
