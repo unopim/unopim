@@ -4,7 +4,7 @@ name: Playwright Tests
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
-    branches: [master, '3.0']
+    branches: [master, '3.x']
   pull_request:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
@@ -66,7 +66,7 @@ jobs:
         uses: actions/checkout@v5
 
       - name: Set up Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 

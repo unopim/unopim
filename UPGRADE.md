@@ -94,8 +94,8 @@ The new release is installed **beside** the current one, not on top of it:
 ```
 /var/www/unopim/
 ├── releases/2.1.6/     ← keeps running while you prepare
-├── releases/3.0.0/     ← the new release
-└── current -> releases/3.0.0
+├── releases/3.1.0/     ← the new release
+└── current -> releases/3.1.0
 ```
 
 Your web server document root points at `current/public`. Cutover is a symlink
@@ -144,16 +144,16 @@ has changed yet — the same code is serving from a new path.
 ```bash
 cd /var/www/unopim/releases
 
-curl -fL -o unopim.zip https://github.com/unopim/unopim/archive/refs/tags/v3.0.0.zip
+curl -fL -o unopim.zip https://github.com/unopim/unopim/archive/refs/tags/v3.1.0.zip
 unzip -q unopim.zip
-mv unopim-3.0.0 3.0.0
+mv unopim-3.1.0 3.1.0
 rm unopim.zip
 ```
 
 ### 3. Bring over your environment and files
 
 ```bash
-cd /var/www/unopim/releases/3.0.0
+cd /var/www/unopim/releases/3.1.0
 
 cp ../2.1.6/.env .env
 cp -a ../2.1.6/storage/app/. storage/app/
@@ -191,7 +191,7 @@ command aborts on its own if a tracked import or export job is still running.
 
 ```bash
 cd /var/www/unopim
-ln -sfn releases/3.0.0 current
+ln -sfn releases/3.1.0 current
 
 sudo systemctl reload php8.4-fpm
 sudo systemctl reload nginx        # or: sudo systemctl reload apache2
@@ -210,7 +210,7 @@ commits.
 cd /var/www/unopim/releases/2.1.6
 
 git fetch --tags
-git worktree add ../3.0.0 v3.0.0
+git worktree add ../3.1.0 v3.1.0
 ```
 
 Then continue from **Track A step 3**. Your local commits stay on their branch;

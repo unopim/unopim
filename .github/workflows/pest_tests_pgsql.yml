@@ -4,7 +4,7 @@ name: Pest Tests (PostgreSQL)
 # limited to the release lines and everything else arrives through the PR event.
 on:
   push:
-    branches: [master, '3.0']
+    branches: [master, '3.x']
   pull_request:
 
 # head_ref is the branch on a pull request and empty elsewhere, which keeps a
@@ -57,7 +57,7 @@ jobs:
           composer-options: "--optimize-autoloader"
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
@@ -148,7 +148,7 @@ jobs:
           composer-options: "--optimize-autoloader"
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: '22'
 
