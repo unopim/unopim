@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Filen :value hører ikke til denne posten. Last den opp på nytt for feltet :attribute.',
     'password-surrounding-whitespace'  => ':attribute kan ikke begynne eller slutte med et mellomrom.',
     'password-whitespace-only'         => ':attribute kan ikke bestå av bare mellomrom.',
+    'active-content-detected'          => ':attribute kunne ikke lastes opp fordi den inneholder aktivt innhold (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'innebygd JavaScript eller en PDF-handling som kjøres automatisk',
+        'invalid_svg_markup'            => 'feilformatert SVG-markering',
+        'embedded_script_tag'           => 'en innebygd <script>-tag',
+        'inline_event_handler'          => 'et innebygd hendelsesbehandler-attributt',
+        'javascript_uri'                => 'en javascript:-URI',
+        'embedded_vba_macro'            => 'en innebygd VBA-makro',
+        'auto_executing_ole_object'     => 'et automatisk kjørende innebygd objekt',
+    ],
 ];

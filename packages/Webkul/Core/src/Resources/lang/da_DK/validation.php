@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Filen :value tilhører ikke denne post. Upload den igen til feltet :attribute.',
     'password-surrounding-whitespace'  => ':attribute må ikke begynde eller slutte med et mellemrum.',
     'password-whitespace-only'         => ':attribute må ikke kun bestå af mellemrum.',
+    'active-content-detected'          => ':attribute kunne ikke uploades, fordi den indeholder aktivt indhold (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'indlejret JavaScript eller en PDF-handling, der køres automatisk',
+        'invalid_svg_markup'            => 'fejlformateret SVG-markup',
+        'embedded_script_tag'           => 'et indlejret <script>-tag',
+        'inline_event_handler'          => 'en indlejret hændelseshandler-attribut',
+        'javascript_uri'                => 'en javascript:-URI',
+        'embedded_vba_macro'            => 'en indlejret VBA-makro',
+        'auto_executing_ole_object'     => 'et automatisk udførende indlejret objekt',
+    ],
 ];

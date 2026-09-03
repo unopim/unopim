@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Die Datei :value gehört nicht zu diesem Datensatz. Laden Sie sie für das Feld :attribute erneut hoch.',
     'password-surrounding-whitespace'  => ':attribute darf nicht mit einem Leerzeichen beginnen oder enden.',
     'password-whitespace-only'         => ':attribute darf nicht ausschließlich aus Leerzeichen bestehen.',
+    'active-content-detected'          => ':attribute konnte nicht hochgeladen werden, da es aktive Inhalte enthält (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'eingebettetes JavaScript oder eine automatisch ausgeführte PDF-Aktion',
+        'invalid_svg_markup'            => 'fehlerhaftes SVG-Markup',
+        'embedded_script_tag'           => 'ein eingebettetes <script>-Tag',
+        'inline_event_handler'          => 'ein eingebettetes Event-Handler-Attribut',
+        'javascript_uri'                => 'eine javascript:-URI',
+        'embedded_vba_macro'            => 'ein eingebettetes VBA-Makro',
+        'auto_executing_ole_object'     => 'ein automatisch ausgeführtes eingebettetes Objekt',
+    ],
 ];

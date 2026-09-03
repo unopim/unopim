@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Tệp :value không thuộc về bản ghi này. Hãy tải lên lại cho trường :attribute.',
     'password-surrounding-whitespace'  => ':attribute không được bắt đầu hoặc kết thúc bằng khoảng trắng.',
     'password-whitespace-only'         => ':attribute không được chỉ gồm khoảng trắng.',
+    'active-content-detected'          => 'Không thể tải lên :attribute vì nó chứa nội dung hoạt động (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'JavaScript được nhúng hoặc một hành động PDF tự động chạy',
+        'invalid_svg_markup'            => 'mã SVG không hợp lệ',
+        'embedded_script_tag'           => 'thẻ <script> được nhúng',
+        'inline_event_handler'          => 'thuộc tính trình xử lý sự kiện nội tuyến',
+        'javascript_uri'                => 'URI javascript:',
+        'embedded_vba_macro'            => 'macro VBA được nhúng',
+        'auto_executing_ole_object'     => 'đối tượng nhúng tự động chạy',
+    ],
 ];

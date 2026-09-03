@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => ':value 파일은 이 레코드에 속하지 않습니다. :attribute 필드에 다시 업로드하세요.',
     'password-surrounding-whitespace'  => ':attribute 의 처음과 끝에는 공백을 사용할 수 없습니다.',
     'password-whitespace-only'         => ':attribute 를 공백만으로 구성할 수 없습니다.',
+    'active-content-detected'          => ':attribute에 활성 콘텐츠(:reason)가 포함되어 있어 업로드할 수 없습니다.',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => '삽입된 JavaScript 또는 자동 실행 PDF 작업',
+        'invalid_svg_markup'            => '잘못된 SVG 마크업',
+        'embedded_script_tag'           => '삽입된 <script> 태그',
+        'inline_event_handler'          => '인라인 이벤트 핸들러 속성',
+        'javascript_uri'                => 'javascript: URI',
+        'embedded_vba_macro'            => '삽입된 VBA 매크로',
+        'auto_executing_ole_object'     => '자동 실행되는 삽입 개체',
+    ],
 ];

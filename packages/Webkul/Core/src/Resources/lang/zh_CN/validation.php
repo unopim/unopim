@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => '文件 :value 不属于此记录。请为 :attribute 字段重新上传。',
     'password-surrounding-whitespace'  => ':attribute 不能以空格开头或结尾。',
     'password-whitespace-only'         => ':attribute 不能只由空格组成。',
+    'active-content-detected'          => '无法上传 :attribute，因为它包含活动内容 (:reason)。',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => '嵌入的 JavaScript 或自动运行的 PDF 操作',
+        'invalid_svg_markup'            => '格式错误的 SVG 标记',
+        'embedded_script_tag'           => '嵌入的 <script> 标签',
+        'inline_event_handler'          => '内联事件处理程序属性',
+        'javascript_uri'                => 'javascript: URI',
+        'embedded_vba_macro'            => '嵌入的 VBA 宏',
+        'auto_executing_ole_object'     => '自动执行的嵌入对象',
+    ],
 ];
