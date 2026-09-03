@@ -184,13 +184,10 @@ class CoreServiceProvider extends ServiceProvider
     /**
      * Create the HTMLPurifier serializer cache directory.
      *
-     * Losing the race to a concurrent boot (Octane workers, parallel PHPStan) counts as success, so
-     * the directory is re-checked after the attempt. `File::ensureDirectoryExists()` is unusable here:
-     * it checks before an unsuppressed mkdir and so raises "File exists" on the boot that loses. The
-     * error handler captures the reason a genuine failure gives, which `error_get_last()` cannot
-     * report once Laravel's own handler has consumed the warning.
+     * Concurrent boots race here, so the directory is re-checked after the attempt rather than
+     * before it, which rules out `File::ensureDirectoryExists()`.
      *
-     * @throws RuntimeException when the directory is absent and cannot be created
+     * @throws RuntimeException
      */
     protected function ensurePurifierCacheDirectory(string $path): void
     {
@@ -200,6 +197,7 @@ class CoreServiceProvider extends ServiceProvider
 
         $failure = null;
 
+        // Laravel's handler swallows the warning, leaving error_get_last() empty.
         set_error_handler(function (int $level, string $message) use (&$failure): bool {
             $failure = $message;
 
