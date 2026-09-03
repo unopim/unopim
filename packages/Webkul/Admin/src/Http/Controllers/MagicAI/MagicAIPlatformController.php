@@ -70,6 +70,9 @@ class MagicAIPlatformController extends Controller
         $extras = request()->input('extras');
         if ($extras) {
             $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+            if (is_array($data['extras'])) {
+                $this->validateExtrasUrl($data['extras']);
+            }
         }
 
         $this->platformRepository->create($data);
@@ -135,6 +138,9 @@ class MagicAIPlatformController extends Controller
         $extras = request()->input('extras');
         if ($extras) {
             $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+            if (is_array($data['extras'])) {
+                $this->validateExtrasUrl($data['extras']);
+            }
         }
 
         $this->platformRepository->update($data, $id);
@@ -196,6 +202,13 @@ class MagicAIPlatformController extends Controller
         }
 
         if (! $this->isSafeApiUrl(request()->input('api_url'))) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => trans('admin::app.configuration.platform.message.test-fail'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if (! $this->isSafeExtrasUrl(request()->input('extras'))) {
             return new JsonResponse([
                 'success' => false,
                 'message' => trans('admin::app.configuration.platform.message.test-fail'),
@@ -348,6 +361,39 @@ class MagicAIPlatformController extends Controller
         $apiUrl = trim((string) $apiUrl);
 
         return $apiUrl === '' || SafeWebhookUrl::validate($apiUrl)['valid'];
+    }
+
+    /**
+     * The 'extras' JSON can carry a 'url' key that overrides api_url, so it
+     * must pass the same SSRF check.
+     */
+    private function isSafeExtrasUrl(mixed $extras): bool
+    {
+        if (! $extras) {
+            return true;
+        }
+
+        $decoded = is_string($extras) ? json_decode($extras, true) : $extras;
+
+        if (! is_array($decoded) || ! array_key_exists('url', $decoded)) {
+            return true;
+        }
+
+        return $this->isSafeApiUrl(is_string($decoded['url']) ? $decoded['url'] : null);
+    }
+
+    /**
+     * @param  array<string, mixed>  $extras
+     *
+     * @throws ValidationException
+     */
+    private function validateExtrasUrl(array $extras): void
+    {
+        if (! $this->isSafeExtrasUrl($extras)) {
+            throw ValidationException::withMessages([
+                'extras' => trans('admin::app.configuration.platform.message.unsafe-api-url'),
+            ]);
+        }
     }
 
     /**
