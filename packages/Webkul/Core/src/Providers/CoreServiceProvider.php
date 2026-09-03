@@ -15,6 +15,7 @@ use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
+use RuntimeException;
 use Webkul\Core\CatalogScope;
 use Webkul\Core\Console\Commands\TranslationsChecker;
 use Webkul\Core\Console\Commands\UnoPimPublish;
@@ -57,8 +58,13 @@ class CoreServiceProvider extends ServiceProvider
 
         $purifierCachePath = storage_path('app/purifier');
 
-        if (! is_dir($purifierCachePath)) {
-            mkdir($purifierCachePath, 0755, true);
+        // Re-check after mkdir: concurrent boots (Octane workers, parallel PHPStan) race here.
+        if (
+            ! is_dir($purifierCachePath)
+            && ! @mkdir($purifierCachePath, 0755, true)
+            && ! is_dir($purifierCachePath)
+        ) {
+            throw new RuntimeException("Unable to create purifier cache directory: {$purifierCachePath}");
         }
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
