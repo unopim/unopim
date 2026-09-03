@@ -9,6 +9,7 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
@@ -56,16 +57,7 @@ class CoreServiceProvider extends ServiceProvider
 
         include __DIR__.'/../Http/helpers.php';
 
-        $purifierCachePath = storage_path('app/purifier');
-
-        // Re-check after mkdir: concurrent boots (Octane workers, parallel PHPStan) race here.
-        if (
-            ! is_dir($purifierCachePath)
-            && ! @mkdir($purifierCachePath, 0755, true)
-            && ! is_dir($purifierCachePath)
-        ) {
-            throw new RuntimeException("Unable to create purifier cache directory: {$purifierCachePath}");
-        }
+        $this->ensurePurifierCacheDirectory(storage_path('app/purifier'));
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
@@ -187,6 +179,48 @@ class CoreServiceProvider extends ServiceProvider
         if ($fromName = core()->getConfigData($prefix.'sender_name')) {
             config(['mail.from.name' => $fromName]);
         }
+    }
+
+    /**
+     * Create the HTMLPurifier serializer cache directory.
+     *
+     * Losing the race to a concurrent boot (Octane workers, parallel PHPStan) counts as success, so
+     * the directory is re-checked after the attempt. `File::ensureDirectoryExists()` is unusable here:
+     * it checks before an unsuppressed mkdir and so raises "File exists" on the boot that loses. The
+     * error handler captures the reason a genuine failure gives, which `error_get_last()` cannot
+     * report once Laravel's own handler has consumed the warning.
+     *
+     * @throws RuntimeException when the directory is absent and cannot be created
+     */
+    protected function ensurePurifierCacheDirectory(string $path): void
+    {
+        if (File::isDirectory($path)) {
+            return;
+        }
+
+        $failure = null;
+
+        set_error_handler(function (int $level, string $message) use (&$failure): bool {
+            $failure = $message;
+
+            return true;
+        });
+
+        try {
+            $created = mkdir($path, 0755, true);
+        } finally {
+            restore_error_handler();
+        }
+
+        if ($created || File::isDirectory($path)) {
+            return;
+        }
+
+        throw new RuntimeException(sprintf(
+            'Unable to create purifier cache directory [%s]: %s',
+            $path,
+            $failure ?? 'unknown error',
+        ));
     }
 
     public function register(): void
