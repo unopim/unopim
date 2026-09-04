@@ -4,6 +4,7 @@ namespace Webkul\Publication\Services;
 
 use Illuminate\Support\Facades\Log;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationGtinProxy;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
@@ -45,15 +46,37 @@ class PublicationResolver
      */
     public function findByGtin(string $gtin, string $type): ?Publication
     {
+        $publication = $this->findByGtinWhere($gtin, $type, fn ($query) => $query->where('gtin', $gtin));
+
+        if ($publication !== null) {
+            return $publication;
+        }
+
+        // A GTIN the publication carried earlier: carriers printed under it must keep resolving after a correction.
+        $previouslyOwned = PublicationGtinProxy::modelClass()::query()->where('gtin', $gtin)->pluck('publication_id');
+
+        if ($previouslyOwned->isEmpty()) {
+            return null;
+        }
+
+        return $this->findByGtinWhere($gtin, $type, fn ($query) => $query->whereIn('id', $previouslyOwned));
+    }
+
+    /**
+     * Shared GS1 lookup: designated passport channel first, else lowest channel_id with a logged warning.
+     */
+    private function findByGtinWhere(string $gtin, string $type, callable $scope): ?Publication
+    {
         $passportChannel = core()->getConfigData('general.publication.settings.gs1_passport_channel');
 
         $query = PublicationProxy::modelClass()::query()
-            ->where('gtin', $gtin)
             ->where('type', $type)
             ->with([
                 'channel.locales',
                 'versions' => fn ($query) => $query->where('is_current', true)->with('locale'),
             ]);
+
+        $scope($query);
 
         if (! empty($passportChannel)) {
             return $query->whereHas('channel', fn ($channel) => $channel->where('code', $passportChannel))->first();

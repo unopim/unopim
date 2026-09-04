@@ -76,6 +76,11 @@ class Publication extends Model implements HistoryContract, PublicationContract
         return $this->hasMany(PublicationReleaseProxy::modelClass());
     }
 
+    public function gtins(): HasMany
+    {
+        return $this->hasMany(PublicationGtinProxy::modelClass());
+    }
+
     public function carrierIssuances(): HasMany
     {
         return $this->hasMany(PublicationCarrierIssuanceProxy::modelClass());

@@ -5,6 +5,7 @@ namespace Webkul\Publication\Providers;
 use Webkul\Core\Providers\CoreModuleServiceProvider;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationCarrierIssuance;
+use Webkul\Publication\Models\PublicationGtin;
 use Webkul\Publication\Models\PublicationPublishAttempt;
 use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
@@ -17,6 +18,7 @@ class ModuleServiceProvider extends CoreModuleServiceProvider
     protected $models = [
         Publication::class,
         PublicationCarrierIssuance::class,
+        PublicationGtin::class,
         PublicationRelease::class,
         PublicationVersion::class,
         PublicationVersionPayload::class,

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Webkul\Publication\Contracts\LotReleaseResolver;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Enums\PublicationStatus;
 use Webkul\Publication\Jobs\RecordPublicationView;
@@ -13,6 +14,7 @@ use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
+use Webkul\Publication\Services\Gs1DigitalLink;
 use Webkul\Publication\Services\PublicationResolver;
 
 class PublicationController extends Controller
@@ -26,6 +28,8 @@ class PublicationController extends Controller
     public function __construct(
         private readonly PublicationResolver $resolver,
         private readonly PublicationTypeRegistry $registry,
+        private readonly Gs1DigitalLink $gs1,
+        private readonly LotReleaseResolver $lots,
     ) {}
 
     /**
@@ -62,9 +66,24 @@ class PublicationController extends Controller
      */
     public function resolveByGtin(Request $request, string $gtin): Response
     {
+        return $this->resolveByGtinQualified($request, $gtin, null, null);
+    }
+
+    /**
+     * GS1 Digital Link with qualifiers: `/01/{gtin}/10/{lot}`, `/01/{gtin}/21/{serial}` or both. The lot or serial
+     * ties a scanned unit to the release it was placed on the market under. Which release that is lives outside the
+     * PIM, so it is asked from the bound LotReleaseResolver; when it does not know, the scan lands on the live
+     * passport exactly as an unqualified link does. A malformed qualifier is a bad link, not a live fallback: 404.
+     */
+    public function resolveByGtinQualified(Request $request, string $gtin, ?string $lot = null, ?string $serial = null): Response
+    {
         $type = $this->routeType($request);
 
         if (! $this->registry->has($type)) {
+            return $this->notFound();
+        }
+
+        if (! $this->gs1->isWellFormedQualifier($lot) || ! $this->gs1->isWellFormedQualifier($serial)) {
             return $this->notFound();
         }
 
@@ -76,6 +95,25 @@ class PublicationController extends Controller
             || ! $this->resolver->isChannelEnabled($publication)
         ) {
             return $this->notFound();
+        }
+
+        $release = ($lot === null && $serial === null) ? null : $this->lots->resolve($publication, $lot, $serial);
+
+        if ($release !== null && (int) $release->publication_id === (int) $publication->id) {
+            $version = $this->resolver->pickVersion($publication, $release->versionsAsOf(), null, $request->header('Accept-Language'));
+
+            if ($version === null) {
+                return $this->notFound();
+            }
+
+            return redirect()
+                ->route('publication.public.'.$type.'.show.release', [
+                    'uuid'     => $publication->uuid,
+                    'sequence' => $release->sequence,
+                    'locale'   => $version->locale->code,
+                ])
+                ->header('Cache-Control', 'private, no-store')
+                ->header('Vary', 'Accept-Language');
         }
 
         $version = $this->resolver->resolveVersion($publication, null, $request->header('Accept-Language'));
