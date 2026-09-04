@@ -17,6 +17,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::post('mass-transition', 'massTransition')->name('admin.catalog.passports.mass_transition');
         Route::get('{publication}/versions', 'versions')->name('admin.catalog.passports.versions');
         Route::post('{publication}/versions/republish', 'republish')->name('admin.catalog.passports.republish');
+        Route::post('{publication}/releases/{sequence}/carrier', 'issueCarrier')->whereNumber('sequence')->name('admin.catalog.passports.issue_carrier');
     });
 
     Route::controller(PassportTemplateController::class)->prefix('catalog/passports/templates')->group(function (): void {
