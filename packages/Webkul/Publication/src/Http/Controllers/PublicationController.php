@@ -120,6 +120,46 @@ class PublicationController extends Controller
     }
 
     /**
+     * Entry point for a printed release carrier: picks the locale from Accept-Language among the locales
+     * that exist in that release and 302s to the strict per-locale URL, mirroring the live `redirect()`.
+     */
+    public function redirectRelease(Request $request, string $uuid, string $sequence): Response
+    {
+        $type = $this->routeType($request);
+
+        if (! $this->registry->has($type)) {
+            return $this->notFound();
+        }
+
+        $publication = $this->resolveEnabledPublication($uuid, $type);
+
+        if ($publication === null) {
+            return $this->notFound();
+        }
+
+        $release = $this->resolver->findRelease($publication, (int) $sequence);
+
+        if ($release === null) {
+            return $this->notFound();
+        }
+
+        $version = $this->resolver->pickVersion($publication, $release->versionsAsOf(), null, $request->header('Accept-Language'));
+
+        if ($version === null) {
+            return $this->notFound();
+        }
+
+        return redirect()
+            ->route('publication.public.'.$type.'.show.release', [
+                'uuid'     => $uuid,
+                'sequence' => $release->sequence,
+                'locale'   => $version->locale->code,
+            ])
+            ->header('Cache-Control', 'private, no-store')
+            ->header('Vary', 'Accept-Language');
+    }
+
+    /**
      * Renders the state as of one release: for the requested locale, the most recent version minted at
      * or before that release. Strict locale, no Accept-Language negotiation: an explicit historical URL
      * is a reference, and a reference must not resolve to a different document per reader.

@@ -70,6 +70,11 @@ class PublicationRelease extends Model implements PublicationReleaseContract
         return $this->belongsTo(AdminProxy::modelClass(), 'published_by_id');
     }
 
+    public function carrierIssuances(): HasMany
+    {
+        return $this->hasMany(PublicationCarrierIssuanceProxy::modelClass(), 'release_id');
+    }
+
     /**
      * The versions minted in this release (at most one per locale by construction).
      */

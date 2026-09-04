@@ -76,6 +76,11 @@ class Publication extends Model implements HistoryContract, PublicationContract
         return $this->hasMany(PublicationReleaseProxy::modelClass());
     }
 
+    public function carrierIssuances(): HasMany
+    {
+        return $this->hasMany(PublicationCarrierIssuanceProxy::modelClass());
+    }
+
     /**
      * `orderByDesc('version')` guards against a data anomaly, not the normal
      * path: `is_current` is uniquely constrained to one row per locale, so at

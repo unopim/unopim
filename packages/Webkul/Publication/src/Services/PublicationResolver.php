@@ -84,11 +84,21 @@ class PublicationResolver
      */
     public function resolveVersion(Publication $publication, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
     {
-        $currentByLocale = $publication->versions->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
+        return $this->pickVersion($publication, $publication->versions, $localeCode, $acceptLanguage);
+    }
+
+    /**
+     * The same locale negotiation over any set of versions, one per locale (e.g. a release's `versionsAsOf()`).
+     *
+     * @param  iterable<PublicationVersion>  $versions
+     */
+    public function pickVersion(Publication $publication, iterable $versions, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
+    {
+        $byLocale = collect($versions)->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
 
         foreach ($this->localePreference($publication, $localeCode, $acceptLanguage) as $code) {
-            if ($currentByLocale->has($code)) {
-                return $currentByLocale->get($code);
+            if ($byLocale->has($code)) {
+                return $byLocale->get($code);
             }
         }
 

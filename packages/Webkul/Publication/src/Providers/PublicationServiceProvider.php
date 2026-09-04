@@ -123,6 +123,12 @@ class PublicationServiceProvider extends ServiceProvider
 
                     // Four segments with a literal `r`, so it can never shadow the two-segment routes above.
                     // `sequence` is bounded to a positive int that fits the column; anything else 404s at the router.
+                    // Entry point a printed release carrier encodes: negotiates the locale once, then 302s to the strict URL.
+                    Route::get('/{uuid}/r/{sequence}', [PublicationController::class, 'redirectRelease'])
+                        ->where('sequence', '[1-9][0-9]{0,9}')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.show.release.entry');
+
                     Route::get('/{uuid}/r/{sequence}/{locale}', [PublicationController::class, 'showRelease'])
                         ->where('sequence', '[1-9][0-9]{0,9}')
                         ->defaults('type', $type->code)

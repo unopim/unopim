@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versio julkaistiin uudelleen.',
         'republish-invalid'           => 'Tätä versiota ei voi julkaista uudelleen.',
         'republish-noop'              => 'Tämä versio on jo nykyinen.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'Passin versiohistoria',
             'subtitle'      => 'SKU :sku · kanava :channel',
