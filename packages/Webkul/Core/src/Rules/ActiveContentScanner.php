@@ -13,12 +13,12 @@ class ActiveContentScanner
     public static function scan(string $extension, string $path): ?string
     {
         return match (strtolower($extension)) {
-            'pdf' => self::scanPdf($path),
-            'svg' => self::scanSvg($path),
+            'pdf'          => self::scanPdf($path),
+            'svg'          => self::scanSvg($path),
             'docx', 'pptx' => self::scanOoxml($path),
-            'doc', 'ppt' => self::scanLegacyOle($path),
-            'rtf' => self::scanRtf($path),
-            default => null,
+            'doc', 'ppt'   => self::scanLegacyOle($path),
+            'rtf'          => self::scanRtf($path),
+            default        => null,
         };
     }
 
@@ -50,7 +50,7 @@ class ActiveContentScanner
         }
 
         $previousState = libxml_use_internal_errors(true);
-        $dom = new \DOMDocument();
+        $dom = new \DOMDocument;
         $loaded = $dom->loadXML($contents, LIBXML_NONET);
         libxml_use_internal_errors($previousState);
 
@@ -81,7 +81,7 @@ class ActiveContentScanner
 
     protected static function scanOoxml(string $path): ?string
     {
-        $zip = new ZipArchive();
+        $zip = new ZipArchive;
 
         if ($zip->open($path) !== true) {
             return null;
