@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'The file :value does not belong to this record. Upload it again for the :attribute field.',
     'password-surrounding-whitespace'  => 'The :attribute cannot begin or end with a space.',
     'password-whitespace-only'         => 'The :attribute cannot consist only of spaces.',
+    'active-content-detected'          => 'The :attribute could not be uploaded because it contains active content (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'embedded JavaScript or an auto-run PDF action',
+        'invalid_svg_markup'            => 'malformed SVG markup',
+        'embedded_script_tag'           => 'an embedded <script> tag',
+        'inline_event_handler'          => 'an inline event handler attribute',
+        'javascript_uri'                => 'a javascript: URI',
+        'embedded_vba_macro'            => 'an embedded VBA macro',
+        'auto_executing_ole_object'     => 'an auto-executing embedded object',
+    ],
 ];

@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Файл :value не принадлежит этой записи. Загрузите его заново для поля :attribute.',
     'password-surrounding-whitespace'  => 'Поле :attribute не может начинаться или заканчиваться пробелом.',
     'password-whitespace-only'         => 'Поле :attribute не может состоять только из пробелов.',
+    'active-content-detected'          => 'Не удалось загрузить :attribute, так как он содержит активное содержимое (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'встроенный JavaScript или автоматически запускаемое действие PDF',
+        'invalid_svg_markup'            => 'некорректная разметка SVG',
+        'embedded_script_tag'           => 'встроенный тег <script>',
+        'inline_event_handler'          => 'встроенный атрибут обработчика событий',
+        'javascript_uri'                => 'URI javascript:',
+        'embedded_vba_macro'            => 'встроенный макрос VBA',
+        'auto_executing_ole_object'     => 'автоматически запускаемый встроенный объект',
+    ],
 ];

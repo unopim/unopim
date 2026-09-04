@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Le fichier :value n\'appartient pas à cet enregistrement. Téléversez-le à nouveau pour le champ :attribute.',
     'password-surrounding-whitespace'  => 'Le champ :attribute ne peut pas commencer ni se terminer par une espace.',
     'password-whitespace-only'         => 'Le champ :attribute ne peut pas être composé uniquement d\'espaces.',
+    'active-content-detected'          => 'Le fichier :attribute n\'a pas pu être téléversé car il contient du contenu actif (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'du JavaScript intégré ou une action PDF à exécution automatique',
+        'invalid_svg_markup'            => 'un balisage SVG mal formé',
+        'embedded_script_tag'           => 'une balise <script> intégrée',
+        'inline_event_handler'          => 'un attribut de gestionnaire d\'événement en ligne',
+        'javascript_uri'                => 'une URI javascript:',
+        'embedded_vba_macro'            => 'une macro VBA intégrée',
+        'auto_executing_ole_object'     => 'un objet intégré à exécution automatique',
+    ],
 ];

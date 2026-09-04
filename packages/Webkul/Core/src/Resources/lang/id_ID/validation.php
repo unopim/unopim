@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Berkas :value bukan milik catatan ini. Unggah ulang untuk bidang :attribute.',
     'password-surrounding-whitespace'  => ':attribute tidak boleh diawali atau diakhiri dengan spasi.',
     'password-whitespace-only'         => ':attribute tidak boleh hanya berisi spasi.',
+    'active-content-detected'          => ':attribute tidak dapat diunggah karena berisi konten aktif (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'JavaScript tersemat atau tindakan PDF yang berjalan otomatis',
+        'invalid_svg_markup'            => 'markup SVG tidak valid',
+        'embedded_script_tag'           => 'tag <script> tersemat',
+        'inline_event_handler'          => 'atribut penangan peristiwa inline',
+        'javascript_uri'                => 'URI javascript:',
+        'embedded_vba_macro'            => 'makro VBA tersemat',
+        'auto_executing_ole_object'     => 'objek tersemat yang berjalan otomatis',
+    ],
 ];

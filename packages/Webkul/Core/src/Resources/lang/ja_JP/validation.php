@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'ファイル :value はこのレコードに属していません。:attribute フィールド用にもう一度アップロードしてください。',
     'password-surrounding-whitespace'  => ':attribute の先頭と末尾に空白は使用できません。',
     'password-whitespace-only'         => ':attribute を空白だけにすることはできません。',
+    'active-content-detected'          => ':attribute はアクティブコンテンツ (:reason) が含まれているためアップロードできませんでした。',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => '埋め込まれたJavaScriptまたは自動実行されるPDFアクション',
+        'invalid_svg_markup'            => '不正なSVGマークアップ',
+        'embedded_script_tag'           => '埋め込まれた<script>タグ',
+        'inline_event_handler'          => 'インラインイベントハンドラ属性',
+        'javascript_uri'                => 'javascript: URI',
+        'embedded_vba_macro'            => '埋め込まれたVBAマクロ',
+        'auto_executing_ole_object'     => '自動実行される埋め込みオブジェクト',
+    ],
 ];

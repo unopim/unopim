@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Plik :value nie należy do tego rekordu. Prześlij go ponownie dla pola :attribute.',
     'password-surrounding-whitespace'  => 'Pole :attribute nie może zaczynać się ani kończyć spacją.',
     'password-whitespace-only'         => 'Pole :attribute nie może składać się wyłącznie ze spacji.',
+    'active-content-detected'          => 'Nie udało się przesłać :attribute, ponieważ zawiera aktywną zawartość (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'osadzony kod JavaScript lub automatycznie uruchamiana akcja PDF',
+        'invalid_svg_markup'            => 'nieprawidłowy znacznik SVG',
+        'embedded_script_tag'           => 'osadzony znacznik <script>',
+        'inline_event_handler'          => 'osadzony atrybut obsługi zdarzenia',
+        'javascript_uri'                => 'URI javascript:',
+        'embedded_vba_macro'            => 'osadzone makro VBA',
+        'auto_executing_ole_object'     => 'automatycznie uruchamiany osadzony obiekt',
+    ],
 ];

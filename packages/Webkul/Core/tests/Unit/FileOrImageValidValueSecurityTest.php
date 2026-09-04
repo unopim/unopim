@@ -96,3 +96,58 @@ it('rejects existing media paths with a mismatched stored type', function () {
 
     expect($validator->fails())->toBeTrue();
 });
+
+it('rejects a PDF upload carrying an embedded JavaScript action', function () {
+    $payload = "%PDF-1.7\n1 0 obj<</Type/Catalog/OpenAction<</S/JavaScript/JS(app.alert\\(1\\))>>>>endobj\n%%EOF";
+    $file = UploadedFile::fake()->createWithContent('payload.pdf', $payload);
+
+    $validator = Validator::make(['file' => $file], [
+        'file' => [new FileOrImageValidValue],
+    ]);
+
+    expect($validator->fails())->toBeTrue();
+});
+
+it('accepts a clean PDF upload with no active content', function () {
+    $payload = "%PDF-1.7\n1 0 obj<</Type/Catalog>>endobj\n%%EOF";
+    $file = UploadedFile::fake()->createWithContent('spec-sheet.pdf', $payload);
+
+    $validator = Validator::make(['file' => $file], [
+        'file' => [new FileOrImageValidValue],
+    ]);
+
+    expect($validator->passes())->toBeTrue();
+});
+
+it('rejects an SVG upload carrying an embedded script tag', function () {
+    $payload = '<svg xmlns="http://www.w3.org/2000/svg"><script>alert(document.domain)</script></svg>';
+    $file = UploadedFile::fake()->createWithContent('payload.svg', $payload);
+
+    $validator = Validator::make(['image' => $file], [
+        'image' => [new FileOrImageValidValue],
+    ]);
+
+    expect($validator->fails())->toBeTrue();
+});
+
+it('rejects an SVG upload carrying an inline event handler', function () {
+    $payload = '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(document.domain)"></svg>';
+    $file = UploadedFile::fake()->createWithContent('payload.svg', $payload);
+
+    $validator = Validator::make(['image' => $file], [
+        'image' => [new FileOrImageValidValue],
+    ]);
+
+    expect($validator->fails())->toBeTrue();
+});
+
+it('accepts a clean SVG upload with no script content', function () {
+    $payload = '<svg xmlns="http://www.w3.org/2000/svg"><circle cx="5" cy="5" r="4"/></svg>';
+    $file = UploadedFile::fake()->createWithContent('logo.svg', $payload);
+
+    $validator = Validator::make(['image' => $file], [
+        'image' => [new FileOrImageValidValue],
+    ]);
+
+    expect($validator->passes())->toBeTrue();
+});
