@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Publication\Contracts\LotReleaseResolver;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Events\PublicationPublished;
 use Webkul\Publication\Events\PublicationRedacted;
@@ -29,6 +30,7 @@ use Webkul\Publication\Listeners\SyncPublicationGtin;
 use Webkul\Publication\Listeners\SyncPublicationVersionDocuments;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Services\Gs1DigitalLink;
+use Webkul\Publication\Services\NullLotReleaseResolver;
 
 class PublicationServiceProvider extends ServiceProvider
 {
@@ -37,6 +39,9 @@ class PublicationServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Consumers with batch/ERP knowledge rebind this; the engine itself cannot know which release a lot shipped under.
+        $this->app->bindIf(LotReleaseResolver::class, NullLotReleaseResolver::class);
+
         $this->app->scoped(PublicationTypeRegistry::class);
     }
 
@@ -121,6 +126,19 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.carrier.svg');
 
+                    // Four segments with a literal `r`, so it can never shadow the two-segment routes above.
+                    // `sequence` is bounded to a positive int that fits the column; anything else 404s at the router.
+                    // Entry point a printed release carrier encodes: negotiates the locale once, then 302s to the strict URL.
+                    Route::get('/{uuid}/r/{sequence}', [PublicationController::class, 'redirectRelease'])
+                        ->where('sequence', '[1-9][0-9]{0,9}')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.show.release.entry');
+
+                    Route::get('/{uuid}/r/{sequence}/{locale}', [PublicationController::class, 'showRelease'])
+                        ->where('sequence', '[1-9][0-9]{0,9}')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.show.release');
+
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.show.locale');
@@ -135,6 +153,15 @@ class PublicationServiceProvider extends ServiceProvider
                     ->where('gtin', Gs1DigitalLink::GTIN_PATTERN)
                     ->defaults('type', 'dpp')
                     ->name('publication.public.gs1');
+
+                // GS1 qualifiers (lot = AI 10, serial = AI 21, in that order when both). The URI grammar only
+                // bounds the segment here; the 82-character set and 1-20 length are enforced in the controller.
+                foreach (['/01/{gtin}/10/{lot}' => 'gs1.lot', '/01/{gtin}/21/{serial}' => 'gs1.serial', '/01/{gtin}/10/{lot}/21/{serial}' => 'gs1.lot.serial'] as $uri => $name) {
+                    Route::get($uri, [PublicationController::class, 'resolveByGtinQualified'])
+                        ->where(['gtin' => Gs1DigitalLink::GTIN_PATTERN, 'lot' => '[^\/]{1,80}', 'serial' => '[^\/]{1,80}'])
+                        ->defaults('type', 'dpp')
+                        ->name('publication.public.'.$name);
+                }
             });
 
         // A late re-invocation needs an explicit refresh, or route() throws despite the routes matching requests fine.

@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Matagumpay na na-publish muli ang bersyon.',
         'republish-invalid'           => 'Hindi maaaring i-publish muli ang bersyong ito.',
         'republish-noop'              => 'Ito na ang kasalukuyang bersyon.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'Kasaysayan ng bersyon ng pasaporte',
             'subtitle'      => 'SKU :sku · channel :channel',
