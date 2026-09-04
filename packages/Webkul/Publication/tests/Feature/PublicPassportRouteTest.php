@@ -125,3 +125,97 @@ it('keeps a withdrawn tombstone out of shared caches while still answering 200',
         ->and($response->headers->getCacheControlDirective('private'))->toBeTrue()
         ->and($response->headers->hasCacheControlDirective('s-maxage'))->toBeFalse();
 });
+
+it('serves an earlier release at its own url, unindexed, with a canonical link to the live page', function (): void {
+    $first = $this->publishedPassportFixture();
+    $second = $this->republishWithMaterial($first, 'recycled steel');
+
+    $uuid = $first->publication->uuid;
+    $locale = $first->locale->code;
+    $live = route('publication.public.dpp.show.locale', ['uuid' => $uuid, 'locale' => $locale]);
+
+    $this->get('/p/'.$uuid.'/r/1/'.$locale)
+        ->assertOk()
+        ->assertHeader('X-Robots-Tag', 'noindex, noarchive, nofollow')
+        ->assertHeader('Link', '<'.$live.'>; rel="canonical"')
+        ->assertSee(e(json_encode($first->fresh()->payload)), false)
+        ->assertDontSee('recycled steel')
+        ->assertSee(trans('publication::app.public.release.banner', ['sequence' => 1]))
+        ->assertSee(trans('publication::app.public.release.superseded'));
+
+    $this->get('/p/'.$uuid.'/r/2/'.$locale)
+        ->assertOk()
+        ->assertSee('recycled steel')
+        ->assertSee(trans('publication::app.public.release.current'));
+
+    expect($second->release->sequence)->toBe(2);
+});
+
+it('404s a release that does not exist and a sequence the router rejects', function (): void {
+    $version = $this->publishedPassportFixture();
+
+    $uuid = $version->publication->uuid;
+    $locale = $version->locale->code;
+
+    $this->get('/p/'.$uuid.'/r/9/'.$locale)->assertNotFound();
+    $this->get('/p/'.$uuid.'/r/0/'.$locale)->assertNotFound();
+    $this->get('/p/'.$uuid.'/r/abc/'.$locale)->assertNotFound();
+});
+
+it('answers 410 for a release whose version was redacted, even while the publication stays published', function (): void {
+    $first = $this->publishedPassportFixture();
+    $this->republishWithMaterial($first, 'recycled steel');
+
+    $first->fresh()->redact($this->loginAsAdmin()->id, 'contained personal data');
+
+    $uuid = $first->publication->uuid;
+    $locale = $first->locale->code;
+
+    $response = $this->get('/p/'.$uuid.'/r/1/'.$locale)
+        ->assertStatus(410)
+        ->assertSee(trans('publication::app.public.withdrawn.heading'))
+        ->assertDontSee('material');
+
+    expect($response->headers->getCacheControlDirective('no-store'))->toBeTrue();
+
+    // The live page is unaffected.
+    $this->get('/p/'.$uuid.'/'.$locale)->assertOk()->assertSee('recycled steel');
+});
+
+it('changes the etag of a release page once that state stops being current', function (): void {
+    $first = $this->publishedPassportFixture();
+
+    $uuid = $first->publication->uuid;
+    $locale = $first->locale->code;
+
+    $whileCurrent = $this->get('/p/'.$uuid.'/r/1/'.$locale)->assertOk()->headers->get('ETag');
+
+    $this->republishWithMaterial($first, 'recycled steel');
+
+    $onceSuperseded = $this->get('/p/'.$uuid.'/r/1/'.$locale)->assertOk()->headers->get('ETag');
+
+    expect($whileCurrent)->not->toBe($onceSuperseded)
+        ->and($this->withHeaders(['If-None-Match' => $onceSuperseded])->get('/p/'.$uuid.'/r/1/'.$locale)->status())->toBe(304);
+});
+
+it('resolves a release strictly per locale: a locale first published later is absent from earlier releases', function (): void {
+    $first = $this->publishedPassportFixture();
+
+    $publication = $first->publication;
+    $other = $publication->channel->locales()->where('locales.id', '!=', $first->locale_id)->firstOrFail();
+
+    $product = $publication->product;
+    $product->values = array_replace_recursive($product->values, [
+        'locale_specific' => [$other->code => ['dpp_material_composition' => 'aluminium']],
+    ]);
+    $product->save();
+
+    $otherVersion = resolve(Publisher::class)->publish($product, $publication->channel, $other, 'dpp');
+
+    expect($otherVersion)->not->toBeNull()
+        ->and($otherVersion->release->sequence)->toBe(2);
+
+    $this->get('/p/'.$publication->uuid.'/r/1/'.$other->code)->assertNotFound();
+    $this->get('/p/'.$publication->uuid.'/r/2/'.$other->code)->assertOk()->assertSee('aluminium');
+    $this->get('/p/'.$publication->uuid.'/r/2/'.$first->locale->code)->assertOk();
+});
