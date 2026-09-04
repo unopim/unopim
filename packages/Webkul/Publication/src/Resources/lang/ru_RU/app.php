@@ -51,5 +51,11 @@ return [
             'heading' => 'Этот паспорт больше не доступен.',
             'notice'  => 'Эта запись сохраняется для прозрачности, но больше не поддерживается активно.',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
