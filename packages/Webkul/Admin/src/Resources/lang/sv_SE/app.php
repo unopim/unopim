@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Rollen används redan av en administratör',
             'being-used-by'     => 'Rollen används redan av :name',
+            'cannot-grant-unheld-permissions' => 'Du kan inte bevilja behörigheter som du inte själv har.',
             'create-success'    => 'Rollen skapades framgångsrikt',
             'delete-failed'     => 'Det gick inte att ta bort rollen',
             'delete-success'    => 'Rollen togs bort framgångsrikt',

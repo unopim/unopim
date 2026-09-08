@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'De rol is al in gebruik door een beheerder.',
             'being-used-by'     => 'De rol wordt al gebruikt door :name.',
+            'cannot-grant-unheld-permissions' => 'U kunt geen rechten verlenen die u zelf niet hebt.',
             'create-success'    => 'Rol succesvol aangemaakt.',
             'delete-failed'     => 'Rol verwijderen mislukt.',
             'delete-success'    => 'Rol succesvol verwijderd.',

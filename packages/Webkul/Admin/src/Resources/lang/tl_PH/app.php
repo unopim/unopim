@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Ang Tungkulin ay ginagamit na ng isang Administrator',
             'being-used-by'     => 'Ang Tungkulin ay ginagamit na ni :name',
+            'cannot-grant-unheld-permissions' => 'Hindi mo maibibigay ang mga pahintulot na wala ka.',
             'create-success'    => 'Tungkulin na nalikha ng matagumpay',
             'delete-failed'     => 'Nabigo ang pagtanggal ng Tungkulin',
             'delete-success'    => 'Tungkulin na tinanggal ng matagumpay',

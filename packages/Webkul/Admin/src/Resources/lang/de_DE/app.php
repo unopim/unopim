@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'Rolle wird bereits vom Administratorbenutzer verwendet',
             'being-used-by'     => 'Rolle wird bereits vom Benutzer :name verwendet',
+            'cannot-grant-unheld-permissions' => 'Sie können keine Berechtigungen erteilen, die Sie nicht besitzen.',
             'create-success'    => 'Rollen erfolgreich erstellt',
             'delete-failed'     => 'Löschen der Rollen fehlgeschlagen',
             'delete-success'    => 'Rollen erfolgreich gelöscht',

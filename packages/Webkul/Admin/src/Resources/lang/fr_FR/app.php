@@ -2077,6 +2077,7 @@ return [
             ],
             'being-used'        => 'Le rôle est déjà utilisé par l\'administrateur',
             'being-used-by'     => 'Le rôle est déjà utilisé par l\'utilisateur :name',
+            'cannot-grant-unheld-permissions' => 'Vous ne pouvez pas accorder des autorisations que vous ne possédez pas.',
             'create-success'    => 'Rôle créé avec succès',
             'delete-failed'     => 'La suppression du rôles a échoué',
             'delete-success'    => 'Le rôle a été supprimé avec succès',

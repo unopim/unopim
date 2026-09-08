@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Função já está a ser utilizada por um utilizador administrador',
             'being-used-by'     => 'Função já está a ser utilizada por :name',
+            'cannot-grant-unheld-permissions' => 'Não pode conceder permissões que não possui.',
             'create-success'    => 'Função criada com sucesso',
             'delete-failed'     => 'Falha ao eliminar a função',
             'delete-success'    => 'Função eliminada com sucesso',

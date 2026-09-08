@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'Peran sudah digunakan pada pengguna admin',
             'being-used-by'     => 'Peran sudah digunakan oleh:name pengguna',
+            'cannot-grant-unheld-permissions' => 'Anda tidak dapat memberikan izin yang tidak Anda miliki.',
             'create-success'    => 'Peran diciptakan dengan sukses',
             'delete-failed'     => 'Peran dihapus gagal',
             'delete-success'    => 'Peran berhasil dihapus',

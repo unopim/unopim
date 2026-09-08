@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => '角色已被管理員用戶使用',
             'being-used-by'     => '角色已由 :name 用戶使用',
+            'cannot-grant-unheld-permissions' => '您無法授予自己不具備的權限。',
             'create-success'    => '角色創建成功',
             'delete-failed'     => '無法刪除角色',
             'delete-success'    => '角色刪除成功',

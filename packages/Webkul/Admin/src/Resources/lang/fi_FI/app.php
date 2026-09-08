@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'Rooli on jo käytössä järjestelmänvalvojan käyttäjällä',
             'being-used-by'     => 'Rooli on jo käytössä käyttäjällä :name',
+            'cannot-grant-unheld-permissions' => 'Et voi myöntää oikeuksia, joita sinulla ei ole.',
             'create-success'    => 'Roolit luotu onnistuneesti',
             'delete-failed'     => 'Roolin poistaminen epäonnistui',
             'delete-success'    => 'Rooli poistettu onnistuneesti',

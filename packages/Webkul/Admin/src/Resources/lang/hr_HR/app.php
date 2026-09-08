@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'Uloga je već korištena u administratorskom korisniku',
             'being-used-by'     => 'Uloga je već korištena od strane korisnika :name',
+            'cannot-grant-unheld-permissions' => 'Ne možete dodijeliti dozvole koje sami nemate.',
             'create-success'    => 'Uloge uspješno kreirane',
             'delete-failed'     => 'Brisanje uloge nije uspjelo',
             'delete-success'    => 'Uloga uspješno izbrisana',

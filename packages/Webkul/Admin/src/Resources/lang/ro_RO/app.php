@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Rolul este deja folosit de un utilizator administrator',
             'being-used-by'     => 'Rolul este deja folosit de utilizatorul :name',
+            'cannot-grant-unheld-permissions' => 'Nu puteți acorda permisiuni pe care nu le dețineți.',
             'create-success'    => 'Rolul a fost creat cu succes',
             'delete-failed'     => 'Ștergerea rolului a eșuat',
             'delete-success'    => 'Rolul a fost șters cu succes',

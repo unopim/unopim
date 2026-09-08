@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'Rollen er allerede brugt af en Administrator Bruger',
             'being-used-by'     => 'Rollen er allerede brugt af :name Bruger',
+            'cannot-grant-unheld-permissions' => 'Du kan ikke tildele tilladelser, du ikke selv har.',
             'create-success'    => 'Roller oprettet succesfuldt',
             'delete-failed'     => 'Rolle sletning mislykkedes',
             'delete-success'    => 'Rolle slettet succesfuldt',

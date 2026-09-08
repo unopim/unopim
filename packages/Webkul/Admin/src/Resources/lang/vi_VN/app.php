@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Vai trò đã được sử dụng bởi người dùng quản trị',
             'being-used-by'     => 'Vai trò đã được sử dụng bởi người dùng :name',
+            'cannot-grant-unheld-permissions' => 'Bạn không thể cấp các quyền mà bạn không có.',
             'create-success'    => 'Vai trò đã được tạo thành công',
             'delete-failed'     => 'Không thể xóa vai trò',
             'delete-success'    => 'Vai trò đã bị xóa thành công',

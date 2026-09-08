@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Rolle er allerede brukt i Administrator bruker',
             'being-used-by'     => 'Rolle er allerede brukt av :name bruker',
+            'cannot-grant-unheld-permissions' => 'Du kan ikke gi tillatelser du ikke har selv.',
             'create-success'    => 'Rolle opprettet suksessfullt',
             'delete-failed'     => 'Rolle sletting mislyktes',
             'delete-success'    => 'Rolle slettet suksessfullt',

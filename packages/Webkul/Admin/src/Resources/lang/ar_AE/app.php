@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'يتم استخدام الدور بالفعل في مستخدم المسؤول',
             'being-used-by'     => 'الدور مستخدم بالفعل بواسطة المستخدم :name',
+            'cannot-grant-unheld-permissions' => 'لا يمكنك منح صلاحيات لا تملكها.',
             'create-success'    => 'أدوار تم إنشاؤها بنجاح',
             'delete-failed'     => 'تم حذف الأدوار فشلت',
             'delete-success'    => 'تم حذف الأدوار بنجاح',

@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Rola jest już używana przez użytkownika administratora',
             'being-used-by'     => 'Rola jest już używana przez użytkownika :name',
+            'cannot-grant-unheld-permissions' => 'Nie możesz przyznać uprawnień, których sam nie posiadasz.',
             'create-success'    => 'Rola została utworzona pomyślnie',
             'delete-failed'     => 'Usuwanie roli nie powiodło się',
             'delete-success'    => 'Rola została usunięta pomyślnie',

@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => 'Rol zaten bir yönetici kullanıcı tarafından kullanılıyor',
             'being-used-by'     => 'Rol, :name kullanıcısı tarafından zaten kullanılıyor',
+            'cannot-grant-unheld-permissions' => 'Sahip olmadığınız izinleri veremezsiniz.',
             'create-success'    => 'Rol başarıyla oluşturuldu',
             'delete-failed'     => 'Rol silinemedi',
             'delete-success'    => 'Rol başarıyla silindi',

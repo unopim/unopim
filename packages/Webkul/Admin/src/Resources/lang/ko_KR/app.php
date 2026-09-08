@@ -2080,6 +2080,7 @@ return [
             ],
             'being-used'        => '이 역할은 관리자 사용자에서 이미 사용 중입니다.',
             'being-used-by'     => '이 역할은 :name 사용자가 이미 사용 중입니다.',
+            'cannot-grant-unheld-permissions' => '보유하지 않은 권한은 부여할 수 없습니다.',
             'create-success'    => '역할이 성공적으로 생성되었습니다.',
             'delete-failed'     => '역할 삭제 실패.',
             'delete-success'    => '역할 삭제 성공.',

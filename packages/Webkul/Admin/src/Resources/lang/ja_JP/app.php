@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'ロールは管理者ユーザーで既に使用されています',
             'being-used-by'     => 'ロールは :name ユーザーによって既に使用されています',
+            'cannot-grant-unheld-permissions' => '自分が持っていない権限を付与することはできません。',
             'create-success'    => 'ロールが正常に作成されました',
             'delete-failed'     => 'ロールの削除に失敗しました',
             'delete-success'    => 'ロールが正常に削除されました',

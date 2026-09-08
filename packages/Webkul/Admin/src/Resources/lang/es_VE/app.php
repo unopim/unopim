@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'El rol ya está siendo utilizado por un usuario administrador',
             'being-used-by'     => 'El rol ya está siendo utilizado por el usuario :name',
+            'cannot-grant-unheld-permissions' => 'No puedes otorgar permisos que no tienes.',
             'create-success'    => 'Rol creado exitosamente',
             'delete-failed'     => 'Error al eliminar el rol',
             'delete-success'    => 'Rol eliminado exitosamente',

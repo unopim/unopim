@@ -2078,6 +2078,7 @@ return [
             ],
             'being-used'        => 'Role is already used in Admin User',
             'being-used-by'     => 'Role is already used by :name User',
+            'cannot-grant-unheld-permissions' => 'You cannot grant permissions you do not hold.',
             'create-success'    => 'Roles Created Successfully',
             'delete-failed'     => 'Role deletion failed',
             'delete-success'    => 'Role deleted successfully',
