@@ -214,9 +214,11 @@ enum AiProvider: string
     }
 
     /**
-     * Pin the request to the pre-validated IP and forbid redirect following so
-     * a user-supplied model-discovery URL cannot pivot to an internal host via
-     * a 30x redirect or DNS rebinding.
+     * Forbid redirect following, and — when the URL validates as public —
+     * additionally pin the host to the address that validation resolved, so a
+     * user-supplied model-discovery URL cannot pivot to an internal host via a
+     * 30x redirect or DNS rebinding. A URL that fails validation gets the
+     * redirect guard alone; the caller is expected to have rejected it already.
      *
      * @param  array<string, mixed>  $options
      * @return array<string, mixed>
