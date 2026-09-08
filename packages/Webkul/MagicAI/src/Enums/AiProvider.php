@@ -4,6 +4,7 @@ namespace Webkul\MagicAI\Enums;
 
 use GuzzleHttp\Client;
 use Laravel\Ai\Enums\Lab;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 enum AiProvider: string
 {

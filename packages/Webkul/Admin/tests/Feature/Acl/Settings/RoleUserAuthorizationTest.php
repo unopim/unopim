@@ -56,7 +56,7 @@ it('blocks a low-privilege admin from updating a user (update route must be ACL-
 });
 
 it('allows an admin with the roles.create permission to reach the store handler', function () {
-    $this->loginWithPermissions('custom', ['settings', 'settings.roles', 'settings.roles.create']);
+    $this->loginWithPermissions('custom', ['dashboard', 'settings', 'settings.roles', 'settings.roles.create']);
 
     $this->post(route('admin.settings.roles.store'), [
         'name'            => 'legit-role',
