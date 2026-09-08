@@ -147,16 +147,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.393.4",
+            "version": "3.394.9",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "a5880510e500aa0fe13a6410183cd222b3263890"
+                "reference": "c5e7a247fa6aeac7355d5be88f38873480789c71"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a5880510e500aa0fe13a6410183cd222b3263890",
-                "reference": "a5880510e500aa0fe13a6410183cd222b3263890",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/c5e7a247fa6aeac7355d5be88f38873480789c71",
+                "reference": "c5e7a247fa6aeac7355d5be88f38873480789c71",
                 "shasum": ""
             },
             "require": {
@@ -238,9 +238,9 @@
             "support": {
                 "forum": "https://github.com/aws/aws-sdk-php/discussions",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.393.4"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.394.9"
             },
-            "time": "2026-08-21T18:24:57+00:00"
+            "time": "2026-09-04T18:07:00+00:00"
         },
         {
             "name": "bacon/bacon-qr-code",
@@ -2933,16 +2933,16 @@
         },
         {
             "name": "laravel/ai",
-            "version": "v0.11.0",
+            "version": "v0.11.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/ai.git",
-                "reference": "dd08142f0c4dc4d5544521ce3fc4a1b9c2fe748c"
+                "reference": "ee2c5162838d440c4e2e629ea93c8c87e838eaed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/ai/zipball/dd08142f0c4dc4d5544521ce3fc4a1b9c2fe748c",
-                "reference": "dd08142f0c4dc4d5544521ce3fc4a1b9c2fe748c",
+                "url": "https://api.github.com/repos/laravel/ai/zipball/ee2c5162838d440c4e2e629ea93c8c87e838eaed",
+                "reference": "ee2c5162838d440c4e2e629ea93c8c87e838eaed",
                 "shasum": ""
             },
             "require": {
@@ -3005,7 +3005,7 @@
                 "issues": "https://github.com/laravel/ai/issues",
                 "source": "https://github.com/laravel/ai"
             },
-            "time": "2026-08-19T03:03:13+00:00"
+            "time": "2026-09-03T09:04:44+00:00"
         },
         {
             "name": "laravel/framework",
@@ -8254,16 +8254,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v8.1.5",
+            "version": "v8.1.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "6b2f4a0eeb28b5d74f90862592923a654bc629b3"
+                "reference": "7599ebb855fede59413ddb7f15198d67bfcae7ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/6b2f4a0eeb28b5d74f90862592923a654bc629b3",
-                "reference": "6b2f4a0eeb28b5d74f90862592923a654bc629b3",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/7599ebb855fede59413ddb7f15198d67bfcae7ba",
+                "reference": "7599ebb855fede59413ddb7f15198d67bfcae7ba",
                 "shasum": ""
             },
             "require": {
@@ -8301,7 +8301,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v8.1.5"
+                "source": "https://github.com/symfony/filesystem/tree/v8.1.6"
             },
             "funding": [
                 {
@@ -8321,7 +8321,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-08-21T12:16:08+00:00"
+            "time": "2026-08-23T10:06:25+00:00"
         },
         {
             "name": "symfony/finder",
