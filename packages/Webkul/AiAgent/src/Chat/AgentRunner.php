@@ -18,6 +18,7 @@ use Webkul\AiAgent\Events\AgentSystemPromptBuilding;
 use Webkul\AiAgent\Events\AgentToolExecuted;
 use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 
 /**
@@ -291,11 +292,7 @@ class AgentRunner
             $overrides['url'] = $context->platform->api_url;
         }
 
-        if ($context->platform->extras && is_array($context->platform->extras)) {
-            return array_merge($overrides, $context->platform->extras);
-        }
-
-        return $overrides;
+        return ProviderOverrides::build($overrides, $context->platform->extras);
     }
 
     /**

@@ -16,6 +16,7 @@ use Webkul\Admin\Http\Requests\MagicAI\PlatformTestRequest;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\MagicAI\Support\ModelRecommender;
 use Webkul\Webhook\Validators\SafeWebhookUrl;
@@ -67,9 +68,9 @@ class MagicAIPlatformController extends Controller
 
         $this->ensureDefaultPlatformIsEnabled($data);
 
-        $extras = request()->input('extras');
-        if ($extras) {
-            $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+        $extras = ProviderOverrides::decode(request()->input('extras'));
+        if ($extras !== []) {
+            $data['extras'] = $extras;
         }
 
         $this->platformRepository->create($data);
@@ -132,9 +133,9 @@ class MagicAIPlatformController extends Controller
             $data['api_key'] = $apiKey;
         }
 
-        $extras = request()->input('extras');
-        if ($extras) {
-            $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+        $extras = ProviderOverrides::decode(request()->input('extras'));
+        if ($extras !== []) {
+            $data['extras'] = $extras;
         }
 
         $this->platformRepository->update($data, $id);
@@ -425,14 +426,6 @@ class MagicAIPlatformController extends Controller
             $overrides['url'] = request()->input('api_url');
         }
 
-        $extras = request()->input('extras');
-        if ($extras) {
-            $decoded = is_string($extras) ? json_decode($extras, true) : $extras;
-            if (is_array($decoded)) {
-                $overrides = array_merge($overrides, $decoded);
-            }
-        }
-
-        return $overrides;
+        return ProviderOverrides::build($overrides, request()->input('extras'));
     }
 }
