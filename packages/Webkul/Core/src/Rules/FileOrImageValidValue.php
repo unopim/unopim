@@ -127,6 +127,10 @@ class FileOrImageValidValue implements ValidationRule
             }
 
             $this->fileExtensionMatchRule->validate($attribute, $value, $fail);
+
+            if (! $this->validateActiveContent($attribute, $value, $fail)) {
+                return;
+            }
         }
 
         if (! is_string($value)) {
@@ -209,6 +213,32 @@ class FileOrImageValidValue implements ValidationRule
 
         if ($this->allowedMimes && ! $this->validateMimes($attribute, $value, $this->allowedMimes)) {
             $fail('validation.mimes')->translate(['values' => implode(', ', $this->allowedMimes)]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Reject uploads carrying embedded active content (PDF /JavaScript,
+     * SVG <script>/event handlers, Office VBA macros, auto-executing RTF
+     * OLE objects) that extension/MIME checks alone cannot catch.
+     */
+    protected function validateActiveContent(string $attribute, UploadedFile|File $value, Closure $fail): bool
+    {
+        $extension = $value instanceof UploadedFile ? $value->getClientOriginalExtension() : $value->getExtension();
+
+        $path = $value->getRealPath();
+
+        if ($path === false) {
+            return true;
+        }
+
+        $reason = ActiveContentScanner::scan($extension, $path);
+
+        if ($reason !== null) {
+            $fail('core::validation.active-content-detected')->translate(['reason' => trans("core::validation.active-content-reasons.{$reason}")]);
 
             return false;
         }

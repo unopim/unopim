@@ -691,7 +691,27 @@
                     this.addFiles(files);
                 },
 
-                addFiles(files) {
+                async scanFile(file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('is_image', '0');
+                    (this.acceptedExtensions || []).forEach(extension => formData.append('accepted_extensions[]', extension));
+
+                    try {
+                        await this.$axios.post("{{ route('admin.media.scan') }}", formData);
+
+                        return true;
+                    } catch (error) {
+                        this.$emitter.emit('add-flash', {
+                            type: 'warning',
+                            message: error?.response?.data?.message || @json(trans('admin::app.components.media.gallery.not-allowed-error'))
+                        });
+
+                        return false;
+                    }
+                },
+
+                async addFiles(files) {
                     if (! files || ! files.length) {
                         return;
                     }
@@ -709,7 +729,11 @@
                         return;
                     }
 
-                    selectedFiles.forEach((file) => {
+                    for (const file of selectedFiles) {
+                        if (! await this.scanFile(file)) {
+                            continue;
+                        }
+
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
@@ -717,7 +741,7 @@
                             type: file.type,
                             name: file.name
                         });
-                    });
+                    }
 
                     this.signalChange();
 
@@ -1028,7 +1052,27 @@
                     this.$refs[this.$.uid + '_imageInput_' + this.index].click();
                 },
 
-                edit() {
+                async scanFile(file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+                    formData.append('is_image', '0');
+                    (this.acceptedExtensions || []).forEach(extension => formData.append('accepted_extensions[]', extension));
+
+                    try {
+                        await this.$axios.post("{{ route('admin.media.scan') }}", formData);
+
+                        return true;
+                    } catch (error) {
+                        this.$emitter.emit('add-flash', {
+                            type: 'warning',
+                            message: error?.response?.data?.message || @json(trans('admin::app.components.media.images.not-allowed-error'))
+                        });
+
+                        return false;
+                    }
+                },
+
+                async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
                     if (imageInput.files == undefined) {
@@ -1043,6 +1087,10 @@
                             message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
+                        return;
+                    }
+
+                    if (! await this.scanFile(imageInput.files[0])) {
                         return;
                     }
 

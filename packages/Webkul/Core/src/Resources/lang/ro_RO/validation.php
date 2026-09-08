@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Fișierul :value nu aparține acestei înregistrări. Încarcă-l din nou pentru câmpul :attribute.',
     'password-surrounding-whitespace'  => 'Câmpul :attribute nu poate începe sau se termina cu un spațiu.',
     'password-whitespace-only'         => 'Câmpul :attribute nu poate conține doar spații.',
+    'active-content-detected'          => 'Fișierul :attribute nu a putut fi încărcat deoarece conține conținut activ (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'JavaScript încorporat sau o acțiune PDF cu executare automată',
+        'invalid_svg_markup'            => 'marcaj SVG incorect',
+        'embedded_script_tag'           => 'o etichetă <script> încorporată',
+        'inline_event_handler'          => 'un atribut de handler de eveniment încorporat',
+        'javascript_uri'                => 'un URI javascript:',
+        'embedded_vba_macro'            => 'o macro VBA încorporată',
+        'auto_executing_ole_object'     => 'un obiect încorporat cu executare automată',
+    ],
 ];

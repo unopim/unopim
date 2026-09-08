@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'الملف :value لا ينتمي إلى هذا السجل. يرجى رفعه مرة أخرى لحقل :attribute.',
     'password-surrounding-whitespace'  => 'لا يمكن أن يبدأ :attribute أو ينتهي بمسافة.',
     'password-whitespace-only'         => 'لا يمكن أن يتكوّن :attribute من مسافات فقط.',
+    'active-content-detected'          => 'تعذر رفع :attribute لأنه يحتوي على محتوى نشط (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'جافا سكريبت مضمّنة أو إجراء PDF يعمل تلقائيًا',
+        'invalid_svg_markup'            => 'ترميز SVG غير صالح',
+        'embedded_script_tag'           => 'وسم <script> مضمّن',
+        'inline_event_handler'          => 'سمة معالج حدث مضمّنة',
+        'javascript_uri'                => 'رابط javascript:',
+        'embedded_vba_macro'            => 'ماكرو VBA مضمّن',
+        'auto_executing_ole_object'     => 'كائن مضمّن يعمل تلقائيًا',
+    ],
 ];

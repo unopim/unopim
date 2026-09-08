@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => ':value файл энэ бичлэгт хамаарахгүй. :attribute талбарт дахин байршуулна уу.',
     'password-surrounding-whitespace'  => ':attribute нь хоосон зайгаар эхэлж эсвэл төгсөж болохгүй.',
     'password-whitespace-only'         => ':attribute нь зөвхөн хоосон зайнаас бүрдэж болохгүй.',
+    'active-content-detected'          => ':attribute нь идэвхтэй агуулга (:reason) агуулж байгаа тул байршуулах боломжгүй.',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'суулгасан JavaScript эсвэл автоматаар ажилладаг PDF үйлдэл',
+        'invalid_svg_markup'            => 'буруу форматтай SVG тэмдэглэгээ',
+        'embedded_script_tag'           => 'суулгасан <script> шошго',
+        'inline_event_handler'          => 'суулгасан үйл явдал боловсруулагчийн шинж чанар',
+        'javascript_uri'                => 'javascript: URI',
+        'embedded_vba_macro'            => 'суулгасан VBA макро',
+        'auto_executing_ole_object'     => 'автоматаар ажилладаг суулгасан объект',
+    ],
 ];

@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Файл :value не належить цьому запису. Завантажте його ще раз для поля :attribute.',
     'password-surrounding-whitespace'  => 'Поле :attribute не може починатися або закінчуватися пробілом.',
     'password-whitespace-only'         => 'Поле :attribute не може складатися лише з пробілів.',
+    'active-content-detected'          => 'Не вдалося завантажити :attribute, оскільки він містить активний вміст (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'вбудований JavaScript або автоматично запущена дія PDF',
+        'invalid_svg_markup'            => 'некоректна розмітка SVG',
+        'embedded_script_tag'           => 'вбудований тег <script>',
+        'inline_event_handler'          => 'вбудований атрибут обробника подій',
+        'javascript_uri'                => 'URI javascript:',
+        'embedded_vba_macro'            => 'вбудований макрос VBA',
+        'auto_executing_ole_object'     => 'автоматично запущений вбудований обʼєкт',
+    ],
 ];

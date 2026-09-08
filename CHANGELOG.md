@@ -1,3 +1,10 @@
+# 3.1.1
+
+## Bug fixes
+
+- Fixed the Magic AI platform test-connection, store and update endpoints allowing the `extras.url` override to bypass the SafeWebhookUrl SSRF check applied to `api_url`, letting an authenticated admin route outbound requests to internal hosts and cloud metadata endpoints.
+- Fixed file and image attribute uploads accepting active content — PDFs carrying embedded JavaScript or auto-run actions, and SVGs carrying `<script>` tags or inline event handlers — that executed when previewed, by scanning uploads for active content both when a file is picked in the media widget and again on save.
+
 # 3.1.0 — August 27th, 2026
 
 ## Bug fixes

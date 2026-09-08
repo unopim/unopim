@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => ':value dosyası bu kayda ait değil. :attribute alanı için tekrar yükleyin.',
     'password-surrounding-whitespace'  => ':attribute boşlukla başlayamaz veya bitemez.',
     'password-whitespace-only'         => ':attribute yalnızca boşluklardan oluşamaz.',
+    'active-content-detected'          => ':attribute yüklenemedi çünkü etkin içerik (:reason) içeriyor.',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'gömülü JavaScript veya otomatik çalışan bir PDF eylemi',
+        'invalid_svg_markup'            => 'hatalı biçimlendirilmiş SVG işaretlemesi',
+        'embedded_script_tag'           => 'gömülü bir <script> etiketi',
+        'inline_event_handler'          => 'satır içi bir olay işleyici özniteliği',
+        'javascript_uri'                => 'bir javascript: URI\'si',
+        'embedded_vba_macro'            => 'gömülü bir VBA makrosu',
+        'auto_executing_ole_object'     => 'otomatik çalışan gömülü bir nesne',
+    ],
 ];

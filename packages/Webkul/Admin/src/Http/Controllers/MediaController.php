@@ -4,16 +4,46 @@ declare(strict_types=1);
 
 namespace Webkul\Admin\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\Http\Requests\MediaDownloadRequest;
+use Webkul\Admin\Http\Requests\MediaScanRequest;
 use Webkul\Core\Rules\FileOrImageValidValue;
 
 class MediaController extends Controller
 {
+    /**
+     * Scans a file at pick/drop time using the same checks
+     * FileOrImageValidValue applies at save time. UX pre-check only.
+     */
+    public function scan(MediaScanRequest $request): JsonResponse
+    {
+        $rule = new FileOrImageValidValue(
+            isImage: $request->boolean('is_image'),
+            allowedExtensions: $request->input('accepted_extensions', []),
+            allowedMimes: $request->input('accepted_extensions', []),
+        );
+
+        $validator = Validator::make(
+            ['file' => $request->file('file')],
+            ['file' => [$rule]],
+        );
+
+        if ($validator->fails()) {
+            return new JsonResponse([
+                'valid'   => false,
+                'message' => $validator->errors()->first('file'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        return new JsonResponse(['valid' => true]);
+    }
+
     /**
      * Serve a media asset from the default disk as an attachment download.
      */

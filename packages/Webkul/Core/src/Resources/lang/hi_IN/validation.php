@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'फ़ाइल :value इस रिकॉर्ड से संबंधित नहीं है। इसे :attribute फ़ील्ड के लिए फिर से अपलोड करें।',
     'password-surrounding-whitespace'  => ':attribute रिक्त स्थान से शुरू या समाप्त नहीं हो सकता।',
     'password-whitespace-only'         => ':attribute केवल रिक्त स्थानों से नहीं बन सकता।',
+    'active-content-detected'          => ':attribute अपलोड नहीं किया जा सका क्योंकि इसमें सक्रिय सामग्री (:reason) है।',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'एम्बेडेड जावास्क्रिप्ट या स्वतः-चलने वाली PDF क्रिया',
+        'invalid_svg_markup'            => 'अमान्य SVG मार्कअप',
+        'embedded_script_tag'           => 'एम्बेडेड <script> टैग',
+        'inline_event_handler'          => 'इनलाइन इवेंट हैंडलर विशेषता',
+        'javascript_uri'                => 'javascript: URI',
+        'embedded_vba_macro'            => 'एम्बेडेड VBA मैक्रो',
+        'auto_executing_ole_object'     => 'स्वतः-निष्पादित होने वाली एम्बेडेड ऑब्जेक्ट',
+    ],
 ];

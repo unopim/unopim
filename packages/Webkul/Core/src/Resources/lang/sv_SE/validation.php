@@ -22,4 +22,14 @@ return [
     'file-outside-attribute-path'      => 'Filen :value tillhör inte den här posten. Ladda upp den igen för fältet :attribute.',
     'password-surrounding-whitespace'  => 'Fältet :attribute får inte börja eller sluta med ett mellanslag.',
     'password-whitespace-only'         => 'Fältet :attribute får inte bestå enbart av mellanslag.',
+    'active-content-detected'          => ':attribute kunde inte laddas upp eftersom den innehåller aktivt innehåll (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'inbäddad JavaScript eller en PDF-åtgärd som körs automatiskt',
+        'invalid_svg_markup'            => 'felaktig SVG-markering',
+        'embedded_script_tag'           => 'en inbäddad <script>-tagg',
+        'inline_event_handler'          => 'ett inbäddat händelsehanterarattribut',
+        'javascript_uri'                => 'en javascript:-URI',
+        'embedded_vba_macro'            => 'ett inbäddat VBA-makro',
+        'auto_executing_ole_object'     => 'ett automatiskt körande inbäddat objekt',
+    ],
 ];
