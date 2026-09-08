@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Tệp phải là kiểu csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => ':attribute Định dạng tệp và loại MIME không khớp. Định dạng tệp là :extension và loại MIME là :mimeType.',
     'file-not-exists'                  => 'Tệp đã chọn không tồn tại :value cho trường :attribute.',
+    'pdf-active-content'              => 'Tệp PDF chứa tập lệnh hoặc hành động được nhúng nên không thể tải lên.',
     'file-outside-attribute-path'      => 'Tệp :value không thuộc về bản ghi này. Hãy tải lên lại cho trường :attribute.',
     'password-surrounding-whitespace'  => ':attribute không được bắt đầu hoặc kết thúc bằng khoảng trắng.',
     'password-whitespace-only'         => ':attribute không được chỉ gồm khoảng trắng.',

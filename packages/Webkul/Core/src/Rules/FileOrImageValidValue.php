@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Concerns\ValidatesAttributes;
 use Symfony\Component\Mime\MimeTypes;
+use Webkul\Core\Helpers\MediaContent;
 
 class FileOrImageValidValue implements ValidationRule
 {
@@ -209,6 +210,12 @@ class FileOrImageValidValue implements ValidationRule
 
         if ($this->allowedMimes && ! $this->validateMimes($attribute, $value, $this->allowedMimes)) {
             $fail('validation.mimes')->translate(['values' => implode(', ', $this->allowedMimes)]);
+
+            return false;
+        }
+
+        if (strtolower($extension) === 'pdf' && MediaContent::pdfHasActiveContent($value->getRealPath())) {
+            $fail('core::validation.pdf-active-content')->translate();
 
             return false;
         }

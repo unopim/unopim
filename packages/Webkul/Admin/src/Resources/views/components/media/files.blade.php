@@ -110,13 +110,15 @@
                     <p class="text-lg font-bold text-gray-800 dark:text-white" v-text="cardMedia.name"></p>
                 </x-slot>
                 <x-slot:content>
-                    <iframe :src="inputFile.url" class="w-full rounded" style="height: 70vh;"></iframe>
+                    <iframe :src="previewUrl" :sandbox="previewSandbox" class="h-[70vh] w-full rounded"></iframe>
                 </x-slot>
             </x-admin::modal>
         </div>
     </script>
 
     <script type="module">
+        const mediaPreviewRoute = @json(route('admin.media.preview'));
+
         app.component('v-media-files', {
             template: '#v-media-files-template',
 
@@ -276,6 +278,18 @@
             props: ['index', 'inputFile', 'name', 'width', 'height', 'acceptedExtensions', 'readOnly', 'allowDownload'],
 
             computed: {
+                previewSandbox() {
+                    return this.cardMedia.extension === 'pdf' ? null : '';
+                },
+
+                previewUrl() {
+                    if (this.inputFile.is_new || ! this.inputFile.value) {
+                        return this.inputFile.url;
+                    }
+
+                    return mediaPreviewRoute + '?path=' + encodeURIComponent(this.inputFile.value);
+                },
+
                 cardMedia() {
                     const fileName = this.inputFile?.file?.name ?? this.inputFile?.fileName ?? '';
 

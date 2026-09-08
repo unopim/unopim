@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'يجب أن يكون الملف من النوع csv,xls,xlsx',
     'file-mime-extension-mismatch'     => 'لا يتطابق امتداد الملف ونوع الـ MIME للحقل :attribute. امتداد الملف هو :extension ونوع الـ MIME هو :mimeType.',
     'file-not-exists'                  => 'الملف المحدد لا يوجد :value للحقل :attribute.',
+    'pdf-active-content'              => 'يحتوي ملف PDF على نصوص برمجية أو إجراءات مضمّنة ولا يمكن رفعه.',
     'file-outside-attribute-path'      => 'الملف :value لا ينتمي إلى هذا السجل. يرجى رفعه مرة أخرى لحقل :attribute.',
     'password-surrounding-whitespace'  => 'لا يمكن أن يبدأ :attribute أو ينتهي بمسافة.',
     'password-whitespace-only'         => 'لا يمكن أن يتكوّن :attribute من مسافات فقط.',

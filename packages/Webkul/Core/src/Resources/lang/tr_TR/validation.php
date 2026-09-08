@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Dosya csv, xls, xlsx türünde olmalıdır.',
     'file-mime-extension-mismatch'     => 'Dosya uzantısı ve MIME türü :attribute alanı için eşleşmiyor. Dosya uzantısı :extension ve MIME türü :mimeType.',
     'file-not-exists'                  => 'Seçilen dosya :value için :attribute alanında mevcut değil.',
+    'pdf-active-content'              => 'PDF gömülü betikler veya eylemler içeriyor ve yüklenemez.',
     'file-outside-attribute-path'      => ':value dosyası bu kayda ait değil. :attribute alanı için tekrar yükleyin.',
     'password-surrounding-whitespace'  => ':attribute boşlukla başlayamaz veya bitemez.',
     'password-whitespace-only'         => ':attribute yalnızca boşluklardan oluşamaz.',

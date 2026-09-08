@@ -23,6 +23,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::get('acl-version', [AclVersionController::class, 'show'])->name('admin.acl.version');
 
     Route::get('media/download', [MediaController::class, 'download'])->name('admin.media.download');
+    Route::get('media/preview', [MediaController::class, 'preview'])->name('admin.media.preview');
 
     /**
      * Dashboard routes.

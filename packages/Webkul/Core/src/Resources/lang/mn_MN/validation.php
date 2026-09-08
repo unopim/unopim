@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Файл нь csv, xls, xlsx төрлийн байх ёстой',
     'file-mime-extension-mismatch'     => 'Файлын өргөтгөл болон MIME төрөл нь :attribute талбарт тохирохгүй байна. Файлын өргөтгөл :extension бөгөөд MIME төрөл :mimeType байна.',
     'file-not-exists'                  => ':attribute талбарт сонгосон файл :value байхгүй байна.',
+    'pdf-active-content'              => 'Энэ PDF нь суулгагдсан скрипт эсвэл үйлдэл агуулсан тул байршуулах боломжгүй.',
     'file-outside-attribute-path'      => ':value файл энэ бичлэгт хамаарахгүй. :attribute талбарт дахин байршуулна уу.',
     'password-surrounding-whitespace'  => ':attribute нь хоосон зайгаар эхэлж эсвэл төгсөж болохгүй.',
     'password-whitespace-only'         => ':attribute нь зөвхөн хоосон зайнаас бүрдэж болохгүй.',

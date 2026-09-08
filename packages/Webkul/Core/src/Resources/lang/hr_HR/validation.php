@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Datoteka mora biti tipa csv,xls,xlsx',
     'file-mime-extension-mismatch'     => 'Ekstenzija datoteke i MIME tip se ne podudaraju za polje :attribute. Ekstenzija datoteke je :extension i MIME tip je :mimeType.',
     'file-not-exists'                  => 'Odabrana datoteka ne postoji :value za polje :attribute.',
+    'pdf-active-content'              => 'PDF sadrži ugrađene skripte ili radnje i ne može se prenijeti.',
     'file-outside-attribute-path'      => 'Datoteka :value ne pripada ovom zapisu. Ponovno je učitajte za polje :attribute.',
     'password-surrounding-whitespace'  => 'Polje :attribute ne smije počinjati ni završavati razmakom.',
     'password-whitespace-only'         => 'Polje :attribute ne može se sastojati samo od razmaka.',

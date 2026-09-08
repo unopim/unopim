@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Die Datei muss vom Typ csv, xls, xlsx sein.',
     'file-mime-extension-mismatch'     => 'Die Dateiendung und der MIME-Typ stimmen nicht überein für das Feld :attribute. Die Dateiendung ist :extension und der MIME-Typ ist :mimeType.',
     'file-not-exists'                  => 'Die ausgewählte Datei existiert nicht :value für das Feld :attribute.',
+    'pdf-active-content'              => 'Das PDF enthält eingebettete Skripte oder Aktionen und kann nicht hochgeladen werden.',
     'file-outside-attribute-path'      => 'Die Datei :value gehört nicht zu diesem Datensatz. Laden Sie sie für das Feld :attribute erneut hoch.',
     'password-surrounding-whitespace'  => ':attribute darf nicht mit einem Leerzeichen beginnen oder enden.',
     'password-whitespace-only'         => ':attribute darf nicht ausschließlich aus Leerzeichen bestehen.',

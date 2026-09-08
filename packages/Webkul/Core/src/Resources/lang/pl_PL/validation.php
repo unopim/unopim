@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Plik musi być typu csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'Rozszerzenie pliku i typ MIME nie pasują do pola :attribute. Rozszerzenie pliku to :extension, a typ MIME to :mimeType.',
     'file-not-exists'                  => 'Wybrany plik nie istnieje :value dla pola :attribute.',
+    'pdf-active-content'              => 'Plik PDF zawiera osadzone skrypty lub akcje i nie może zostać przesłany.',
     'file-outside-attribute-path'      => 'Plik :value nie należy do tego rekordu. Prześlij go ponownie dla pola :attribute.',
     'password-surrounding-whitespace'  => 'Pole :attribute nie może zaczynać się ani kończyć spacją.',
     'password-whitespace-only'         => 'Pole :attribute nie może składać się wyłącznie ze spacji.',

@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Tiedoston tyyppi on oltava csv,xls,xlsx',
     'file-mime-extension-mismatch'     => 'Tiedostopääte ja MIME-tyyppi eivät täsmää kentälle :attribute. Tiedostopääte on :extension ja MIME-tyyppi on :mimeType.',
     'file-not-exists'                  => 'Valittu tiedosto ei ole olemassa :value kentälle :attribute.',
+    'pdf-active-content'              => 'PDF sisältää upotettuja komentosarjoja tai toimintoja, eikä sitä voi ladata.',
     'file-outside-attribute-path'      => 'Tiedosto :value ei kuulu tähän tietueeseen. Lataa se uudelleen kenttään :attribute.',
     'password-surrounding-whitespace'  => 'Kenttä :attribute ei voi alkaa tai päättyä välilyöntiin.',
     'password-whitespace-only'         => 'Kenttä :attribute ei voi koostua pelkistä välilyönneistä.',
