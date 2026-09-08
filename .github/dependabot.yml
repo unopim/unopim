@@ -2,7 +2,7 @@
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 #
 # Major dependency bumps are breaking, so they target `master`, the next-major
-# integration branch. The current release line `3.0` only accepts minor and
+# integration branch. The current release line `3.x` only accepts minor and
 # patch bumps. Dependabot reads this file from the default branch only.
 
 version: 2
@@ -10,7 +10,7 @@ updates:
   # Composer (PHP) — current release line: minor + patch only
   - package-ecosystem: "composer"
     directory: "/"
-    target-branch: "3.0"
+    target-branch: "3.x"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -64,7 +64,7 @@ updates:
   # npm — Playwright e2e tests, current release line
   - package-ecosystem: "npm"
     directory: "/tests/e2e-pw"
-    target-branch: "3.0"
+    target-branch: "3.x"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -115,7 +115,7 @@ updates:
   # GitHub Actions — current release line
   - package-ecosystem: "github-actions"
     directory: "/"
-    target-branch: "3.0"
+    target-branch: "3.x"
     schedule:
       interval: "weekly"
       day: "monday"
