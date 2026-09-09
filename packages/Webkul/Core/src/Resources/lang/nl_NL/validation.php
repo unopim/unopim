@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Het bestand moet van het type CSV, XLS of XLSX zijn.',
     'file-mime-extension-mismatch'     => 'De bestandsextensie en het MIME-type komen niet overeen voor het veld :attribute. De bestandsextensie is :extension en het MIME-type is :mimeType.',
     'file-not-exists'                  => 'Het geselecteerde bestand ":value" bestaat niet (veld :attribute).',
+    'pdf-active-content'               => 'De pdf bevat ingesloten scripts of acties en kan niet worden geüpload.',
     'file-outside-attribute-path'      => 'Het bestand :value hoort niet bij dit record. Upload het opnieuw voor het veld :attribute.',
     'password-surrounding-whitespace'  => ':attribute mag niet beginnen of eindigen met een spatie.',
     'password-whitespace-only'         => ':attribute mag niet alleen uit spaties bestaan.',

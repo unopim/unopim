@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'As colunas número "%s" têm cabeçalhos vazios.',
-            'column-name-invalid'  => 'Cabeçalhos de coluna inválidos: "%s".',
-            'column-not-found'     => 'Colunas necessárias não encontradas: %s.',
-            'column-numbers'       => 'O número de colunas não corresponde ao número de linhas no cabeçalho.',
-            'invalid-attribute'    => 'O cabeçalho contém atributos inválidos: "%s".',
-            'system'               => 'Ocorreu um erro do sistema inesperado.',
-            'wrong-quotes'         => 'Aspas inclinadas usadas em vez de aspas diretas.',
-            'file-empty'           => 'O arquivo está vazio ou não contém uma linha de cabeçalho. Por favor, envie um arquivo válido com dados.',
+            'column-empty-headers'   => 'As colunas número "%s" têm cabeçalhos vazios.',
+            'column-name-invalid'    => 'Cabeçalhos de coluna inválidos: "%s".',
+            'column-not-found'       => 'Colunas necessárias não encontradas: %s.',
+            'column-numbers'         => 'O número de colunas não corresponde ao número de linhas no cabeçalho.',
+            'invalid-attribute'      => 'O cabeçalho contém atributos inválidos: "%s".',
+            'system'                 => 'Ocorreu um erro do sistema inesperado.',
+            'wrong-quotes'           => 'Aspas inclinadas usadas em vez de aspas diretas.',
+            'file-empty'             => 'O arquivo está vazio ou não contém uma linha de cabeçalho. Por favor, envie um arquivo válido com dados.',
+            'file-missing'           => 'O arquivo de origem deste trabalho não foi encontrado. Verifique o caminho do arquivo no perfil e envie o arquivo novamente.',
         ],
     ],
     'job' => [

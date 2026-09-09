@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => '列号“%s”的标题为空。',
-            'column-name-invalid'  => '无效的列名：“%s”。',
-            'column-not-found'     => '未找到所需的列：%s。',
-            'column-numbers'       => '列数与标题中的行数不对应。',
-            'invalid-attribute'    => '标头包含无效属性：“%s”。',
-            'system'               => '发生意外的系统错误。',
-            'wrong-quotes'         => '使用弯引号代替直引号。',
-            'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
+            'column-empty-headers'   => '列号“%s”的标题为空。',
+            'column-name-invalid'    => '无效的列名：“%s”。',
+            'column-not-found'       => '未找到所需的列：%s。',
+            'column-numbers'         => '列数与标题中的行数不对应。',
+            'invalid-attribute'      => '标头包含无效属性：“%s”。',
+            'system'                 => '发生意外的系统错误。',
+            'wrong-quotes'           => '使用弯引号代替直引号。',
+            'file-empty'             => '文件为空或不包含标题行。请上传包含数据的有效文件。',
+            'file-missing'           => '找不到此作业的源文件。请检查配置中的文件路径，然后重新上传文件。',
         ],
     ],
     'job' => [

@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Le fichier doit être de type csv,xls,xlsx',
     'file-mime-extension-mismatch'     => 'L\'extension du fichier et le type MIME ne correspondent pas pour le champ :attribute. L\'extension du fichier est :extension et le type MIME est :mimeType.',
     'file-not-exists'                  => 'Le fichier sélectionné n\'existe pas :value pour le champ :attribute.',
+    'pdf-active-content'               => 'Le PDF contient des scripts ou des actions intégrés et ne peut pas être téléversé.',
     'file-outside-attribute-path'      => 'Le fichier :value n\'appartient pas à cet enregistrement. Téléversez-le à nouveau pour le champ :attribute.',
     'password-surrounding-whitespace'  => 'Le champ :attribute ne peut pas commencer ni se terminer par une espace.',
     'password-whitespace-only'         => 'Le champ :attribute ne peut pas être composé uniquement d\'espaces.',

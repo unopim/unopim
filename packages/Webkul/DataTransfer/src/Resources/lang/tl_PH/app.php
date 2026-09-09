@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Mga kolum na may mga numero "%s" ay may mga walang laman na mga ulo.',
-            'column-name-invalid'  => 'Mga hindi wasto na pangalan ng mga kolum: "%s".',
-            'column-not-found'     => 'Hindi natagpuan ang mga kinakailangang kolum: %s.',
-            'column-numbers'       => 'Ang bilang ng mga kolum ay hindi tumutugma sa bilang ng mga linya sa ulo.',
-            'invalid-attribute'    => 'Ang ulo ay may hindi wasto na mga attribute: "%s".',
-            'system'               => 'Isang hindi inaasahang error ng sistema ang nangyari.',
-            'wrong-quotes'         => 'Ginamit ang mga kurbadong mga quote sa halip na mga tuwid na quote.',
-            'file-empty'           => 'Ang file ay walang laman o walang header row. Mangyaring mag-upload ng wastong file na may datos.',
+            'column-empty-headers'   => 'Mga kolum na may mga numero "%s" ay may mga walang laman na mga ulo.',
+            'column-name-invalid'    => 'Mga hindi wasto na pangalan ng mga kolum: "%s".',
+            'column-not-found'       => 'Hindi natagpuan ang mga kinakailangang kolum: %s.',
+            'column-numbers'         => 'Ang bilang ng mga kolum ay hindi tumutugma sa bilang ng mga linya sa ulo.',
+            'invalid-attribute'      => 'Ang ulo ay may hindi wasto na mga attribute: "%s".',
+            'system'                 => 'Isang hindi inaasahang error ng sistema ang nangyari.',
+            'wrong-quotes'           => 'Ginamit ang mga kurbadong mga quote sa halip na mga tuwid na quote.',
+            'file-empty'             => 'Ang file ay walang laman o walang header row. Mangyaring mag-upload ng wastong file na may datos.',
+            'file-missing'           => 'Hindi mahanap ang source file para sa job na ito. Suriin ang file path sa profile, pagkatapos ay i-upload muli ang file.',
         ],
     ],
     'job' => [

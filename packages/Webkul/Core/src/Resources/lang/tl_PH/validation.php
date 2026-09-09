@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Ang file ay dapat ng uri csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'Ang extension ng file at MIME type ay hindi tumutugma para sa field na :attribute. Ang extension ng file ay :extension at ang MIME type ay :mimeType.',
     'file-not-exists'                  => 'Ang napiling file ay hindi umiiral :value para sa field na :attribute.',
+    'pdf-active-content'               => 'Naglalaman ang PDF ng mga naka-embed na script o aksyon at hindi ito maaaring i-upload.',
     'file-outside-attribute-path'      => 'Ang file na :value ay hindi kabilang sa talaang ito. I-upload itong muli para sa field na :attribute.',
     'password-surrounding-whitespace'  => 'Ang :attribute ay hindi maaaring magsimula o magtapos sa espasyo.',
     'password-whitespace-only'         => 'Ang :attribute ay hindi maaaring puro espasyo lamang.',

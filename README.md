@@ -175,13 +175,17 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 
 ## 🚀 Installation
 
-> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 16+.
+UnoPim supports MariaDB as a primary application datastore, alongside MySQL and PostgreSQL. [UnoPim 3.1.0](https://github.com/unopim/unopim/releases/tag/v3.1.0) added first-class MariaDB support for installation, upgrades, migrations, audit logs, and REST APIs. Composer installations default to MySQL; the supplied Docker stack defaults to PostgreSQL.
+
+> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Composer 2.6+, and MariaDB 10.11 LTS or 11.8 LTS, MySQL 8.0.32+, or PostgreSQL 16. Node 22 LTS is recommended for asset builds.
 >
 > **PHP extensions:** `calendar`, `curl`, `intl`, `mbstring`, `openssl`, `pdo`, `pdo_mysql`, `tokenizer` — these are hard `composer.json` requirements and `composer install` fails without them. The upgrade preflight additionally checks `json`, `xml`, `gd`, `zip` and `fileinfo`.
 >
 > **On PostgreSQL:** `ext-pdo_mysql` is currently required by `composer.json` regardless of the database you run, so it must be installed even on a PostgreSQL-only host. Install `ext-pdo_pgsql` as well and set `DB_CONNECTION=pgsql`.
 
-Full [Installation Guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html) on devdocs — or pick a quick path below.
+> **On MariaDB:** Use the latest patch of 10.11 LTS or 11.8 LTS, enable `pdo_mysql`, and set `DB_CONNECTION=mariadb`. Install `mariadb-dump` on the application host for upgrade backups. Community 10.6 and 10.10 are end of life; consult the [MariaDB maintenance policy](https://mariadb.org/about/#maintenance-policy).
+
+See the [3.1 requirements](https://devdocs.unopim.com/3.1/introduction/requirements.html), [MariaDB installation guide](https://devdocs.unopim.com/3.1/introduction/installation-with-mariadb.html), or [Installation Guide](https://devdocs.unopim.com/3.1/introduction/installation.html) — or pick a quick path below.
 
 ### Composer
 
@@ -204,7 +208,7 @@ php artisan queue:work --queue=webhooks,system,default,completeness,publication
 
 ### Docker
 
-Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker) for advanced configuration.
+Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/3.1/introduction/installation-docker.html) for advanced configuration.
 
 **Run UnoPim** — pre-built images, no checkout, no configuration:
 

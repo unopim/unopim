@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Файл должен иметь тип csv,xls,xlsx',
     'file-mime-extension-mismatch'     => 'Расширение файла и MIME-тип не соответствуют полю :attribute. Расширение файла: :extension, MIME-тип: :mimeType.',
     'file-not-exists'                  => 'Выбранный файл не существует :value для поля :attribute.',
+    'pdf-active-content'               => 'PDF-файл содержит встроенные скрипты или действия и не может быть загружен.',
     'file-outside-attribute-path'      => 'Файл :value не принадлежит этой записи. Загрузите его заново для поля :attribute.',
     'password-surrounding-whitespace'  => 'Поле :attribute не может начинаться или заканчиваться пробелом.',
     'password-whitespace-only'         => 'Поле :attribute не может состоять только из пробелов.',

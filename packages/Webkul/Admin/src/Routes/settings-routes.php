@@ -150,15 +150,15 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('import/{id}', 'importView')->name('admin.settings.data_transfer.imports.import-view');
 
-            Route::get('validate/{id}', 'validateImport')->name('admin.settings.data_transfer.imports.validate');
+            Route::post('validate/{id}', 'validateImport')->name('admin.settings.data_transfer.imports.validate');
 
             Route::put('import-now/{id}', 'importNow')->name('admin.settings.data_transfer.imports.import_now');
 
-            Route::get('start/{id}', 'start')->name('admin.settings.data_transfer.imports.start');
+            Route::post('start/{id}', 'start')->name('admin.settings.data_transfer.imports.start');
 
-            Route::get('link/{id}', 'link')->name('admin.settings.data_transfer.imports.link');
+            Route::post('link/{id}', 'link')->name('admin.settings.data_transfer.imports.link');
 
-            Route::get('index/{id}', 'indexData')->name('admin.settings.data_transfer.imports.index_data');
+            Route::post('index/{id}', 'indexData')->name('admin.settings.data_transfer.imports.index_data');
 
             Route::post('pause/{id}', 'pause')->name('admin.settings.data_transfer.imports.pause');
 
@@ -199,15 +199,15 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
             Route::get('export/{id}', 'exportView')->name('admin.settings.data_transfer.exports.export-view');
 
-            Route::get('validate/{id}', 'validateExport')->name('admin.settings.data_transfer.exports.validate');
+            Route::post('validate/{id}', 'validateExport')->name('admin.settings.data_transfer.exports.validate');
 
             Route::put('export-now/{id}', 'exportNow')->name('admin.settings.data_transfer.exports.export_now');
 
-            Route::get('start/{id}', 'start')->name('admin.settings.data_transfer.exports.start');
+            Route::post('start/{id}', 'start')->name('admin.settings.data_transfer.exports.start');
 
-            Route::get('link/{id}', 'link')->name('admin.settings.data_transfer.exports.link');
+            Route::post('link/{id}', 'link')->name('admin.settings.data_transfer.exports.link');
 
-            Route::get('index/{id}', 'indexData')->name('admin.settings.data_transfer.exports.index_data');
+            Route::post('index/{id}', 'indexData')->name('admin.settings.data_transfer.exports.index_data');
 
             Route::get('stats/{id}/{state?}', 'stats')->name('admin.settings.data_transfer.exports.stats');
 

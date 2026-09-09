@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolumner med nummer "%s" har tomma rubriker.',
-            'column-name-invalid'  => 'Ogiltiga kolumnnamn: "%s".',
-            'column-not-found'     => 'Krävda kolumner hittades inte: %s.',
-            'column-numbers'       => 'Antalet kolumner överensstämmer inte med antalet rader i rubriken.',
-            'invalid-attribute'    => 'Rubriken innehåller ogiltiga attribut: "%s".',
-            'system'               => 'Ett oväntat systemfel inträffade.',
-            'wrong-quotes'         => 'Krokiga citattecken användes i stället för raka citattecken.',
-            'file-empty'           => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
+            'column-empty-headers'   => 'Kolumner med nummer "%s" har tomma rubriker.',
+            'column-name-invalid'    => 'Ogiltiga kolumnnamn: "%s".',
+            'column-not-found'       => 'Krävda kolumner hittades inte: %s.',
+            'column-numbers'         => 'Antalet kolumner överensstämmer inte med antalet rader i rubriken.',
+            'invalid-attribute'      => 'Rubriken innehåller ogiltiga attribut: "%s".',
+            'system'                 => 'Ett oväntat systemfel inträffade.',
+            'wrong-quotes'           => 'Krokiga citattecken användes i stället för raka citattecken.',
+            'file-empty'             => 'Filen är tom eller innehåller ingen rubrikrad. Vänligen ladda upp en giltig fil med data.',
+            'file-missing'           => 'Källfilen för det här jobbet kunde inte hittas. Kontrollera filsökvägen i profilen och ladda upp filen igen.',
         ],
     ],
     'job' => [

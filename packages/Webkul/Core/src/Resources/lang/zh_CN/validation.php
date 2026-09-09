@@ -19,6 +19,7 @@ return [
     'file-type'                        => '文件必须为 csv、xls、xlsx 类型',
     'file-mime-extension-mismatch'     => ':attribute 文件扩展名和 MIME 类型不匹配。文件扩展名是 :extension，MIME 类型是 :mimeType。',
     'file-not-exists'                  => '所选文件 :value 在字段 :attribute 中不存在。',
+    'pdf-active-content'               => '该 PDF 包含嵌入的脚本或动作，无法上传。',
     'file-outside-attribute-path'      => '文件 :value 不属于此记录。请为 :attribute 字段重新上传。',
     'password-surrounding-whitespace'  => ':attribute 不能以空格开头或结尾。',
     'password-whitespace-only'         => ':attribute 不能只由空格组成。',

@@ -3,6 +3,7 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\MagicAI\Rules\SafeProviderExtras;
 
 class PlatformTestRequest extends FormRequest
 {
@@ -17,7 +18,7 @@ class PlatformTestRequest extends FormRequest
     /**
      * Get the validation rules.
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
@@ -26,6 +27,7 @@ class PlatformTestRequest extends FormRequest
             'api_key'  => 'nullable|string',
             'api_url'  => 'nullable',
             'models'   => 'required|string',
+            'extras'   => ['nullable', new SafeProviderExtras],
         ];
     }
 }

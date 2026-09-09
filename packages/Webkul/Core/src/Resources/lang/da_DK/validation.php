@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Filtypen skal være csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'Filtypen og MIME-typen stemmer ikke overens for feltet :attribute. Filtypen er :extension og MIME-typen er :mimeType.',
     'file-not-exists'                  => 'Den valgte fil findes ikke :value for feltet :attribute.',
+    'pdf-active-content'               => 'PDF-filen indeholder indlejrede scripts eller handlinger og kan ikke uploades.',
     'file-outside-attribute-path'      => 'Filen :value tilhører ikke denne post. Upload den igen til feltet :attribute.',
     'password-surrounding-whitespace'  => ':attribute må ikke begynde eller slutte med et mellemrum.',
     'password-whitespace-only'         => ':attribute må ikke kun bestå af mellemrum.',

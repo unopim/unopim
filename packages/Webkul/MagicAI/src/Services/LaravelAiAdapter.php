@@ -59,11 +59,7 @@ class LaravelAiAdapter implements LLMModelInterface, SupportsStructuredTranslati
             $overrides['url'] = $this->platform->api_url;
         }
 
-        if ($this->platform->extras && is_array($this->platform->extras)) {
-            return array_merge($overrides, $this->platform->extras);
-        }
-
-        return $overrides;
+        return ProviderOverrides::build($overrides, $this->platform->extras);
     }
 
     /**

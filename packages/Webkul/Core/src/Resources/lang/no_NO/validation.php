@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'Filtypen må være csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'Filtypen og MIME-typen samsvarer ikke for feltet :attribute. Filtypen er :extension og MIME-typen er :mimeType.',
     'file-not-exists'                  => 'Den valgte filen finnes ikke :value for feltet :attribute.',
+    'pdf-active-content'               => 'PDF-filen inneholder innebygde skript eller handlinger og kan ikke lastes opp.',
     'file-outside-attribute-path'      => 'Filen :value hører ikke til denne posten. Last den opp på nytt for feltet :attribute.',
     'password-surrounding-whitespace'  => ':attribute kan ikke begynne eller slutte med et mellomrom.',
     'password-whitespace-only'         => ':attribute kan ikke bestå av bare mellomrom.',

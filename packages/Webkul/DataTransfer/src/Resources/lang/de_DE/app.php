@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
-            'column-name-invalid'  => 'Ungültige Spaltennamen: „%s“.',
-            'column-not-found'     => 'Erforderliche Spalten nicht gefunden: %s.',
-            'column-numbers'       => 'Die Anzahl der Spalten entspricht nicht der Anzahl der Zeilen in der Kopfzeile.',
-            'invalid-attribute'    => 'Header enthält ungültige Attribute: „%s“.',
-            'system'               => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
-            'wrong-quotes'         => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
-            'file-empty'           => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
+            'column-empty-headers'   => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
+            'column-name-invalid'    => 'Ungültige Spaltennamen: „%s“.',
+            'column-not-found'       => 'Erforderliche Spalten nicht gefunden: %s.',
+            'column-numbers'         => 'Die Anzahl der Spalten entspricht nicht der Anzahl der Zeilen in der Kopfzeile.',
+            'invalid-attribute'      => 'Header enthält ungültige Attribute: „%s“.',
+            'system'                 => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
+            'wrong-quotes'           => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
+            'file-empty'             => 'Die Datei ist leer oder enthält keine Kopfzeile. Bitte laden Sie eine gültige Datei mit Daten hoch.',
+            'file-missing'           => 'Die Quelldatei für diesen Auftrag wurde nicht gefunden. Prüfen Sie den Dateipfad im Profil und laden Sie die Datei erneut hoch.',
         ],
     ],
     'job' => [

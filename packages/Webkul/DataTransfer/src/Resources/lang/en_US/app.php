@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Columns number "%s" have empty headers.',
-            'column-name-invalid'  => 'Invalid column names: "%s".',
-            'column-not-found'     => 'Required columns not found: %s.',
-            'column-numbers'       => 'Number of columns does not correspond to the number of rows in the header.',
-            'invalid-attribute'    => 'Header contains invalid attribute(s): "%s".',
-            'system'               => 'An unexpected system error occurred.',
-            'wrong-quotes'         => 'Curly quotes used instead of straight quotes.',
-            'file-empty'           => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'column-empty-headers'   => 'Columns number "%s" have empty headers.',
+            'column-name-invalid'    => 'Invalid column names: "%s".',
+            'column-not-found'       => 'Required columns not found: %s.',
+            'column-numbers'         => 'Number of columns does not correspond to the number of rows in the header.',
+            'invalid-attribute'      => 'Header contains invalid attribute(s): "%s".',
+            'system'                 => 'An unexpected system error occurred.',
+            'wrong-quotes'           => 'Curly quotes used instead of straight quotes.',
+            'file-empty'             => 'The file is empty or does not contain a header row. Please upload a valid file with data.',
+            'file-missing'           => 'The source file for this job could not be found. Check the file path on the profile, then upload the file again.',
         ],
     ],
     'job' => [

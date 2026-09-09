@@ -27,7 +27,13 @@ class RoleForm extends FormRequest
             return false;
         }
 
-        return array_diff((array) $this->input('permissions', []), $actingRole?->permissions ?? []) === [];
+        $submitted = (array) $this->input('permissions', []);
+
+        if (array_filter($submitted, is_string(...)) !== $submitted) {
+            return false;
+        }
+
+        return array_diff($submitted, $actingRole?->permissions ?? []) === [];
     }
 
     /**
@@ -50,6 +56,7 @@ class RoleForm extends FormRequest
             'permission_type' => $this->id ? 'required|in:all,custom' : 'required',
             'description'     => 'nullable',
             'permissions'     => 'nullable|array',
+            'permissions.*'   => 'string',
         ];
     }
 }

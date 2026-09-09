@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
-            'column-name-invalid'  => 'Ungültige Spaltennamen: „%s“.',
-            'column-not-found'     => 'Erforderliche Spalten nicht gefunden: %s.',
-            'column-numbers'       => 'Die Anzahl der Spalten entspricht nicht der Anzahl der Zeilen in der Kopfzeile.',
-            'invalid-attribute'    => 'Header enthält ungültige Attribute: „%s“.',
-            'system'               => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
-            'wrong-quotes'         => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
-            'file-empty'           => 'Le fichier est vide ou ne contient pas de ligne d\'en-tête. Veuillez télécharger un fichier valide contenant des données.',
+            'column-empty-headers'   => 'Die Spalten mit der Nummer „%s“ haben leere Kopfzeilen.',
+            'column-name-invalid'    => 'Ungültige Spaltennamen: „%s“.',
+            'column-not-found'       => 'Erforderliche Spalten nicht gefunden: %s.',
+            'column-numbers'         => 'Die Anzahl der Spalten entspricht nicht der Anzahl der Zeilen in der Kopfzeile.',
+            'invalid-attribute'      => 'Header enthält ungültige Attribute: „%s“.',
+            'system'                 => 'Es ist ein unerwarteter Systemfehler aufgetreten.',
+            'wrong-quotes'           => 'Anstelle von geraden Anführungszeichen werden geschweifte Anführungszeichen verwendet.',
+            'file-empty'             => 'Le fichier est vide ou ne contient pas de ligne d\'en-tête. Veuillez télécharger un fichier valide contenant des données.',
+            'file-missing'           => 'Le fichier source de cette tâche est introuvable. Vérifiez le chemin du fichier dans le profil, puis téléversez-le à nouveau.',
         ],
     ],
     'job' => [

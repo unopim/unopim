@@ -19,6 +19,7 @@ return [
     'file-type'                        => 'फ़ाइल csv,xls,xlsx प्रकार की होनी चाहिए',
     'file-mime-extension-mismatch'     => 'फ़ाइल एक्सटेंशन और MIME प्रकार :attribute फ़ील्ड के लिए मेल नहीं खाते। फ़ाइल एक्सटेंशन :extension और MIME प्रकार :mimeType है।',
     'file-not-exists'                  => 'चयनित फ़ाइल मौजूद नहीं है :value फ़ील्ड :attribute के लिए।',
+    'pdf-active-content'               => 'इस PDF में एम्बेडेड स्क्रिप्ट या क्रियाएँ हैं और इसे अपलोड नहीं किया जा सकता।',
     'file-outside-attribute-path'      => 'फ़ाइल :value इस रिकॉर्ड से संबंधित नहीं है। इसे :attribute फ़ील्ड के लिए फिर से अपलोड करें।',
     'password-surrounding-whitespace'  => ':attribute रिक्त स्थान से शुरू या समाप्त नहीं हो सकता।',
     'password-whitespace-only'         => ':attribute केवल रिक्त स्थानों से नहीं बन सकता।',

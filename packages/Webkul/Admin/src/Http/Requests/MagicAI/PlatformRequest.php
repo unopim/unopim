@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Requests\MagicAI;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Rules\SafeProviderExtras;
 
 class PlatformRequest extends FormRequest
 {
@@ -31,6 +32,7 @@ class PlatformRequest extends FormRequest
             'models'     => 'required|string',
             'is_default' => 'sometimes|boolean',
             'status'     => 'sometimes|boolean',
+            'extras'     => ['nullable', new SafeProviderExtras],
         ];
     }
 }

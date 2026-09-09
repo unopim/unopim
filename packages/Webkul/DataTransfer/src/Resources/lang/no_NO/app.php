@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolonner nummer "%s" har tomme overskrifter.',
-            'column-name-invalid'  => 'Ugyldige kolonnenavn: "%s".',
-            'column-not-found'     => 'Mangler nødvendige kolonner: %s.',
-            'column-numbers'       => 'Antall kolonner stemmer ikke med antall rader i overskriften.',
-            'invalid-attribute'    => 'Overskrift inneholder ugyldige attributter: "%s".',
-            'system'               => 'En uventet systemfeil oppstod.',
-            'wrong-quotes'         => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
-            'file-empty'           => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
+            'column-empty-headers'   => 'Kolonner nummer "%s" har tomme overskrifter.',
+            'column-name-invalid'    => 'Ugyldige kolonnenavn: "%s".',
+            'column-not-found'       => 'Mangler nødvendige kolonner: %s.',
+            'column-numbers'         => 'Antall kolonner stemmer ikke med antall rader i overskriften.',
+            'invalid-attribute'      => 'Overskrift inneholder ugyldige attributter: "%s".',
+            'system'                 => 'En uventet systemfeil oppstod.',
+            'wrong-quotes'           => 'Skråstilt anførselstegn brukt i stedet for rette anførselstegn.',
+            'file-empty'             => 'Filen er tom eller inneholder ingen overskriftsrad. Vennligst last opp en gyldig fil med data.',
+            'file-missing'           => 'Kildefilen for denne jobben ble ikke funnet. Kontroller filbanen i profilen, og last opp filen på nytt.',
         ],
     ],
     'job' => [
