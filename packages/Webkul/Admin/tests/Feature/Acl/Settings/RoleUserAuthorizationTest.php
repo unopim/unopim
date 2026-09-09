@@ -56,9 +56,7 @@ it('blocks a low-privilege admin from updating a user (update route must be ACL-
 });
 
 it('allows an admin with the roles.create permission to reach the store handler', function () {
-    // The granted set must be one the actor already holds; RoleForm refuses to
-    // let a custom role hand out a permission it does not have itself.
-    $this->loginWithPermissions('custom', ['settings', 'settings.roles', 'settings.roles.create', 'dashboard']);
+    $this->loginWithPermissions('custom', ['dashboard', 'settings', 'settings.roles', 'settings.roles.create']);
 
     $this->post(route('admin.settings.roles.store'), [
         'name'            => 'legit-role',
