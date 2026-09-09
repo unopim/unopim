@@ -12,8 +12,8 @@
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/v/stable.svg" alt="Latest Stable Version"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
-  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=master&label=tests" alt="Tests"></a>
-  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=lint" alt="Lint"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=3.x&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=3.x&label=lint" alt="Lint"></a>
 </p>
 
 <p align="center">
@@ -213,7 +213,7 @@ Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdoc
 **Run UnoPim** — pre-built images, no checkout, no configuration:
 
 ```bash
-curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.yaml
+curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.yaml
 docker compose up -d
 ```
 
@@ -235,7 +235,7 @@ Change it after the first login. Every other setting has a working default; over
 **MySQL instead of PostgreSQL:**
 
 ```bash
-curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.mysql.yaml
+curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.mysql.yaml
 docker compose -f compose.yaml -f compose.mysql.yaml up -d
 ```
 
