@@ -161,6 +161,7 @@
                         return;
                     }
 
+                    this.hasTrusted = true;
                     this.touchedGroups[base] = true;
 
                     this.debounced();
