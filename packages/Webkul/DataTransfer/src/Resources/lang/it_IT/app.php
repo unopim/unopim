@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Le colonne numero "%s" hanno intestazioni vuote.',
-            'column-name-invalid'  => 'Intestazioni di colonna non valide: "%s".',
-            'column-not-found'     => 'Le colonne richieste non sono trovate: %s.',
-            'column-numbers'       => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
-            'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
-            'system'               => 'Si è verificato un errore di sistema imprevisto.',
-            'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
-            'file-empty'           => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
+            'column-empty-headers'   => 'Le colonne numero "%s" hanno intestazioni vuote.',
+            'column-name-invalid'    => 'Intestazioni di colonna non valide: "%s".',
+            'column-not-found'       => 'Le colonne richieste non sono trovate: %s.',
+            'column-numbers'         => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
+            'invalid-attribute'      => 'L\'intestazione contiene attributi non validi: "%s".',
+            'system'                 => 'Si è verificato un errore di sistema imprevisto.',
+            'wrong-quotes'           => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
+            'file-empty'             => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
+            'file-missing'           => 'Impossibile trovare il file di origine per questo processo. Controlla il percorso del file nel profilo, quindi caricalo di nuovo.',
         ],
     ],
     'job' => [

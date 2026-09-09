@@ -19,7 +19,7 @@ return [
     'file-type'                        => 'ファイルのタイプは csv、xls、xlsx でなければなりません。',
     'file-mime-extension-mismatch'     => 'ファイル拡張子とMIMEタイプが:attributeフィールドと一致しません。ファイル拡張子は:extension、MIMEタイプは:mimeTypeです。',
     'file-not-exists'                  => '選択されたファイルは:attributeフィールドの:valueが存在しません。',
-    'pdf-active-content'              => 'この PDF には埋め込みスクリプトまたはアクションが含まれているためアップロードできません。',
+    'pdf-active-content'               => 'この PDF には埋め込みスクリプトまたはアクションが含まれているためアップロードできません。',
     'file-outside-attribute-path'      => 'ファイル :value はこのレコードに属していません。:attribute フィールド用にもう一度アップロードしてください。',
     'password-surrounding-whitespace'  => ':attribute の先頭と末尾に空白は使用できません。',
     'password-whitespace-only'         => ':attribute を空白だけにすることはできません。',

@@ -4,6 +4,7 @@ namespace Webkul\MagicAI\Enums;
 
 use GuzzleHttp\Client;
 use Laravel\Ai\Enums\Lab;
+use Webkul\Webhook\Validators\SafeWebhookUrl;
 
 enum AiProvider: string
 {
@@ -140,7 +141,7 @@ enum AiProvider: string
             return [];
         }
 
-        return $this->fetchOpenAiCompatModels($client, $apiKey, rtrim($apiUrl, '/').'/models');
+        return $this->fetchOpenAiCompatModels($client, $apiKey, rtrim($apiUrl, '/').'/models', harden: true);
     }
 
     private function fetchOpenAiModels(Client $client, ?string $apiKey): array
@@ -178,14 +179,16 @@ enum AiProvider: string
         return $models;
     }
 
-    private function fetchOpenAiCompatModels(Client $client, ?string $apiKey, string $url): array
+    private function fetchOpenAiCompatModels(Client $client, ?string $apiKey, string $url, bool $harden = false): array
     {
-        $response = $client->get($url, [
+        $options = [
             'headers' => [
                 'Authorization' => 'Bearer '.$apiKey,
                 'Content-Type'  => 'application/json',
             ],
-        ]);
+        ];
+
+        $response = $client->get($url, $harden ? $this->ssrfGuardedOptions($url, $options) : $options);
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_map(
@@ -199,13 +202,28 @@ enum AiProvider: string
 
     private function fetchOllamaModels(Client $client, string $baseUrl): array
     {
-        $response = $client->get(rtrim($baseUrl, '/').'/api/tags');
+        $url = rtrim($baseUrl, '/').'/api/tags';
+
+        $response = $client->get($url, $this->ssrfGuardedOptions($url));
 
         $data = json_decode($response->getBody()->getContents(), true);
         $models = array_column($data['models'] ?? [], 'name');
         sort($models);
 
         return $models;
+    }
+
+    /**
+     * Pin the request to the pre-validated IP and forbid redirect following so
+     * a user-supplied model-discovery URL cannot pivot to an internal host via
+     * a 30x redirect or DNS rebinding.
+     *
+     * @param  array<string, mixed>  $options
+     * @return array<string, mixed>
+     */
+    private function ssrfGuardedOptions(string $url, array $options = []): array
+    {
+        return array_merge($options, SafeWebhookUrl::httpOptions($url));
     }
 
     private function fetchAnthropicModels(Client $client, ?string $apiKey): array
@@ -234,12 +252,12 @@ enum AiProvider: string
         try {
             $url = rtrim($apiUrl, '/').'/openai/models?api-version=2024-10-21';
 
-            $response = $client->get($url, [
+            $response = $client->get($url, $this->ssrfGuardedOptions($url, [
                 'headers' => [
                     'api-key'      => $apiKey,
                     'Content-Type' => 'application/json',
                 ],
-            ]);
+            ]));
 
             $data = json_decode($response->getBody()->getContents(), true);
             $models = array_column($data['data'] ?? [], 'id');

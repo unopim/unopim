@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolonnenummer "%s" har tomme overskrifter.',
-            'column-name-invalid'  => 'Ugyldige kolonnenavne: "%s".',
-            'column-not-found'     => 'Krævede kolonner findes ikke: %s.',
-            'column-numbers'       => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
-            'invalid-attribute'    => 'Overskriften indeholder ugyldige attributter: "%s".',
-            'system'               => 'En uventet systemfejl opstod.',
-            'wrong-quotes'         => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
-            'file-empty'           => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
+            'column-empty-headers'   => 'Kolonnenummer "%s" har tomme overskrifter.',
+            'column-name-invalid'    => 'Ugyldige kolonnenavne: "%s".',
+            'column-not-found'       => 'Krævede kolonner findes ikke: %s.',
+            'column-numbers'         => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
+            'invalid-attribute'      => 'Overskriften indeholder ugyldige attributter: "%s".',
+            'system'                 => 'En uventet systemfejl opstod.',
+            'wrong-quotes'           => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
+            'file-empty'             => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
+            'file-missing'           => 'Kildefilen til dette job blev ikke fundet. Kontrollér filstien i profilen, og upload filen igen.',
         ],
     ],
     'job' => [

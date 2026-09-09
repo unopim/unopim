@@ -19,7 +19,7 @@ return [
     'file-type'                        => 'El archivo debe ser de tipo csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'La extensión del archivo y el tipo MIME no coinciden para el campo :attribute. La extensión del archivo es :extension y el tipo MIME es :mimeType.',
     'file-not-exists'                  => 'El archivo seleccionado no existe :value para el campo :attribute.',
-    'pdf-active-content'              => 'El PDF contiene scripts o acciones incrustados y no se puede subir.',
+    'pdf-active-content'               => 'El PDF contiene scripts o acciones incrustados y no se puede subir.',
     'file-outside-attribute-path'      => 'El archivo :value no pertenece a este registro. Vuelve a subirlo para el campo :attribute.',
     'password-surrounding-whitespace'  => 'El campo :attribute no puede empezar ni terminar con un espacio.',
     'password-whitespace-only'         => 'El campo :attribute no puede estar compuesto solo por espacios.',

@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Các cột với số "%s" có các tiêu đề trống.',
-            'column-name-invalid'  => 'Tên cột không hợp lệ: "%s".',
-            'column-not-found'     => 'Các cột yêu cầu không được tìm thấy: %s.',
-            'column-numbers'       => 'Số cột không khớp với số hàng trong tiêu đề.',
-            'invalid-attribute'    => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
-            'system'               => 'Lỗi hệ thống không mong muốn xảy ra.',
-            'wrong-quotes'         => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
-            'file-empty'           => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
+            'column-empty-headers'   => 'Các cột với số "%s" có các tiêu đề trống.',
+            'column-name-invalid'    => 'Tên cột không hợp lệ: "%s".',
+            'column-not-found'       => 'Các cột yêu cầu không được tìm thấy: %s.',
+            'column-numbers'         => 'Số cột không khớp với số hàng trong tiêu đề.',
+            'invalid-attribute'      => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
+            'system'                 => 'Lỗi hệ thống không mong muốn xảy ra.',
+            'wrong-quotes'           => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
+            'file-empty'             => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
+            'file-missing'           => 'Không tìm thấy tệp nguồn cho tác vụ này. Hãy kiểm tra đường dẫn tệp trong hồ sơ, sau đó tải tệp lên lại.',
         ],
     ],
     'job' => [

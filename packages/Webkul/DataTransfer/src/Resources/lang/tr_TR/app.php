@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolon numarası "%s" için boş başlıklar vardır.',
-            'column-name-invalid'  => 'Geçersiz kolon adları: "%s".',
-            'column-not-found'     => 'Gerekli kolonlar bulunamadı: %s.',
-            'column-numbers'       => 'Kolon sayısı, başlıktaki satır sayısı ile uyumsuz.',
-            'invalid-attribute'    => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
-            'system'               => 'Beklenmeyen bir sistem hatası oluştu.',
-            'wrong-quotes'         => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
-            'file-empty'           => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
+            'column-empty-headers'   => 'Kolon numarası "%s" için boş başlıklar vardır.',
+            'column-name-invalid'    => 'Geçersiz kolon adları: "%s".',
+            'column-not-found'       => 'Gerekli kolonlar bulunamadı: %s.',
+            'column-numbers'         => 'Kolon sayısı, başlıktaki satır sayısı ile uyumsuz.',
+            'invalid-attribute'      => 'Başlık geçersiz attribute(s) içeriyor: "%s".',
+            'system'                 => 'Beklenmeyen bir sistem hatası oluştu.',
+            'wrong-quotes'           => 'Kıvrık tırnaklar, doğru tırnaklar yerine kullanıldı.',
+            'file-empty'             => 'Dosya boş veya başlık satırı içermiyor. Lütfen veri içeren geçerli bir dosya yükleyin.',
+            'file-missing'           => 'Bu iş için kaynak dosya bulunamadı. Profildeki dosya yolunu kontrol edin, ardından dosyayı yeniden yükleyin.',
         ],
     ],
     'job' => [

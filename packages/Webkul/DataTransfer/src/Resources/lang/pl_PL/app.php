@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolumny numer "%s" mają puste nagłówki.',
-            'column-name-invalid'  => 'Nieprawidłowe nazwy kolumn: "%s".',
-            'column-not-found'     => 'Brak wymaganych kolumn: %s.',
-            'column-numbers'       => 'Liczba kolumn nie odpowiada liczbie wierszy w nagłówku.',
-            'invalid-attribute'    => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
-            'system'               => 'Wystąpił nieoczekiwany błąd systemowy.',
-            'wrong-quotes'         => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
-            'file-empty'           => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
+            'column-empty-headers'   => 'Kolumny numer "%s" mają puste nagłówki.',
+            'column-name-invalid'    => 'Nieprawidłowe nazwy kolumn: "%s".',
+            'column-not-found'       => 'Brak wymaganych kolumn: %s.',
+            'column-numbers'         => 'Liczba kolumn nie odpowiada liczbie wierszy w nagłówku.',
+            'invalid-attribute'      => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
+            'system'                 => 'Wystąpił nieoczekiwany błąd systemowy.',
+            'wrong-quotes'           => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
+            'file-empty'             => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
+            'file-missing'           => 'Nie znaleziono pliku źródłowego dla tego zadania. Sprawdź ścieżkę pliku w profilu, a następnie prześlij plik ponownie.',
         ],
     ],
     'job' => [

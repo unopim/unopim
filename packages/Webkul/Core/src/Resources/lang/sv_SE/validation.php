@@ -19,7 +19,7 @@ return [
     'file-type'                        => 'Filen måste vara av typen csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'Filändelsen och MIME-typen matchar inte för fältet :attribute. Filändelsen är :extension och MIME-typen är :mimeType.',
     'file-not-exists'                  => 'Den valda filen finns inte :value för fältet :attribute.',
-    'pdf-active-content'              => 'PDF-filen innehåller inbäddade skript eller åtgärder och kan inte laddas upp.',
+    'pdf-active-content'               => 'PDF-filen innehåller inbäddade skript eller åtgärder och kan inte laddas upp.',
     'file-outside-attribute-path'      => 'Filen :value tillhör inte den här posten. Ladda upp den igen för fältet :attribute.',
     'password-surrounding-whitespace'  => 'Fältet :attribute får inte börja eller sluta med ett mellanslag.',
     'password-whitespace-only'         => 'Fältet :attribute får inte bestå enbart av mellanslag.',

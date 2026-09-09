@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => '列數 "%s" 的標題為空。',
-            'column-name-invalid'  => '無效的列名稱: "%s".',
-            'column-not-found'     => '找不到需要的列: %s.',
-            'column-numbers'       => '列數量不匹配標題的行數。',
-            'invalid-attribute'    => '標題包含無效屬性: "%s".',
-            'system'               => '發生了一個意外的系統錯誤。',
-            'wrong-quotes'         => '使用了弓形引號而不是直引號。',
-            'file-empty'           => '檔案為空或不包含標題列。請上傳包含資料的有效檔案。',
+            'column-empty-headers'   => '列數 "%s" 的標題為空。',
+            'column-name-invalid'    => '無效的列名稱: "%s".',
+            'column-not-found'       => '找不到需要的列: %s.',
+            'column-numbers'         => '列數量不匹配標題的行數。',
+            'invalid-attribute'      => '標題包含無效屬性: "%s".',
+            'system'                 => '發生了一個意外的系統錯誤。',
+            'wrong-quotes'           => '使用了弓形引號而不是直引號。',
+            'file-empty'             => '檔案為空或不包含標題列。請上傳包含資料的有效檔案。',
+            'file-missing'           => '找不到此工作的來源檔案。請檢查設定檔中的檔案路徑，然後重新上傳檔案。',
         ],
     ],
     'job' => [

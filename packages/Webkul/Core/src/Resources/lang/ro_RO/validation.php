@@ -19,7 +19,7 @@ return [
     'file-type'                        => 'Fișierul trebuie să fie de tip csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'Extensia fișierului și tipul MIME nu se potrivesc pentru câmpul :attribute. Extensia fișierului este :extension și tipul MIME este :mimeType.',
     'file-not-exists'                  => 'Fișierul selectat nu există :value pentru câmpul :attribute.',
-    'pdf-active-content'              => 'PDF-ul conține scripturi sau acțiuni încorporate și nu poate fi încărcat.',
+    'pdf-active-content'               => 'PDF-ul conține scripturi sau acțiuni încorporate și nu poate fi încărcat.',
     'file-outside-attribute-path'      => 'Fișierul :value nu aparține acestei înregistrări. Încarcă-l din nou pentru câmpul :attribute.',
     'password-surrounding-whitespace'  => 'Câmpul :attribute nu poate începe sau se termina cu un spațiu.',
     'password-whitespace-only'         => 'Câmpul :attribute nu poate conține doar spații.',

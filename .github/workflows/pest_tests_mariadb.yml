@@ -1,0 +1,117 @@
+name: Pest Tests (MariaDB)
+
+on:
+  push:
+    branches: [master, '3.0', '3.x']
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pest-mariadb:
+    runs-on: ubuntu-24.04
+    name: Pest Tests (MariaDB ${{ matrix.mariadb }})
+    strategy:
+      fail-fast: false
+      matrix:
+        mariadb: ['10.11', '11.8']
+
+    services:
+      mariadb:
+        image: mariadb:${{ matrix.mariadb }}
+        env:
+          MARIADB_ROOT_PASSWORD: root
+          MARIADB_DATABASE: unopim
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: '8.4'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL
+          tools: composer:v2
+          coverage: none
+
+      - name: Install MariaDB client
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes mariadb-client
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v3
+        with:
+          composer-options: "--optimize-autoloader"
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+
+      - name: Setting Environment
+        run: |
+          cp .env.example .env
+          sed -i 's/^APP_ENV=.*/APP_ENV=testing/' .env
+          sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=mariadb/' .env
+          sed -i 's/^DB_HOST=.*/DB_HOST=127.0.0.1/' .env
+          sed -i 's/^DB_PORT=.*/DB_PORT=3306/' .env
+          sed -i 's/^DB_DATABASE=.*/DB_DATABASE=unopim/' .env
+          sed -i 's/^DB_USERNAME=.*/DB_USERNAME=root/' .env
+          sed -i 's/^DB_PASSWORD=.*/DB_PASSWORD=root/' .env
+          sed -i 's/^DB_PREFIX=.*/DB_PREFIX=wk_/' .env
+          sed -i 's/^ELASTICSEARCH_ENABLED=.*/ELASTICSEARCH_ENABLED=false/' .env
+
+      - name: Running UnoPim Installer
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation --with-demo-data --no-interaction
+
+      - name: Running driver regression tests
+        run: vendor/bin/pest packages/Webkul/Installer/tests/Unit --colors=always
+
+      - name: Running Pest Tests
+        run: |
+          php -r '$xml = simplexml_load_file("phpunit.xml"); foreach ($xml->testsuites->testsuite as $suite) { echo $suite["name"], PHP_EOL; }' > /tmp/pest-suites.txt
+          report=0
+          while IFS= read -r suite; do
+            shards=1
+            if [ "$suite" = 'Admin Feature Test' ]; then
+              shards=4
+            fi
+            for ((shard = 1; shard <= shards; shard++)); do
+              report=$((report + 1))
+              vendor/bin/pest --parallel --processes=2 --colors=always --log-teamcity "pest-teamcity-${report}.log" --testsuite "$suite" --shard="${shard}/${shards}"
+            done
+          done < /tmp/pest-suites.txt
+
+      - name: Upload failure report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pest-mariadb-${{ matrix.mariadb }}-teamcity
+          path: pest-teamcity-*.log
+          if-no-files-found: ignore

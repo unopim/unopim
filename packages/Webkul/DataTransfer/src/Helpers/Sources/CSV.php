@@ -2,7 +2,6 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
-use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
 
 class CSV extends AbstractSource
@@ -24,7 +23,9 @@ class CSV extends AbstractSource
         string $filePath,
         protected string $delimiter = ','
     ) {
-        $detectedSeparator = self::checkSeparator(Storage::disk('private')->path($filePath));
+        $path = self::resolveReadablePath($filePath);
+
+        $detectedSeparator = self::checkSeparator($path);
 
         if ($detectedSeparator === null) {
             throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
@@ -33,7 +34,7 @@ class CSV extends AbstractSource
         throw_if($detectedSeparator !== $delimiter, \LogicException::class, "Separator '{$delimiter}' is not supported in the provided file.");
 
         try {
-            $this->reader = fopen(Storage::disk('private')->path($filePath), 'r');
+            $this->reader = fopen($path, 'r');
 
             /**
              * Set a larger read buffer for better I/O performance on large files.
@@ -67,6 +68,10 @@ class CSV extends AbstractSource
      */
     public static function checkSeparator(string $filePath): ?string
     {
+        if (! is_file($filePath) || ! is_readable($filePath)) {
+            return null;
+        }
+
         $handle = fopen($filePath, 'r');
         if ($handle === false) {
             return null;

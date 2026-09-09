@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolom nomor "%s" memiliki header kosong.',
-            'column-name-invalid'  => 'Nama kolom tidak valid: "%s".',
-            'column-not-found'     => 'Kolom yang wajib diisi tidak ditemukan: %s.',
-            'column-numbers'       => 'Jumlah kolom tidak sesuai dengan jumlah baris pada header.',
-            'invalid-attribute'    => 'Header berisi atribut yang tidak valid: "%s".',
-            'system'               => 'Terjadi kesalahan sistem yang tidak terduga.',
-            'wrong-quotes'         => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
-            'file-empty'           => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
+            'column-empty-headers'   => 'Kolom nomor "%s" memiliki header kosong.',
+            'column-name-invalid'    => 'Nama kolom tidak valid: "%s".',
+            'column-not-found'       => 'Kolom yang wajib diisi tidak ditemukan: %s.',
+            'column-numbers'         => 'Jumlah kolom tidak sesuai dengan jumlah baris pada header.',
+            'invalid-attribute'      => 'Header berisi atribut yang tidak valid: "%s".',
+            'system'                 => 'Terjadi kesalahan sistem yang tidak terduga.',
+            'wrong-quotes'           => 'Kutipan keriting digunakan sebagai pengganti tanda kutip lurus.',
+            'file-empty'             => 'File kosong atau tidak memiliki baris header. Silakan unggah file yang valid dengan data.',
+            'file-missing'           => 'Berkas sumber untuk tugas ini tidak ditemukan. Periksa jalur berkas pada profil, lalu unggah ulang berkas tersebut.',
         ],
     ],
     'job' => [

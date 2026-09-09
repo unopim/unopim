@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Sarakkeiden numero "%s" otsikot ovat tyhjät.',
-            'column-name-invalid'  => 'Virheelliset sarakkeen nimet: "%s".',
-            'column-not-found'     => 'Vaadittuja sarakkeita ei löytynyt: %s.',
-            'column-numbers'       => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
-            'invalid-attribute'    => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
-            'system'               => 'Odottamaton järjestelmävirhe tapahtui.',
-            'wrong-quotes'         => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
-            'file-empty'           => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
+            'column-empty-headers'   => 'Sarakkeiden numero "%s" otsikot ovat tyhjät.',
+            'column-name-invalid'    => 'Virheelliset sarakkeen nimet: "%s".',
+            'column-not-found'       => 'Vaadittuja sarakkeita ei löytynyt: %s.',
+            'column-numbers'         => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
+            'invalid-attribute'      => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
+            'system'                 => 'Odottamaton järjestelmävirhe tapahtui.',
+            'wrong-quotes'           => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
+            'file-empty'             => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
+            'file-missing'           => 'Tämän työn lähdetiedostoa ei löytynyt. Tarkista profiilin tiedostopolku ja lataa tiedosto uudelleen.',
         ],
     ],
     'job' => [

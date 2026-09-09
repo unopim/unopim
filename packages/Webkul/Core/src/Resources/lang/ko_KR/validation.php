@@ -19,7 +19,7 @@ return [
     'file-type'                        => '파일 유형은 csv, xls, xlsx여야 합니다.',
     'file-mime-extension-mismatch'     => '파일 확장자와 MIME 유형이 :attribute 필드와 일치하지 않습니다. 파일 확장자는 :extension이고 MIME 유형은 :mimeType입니다.',
     'file-not-exists'                  => ':attribute 필드의 선택한 파일 :value가 존재하지 않습니다.',
-    'pdf-active-content'              => '이 PDF에는 포함된 스크립트나 동작이 있어 업로드할 수 없습니다.',
+    'pdf-active-content'               => '이 PDF에는 포함된 스크립트나 동작이 있어 업로드할 수 없습니다.',
     'file-outside-attribute-path'      => ':value 파일은 이 레코드에 속하지 않습니다. :attribute 필드에 다시 업로드하세요.',
     'password-surrounding-whitespace'  => ':attribute 의 처음과 끝에는 공백을 사용할 수 없습니다.',
     'password-whitespace-only'         => ':attribute 를 공백만으로 구성할 수 없습니다.',

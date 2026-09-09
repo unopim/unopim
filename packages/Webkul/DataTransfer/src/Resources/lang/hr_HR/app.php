@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolone broj "%s" imaju prazne zaglavlja.',
-            'column-name-invalid'  => 'Neispravna imena kolona: "%s".',
-            'column-not-found'     => 'Potrebne kolone nisu pronađene: %s.',
-            'column-numbers'       => 'Broj kolona ne odgovara broju redaka u zaglavlju.',
-            'invalid-attribute'    => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
-            'system'               => 'Došlo je do neočekivane sistemske greške.',
-            'wrong-quotes'         => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
-            'file-empty'           => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',
+            'column-empty-headers'   => 'Kolone broj "%s" imaju prazne zaglavlja.',
+            'column-name-invalid'    => 'Neispravna imena kolona: "%s".',
+            'column-not-found'       => 'Potrebne kolone nisu pronađene: %s.',
+            'column-numbers'         => 'Broj kolona ne odgovara broju redaka u zaglavlju.',
+            'invalid-attribute'      => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
+            'system'                 => 'Došlo je do neočekivane sistemske greške.',
+            'wrong-quotes'           => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
+            'file-empty'             => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',
+            'file-missing'           => 'Izvorna datoteka za ovaj posao nije pronađena. Provjerite putanju datoteke u profilu, a zatim je ponovno učitajte.',
         ],
     ],
     'job' => [

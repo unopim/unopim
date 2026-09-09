@@ -2,6 +2,7 @@
 
 namespace Webkul\Admin\Http\Requests;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RoleForm extends FormRequest
@@ -9,17 +10,38 @@ class RoleForm extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      *
-     * Only a full-access admin may create or promote a role to full access;
-     * this closes the self-escalation path from a custom role. Assigning an
-     * over-privileged role to a user is separately guarded in UserController.
+     * A non full-access admin may neither promote a role to full access nor
+     * grant a permission it does not itself hold. Both guard the same
+     * self-escalation path — a delegated role manager editing its own role —
+     * and mirror the assignment guard in UserController.
      */
     public function authorize(): bool
     {
-        if (strtolower((string) $this->input('permission_type')) === 'all') {
-            return auth()->guard('admin')->user()?->role?->permission_type === 'all';
+        $actingRole = auth()->guard('admin')->user()?->role;
+
+        if ($actingRole?->permission_type === 'all') {
+            return true;
         }
 
-        return true;
+        if (strtolower((string) $this->input('permission_type')) === 'all') {
+            return false;
+        }
+
+        $submitted = (array) $this->input('permissions', []);
+
+        if (array_filter($submitted, is_string(...)) !== $submitted) {
+            return false;
+        }
+
+        return array_diff($submitted, $actingRole?->permissions ?? []) === [];
+    }
+
+    /**
+     * Handle a failed authorization attempt.
+     */
+    protected function failedAuthorization(): void
+    {
+        throw new AuthorizationException(trans('admin::app.settings.roles.cannot-grant-unheld-permissions'));
     }
 
     /**
@@ -34,6 +56,7 @@ class RoleForm extends FormRequest
             'permission_type' => $this->id ? 'required|in:all,custom' : 'required',
             'description'     => 'nullable',
             'permissions'     => 'nullable|array',
+            'permissions.*'   => 'string',
         ];
     }
 }

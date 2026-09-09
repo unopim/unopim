@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Las columnas número "%s" tienen encabezados vacíos.',
-            'column-name-invalid'  => 'Nombres de columnas no válidos: "%s".',
-            'column-not-found'     => 'Columnas obligatorias no encontradas: %s.',
-            'column-numbers'       => 'El número de columnas no corresponde al número de filas del encabezado.',
-            'invalid-attribute'    => 'El encabezado contiene atributos no válidos: "%s".',
-            'system'               => 'Se produjo un error inesperado del sistema.',
-            'wrong-quotes'         => 'Se utilizan comillas rizadas en lugar de comillas rectas.',
-            'file-empty'           => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
+            'column-empty-headers'   => 'Las columnas número "%s" tienen encabezados vacíos.',
+            'column-name-invalid'    => 'Nombres de columnas no válidos: "%s".',
+            'column-not-found'       => 'Columnas obligatorias no encontradas: %s.',
+            'column-numbers'         => 'El número de columnas no corresponde al número de filas del encabezado.',
+            'invalid-attribute'      => 'El encabezado contiene atributos no válidos: "%s".',
+            'system'                 => 'Se produjo un error inesperado del sistema.',
+            'wrong-quotes'           => 'Se utilizan comillas rizadas en lugar de comillas rectas.',
+            'file-empty'             => 'El archivo está vacío o no contiene una fila de encabezado. Por favor, suba un archivo válido con datos.',
+            'file-missing'           => 'No se ha encontrado el archivo de origen de esta tarea. Comprueba la ruta del archivo en el perfil y vuelve a subirlo.',
         ],
     ],
     'job' => [

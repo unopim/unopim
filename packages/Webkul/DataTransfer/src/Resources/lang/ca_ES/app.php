@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Les columnes número "%s" tenen cap capçalera buida.',
-            'column-name-invalid'  => 'Noms de columnes invàlids: "%s".',
-            'column-not-found'     => 'Columnes requerides no trobades: %s.',
-            'column-numbers'       => 'El nombre de columnes no correspon al nombre de files a la capçalera.',
-            'invalid-attribute'    => 'Capçalera conté atribut(s) invàlid(s): "%s".',
-            'system'               => 'S\'ha produït un error de sistema inesperat.',
-            'wrong-quotes'         => 'S\'han utilitzat guions curts en lloc de guions rectes.',
-            'file-empty'           => 'El fitxer està buit o no conté una fila de capçalera. Si us plau, pengeu un fitxer vàlid amb dades.',
+            'column-empty-headers'   => 'Les columnes número "%s" tenen cap capçalera buida.',
+            'column-name-invalid'    => 'Noms de columnes invàlids: "%s".',
+            'column-not-found'       => 'Columnes requerides no trobades: %s.',
+            'column-numbers'         => 'El nombre de columnes no correspon al nombre de files a la capçalera.',
+            'invalid-attribute'      => 'Capçalera conté atribut(s) invàlid(s): "%s".',
+            'system'                 => 'S\'ha produït un error de sistema inesperat.',
+            'wrong-quotes'           => 'S\'han utilitzat guions curts en lloc de guions rectes.',
+            'file-empty'             => 'El fitxer està buit o no conté una fila de capçalera. Si us plau, pengeu un fitxer vàlid amb dades.',
+            'file-missing'           => 'No s\'ha trobat el fitxer d\'origen d\'aquesta tasca. Comproveu la ruta del fitxer al perfil i torneu a pujar-lo.',
         ],
     ],
     'job' => [

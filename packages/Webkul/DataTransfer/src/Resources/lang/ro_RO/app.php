@@ -292,14 +292,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Coloanele numărului "%s" au antete goale.',
-            'column-name-invalid'  => 'Anteturi de coloane invalide: "%s".',
-            'column-not-found'     => 'Coloanele necesare nu au fost găsite: %s.',
-            'column-numbers'       => 'Numărul de coloane nu corespunde numărului de rânduri din antet.',
-            'invalid-attribute'    => 'Antetul conține atribute invalide: "%s".',
-            'system'               => 'A apărut o eroare sistemică neașteptată.',
-            'wrong-quotes'         => 'A fost utilizată virgulă în loc de virgulă directă.',
-            'file-empty'           => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',
+            'column-empty-headers'   => 'Coloanele numărului "%s" au antete goale.',
+            'column-name-invalid'    => 'Anteturi de coloane invalide: "%s".',
+            'column-not-found'       => 'Coloanele necesare nu au fost găsite: %s.',
+            'column-numbers'         => 'Numărul de coloane nu corespunde numărului de rânduri din antet.',
+            'invalid-attribute'      => 'Antetul conține atribute invalide: "%s".',
+            'system'                 => 'A apărut o eroare sistemică neașteptată.',
+            'wrong-quotes'           => 'A fost utilizată virgulă în loc de virgulă directă.',
+            'file-empty'             => 'Fișierul este gol sau nu conține un rând de antet. Vă rugăm să încărcați un fișier valid cu date.',
+            'file-missing'           => 'Fișierul sursă pentru această sarcină nu a fost găsit. Verificați calea fișierului din profil, apoi încărcați fișierul din nou.',
         ],
     ],
     'job' => [

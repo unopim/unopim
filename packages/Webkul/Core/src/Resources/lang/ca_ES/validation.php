@@ -19,7 +19,7 @@ return [
     'file-type'                        => 'El fitxer ha de ser de tipus csv, xls, xlsx.',
     'file-mime-extension-mismatch'     => 'L\'extensió del fitxer i el tipus MIME no coincideixen per al camp :attribute. L\'extensió del fitxer és :extension i el tipus MIME és :mimeType.',
     'file-not-exists'                  => 'El fitxer seleccionat no existeix :value per al camp :attribute.',
-    'pdf-active-content'              => 'El PDF conté scripts o accions incrustats i no es pot penjar.',
+    'pdf-active-content'               => 'El PDF conté scripts o accions incrustats i no es pot penjar.',
     'file-outside-attribute-path'      => 'El fitxer :value no pertany a aquest registre. Torna\'l a pujar per al camp :attribute.',
     'password-surrounding-whitespace'  => 'El camp :attribute no pot començar ni acabar amb un espai.',
     'password-whitespace-only'         => 'El camp :attribute no pot estar format només per espais.',

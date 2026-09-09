@@ -19,7 +19,7 @@ return [
     'file-type'                        => 'Il file deve essere di tipo csv,xls,xlsx.',
     'file-mime-extension-mismatch'     => ':attribute L\'estensione del file e il tipo MIME non corrispondono. L\'estensione del file è :extension e il tipo MIME è :mimeType.',
     'file-not-exists'                  => 'Il file selezionato non esiste :value per il campo :attribute.',
-    'pdf-active-content'              => 'Il PDF contiene script o azioni incorporati e non può essere caricato.',
+    'pdf-active-content'               => 'Il PDF contiene script o azioni incorporati e non può essere caricato.',
     'file-outside-attribute-path'      => 'Il file :value non appartiene a questo record. Caricalo di nuovo per il campo :attribute.',
     'password-surrounding-whitespace'  => 'Il campo :attribute non può iniziare né terminare con uno spazio.',
     'password-whitespace-only'         => 'Il campo :attribute non può essere composto solo da spazi.',
