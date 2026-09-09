@@ -32,9 +32,9 @@
   &nbsp;·&nbsp;
   <a href="https://devdocs.unopim.com/">📘&nbsp;Documentation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html">🚀&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/3.1/introduction/installation.html">🚀&nbsp;Installation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/3.1/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
   &nbsp;·&nbsp;
   <a href="https://demo.unopim.com/">🎯&nbsp;Live&nbsp;Demo</a>
 </p>
