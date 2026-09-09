@@ -81,3 +81,31 @@ it('strips reserved keys from a platform row persisted before the guard existed'
     expect($overrides['url'])->toBe('https://api.openai.com/v1')
         ->and($overrides['organization'])->toBe('org-abc');
 });
+
+it('strips a reserved key whose case differs from the canonical spelling', function () {
+    $overrides = ProviderOverrides::build(
+        ['key' => 'sk-real', 'url' => 'https://api.openai.com/v1'],
+        ['URL' => 'http://169.254.169.254/', 'Api_Key' => 'sk-attacker', 'organization' => 'org-abc'],
+    );
+
+    expect($overrides['url'])->toBe('https://api.openai.com/v1')
+        ->and($overrides['key'])->toBe('sk-real')
+        ->and($overrides)->not->toHaveKey('URL')
+        ->and($overrides)->not->toHaveKey('Api_Key')
+        ->and($overrides['organization'])->toBe('org-abc');
+});
+
+it('rejects extras that decode to a json list rather than an object', function () {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.magic_ai.platform.store'), [
+        'provider' => AiProvider::Custom->value,
+        'label'    => 'list-extras',
+        'api_key'  => 'sk-test-key-1234567890',
+        'api_url'  => 'https://api.openai.com/v1',
+        'models'   => 'gpt-4o',
+        'extras'   => json_encode(['url', 'key']),
+    ])->assertJsonValidationErrors('extras');
+
+    expect(DB::table('magic_ai_platforms')->where('label', 'list-extras')->exists())->toBeFalse();
+});

@@ -2,8 +2,6 @@
 
 namespace Webkul\MagicAI\Services;
 
-use Illuminate\Support\Arr;
-
 /**
  * Builds laravel/ai provider config overrides from a validated base plus
  * user-supplied extras.
@@ -16,7 +14,8 @@ use Illuminate\Support\Arr;
 class ProviderOverrides
 {
     /**
-     * Keys the platform record owns; extras may never redefine them.
+     * Keys the platform record owns; extras may never redefine them. Matched
+     * case-insensitively, so a legacy `URL` is stripped alongside `url`.
      */
     public const RESERVED_KEYS = ['url', 'key', 'api_key', 'base_url'];
 
@@ -48,6 +47,10 @@ class ProviderOverrides
             return [];
         }
 
-        return Arr::except($extras, self::RESERVED_KEYS);
+        return array_filter(
+            $extras,
+            fn (string|int $key): bool => ! in_array(strtolower((string) $key), self::RESERVED_KEYS, true),
+            ARRAY_FILTER_USE_KEY,
+        );
     }
 }

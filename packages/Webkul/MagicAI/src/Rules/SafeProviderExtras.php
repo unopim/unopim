@@ -42,7 +42,7 @@ class SafeProviderExtras implements ValidationRule
             }
         }
 
-        if (! is_array($value)) {
+        if (! is_array($value) || array_is_list($value)) {
             $fail(trans('admin::app.configuration.platform.message.extras-invalid-json'));
 
             return;

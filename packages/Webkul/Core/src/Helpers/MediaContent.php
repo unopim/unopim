@@ -38,7 +38,8 @@ class MediaContent
     private const string PDF_ACTIVE_CONTENT = '/\/(OpenAction|AA|JavaScript|JS|Launch|EmbeddedFile|RichMedia)\b/';
 
     /**
-     * Cap on the bytes read when scanning for active content.
+     * Cap on the bytes read from each end of the file when scanning for
+     * active content.
      */
     private const MAX_SCAN_BYTES = 8 * 1024 * 1024;
 
@@ -70,9 +71,11 @@ class MediaContent
     /**
      * Whether a PDF carries an action or embedded payload a viewer would run.
      *
-     * Scans the raw bytes, so a PDF that hides its catalog inside a compressed
-     * object stream is not detected here; the inline response's sandboxing is
-     * what covers that case.
+     * Both ends of the file are read because the trailer and cross-reference
+     * table live at the tail, and a scan of the head alone is defeated by
+     * padding the document past the cap. Scanning raw bytes still misses a
+     * catalog hidden inside a compressed object stream; nothing here covers
+     * that, so `responseHeaders()` is the second line rather than a backstop.
      */
     public static function pdfHasActiveContent(?string $realPath): bool
     {
@@ -87,10 +90,36 @@ class MediaContent
         }
 
         try {
-            $content = (string) @fread($handle, self::MAX_SCAN_BYTES);
+            $size = (int) @filesize($realPath);
+
+            if (self::scanMatches($handle, 0, self::MAX_SCAN_BYTES)) {
+                return true;
+            }
+
+            if ($size <= self::MAX_SCAN_BYTES) {
+                return false;
+            }
+
+            $tail = max(self::MAX_SCAN_BYTES, $size - self::MAX_SCAN_BYTES);
+
+            return self::scanMatches($handle, $tail, self::MAX_SCAN_BYTES);
         } finally {
             @fclose($handle);
         }
+    }
+
+    /**
+     * Whether an active-content marker appears in one window of the file.
+     *
+     * @param  resource  $handle
+     */
+    private static function scanMatches($handle, int $offset, int $length): bool
+    {
+        if (@fseek($handle, $offset) !== 0) {
+            return false;
+        }
+
+        $content = (string) @fread($handle, $length);
 
         return $content !== '' && preg_match(self::PDF_ACTIVE_CONTENT, $content) === 1;
     }
