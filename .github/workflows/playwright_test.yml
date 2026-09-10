@@ -101,7 +101,21 @@ jobs:
         run: |
           cd tests/e2e-pw
           npm install --no-progress --prefer-offline
-          npx playwright install --with-deps chromium
+          for attempt in 1 2 3; do
+            if npx playwright install --with-deps chromium; then
+              break
+            fi
+
+            if [ "$attempt" -eq 3 ]; then
+              exit 1
+            fi
+
+            echo "Playwright browser install failed on attempt $attempt. Retrying..."
+            sudo rm -rf /var/lib/apt/lists/*
+            sudo apt-get clean
+            sudo apt-get update
+            sleep 5
+          done
 
       - name: Setting Environment
         run: |
