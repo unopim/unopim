@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => 'O ficheiro :value não pertence a este registo. Carregue-o novamente para o campo :attribute.',
     'password-surrounding-whitespace'  => 'O campo :attribute não pode começar nem terminar com um espaço.',
     'password-whitespace-only'         => 'O campo :attribute não pode conter apenas espaços.',
+    'active-content-detected'          => 'Não foi possível carregar :attribute porque contém conteúdo ativo (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'JavaScript incorporado ou uma ação de PDF de execução automática',
+        'embedded_vba_macro'            => 'uma macro VBA incorporada',
+        'auto_executing_ole_object'     => 'um objeto incorporado de execução automática',
+    ],
 ];

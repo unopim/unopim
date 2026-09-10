@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => 'Файл :value не належить цьому запису. Завантажте його ще раз для поля :attribute.',
     'password-surrounding-whitespace'  => 'Поле :attribute не може починатися або закінчуватися пробілом.',
     'password-whitespace-only'         => 'Поле :attribute не може складатися лише з пробілів.',
+    'active-content-detected'          => 'Не вдалося завантажити :attribute, оскільки він містить активний вміст (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'вбудований JavaScript або автоматично запущена дія PDF',
+        'embedded_vba_macro'            => 'вбудований макрос VBA',
+        'auto_executing_ole_object'     => 'автоматично запущений вбудований обʼєкт',
+    ],
 ];

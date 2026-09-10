@@ -314,6 +314,38 @@ function createAdminApp() {
         }
     };
 
+    /**
+     * Pre-checks a picked file against the server-side upload rule so a
+     * rejected file is reported before the form is submitted. Only a 422
+     * counts as a rejection; any other failure lets the file through, since
+     * the form's own validation is the enforcement point. Available on every
+     * component as `this.$scanMedia(file, { url, isImage, acceptedExtensions, fallbackMessage })`.
+     */
+    app.config.globalProperties.$scanMedia = async function (file, { url, isImage = false, acceptedExtensions = [], fallbackMessage = '' }) {
+        const formData = new FormData();
+
+        formData.append('file', file);
+        formData.append('is_image', isImage ? '1' : '0');
+        (acceptedExtensions || []).forEach((extension) => formData.append('accepted_extensions[]', extension));
+
+        try {
+            await this.$axios.post(url, formData);
+
+            return true;
+        } catch (error) {
+            if (error?.response?.status !== 422) {
+                return true;
+            }
+
+            this.$emitter.emit('add-flash', {
+                type: 'warning',
+                message: error.response?.data?.message || fallbackMessage,
+            });
+
+            return false;
+        }
+    };
+
     window.app = app;
 
     return app;

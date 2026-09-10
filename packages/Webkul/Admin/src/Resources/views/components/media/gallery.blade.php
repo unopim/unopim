@@ -691,7 +691,16 @@
                     this.addFiles(files);
                 },
 
-                addFiles(files) {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.gallery.not-allowed-error')),
+                    });
+                },
+
+                async addFiles(files) {
                     if (! files || ! files.length) {
                         return;
                     }
@@ -709,7 +718,11 @@
                         return;
                     }
 
-                    selectedFiles.forEach((file) => {
+                    for (const file of selectedFiles) {
+                        if (! await this.scanFile(file)) {
+                            continue;
+                        }
+
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
@@ -717,7 +730,7 @@
                             type: file.type,
                             name: file.name
                         });
-                    });
+                    }
 
                     this.signalChange();
 
@@ -1028,7 +1041,16 @@
                     this.$refs[this.$.uid + '_imageInput_' + this.index].click();
                 },
 
-                edit() {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.images.not-allowed-error')),
+                    });
+                },
+
+                async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
                     if (imageInput.files == undefined) {
@@ -1043,6 +1065,10 @@
                             message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
+                        return;
+                    }
+
+                    if (! await this.scanFile(imageInput.files[0])) {
                         return;
                     }
 

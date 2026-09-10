@@ -214,8 +214,12 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
-        if (strtolower($extension) === 'pdf' && MediaContent::pdfHasActiveContent($value->getRealPath())) {
-            $fail('core::validation.pdf-active-content')->translate();
+        $reason = MediaContent::activeContentReason($extension, $value->getRealPath());
+
+        if ($reason !== null) {
+            $fail('core::validation.active-content-detected')->translate([
+                'reason' => trans('core::validation.active-content-reasons.'.$reason),
+            ]);
 
             return false;
         }
