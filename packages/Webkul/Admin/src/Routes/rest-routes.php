@@ -25,6 +25,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     Route::get('media/download', [MediaController::class, 'download'])->name('admin.media.download');
     Route::get('media/preview', [MediaController::class, 'preview'])->name('admin.media.preview');
 
+    Route::post('media/scan', [MediaController::class, 'scan'])->name('admin.media.scan');
+
     /**
      * Dashboard routes.
      */

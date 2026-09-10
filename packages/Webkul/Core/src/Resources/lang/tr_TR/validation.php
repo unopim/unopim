@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => ':value dosyası bu kayda ait değil. :attribute alanı için tekrar yükleyin.',
     'password-surrounding-whitespace'  => ':attribute boşlukla başlayamaz veya bitemez.',
     'password-whitespace-only'         => ':attribute yalnızca boşluklardan oluşamaz.',
+    'active-content-detected'          => ':attribute yüklenemedi çünkü etkin içerik (:reason) içeriyor.',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'gömülü JavaScript veya otomatik çalışan bir PDF eylemi',
+        'embedded_vba_macro'            => 'gömülü bir VBA makrosu',
+        'auto_executing_ole_object'     => 'otomatik çalışan gömülü bir nesne',
+    ],
 ];
