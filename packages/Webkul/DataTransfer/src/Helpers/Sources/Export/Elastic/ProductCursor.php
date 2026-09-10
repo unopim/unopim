@@ -11,6 +11,13 @@ use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
 class ProductCursor extends AbstractElasticCursor
 {
     /**
+     * `values.categories` is indexed as analyzed text, so its tokens are lowercased and a
+     * term-level `terms` lookup for a code such as "Footwear" never matches. The exact-value
+     * keyword subfield is what a category code has to be compared against.
+     */
+    const CATEGORY_FIELD = 'values.categories.keyword';
+
+    /**
      * Memoized bool query. The filter clauses (family/category/value-filtered ids) are identical
      * for every page of a single export run, so they are resolved once instead of re-running the
      * underlying DB queries on every search_after fetch.
@@ -105,7 +112,7 @@ class ProductCursor extends AbstractElasticCursor
         $categoryCodes = $filter->categoryCodes($filters);
 
         if (! empty($categoryCodes)) {
-            $clauses[] = ['terms' => ['values.categories' => $categoryCodes]];
+            $clauses[] = ['terms' => [self::CATEGORY_FIELD => $categoryCodes]];
         }
 
         $range = array_filter([
