@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Webkul\Core\Helpers;
 
+use ZipArchive;
+
 /**
  * Decides how a stored media file may be handed back to a browser.
  *
@@ -38,6 +40,20 @@ class MediaContent
     private const string PDF_ACTIVE_CONTENT = '/\/(OpenAction|AA|JavaScript|JS|Launch|EmbeddedFile|RichMedia)\b/';
 
     /**
+     * UTF-16LE "VBA" as it appears in the directory entries of a legacy
+     * binary Office (OLE compound) document that stores a macro project.
+     */
+    private const string OLE_VBA_PROJECT = '/V\x00B\x00A\x00/';
+
+    /**
+     * RTF control words that make an embedded OLE object update or open
+     * itself as soon as the document is rendered.
+     */
+    private const string RTF_AUTO_OBJECT = '/\\\\obj(autlink|update)\b/i';
+
+    private const string OOXML_VBA_PROJECT = 'vbaproject.bin';
+
+    /**
      * Cap on the bytes read from each end of the file when scanning for
      * active content.
      */
@@ -69,6 +85,27 @@ class MediaContent
     }
 
     /**
+     * Why an upload would execute something when opened, or null when the
+     * format is not scanned or carries nothing active.
+     *
+     * The reason is a key under `core::validation.active-content-reasons`.
+     */
+    public static function activeContentReason(?string $extension, ?string $realPath): ?string
+    {
+        if (! $realPath || ! is_file($realPath)) {
+            return null;
+        }
+
+        return match (strtolower((string) $extension)) {
+            'pdf'          => self::pdfHasActiveContent($realPath) ? 'embedded_javascript_or_action' : null,
+            'docx', 'pptx' => self::ooxmlHasMacroProject($realPath) ? 'embedded_vba_macro' : null,
+            'doc', 'ppt'   => self::matchesInWindows($realPath, self::OLE_VBA_PROJECT) ? 'embedded_vba_macro' : null,
+            'rtf'          => self::matchesInWindows($realPath, self::RTF_AUTO_OBJECT) ? 'auto_executing_ole_object' : null,
+            default        => null,
+        };
+    }
+
+    /**
      * Whether a PDF carries an action or embedded payload a viewer would run.
      *
      * Both ends of the file are read because the trailer and cross-reference
@@ -78,6 +115,41 @@ class MediaContent
      * that, so `responseHeaders()` is the second line rather than a backstop.
      */
     public static function pdfHasActiveContent(?string $realPath): bool
+    {
+        return self::matchesInWindows($realPath, self::PDF_ACTIVE_CONTENT);
+    }
+
+    /**
+     * Whether an OOXML package (a zip) ships a VBA project part. Only the
+     * central directory is read, so the size of the document is irrelevant.
+     */
+    private static function ooxmlHasMacroProject(string $realPath): bool
+    {
+        $zip = new ZipArchive;
+
+        if ($zip->open($realPath, ZipArchive::RDONLY) !== true) {
+            return false;
+        }
+
+        try {
+            for ($index = 0; $index < $zip->numFiles; $index++) {
+                $name = $zip->getNameIndex($index);
+
+                if ($name !== false && str_ends_with(strtolower($name), self::OOXML_VBA_PROJECT)) {
+                    return true;
+                }
+            }
+
+            return false;
+        } finally {
+            $zip->close();
+        }
+    }
+
+    /**
+     * Whether a marker appears in the head or tail window of a file.
+     */
+    private static function matchesInWindows(?string $realPath, string $pattern): bool
     {
         if (! $realPath || ! is_file($realPath)) {
             return false;
@@ -92,7 +164,7 @@ class MediaContent
         try {
             $size = (int) @filesize($realPath);
 
-            if (self::scanMatches($handle, 0, self::MAX_SCAN_BYTES)) {
+            if (self::scanMatches($handle, 0, self::MAX_SCAN_BYTES, $pattern)) {
                 return true;
             }
 
@@ -102,7 +174,7 @@ class MediaContent
 
             $tail = max(self::MAX_SCAN_BYTES, $size - self::MAX_SCAN_BYTES);
 
-            return self::scanMatches($handle, $tail, self::MAX_SCAN_BYTES);
+            return self::scanMatches($handle, $tail, self::MAX_SCAN_BYTES, $pattern);
         } finally {
             @fclose($handle);
         }
@@ -113,7 +185,7 @@ class MediaContent
      *
      * @param  resource  $handle
      */
-    private static function scanMatches($handle, int $offset, int $length): bool
+    private static function scanMatches($handle, int $offset, int $length, string $pattern): bool
     {
         if (@fseek($handle, $offset) !== 0) {
             return false;
@@ -121,6 +193,6 @@ class MediaContent
 
         $content = (string) @fread($handle, $length);
 
-        return $content !== '' && preg_match(self::PDF_ACTIVE_CONTENT, $content) === 1;
+        return $content !== '' && preg_match($pattern, $content) === 1;
     }
 }

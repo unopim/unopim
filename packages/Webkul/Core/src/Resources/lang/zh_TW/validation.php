@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => '檔案 :value 不屬於此記錄。請為 :attribute 欄位重新上傳。',
     'password-surrounding-whitespace'  => ':attribute 不能以空格開頭或結尾。',
     'password-whitespace-only'         => ':attribute 不能只由空格組成。',
+    'active-content-detected'          => '無法上傳 :attribute，因為它包含主動內容 (:reason)。',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => '嵌入的 JavaScript 或自動執行的 PDF 動作',
+        'embedded_vba_macro'            => '嵌入的 VBA 巨集',
+        'auto_executing_ole_object'     => '自動執行的嵌入物件',
+    ],
 ];

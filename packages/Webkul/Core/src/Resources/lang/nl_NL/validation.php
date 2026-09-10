@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => 'Het bestand :value hoort niet bij dit record. Upload het opnieuw voor het veld :attribute.',
     'password-surrounding-whitespace'  => ':attribute mag niet beginnen of eindigen met een spatie.',
     'password-whitespace-only'         => ':attribute mag niet alleen uit spaties bestaan.',
+    'active-content-detected'          => 'Het bestand :attribute kon niet worden geüpload omdat het actieve inhoud bevat (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'ingesloten JavaScript of een automatisch uitgevoerde PDF-actie',
+        'embedded_vba_macro'            => 'een ingesloten VBA-macro',
+        'auto_executing_ole_object'     => 'een automatisch uitgevoerd ingesloten object',
+    ],
 ];

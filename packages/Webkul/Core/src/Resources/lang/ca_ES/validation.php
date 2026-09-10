@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => 'El fitxer :value no pertany a aquest registre. Torna\'l a pujar per al camp :attribute.',
     'password-surrounding-whitespace'  => 'El camp :attribute no pot començar ni acabar amb un espai.',
     'password-whitespace-only'         => 'El camp :attribute no pot estar format només per espais.',
+    'active-content-detected'          => 'No s\'ha pogut pujar :attribute perquè conté contingut actiu (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'JavaScript incrustat o una acció de PDF d\'execució automàtica',
+        'embedded_vba_macro'            => 'una macro VBA incrustada',
+        'auto_executing_ole_object'     => 'un objecte incrustat d\'execució automàtica',
+    ],
 ];
