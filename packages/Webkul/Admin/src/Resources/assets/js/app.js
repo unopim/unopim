@@ -326,7 +326,9 @@ function createAdminApp() {
 
         formData.append('file', file);
         formData.append('is_image', isImage ? '1' : '0');
-        (acceptedExtensions || []).forEach((extension) => formData.append('accepted_extensions[]', extension));
+        (acceptedExtensions || []).forEach((extension) => {
+            formData.append('accepted_extensions[]', extension.replace(/^\./, '').toLowerCase());
+        });
 
         try {
             await this.$axios.post(url, formData);
