@@ -129,7 +129,7 @@ it('intersects explicit locale and currency selections within the channel scope'
     expect($currencies)->toBe(['EUR']);
 });
 
-it('keeps every attribute column and records the selected attributes', function () {
+it('keeps every attribute loaded and records the selected attributes', function () {
     seedProductScopeChannels();
     Attribute::factory()->create(['code' => 'scoped_attr']);
     Cache::flush();
@@ -143,7 +143,7 @@ it('keeps every attribute column and records the selected attributes', function 
     expect(readExporterProperty($exporter, 'selectedAttributeCodes'))->toBe(['scoped_attr']);
 });
 
-it('exports values only for the selected attributes while keeping every column', function () {
+it('drops the columns of attributes outside the selection', function () {
     seedProductScopeChannels();
     Attribute::factory()->create(['code' => 'scoped_attr']);
     Cache::flush();
@@ -159,8 +159,42 @@ it('exports values only for the selected attributes while keeping every column',
     ], null);
 
     expect($values['scoped_attr'])->toBe('selected-value');
-    expect($values)->toHaveKey('name');
-    expect($values['name'])->toBeNull();
+    expect($values)->not->toHaveKey('name');
+});
+
+it('drops the price columns of an unselected price attribute', function () {
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_attr']);
+    Attribute::factory()->create(['code' => 'list_price', 'type' => 'price']);
+    Cache::flush();
+
+    $exporter = makeInitializedProductExporter(['attributes' => ['scoped_attr']]);
+
+    $method = new ReflectionMethod($exporter, 'setAttributesValues');
+    $method->setAccessible(true);
+
+    $values = $method->invoke($exporter, ['scoped_attr' => 'selected-value'], null);
+
+    expect(array_keys($values))->toBe(['scoped_attr']);
+});
+
+it('sizes the disk-budget estimate on the selected attributes only', function () {
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_attr']);
+    Cache::flush();
+
+    $selected = makeInitializedProductExporter(['attributes' => ['scoped_attr']]);
+    $everything = makeInitializedProductExporter([]);
+
+    $countColumns = function (Exporter $exporter): int {
+        $method = new ReflectionMethod($exporter, 'countExportedColumns');
+        $method->setAccessible(true);
+
+        return $method->invoke($exporter);
+    };
+
+    expect($countColumns($selected))->toBe(1)
+        ->and($countColumns($everything))->toBeGreaterThan(1);
 });
 
 it('keeps every attribute when none is selected', function () {

@@ -239,9 +239,29 @@ class Exporter extends AbstractExporter
         }
 
         $rows = $productCount * max(1, $this->countChannelLocalePairs());
-        $columns = max(1, $this->attributeRepository->count());
 
-        $this->guardAgainstOversizedExport($rows, $columns);
+        $this->guardAgainstOversizedExport($rows, $this->countExportedColumns());
+    }
+
+    /**
+     * Width the disk-budget estimate is sized on.
+     *
+     * A profile that selects attributes writes only those columns, so charging it for every
+     * attribute in the catalogue would reject exports that comfortably fit. The codes are read
+     * from the filters rather than from $selectedAttributeCodes because the guard runs during
+     * initializeBatches(), before initilize() has applied the scope filters.
+     */
+    protected function countExportedColumns(): int
+    {
+        $selected = ScopeFilterValue::toCodes(
+            $this->getFilters()[ProductExportScope::ATTRIBUTES->value] ?? null
+        );
+
+        if ($selected !== []) {
+            return max(1, count($selected));
+        }
+
+        return max(1, $this->attributeRepository->count());
     }
 
     protected function countChannelLocalePairs(): int
@@ -642,9 +662,6 @@ class Exporter extends AbstractExporter
             $code = $meta['code'];
 
             if (! $this->isAttributeValueExported($code)) {
-                $attributeValues[$code] = null;
-                $attributeValues["{$code}(unit)"] = null;
-
                 continue;
             }
 
@@ -687,8 +704,13 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Sets attribute values for every non-measurement attribute. If an attribute is
-     * not present in the given values array,
+     * Sets attribute values for every non-measurement attribute.
+     *
+     * Attributes outside the profile's selection are omitted entirely rather than written as null:
+     * FlatItemBuffer derives the header from the first row's keys, so a null placeholder would keep
+     * the column in the file and contradict the "only the selected attributes are exported" promise.
+     * Every row runs this same loop with the same selection, so the key set stays identical across
+     * rows and batches, which is what the buffer's positional writes rely on.
      */
     protected function setNonMeasurementAttributesValues(array $values, mixed $filePath, ?string $locale = null): array
     {
@@ -709,21 +731,11 @@ class Exporter extends AbstractExporter
                 continue;
             }
 
-            $isPrice = $type === AttributeTypes::PRICE_ATTRIBUTE_TYPE;
-
             if (! $this->isAttributeValueExported($code)) {
-                if ($isPrice) {
-                    foreach ($this->currencies as $currency) {
-                        $attributeValues["{$code} ({$currency})"] = null;
-                    }
-
-                    continue;
-                }
-
-                $attributeValues[$code] = null;
-
                 continue;
             }
+
+            $isPrice = $type === AttributeTypes::PRICE_ATTRIBUTE_TYPE;
 
             $rawValue = $values[$code] ?? null;
 
