@@ -5,6 +5,7 @@ namespace Webkul\DataTransfer\Helpers\Exporters\Product;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Event;
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\AttributeTypes;
 use Webkul\Core\Repositories\ChannelRepository;
@@ -27,6 +28,8 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class Exporter extends AbstractExporter
 {
+    private const int ATTRIBUTE_LOOKUP_CHUNK_SIZE = 1000;
+
     /**
      * Static cache for channels/locales/currencies/attributes.
      * Shared across all ExportBatch jobs within the same worker process,
@@ -257,7 +260,12 @@ class Exporter extends AbstractExporter
         $selected = ScopeFilterValue::toCodes(
             $filters[ProductExportScope::ATTRIBUTES->value] ?? null
         );
-        $columns = 10 + ((bool) ($filters['with_associations'] ?? false) ? 3 : 0);
+        $columns = count($this->getBaseFields());
+
+        if ((bool) ($filters['with_associations'] ?? false)) {
+            $columns += count($this->getAssociationColumns());
+        }
+
         $currencyCount = null;
 
         $query = $this->attributeRepository->getModel()->newQuery()
@@ -266,7 +274,7 @@ class Exporter extends AbstractExporter
             ->whereNotIn('code', ['sku', 'status'])
             ->groupBy('type');
 
-        foreach (array_chunk($selected, 1000) ?: [[]] as $codes) {
+        foreach (array_chunk($selected, self::ATTRIBUTE_LOOKUP_CHUNK_SIZE) ?: [[]] as $codes) {
             $attributeQuery = clone $query;
 
             if ($codes !== []) {
@@ -275,7 +283,7 @@ class Exporter extends AbstractExporter
 
             foreach ($attributeQuery->toBase()->pluck('aggregate', 'type') as $type => $count) {
                 $columns += (int) $count * match ($type) {
-                    'measurement'                              => 2,
+                    Attribute::MEASUREMENT_FIELD_TYPE          => 2,
                     AttributeTypes::PRICE_ATTRIBUTE_TYPE       => $currencyCount ??= $this->countExportedCurrencies(),
                     default                                    => 1,
                 };
@@ -455,6 +463,33 @@ class Exporter extends AbstractExporter
     }
 
     /**
+     * Build the fixed product fields in their exported order.
+     */
+    protected function getBaseFields(array $rowData = []): array
+    {
+        return [
+            'channel'                 => null,
+            'locale'                  => null,
+            'sku'                     => $rowData['sku'] ?? null,
+            'status'                  => ($rowData['status'] ?? false) ? 'true' : 'false',
+            'type'                    => $rowData['type'] ?? null,
+            'parent'                  => $rowData['parent'] ?? null,
+            'attribute_family'        => $rowData['attribute_family']['code'] ?? null,
+            'variant_structure'       => $rowData['variant_structure'] ?? null,
+            'configurable_attributes' => $rowData === [] ? null : $this->getSuperAttributes($rowData),
+            'categories'              => $rowData === [] ? null : $this->getCategories($rowData),
+        ];
+    }
+
+    /**
+     * List the optional association columns in their exported order.
+     */
+    protected function getAssociationColumns(): array
+    {
+        return ['up_sells', 'cross_sells', 'related_products'];
+    }
+
+    /**
      * Prepare products from current batch
      *
      * Legacy `up_sells`/`cross_sells`/`related_products` SKU-list columns stay opt-in (default off);
@@ -482,9 +517,13 @@ class Exporter extends AbstractExporter
             $productValues = $mergedValuesById[$product->id] ?? ($product->values ?? []);
 
             $rowData = [
-                'type'             => $product->type,
-                'sku'              => $product->sku,
-                'status'           => $product->status,
+                'type'              => $product->type,
+                'sku'               => $product->sku,
+                'status'            => $product->status,
+                'parent'            => $product->parent?->sku,
+                'variant_structure' => $product->type === 'configurable'
+                    ? $product->variantStructure?->code
+                    : null,
                 'super_attributes' => $product->type === 'configurable'
                     ? $product->super_attributes->toArray()
                     : [],
@@ -492,23 +531,14 @@ class Exporter extends AbstractExporter
                 'values'           => $productValues,
             ];
 
-            $family = $product->attribute_family?->code;
-            $parentSku = $product->parent?->sku;
-            $variantStructure = $product->type === 'configurable'
-                ? $product->variantStructure?->code
-                : null;
+            $baseFields = $this->getBaseFields($rowData);
+            $associationFields = [];
 
-            $sku = $product->sku;
-            $type = $product->type;
-            $status = $product->status ? 'true' : 'false';
-            $configurableAttributes = $this->getSuperAttributes($rowData);
-            $categories = $this->getCategories($rowData);
-
-            $associationFields = $withAssociations ? [
-                'up_sells'         => $this->getAssociations($rowData, 'up_sells'),
-                'cross_sells'      => $this->getAssociations($rowData, 'cross_sells'),
-                'related_products' => $this->getAssociations($rowData, 'related_products'),
-            ] : [];
+            if ($withAssociations) {
+                foreach ($this->getAssociationColumns() as $column) {
+                    $associationFields[$column] = $this->getAssociations($rowData, $column);
+                }
+            }
 
             $commonFields = $this->getCommonFields($rowData);
             unset($commonFields['sku']);
@@ -528,17 +558,9 @@ class Exporter extends AbstractExporter
 
                     $values = $this->setAttributesValues($mergedFields, $filePath, $locale);
 
-                    $row = array_merge([
-                        'channel'                 => $channel,
-                        'locale'                  => $locale,
-                        'sku'                     => $sku,
-                        'status'                  => $status,
-                        'type'                    => $type,
-                        'parent'                  => $parentSku,
-                        'attribute_family'        => $family,
-                        'variant_structure'       => $variantStructure,
-                        'configurable_attributes' => $configurableAttributes,
-                        'categories'              => $categories,
+                    $row = array_merge($baseFields, [
+                        'channel' => $channel,
+                        'locale'  => $locale,
                     ], $associationFields, $values);
 
                     $this->exportBuffer->write([$row]);
@@ -689,7 +711,7 @@ class Exporter extends AbstractExporter
     {
         $measurementMeta = array_filter(
             $this->attributeMeta,
-            fn (array $meta): bool => ($meta['type'] ?? null) === 'measurement'
+            fn (array $meta): bool => ($meta['type'] ?? null) === Attribute::MEASUREMENT_FIELD_TYPE
         );
 
         if ($measurementMeta === []) {
