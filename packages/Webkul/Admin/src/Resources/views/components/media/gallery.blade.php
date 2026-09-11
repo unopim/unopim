@@ -16,6 +16,10 @@
 @php
     $dynamicUploadedImages = $attributes->get('::uploaded-images') ?? $attributes->get(':uploaded-images');
     $rootAttributes = $attributes->except(['::uploaded-images', ':uploaded-images', 'uploaded-images']);
+    $resolvedMimeTypes = array_replace(
+        app(\Webkul\Core\Helpers\MediaMimeTypes::class)->forExtensions($acceptedExtensions),
+        $mimeTypes,
+    );
 @endphp
 
 <x-admin::media.field type="gallery" :name="$name" :instructions="$instructions">
@@ -36,7 +40,7 @@
     height="{{ $height }}"
     :accepted-types='@json($acceptedTypes)'
     :accepted-extensions='@json($acceptedExtensions)'
-    :mime-types='@json($mimeTypes)'
+    :mime-types='@json($resolvedMimeTypes)'
     :errors="errors"
 >
     <x-admin::shimmer.media />
