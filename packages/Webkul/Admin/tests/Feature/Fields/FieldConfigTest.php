@@ -24,6 +24,36 @@ it('falls back to text for a field with no type', function () {
     expect(app(FieldConfig::class)->field(['name' => 'sku'])['type'])->toBe('text');
 });
 
+it('keeps legacy product export translations usable in custom field configurations', function (string $locale) {
+    app()->setLocale($locale);
+    $config = app(FieldConfig::class);
+
+    $legacy = $config->field([
+        'name'  => 'file_path',
+        'title' => 'data_transfer::app.exporters.fields.file-path',
+        'info'  => 'data_transfer::app.exporters.fields.file-path-info',
+    ]);
+    $current = $config->field([
+        'name'  => 'file_path',
+        'title' => 'data_transfer::app.exporters.fields.file-name',
+        'info'  => 'data_transfer::app.exporters.fields.file-name-info',
+    ]);
+
+    expect($legacy['label'])->not->toContain('::')->toBe($current['label']);
+    expect($legacy['info'])->not->toContain('::')->toBe($current['info']);
+})->with(fn (): array => array_map('basename', glob(dirname(__DIR__, 4).'/DataTransfer/src/Resources/lang/*', GLOB_ONLYDIR)));
+
+it('labels the product export file name while preserving the saved setting name', function () {
+    app()->setLocale('en_US');
+
+    $sets = app(FieldConfig::class)->payload(config('exporters'))['sets'];
+    $field = collect($sets['products'])->firstWhere('name', 'file_path');
+
+    expect($field)->not->toBeNull();
+    expect($field['label'])->toBe('File Name');
+    expect($field['info'])->toBe('File name pattern. Tokens: [code], [date], [time], [entity_type]');
+});
+
 it('carries depends_on through, so scoping stays config driven', function () {
     $sets = app(FieldConfig::class)->payload(config('exporters'))['sets'];
 
