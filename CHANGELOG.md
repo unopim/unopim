@@ -1,22 +1,9 @@
 # Unreleased
 
-## Security fixes
-
-- Hardened Magic AI model discovery for custom, Ollama, and Azure endpoints against redirects and DNS rebinding by disabling redirect following and pinning validated public addresses.
-- Prevented Magic AI provider extras from overriding validated endpoints or credentials, including case-varied keys and previously stored extras used by connection testing, text generation, and AI Agent conversations. Added validation for malformed, oversized, and excessively nested JSON extras.
-- Prevented administrators with custom roles from granting permissions they do not hold, and rejected malformed permission entries before authorization could raise a server error.
-- Escaped localized values embedded in the translatable-field component to prevent stored HTML or script content from breaking out of its JSON attribute.
-- Fixed unsafe stored-file previews by enforcing authentication, permissions, explicit content types, restrictive response headers, and download fallback for unsupported inline formats. Non-PDF previews are sandboxed.
-- Hardened PDF file-attribute validation against active content, scanning both ends of larger files so padding cannot bypass the initial scan window.
-- Extended spreadsheet formula-injection protection to export headers and AI Agent CSV/XLSX exports while preserving numeric cell values.
-- Changed import/export validation, start, link, and indexing actions from GET to POST so state-changing requests receive CSRF protection.
-
 ## Bug fixes
 
-- Fixed concurrent application boots failing when another process creates the HTML purifier cache directory first, while retaining errors for actual filesystem failures.
-- Fixed CSV and Excel imports exposing filesystem warnings and absolute paths when a saved profile's source file is missing or unreadable; they now report a localized validation error.
-- Fixed channel deletion protection for installations using a custom default channel by reading `APP_CHANNEL`, with `default` retained as the fallback.
-- Corrected outdated installation documentation links and Docker download commands to target the 3.1 documentation and `3.x` branch.
+- Extended the upload active-content scan from PDF to Office documents: `.docx`/`.pptx` packages shipping a VBA project, legacy `.doc`/`.ppt` files carrying a VBA stream, and RTF documents with auto-updating embedded objects are now rejected at save time, with the reason reported in the validation message.
+- Added a pick-time scan to the media widgets (files, gallery, image) so a rejected upload is reported as soon as it is chosen, before the form is submitted.
 
 # 3.1.0 — August 27th, 2026
 

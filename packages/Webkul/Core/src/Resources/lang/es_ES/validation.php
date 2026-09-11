@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => 'El archivo :value no pertenece a este registro. Vuelve a subirlo para el campo :attribute.',
     'password-surrounding-whitespace'  => 'El campo :attribute no puede empezar ni terminar con un espacio.',
     'password-whitespace-only'         => 'El campo :attribute no puede estar compuesto solo por espacios.',
+    'active-content-detected'          => 'No se pudo subir :attribute porque contiene contenido activo (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'JavaScript incrustado o una acción de PDF de ejecución automática',
+        'embedded_vba_macro'            => 'una macro VBA incrustada',
+        'auto_executing_ole_object'     => 'un objeto incrustado de ejecución automática',
+    ],
 ];

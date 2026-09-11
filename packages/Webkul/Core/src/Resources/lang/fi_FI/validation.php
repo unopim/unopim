@@ -23,4 +23,10 @@ return [
     'file-outside-attribute-path'      => 'Tiedosto :value ei kuulu tähän tietueeseen. Lataa se uudelleen kenttään :attribute.',
     'password-surrounding-whitespace'  => 'Kenttä :attribute ei voi alkaa tai päättyä välilyöntiin.',
     'password-whitespace-only'         => 'Kenttä :attribute ei voi koostua pelkistä välilyönneistä.',
+    'active-content-detected'          => ':attribute-tiedostoa ei voitu ladata, koska se sisältää aktiivista sisältöä (:reason).',
+    'active-content-reasons'           => [
+        'embedded_javascript_or_action' => 'upotettu JavaScript tai automaattisesti suoritettava PDF-toiminto',
+        'embedded_vba_macro'            => 'upotettu VBA-makro',
+        'auto_executing_ole_object'     => 'automaattisesti suoritettava upotettu objekti',
+    ],
 ];

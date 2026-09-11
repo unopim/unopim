@@ -153,3 +153,52 @@ it('rejects existing media paths with a mismatched stored type', function () {
 
     expect($validator->fails())->toBeTrue();
 });
+
+function fakeDocx(string $name, bool $withMacroProject): UploadedFile
+{
+    $path = tempnam(sys_get_temp_dir(), 'docx');
+
+    $zip = new ZipArchive;
+    $zip->open($path, ZipArchive::OVERWRITE);
+    $zip->addFromString('[Content_Types].xml', '<?xml version="1.0"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+    $zip->addFromString('_rels/.rels', '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"/>');
+    $zip->addFromString('word/document.xml', '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body/></w:document>');
+
+    if ($withMacroProject) {
+        $zip->addFromString('word/vbaProject.bin', 'x');
+    }
+
+    $zip->close();
+
+    return UploadedFile::fake()->createWithContent($name, file_get_contents($path));
+}
+
+it('rejects a pdf upload carrying an embedded javascript action with the reason', function () {
+    $file = UploadedFile::fake()->createWithContent('payload.pdf', "%PDF-1.7\n1 0 obj<</Type/Catalog/OpenAction<</S/JavaScript/JS(app.alert\\(1\\))>>>>endobj\n%%EOF");
+
+    $validator = Validator::make(['file' => $file], ['file' => [new FileOrImageValidValue]]);
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->first('file'))->toContain(trans('core::validation.active-content-reasons.embedded_javascript_or_action'));
+});
+
+it('rejects a docx upload shipping a vba macro project', function () {
+    $validator = Validator::make(['file' => fakeDocx('payload.docx', true)], ['file' => [new FileOrImageValidValue]]);
+
+    expect($validator->fails())->toBeTrue()
+        ->and($validator->errors()->first('file'))->toContain(trans('core::validation.active-content-reasons.embedded_vba_macro'));
+});
+
+it('accepts a docx upload without macros', function () {
+    $validator = Validator::make(['file' => fakeDocx('spec.docx', false)], ['file' => [new FileOrImageValidValue]]);
+
+    expect($validator->passes())->toBeTrue();
+});
+
+it('rejects an rtf upload carrying an auto-executing object', function () {
+    $file = UploadedFile::fake()->createWithContent('payload.rtf', '{\rtf1\ansi{\object\objautlink\objupdate}}');
+
+    $validator = Validator::make(['file' => $file], ['file' => [new FileOrImageValidValue]]);
+
+    expect($validator->fails())->toBeTrue();
+});

@@ -713,12 +713,12 @@
                     image.selected = true;
                 },
 
-                add(files) {
+                async add(files) {
                     if (! files || ! files.length) {
                         return;
                     }
 
-                    if (! this.addFiles(files)) {
+                    if (! await this.addFiles(files)) {
                         return;
                     }
 
@@ -753,7 +753,16 @@
                     return file.type.startsWith('image/');
                 },
 
-                addFiles(files) {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.images.not-allowed-error')),
+                    });
+                },
+
+                async addFiles(files) {
                     const validFiles = Array.from(files).every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
@@ -765,18 +774,26 @@
                         return false;
                     }
 
-                    Array.from(files).forEach((file) => {
+                    let anyAdded = false;
+
+                    for (const file of Array.from(files)) {
+                        if (! await this.scanFile(file)) {
+                            continue;
+                        }
+
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
                             file: file,
                             name: file.name
                         });
-                    });
+
+                        anyAdded = true;
+                    }
 
                     this.signalChange();
 
-                    return true;
+                    return anyAdded;
                 },
 
                 remove(image) {
@@ -1078,7 +1095,16 @@
                     this.$refs[this.$.uid + '_imageInput_' + this.index].click();
                 },
 
-                edit() {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.images.not-allowed-error')),
+                    });
+                },
+
+                async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
                     if (imageInput.files == undefined) {
@@ -1093,6 +1119,10 @@
                             message: @json(trans('admin::app.components.media.images.not-allowed-error'))
                         });
 
+                        return;
+                    }
+
+                    if (! await this.scanFile(imageInput.files[0])) {
                         return;
                     }
 

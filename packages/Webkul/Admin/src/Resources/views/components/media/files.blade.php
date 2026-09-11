@@ -230,7 +230,7 @@
                     this.addFiles(files);
                 },
 
-                addFiles(files) {
+                async addFiles(files) {
                     if (! files || ! files.length) {
                         return;
                     }
@@ -246,15 +246,27 @@
                         return;
                     }
 
-                    Array.from(files).forEach((file) => {
+                    for (const file of Array.from(files)) {
+                        if (! await this.scanFile(file)) {
+                            continue;
+                        }
+
                         this.inputFiles.push({
                             id: 'file_' + this.inputFiles.length,
                             url: '',
                             file: file
                         });
-                    });
+                    }
 
                     this.signalChange();
+                },
+
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: "@lang('admin::app.components.media.files.not-allowed-error')",
+                    });
                 },
 
                 remove(file) {
@@ -355,7 +367,15 @@
                     this.$refs[this.$.uid + '_fileInput_' + this.index].click();
                 },
 
-                edit() {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: "@lang('admin::app.components.media.files.not-allowed-error')",
+                    });
+                },
+
+                async edit() {
                     let inputs = this.$refs[this.$.uid + '_fileInput_' + this.index];
 
                     if (inputs.files == undefined) {
@@ -380,6 +400,10 @@
                             message: "@lang('admin::app.components.media.files.not-allowed-error')"
                         });
 
+                        return;
+                    }
+
+                    if (! await this.scanFile(inputs.files[0])) {
                         return;
                     }
 
