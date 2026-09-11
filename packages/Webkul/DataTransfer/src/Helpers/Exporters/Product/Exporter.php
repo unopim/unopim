@@ -244,7 +244,7 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Width the disk-budget estimate is sized on.
+     * Count fixed, association, and expanded attribute columns for the disk-budget estimate.
      *
      * A profile that selects attributes writes only those columns, so charging it for every
      * attribute in the catalogue would reject exports that comfortably fit. The codes are read
@@ -253,15 +253,61 @@ class Exporter extends AbstractExporter
      */
     protected function countExportedColumns(): int
     {
+        $filters = $this->getFilters();
         $selected = ScopeFilterValue::toCodes(
-            $this->getFilters()[ProductExportScope::ATTRIBUTES->value] ?? null
+            $filters[ProductExportScope::ATTRIBUTES->value] ?? null
         );
+        $columns = 10 + ((bool) ($filters['with_associations'] ?? false) ? 3 : 0);
+        $currencyCount = null;
 
-        if ($selected !== []) {
-            return max(1, count($selected));
+        $query = $this->attributeRepository->getModel()->newQuery()
+            ->select('type')
+            ->selectRaw('COUNT(*) as aggregate')
+            ->whereNotIn('code', ['sku', 'status'])
+            ->groupBy('type');
+
+        foreach (array_chunk($selected, 1000) ?: [[]] as $codes) {
+            $attributeQuery = clone $query;
+
+            if ($codes !== []) {
+                $attributeQuery->whereIn('code', $codes);
+            }
+
+            foreach ($attributeQuery->toBase()->pluck('aggregate', 'type') as $type => $count) {
+                $columns += (int) $count * match ($type) {
+                    'measurement'                              => 2,
+                    AttributeTypes::PRICE_ATTRIBUTE_TYPE       => $currencyCount ??= $this->countExportedCurrencies(),
+                    default                                    => 1,
+                };
+            }
         }
 
-        return max(1, $this->attributeRepository->count());
+        return $columns;
+    }
+
+    /**
+     * Count unique currencies within the export profile's channel and currency scopes.
+     */
+    protected function countExportedCurrencies(): int
+    {
+        $filters = $this->getFilters();
+        $channelCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::CHANNELS->value] ?? null);
+        $currencyCodes = ScopeFilterValue::toCodes($filters[ProductExportScope::CURRENCIES->value] ?? null);
+        $currencies = [];
+
+        foreach ($this->channelRepository->with(['currencies'])->all() as $channel) {
+            if ($channelCodes !== [] && ! in_array($channel->code, $channelCodes, true)) {
+                continue;
+            }
+
+            $currencies = array_merge($currencies, $channel->currencies->pluck('code')->all());
+        }
+
+        if ($currencyCodes !== []) {
+            $currencies = array_intersect($currencies, $currencyCodes);
+        }
+
+        return count(array_unique($currencies));
     }
 
     protected function countChannelLocalePairs(): int
