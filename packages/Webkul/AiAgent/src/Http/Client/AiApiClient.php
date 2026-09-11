@@ -189,6 +189,7 @@ class AiApiClient
     {
         return match ($this->provider) {
             'anthropic' => $this->baseUrl.'/v1/messages',
+            'gemini'    => $this->baseUrl.'/openai/chat/completions',
             default     => $this->baseUrl.'/v1/chat/completions',
         };
     }
