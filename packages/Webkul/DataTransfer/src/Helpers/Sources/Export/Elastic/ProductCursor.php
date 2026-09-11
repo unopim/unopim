@@ -15,7 +15,7 @@ class ProductCursor extends AbstractElasticCursor
      * term-level `terms` lookup for a code such as "Footwear" never matches. The exact-value
      * keyword subfield is what a category code has to be compared against.
      */
-    const CATEGORY_FIELD = 'values.categories.keyword';
+    private const string CATEGORY_FIELD = 'values.categories.keyword';
 
     /**
      * Memoized bool query. The filter clauses (family/category/value-filtered ids) are identical
