@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Nome do arquivo',
             'file-name-info' => 'Padrão do nome do arquivo. Variáveis: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Nome do arquivo',
+            'file-path'      => 'Caminho do Arquivo',
             'file-path-info' => 'Padrão do nome do arquivo. Variáveis: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Ativado',

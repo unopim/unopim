@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Файлын нэр',
             'file-name-info' => 'Файлын нэрийн загвар. Орлуулах тэмдэглэгээ: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Файлын нэр',
+            'file-path'      => 'Файлын зам',
             'file-path-info' => 'Файлын нэрийн загвар. Орлуулах тэмдэглэгээ: [code], [date], [time], [entity_type]',
             'status'         => 'Төлөв',
             'enable'         => 'Идэвхтэй',

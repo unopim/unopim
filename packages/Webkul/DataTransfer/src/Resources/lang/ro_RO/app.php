@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Numele fișierului',
             'file-name-info' => 'Șablon pentru numele fișierului. Variabile: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Numele fișierului',
+            'file-path'      => 'Calea Fișierului',
             'file-path-info' => 'Șablon pentru numele fișierului. Variabile: [code], [date], [time], [entity_type]',
             'status'         => 'Stare',
             'enable'         => 'Activat',

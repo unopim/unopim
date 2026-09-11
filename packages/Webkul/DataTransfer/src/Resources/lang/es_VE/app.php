@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Nombre del archivo',
             'file-name-info' => 'Patrón del nombre del archivo. Variables: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Nombre del archivo',
+            'file-path'      => 'Ruta del Archivo',
             'file-path-info' => 'Patrón del nombre del archivo. Variables: [code], [date], [time], [entity_type]',
             'status'         => 'Estado',
             'enable'         => 'Habilitado',

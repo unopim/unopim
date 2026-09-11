@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Nom del fitxer',
             'file-name-info' => 'Patró del nom del fitxer. Variables: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Nom del fitxer',
+            'file-path'      => 'Camí del Fitxer',
             'file-path-info' => 'Patró del nom del fitxer. Variables: [code], [date], [time], [entity_type]',
             'status'         => 'Estat',
             'enable'         => 'Activat',

@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Bestandsnaam',
             'file-name-info' => 'Patroon voor de bestandsnaam. Plaatsaanduidingen: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Bestandsnaam',
+            'file-path'      => 'Bestandspad',
             'file-path-info' => 'Patroon voor de bestandsnaam. Plaatsaanduidingen: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Ingeschakeld',

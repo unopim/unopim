@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Имя файла',
             'file-name-info' => 'Шаблон имени файла. Подстановки: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Имя файла',
+            'file-path'      => 'Путь к файлу',
             'file-path-info' => 'Шаблон имени файла. Подстановки: [code], [date], [time], [entity_type]',
             'status'         => 'Статус',
             'enable'         => 'Включён',

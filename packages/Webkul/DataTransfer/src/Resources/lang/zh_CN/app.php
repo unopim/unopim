@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => '文件名',
             'file-name-info' => '文件名模板。可用变量：[code], [date], [time], [entity_type]',
-            'file-path'      => '文件名',
+            'file-path'      => '文件路径',
             'file-path-info' => '文件名模板。可用变量：[code], [date], [time], [entity_type]',
             'status'         => '状态',
             'enable'         => '启用',

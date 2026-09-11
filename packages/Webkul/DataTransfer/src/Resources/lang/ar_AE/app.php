@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'اسم الملف',
             'file-name-info' => 'نمط اسم الملف. الرموز: [code], [date], [time], [entity_type]',
-            'file-path'      => 'اسم الملف',
+            'file-path'      => 'مسار الملف',
             'file-path-info' => 'نمط اسم الملف. الرموز: [code], [date], [time], [entity_type]',
             'status'         => 'الحالة',
             'enable'         => 'مفعّل',

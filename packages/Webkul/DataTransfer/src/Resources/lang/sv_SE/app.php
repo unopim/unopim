@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Filnamn',
             'file-name-info' => 'Mönster för filnamn. Platshållare: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Filnamn',
+            'file-path'      => 'Fil Sökväg',
             'file-path-info' => 'Mönster för filnamn. Platshållare: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktiverad',

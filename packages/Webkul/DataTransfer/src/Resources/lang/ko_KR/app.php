@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => '파일 이름',
             'file-name-info' => '파일 이름 패턴. 사용 가능한 토큰: [code], [date], [time], [entity_type]',
-            'file-path'      => '파일 이름',
+            'file-path'      => '파일 경로',
             'file-path-info' => '파일 이름 패턴. 사용 가능한 토큰: [code], [date], [time], [entity_type]',
             'status'         => '상태',
             'enable'         => '활성화',

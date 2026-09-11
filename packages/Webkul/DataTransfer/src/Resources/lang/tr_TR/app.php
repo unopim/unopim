@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Dosya Adı',
             'file-name-info' => 'Dosya adı şablonu. Yer tutucular: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Dosya Adı',
+            'file-path'      => 'Dosya Yolu',
             'file-path-info' => 'Dosya adı şablonu. Yer tutucular: [code], [date], [time], [entity_type]',
             'status'         => 'Durum',
             'enable'         => 'Etkin',

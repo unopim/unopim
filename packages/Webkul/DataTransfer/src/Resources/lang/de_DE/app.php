@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Dateiname',
             'file-name-info' => 'Muster für den Dateinamen. Platzhalter: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Dateiname',
+            'file-path'      => 'Dateipfad',
             'file-path-info' => 'Muster für den Dateinamen. Platzhalter: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktiviert',

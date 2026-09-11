@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Nama file',
             'file-name-info' => 'Pola nama file. Token: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Nama file',
+            'file-path'      => 'Jalur file',
             'file-path-info' => 'Pola nama file. Token: [code], [date], [time], [entity_type]',
             'status'         => 'Negara',
             'enable'         => 'Aktif',

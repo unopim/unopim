@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'फ़ाइल का नाम',
             'file-name-info' => 'फ़ाइल के नाम का प्रारूप। उपलब्ध टोकन: [code], [date], [time], [entity_type]',
-            'file-path'      => 'फ़ाइल का नाम',
+            'file-path'      => 'दस्तावेज पथ',
             'file-path-info' => 'फ़ाइल के नाम का प्रारूप। उपलब्ध टोकन: [code], [date], [time], [entity_type]',
             'status'         => 'स्थिति',
             'enable'         => 'सक्षम',

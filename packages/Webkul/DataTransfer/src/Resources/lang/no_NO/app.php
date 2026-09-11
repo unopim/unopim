@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Filnavn',
             'file-name-info' => 'Mønster for filnavn. Plassholdere: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Filnavn',
+            'file-path'      => 'Filsti',
             'file-path-info' => 'Mønster for filnavn. Plassholdere: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktivert',

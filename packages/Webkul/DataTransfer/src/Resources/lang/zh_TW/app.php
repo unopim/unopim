@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => '檔案名稱',
             'file-name-info' => '檔案名稱範本。可用變數：[code], [date], [time], [entity_type]',
-            'file-path'      => '檔案名稱',
+            'file-path'      => '文件路徑',
             'file-path-info' => '檔案名稱範本。可用變數：[code], [date], [time], [entity_type]',
             'status'         => '狀態',
             'enable'         => '啟用',

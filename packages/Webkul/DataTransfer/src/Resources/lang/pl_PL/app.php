@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Nazwa pliku',
             'file-name-info' => 'Wzorzec nazwy pliku. Znaczniki: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Nazwa pliku',
+            'file-path'      => 'Ścieżka pliku',
             'file-path-info' => 'Wzorzec nazwy pliku. Znaczniki: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Włączony',

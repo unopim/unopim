@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Nome del file',
             'file-name-info' => 'Schema del nome del file. Segnaposto: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Nome del file',
+            'file-path'      => 'Percorso File',
             'file-path-info' => 'Schema del nome del file. Segnaposto: [code], [date], [time], [entity_type]',
             'status'         => 'Stato',
             'enable'         => 'Abilitato',

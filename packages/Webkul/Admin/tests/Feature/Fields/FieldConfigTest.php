@@ -24,7 +24,7 @@ it('falls back to text for a field with no type', function () {
     expect(app(FieldConfig::class)->field(['name' => 'sku'])['type'])->toBe('text');
 });
 
-it('keeps legacy product export translations usable in custom field configurations', function (string $locale) {
+it('preserves the original file path label for custom field configurations', function (string $locale, string $legacyLabel) {
     app()->setLocale($locale);
     $config = app(FieldConfig::class);
 
@@ -39,9 +39,44 @@ it('keeps legacy product export translations usable in custom field configuratio
         'info'  => 'data_transfer::app.exporters.fields.file-name-info',
     ]);
 
-    expect($legacy['label'])->not->toContain('::')->toBe($current['label']);
+    expect($legacy['label'])->toBe($legacyLabel);
+    expect($current['label'])->not->toContain('::')->not->toBe($legacyLabel);
     expect($legacy['info'])->not->toContain('::')->toBe($current['info']);
-})->with(fn (): array => array_map('basename', glob(dirname(__DIR__, 4).'/DataTransfer/src/Resources/lang/*', GLOB_ONLYDIR)));
+})->with([
+    'en_US' => ['en_US', 'File Path'],
+    'ar_AE' => ['ar_AE', 'مسار الملف'],
+    'ca_ES' => ['ca_ES', 'Camí del Fitxer'],
+    'da_DK' => ['da_DK', 'Filsti'],
+    'de_DE' => ['de_DE', 'Dateipfad'],
+    'en_AU' => ['en_AU', 'File Path'],
+    'en_GB' => ['en_GB', 'File Path'],
+    'en_NZ' => ['en_NZ', 'File Path'],
+    'es_ES' => ['es_ES', 'Ruta de archivo'],
+    'es_VE' => ['es_VE', 'Ruta del Archivo'],
+    'fi_FI' => ['fi_FI', 'Tiedostopolku'],
+    'fr_FR' => ['fr_FR', 'Chemin du fichier'],
+    'hi_IN' => ['hi_IN', 'दस्तावेज पथ'],
+    'hr_HR' => ['hr_HR', 'Putanja Datoteke'],
+    'id_ID' => ['id_ID', 'Jalur file'],
+    'it_IT' => ['it_IT', 'Percorso File'],
+    'ja_JP' => ['ja_JP', 'ファイル パス'],
+    'ko_KR' => ['ko_KR', '파일 경로'],
+    'mn_MN' => ['mn_MN', 'Файлын зам'],
+    'nl_NL' => ['nl_NL', 'Bestandspad'],
+    'no_NO' => ['no_NO', 'Filsti'],
+    'pl_PL' => ['pl_PL', 'Ścieżka pliku'],
+    'pt_BR' => ['pt_BR', 'Caminho do Arquivo'],
+    'pt_PT' => ['pt_PT', 'Caminho do Arquivo'],
+    'ro_RO' => ['ro_RO', 'Calea Fișierului'],
+    'ru_RU' => ['ru_RU', 'Путь к файлу'],
+    'sv_SE' => ['sv_SE', 'Fil Sökväg'],
+    'tl_PH' => ['tl_PH', 'Daan ng File'],
+    'tr_TR' => ['tr_TR', 'Dosya Yolu'],
+    'uk_UA' => ['uk_UA', 'Шлях до файлу'],
+    'vi_VN' => ['vi_VN', 'Đường dẫn tệp'],
+    'zh_CN' => ['zh_CN', '文件路径'],
+    'zh_TW' => ['zh_TW', '文件路徑'],
+]);
 
 it('labels the product export file name while preserving the saved setting name', function () {
     app()->setLocale('en_US');

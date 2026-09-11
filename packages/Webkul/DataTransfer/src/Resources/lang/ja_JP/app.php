@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'ファイル名',
             'file-name-info' => 'ファイル名のパターン。使用できるトークン: [code], [date], [time], [entity_type]',
-            'file-path'      => 'ファイル名',
+            'file-path'      => 'ファイル パス',
             'file-path-info' => 'ファイル名のパターン。使用できるトークン: [code], [date], [time], [entity_type]',
             'status'         => 'ステータス',
             'enable'         => '有効',

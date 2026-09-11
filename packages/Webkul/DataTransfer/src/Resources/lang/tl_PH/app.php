@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Pangalan ng file',
             'file-name-info' => 'Pattern ng pangalan ng file. Mga token: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Pangalan ng file',
+            'file-path'      => 'Daan ng File',
             'file-path-info' => 'Pattern ng pangalan ng file. Mga token: [code], [date], [time], [entity_type]',
             'status'         => 'Katayuan',
             'enable'         => 'Naka-enable',

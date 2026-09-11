@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Naziv datoteke',
             'file-name-info' => 'Predložak naziva datoteke. Oznake: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Naziv datoteke',
+            'file-path'      => 'Putanja Datoteke',
             'file-path-info' => 'Predložak naziva datoteke. Oznake: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Omogućeno',

@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Tên tệp',
             'file-name-info' => 'Mẫu tên tệp. Các biến: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Tên tệp',
+            'file-path'      => 'Đường dẫn tệp',
             'file-path-info' => 'Mẫu tên tệp. Các biến: [code], [date], [time], [entity_type]',
             'status'         => 'Trạng thái',
             'enable'         => 'Bật',

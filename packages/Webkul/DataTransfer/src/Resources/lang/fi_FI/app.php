@@ -192,7 +192,7 @@ return [
             ],
             'file-name'      => 'Tiedostonimi',
             'file-name-info' => 'Tiedostonimen malli. Paikkamerkit: [code], [date], [time], [entity_type]',
-            'file-path'      => 'Tiedostonimi',
+            'file-path'      => 'Tiedostopolku',
             'file-path-info' => 'Tiedostonimen malli. Paikkamerkit: [code], [date], [time], [entity_type]',
             'status'         => 'Tila',
             'enable'         => 'Käytössä',
