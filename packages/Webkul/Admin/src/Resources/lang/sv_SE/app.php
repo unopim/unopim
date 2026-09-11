@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Endast videofiler (.mp4, .mov, .ogg ..) är tillåtna.',
             ],
             'files' => [
-                'add-file-btn'      => 'Lägg Till Fil',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Endast PDF-filer är tillåtna',
+                'add-file-btn'        => 'Lägg Till Fil',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Endast PDF-filer är tillåtna',
+                'preview-unavailable' => 'Förhandsvisning är inte tillgänglig för den här filtypen.',
             ],
         ],
         'tinymce' => [

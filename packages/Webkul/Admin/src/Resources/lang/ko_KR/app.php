@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => '비디오 파일만 허용됩니다 (.mp4, .mov, .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => '파일 추가',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'PDF 파일만 허용됩니다',
+                'add-file-btn'        => '파일 추가',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'PDF 파일만 허용됩니다',
+                'preview-unavailable' => '이 파일 형식은 미리보기를 지원하지 않습니다.',
             ],
         ],
         'tinymce' => [

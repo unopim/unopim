@@ -2963,9 +2963,10 @@ return [
             ],
 
             'files' => [
-                'add-file-btn'      => 'Add File',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Only pdf files are allowed',
+                'add-file-btn'        => 'Add File',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Only pdf files are allowed',
+                'preview-unavailable' => 'Preview is not available for this file type.',
             ],
         ],
 

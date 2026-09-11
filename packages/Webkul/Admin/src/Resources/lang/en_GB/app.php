@@ -2781,9 +2781,10 @@ return [
                 'not-allowed-error' => 'Only video files (.mp4, .mov, .ogg ..) are allowed.',
             ],
             'files' => [
-                'add-file-btn'      => 'Add File',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Only pdf files are allowed',
+                'add-file-btn'        => 'Add File',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Only pdf files are allowed',
+                'preview-unavailable' => 'A preview is unavailable for this file type.',
             ],
         ],
         'tinymce' => [

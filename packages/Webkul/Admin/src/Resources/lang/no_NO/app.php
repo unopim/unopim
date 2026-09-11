@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Bare videofiler (.mp4, .mov, .ogg ..) er tillatt.',
             ],
             'files' => [
-                'add-file-btn'      => 'Legg til fil',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Bare PDF-filer er tillatt',
+                'add-file-btn'        => 'Legg til fil',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Bare PDF-filer er tillatt',
+                'preview-unavailable' => 'Forhåndsvisning er ikke tilgjengelig for denne filtypen.',
             ],
         ],
         'tinymce' => [

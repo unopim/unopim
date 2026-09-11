@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Chỉ cho phép các tệp video (.mp4, .mov, .ogg, ..)',
             ],
             'files' => [
-                'add-file-btn'      => 'Thêm tệp',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Chỉ cho phép các tệp pdf',
+                'add-file-btn'        => 'Thêm tệp',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Chỉ cho phép các tệp pdf',
+                'preview-unavailable' => 'Không thể xem trước loại tệp này.',
             ],
         ],
         'tinymce' => [

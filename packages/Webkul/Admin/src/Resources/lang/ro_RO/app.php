@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Doar fișiere video (.mp4, .mov, .ogg ..) sunt permise.',
             ],
             'files' => [
-                'add-file-btn'      => 'Adaugă Fișier',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Doar fișiere PDF sunt permise.',
+                'add-file-btn'        => 'Adaugă Fișier',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Doar fișiere PDF sunt permise.',
+                'preview-unavailable' => 'Previzualizarea nu este disponibilă pentru acest tip de fișier.',
             ],
         ],
         'tinymce' => [

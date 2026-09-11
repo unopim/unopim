@@ -669,6 +669,7 @@ class Import
         }
         $errorFilePath = 'imports/'.time().'-error-report.'.$fileType;
 
+        Storage::disk('private')->makeDirectory('imports');
         $writer->save(Storage::disk('private')->path($errorFilePath));
 
         return $errorFilePath;

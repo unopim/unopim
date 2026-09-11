@@ -10,6 +10,8 @@ const { gotoTab, assignAttributesToGroup, saveFamilyEdit } = require('../../util
 const FAMILY_ID = 1;
 const IMAGE_1 = path.resolve(__dirname, '../../utils/berlin.jpeg');
 const IMAGE_2 = path.resolve(__dirname, '../../utils/bikes.jpeg');
+const PDF = path.resolve(__dirname, '../../assets/sample.pdf');
+const GALLERY_EXTENSIONS = ['gif', 'jfif', 'jif', 'jpeg', 'jpg', 'png', 'psd', 'tif', 'tiff', 'webp', 'bmp', 'mp4', 'webm', 'mkv'];
 
 test.describe.configure({ timeout: 240_000 });
 
@@ -186,7 +188,25 @@ test.describe('Gallery reorder marks the product form dirty', () => {
         const group = fieldGroup(adminPage, label);
         await expect(group).toBeVisible({ timeout: 15000 });
 
+        const addTile = group.locator('label.border-dashed');
+        await expect(addTile).toHaveAttribute('title', GALLERY_EXTENSIONS.join(', '));
+
+        const picker = group.locator('input[type="file"]').first();
+        await expect(picker).toHaveAttribute('accept', GALLERY_EXTENSIONS.map(extension => `.${extension}`).join(','));
+        await picker.setInputFiles(PDF);
+        await expect(adminPage.getByText('Only image and video files are allowed. (.mp4, .jpg ..)', { exact: true })).toBeVisible();
+        await expect(group.locator('.group.relative')).toHaveCount(0);
+
         await group.locator('input[type="file"]').first().setInputFiles([IMAGE_1, IMAGE_2]);
+
+        await expect(group.locator('.group.relative')).toHaveCount(2);
+        const replacementPicker = group.locator('input[type="file"][name]').first();
+        await expect(replacementPicker).toHaveAttribute('accept', GALLERY_EXTENSIONS.map(extension => `.${extension}`).join(','));
+        await replacementPicker.setInputFiles({
+          name: 'gallery.jfif',
+          mimeType: 'image/jpeg',
+          buffer: require('fs').readFileSync(IMAGE_1),
+        });
 
         await adminPage.locator('#name').fill(`Gallery Reorder ${sku}`);
         await adminPage.locator('#url_key').fill(`gallery-reorder-${sku}`);

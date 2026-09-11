@@ -138,14 +138,16 @@ return [
      * settings an operator is expected to make deliberate decisions about.
      */
     'settings' => [
-        'general.publication.settings.enabled'               => '1',
-        'general.publication.settings.cache_ttl'             => '300',
-        'general.publication.settings.rate_limit'            => '120',
-        'general.publication.settings.indexable'             => '1',
-        'catalog.product_passport.settings.enabled'          => '1',
-        'catalog.product_passport.settings.auto_publish'     => '0',
-        'catalog.product_passport.settings.operator_name'    => 'Nordvale Group AB',
-        'catalog.product_passport.settings.operator_address' => "Nordvale Group AB\nHamngatan 12\n111 47 Stockholm\nSweden",
-        'catalog.product_passport.settings.operator_eu_rep'  => 'Nordvale Europe GmbH, Rosenthaler Straße 40, 10178 Berlin, Germany',
+        'general.magic_ai.agentic_pim.enabled'                => '1',
+        'general.magic_ai.agentic_pim.open_by_default'        => '1',
+        'general.publication.settings.enabled'                => '1',
+        'general.publication.settings.cache_ttl'              => '300',
+        'general.publication.settings.rate_limit'             => '120',
+        'general.publication.settings.indexable'              => '1',
+        'catalog.product_passport.settings.enabled'           => '1',
+        'catalog.product_passport.settings.auto_publish'      => '0',
+        'catalog.product_passport.settings.operator_name'     => 'Nordvale Group AB',
+        'catalog.product_passport.settings.operator_address'  => "Nordvale Group AB\nHamngatan 12\n111 47 Stockholm\nSweden",
+        'catalog.product_passport.settings.operator_eu_rep'   => 'Nordvale Europe GmbH, Rosenthaler Straße 40, 10178 Berlin, Germany',
     ],
 ];
