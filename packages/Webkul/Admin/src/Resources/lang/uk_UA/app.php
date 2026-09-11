@@ -2784,9 +2784,9 @@ return [
                 'not-allowed-error' => 'Дозволені тільки відео файли (.mp4, .mov, .ogg ..)',
             ],
             'files' => [
-                'add-file-btn'      => 'Додати файл',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Дозволені тільки pdf файли',
+                'add-file-btn'        => 'Додати файл',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Дозволені тільки pdf файли',
                 'preview-unavailable' => 'Попередній перегляд недоступний для цього типу файлу.',
             ],
         ],
