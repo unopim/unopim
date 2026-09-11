@@ -190,7 +190,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'مسار الملف',
+            'file-path'      => 'اسم الملف',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'الحالة',
             'enable'         => 'مفعّل',

@@ -190,7 +190,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'दस्तावेज पथ',
+            'file-path'      => 'फ़ाइल का नाम',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'स्थिति',
             'enable'         => 'सक्षम',

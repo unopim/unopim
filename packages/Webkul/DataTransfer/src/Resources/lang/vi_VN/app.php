@@ -190,7 +190,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'Đường dẫn tệp',
+            'file-path'      => 'Tên tệp',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Trạng thái',
             'enable'         => 'Bật',

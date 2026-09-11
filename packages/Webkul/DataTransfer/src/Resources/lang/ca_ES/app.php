@@ -190,7 +190,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'Camí del Fitxer',
+            'file-path'      => 'Nom del fitxer',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Estat',
             'enable'         => 'Activat',

@@ -190,7 +190,7 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
-            'file-path'      => 'Calea Fișierului',
+            'file-path'      => 'Numele fișierului',
             'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
             'status'         => 'Stare',
             'enable'         => 'Activat',
