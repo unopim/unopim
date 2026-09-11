@@ -39,6 +39,11 @@ return [
     ], [
         'key'   => 'catalog.passport.publish',
         'name'  => 'passport::app.acl.passports.publish',
+        'route' => 'admin.catalog.passports.issue_carrier',
+        'sort'  => 2,
+    ], [
+        'key'   => 'catalog.passport.publish',
+        'name'  => 'passport::app.acl.passports.publish',
         'route' => 'admin.catalog.passports.mass_publish',
         'sort'  => 2,
     ], [
