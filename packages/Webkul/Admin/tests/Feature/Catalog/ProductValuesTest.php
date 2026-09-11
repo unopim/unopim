@@ -570,7 +570,7 @@ it('should store the image attribute value when updating simple product', functi
     $this->assertTrue(Storage::exists($product->values['common'][$attributeCode]));
 });
 
-it('should store the gallery attribute value when updating simple product', function () {
+it('should store the gallery attribute value when updating simple product', function (string $extension) {
     $this->loginAsAdmin();
 
     $attribute = Attribute::factory()->create(['type' => 'gallery']);
@@ -583,12 +583,14 @@ it('should store the gallery attribute value when updating simple product', func
 
     Storage::fake();
 
+    $image = UploadedFile::fake()->image('product.jpg');
+
     $data = [
         'sku'    => $product->sku,
         'values' => [
             'common' => [
                 $attributeCode => [
-                    UploadedFile::fake()->image('product.jpg'),
+                    new UploadedFile($image->getRealPath(), 'product.'.$extension, test: true),
                     UploadedFile::fake()->image('product2.jpg'),
                     UploadedFile::fake()->image('product3.jpg'),
                 ],
@@ -606,7 +608,12 @@ it('should store the gallery attribute value when updating simple product', func
     foreach ($product->values['common'][$attributeCode] as $media) {
         $this->assertTrue(Storage::exists($media));
     }
-});
+
+    $data['values']['common'][$attributeCode] = $product->values['common'][$attributeCode];
+
+    $this->put(route('admin.catalog.products.update', $product->id), $data)
+        ->assertSessionHas('success', trans('admin::app.catalog.products.update-success'));
+})->with(['jpg', 'jfif', 'jif']);
 
 it('should store the file attribute value when updating simple product', function () {
     $this->loginAsAdmin();

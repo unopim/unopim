@@ -2787,6 +2787,7 @@ return [
                 'add-file-btn'      => 'Thêm tệp',
                 'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
                 'not-allowed-error' => 'Chỉ cho phép các tệp pdf',
+                'preview-unavailable' => 'Không thể xem trước loại tệp này.',
             ],
         ],
         'tinymce' => [

@@ -2781,9 +2781,10 @@ return [
                 'not-allowed-error' => 'Solo se permiten archivos de video (.mp4, .mov, .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => 'Agregar archivo',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Solo se permiten archivos PDF',
+                'add-file-btn'        => 'Agregar archivo',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Solo se permiten archivos PDF',
+                'preview-unavailable' => 'La vista previa no está disponible para este tipo de archivo.',
             ],
         ],
         'tinymce' => [

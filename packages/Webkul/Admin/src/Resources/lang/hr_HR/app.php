@@ -2784,6 +2784,7 @@ return [
                 'add-file-btn'      => 'Dodaj datoteku',
                 'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
                 'not-allowed-error' => 'Dozvoljeni su samo PDF datoteke',
+                'preview-unavailable' => 'Pretpregled nije dostupan za ovu vrstu datoteke.',
             ],
         ],
         'tinymce' => [

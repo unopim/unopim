@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Разрешены только файлы видео (.mp4, .mov, .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => 'Добавить файл',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Разрешены только файлы PDF',
+                'add-file-btn'        => 'Добавить файл',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Разрешены только файлы PDF',
+                'preview-unavailable' => 'Предварительный просмотр недоступен для этого типа файла.',
             ],
         ],
         'tinymce' => [

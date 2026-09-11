@@ -2784,6 +2784,7 @@ return [
                 'add-file-btn'      => 'Aggiungi file',
                 'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
                 'not-allowed-error' => 'Sono consentiti solo file PDF',
+                'preview-unavailable' => 'L’anteprima non è disponibile per questo tipo di file.',
             ],
         ],
         'tinymce' => [

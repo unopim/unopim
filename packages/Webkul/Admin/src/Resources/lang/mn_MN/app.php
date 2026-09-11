@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Зөвхөн видео файлууд (.mp4, .mov, .mov, .mov,.) Зөвшөөрнө ..',
             ],
             'files' => [
-                'add-file-btn'      => 'Нэмэх',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Зөвхөн PDF файлуудыг зөвшөөрдөг',
+                'add-file-btn'        => 'Нэмэх',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Зөвхөн PDF файлуудыг зөвшөөрдөг',
+                'preview-unavailable' => 'Энэ төрлийн файлыг урьдчилан харах боломжгүй.',
             ],
         ],
         'tinymce' => [

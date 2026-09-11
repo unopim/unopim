@@ -2781,9 +2781,10 @@ return [
                 'not-allowed-error' => 'Hanya file video (.mp4, .mov, .ogg ..) yang diizinkan.',
             ],
             'files' => [
-                'add-file-btn'      => 'Tambah berkas',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Hanya file PDF yang diizinkan',
+                'add-file-btn'        => 'Tambah berkas',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Hanya file PDF yang diizinkan',
+                'preview-unavailable' => 'Pratinjau tidak tersedia untuk jenis berkas ini.',
             ],
         ],
         'tinymce' => [
