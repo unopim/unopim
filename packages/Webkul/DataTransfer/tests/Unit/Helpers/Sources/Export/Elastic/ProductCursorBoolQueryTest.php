@@ -50,6 +50,14 @@ it('builds a status term clause', function () {
     ]);
 });
 
+it('matches category codes against the exact-value keyword subfield', function () {
+    expect(buildBoolQuery(['categories' => ['Footwear', 'Outerwear']]))->toBe([
+        'filter' => [
+            ['terms' => ['values.categories.keyword' => ['Footwear', 'Outerwear']]],
+        ],
+    ]);
+});
+
 it('builds an updated_at range clause', function () {
     expect(buildBoolQuery(['updated_after' => '2026-01-01 00:00:00']))->toBe([
         'filter' => [
