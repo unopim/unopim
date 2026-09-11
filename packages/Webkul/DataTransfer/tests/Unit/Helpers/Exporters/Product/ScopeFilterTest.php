@@ -32,7 +32,7 @@ function readExporterProperty(Exporter $exporter, string $name): mixed
     return $property->getValue($exporter);
 }
 
-function makeInitializedProductExporter(array $filters): Exporter
+function makeProductScopeExporter(array $filters): Exporter
 {
     $jobInstance = JobInstances::create([
         'code'                => 'product_export_'.uniqid(),
@@ -55,10 +55,36 @@ function makeInitializedProductExporter(array $filters): Exporter
     $exporter = app(Exporter::class);
     $exporter->setExport($jobTrack);
 
+    return $exporter;
+}
+
+function makeInitializedProductExporter(array $filters): Exporter
+{
+    $exporter = makeProductScopeExporter($filters);
+
     resetProductExporterCache();
     $exporter->initilize();
 
     return $exporter;
+}
+
+function captureProductScopeRows(Exporter $exporter, Product $product): array
+{
+    $buffer = new class
+    {
+        public array $rows = [];
+
+        public function write(array $items, array $options = []): void
+        {
+            $this->rows = array_merge($this->rows, $items);
+        }
+    };
+
+    $exporter->setExportBuffer($buffer);
+    $exporter->initilize();
+    $exporter->prepareProducts(new JobTrackBatch(['data' => [['id' => $product->id]]]), null);
+
+    return $buffer->rows;
 }
 
 function seedProductScopeChannels(): void
@@ -129,7 +155,7 @@ it('intersects explicit locale and currency selections within the channel scope'
     expect($currencies)->toBe(['EUR']);
 });
 
-it('keeps every attribute column and records the selected attributes', function () {
+it('keeps every attribute loaded and records the selected attributes', function () {
     seedProductScopeChannels();
     Attribute::factory()->create(['code' => 'scoped_attr']);
     Cache::flush();
@@ -143,7 +169,7 @@ it('keeps every attribute column and records the selected attributes', function 
     expect(readExporterProperty($exporter, 'selectedAttributeCodes'))->toBe(['scoped_attr']);
 });
 
-it('exports values only for the selected attributes while keeping every column', function () {
+it('drops the columns of attributes outside the selection', function () {
     seedProductScopeChannels();
     Attribute::factory()->create(['code' => 'scoped_attr']);
     Cache::flush();
@@ -159,8 +185,155 @@ it('exports values only for the selected attributes while keeping every column',
     ], null);
 
     expect($values['scoped_attr'])->toBe('selected-value');
-    expect($values)->toHaveKey('name');
-    expect($values['name'])->toBeNull();
+    expect($values)->not->toHaveKey('name');
+});
+
+it('drops the price columns of an unselected price attribute', function (): void {
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_attr']);
+    Attribute::factory()->create(['code' => 'list_price', 'type' => 'price']);
+    Cache::flush();
+
+    $exporter = makeInitializedProductExporter(['attributes' => ['scoped_attr']]);
+
+    $method = new ReflectionMethod($exporter, 'setAttributesValues');
+    $method->setAccessible(true);
+
+    $values = $method->invoke($exporter, ['scoped_attr' => 'selected-value'], null);
+
+    expect(array_keys($values))->toBe(['scoped_attr']);
+});
+
+it('sizes the disk-budget estimate on the columns written before initialization', function (array $filters, int $expectedColumns): void {
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_text', 'type' => 'text']);
+    Attribute::factory()->create(['code' => 'scoped_price', 'type' => 'price']);
+    Attribute::factory()->create(['code' => 'scoped_measurement', 'type' => 'measurement']);
+    Channel::where('code', 'mobile')->firstOrFail()->currencies()->attach(
+        Currency::where('code', 'EUR')->firstOrFail()->id
+    );
+    $product = Product::factory()->withInitialValues()->create();
+    Cache::flush();
+
+    $exporter = makeProductScopeExporter(array_merge(['channels' => ['web']], $filters));
+    $countColumns = new ReflectionMethod($exporter, 'countExportedColumns');
+
+    $estimatedColumns = $countColumns->invoke($exporter);
+    $rows = captureProductScopeRows($exporter, $product);
+
+    expect($rows)->not->toBeEmpty();
+    expect($rows)->each->toHaveCount($expectedColumns);
+    expect($estimatedColumns)->toBe($expectedColumns);
+})->with([
+    'fixed columns'                  => [['attributes' => ['scoped_text']], 11],
+    'association columns'            => [['attributes' => ['scoped_text'], 'with_associations' => true], 14],
+    'sku and status counted once'    => [['attributes' => ['sku', 'status', 'scoped_text']], 11],
+    'measurement unit column'        => [['attributes' => ['scoped_measurement']], 12],
+    'channel currencies'             => [['attributes' => ['scoped_price']], 12],
+    'selected currency'              => [['attributes' => ['scoped_price'], 'currencies' => ['EUR']], 11],
+    'currency outside channel scope' => [['attributes' => ['scoped_price'], 'currencies' => ['GBP']], 10],
+    'shared currency counted once'   => [['attributes' => ['scoped_price'], 'channels' => ['web', 'mobile']], 13],
+    'mixed attribute types'          => [['attributes' => ['scoped_text', 'scoped_price', 'scoped_measurement'], 'with_associations' => true], 18],
+    'deleted attribute selection'    => [['attributes' => ['deleted_attribute']], 10],
+    'selection across query chunks'  => [['attributes' => array_merge(
+        array_map(fn (int $index): string => 'deleted_attribute_'.$index, range(1, 999)),
+        ['scoped_text', 'scoped_price']
+    )], 13],
+]);
+
+it('counts additional columns supplied by exporter extensions', function (bool $withAssociations, int $expectedColumns): void {
+    app()->bind(Exporter::class, ProductScopeAdditionalColumnsExporter::class);
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_text', 'type' => 'text']);
+    $product = Product::factory()->withInitialValues()->create();
+    Cache::flush();
+
+    $exporter = makeProductScopeExporter([
+        'channels'          => ['web'],
+        'attributes'        => ['scoped_text'],
+        'with_associations' => $withAssociations,
+    ]);
+    $estimatedColumns = (new ReflectionMethod($exporter, 'countExportedColumns'))->invoke($exporter);
+    $rows = captureProductScopeRows($exporter, $product);
+
+    expect($rows)->not->toBeEmpty();
+    expect($rows)->each->toHaveCount($expectedColumns);
+    expect($rows[0]['external_id'])->toBe('external-1');
+    expect(array_key_exists('custom_association', $rows[0]))->toBe($withAssociations);
+    expect($estimatedColumns)->toBe($expectedColumns);
+})->with([
+    'base fields'        => [false, 12],
+    'association fields' => [true, 16],
+]);
+
+it('preserves the fixed column order and values for existing exports', function (): void {
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_text', 'type' => 'text']);
+    $family = AttributeFamily::factory()->create(['code' => 'column_family']);
+    $parent = Product::factory()->create(['sku' => 'PARENT-COLUMNS', 'type' => 'configurable']);
+    $product = Product::factory()->create([
+        'sku'                 => 'CHILD-COLUMNS',
+        'status'              => false,
+        'parent_id'           => $parent->id,
+        'attribute_family_id' => $family->id,
+        'values'              => [
+            'common'     => ['scoped_text' => 'selected-value'],
+            'categories' => ['clothes'],
+        ],
+    ]);
+    Cache::flush();
+
+    $exporter = makeProductScopeExporter([
+        'channels'   => ['web'],
+        'locales'    => ['en_US'],
+        'attributes' => ['scoped_text'],
+    ]);
+
+    expect(captureProductScopeRows($exporter, $product))->toBe([[
+        'channel'                 => 'web',
+        'locale'                  => 'en_US',
+        'sku'                     => 'CHILD-COLUMNS',
+        'status'                  => 'false',
+        'type'                    => 'simple',
+        'parent'                  => 'PARENT-COLUMNS',
+        'attribute_family'        => 'column_family',
+        'variant_structure'       => null,
+        'configurable_attributes' => '',
+        'categories'              => 'clothes',
+        'scoped_text'             => 'selected-value',
+    ]]);
+});
+
+it('counts every exported attribute column when the selection is empty', function (): void {
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_text', 'type' => 'text']);
+    Attribute::factory()->create(['code' => 'scoped_price', 'type' => 'price']);
+    Attribute::factory()->create(['code' => 'scoped_measurement', 'type' => 'measurement']);
+    Cache::flush();
+
+    $exporter = makeProductScopeExporter(['channels' => ['web']]);
+    $countColumns = new ReflectionMethod($exporter, 'countExportedColumns');
+    $estimatedColumns = $countColumns->invoke($exporter);
+
+    $exporter->initilize();
+    $attributeColumns = (new ReflectionMethod($exporter, 'setAttributesValues'))->invoke($exporter, [], null);
+
+    expect($attributeColumns)->toHaveKeys(['scoped_text', 'scoped_price (USD)', 'scoped_price (EUR)', 'scoped_measurement', 'scoped_measurement(unit)'])
+        ->not->toHaveKeys(['sku', 'status']);
+    expect($estimatedColumns)->toBe(10 + count($attributeColumns));
+});
+
+it('rejects an export when its fixed columns push it over the disk budget', function (): void {
+    seedProductScopeChannels();
+    Attribute::factory()->create(['code' => 'scoped_text', 'type' => 'text']);
+    Cache::flush();
+
+    $exporter = makeProductScopeExporter(['attributes' => ['scoped_text']]);
+    $columns = (new ReflectionMethod($exporter, 'countExportedColumns'))->invoke($exporter);
+    $exceedsBudget = new ReflectionMethod($exporter, 'exportExceedsDiskBudget');
+
+    expect($exceedsBudget->invoke($exporter, 3_000_000, $columns, 1_000_000_000))->toBeTrue();
+    expect($exceedsBudget->invoke($exporter, 1_000_000, $columns, 1_000_000_000))->toBeFalse();
 });
 
 it('keeps every attribute when none is selected', function () {
@@ -294,3 +467,16 @@ it('parses every stored multiselect shape into codes', function () {
     expect(ScopeFilterValue::toCodes(['GBP']))->toBe(['GBP']);
     expect(ScopeFilterValue::toCodes(null))->toBe([]);
 });
+
+class ProductScopeAdditionalColumnsExporter extends Exporter
+{
+    protected function getBaseFields(array $rowData = []): array
+    {
+        return array_merge(parent::getBaseFields($rowData), ['external_id' => 'external-1']);
+    }
+
+    protected function getAssociationColumns(): array
+    {
+        return [...parent::getAssociationColumns(), 'custom_association'];
+    }
+}
