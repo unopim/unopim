@@ -117,7 +117,7 @@
                     <div v-else class="flex flex-col items-center gap-4 text-center text-white">
                         <span class="icon-file text-5xl text-gray-300"></span>
                         <p class="text-base">@lang('admin::app.components.media.files.preview-unavailable')</p>
-                        <a :href="downloadUrl" class="primary-button" download>
+                        <a v-if="allowDownload" :href="downloadUrl" class="primary-button" download>
                             @lang('admin::app.export.download')
                         </a>
                     </div>

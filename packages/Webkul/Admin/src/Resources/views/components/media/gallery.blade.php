@@ -36,7 +36,7 @@
     height="{{ $height }}"
     :accepted-types='@json($acceptedTypes)'
     :accepted-extensions='@json($acceptedExtensions)'
-    :mime-types='@json($resolvedMimeTypes)'
+    :mime-types='@json($mimeTypes)'
     :errors="errors"
 >
     <x-admin::shimmer.media />
