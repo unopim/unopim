@@ -314,7 +314,7 @@
                 },
 
                 canPreview() {
-                    return ['pdf', 'svg', 'txt'].includes(this.cardMedia.extension);
+                    return ['pdf', 'svg'].includes(this.cardMedia.extension);
                 },
 
                 downloadUrl() {
