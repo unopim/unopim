@@ -121,6 +121,13 @@ class PublicationServiceProvider extends ServiceProvider
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.carrier.svg');
 
+                    // Four segments with a literal `r`, so it can never shadow the two-segment routes above.
+                    // `sequence` is bounded to a positive int that fits the column; anything else 404s at the router.
+                    Route::get('/{uuid}/r/{sequence}/{locale}', [PublicationController::class, 'showRelease'])
+                        ->where('sequence', '[1-9][0-9]{0,9}')
+                        ->defaults('type', $type->code)
+                        ->name('publication.public.'.$type->code.'.show.release');
+
                     Route::get('/{uuid}/{locale}', [PublicationController::class, 'show'])
                         ->defaults('type', $type->code)
                         ->name('publication.public.'.$type->code.'.show.locale');
