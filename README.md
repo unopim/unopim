@@ -219,6 +219,48 @@ php artisan queue:work --queue=webhooks,system,completeness,default,publication
 > **Note:** The `publication` queue processes Digital Product Passport publish jobs (single and bulk). Omit it and passports will queue but never publish. If you run a process manager such as Supervisor, add `publication` to your worker's `--queue=` list and restart it (e.g. `sudo supervisorctl restart unopim-worker`).
 
 ### Docker
+Hamsync — Digital Learning Resources
+
+Welcome to Hamsync, a digital store focused on creating practical, engaging, and easy-to-use educational resources for kids.
+
+Our goal is to make learning more enjoyable for children while giving parents, teachers, and homeschoolers access to convenient printable resources they can use at home or in the classroom.
+
+📚 What You'll Find
+✏️ Kids' educational worksheets
+🔤 Alphabet & letter-learning activities
+🔢 Numbers and counting resources
+🎨 Coloring pages and activity sheets
+📝 Handwriting & writing practice
+🧩 Learning games and activity packs
+🏫 Preschool & kindergarten resources
+📖 Printable educational bundles
+🎉 Seasonal and themed learning activities
+🎯 Our Mission
+
+We believe learning should be fun, creative, simple, and accessible. Hamsync creates digital resources designed to support children's early learning, creativity, handwriting, problem-solving, and independent practice.
+
+👨‍👩‍👧‍👦 Perfect For
+
+Our resources are useful for:
+
+Parents
+Teachers
+Homeschooling families
+Preschool educators
+Kindergarten classrooms
+Tutors
+Children's activity groups
+💻 Digital Products
+
+All products are delivered digitally, allowing you to download and print your resources whenever you need them. No physical product is shipped.
+
+🛍️ Visit Our Store
+
+Explore our latest educational printables and digital resources:
+
+Hamsync on Etsy: https://hamsync.etsy.com
+
+Thank you for supporting Hamsync and our mission to make children's learning more creative and enjoyable! ❤️
 
 Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/3.1/introduction/installation-docker.html) for advanced configuration.
 
