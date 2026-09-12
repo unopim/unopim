@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Хувилбарыг дахин нийтэллээ.',
         'republish-invalid'           => 'Энэ хувилбарыг дахин нийтлэх боломжгүй.',
         'republish-noop'              => 'Энэ хувилбар аль хэдийн одоогийнх байна.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'Паспортын хувилбарын түүх',
             'subtitle'      => 'SKU :sku · суваг :channel',

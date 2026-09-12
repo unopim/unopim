@@ -99,6 +99,23 @@ return [
         'republished'                 => 'تمت إعادة نشر الإصدار بنجاح.',
         'republish-invalid'           => 'لا يمكن إعادة نشر هذا الإصدار.',
         'republish-noop'              => 'هذا الإصدار هو الحالي بالفعل.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'سجل إصدارات الجواز',
             'subtitle'      => 'رمز المنتج :sku · القناة :channel',

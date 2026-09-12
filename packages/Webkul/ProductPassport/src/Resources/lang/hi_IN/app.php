@@ -99,6 +99,23 @@ return [
         'republished'                 => 'संस्करण सफलतापूर्वक पुनः प्रकाशित किया गया।',
         'republish-invalid'           => 'यह संस्करण पुनः प्रकाशित नहीं किया जा सकता।',
         'republish-noop'              => 'यह संस्करण पहले से ही वर्तमान है।',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'पासपोर्ट संस्करण इतिहास',
             'subtitle'      => 'SKU :sku · चैनल :channel',

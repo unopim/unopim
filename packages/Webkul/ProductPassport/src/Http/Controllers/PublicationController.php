@@ -3,6 +3,7 @@
 namespace Webkul\ProductPassport\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -10,6 +11,7 @@ use Webkul\Core\Models\ChannelProxy;
 use Webkul\Product\Models\Product;
 use Webkul\ProductPassport\DataGrids\Catalog\PublicationDataGrid;
 use Webkul\ProductPassport\Http\Requests\BulkPublishPassportRequest;
+use Webkul\ProductPassport\Http\Requests\IssueCarrierRequest;
 use Webkul\ProductPassport\Http\Requests\MassPublishPassportRequest;
 use Webkul\ProductPassport\Http\Requests\MassTransitionPassportRequest;
 use Webkul\ProductPassport\Http\Requests\PublishPassportRequest;
@@ -27,6 +29,8 @@ use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Models\PublicationPublishAttempt;
 use Webkul\Publication\Models\PublicationPublishAttemptProxy;
 use Webkul\Publication\Models\PublicationVersionProxy;
+use Webkul\Publication\Services\CarrierIssuer;
+use Webkul\Publication\Services\CarrierSvg;
 use Webkul\Publication\Services\PublicAccessGate;
 use Webkul\Publication\Services\Publisher;
 
@@ -419,12 +423,39 @@ class PublicationController extends Controller
             'product',
             'channel',
             'versions' => fn ($query) => $query
-                ->with(['locale', 'publishedBy'])
+                ->with(['locale', 'publishedBy', 'release'])
                 ->orderBy('locale_id')
                 ->orderByDesc('version'),
+            'releases' => fn ($query) => $query
+                ->with(['publishedBy', 'versions.locale'])
+                ->orderByDesc('sequence'),
+            'carrierIssuances' => fn ($query) => $query
+                ->with(['release', 'issuedBy'])
+                ->orderByDesc('issued_at'),
         ]);
 
         return view('passport::admin.versions.index', compact('publication'));
+    }
+
+    /**
+     * Issues a printable carrier for one release: records exactly what is encoded, then returns the SVG.
+     * The record, not the image, is the durable answer to "which QR code is in the manual and what did it point at".
+     */
+    public function issueCarrier(IssueCarrierRequest $request, Publication $publication, int $sequence, CarrierIssuer $issuer, CarrierSvg $svg): Response
+    {
+        abort_unless($publication->status->isPubliclyResolvable(), 422, trans('passport::app.publications.carrier.not-issuable'));
+
+        $release = $publication->releases()->where('sequence', $sequence)->first();
+
+        abort_if($release === null, 404);
+
+        $issuance = $issuer->issue($publication, $release, auth()->guard('admin')->id());
+
+        return response($svg->render($issuance->target), 200, [
+            'Content-Type'        => 'image/svg+xml',
+            'Content-Disposition' => 'attachment; filename="passport-'.$publication->uuid.'-r'.$release->sequence.'.svg"',
+            'Cache-Control'       => 'private, no-store',
+        ]);
     }
 
     /**

@@ -51,5 +51,11 @@ return [
             'heading' => 'Hộ chiếu này không còn khả dụng.',
             'notice'  => 'Bản ghi này được lưu giữ vì mục đích minh bạch nhưng không còn được duy trì tích cực.',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
