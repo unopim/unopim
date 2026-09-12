@@ -4,6 +4,11 @@
 
 - Extended the upload active-content scan from PDF to Office documents: `.docx`/`.pptx` packages shipping a VBA project, legacy `.doc`/`.ppt` files carrying a VBA stream, and RTF documents with auto-updating embedded objects are now rejected at save time, with the reason reported in the validation message.
 - Added a pick-time scan to the media widgets (files, gallery, image) so a rejected upload is reported as soon as it is chosen, before the form is submitted.
+- Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
+
+## New features
+
+- The product grid's quick search reads the attribute codes it looks in from `products.search_fields`, so an EAN, a GTIN or a supplier article number can be searched from the one search box. An attribute marked `is_filterable` could already be filtered by substring on its own grid column with the `contains` operator; this saves adding the column and picking the operator, and covers identifier attributes that are not filterable, such as the seeded `product_number`. The SKU and the name are still searched by default, codes that do not resolve to a text attribute are skipped, and at most ten are searched.
 
 # 3.1.0 — August 27th, 2026
 
