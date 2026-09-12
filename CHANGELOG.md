@@ -4,6 +4,7 @@
 
 - Extended the upload active-content scan from PDF to Office documents: `.docx`/`.pptx` packages shipping a VBA project, legacy `.doc`/`.ppt` files carrying a VBA stream, and RTF documents with auto-updating embedded objects are now rejected at save time, with the reason reported in the validation message.
 - Added a pick-time scan to the media widgets (files, gallery, image) so a rejected upload is reported as soon as it is chosen, before the form is submitted.
+- Fixed a product quick search none of whose fields resolves to an attribute returning the entire catalogue instead of no products. The database path dropped the empty condition group; the Elasticsearch path emitted an empty `should`, which Elasticsearch answers with a match_all because it applies `minimum_should_match` only once there are `should` clauses to count. Both now refuse the term, with `1 = 0` and with `match_none`.
 
 # 3.1.0 — August 27th, 2026
 
