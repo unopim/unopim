@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Traits\AttributeColumnTrait;
+use Webkul\Attribute\Models\Attribute as AttributeModel;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Services\AttributeService;
@@ -29,6 +30,44 @@ use Webkul\Product\Type\AbstractType;
 class ProductDataGrid extends DataGrid implements ExportableInterface
 {
     use AttributeColumnTrait;
+
+    /**
+     * Searched by the quick search box when `products.search_fields` is unset,
+     * and fallen back to when none of the configured codes resolves to a
+     * searchable attribute. Keeping the historical pair here means a mistyped
+     * configuration narrows the search back to the SKU and the name instead of
+     * leaving both engines with a term they cannot evaluate, which they now
+     * answer with no products at all.
+     *
+     * Read through `static::`, so a data grid subclassing this one can replace
+     * the list; the same goes for the two constants below.
+     *
+     * @var array<int, string>
+     */
+    protected const DEFAULT_SEARCH_FIELDS = ['sku', 'name'];
+
+    /**
+     * Attribute types the quick search can look in.
+     *
+     * Text only. It is a text search, and the remaining types either cannot
+     * answer one -- Elasticsearch maps price as float and date/datetime as
+     * date -- or answer it with the option code rather than the label that was
+     * typed, so a configured `color` would be found by typing `midnight_blue`
+     * rather than "Midnight Blue". textarea is left out although the index
+     * would accept it: a description matches most of the catalogue, and the
+     * grid cannot float the row that was meant, because the Elasticsearch
+     * query is wrapped in a constant_score and the rows come back in the sort
+     * column's order rather than by relevance.
+     *
+     * @var array<int, string>
+     */
+    protected const SEARCHABLE_ATTRIBUTE_TYPES = [AttributeModel::TEXT_TYPE];
+
+    /**
+     * Upper bound on the configured search fields. Every field adds a clause
+     * to every quick search, on the Elasticsearch and on the database path.
+     */
+    protected const MAX_SEARCH_FIELDS = 10;
 
     /**
      * Prepare query builder.
@@ -678,7 +717,7 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
             }
 
             if ($attribute === 'all') {
-                $queryBuilder->applySkuOrUnfilteredFilter(['sku', 'name'], FilterOperators::WILDCARD, $value, $context);
+                $queryBuilder->applySkuOrUnfilteredFilter($this->getSearchFields(), FilterOperators::WILDCARD, $value, $context);
 
                 continue;
             }
@@ -698,6 +737,61 @@ class ProductDataGrid extends DataGrid implements ExportableInterface
                 $this->applyFilterValue($queryBuilder, $attribute, $value, $operator, $context);
             }
         }
+    }
+
+    /**
+     * Attribute codes the quick search box looks in, from `products.search_fields`.
+     *
+     * Codes that do not resolve to a searchable attribute are skipped, so a bad
+     * entry narrows the search instead of breaking it, and the default pair is
+     * searched when nothing is left. The configured order is preserved, so the
+     * cap drops the codes the administrator wrote last rather than an arbitrary
+     * pair: `findByCodes()` returns its map in attribute cache order, not in the
+     * order it was asked for. The default pair is moved in front of the rest
+     * before the cap is applied, so a long list cannot push the SKU out of the
+     * quick search. Resolving the whole list in one call also warms the cache
+     * the filter then reads field by field.
+     *
+     * `is_filterable` is deliberately not consulted. It gates the per-column
+     * filters, and the seeded identifier attribute this feature exists for,
+     * `product_number`, ships with it turned off, so honouring it here would
+     * make the documented example fail on a fresh install.
+     *
+     * @return array<int, string>
+     */
+    protected function getSearchFields(): array
+    {
+        $configured = array_values(array_unique(array_filter(
+            (array) config('products.search_fields', static::DEFAULT_SEARCH_FIELDS),
+            fn ($code): bool => is_string($code) && $code !== '',
+        )));
+
+        if ($configured === []) {
+            return static::DEFAULT_SEARCH_FIELDS;
+        }
+
+        $attributes = $this->attributeService->findByCodes($configured) ?? [];
+
+        $fields = [];
+
+        foreach ($configured as $code) {
+            $attribute = $attributes[$code] ?? null;
+
+            if ($attribute && in_array($attribute->type, static::SEARCHABLE_ATTRIBUTE_TYPES, true)) {
+                $fields[] = $code;
+            }
+        }
+
+        if ($fields === []) {
+            return static::DEFAULT_SEARCH_FIELDS;
+        }
+
+        $fields = array_values(array_unique(array_merge(
+            array_intersect(static::DEFAULT_SEARCH_FIELDS, $fields),
+            $fields,
+        )));
+
+        return array_slice($fields, 0, static::MAX_SEARCH_FIELDS);
     }
 
     protected function getOperatorAndValue($attribute, $value)

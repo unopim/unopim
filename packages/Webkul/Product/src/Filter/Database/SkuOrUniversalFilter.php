@@ -30,6 +30,8 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
         $escapedValue = QueryString::escapeValue(current((array) $value));
 
         $this->queryBuilder->where(function ($query) use ($fields, $options, $escapedValue): void {
+            $searched = false;
+
             foreach ($fields as $attribute) {
                 $attribute = $this->attributeService->findAttributeByCode($attribute);
                 if (! $attribute instanceof Attribute) {
@@ -47,6 +49,18 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
                     "LOWER($searchPath) LIKE ?",
                     '%'.strtolower($escapedValue).'%'
                 );
+
+                $searched = true;
+            }
+
+            if (! $searched) {
+                /**
+                 * A nested group that added no condition is dropped by the query
+                 * builder, which would answer a term that cannot be evaluated
+                 * with the entire catalogue. The Elasticsearch filter refuses
+                 * the same term with a match_none clause, so refuse it here too.
+                 */
+                $query->whereRaw('1 = 0');
             }
         });
 
