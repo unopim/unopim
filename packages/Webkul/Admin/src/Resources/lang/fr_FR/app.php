@@ -2780,9 +2780,10 @@ return [
                 'not-allowed-error' => 'Seuls les fichiers de vidéos (.mp4, .mov, .ogg...) sont autorisés.',
             ],
             'files' => [
-                'add-file-btn'      => 'Ajouter un fichier',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Seuls les fichiers PDF sont autorisés',
+                'add-file-btn'        => 'Ajouter un fichier',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Seuls les fichiers PDF sont autorisés',
+                'preview-unavailable' => 'Aucun aperçu n’est disponible pour ce type de fichier.',
             ],
         ],
         'tinymce' => [

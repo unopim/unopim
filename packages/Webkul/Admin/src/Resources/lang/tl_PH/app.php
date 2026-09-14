@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Tanging mga file ng video (.mp4, .mov, .ogg ..) ang pinapayagan.',
             ],
             'files' => [
-                'add-file-btn'      => 'Magdagdag ng File',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Tanging mga pdf file ang pinapayagan',
+                'add-file-btn'        => 'Magdagdag ng File',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Tanging mga pdf file ang pinapayagan',
+                'preview-unavailable' => 'Hindi available ang paunang pagtingin para sa ganitong uri ng file.',
             ],
         ],
         'tinymce' => [

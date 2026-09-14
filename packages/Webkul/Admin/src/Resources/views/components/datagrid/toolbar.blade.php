@@ -5,7 +5,7 @@
 <template v-else>
     <div class="datagrid-toolbar mt-7 flex items-center justify-between gap-4 flex-wrap">
         <!-- Left Toolbar -->
-        <div class="flex flex-1 min-w-[240px] gap-x-1">
+        <div class="flex shrink-0 min-w-[240px] gap-x-1">
             <div
                 class="flex w-full items-center gap-x-1"
                 v-if="applied.massActions.indices.length"

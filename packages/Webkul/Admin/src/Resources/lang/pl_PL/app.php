@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Tylko pliki wideo (.mp4, .mov, .ogg ..) są dozwolone.',
             ],
             'files' => [
-                'add-file-btn'      => 'Dodaj plik',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Tylko pliki PDF są dozwolone',
+                'add-file-btn'        => 'Dodaj plik',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Tylko pliki PDF są dozwolone',
+                'preview-unavailable' => 'Podgląd jest niedostępny dla tego typu pliku.',
             ],
         ],
         'tinymce' => [

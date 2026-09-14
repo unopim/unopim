@@ -2781,9 +2781,10 @@ return [
                 'not-allowed-error' => 'केवल वीडियो फ़ाइलें (.mp4, .mov, .ogg ..) की अनुमति है।',
             ],
             'files' => [
-                'add-file-btn'      => 'फ़ाइल जोड़ें',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'केवल पीडीएफ फ़ाइलों की अनुमति है',
+                'add-file-btn'        => 'फ़ाइल जोड़ें',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'केवल पीडीएफ फ़ाइलों की अनुमति है',
+                'preview-unavailable' => 'इस प्रकार की फ़ाइल का पूर्वावलोकन उपलब्ध नहीं है।',
             ],
         ],
         'tinymce' => [

@@ -16,6 +16,14 @@ it('renders the datagrid toolbar so it wraps instead of widening the page', func
         ->and($toolbar[0])->not->toContain('max-md:flex-wrap');
 });
 
+it('keeps the toolbar controls aligned after the search controls', function () {
+    $this->loginAsAdmin();
+
+    $response = get(route('admin.catalog.products.index'))->assertOk();
+
+    expect($response->getContent())->toContain('class="flex shrink-0 min-w-[240px] gap-x-1"');
+});
+
 it('renders the main content area guarded against horizontal page scroll', function () {
     $this->loginAsAdmin();
 

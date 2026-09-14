@@ -44,7 +44,7 @@ class ProductJobValidator extends JobValidator
             'filters.header_row'        => trans('data_transfer::app.exporters.fields.header-row'),
             'filters.use_labels'        => trans('data_transfer::app.exporters.fields.use-labels'),
             'filters.date_format'       => trans('data_transfer::app.exporters.fields.date-format'),
-            'filters.file_path'         => trans('data_transfer::app.exporters.fields.file-path'),
+            'filters.file_path'         => trans('data_transfer::app.exporters.fields.file-name'),
             'filters.status'            => trans('data_transfer::app.exporters.fields.status'),
             'filters.sku'               => trans('data_transfer::app.exporters.products.filters.identifiers'),
             'filters.completeness'      => trans('data_transfer::app.exporters.products.filters.completeness'),

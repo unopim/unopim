@@ -2780,9 +2780,10 @@ return [
                 'not-allowed-error' => 'يُسمح فقط بملفات الفيديو (.mp4، .mov، .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => 'اضف ملف',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'يسمح فقط بملفات pdf',
+                'add-file-btn'        => 'اضف ملف',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'يسمح فقط بملفات pdf',
+                'preview-unavailable' => 'المعاينة غير متاحة لهذا النوع من الملفات.',
             ],
         ],
         'tinymce' => [

@@ -2781,9 +2781,10 @@ return [
                 'not-allowed-error' => 'Vain video tiedostot (.mp4, .mov, .ogg ..) ovat sallittuja.',
             ],
             'files' => [
-                'add-file-btn'      => 'Lisää tiedosto',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Vain pdf tiedostot ovat sallittuja',
+                'add-file-btn'        => 'Lisää tiedosto',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Vain pdf tiedostot ovat sallittuja',
+                'preview-unavailable' => 'Tämän tiedostotyypin esikatselu ei ole käytettävissä.',
             ],
         ],
         'tinymce' => [

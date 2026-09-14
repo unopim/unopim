@@ -2781,9 +2781,10 @@ return [
                 'not-allowed-error' => 'Solo se permiten archivos de vídeo (.mp4, .mov, .ogg ..)',
             ],
             'files' => [
-                'add-file-btn'      => 'Añadir archivo',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Solo se permiten archivos pdf',
+                'add-file-btn'        => 'Añadir archivo',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Solo se permiten archivos pdf',
+                'preview-unavailable' => 'La previsualització no està disponible per a aquest tipus de fitxer.',
             ],
         ],
         'tinymce' => [

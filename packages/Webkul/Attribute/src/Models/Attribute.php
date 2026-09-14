@@ -97,6 +97,27 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
     }
 
     /**
+     * Resolve gallery limits, where a non-positive value disables the limit.
+     */
+    public function resolvedGalleryMaxKilobytes(int $fallbackKilobytes): ?int
+    {
+        if ($this->max_file_size !== null && $this->max_file_size <= 0) {
+            return null;
+        }
+
+        $limit = $this->resolvedMaxKilobytes($fallbackKilobytes);
+
+        return $limit > 0 ? $limit : null;
+    }
+
+    protected function positiveGalleryLimit(mixed $limit): ?int
+    {
+        $limit = (int) $limit;
+
+        return $limit > 0 ? $limit : null;
+    }
+
+    /**
      * Per-attribute allowed extensions, or an empty array to fall back to the
      * FileOrImageValidValue defaults.
      *
@@ -258,17 +279,18 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                 isImage: true,
                 allowedExtensions: $this->resolvedAllowedExtensions(),
                 isMultiple: true,
-                maxKilobytes: $this->resolvedMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
+                maxKilobytes: $this->resolvedGalleryMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
                 minFiles: (int) config('media.gallery.min_files', 0),
                 maxFiles: (int) config('media.gallery.max_files', 50),
-                maxTotalKilobytes: (int) config('media.gallery.max_total_size_kilobytes', 51200),
+                maxTotalKilobytes: $this->positiveGalleryLimit(config('media.gallery.max_total_size_kilobytes', 51200)),
                 allowedPathPrefixes: $id ? ['product/'.$id.'/'.$this->code] : [],
             );
 
             if (empty($this->allowed_extensions)) {
-                $galleryValue->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS)
-                    ->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+                $galleryValue->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
             }
+
+            $galleryValue->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
 
             $validations[] = $galleryValue;
         }
@@ -498,17 +520,18 @@ class Attribute extends TranslatableModel implements AttributeContract, HistoryC
                     isImage: true,
                     allowedExtensions: $this->resolvedAllowedExtensions(),
                     isMultiple: true,
-                    maxKilobytes: $this->resolvedMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
+                    maxKilobytes: $this->resolvedGalleryMaxKilobytes((int) config('media.gallery.max_file_size_kilobytes', 15360)),
                     minFiles: (int) config('media.gallery.min_files', 0),
                     maxFiles: (int) config('media.gallery.max_files', 50),
-                    maxTotalKilobytes: (int) config('media.gallery.max_total_size_kilobytes', 51200),
+                    maxTotalKilobytes: $this->positiveGalleryLimit(config('media.gallery.max_total_size_kilobytes', 51200)),
                     allowedPathPrefixes: $mediaPathPrefixes,
                 );
 
                 if (empty($this->allowed_extensions)) {
-                    $galleryRule->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS)
-                        ->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
+                    $galleryRule->mergeAllowedExtensions(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
                 }
+
+                $galleryRule->mergeAllowedMimes(FileOrImageValidValue::VIDEO_ALLOWED_EXTENSIONS);
 
                 $rules[] = $galleryRule;
 

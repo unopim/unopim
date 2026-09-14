@@ -2781,9 +2781,10 @@ return [
                 'not-allowed-error' => 'ビデオ ファイル (.mp4、.mov、.ogg など) のみが許可されます。',
             ],
             'files' => [
-                'add-file-btn'      => 'ファイルを追加',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'pdf ファイルのみ許可されます',
+                'add-file-btn'        => 'ファイルを追加',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'pdf ファイルのみ許可されます',
+                'preview-unavailable' => 'この種類のファイルはプレビューできません。',
             ],
         ],
         'tinymce' => [

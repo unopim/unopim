@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Sadece video dosyaları (.mp4, .mov, .ogg ..) kabul edilmektedir.',
             ],
             'files' => [
-                'add-file-btn'      => 'Dosya Ekle',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Sadece pdf dosyaları kabul edilmektedir',
+                'add-file-btn'        => 'Dosya Ekle',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Sadece pdf dosyaları kabul edilmektedir',
+                'preview-unavailable' => 'Bu dosya türü için önizleme kullanılamıyor.',
             ],
         ],
         'tinymce' => [

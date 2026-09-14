@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => 'Alleen videobestanden zijn toegestaan (.mp4, .mov, .ogg, enz.).',
             ],
             'files' => [
-                'add-file-btn'      => 'Bestand toevoegen',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Alleen PDF-bestanden zijn toegestaan.',
+                'add-file-btn'        => 'Bestand toevoegen',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Alleen PDF-bestanden zijn toegestaan.',
+                'preview-unavailable' => 'Er is geen voorbeeld beschikbaar voor dit bestandstype.',
             ],
         ],
         'tinymce' => [

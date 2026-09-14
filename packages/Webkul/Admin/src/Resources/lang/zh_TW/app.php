@@ -2784,9 +2784,10 @@ return [
                 'not-allowed-error' => '僅允許視頻文件 (.mp4, .mov, .ogg ..)。',
             ],
             'files' => [
-                'add-file-btn'      => '添加文件',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => '僅允許pdf文件',
+                'add-file-btn'        => '添加文件',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => '僅允許pdf文件',
+                'preview-unavailable' => '此檔案類型不支援預覽。',
             ],
         ],
         'tinymce' => [

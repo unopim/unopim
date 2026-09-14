@@ -65,6 +65,7 @@
                         value-field="id"
                         id-field="id"
                         children-page-size="100"
+                        ::expand-roots="true"
                         ::show-toolbar="true"
                         ::show-search="true"
                         ::navigate-on-select="true"
