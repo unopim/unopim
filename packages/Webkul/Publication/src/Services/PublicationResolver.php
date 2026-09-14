@@ -5,6 +5,7 @@ namespace Webkul\Publication\Services;
 use Illuminate\Support\Facades\Log;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationProxy;
+use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 
 class PublicationResolver
@@ -68,6 +69,14 @@ class PublicationResolver
         }
 
         return $publication;
+    }
+
+    /**
+     * Finds one release of the publication by its per-publication sequence.
+     */
+    public function findRelease(Publication $publication, int $sequence): ?PublicationRelease
+    {
+        return $publication->releases()->where('sequence', $sequence)->first();
     }
 
     /**
