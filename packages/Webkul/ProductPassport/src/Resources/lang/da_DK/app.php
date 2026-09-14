@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versionen blev genudgivet.',
         'republish-invalid'           => 'Denne version kan ikke genudgives.',
         'republish-noop'              => 'Denne version er allerede den aktuelle.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'Pasversionshistorik',
             'subtitle'      => 'SKU :sku · kanal :channel',
