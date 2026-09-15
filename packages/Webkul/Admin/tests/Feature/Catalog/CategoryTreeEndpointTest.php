@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\Category\Models\Category;
+use Webkul\Category\Repositories\CategoryRepository;
 
 /**
  * The category picker used to answer `tree` with a full branch — every sibling at
@@ -143,6 +144,65 @@ it('caps the number of children a single request may pull', function () {
         'page'  => 1,
         'limit' => 10000,
     ]))->assertStatus(422);
+});
+
+it('returns the full descendant subtree of a category in one request', function () {
+    $this->loginAsAdmin();
+
+    [$root, $branch, $leaves] = makeTreeFixture();
+
+    $response = $this->json('GET', route('admin.catalog.categories.descendants', [
+        'id'     => $root->id,
+        'locale' => 'en_US',
+    ]));
+
+    $response->assertStatus(200);
+
+    $tree = collect($response->json('data'));
+
+    expect($tree)->toHaveCount(1)
+        ->and($tree->first()['code'])->toBe($branch->code)
+        ->and($tree->first()['children'])->toHaveCount(5)
+        ->and(collect($tree->first()['children'])->pluck('code')->all())
+        ->toEqualCanonicalizing($leaves->pluck('code')->all());
+});
+
+it('resolves descendant names in the requested locale', function () {
+    $this->loginAsAdmin();
+
+    [$root, $branch] = makeTreeFixture();
+
+    $branch->additional_data = ['locale_specific' => ['en_US' => ['name' => 'Branch'], 'fr_FR' => ['name' => 'Filiale']]];
+    $branch->save();
+
+    $response = $this->json('GET', route('admin.catalog.categories.descendants', [
+        'id'     => $root->id,
+        'locale' => 'fr_FR',
+    ]));
+
+    expect(collect($response->json('data'))->first()['name'])->toBe('Filiale');
+});
+
+it('keeps the descendants endpoint behind authentication', function () {
+    [$root] = makeTreeFixture();
+
+    $this->json('GET', route('admin.catalog.categories.descendants', ['id' => $root->id]))
+        ->assertRedirect(route('admin.session.create'));
+});
+
+it('rejects a descendants request for a category with too many descendants', function () {
+    $this->loginAsAdmin();
+
+    [$root] = makeTreeFixture();
+
+    $this->mock(CategoryRepository::class, function ($mock) {
+        $mock->makePartial();
+        $mock->shouldReceive('countDescendants')->once()->andReturn(CategoryRepository::MAX_DESCENDANTS + 1);
+        $mock->shouldReceive('getDescendantTree')->never();
+    });
+
+    $this->json('GET', route('admin.catalog.categories.descendants', ['id' => $root->id]))
+        ->assertStatus(422);
 });
 
 it('lists an existing selection by code so the picker can show what is assigned', function () {

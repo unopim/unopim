@@ -4,6 +4,7 @@
 
 - Extended the upload active-content scan from PDF to Office documents: `.docx`/`.pptx` packages shipping a VBA project, legacy `.doc`/`.ppt` files carrying a VBA stream, and RTF documents with auto-updating embedded objects are now rejected at save time, with the reason reported in the validation message.
 - Added a pick-time scan to the media widgets (files, gallery, image) so a rejected upload is reported as soon as it is chosen, before the form is submitted.
+- Fixed the product-edit category tree and the datagrid category filter requiring every subcategory to be ticked individually: clicking a category's folder icon now selects (or deselects) it together with every descendant in one action, resolved through a single nested-set query regardless of branch depth.
 
 # 3.1.0 — August 27th, 2026
 
