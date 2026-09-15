@@ -29,7 +29,7 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
 
         $escapedValue = QueryString::escapeValue(current((array) $value));
 
-        $likeSafeValue = addcslashes($escapedValue, '\\%_');
+        $likeSafeValue = addcslashes($escapedValue, '%_');
 
         $this->queryBuilder->where(function ($query) use ($fields, $options, $likeSafeValue): void {
             foreach ($fields as $attribute) {
