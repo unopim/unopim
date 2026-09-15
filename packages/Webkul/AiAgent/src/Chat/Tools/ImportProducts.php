@@ -16,6 +16,7 @@ use Webkul\AiAgent\Services\ProductImportCsvNormalizer;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
+use Webkul\Core\Rules\Sku;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 
@@ -427,11 +428,10 @@ class ImportProducts implements PimTool
 
     /**
      * Validate that a SKU matches the accepted format.
-     * Uses the same pattern as Webkul\Core\Rules\Sku.
      */
     public function validateSku(string $sku): bool
     {
-        return (bool) preg_match('/^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/', $sku);
+        return ! validator(['sku' => $sku], ['sku' => ['required', new Sku]])->fails();
     }
 
     /**

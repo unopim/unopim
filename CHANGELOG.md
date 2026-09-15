@@ -2,6 +2,7 @@
 
 ## Bug fixes
 
+- Fixed the SKU field rejecting valid values containing characters other than letters, numbers, hyphens, and underscores (such as `%`); a SKU is now only rejected for being blank, over 255 characters, padded with leading/trailing spaces, or containing a comma or semicolon (which break CSV import/export), both on the server and in the create-product form.
 - Extended the upload active-content scan from PDF to Office documents: `.docx`/`.pptx` packages shipping a VBA project, legacy `.doc`/`.ppt` files carrying a VBA stream, and RTF documents with auto-updating embedded objects are now rejected at save time, with the reason reported in the validation message.
 - Added a pick-time scan to the media widgets (files, gallery, image) so a rejected upload is reported as soon as it is chosen, before the form is submitted.
 
