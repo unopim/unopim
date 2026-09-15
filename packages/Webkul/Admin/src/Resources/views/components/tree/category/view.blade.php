@@ -236,6 +236,16 @@
                 unsavedFieldName: {
                     type: String,
                     default: null
+                },
+
+                /**
+                 * Locale the descendants request resolves node names in,
+                 * matching whatever the tree's own items were fetched with —
+                 * left unset falls back to the globally requested locale.
+                 */
+                locale: {
+                    type: String,
+                    default: null
                 }
             },
 
@@ -259,6 +269,16 @@
                     searchLoading: false,
                     searchTimer: null,
                     savedValues: [],
+
+                    /**
+                     * A folder click on one node fetches, selects and renders
+                     * a whole subtree asynchronously; a second cascade
+                     * starting before the first resolves would each compute
+                     * its own selection snapshot and apply it on arrival,
+                     * making the final state depend on response order. This
+                     * flag serializes cascades tree-wide instead of per-node.
+                     */
+                    cascadeInFlight: false,
 
                     labels: {}
                 };

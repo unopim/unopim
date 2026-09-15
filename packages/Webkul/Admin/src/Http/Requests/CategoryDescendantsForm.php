@@ -25,7 +25,8 @@ class CategoryDescendantsForm extends FormRequest
     public function rules(): array
     {
         return [
-            'id' => ['required', 'integer', Rule::exists('categories', 'id')],
+            'id'     => ['required', 'integer', Rule::exists('categories', 'id')],
+            'locale' => ['nullable', 'string', Rule::exists('locales', 'code')],
         ];
     }
 }

@@ -152,6 +152,7 @@
                     value-field="code"
                     children-page-size="100"
                     unsaved-field-name="categories"
+                    :locale="$currentLocaleCode"
                     ::items="categories"
                     ::value="selectedJson"
                     ::baseline-value="baselineJson"

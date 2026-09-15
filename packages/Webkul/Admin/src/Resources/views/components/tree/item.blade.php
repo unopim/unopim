@@ -12,7 +12,12 @@
 
             <i
                 :class="folderIconClasses"
+                :role="folderInteractive ? 'button' : null"
+                :tabindex="folderInteractive ? 0 : null"
+                :aria-label="folderInteractive ? label : null"
                 @click="onFolderClick"
+                @keydown.enter.prevent="onFolderClick"
+                @keydown.space.prevent="onFolderClick"
             ></i>
 
             <span
@@ -217,6 +222,10 @@
                     'shrink-0 text-2xl',
                     this.folderLoading ? 'cursor-wait pointer-events-none opacity-50' : 'cursor-pointer'
                 ];
+            },
+
+            folderInteractive() {
+                return ! this.categorytree.navigateOnSelect && this.categorytree.inputType === 'checkbox';
             },
 
             inputComponent() {
@@ -479,12 +488,13 @@
              * whatever selection mode the tree was configured with.
              */
             async onFolderClick() {
-                if (this.categorytree.navigateOnSelect || this.categorytree.inputType !== 'checkbox' || this.folderLoading) {
+                if (! this.folderInteractive || this.categorytree.cascadeInFlight) {
                     return;
                 }
 
                 const willSelect = ! this.hasSelectedValue;
 
+                this.categorytree.cascadeInFlight = true;
                 this.folderLoading = true;
 
                 let tree = [];
@@ -495,11 +505,13 @@
                     }
                 } catch {
                     this.folderLoading = false;
+                    this.categorytree.cascadeInFlight = false;
 
                     return;
                 }
 
                 this.folderLoading = false;
+                this.categorytree.cascadeInFlight = false;
 
                 this.categorytree.toggle(this.value);
 
@@ -507,7 +519,7 @@
                     willSelect ? this.categorytree.select(code) : this.categorytree.unSelect(code);
                 });
 
-                if (willSelect) {
+                if (willSelect && tree.length) {
                     /**
                      * Assigning the whole fetched subtree in one go means every
                      * nested v-tree-item mounts with its own children already
@@ -529,7 +541,7 @@
                      * it's pushed onto it directly, same as a normal fetch does.
                      */
                     tree.forEach((child) => this.syncMountedDescendant(child));
-                } else {
+                } else if (! willSelect) {
                     this.showChildren = false;
                     this.teardownChildrenObserver();
                 }
@@ -551,6 +563,15 @@
                     });
                 }
 
+                /**
+                 * Newly assigned descendants mount asynchronously — waiting a
+                 * tick lets their own mounted() hook register a label before
+                 * change-input fires, so a listener reading `labels` (e.g. the
+                 * product category summary) doesn't miss the freshly selected
+                 * codes' names.
+                 */
+                await this.$nextTick();
+
                 this.$emit('select-node', {
                     value: this.value,
                     label: this.label,
@@ -570,6 +591,10 @@
 
                 url.searchParams.append('id', this.id);
 
+                if (this.categorytree.locale) {
+                    url.searchParams.append('locale', this.categorytree.locale);
+                }
+
                 return this.$axios
                     .get(url.toString())
                     .then(({ data }) => this.clearPartialFlag(data?.data || []))
@@ -578,7 +603,7 @@
 
                         this.$emitter.emit('add-flash', {
                             type:    'error',
-                            message: err.response?.data?.message || '@lang('admin::app.catalog.categories.browse.children-failed')',
+                            message: err.response?.data?.message || "@lang('admin::app.catalog.categories.browse.children-failed')",
                         });
 
                         throw err;
@@ -605,6 +630,10 @@
 
             syncMountedDescendant(nodeData) {
                 const children = nodeData[this.categorytree.childrenField] || [];
+
+                if (! children.length) {
+                    return;
+                }
 
                 const mounted = this.categorytree.nodes.find(
                     (node) => node.value === String(nodeData[this.categorytree.valueField])
