@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\Category\Models\Category;
+use Webkul\Category\Repositories\CategoryRepository;
 
 /**
  * The category picker used to answer `tree` with a full branch — every sibling at
@@ -194,9 +195,9 @@ it('rejects a descendants request for a category with too many descendants', fun
 
     [$root] = makeTreeFixture();
 
-    $this->mock(\Webkul\Category\Repositories\CategoryRepository::class, function ($mock) {
+    $this->mock(CategoryRepository::class, function ($mock) {
         $mock->makePartial();
-        $mock->shouldReceive('countDescendants')->once()->andReturn(\Webkul\Category\Repositories\CategoryRepository::MAX_DESCENDANTS + 1);
+        $mock->shouldReceive('countDescendants')->once()->andReturn(CategoryRepository::MAX_DESCENDANTS + 1);
         $mock->shouldReceive('getDescendantTree')->never();
     });
 
