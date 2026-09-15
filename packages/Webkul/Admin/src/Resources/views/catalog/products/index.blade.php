@@ -154,7 +154,7 @@
                                         <x-admin::form.control-group.control
                                             type="text"
                                             name="sku"
-                                            rules="required"
+                                            ::rules="{ required: true, max: 255, regex: /^(?!.*[,;])\S(?:.*\S)?$/ }"
                                             :label="trans('admin::app.catalog.products.index.create.sku')"
                                         />
 
