@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Mở thêm một cấp của cây.',
                 'search-failed'       => 'Không thể tìm kiếm danh mục.',
                 'children-failed'     => 'Không thể tải danh mục con.',
+                'descendants-too-large' => 'Danh mục này có quá nhiều danh mục con để chọn tất cả cùng một lúc.',
             ],
 
             'create' => [

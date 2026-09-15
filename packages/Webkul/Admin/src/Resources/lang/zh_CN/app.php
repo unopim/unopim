@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => '再展开一级目录树。',
                 'search-failed'       => '无法搜索类目。',
                 'children-failed'     => '无法加载子类目。',
+                'descendants-too-large' => '此分类的子分类太多，无法一次性全部选中。',
             ],
 
             'create' => [

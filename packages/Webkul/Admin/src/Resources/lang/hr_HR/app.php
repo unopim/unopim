@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Otvara još jednu razinu stabla.',
                 'search-failed'       => 'Pretraživanje kategorija nije uspjelo.',
                 'children-failed'     => 'Učitavanje potkategorija nije uspjelo.',
+                'descendants-too-large' => 'Ova kategorija ima previše potkategorija da bi se sve odabrale odjednom.',
             ],
 
             'create' => [

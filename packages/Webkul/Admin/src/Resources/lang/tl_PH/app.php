@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Nagbubukas ng isa pang antas ng puno.',
                 'search-failed'       => 'Hindi mahanap ang mga kategorya.',
                 'children-failed'     => 'Hindi ma-load ang mga subkategorya.',
+                'descendants-too-large' => 'Ang kategoryang ito ay may masyadong maraming subcategory para piliin lahat nang sabay-sabay.',
             ],
 
             'create' => [

@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Öppnar ytterligare en nivå av trädet.',
                 'search-failed'       => 'Kategorierna kunde inte sökas.',
                 'children-failed'     => 'Underkategorierna kunde inte laddas.',
+                'descendants-too-large' => 'Den här kategorin har för många underkategorier för att kunna väljas alla samtidigt.',
             ],
 
             'create' => [

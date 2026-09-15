@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Ouvre un niveau supplémentaire de l\'arborescence.',
                 'search-failed'       => 'Impossible de rechercher les catégories.',
                 'children-failed'     => 'Impossible de charger les sous-catégories.',
+                'descendants-too-large' => 'Cette catégorie a trop de sous-catégories pour toutes les sélectionner en même temps.',
             ],
 
             'create' => [

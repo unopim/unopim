@@ -223,6 +223,19 @@
                 fillHeight: {
                     type: Boolean,
                     default: false
+                },
+
+                /**
+                 * The real submitted field name a folder-click cascade should
+                 * mark touched for the unsaved-changes tracker — its own
+                 * value-diff check works via the hidden inputs' `form`
+                 * attribute regardless of DOM placement, but the touched-field
+                 * tracking needs an explicit event since a cascade selects
+                 * after an async fetch, past the tracker's snapshot window.
+                 */
+                unsavedFieldName: {
+                    type: String,
+                    default: null
                 }
             },
 
@@ -233,6 +246,7 @@
                     formattedValues: [],
                     formattedExpandedBranch: [],
                     fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
+                    descendantsUrl: "{{ route('admin.catalog.categories.descendants')}}",
                     createUrl: "{{ route('admin.catalog.categories.index') }}",
                     searchUrl: "{{ route('admin.catalog.categories.search') }}",
                     deleteUrl: "{{ route('admin.catalog.categories.delete', 'nodeId') }}",

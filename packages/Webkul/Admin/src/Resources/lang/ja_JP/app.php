@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'ツリーをもう一階層開きます。',
                 'search-failed'       => 'カテゴリを検索できませんでした。',
                 'children-failed'     => 'サブカテゴリを読み込めませんでした。',
+                'descendants-too-large' => 'このカテゴリには一度に選択できないほど多くのサブカテゴリがあります。',
             ],
 
             'create' => [

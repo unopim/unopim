@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Membuka satu tingkat pohon lagi.',
                 'search-failed'       => 'Kategori tidak dapat dicari.',
                 'children-failed'     => 'Subkategori tidak dapat dimuat.',
+                'descendants-too-large' => 'Kategori ini memiliki terlalu banyak subkategori untuk dipilih sekaligus.',
             ],
 
             'create' => [

@@ -829,6 +829,7 @@ return [
                 'expand-all-hint'     => 'Opent één niveau meer van de boom.',
                 'search-failed'       => 'Categorieën konden niet worden doorzocht.',
                 'children-failed'     => 'Subcategorieën konden niet worden geladen.',
+                'descendants-too-large' => 'Deze categorie heeft te veel subcategorieën om ze allemaal in één keer te selecteren.',
             ],
 
             'create' => [

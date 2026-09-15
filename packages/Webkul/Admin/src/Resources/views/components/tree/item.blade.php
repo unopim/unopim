@@ -10,7 +10,10 @@
                 @click="toggleBranch"
             ></i>
 
-            <i :class="folderIconClasses"></i>
+            <i
+                :class="folderIconClasses"
+                @click="onFolderClick"
+            ></i>
 
             <span
                 class="flex-1 ltr:ml-1 rtl:mr-1 py-1.5 text-sm truncate"
@@ -102,6 +105,7 @@
                 revealedChildren: null,
                 childrenLoading: false,
                 childrenObserver: null,
+                folderLoading: false,
             };
         },
 
@@ -120,7 +124,15 @@
                 if (this.isPartial) {
                     this.setupChildrenObserver();
                 } else {
+                    /**
+                     * A non-partial set is already the complete children
+                     * list (e.g. a whole fetched subtree assigned in one
+                     * go) — childrenHasMore defaults true, and left alone
+                     * it renders the pagination sentinel's spinner forever
+                     * with nothing left to ever resolve it.
+                     */
                     this.hasFetchedChildren = true;
+                    this.childrenHasMore = false;
                 }
             }
         },
@@ -202,7 +214,8 @@
             folderIconClasses() {
                 return [
                     (this.hasChildren || this.hasFetchedChildren) ? 'icon-folder' : 'icon-attribute',
-                    'shrink-0 text-2xl cursor-pointer'
+                    'shrink-0 text-2xl',
+                    this.folderLoading ? 'cursor-wait pointer-events-none opacity-50' : 'cursor-pointer'
                 ];
             },
 
@@ -280,7 +293,7 @@
                     return;
                 }
 
-                this.$axios
+                return this.$axios
                     .get(this.buildChildrenUrl())
                     .then((response) => {
                         this.children = response.data;
@@ -458,6 +471,168 @@
                 }
 
                 return labels.join(' / ');
+            },
+
+            /**
+             * Folder click always selects/deselects this branch plus every
+             * descendant, independent of selectionType — the checkbox keeps
+             * whatever selection mode the tree was configured with.
+             */
+            async onFolderClick() {
+                if (this.categorytree.navigateOnSelect || this.categorytree.inputType !== 'checkbox' || this.folderLoading) {
+                    return;
+                }
+
+                const willSelect = ! this.hasSelectedValue;
+
+                this.folderLoading = true;
+
+                let tree = [];
+
+                try {
+                    if (this.hasChildren || this.hasFetchedChildren) {
+                        tree = await this.fetchDescendantTree();
+                    }
+                } catch {
+                    this.folderLoading = false;
+
+                    return;
+                }
+
+                this.folderLoading = false;
+
+                this.categorytree.toggle(this.value);
+
+                this.flattenCodes(tree).forEach((code) => {
+                    willSelect ? this.categorytree.select(code) : this.categorytree.unSelect(code);
+                });
+
+                if (willSelect) {
+                    /**
+                     * Assigning the whole fetched subtree in one go means every
+                     * nested v-tree-item mounts with its own children already
+                     * present, so each self-expands in its own mounted() hook —
+                     * one render pass, not a fetch-then-reveal per level.
+                     */
+                    this.item[this.categorytree.childrenField] = tree;
+                    this.children = tree;
+                    this.hasFetchedChildren = true;
+                    this.childrenHasMore = false;
+                    this.showChildren = true;
+
+                    /**
+                     * A descendant already mounted and visible (e.g. left
+                     * expanded from revealing the path to an earlier
+                     * selection) initialized its own `children` from the
+                     * old, thinner data at mount time — updating the parent's
+                     * object here doesn't reach back into that instance, so
+                     * it's pushed onto it directly, same as a normal fetch does.
+                     */
+                    tree.forEach((child) => this.syncMountedDescendant(child));
+                } else {
+                    this.showChildren = false;
+                    this.teardownChildrenObserver();
+                }
+
+                if (this.categorytree.unsavedFieldName) {
+                    /**
+                     * The drawer this tree renders in is teleported away from
+                     * the unsaved-changes tracker's own subtree, so a plain
+                     * bubbling dispatch from here never reaches its listener —
+                     * dispatch straight on the root(s) instead. Touching every
+                     * tracker on the page (there's normally exactly one) is
+                     * harmless for the others, unlike guessing the wrong one
+                     * via querySelector's first-match.
+                     */
+                    document.querySelectorAll('.unsaved-root').forEach((root) => {
+                        root.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                            detail: { name: this.categorytree.unsavedFieldName },
+                        }));
+                    });
+                }
+
+                this.$emit('select-node', {
+                    value: this.value,
+                    label: this.label,
+                    path:  this.path(),
+                });
+
+                this.$emit('change-input', this.categorytree.formattedValues);
+            },
+
+            /**
+             * One nested-set range query on the server returns the whole
+             * descendant subtree in a single round trip, so a cascading
+             * select doesn't need to walk the branch level by level.
+             */
+            fetchDescendantTree() {
+                const url = new URL(this.categorytree.descendantsUrl, window.location.origin);
+
+                url.searchParams.append('id', this.id);
+
+                return this.$axios
+                    .get(url.toString())
+                    .then(({ data }) => this.clearPartialFlag(data?.data || []))
+                    .catch((err) => {
+                        console.error('Failed to fetch descendants for node', this.id, err);
+
+                        this.$emitter.emit('add-flash', {
+                            type:    'error',
+                            message: err.response?.data?.message || '@lang('admin::app.catalog.categories.browse.children-failed')',
+                        });
+
+                        throw err;
+                    });
+            },
+
+            /**
+             * CategoryTreeResource marks any node whose children are loaded
+             * as `partial: true` — correct for the lazily-revealed children
+             * endpoint, but this fetch already pulled the complete subtree,
+             * so a fresh mount must not read that flag and set up an
+             * IntersectionObserver to needlessly re-fetch it via the
+             * paginated endpoint.
+             */
+            clearPartialFlag(nodes) {
+                nodes.forEach((node) => {
+                    delete node.partial;
+
+                    this.clearPartialFlag(node[this.categorytree.childrenField] || []);
+                });
+
+                return nodes;
+            },
+
+            syncMountedDescendant(nodeData) {
+                const children = nodeData[this.categorytree.childrenField] || [];
+
+                const mounted = this.categorytree.nodes.find(
+                    (node) => node.value === String(nodeData[this.categorytree.valueField])
+                );
+
+                if (mounted) {
+                    mounted.children = children;
+                    mounted.hasFetchedChildren = true;
+                    mounted.childrenHasMore = false;
+                    mounted.showChildren = true;
+                }
+
+                children.forEach((child) => this.syncMountedDescendant(child));
+            },
+
+            flattenCodes(nodes) {
+                const codes = [];
+
+                const walk = (list) => {
+                    list.forEach((node) => {
+                        codes.push(node[this.categorytree.valueField]);
+                        walk(node[this.categorytree.childrenField] || []);
+                    });
+                };
+
+                walk(nodes);
+
+                return codes;
             },
 
             onInputChange() {

@@ -829,6 +829,7 @@ return [
                 'expand-all-hint'     => 'Deschide încă un nivel din arbore.',
                 'search-failed'       => 'Categoriile nu au putut fi căutate.',
                 'children-failed'     => 'Subcategoriile nu au putut fi încărcate.',
+                'descendants-too-large' => 'Această categorie are prea multe subcategorii pentru a fi selectate toate deodată.',
             ],
 
             'create' => [

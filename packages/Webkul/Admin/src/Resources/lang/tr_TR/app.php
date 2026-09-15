@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Ağacın bir seviyesini daha açar.',
                 'search-failed'       => 'Kategorilerde arama yapılamadı.',
                 'children-failed'     => 'Alt kategoriler yüklenemedi.',
+                'descendants-too-large' => 'Bu kategorinin tümünü aynı anda seçmek için çok fazla alt kategorisi var.',
             ],
 
             'create' => [

@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Abre un nivel más del árbol.',
                 'search-failed'       => 'No se pudieron buscar las categorías.',
                 'children-failed'     => 'No se pudieron cargar las subcategorías.',
+                'descendants-too-large' => 'Esta categoría tiene demasiadas subcategorías para seleccionarlas todas a la vez.',
             ],
 
             'create' => [

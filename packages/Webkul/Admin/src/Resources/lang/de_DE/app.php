@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Öffnet eine weitere Ebene des Baums.',
                 'search-failed'       => 'Kategorien konnten nicht durchsucht werden.',
                 'children-failed'     => 'Unterkategorien konnten nicht geladen werden.',
+                'descendants-too-large' => 'Diese Kategorie hat zu viele Unterkategorien, um sie alle auf einmal auszuwählen.',
             ],
 
             'create' => [

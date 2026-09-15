@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => 'Avaa puusta yhden tason lisää.',
                 'search-failed'       => 'Kategorioita ei voitu hakea.',
                 'children-failed'     => 'Alakategorioita ei voitu ladata.',
+                'descendants-too-large' => 'Tässä kategoriassa on liian monta alakategoriaa valittavaksi kerralla.',
             ],
 
             'create' => [

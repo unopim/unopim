@@ -828,6 +828,7 @@ return [
                 'expand-all-hint'     => '再展開一層類別樹。',
                 'search-failed'       => '無法搜尋類別。',
                 'children-failed'     => '無法載入子類別。',
+                'descendants-too-large' => '此分類的子分類太多，無法一次全部選取。',
             ],
 
             'create' => [

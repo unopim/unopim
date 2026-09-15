@@ -829,6 +829,7 @@ return [
                 'expand-all-hint'     => 'Åpner ett nivå til av treet.',
                 'search-failed'       => 'Kunne ikke søke i kategoriene.',
                 'children-failed'     => 'Kunne ikke laste underkategoriene.',
+                'descendants-too-large' => 'Denne kategorien har for mange underkategorier til at de kan velges samtidig.',
             ],
 
             'create' => [

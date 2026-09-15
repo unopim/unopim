@@ -885,6 +885,7 @@ return [
                 'expand-all-hint'     => 'Opens one more level of the tree.',
                 'search-failed'       => 'Categories could not be searched.',
                 'children-failed'     => 'Subcategories could not be loaded.',
+                'descendants-too-large' => 'This category has too many subcategories to select all at once.',
             ],
 
             'create' => [

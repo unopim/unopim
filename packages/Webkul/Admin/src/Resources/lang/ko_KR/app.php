@@ -829,6 +829,7 @@ return [
                 'expand-all-hint'     => '트리를 한 단계 더 펼칩니다.',
                 'search-failed'       => '카테고리를 검색하지 못했습니다.',
                 'children-failed'     => '하위 카테고리를 불러오지 못했습니다.',
+                'descendants-too-large' => '이 카테고리에는 한 번에 모두 선택할 수 없을 만큼 하위 카테고리가 너무 많습니다.',
             ],
 
             'create' => [

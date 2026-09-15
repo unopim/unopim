@@ -151,6 +151,7 @@
                     id-field="code"
                     value-field="code"
                     children-page-size="100"
+                    unsaved-field-name="categories"
                     ::items="categories"
                     ::value="selectedJson"
                     ::baseline-value="baselineJson"
