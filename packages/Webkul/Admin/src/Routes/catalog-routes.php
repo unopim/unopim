@@ -124,6 +124,8 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
             Route::post('tree', 'tree')->name('admin.catalog.categories.tree');
 
             Route::get('children-tree', 'children')->name('admin.catalog.categories.children.tree');
+
+            Route::get('descendants', 'descendants')->name('admin.catalog.categories.descendants');
         });
 
         /**
