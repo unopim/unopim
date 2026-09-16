@@ -33,10 +33,10 @@
                 <input
                     ref="input"
                     type="text"
-                    class="multiselect__input !mb-0 !w-auto !min-w-0 flex-1 basis-0 !pl-0"
+                    class="multiselect__input !mb-0 !w-auto min-w-[12rem] flex-1 !pl-0 !text-sm !leading-6 placeholder:text-gray-400 dark:placeholder:text-gray-500"
                     :id="inputId"
                     v-model="draft"
-                    :placeholder="tags.length ? '' : placeholder"
+                    :placeholder="placeholder"
                     :disabled="disabled"
                     :aria-invalid="hasErrors"
                     @keydown="onKeydown"
