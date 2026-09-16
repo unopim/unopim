@@ -5,14 +5,14 @@
             :class="{'multiselect--active': focused, 'multiselect--disabled': disabled}"
         >
             <div
-                class="multiselect__tags !flex !flex-wrap !items-center gap-y-1 cursor-text"
+                class="multiselect__tags !flex !flex-wrap !items-center gap-y-1.5 cursor-text"
                 :class="hasErrors ? 'border !border-danger' : ''"
                 @click="focusInput"
             >
                 <span
                     v-for="(tag, index) in tags"
                     :key="tag"
-                    class="multiselect__tag !mb-0 !mr-0 flex items-center"
+                    class="multiselect__tag !mb-0"
                 >
                     <span
                         class="inline-block max-w-[220px] truncate align-bottom"
