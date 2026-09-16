@@ -2487,6 +2487,14 @@ return [
                 'empty'  => 'Walang resulta',
                 'search' => 'Maghanap',
             ],
+            'tags'            => [
+                'placeholder' => 'Mag-type o mag-paste ng mga halaga na pinaghihiwalay ng kuwit o bagong linya',
+                'hint'        => 'Paghiwalayin ang mga halaga gamit ang kuwit o bagong linya',
+                'count'       => ':count na halaga ang naidagdag',
+                'count-one'   => '1 halaga ang naidagdag',
+                'remove'      => 'Alisin ang :value',
+                'clear-all'   => 'I-clear lahat',
+            ],
             'ajax-error'      => 'May nangyaring mali habang nagse-save. Pakisubukang muli.',
             'file-uploader'   => [
                 'upload-cta'  => 'I-click para mag-upload',

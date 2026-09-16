@@ -2484,6 +2484,14 @@ return [
                 'empty'  => 'Nema rezultata',
                 'search' => 'Pretraži',
             ],
+            'tags'            => [
+                'placeholder' => 'Upišite ili zalijepite vrijednosti odvojene zarezima ili novim redovima',
+                'hint'        => 'Odvojite vrijednosti zarezom ili novim redom',
+                'count'       => 'Dodano vrijednosti: :count',
+                'count-one'   => 'Dodana 1 vrijednost',
+                'remove'      => 'Ukloni :value',
+                'clear-all'   => 'Očisti sve',
+            ],
             'ajax-error'      => 'Nešto je pošlo po zlu prilikom spremanja. Pokušajte ponovno.',
             'file-uploader'   => [
                 'upload-cta'  => 'Kliknite za učitavanje',

@@ -2487,6 +2487,14 @@ return [
                 'empty'  => '找不到結果',
                 'search' => '搜尋',
             ],
+            'tags'            => [
+                'placeholder' => '輸入或貼上值，使用逗號或換行分隔',
+                'hint'        => '使用逗號或換行分隔各個值',
+                'count'       => '已新增 :count 個值',
+                'count-one'   => '已新增 1 個值',
+                'remove'      => '移除 :value',
+                'clear-all'   => '全部清除',
+            ],
             'ajax-error'      => '儲存時發生問題。請再試一次。',
             'file-uploader'   => [
                 'upload-cta'  => '點擊上傳',

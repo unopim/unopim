@@ -427,6 +427,7 @@ window.lockBodyScroll = () => {
     window.__scrollLocks = (window.__scrollLocks || 0) + 1;
 
     document.body.style.overflow = "hidden";
+    document.body.classList.add("overlay-open");
 };
 
 window.unlockBodyScroll = () => {
@@ -434,6 +435,7 @@ window.unlockBodyScroll = () => {
 
     if (! window.__scrollLocks) {
         document.body.style.overflow = "";
+        document.body.classList.remove("overlay-open");
     }
 };
 

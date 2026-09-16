@@ -2487,6 +2487,14 @@ return [
                 'empty'  => 'Nenhum resultado',
                 'search' => 'Pesquisar',
             ],
+            'tags'            => [
+                'placeholder' => 'Digite ou cole valores separados por vírgulas ou novas linhas',
+                'hint'        => 'Separe os valores com vírgula ou nova linha',
+                'count'       => ':count valores adicionados',
+                'count-one'   => '1 valor adicionado',
+                'remove'      => 'Remover :value',
+                'clear-all'   => 'Limpar tudo',
+            ],
             'ajax-error'      => 'Algo deu errado ao salvar. Por favor, tente novamente.',
             'file-uploader'   => [
                 'upload-cta'  => 'Clique para enviar',

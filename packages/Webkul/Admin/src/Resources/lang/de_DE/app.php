@@ -2484,6 +2484,14 @@ return [
                 'empty'  => 'Keine Ergebnisse',
                 'search' => 'Suchen',
             ],
+            'tags'            => [
+                'placeholder' => 'Werte eingeben oder einfügen, getrennt durch Kommas oder Zeilenumbrüche',
+                'hint'        => 'Werte durch Komma oder Zeilenumbruch trennen',
+                'count'       => ':count Werte hinzugefügt',
+                'count-one'   => '1 Wert hinzugefügt',
+                'remove'      => ':value entfernen',
+                'clear-all'   => 'Alle entfernen',
+            ],
             'ajax-error'      => 'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'file-uploader'   => [
                 'upload-cta'  => 'Zum Hochladen klicken',

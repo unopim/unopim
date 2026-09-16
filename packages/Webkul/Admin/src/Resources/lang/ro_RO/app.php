@@ -2487,6 +2487,14 @@ return [
                 'empty'  => 'Niciun rezultat',
                 'search' => 'Caută',
             ],
+            'tags'            => [
+                'placeholder' => 'Tastați sau lipiți valori separate prin virgule sau rânduri noi',
+                'hint'        => 'Separați valorile prin virgulă sau rând nou',
+                'count'       => ':count valori adăugate',
+                'count-one'   => '1 valoare adăugată',
+                'remove'      => 'Elimină :value',
+                'clear-all'   => 'Șterge tot',
+            ],
             'ajax-error'      => 'A apărut o eroare la salvare. Vă rugăm să încercați din nou.',
             'file-uploader'   => [
                 'upload-cta'  => 'Faceți clic pentru a încărca',

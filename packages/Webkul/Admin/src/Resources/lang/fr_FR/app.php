@@ -2483,6 +2483,14 @@ return [
                 'empty'  => 'Aucun résultat',
                 'search' => 'Rechercher',
             ],
+            'tags'            => [
+                'placeholder' => 'Saisissez ou collez des valeurs séparées par des virgules ou des sauts de ligne',
+                'hint'        => 'Séparez les valeurs par une virgule ou un saut de ligne',
+                'count'       => ':count valeurs ajoutées',
+                'count-one'   => '1 valeur ajoutée',
+                'remove'      => 'Supprimer :value',
+                'clear-all'   => 'Tout effacer',
+            ],
             'ajax-error'      => 'Une erreur s\'est produite lors de l\'enregistrement. Veuillez réessayer.',
             'file-uploader'   => [
                 'upload-cta'  => 'Cliquez pour téléverser',

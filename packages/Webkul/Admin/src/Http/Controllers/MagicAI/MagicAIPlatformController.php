@@ -133,9 +133,8 @@ class MagicAIPlatformController extends Controller
             $data['api_key'] = $apiKey;
         }
 
-        $extras = ProviderOverrides::decode(request()->input('extras'));
-        if ($extras !== []) {
-            $data['extras'] = $extras;
+        if ($request->has('extras')) {
+            $data['extras'] = ProviderOverrides::decode($request->validated('extras'));
         }
 
         $this->platformRepository->update($data, $id);

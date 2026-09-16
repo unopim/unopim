@@ -2484,6 +2484,14 @@ return [
                 'empty'  => 'Sense resultats',
                 'search' => 'Cerca',
             ],
+            'tags'            => [
+                'placeholder' => 'Escriviu o enganxeu valors separats per comes o salts de línia',
+                'hint'        => 'Separeu els valors amb una coma o un salt de línia',
+                'count'       => ':count valors afegits',
+                'count-one'   => '1 valor afegit',
+                'remove'      => 'Elimina :value',
+                'clear-all'   => 'Esborra-ho tot',
+            ],
             'ajax-error'      => 'Alguna cosa ha anat malament en desar. Torneu-ho a provar.',
             'file-uploader'   => [
                 'upload-cta'  => 'Fes clic per pujar',

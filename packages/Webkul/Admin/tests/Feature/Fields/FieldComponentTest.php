@@ -251,3 +251,22 @@ it('renders every type standalone', function () {
         expect($html)->toContain(str_contains($type, 'datetime') ? '<v-datetime-picker' : '<v-date-picker');
     }
 });
+
+it('renders the tags field as a chip editor with removal and clear controls', function () {
+    $html = Blade::render('<x-admin::form.field type="tags" name="sku" />@stack(\'scripts\')');
+
+    expect($html)
+        ->toContain('@click.stop="removeTag(index)"')
+        ->toContain('@click="clearTags"')
+        ->toContain(trans('admin::app.components.form.tags.clear-all'))
+        ->toContain(json_encode(trans('admin::app.components.form.tags.placeholder')))
+        ->toContain(json_encode(trans('admin::app.components.form.tags.hint')));
+});
+
+it('splits pasted tags on commas and new lines only', function () use ($views) {
+    $field = file_get_contents($views.'/components/form/fields/tags.blade.php');
+
+    expect($field)
+        ->toContain('const TAG_SEPARATOR = /[\r\n\t;,]+/;')
+        ->toContain('@paste="onPaste"');
+});

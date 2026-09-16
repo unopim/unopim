@@ -2484,6 +2484,14 @@ return [
                 'empty'  => 'Ingen resultater',
                 'search' => 'Søg',
             ],
+            'tags'            => [
+                'placeholder' => 'Skriv eller indsæt værdier adskilt af kommaer eller linjeskift',
+                'hint'        => 'Adskil værdier med komma eller linjeskift',
+                'count'       => ':count værdier tilføjet',
+                'count-one'   => '1 værdi tilføjet',
+                'remove'      => 'Fjern :value',
+                'clear-all'   => 'Ryd alle',
+            ],
             'ajax-error'      => 'Noget gik galt under lagringen. Prøv venligst igen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik for at uploade',

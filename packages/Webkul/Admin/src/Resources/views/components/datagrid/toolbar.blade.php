@@ -3,9 +3,13 @@
 </template>
 
 <template v-else>
-    <div class="datagrid-toolbar mt-7 flex items-center justify-between gap-4 flex-wrap">
+    <div
+        class="datagrid-toolbar group/toolbar mt-7 flex items-center justify-between gap-4 [&.is-stacked]:flex-wrap"
+        :class="toolbarLayout"
+        ref="toolbar"
+    >
         <!-- Left Toolbar -->
-        <div class="flex shrink-0 min-w-[240px] gap-x-1">
+        <div class="flex min-w-0 shrink gap-x-1">
             <div
                 class="flex w-full items-center gap-x-1"
                 v-if="applied.massActions.indices.length"
@@ -105,10 +109,10 @@
             </div>
 
             <div
-                class="flex w-full items-center gap-x-1"
+                class="flex w-full min-w-0 items-center gap-x-1"
                 v-else
             >
-                <div class="flex w-full max-w-xs items-center max-sm:w-full max-sm:max-w-full">
+                <div class="flex w-full min-w-0 max-w-xs shrink items-center max-sm:w-full max-sm:max-w-full">
                     <x-admin::search
                         name="search"
                         ::value="getAppliedColumnValues('all')"
@@ -117,30 +121,40 @@
                     />
                 </div>
 
-                <div class="ltr:pl-2.5 rtl:pr-2.5">
-                    <p class="text-sm font-light text-gray-800 dark:text-white">
+                <div class="shrink-0 ltr:pl-2.5 rtl:pr-2.5 group-[.is-tight]/toolbar:sr-only">
+                    <p class="whitespace-nowrap text-sm font-light text-gray-800 dark:text-white">
                         @{{ @json(trans('admin::app.components.datagrid.toolbar.results')).replace(':total', available.meta.total) }}
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="flex grow flex-wrap items-center justify-between gap-4">
-            <div class="flex flex-wrap items-center gap-4">
+        <div class="flex grow items-center justify-between gap-4 group-[.is-stacked]/toolbar:flex-wrap">
+            <div class="flex shrink-0 items-center gap-4 group-[.is-condensed]/toolbar:gap-2 group-[.is-stacked]/toolbar:fixed group-[.is-stacked]/toolbar:inset-x-0 group-[.is-stacked]/toolbar:bottom-0 group-[.is-stacked]/toolbar:z-[10003] group-[.is-stacked]/toolbar:justify-around group-[.is-stacked]/toolbar:gap-1 group-[.is-stacked]/toolbar:border-t group-[.is-stacked]/toolbar:border-gray-200 group-[.is-stacked]/toolbar:bg-white group-[.is-stacked]/toolbar:p-3 group-[.is-stacked]/toolbar:text-xs group-[.is-stacked]/toolbar:[&>*]:shrink-0 group-[.is-stacked]/toolbar:[&_.icon-manage-column]:text-xl group-[.is-stacked]/toolbar:[&_.icon-filter]:text-xl group-[.is-stacked]/toolbar:[&_.icon-star]:text-xl dark:group-[.is-stacked]/toolbar:border-cherry-800 dark:group-[.is-stacked]/toolbar:bg-cherry-900">
              <template v-if="available.meta.managedColumn?.enabled">
                 <x-admin::datagrid.manage-columns />
              </template>
             
-            <x-admin::dropdown v-if="viewsSrc" ref="savedFilters" ::close-on-click="false">
+            <x-admin::dropdown
+                v-if="viewsSrc"
+                ref="savedFilters"
+                :teleport="true"
+                ::close-on-click="false"
+            >
                 <x-slot:toggle>
                     <button
                         type="button"
                         data-grid-views
                         class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-2.5 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:hover:border-gray-400"
+                        :title="appliedViewName()"
+                        :class="{'[&>*]:text-primary-700 [&>*]:dark:text-white': activeViewId()}"
                     >
                         <span class="icon-star text-2xl" aria-hidden="true"></span>
 
-                        <span class="max-w-[10rem] truncate" v-text="appliedViewName()"></span>
+                        <span
+                            class="max-w-[10rem] truncate group-[.is-condensed]/toolbar:sr-only"
+                            v-text="appliedViewName()"
+                        ></span>
 
                         <span class="icon-chevron-down text-2xl"></span>
                     </button>
@@ -277,11 +291,12 @@
                         <div
                             class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
                             :class="{'[&>*]:text-primary-700 [&>*]:dark:text-white': hasAppliedFilters()}"
+                            title="@lang('admin::app.components.datagrid.toolbar.filter.title')"
                             v-if="available?.columns?.filter(col => col?.filterable == true)?.length"
                         >
                             <span class="icon-filter text-2xl" aria-hidden="true"></span>
 
-                            <span>
+                            <span class="group-[.is-condensed]/toolbar:sr-only">
                                 @lang('admin::app.components.datagrid.toolbar.filter.title')
                             </span>
 
@@ -390,7 +405,7 @@
             </x-admin::drawer>
             </div>
 
-            <div class="flex items-center gap-x-2">
+            <div class="flex shrink-0 items-center gap-x-2">
                 <x-admin::dropdown>
                     <x-slot:toggle>
                         <button
@@ -415,19 +430,24 @@
                     </x-slot>
                 </x-admin::dropdown>
 
-                <p class="max-w-[44px] text-center leading-tight text-gray-600 dark:text-gray-300 max-sm:hidden">
+                <p class="max-w-[44px] text-center leading-tight text-gray-600 dark:text-gray-300 max-sm:hidden group-[.is-compact]/toolbar:hidden">
                     @lang('admin::app.components.datagrid.toolbar.per-page')
                 </p>
 
                 <input
                     type="text"
-                    class="inline-flex min-h-[38px] max-w-[46px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-2 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400 max-sm:hidden"
+                    class="inline-flex min-h-[38px] max-w-[46px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-2 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400 max-sm:hidden group-[.is-compact]/toolbar:hidden"
                     :value="available.meta.current_page"
                     @change="changePage(parseInt($event.target.value))"
                     aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')"
                 >
 
                 <div class="whitespace-nowrap text-gray-600 dark:text-gray-300">
+                    <span
+                        class="hidden max-sm:inline group-[.is-compact]/toolbar:inline group-[.is-stacked]/toolbar:inline"
+                        v-text="available.meta.current_page"
+                    ></span>
+
                     <span> @lang('admin::app.components.datagrid.toolbar.of') </span>
 
                     <span v-text="available.meta.last_page"></span>
@@ -436,7 +456,7 @@
                 <div class="flex items-center gap-1" role="navigation" aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')">
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300 group-[.is-tight]/toolbar:hidden"
                         @click="changePage('first')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
@@ -464,7 +484,7 @@
                     </button>
                     <button
                         type="button"
-                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
+                        class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300 group-[.is-tight]/toolbar:hidden"
                         @click="changePage('last')"
                         title="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"
                         aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"

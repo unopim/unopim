@@ -2484,6 +2484,14 @@ return [
                 'empty'  => 'Tidak ada hasil',
                 'search' => 'Cari',
             ],
+            'tags'            => [
+                'placeholder' => 'Ketik atau tempel nilai yang dipisahkan koma atau baris baru',
+                'hint'        => 'Pisahkan nilai dengan koma atau baris baru',
+                'count'       => ':count nilai ditambahkan',
+                'count-one'   => '1 nilai ditambahkan',
+                'remove'      => 'Hapus :value',
+                'clear-all'   => 'Hapus semua',
+            ],
             'ajax-error'      => 'Terjadi kesalahan saat menyimpan. Silakan coba lagi.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik untuk mengunggah',

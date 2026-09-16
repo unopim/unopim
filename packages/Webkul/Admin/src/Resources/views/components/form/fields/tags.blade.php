@@ -1,49 +1,76 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-field-tags-template">
-        <div
-            class="flex flex-wrap items-center gap-2 w-full min-h-[44px] px-3 py-2.5 border rounded-md text-sm transition-all hover:border-gray-400 dark:hover:border-gray-400 focus-within:border-gray-400 dark:bg-cherry-900 dark:border-gray-600 cursor-text"
-            :class="hasErrors ? 'border !border-red-600' : ''"
-            @click="focusInput"
-        >
-            <span
-                v-for="(tag, index) in tags"
-                :key="tag"
-                class="flex items-center gap-1 px-1 py-1 rounded bg-primary-100 dark:bg-cherry-800 text-primary-700 dark:text-primary-200 text-sm"
+        <div class="flex w-full flex-col gap-1.5">
+            <div
+                class="flex w-full cursor-text flex-col gap-2 overflow-y-auto rounded-md border px-3 py-2.5 transition-all min-h-[104px] max-h-[220px] hover:border-gray-400 focus-within:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:hover:border-gray-400"
+                :class="hasErrors ? 'border !border-danger' : ''"
+                @click="focusInput"
             >
-                <span v-text="tag"></span>
+                <div
+                    v-if="tags.length"
+                    class="flex flex-wrap gap-1.5"
+                >
+                    <span
+                        v-for="(tag, index) in tags"
+                        :key="tag"
+                        class="inline-flex max-w-full items-center gap-1 rounded-md border border-gray-200 bg-gray-100 py-0.5 pl-2 pr-1 text-xs text-gray-800 dark:border-gray-800 dark:bg-cherry-800 dark:text-gray-300"
+                    >
+                        <span
+                            class="truncate max-w-[220px]"
+                            :title="tag"
+                            v-text="tag"
+                        ></span>
+
+                        <button
+                            type="button"
+                            :aria-label="removeLabel(tag)"
+                            :title="removeLabel(tag)"
+                            :disabled="disabled"
+                            @click.stop="removeTag(index)"
+                            class="icon-cross-large flex shrink-0 items-center rounded text-sm leading-none text-gray-500 hover:bg-gray-200 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-cherry-900 dark:hover:text-white"
+                        >
+                        </button>
+                    </span>
+                </div>
+
+                <input
+                    ref="input"
+                    type="text"
+                    :id="inputId"
+                    v-model="draft"
+                    :placeholder="placeholder"
+                    :disabled="disabled"
+                    :aria-invalid="hasErrors"
+                    class="w-full flex-1 border-0 bg-transparent px-0 py-0.5 text-sm text-gray-600 focus:outline-none focus:ring-0 dark:text-gray-300"
+                    @keydown="onKeydown"
+                    @paste="onPaste"
+                    @blur="commitDraft"
+                />
+
+                <input type="hidden" :name="name" :value="serialized" />
+            </div>
+
+            <div class="flex items-center justify-between gap-2">
+                <span class="text-xs text-gray-500 dark:text-gray-400" v-text="footerLabel"></span>
 
                 <button
+                    v-if="tags.length"
                     type="button"
-                    :aria-label="'Remove ' + tag"
-                    @click.stop="removeTag(index)"
-                    class="icon-cross-large text-base leading-none text-primary-500 dark:text-primary-300 hover:text-primary-700 dark:hover:text-white"
+                    :disabled="disabled"
+                    @click="clearTags"
+                    class="text-xs text-info transition-all hover:underline"
                 >
+                    @lang('admin::app.components.form.tags.clear-all')
                 </button>
-            </span>
-
-            <input
-                ref="input"
-                type="text"
-                :id="inputId"
-                v-model="draft"
-                :placeholder="tags.length ? '' : (field.placeholder ?? field.label)"
-                :disabled="disabled"
-                :aria-invalid="hasErrors"
-                class="flex-1 min-w-[60px] px-0 py-0.5 bg-transparent border-0 text-sm text-gray-600 dark:text-gray-300 focus:ring-0 focus:outline-none"
-                @keydown="onKeydown"
-                @paste="onPaste"
-                @blur="commitDraft"
-            />
-
-            <input type="hidden" :name="name" :value="serialized" />
+            </div>
         </div>
     </script>
 
     <script type="module">
-        const TAG_SEPARATOR = /[\s,]+/;
+        const TAG_SEPARATOR = /[\r\n\t;,]+/;
         const TAB_KEY = 'Tab';
         const REMOVE_KEY = 'Backspace';
-        const COMMIT_KEYS = ['Enter', ',', ' ', TAB_KEY];
+        const COMMIT_KEYS = ['Enter', ',', ';', TAB_KEY];
 
         app.component('v-field-tags', {
             template: '#v-field-tags-template',
@@ -60,6 +87,22 @@
             computed: {
                 serialized() {
                     return this.tags.join(',');
+                },
+
+                placeholder() {
+                    return this.field.placeholder ?? @json(trans('admin::app.components.form.tags.placeholder'));
+                },
+
+                footerLabel() {
+                    if (! this.tags.length) {
+                        return @json(trans('admin::app.components.form.tags.hint'));
+                    }
+
+                    const key = this.tags.length === 1
+                        ? @json(trans('admin::app.components.form.tags.count-one'))
+                        : @json(trans('admin::app.components.form.tags.count'));
+
+                    return key.replace(':count', this.tags.length);
                 },
             },
 
@@ -105,6 +148,18 @@
 
                 removeTag(index) {
                     this.tags.splice(index, 1);
+                },
+
+                clearTags() {
+                    this.tags = [];
+
+                    this.draft = '';
+
+                    this.focusInput();
+                },
+
+                removeLabel(tag) {
+                    return @json(trans('admin::app.components.form.tags.remove')).replace(':value', tag);
                 },
 
                 commitDraft() {

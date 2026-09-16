@@ -2487,6 +2487,14 @@ return [
                 'empty'  => 'Không có kết quả',
                 'search' => 'Tìm kiếm',
             ],
+            'tags'            => [
+                'placeholder' => 'Nhập hoặc dán các giá trị, phân tách bằng dấu phẩy hoặc dòng mới',
+                'hint'        => 'Phân tách các giá trị bằng dấu phẩy hoặc dòng mới',
+                'count'       => 'Đã thêm :count giá trị',
+                'count-one'   => 'Đã thêm 1 giá trị',
+                'remove'      => 'Xóa :value',
+                'clear-all'   => 'Xóa tất cả',
+            ],
             'ajax-error'      => 'Đã xảy ra lỗi khi lưu. Vui lòng thử lại.',
             'file-uploader'   => [
                 'upload-cta'  => 'Nhấp để tải lên',

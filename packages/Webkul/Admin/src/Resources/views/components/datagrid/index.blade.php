@@ -19,7 +19,7 @@
         type="text/x-template"
         id="v-datagrid-template"
     >
-        <div :class="{'compact-datagrid': isCompact()}">
+        <div :class="[{'compact-datagrid': isCompact()}, toolbarLayout['is-stacked'] ? 'pb-20' : '']">
             <x-admin::datagrid.toolbar />
 
             <div class="flex mt-4">
@@ -133,6 +133,8 @@
 
                     filterPickerSearchTimer: null,
 
+                    toolbarWidth: 0,
+
                     available: {
                         id: null,
 
@@ -193,9 +195,18 @@
 
                 this._onShareLinkChanged = () => this.get();
                 this.$emitter.on('share-link-changed', this._onShareLinkChanged);
+
+                this.observeToolbar();
+            },
+
+            updated() {
+                this.observeToolbar();
             },
 
             beforeUnmount() {
+                this._toolbarObserver?.disconnect();
+                this.syncBottomBarClass(false);
+
                 if (this._onShareLinkChanged) {
                     this.$emitter.off('share-link-changed', this._onShareLinkChanged);
                 }
@@ -210,6 +221,32 @@
                  */
                 stateKey() {
                     return this.storageKey || this.src;
+                },
+
+                /**
+                 * The toolbar has to stay on one line beside anything that narrows the
+                 * page (the docked Agentic PIM panel, a split view), so its density is
+                 * driven by its own measured width rather than the viewport's.
+                 */
+                toolbarLayout() {
+                    if (! this.toolbarWidth) {
+                        return {};
+                    }
+
+                    if (this.toolbarWidth < 460) {
+                        return {
+                            'is-stacked':   true,
+                            'is-compact':   true,
+                            'is-condensed': true,
+                            'is-tight':     true,
+                        };
+                    }
+
+                    return {
+                        'is-compact':   this.toolbarWidth < 1200,
+                        'is-condensed': this.toolbarWidth < 1000,
+                        'is-tight':     this.toolbarWidth < 760,
+                    };
                 },
 
                 filterFields() {
@@ -251,9 +288,32 @@
             },
 
             watch: {
+                toolbarLayout: {
+                    handler(layout) {
+                        this.syncBottomBarClass(!! layout['is-stacked']);
+                    },
+
+                    immediate: true,
+                },
+
                 'applied.massActions.indices': {
                     handler() {
                         this.setCurrentSelectionMode();
+                    },
+
+                    deep: true,
+                },
+
+                /**
+                 * Selected ids survive pagination and sorting, but a new search or filter
+                 * gives a different result set, so a stale selection would keep the mass
+                 * action bar (and its count) in place over records that no longer match.
+                 */
+                'applied.filters': {
+                    handler() {
+                        if (this.applied.massActions.indices.length) {
+                            this.clearMassSelection();
+                        }
                     },
 
                     deep: true,
@@ -277,6 +337,41 @@
             },
 
             methods: {
+                /**
+                 * Track the toolbar's own width. The element is only in the DOM once the
+                 * grid has loaded, so re-attach whenever the render swaps it out.
+                 */
+                observeToolbar() {
+                    const toolbar = this.$refs.toolbar;
+
+                    if (! toolbar || toolbar === this._toolbarElement) {
+                        return;
+                    }
+
+                    this._toolbarObserver?.disconnect();
+                    this._toolbarElement = toolbar;
+
+                    if (typeof ResizeObserver === 'undefined') {
+                        this.toolbarWidth = toolbar.clientWidth;
+
+                        return;
+                    }
+
+                    this._toolbarObserver = new ResizeObserver(([entry]) => {
+                        this.toolbarWidth = Math.round(entry.contentRect.width);
+                    });
+
+                    this._toolbarObserver.observe(toolbar);
+                },
+
+                /**
+                 * The Agentic PIM floating button is fixed to the same corner as the
+                 * phone-width toolbar bar; this body class lifts it clear of the bar.
+                 */
+                syncBottomBarClass(isOpen) {
+                    document.body.classList.toggle('datagrid-bar-open', isOpen);
+                },
+
                 isCompact() {
                     return this.compact === true || this.compact === 'true';
                 },

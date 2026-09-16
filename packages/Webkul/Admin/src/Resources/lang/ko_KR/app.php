@@ -2487,6 +2487,14 @@ return [
                 'empty'  => '결과가 없습니다',
                 'search' => '검색',
             ],
+            'tags'            => [
+                'placeholder' => '값을 입력하거나 쉼표 또는 줄바꿈으로 구분하여 붙여넣으세요',
+                'hint'        => '쉼표 또는 줄바꿈으로 값을 구분하세요',
+                'count'       => ':count개의 값이 추가됨',
+                'count-one'   => '1개의 값이 추가됨',
+                'remove'      => ':value 제거',
+                'clear-all'   => '모두 지우기',
+            ],
             'ajax-error'      => '저장하는 동안 문제가 발생했습니다. 다시 시도해 주세요.',
             'file-uploader'   => [
                 'upload-cta'  => '클릭하여 업로드',

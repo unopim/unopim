@@ -2487,6 +2487,14 @@ return [
                 'empty'  => 'Brak wyników',
                 'search' => 'Szukaj',
             ],
+            'tags'            => [
+                'placeholder' => 'Wpisz lub wklej wartości oddzielone przecinkami albo nowymi wierszami',
+                'hint'        => 'Oddzielaj wartości przecinkiem lub nowym wierszem',
+                'count'       => 'Dodano wartości: :count',
+                'count-one'   => 'Dodano 1 wartość',
+                'remove'      => 'Usuń :value',
+                'clear-all'   => 'Wyczyść wszystko',
+            ],
             'ajax-error'      => 'Coś poszło nie tak podczas zapisywania. Spróbuj ponownie.',
             'file-uploader'   => [
                 'upload-cta'  => 'Kliknij, aby przesłać',
