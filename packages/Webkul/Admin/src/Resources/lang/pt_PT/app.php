@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Escreva ou cole valores separados por vírgulas ou novas linhas',
-                'hint'        => 'Separe os valores com vírgula ou nova linha',
-                'count'       => ':count valores adicionados',
-                'count-one'   => '1 valor adicionado',
                 'remove'      => 'Remover :value',
                 'clear-all'   => 'Limpar tudo',
             ],

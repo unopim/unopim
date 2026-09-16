@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hr',
   '\n' +
   '<p>Za pomicanje s jednog dijela korisničkog sučelja na prethodni pritisnite <strong>Shift + tabulator</strong>.</p>\n' +
   '\n' +
-  '<p>Ovo je redoslijed pomicanja <strong>tabulatora</strong> po dijelovima korisničkog sučelja:\n' +
+  '<p>Ovo je redoslijed pomicanja <strong>tabulatora</strong> po dijelovima korisničkog sučelja:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Traka izbornika</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hr',
   '<p>Ako neki dio korisničkog sučelja nije naveden, on se preskače.</p>\n' +
   '\n' +
   '<p>Ako u podnožju postoji fokus za navigaciju na tipkovnici, a nema vidljive bočne trake, pritiskom na <strong>Shift + tabulator</strong>\n' +
-  '  fokus se prebacuje na prvu skupinu na alatnoj traci, ne na zadnju.\n' +
+  '  fokus se prebacuje na prvu skupinu na alatnoj traci, ne na zadnju.</p>\n' +
   '\n' +
   '<h1>Navigacija unutar dijelova korisničkog sučelja</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hr',
   '  <li>služe za pomicanje između stavki na elementu puta u podnožju.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Tipke s <strong>donjom</strong> i <strong>gornjom</strong> strelicom\n' +
+  '<p>Tipke s <strong>donjom</strong> i <strong>gornjom</strong> strelicom</p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>služe za pomicanje između stavki unutar izbornika.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hr',
   '\n' +
   '<p>Tipkama <strong>strelica</strong> kružno se pomičete unutar dijela korisničkog sučelja koji je u fokusu.</p>\n' +
   '\n' +
-  '<p>Za zatvaranje otvorenog izbornika, otvorenog podizbornika ili otvorenog skočnog izbornika pritisnite tipku <strong>Esc</strong>.\n' +
+  '<p>Za zatvaranje otvorenog izbornika, otvorenog podizbornika ili otvorenog skočnog izbornika pritisnite tipku <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Ako je fokus trenutačno postavljen na vrh pojedinačnog dijela korisničkog sučelja, pritiskom na tipku <strong>Esc</strong> također\n' +
   '  u potpunosti zatvarate navigaciju na tipkovnici.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hr',
   '<h1>Izvršavanje radnji putem stavki izbornika ili gumba na alatnoj traci</h1>\n' +
   '\n' +
   '<p>Nakon što se istakne stavka izbornika ili gumb na alatnoj traci s radnjom koju želite izvršiti, pritisnite tipku <strong>Return</strong>, <strong>Enter</strong>\n' +
-  '  ili <strong>razmak</strong> da biste pokrenuli željenu radnju.\n' +
+  '  ili <strong>razmak</strong> da biste pokrenuli željenu radnju.</p>\n' +
   '\n' +
   '<h1>Navigacija dijaloškim okvirima izvan kartica</h1>\n' +
   '\n' +

@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => '输入或粘贴值，使用逗号或换行分隔',
-                'hint'        => '使用逗号或换行分隔各个值',
-                'count'       => '已添加 :count 个值',
-                'count-one'   => '已添加 1 个值',
                 'remove'      => '移除 :value',
                 'clear-all'   => '全部清除',
             ],

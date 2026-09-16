@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => '값을 입력하거나 쉼표 또는 줄바꿈으로 구분하여 붙여넣으세요',
-                'hint'        => '쉼표 또는 줄바꿈으로 값을 구분하세요',
-                'count'       => ':count개의 값이 추가됨',
-                'count-one'   => '1개의 값이 추가됨',
                 'remove'      => ':value 제거',
                 'clear-all'   => '모두 지우기',
             ],

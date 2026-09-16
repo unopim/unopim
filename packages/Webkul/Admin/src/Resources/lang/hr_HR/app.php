@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Upišite ili zalijepite vrijednosti odvojene zarezima ili novim redovima',
-                'hint'        => 'Odvojite vrijednosti zarezom ili novim redom',
-                'count'       => 'Dodano vrijednosti: :count',
-                'count-one'   => 'Dodana 1 vrijednost',
                 'remove'      => 'Ukloni :value',
                 'clear-all'   => 'Očisti sve',
             ],

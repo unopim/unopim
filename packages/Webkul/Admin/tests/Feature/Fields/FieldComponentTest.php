@@ -252,15 +252,17 @@ it('renders every type standalone', function () {
     }
 });
 
-it('renders the tags field as a chip editor with removal and clear controls', function () {
+it('renders the tags field with multiselect chip styling and a clear control', function () {
     $html = Blade::render('<x-admin::form.field type="tags" name="sku" />@stack(\'scripts\')');
 
     expect($html)
+        ->toContain('multiselect__tags')
+        ->toContain('multiselect__tag ')
+        ->toContain('class="multiselect__tag-icon"')
         ->toContain('@click.stop="removeTag(index)"')
-        ->toContain('@click="clearTags"')
-        ->toContain(trans('admin::app.components.form.tags.clear-all'))
-        ->toContain(json_encode(trans('admin::app.components.form.tags.placeholder')))
-        ->toContain(json_encode(trans('admin::app.components.form.tags.hint')));
+        ->toContain('@click.stop="clearTags"')
+        ->toContain(json_encode(trans('admin::app.components.form.tags.clear-all')))
+        ->toContain(json_encode(trans('admin::app.components.form.tags.placeholder')));
 });
 
 it('splits pasted tags on commas and new lines only', function () use ($views) {

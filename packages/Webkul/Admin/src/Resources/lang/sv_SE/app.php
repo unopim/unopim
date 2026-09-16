@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Skriv eller klistra in värden separerade med kommatecken eller nya rader',
-                'hint'        => 'Separera värden med kommatecken eller ny rad',
-                'count'       => ':count värden tillagda',
-                'count-one'   => '1 värde tillagt',
                 'remove'      => 'Ta bort :value',
                 'clear-all'   => 'Rensa alla',
             ],

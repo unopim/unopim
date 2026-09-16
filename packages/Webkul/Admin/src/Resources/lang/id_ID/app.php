@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Ketik atau tempel nilai yang dipisahkan koma atau baris baru',
-                'hint'        => 'Pisahkan nilai dengan koma atau baris baru',
-                'count'       => ':count nilai ditambahkan',
-                'count-one'   => '1 nilai ditambahkan',
                 'remove'      => 'Hapus :value',
                 'clear-all'   => 'Hapus semua',
             ],

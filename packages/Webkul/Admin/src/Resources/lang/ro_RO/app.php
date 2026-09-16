@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Tastați sau lipiți valori separate prin virgule sau rânduri noi',
-                'hint'        => 'Separați valorile prin virgulă sau rând nou',
-                'count'       => ':count valori adăugate',
-                'count-one'   => '1 valoare adăugată',
                 'remove'      => 'Elimină :value',
                 'clear-all'   => 'Șterge tot',
             ],

@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Mag-type o mag-paste ng mga halaga na pinaghihiwalay ng kuwit o bagong linya',
-                'hint'        => 'Paghiwalayin ang mga halaga gamit ang kuwit o bagong linya',
-                'count'       => ':count na halaga ang naidagdag',
-                'count-one'   => '1 halaga ang naidagdag',
                 'remove'      => 'Alisin ang :value',
                 'clear-all'   => 'I-clear lahat',
             ],

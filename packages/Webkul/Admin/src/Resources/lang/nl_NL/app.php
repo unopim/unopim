@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Typ of plak waarden, gescheiden door komma’s of nieuwe regels',
-                'hint'        => 'Scheid waarden met een komma of een nieuwe regel',
-                'count'       => ':count waarden toegevoegd',
-                'count-one'   => '1 waarde toegevoegd',
                 'remove'      => ':value verwijderen',
                 'clear-all'   => 'Alles wissen',
             ],

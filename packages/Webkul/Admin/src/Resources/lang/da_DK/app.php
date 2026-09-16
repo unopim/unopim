@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Skriv eller indsæt værdier adskilt af kommaer eller linjeskift',
-                'hint'        => 'Adskil værdier med komma eller linjeskift',
-                'count'       => ':count værdier tilføjet',
-                'count-one'   => '1 værdi tilføjet',
                 'remove'      => 'Fjern :value',
                 'clear-all'   => 'Ryd alle',
             ],

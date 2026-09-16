@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Digita o incolla i valori separati da virgole o a capo',
-                'hint'        => 'Separa i valori con una virgola o un a capo',
-                'count'       => ':count valori aggiunti',
-                'count-one'   => '1 valore aggiunto',
                 'remove'      => 'Rimuovi :value',
                 'clear-all'   => 'Cancella tutto',
             ],

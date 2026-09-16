@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Değerleri yazın veya virgül ya da yeni satırla ayırarak yapıştırın',
-                'hint'        => 'Değerleri virgül veya yeni satırla ayırın',
-                'count'       => ':count değer eklendi',
-                'count-one'   => '1 değer eklendi',
                 'remove'      => ':value öğesini kaldır',
                 'clear-all'   => 'Tümünü temizle',
             ],

@@ -1,68 +1,61 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-field-tags-template">
-        <div class="flex w-full flex-col gap-1.5">
+        <div
+            class="multiselect relative w-full"
+            :class="{'multiselect--active': focused, 'multiselect--disabled': disabled}"
+        >
             <div
-                class="flex w-full cursor-text flex-col gap-2 overflow-y-auto rounded-md border px-3 py-2.5 transition-all min-h-[104px] max-h-[220px] hover:border-gray-400 focus-within:border-gray-400 dark:border-gray-600 dark:bg-cherry-900 dark:hover:border-gray-400"
+                class="multiselect__tags !flex !flex-wrap !items-center gap-y-1 cursor-text"
                 :class="hasErrors ? 'border !border-danger' : ''"
                 @click="focusInput"
             >
-                <div
-                    v-if="tags.length"
-                    class="flex flex-wrap gap-1.5"
+                <span
+                    v-for="(tag, index) in tags"
+                    :key="tag"
+                    class="multiselect__tag !mb-0 !mr-0 flex items-center"
                 >
                     <span
-                        v-for="(tag, index) in tags"
-                        :key="tag"
-                        class="inline-flex max-w-full items-center gap-1 rounded-md border border-gray-200 bg-gray-100 py-0.5 pl-2 pr-1 text-xs text-gray-800 dark:border-gray-800 dark:bg-cherry-800 dark:text-gray-300"
-                    >
-                        <span
-                            class="truncate max-w-[220px]"
-                            :title="tag"
-                            v-text="tag"
-                        ></span>
+                        class="inline-block max-w-[220px] truncate align-bottom"
+                        :title="tag"
+                        v-text="tag"
+                    ></span>
 
-                        <button
-                            type="button"
-                            :aria-label="removeLabel(tag)"
-                            :title="removeLabel(tag)"
-                            :disabled="disabled"
-                            @click.stop="removeTag(index)"
-                            class="icon-cross-large flex shrink-0 items-center rounded text-sm leading-none text-gray-500 hover:bg-gray-200 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-cherry-900 dark:hover:text-white"
-                        >
-                        </button>
-                    </span>
-                </div>
+                    <i
+                        class="multiselect__tag-icon"
+                        role="button"
+                        tabindex="-1"
+                        :aria-label="removeLabel(tag)"
+                        :title="removeLabel(tag)"
+                        @click.stop="removeTag(index)"
+                    ></i>
+                </span>
 
                 <input
                     ref="input"
                     type="text"
+                    class="multiselect__input !mb-0 !w-auto !min-w-0 flex-1 basis-0 !pl-0"
                     :id="inputId"
                     v-model="draft"
-                    :placeholder="placeholder"
+                    :placeholder="tags.length ? '' : placeholder"
                     :disabled="disabled"
                     :aria-invalid="hasErrors"
-                    class="w-full flex-1 border-0 bg-transparent px-0 py-0.5 text-sm text-gray-600 focus:outline-none focus:ring-0 dark:text-gray-300"
                     @keydown="onKeydown"
                     @paste="onPaste"
-                    @blur="commitDraft"
+                    @focus="focused = true"
+                    @blur="onBlur"
                 />
 
                 <input type="hidden" :name="name" :value="serialized" />
             </div>
 
-            <div class="flex items-center justify-between gap-2">
-                <span class="text-xs text-gray-500 dark:text-gray-400" v-text="footerLabel"></span>
-
-                <button
-                    v-if="tags.length"
-                    type="button"
-                    :disabled="disabled"
-                    @click="clearTags"
-                    class="text-xs text-info transition-all hover:underline"
-                >
-                    @lang('admin::app.components.form.tags.clear-all')
-                </button>
-            </div>
+            <button
+                v-if="tags.length && ! disabled"
+                type="button"
+                :aria-label="clearLabel"
+                :title="clearLabel"
+                @click.stop="clearTags"
+                class="icon-cancel absolute right-2 top-2 flex items-center rounded text-lg leading-none text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
+            ></button>
         </div>
     </script>
 
@@ -81,6 +74,7 @@
                 return {
                     tags: this.splitTags(this.modelValue),
                     draft: '',
+                    focused: false,
                 };
             },
 
@@ -89,20 +83,12 @@
                     return this.tags.join(',');
                 },
 
-                placeholder() {
-                    return this.field.placeholder ?? @json(trans('admin::app.components.form.tags.placeholder'));
+                clearLabel() {
+                    return @json(trans('admin::app.components.form.tags.clear-all'));
                 },
 
-                footerLabel() {
-                    if (! this.tags.length) {
-                        return @json(trans('admin::app.components.form.tags.hint'));
-                    }
-
-                    const key = this.tags.length === 1
-                        ? @json(trans('admin::app.components.form.tags.count-one'))
-                        : @json(trans('admin::app.components.form.tags.count'));
-
-                    return key.replace(':count', this.tags.length);
+                placeholder() {
+                    return this.field.placeholder ?? @json(trans('admin::app.components.form.tags.placeholder'));
                 },
             },
 
@@ -146,10 +132,6 @@
                     this.tags.push(value);
                 },
 
-                removeTag(index) {
-                    this.tags.splice(index, 1);
-                },
-
                 clearTags() {
                     this.tags = [];
 
@@ -158,8 +140,18 @@
                     this.focusInput();
                 },
 
+                removeTag(index) {
+                    this.tags.splice(index, 1);
+                },
+
                 removeLabel(tag) {
                     return @json(trans('admin::app.components.form.tags.remove')).replace(':value', tag);
+                },
+
+                onBlur() {
+                    this.focused = false;
+
+                    this.commitDraft();
                 },
 
                 commitDraft() {

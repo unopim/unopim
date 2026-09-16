@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Escriviu o enganxeu valors separats per comes o salts de línia',
-                'hint'        => 'Separeu els valors amb una coma o un salt de línia',
-                'count'       => ':count valors afegits',
-                'count-one'   => '1 valor afegit',
                 'remove'      => 'Elimina :value',
                 'clear-all'   => 'Esborra-ho tot',
             ],

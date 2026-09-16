@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Type or paste values, separated by commas or new lines',
-                'hint'        => 'Separate values with a comma or a new line',
-                'count'       => ':count values added',
-                'count-one'   => '1 value added',
                 'remove'      => 'Remove :value',
                 'clear-all'   => 'Clear all',
             ],

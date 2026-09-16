@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Werte eingeben oder einfügen, getrennt durch Kommas oder Zeilenumbrüche',
-                'hint'        => 'Werte durch Komma oder Zeilenumbruch trennen',
-                'count'       => ':count Werte hinzugefügt',
-                'count-one'   => '1 Wert hinzugefügt',
                 'remove'      => ':value entfernen',
                 'clear-all'   => 'Alle entfernen',
             ],

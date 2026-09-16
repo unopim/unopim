@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Kirjoita tai liitä arvot pilkulla tai rivinvaihdolla eroteltuina',
-                'hint'        => 'Erota arvot pilkulla tai rivinvaihdolla',
-                'count'       => ':count arvoa lisätty',
-                'count-one'   => '1 arvo lisätty',
                 'remove'      => 'Poista :value',
                 'clear-all'   => 'Tyhjennä kaikki',
             ],

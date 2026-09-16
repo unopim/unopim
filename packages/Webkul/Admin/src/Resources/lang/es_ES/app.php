@@ -2486,9 +2486,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Escribe o pega valores separados por comas o saltos de línea',
-                'hint'        => 'Separa los valores con una coma o un salto de línea',
-                'count'       => ':count valores añadidos',
-                'count-one'   => '1 valor añadido',
                 'remove'      => 'Eliminar :value',
                 'clear-all'   => 'Borrar todo',
             ],

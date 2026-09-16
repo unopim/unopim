@@ -2489,9 +2489,6 @@ return [
             ],
             'tags'            => [
                 'placeholder' => 'Wpisz lub wklej wartości oddzielone przecinkami albo nowymi wierszami',
-                'hint'        => 'Oddzielaj wartości przecinkiem lub nowym wierszem',
-                'count'       => 'Dodano wartości: :count',
-                'count-one'   => 'Dodano 1 wartość',
                 'remove'      => 'Usuń :value',
                 'clear-all'   => 'Wyczyść wszystko',
             ],

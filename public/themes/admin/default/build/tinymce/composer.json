@@ -1,6 +1,6 @@
 {
 	"name": "tinymce/tinymce",
-	"version": "6.6.2",
+	"version": "6.8.6",
 	"description": "Web based JavaScript HTML WYSIWYG editor control.",
 	"license": [
 		"MIT-only"
