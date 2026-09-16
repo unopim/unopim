@@ -395,7 +395,7 @@ class ProductRepository extends Repository
             }
 
             if (! empty($params['sku'])) {
-                $qb->where('products.sku', 'like', '%'.$params['sku'].'%');
+                $qb->where('products.sku', 'like', '%'.addcslashes($params['sku'], '\\%_').'%');
             }
 
             if (! empty($params['ids'])) {

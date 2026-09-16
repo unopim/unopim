@@ -12,6 +12,7 @@ use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CategoryBrowseRequest;
 use Webkul\Admin\Http\Requests\CategoryChildrenForm;
+use Webkul\Admin\Http\Requests\CategoryDescendantsForm;
 use Webkul\Admin\Http\Requests\CategoryRequest;
 use Webkul\Admin\Http\Requests\CategorySearchForm;
 use Webkul\Admin\Http\Requests\CategoryTreeForm;
@@ -515,6 +516,26 @@ class CategoryController extends Controller
         $childCategories = $this->categoryRepository->getChildCategories($parentId, $categoryId);
 
         return new JsonResponse(CategoryTreeResource::collection($childCategories)->toArray($request));
+    }
+
+    /**
+     * The full descendant subtree of a category in one query, so a
+     * cascading select on the client can select and render every level
+     * at once instead of fetching and revealing it level by level.
+     */
+    public function descendants(CategoryDescendantsForm $request): JsonResponse
+    {
+        $id = (int) $request->validated('id');
+
+        if ($this->categoryRepository->countDescendants($id) > CategoryRepository::MAX_DESCENDANTS) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.categories.browse.descendants-too-large'),
+            ], 422);
+        }
+
+        $tree = $this->categoryRepository->getDescendantTree($id);
+
+        return new JsonResponse(['data' => CategoryTreeResource::collection($tree)->toArray($request)]);
     }
 
     /**
