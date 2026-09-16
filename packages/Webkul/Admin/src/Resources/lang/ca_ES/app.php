@@ -2485,9 +2485,10 @@ return [
                 'search' => 'Cerca',
             ],
             'tags'            => [
-                'placeholder' => 'Escriviu o enganxeu valors separats per comes o salts de línia',
-                'remove'      => 'Elimina :value',
-                'clear-all'   => 'Esborra-ho tot',
+                'placeholder'     => 'Escriviu o enganxeu valors separats per comes o salts de línia',
+                'remove'          => 'Elimina :value',
+                'clear-all'       => 'Esborra-ho tot',
+                'tag-placeholder' => 'Premeu Retorn per afegir',
             ],
             'ajax-error'      => 'Alguna cosa ha anat malament en desar. Torneu-ho a provar.',
             'file-uploader'   => [

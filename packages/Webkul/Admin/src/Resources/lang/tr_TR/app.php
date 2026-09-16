@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Ara',
             ],
             'tags'            => [
-                'placeholder' => 'Değerleri yazın veya virgül ya da yeni satırla ayırarak yapıştırın',
-                'remove'      => ':value öğesini kaldır',
-                'clear-all'   => 'Tümünü temizle',
+                'placeholder'     => 'Değerleri yazın veya virgül ya da yeni satırla ayırarak yapıştırın',
+                'remove'          => ':value öğesini kaldır',
+                'clear-all'       => 'Tümünü temizle',
+                'tag-placeholder' => 'Eklemek için Enter tuşuna basın',
             ],
             'ajax-error'      => 'Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
             'file-uploader'   => [

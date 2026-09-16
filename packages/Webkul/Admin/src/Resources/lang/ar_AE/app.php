@@ -2485,9 +2485,10 @@ return [
                 'search' => 'بحث',
             ],
             'tags'            => [
-                'placeholder' => 'اكتب القيم أو الصقها مفصولة بفواصل أو أسطر جديدة',
-                'remove'      => 'إزالة :value',
-                'clear-all'   => 'مسح الكل',
+                'placeholder'     => 'اكتب القيم أو الصقها مفصولة بفواصل أو أسطر جديدة',
+                'remove'          => 'إزالة :value',
+                'clear-all'       => 'مسح الكل',
+                'tag-placeholder' => 'اضغط Enter للإضافة',
             ],
             'ajax-error'      => 'حدث خطأ ما أثناء الحفظ. يرجى المحاولة مرة أخرى.',
             'file-uploader'   => [

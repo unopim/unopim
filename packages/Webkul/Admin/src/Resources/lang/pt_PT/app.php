@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Pesquisar',
             ],
             'tags'            => [
-                'placeholder' => 'Escreva ou cole valores separados por vírgulas ou novas linhas',
-                'remove'      => 'Remover :value',
-                'clear-all'   => 'Limpar tudo',
+                'placeholder'     => 'Escreva ou cole valores separados por vírgulas ou novas linhas',
+                'remove'          => 'Remover :value',
+                'clear-all'       => 'Limpar tudo',
+                'tag-placeholder' => 'Prima Enter para adicionar',
             ],
             'ajax-error'      => 'Algo correu mal ao guardar. Por favor, tente novamente.',
             'file-uploader'   => [

@@ -252,16 +252,17 @@ it('renders every type standalone', function () {
     }
 });
 
-it('renders the tags field with multiselect chip styling and a clear control', function () {
+it('renders the tags field through the shared multiselect in taggable mode', function () {
     $html = Blade::render('<x-admin::form.field type="tags" name="sku" />@stack(\'scripts\')');
 
     expect($html)
-        ->toContain('multiselect__tags')
-        ->toContain('multiselect__tag ')
-        ->toContain('class="multiselect__tag-icon"')
-        ->toContain('@click.stop="removeTag(index)"')
-        ->toContain('@click.stop="clearTags"')
+        ->toContain('<v-multiselect')
+        ->toContain(':taggable="true"')
+        ->toContain('@tag="addTag"')
+        ->toContain('v-slot:clear')
+        ->toContain('@mousedown.prevent.stop="clearTags"')
         ->toContain(json_encode(trans('admin::app.components.form.tags.clear-all')))
+        ->toContain(json_encode(trans('admin::app.components.form.tags.tag-placeholder')))
         ->toContain(json_encode(trans('admin::app.components.form.tags.placeholder')));
 });
 
@@ -270,5 +271,5 @@ it('splits pasted tags on commas and new lines only', function () use ($views) {
 
     expect($field)
         ->toContain('const TAG_SEPARATOR = /[\r\n\t;,]+/;')
-        ->toContain('@paste="onPaste"');
+        ->toContain('@search-change="onSearchChange"');
 });

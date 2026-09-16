@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Szukaj',
             ],
             'tags'            => [
-                'placeholder' => 'Wpisz lub wklej wartości oddzielone przecinkami albo nowymi wierszami',
-                'remove'      => 'Usuń :value',
-                'clear-all'   => 'Wyczyść wszystko',
+                'placeholder'     => 'Wpisz lub wklej wartości oddzielone przecinkami albo nowymi wierszami',
+                'remove'          => 'Usuń :value',
+                'clear-all'       => 'Wyczyść wszystko',
+                'tag-placeholder' => 'Naciśnij Enter, aby dodać',
             ],
             'ajax-error'      => 'Coś poszło nie tak podczas zapisywania. Spróbuj ponownie.',
             'file-uploader'   => [

@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Tìm kiếm',
             ],
             'tags'            => [
-                'placeholder' => 'Nhập hoặc dán các giá trị, phân tách bằng dấu phẩy hoặc dòng mới',
-                'remove'      => 'Xóa :value',
-                'clear-all'   => 'Xóa tất cả',
+                'placeholder'     => 'Nhập hoặc dán các giá trị, phân tách bằng dấu phẩy hoặc dòng mới',
+                'remove'          => 'Xóa :value',
+                'clear-all'       => 'Xóa tất cả',
+                'tag-placeholder' => 'Nhấn Enter để thêm',
             ],
             'ajax-error'      => 'Đã xảy ra lỗi khi lưu. Vui lòng thử lại.',
             'file-uploader'   => [

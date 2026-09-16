@@ -2485,9 +2485,10 @@ return [
                 'search' => 'Cari',
             ],
             'tags'            => [
-                'placeholder' => 'Ketik atau tempel nilai yang dipisahkan koma atau baris baru',
-                'remove'      => 'Hapus :value',
-                'clear-all'   => 'Hapus semua',
+                'placeholder'     => 'Ketik atau tempel nilai yang dipisahkan koma atau baris baru',
+                'remove'          => 'Hapus :value',
+                'clear-all'       => 'Hapus semua',
+                'tag-placeholder' => 'Tekan Enter untuk menambahkan',
             ],
             'ajax-error'      => 'Terjadi kesalahan saat menyimpan. Silakan coba lagi.',
             'file-uploader'   => [

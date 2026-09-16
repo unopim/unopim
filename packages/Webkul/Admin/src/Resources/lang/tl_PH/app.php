@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Maghanap',
             ],
             'tags'            => [
-                'placeholder' => 'Mag-type o mag-paste ng mga halaga na pinaghihiwalay ng kuwit o bagong linya',
-                'remove'      => 'Alisin ang :value',
-                'clear-all'   => 'I-clear lahat',
+                'placeholder'     => 'Mag-type o mag-paste ng mga halaga na pinaghihiwalay ng kuwit o bagong linya',
+                'remove'          => 'Alisin ang :value',
+                'clear-all'       => 'I-clear lahat',
+                'tag-placeholder' => 'Pindutin ang Enter upang idagdag',
             ],
             'ajax-error'      => 'May nangyaring mali habang nagse-save. Pakisubukang muli.',
             'file-uploader'   => [

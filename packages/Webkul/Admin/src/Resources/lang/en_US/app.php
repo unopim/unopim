@@ -2643,9 +2643,10 @@ return [
                 'search' => 'Search',
             ],
             'tags'            => [
-                'placeholder' => 'Type or paste values, separated by commas or new lines',
-                'remove'      => 'Remove :value',
-                'clear-all'   => 'Clear all',
+                'placeholder'     => 'Type or paste values, separated by commas or new lines',
+                'remove'          => 'Remove :value',
+                'clear-all'       => 'Clear all',
+                'tag-placeholder' => 'Press Enter to add',
             ],
             'ajax-error'      => 'Something went wrong while saving. Please try again.',
             'file-uploader'   => [

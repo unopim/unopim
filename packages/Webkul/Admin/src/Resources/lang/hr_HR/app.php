@@ -2485,9 +2485,10 @@ return [
                 'search' => 'Pretraži',
             ],
             'tags'            => [
-                'placeholder' => 'Upišite ili zalijepite vrijednosti odvojene zarezima ili novim redovima',
-                'remove'      => 'Ukloni :value',
-                'clear-all'   => 'Očisti sve',
+                'placeholder'     => 'Upišite ili zalijepite vrijednosti odvojene zarezima ili novim redovima',
+                'remove'          => 'Ukloni :value',
+                'clear-all'       => 'Očisti sve',
+                'tag-placeholder' => 'Pritisnite Enter za dodavanje',
             ],
             'ajax-error'      => 'Nešto je pošlo po zlu prilikom spremanja. Pokušajte ponovno.',
             'file-uploader'   => [

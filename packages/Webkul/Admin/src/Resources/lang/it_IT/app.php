@@ -2485,9 +2485,10 @@ return [
                 'search' => 'Cerca',
             ],
             'tags'            => [
-                'placeholder' => 'Digita o incolla i valori separati da virgole o a capo',
-                'remove'      => 'Rimuovi :value',
-                'clear-all'   => 'Cancella tutto',
+                'placeholder'     => 'Digita o incolla i valori separati da virgole o a capo',
+                'remove'          => 'Rimuovi :value',
+                'clear-all'       => 'Cancella tutto',
+                'tag-placeholder' => 'Premi Invio per aggiungere',
             ],
             'ajax-error'      => 'Si è verificato un errore durante il salvataggio. Riprova.',
             'file-uploader'   => [

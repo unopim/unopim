@@ -2485,9 +2485,10 @@ return [
                 'search' => 'Buscar',
             ],
             'tags'            => [
-                'placeholder' => 'Escribe o pega valores separados por comas o saltos de línea',
-                'remove'      => 'Eliminar :value',
-                'clear-all'   => 'Borrar todo',
+                'placeholder'     => 'Escribe o pega valores separados por comas o saltos de línea',
+                'remove'          => 'Eliminar :value',
+                'clear-all'       => 'Borrar todo',
+                'tag-placeholder' => 'Presiona Enter para agregar',
             ],
             'ajax-error'      => 'Algo salió mal al guardar. Por favor, inténtelo de nuevo.',
             'file-uploader'   => [

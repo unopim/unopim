@@ -2485,9 +2485,10 @@ return [
                 'search' => 'Suchen',
             ],
             'tags'            => [
-                'placeholder' => 'Werte eingeben oder einfügen, getrennt durch Kommas oder Zeilenumbrüche',
-                'remove'      => ':value entfernen',
-                'clear-all'   => 'Alle entfernen',
+                'placeholder'     => 'Werte eingeben oder einfügen, getrennt durch Kommas oder Zeilenumbrüche',
+                'remove'          => ':value entfernen',
+                'clear-all'       => 'Alle entfernen',
+                'tag-placeholder' => 'Zum Hinzufügen Enter drücken',
             ],
             'ajax-error'      => 'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'file-uploader'   => [

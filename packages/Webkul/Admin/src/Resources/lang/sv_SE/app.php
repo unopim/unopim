@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Sök',
             ],
             'tags'            => [
-                'placeholder' => 'Skriv eller klistra in värden separerade med kommatecken eller nya rader',
-                'remove'      => 'Ta bort :value',
-                'clear-all'   => 'Rensa alla',
+                'placeholder'     => 'Skriv eller klistra in värden separerade med kommatecken eller nya rader',
+                'remove'          => 'Ta bort :value',
+                'clear-all'       => 'Rensa alla',
+                'tag-placeholder' => 'Tryck på Enter för att lägga till',
             ],
             'ajax-error'      => 'Något gick fel när det skulle sparas. Försök igen.',
             'file-uploader'   => [

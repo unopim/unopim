@@ -2488,9 +2488,10 @@ return [
                 'search' => '搜尋',
             ],
             'tags'            => [
-                'placeholder' => '輸入或貼上值，使用逗號或換行分隔',
-                'remove'      => '移除 :value',
-                'clear-all'   => '全部清除',
+                'placeholder'     => '輸入或貼上值，使用逗號或換行分隔',
+                'remove'          => '移除 :value',
+                'clear-all'       => '全部清除',
+                'tag-placeholder' => '按 Enter 鍵新增',
             ],
             'ajax-error'      => '儲存時發生問題。請再試一次。',
             'file-uploader'   => [

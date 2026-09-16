@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Caută',
             ],
             'tags'            => [
-                'placeholder' => 'Tastați sau lipiți valori separate prin virgule sau rânduri noi',
-                'remove'      => 'Elimină :value',
-                'clear-all'   => 'Șterge tot',
+                'placeholder'     => 'Tastați sau lipiți valori separate prin virgule sau rânduri noi',
+                'remove'          => 'Elimină :value',
+                'clear-all'       => 'Șterge tot',
+                'tag-placeholder' => 'Apăsați Enter pentru a adăuga',
             ],
             'ajax-error'      => 'A apărut o eroare la salvare. Vă rugăm să încercați din nou.',
             'file-uploader'   => [

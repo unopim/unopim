@@ -2484,9 +2484,10 @@ return [
                 'search' => 'Rechercher',
             ],
             'tags'            => [
-                'placeholder' => 'Saisissez ou collez des valeurs séparées par des virgules ou des sauts de ligne',
-                'remove'      => 'Supprimer :value',
-                'clear-all'   => 'Tout effacer',
+                'placeholder'     => 'Saisissez ou collez des valeurs séparées par des virgules ou des sauts de ligne',
+                'remove'          => 'Supprimer :value',
+                'clear-all'       => 'Tout effacer',
+                'tag-placeholder' => 'Appuyez sur Entrée pour ajouter',
             ],
             'ajax-error'      => 'Une erreur s\'est produite lors de l\'enregistrement. Veuillez réessayer.',
             'file-uploader'   => [

@@ -2485,9 +2485,10 @@ return [
                 'search' => '検索',
             ],
             'tags'            => [
-                'placeholder' => '値を入力するか、カンマまたは改行で区切って貼り付けてください',
-                'remove'      => ':value を削除',
-                'clear-all'   => 'すべてクリア',
+                'placeholder'     => '値を入力するか、カンマまたは改行で区切って貼り付けてください',
+                'remove'          => ':value を削除',
+                'clear-all'       => 'すべてクリア',
+                'tag-placeholder' => 'Enter キーで追加',
             ],
             'ajax-error'      => '保存中に問題が発生しました。もう一度お試しください。',
             'file-uploader'   => [

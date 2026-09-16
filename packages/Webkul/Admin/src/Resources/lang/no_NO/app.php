@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Søk',
             ],
             'tags'            => [
-                'placeholder' => 'Skriv eller lim inn verdier atskilt med komma eller linjeskift',
-                'remove'      => 'Fjern :value',
-                'clear-all'   => 'Tøm alle',
+                'placeholder'     => 'Skriv eller lim inn verdier atskilt med komma eller linjeskift',
+                'remove'          => 'Fjern :value',
+                'clear-all'       => 'Tøm alle',
+                'tag-placeholder' => 'Trykk Enter for å legge til',
             ],
             'ajax-error'      => 'Noe gikk galt under lagringen. Prøv igjen.',
             'file-uploader'   => [

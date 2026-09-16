@@ -2488,9 +2488,10 @@ return [
                 'search' => 'Zoeken',
             ],
             'tags'            => [
-                'placeholder' => 'Typ of plak waarden, gescheiden door komma’s of nieuwe regels',
-                'remove'      => ':value verwijderen',
-                'clear-all'   => 'Alles wissen',
+                'placeholder'     => 'Typ of plak waarden, gescheiden door komma’s of nieuwe regels',
+                'remove'          => ':value verwijderen',
+                'clear-all'       => 'Alles wissen',
+                'tag-placeholder' => 'Druk op Enter om toe te voegen',
             ],
             'ajax-error'      => 'Er is iets misgegaan tijdens het opslaan. Probeer het opnieuw.',
             'file-uploader'   => [

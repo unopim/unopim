@@ -2488,9 +2488,10 @@ return [
                 'search' => '검색',
             ],
             'tags'            => [
-                'placeholder' => '값을 입력하거나 쉼표 또는 줄바꿈으로 구분하여 붙여넣으세요',
-                'remove'      => ':value 제거',
-                'clear-all'   => '모두 지우기',
+                'placeholder'     => '값을 입력하거나 쉼표 또는 줄바꿈으로 구분하여 붙여넣으세요',
+                'remove'          => ':value 제거',
+                'clear-all'       => '모두 지우기',
+                'tag-placeholder' => 'Enter 키를 눌러 추가',
             ],
             'ajax-error'      => '저장하는 동안 문제가 발생했습니다. 다시 시도해 주세요.',
             'file-uploader'   => [

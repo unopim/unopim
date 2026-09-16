@@ -1,69 +1,46 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-field-tags-template">
-        <div
-            class="multiselect relative w-full"
-            :class="{'multiselect--active': focused, 'multiselect--disabled': disabled}"
-        >
-            <div
-                class="multiselect__tags !flex !flex-wrap !items-center gap-y-1.5 cursor-text"
-                :class="hasErrors ? 'border !border-danger' : ''"
-                @click="focusInput"
+        <div class="relative w-full">
+            <v-multiselect
+                :options="tags"
+                v-model="tags"
+                :multiple="true"
+                :taggable="true"
+                :searchable="true"
+                :close-on-select="false"
+                :clear-on-select="true"
+                :preserve-search="false"
+                :hide-selected="true"
+                :show-no-options="false"
+                :show-no-results="false"
+                :placeholder="placeholder"
+                :tag-placeholder="tagPlaceholder"
+                :disabled="disabled"
+                :name="name"
+                :id="inputId"
+                @tag="addTag"
+                @search-change="onSearchChange"
             >
-                <span
-                    v-for="(tag, index) in tags"
-                    :key="tag"
-                    class="multiselect__tag !mb-0"
-                >
+                <template v-slot:clear>
                     <span
-                        class="inline-block max-w-[220px] truncate align-bottom"
-                        :title="tag"
-                        v-text="tag"
-                    ></span>
-
-                    <i
-                        class="multiselect__tag-icon"
+                        v-if="tags.length && ! disabled"
                         role="button"
-                        tabindex="-1"
-                        :aria-label="removeLabel(tag)"
-                        :title="removeLabel(tag)"
-                        @click.stop="removeTag(index)"
-                    ></i>
-                </span>
+                        tabindex="0"
+                        :aria-label="clearLabel"
+                        :title="clearLabel"
+                        @mousedown.prevent.stop="clearTags"
+                        @keydown.enter.prevent.stop="clearTags"
+                        class="icon-cancel absolute right-7 top-2.5 z-10 cursor-pointer text-xl leading-none text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white"
+                    ></span>
+                </template>
+            </v-multiselect>
 
-                <input
-                    ref="input"
-                    type="text"
-                    class="multiselect__input !mb-0 !w-auto min-w-[12rem] flex-1 !pl-0 !text-sm !leading-6 placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                    :id="inputId"
-                    v-model="draft"
-                    :placeholder="placeholder"
-                    :disabled="disabled"
-                    :aria-invalid="hasErrors"
-                    @keydown="onKeydown"
-                    @paste="onPaste"
-                    @focus="focused = true"
-                    @blur="onBlur"
-                />
-
-                <input type="hidden" :name="name" :value="serialized" />
-            </div>
-
-            <button
-                v-if="tags.length && ! disabled"
-                type="button"
-                :aria-label="clearLabel"
-                :title="clearLabel"
-                @click.stop="clearTags"
-                class="icon-cancel absolute right-2 top-2 flex items-center rounded text-lg leading-none text-gray-500 transition-all hover:bg-gray-100 hover:text-gray-800 dark:text-gray-400 dark:hover:bg-cherry-800 dark:hover:text-white"
-            ></button>
+            <input type="hidden" :name="name" :value="serialized" />
         </div>
     </script>
 
     <script type="module">
         const TAG_SEPARATOR = /[\r\n\t;,]+/;
-        const TAB_KEY = 'Tab';
-        const REMOVE_KEY = 'Backspace';
-        const COMMIT_KEYS = ['Enter', ',', ';', TAB_KEY];
 
         app.component('v-field-tags', {
             template: '#v-field-tags-template',
@@ -73,8 +50,6 @@
             data() {
                 return {
                     tags: this.splitTags(this.modelValue),
-                    draft: '',
-                    focused: false,
                 };
             },
 
@@ -83,12 +58,16 @@
                     return this.tags.join(',');
                 },
 
+                placeholder() {
+                    return this.field.placeholder ?? @json(trans('admin::app.components.form.tags.placeholder'));
+                },
+
                 clearLabel() {
                     return @json(trans('admin::app.components.form.tags.clear-all'));
                 },
 
-                placeholder() {
-                    return this.field.placeholder ?? @json(trans('admin::app.components.form.tags.placeholder'));
+                tagPlaceholder() {
+                    return @json(trans('admin::app.components.form.tags.tag-placeholder'));
                 },
             },
 
@@ -122,72 +101,30 @@
                     return tags;
                 },
 
-                addTag(tag) {
-                    const value = `${tag ?? ''}`.trim();
-
-                    if (! value || this.tags.includes(value)) {
-                        return;
-                    }
-
-                    this.tags.push(value);
-                },
-
                 clearTags() {
                     this.tags = [];
-
-                    this.draft = '';
-
-                    this.focusInput();
                 },
 
-                removeTag(index) {
-                    this.tags.splice(index, 1);
+                addTag(tag) {
+                    this.splitTags(tag).forEach(value => {
+                        if (! this.tags.includes(value)) {
+                            this.tags.push(value);
+                        }
+                    });
                 },
 
-                removeLabel(tag) {
-                    return @json(trans('admin::app.components.form.tags.remove')).replace(':value', tag);
-                },
-
-                onBlur() {
-                    this.focused = false;
-
-                    this.commitDraft();
-                },
-
-                commitDraft() {
-                    this.splitTags(this.draft).forEach(tag => this.addTag(tag));
-
-                    this.draft = '';
-                },
-
-                onKeydown(event) {
-                    if (event.key === REMOVE_KEY && this.draft === '' && this.tags.length) {
-                        this.removeTag(this.tags.length - 1);
-
+                /**
+                 * Pasting a comma or newline separated list commits every value at once,
+                 * so the field accepts a column copied straight out of a spreadsheet.
+                 */
+                onSearchChange(query) {
+                    if (! TAG_SEPARATOR.test(query)) {
                         return;
                     }
 
-                    if (! COMMIT_KEYS.includes(event.key) || this.draft.trim() === '') {
-                        return;
-                    }
+                    this.addTag(query);
 
-                    if (event.key !== TAB_KEY) {
-                        event.preventDefault();
-                    }
-
-                    this.commitDraft();
-                },
-
-                onPaste(event) {
-                    event.preventDefault();
-
-                    const pasted = (event.clipboardData || window.clipboardData).getData('text');
-
-                    this.splitTags(pasted).forEach(tag => this.addTag(tag));
-                },
-
-                focusInput() {
-                    this.$refs.input?.focus();
+                    this.$el.querySelector('.multiselect__input').value = '';
                 },
             },
         });

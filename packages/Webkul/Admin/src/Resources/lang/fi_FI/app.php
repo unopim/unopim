@@ -2485,9 +2485,10 @@ return [
                 'search' => 'Hae',
             ],
             'tags'            => [
-                'placeholder' => 'Kirjoita tai liitä arvot pilkulla tai rivinvaihdolla eroteltuina',
-                'remove'      => 'Poista :value',
-                'clear-all'   => 'Tyhjennä kaikki',
+                'placeholder'     => 'Kirjoita tai liitä arvot pilkulla tai rivinvaihdolla eroteltuina',
+                'remove'          => 'Poista :value',
+                'clear-all'       => 'Tyhjennä kaikki',
+                'tag-placeholder' => 'Lisää painamalla Enter',
             ],
             'ajax-error'      => 'Tallennuksen aikana tapahtui virhe. Yritä uudelleen.',
             'file-uploader'   => [
