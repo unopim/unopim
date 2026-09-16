@@ -1,4 +1,5 @@
 /**
+const { closeDropdown } = require('../../utils/helpers');
  * End-to-end run of the passport feature against the EU battery passport, the
  * first product group the regulation actually mandates (Reg. 2023/1542): build a
  * template, bind the family, source fields from the attributes the merchant
@@ -124,7 +125,7 @@ async function pickInMultiselect(scope, hiddenName, optionLabel) {
     await option.click({ timeout: 8_000 }).catch(() => {});
 
     if (await hidden.inputValue().catch(() => '')) {
-      await (scope.keyboard ?? scope.page().keyboard).press('Escape');
+      await closeDropdown(scope.page?.() ?? scope);
 
       return;
     }

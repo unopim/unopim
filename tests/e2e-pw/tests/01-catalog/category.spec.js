@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, openFilterDrawer } = require('../../utils/helpers');
 
 /**
  * Helper: Open the Create Category form and let the unsaved-changes tracker
@@ -104,7 +104,7 @@ test.describe('UnoPim Category Tests', () => {
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoriesList');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 

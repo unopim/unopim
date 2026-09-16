@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField, openFilterDrawer } = require('../../utils/helpers');
 
 /** Create an attribute group via UI. */
 async function createAttributeGroup(adminPage, code, name) {
@@ -57,7 +57,7 @@ test.describe('UnoPim Attribute Group Tests', () => {
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'attributeGroups');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 

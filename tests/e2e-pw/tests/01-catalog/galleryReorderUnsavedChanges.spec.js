@@ -1,6 +1,6 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, fillLocalizedField } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, fillLocalizedField, closeDropdown } = require('../../utils/helpers');
 const { gotoTab, assignAttributesToGroup, saveFamilyEdit } = require('../../utils/family-helpers');
 
 /**
@@ -48,7 +48,7 @@ async function selectMultiselect(page, fieldName, optionLabel) {
       .first()
       .click();
   }
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 }
 
 /** Create a Gallery-type attribute and land on its edit page. */

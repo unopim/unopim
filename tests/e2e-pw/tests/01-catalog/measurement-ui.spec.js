@@ -1,6 +1,6 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { clickSave, generateUid, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
 
 const STORAGE_STATE = path.resolve(__dirname, '../..', process.env.PW_STATE_DIR || '.state', 'admin-auth.json');
 const BASE = process.env.BASE_URL || 'http://127.0.0.1:8000';
@@ -64,7 +64,7 @@ async function selectMultiselectOption(page, name, label, { filter = true } = {}
   await option.waitFor({ state: 'visible', timeout: 10000 });
   await option.scrollIntoViewIfNeeded().catch(() => {});
   await option.click();
-  await page.keyboard.press('Escape').catch(() => {});
+  await closeDropdown(page);
 }
 
 async function selectFirstMultiselectOption(page, name) {
@@ -76,7 +76,7 @@ async function selectFirstMultiselectOption(page, name) {
 
   const label = cleanOptionLabel(await first.innerText());
   await first.click();
-  await page.keyboard.press('Escape').catch(() => {});
+  await closeDropdown(page);
 
   return label;
 }
@@ -307,7 +307,7 @@ async function setMeasurementValue(page, amount) {
   const unitLabel = cleanOptionLabel(await option.innerText());
 
   await option.click();
-  await page.keyboard.press('Escape').catch(() => {});
+  await closeDropdown(page);
 
   return unitLabel;
 }

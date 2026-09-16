@@ -1,4 +1,5 @@
 const { test, expect } = require('@playwright/test');
+const { openFilterDrawer } = require('../utils/helpers');
 
 /**
  * Applying a saved filter rewrites the grid layout — columns, sort, page size
@@ -147,7 +148,7 @@ test.describe('product grid saved filters', () => {
     await openSavedFilters(page);
     await actAndReload(page, () => page.getByText('PW filter autosave').first().click());
 
-    await page.getByText('Filter', { exact: true }).first().click();
+    await openFilterDrawer(page);
 
     const skuFilter = page.locator('[data-datagrid-filter="sku"]');
 
@@ -178,7 +179,7 @@ test.describe('product grid saved filters', () => {
   });
 
   test('keeps the default filter rows visible under a seeded view', async ({ page }) => {
-    await page.getByText('Filter', { exact: true }).first().click();
+    await openFilterDrawer(page);
 
     const defaults = await page.locator('[data-datagrid-filter]').evaluateAll(
       (nodes) => nodes.map((node) => node.dataset.datagridFilter)
@@ -193,7 +194,7 @@ test.describe('product grid saved filters', () => {
     await openSavedFilters(page);
     await actAndReload(page, () => page.locator(VIEW).first().click());
 
-    await page.getByText('Filter', { exact: true }).first().click();
+    await openFilterDrawer(page);
 
     const underView = await page.locator('[data-datagrid-filter]').evaluateAll(
       (nodes) => nodes.map((node) => node.dataset.datagridFilter)
@@ -220,7 +221,7 @@ test.describe('product grid saved filters', () => {
       await openSavedFilters(page);
       await actAndReload(page, () => page.getByText(view.name).first().click());
 
-      await page.getByText('Filter', { exact: true }).first().click();
+      await openFilterDrawer(page);
 
       const row = page.locator(`[data-datagrid-filter="${view.index}"]`);
 
@@ -246,7 +247,7 @@ test.describe('product grid saved filters', () => {
     await openSavedFilters(page);
     await actAndReload(page, () => page.getByText('Featured this season').first().click());
 
-    await page.getByText('Filter', { exact: true }).first().click();
+    await openFilterDrawer(page);
     await page.waitForTimeout(1200);
 
     expect(JSON.stringify((await read()).views.map((view) => view.payload))).toBe(before);
@@ -294,7 +295,7 @@ test.describe('product grid saved filters', () => {
 
     expect(await gridColumns(page)).toEqual(defaults);
 
-    await page.getByText('Filter', { exact: true }).first().click();
+    await openFilterDrawer(page);
 
     await expect(page.locator('[data-applied-filter-count]')).toHaveCount(0);
   });

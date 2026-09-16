@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, clickSaveAndExpect, fillLocalizedField, openFilterDrawer } = require('../../utils/helpers');
 
 /** Create a category field via UI. */
 async function createCategoryField(adminPage, code, name, type = 'Text') {
@@ -83,7 +83,7 @@ test.describe('UnoPim Category Field Tests', () => {
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'categoryFields');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 

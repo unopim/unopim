@@ -46,6 +46,20 @@ const settleDock = async (page) => {
   }).toBe(true);
 };
 
+/**
+ * The drawer slides in from the viewport edge, so its box only reflects the
+ * docked layout once the enter transition has finished.
+ */
+const settleRect = async (page, locator) => {
+  await expect.poll(async () => {
+    const before = await locator.evaluate((el) => el.getBoundingClientRect().right);
+
+    await page.waitForTimeout(120);
+
+    return before === await locator.evaluate((el) => el.getBoundingClientRect().right);
+  }).toBe(true);
+};
+
 const layout = (page) => page.evaluate(() => {
   const toolbar = document.querySelector('.datagrid-toolbar');
   const main = document.querySelector('main#main-content');
@@ -89,9 +103,9 @@ const layout = (page) => page.evaluate(() => {
     pageOverflow: document.documentElement.scrollWidth - document.documentElement.clientWidth,
     overflowing,
     triggers: {
-      columns: rect(document.querySelector('.datagrid-toolbar [class*="icon-manage-column"]')),
+      columns: rect(document.querySelector('.datagrid-toolbar .icon-manage-column')),
       views: rect(document.querySelector('.datagrid-toolbar [data-grid-views]')),
-      filter: rect(document.querySelector('.datagrid-toolbar [class*="icon-filter"]')),
+      filter: rect(document.querySelector('.datagrid-toolbar [data-grid-filter]')),
     },
   };
 });
@@ -159,11 +173,13 @@ test.describe('product grid responsive layout', () => {
 
     test.skip(! (await openPanel(page)), 'Agentic PIM is disabled on this instance');
 
-    await page.locator('.datagrid-toolbar [class*="icon-filter"]').first().click();
+    await page.locator('.datagrid-toolbar [data-grid-filter]').first().click();
 
     const drawer = page.locator('[data-drawer-panel]:visible').first();
 
     await expect(drawer).toBeVisible();
+
+    await settleRect(page, drawer);
 
     const panelLeft = await page.evaluate(() => document.querySelector('.ap-panel').getBoundingClientRect().left);
     const drawerRight = await drawer.evaluate((el) => el.getBoundingClientRect().right);

@@ -1,6 +1,6 @@
 const path = require('path');
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, clickSave, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, clickSave, generateUid, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
 
 /**
  * Media download button and read-only locked media fields on product edit.
@@ -45,7 +45,7 @@ async function selectMultiselect(page, fieldName, optionLabel) {
       .first()
       .click();
   }
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 }
 
 /**
