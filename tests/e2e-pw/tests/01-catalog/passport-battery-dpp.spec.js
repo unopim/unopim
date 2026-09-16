@@ -1,5 +1,4 @@
 /**
-const { closeDropdown } = require('../../utils/helpers');
  * End-to-end run of the passport feature against the EU battery passport, the
  * first product group the regulation actually mandates (Reg. 2023/1542): build a
  * template, bind the family, source fields from the attributes the merchant
@@ -8,6 +7,7 @@ const { closeDropdown } = require('../../utils/helpers');
  *
  * Fixture: scripts/seed-passport-template-e2e.php (idempotent).
  */
+const { closeDropdown } = require('../../utils/helpers');
 const { execFileSync } = require('child_process');
 
 const { test, expect } = require('@playwright/test');
