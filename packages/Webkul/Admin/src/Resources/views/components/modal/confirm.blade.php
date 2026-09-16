@@ -5,7 +5,7 @@
         type="text/x-template"
         id="v-modal-confirm-template"
     >
-        <teleport to="body">
+        <div>
             <transition
                 tag="div"
                 name="modal-overlay"
@@ -17,7 +17,7 @@
                 leave-to-class="opacity-0"
             >
                 <div
-                    class="fixed inset-0 bg-gray-500 bg-opacity-50 transition-opacity z-[10020]"
+                    class="fixed inset-0 bg-gray-500 bg-opacity-50 transition-opacity z-[10002]"
                     v-show="isOpen"
                 ></div>
             </transition>
@@ -33,7 +33,7 @@
                 leave-to-class="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
             >
                 <div
-                    class="fixed inset-0 z-[10020] transform transition overflow-y-auto"
+                    class="fixed inset-0 z-[10002] transform transition overflow-y-auto"
                     v-if="isOpen"
                 >
                     <div class="flex min-h-full items-end justify-center p-5 sm:items-center sm:p-0">
@@ -59,7 +59,7 @@
                     </div>
                 </div>
             </transition>
-        </teleport>
+        </div>
     </script>
 
     <script type="module">
@@ -113,6 +113,8 @@
                     if (! this.isOpen) {
                         window.lockBodyScroll();
                     }
+
+                    window.dispatchEvent(new CustomEvent('overlay:opened'));
 
                     this.isOpen = true;
 
