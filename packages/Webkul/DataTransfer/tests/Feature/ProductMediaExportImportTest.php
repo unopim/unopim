@@ -8,6 +8,7 @@ use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
 use Webkul\DataTransfer\Helpers\Import;
+use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
 use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
 use Webkul\DataTransfer\Models\JobInstances;
@@ -68,9 +69,21 @@ function exportMediaRows(array $products): array
     return $rows;
 }
 
-function mediaImportJobTrack(): JobTrack
+function mediaImportJobTrack(?string $imagesDirectory = null): JobTrack
 {
-    return JobTrack::factory()->create(['action' => Import::ACTION_APPEND]);
+    (new ReflectionProperty(FieldProcessor::class, 'pathExistsCache'))->setValue(null, []);
+
+    return JobTrack::factory()->create([
+        'action'                => Import::ACTION_APPEND,
+        'images_directory_path' => $imagesDirectory,
+    ]);
+}
+
+function stageImportMedia(string $imagesDirectory, string $relativePath): void
+{
+    Storage::disk('local')->put('public/'.$imagesDirectory.'/'.$relativePath, 'binary');
+
+    Storage::disk('public')->put($imagesDirectory.'/'.$relativePath, 'binary');
 }
 
 function freshMediaImporter(): Importer
@@ -189,6 +202,88 @@ describe('product media import', function () {
             ->and($importedPath)->toContain('exported-second.jpg')
             ->and($importedPath)->toStartWith('product/'.$imported->id.'/'.$code.'/')
             ->and(Storage::disk('public')->exists($importedPath))->toBeTrue();
+    });
+
+    it('resolves a media column against the job images directory', function () {
+        $this->loginAsAdmin();
+
+        $imagesDirectory = 'import-images/product-'.uniqid();
+
+        $jobTrack = mediaImportJobTrack($imagesDirectory);
+
+        Storage::fake('local');
+        Storage::fake('public');
+
+        [$product, $code] = productWithReplacedImage();
+
+        stageImportMedia($imagesDirectory, 'staged.jpg');
+
+        $rows = exportMediaRows([$product]);
+
+        $row = collect($rows)->firstWhere('sku', $product->sku);
+
+        $row[$code] = 'staged.jpg';
+
+        $importer = freshMediaImporter();
+
+        $importer->setImport($jobTrack);
+        $importer->setErrorHelper(app(Error::class));
+
+        $validated = $row;
+
+        expect($importer->validateRow($validated, 1))->toBeTrue();
+
+        $batch = JobTrackBatch::factory()->create([
+            'data'         => [$row],
+            'job_track_id' => $jobTrack->id,
+        ]);
+
+        $importer->importBatch($batch);
+
+        $product->refresh();
+
+        $stored = $product->values['common'][$code] ?? null;
+
+        expect($stored)->toContain('staged.jpg')
+            ->and($stored)->toStartWith('product/'.$product->id.'/'.$code.'/')
+            ->and(Storage::disk('public')->exists($stored))->toBeTrue();
+    });
+
+    it('drops a media column whose file is absent from the job images directory', function () {
+        $this->loginAsAdmin();
+
+        $imagesDirectory = 'import-images/product-'.uniqid();
+
+        $jobTrack = mediaImportJobTrack($imagesDirectory);
+
+        Storage::fake('local');
+        Storage::fake('public');
+
+        [$product, $code] = productWithReplacedImage();
+
+        $stored = $product->values['common'][$code];
+
+        $rows = exportMediaRows([$product]);
+
+        $row = collect($rows)->firstWhere('sku', $product->sku);
+
+        $row[$code] = 'never-staged.jpg';
+
+        $importer = freshMediaImporter();
+
+        $importer->setImport($jobTrack);
+        $importer->setErrorHelper(app(Error::class));
+
+        $batch = JobTrackBatch::factory()->create([
+            'data'         => [$row],
+            'job_track_id' => $jobTrack->id,
+        ]);
+
+        $importer->importBatch($batch);
+
+        $product->refresh();
+
+        expect($product->values['common'][$code] ?? null)->toBe($stored);
     });
 
     it('updates the media value of an existing product on re-import', function () {
