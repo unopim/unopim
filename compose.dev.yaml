@@ -138,7 +138,7 @@ services:
     env_file: .env
     environment:
       <<: *app-environment
-      QUEUE_NAMES: "webhooks,system,completeness,default,publication"
+      QUEUE_NAMES: "webhooks,system,completeness,default,publication,dam,dam-bulk,dam-media"
     depends_on:
       <<: *app-depends
       unopim-fpm:

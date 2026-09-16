@@ -100,7 +100,7 @@ services:
     restart: unless-stopped
     environment:
       <<: *app-environment
-      QUEUE_NAMES: "${QUEUE_NAMES:-webhooks,system,completeness,default,publication}"
+      QUEUE_NAMES: "${QUEUE_NAMES:-webhooks,system,completeness,default,publication,dam,dam-bulk,dam-media}"
     depends_on:
       <<: *app-depends
       unopim:

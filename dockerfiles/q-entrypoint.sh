@@ -6,7 +6,7 @@ ROOT=/var/www/html
 source "${ROOT}/dockerfiles/lib/ensure-app-key.sh"
 source "${ROOT}/dockerfiles/lib/wait-for-setup.sh"
 
-QUEUE_NAMES="${QUEUE_NAMES:-webhooks,system,completeness,default,publication}"
+QUEUE_NAMES="${QUEUE_NAMES:-webhooks,system,completeness,default,publication,dam,dam-bulk,dam-media}"
 QUEUE_TIMEOUT="${QUEUE_TIMEOUT:-90}"
 QUEUE_TRIES="${QUEUE_TRIES:-3}"
 QUEUE_MAX_JOBS="${QUEUE_MAX_JOBS:-1000}"
