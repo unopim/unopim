@@ -13,6 +13,7 @@ use Webkul\AdminApi\ApiDataSource\Catalog\ConfigurableProductDataSource;
 use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateConfigurableProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreConfigurableProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateConfigurableProductRequest;
+use Webkul\Core\Rules\Sku;
 use Webkul\Product\Repositories\VariantStructureRepository;
 use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Type\AbstractType;
@@ -392,7 +393,7 @@ class ConfigurableProductController extends ProductController
             [
                 'variants'              => ['array'],
                 'variants.*'            => ['required', 'array'],
-                'variants.*.sku'        => ['required', 'string'],
+                'variants.*.sku'        => ['required', 'string', new Sku],
                 'variants.*.attributes' => ['required', 'array'],
             ]
         );

@@ -14,6 +14,7 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\ProductImportCsvNormalizer;
 use Webkul\AiAgent\Services\ProductWriterService;
+use Webkul\Core\Rules\Sku;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Jobs\Import\ImportTrackBatch;
 use Webkul\DataTransfer\Repositories\JobInstancesRepository;
@@ -145,9 +146,10 @@ class ImportProducts implements PimTool
                         $normalizedRow[strtolower(trim((string) $key))] = $value;
                     }
 
-                    $sku = trim((string) ($normalizedRow['sku'] ?? ''));
+                    $rawSku = (string) ($normalizedRow['sku'] ?? '');
+                    $trimmedSku = trim($rawSku);
 
-                    if ($sku === '' || $sku === '0' || ! $this->outer->validateSku($sku)) {
+                    if ($trimmedSku === '' || $trimmedSku === '0' || ! $this->outer->validateSku($rawSku)) {
                         $skippedInvalidSku[] = trans('ai-agent::app.common.import-invalid-sku-row', ['row' => $i + 2]);
 
                         continue;
@@ -427,11 +429,36 @@ class ImportProducts implements PimTool
 
     /**
      * Validate that a SKU matches the accepted format.
-     * Uses the same pattern as Webkul\Core\Rules\Sku.
+     *
+     * Invokes the rule directly rather than building a Validator (via the
+     * `validator()` helper) per call — this runs once per imported row, up
+     * to the 100,000-row cap in `handle()`, so a fresh Factory/Validator
+     * allocation per row is measurable overhead the queued DataTransfer
+     * importer's own `Sku` validation makes redundant besides.
      */
     public function validateSku(string $sku): bool
     {
-        return (bool) preg_match('/^[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/', $sku);
+        if ($sku === '') {
+            return false;
+        }
+
+        $fails = false;
+
+        $noopTranslatable = new class
+        {
+            public function translate(array $replace = [], ?string $locale = null): static
+            {
+                return $this;
+            }
+        };
+
+        (new Sku)->validate('sku', $sku, function () use (&$fails, $noopTranslatable) {
+            $fails = true;
+
+            return $noopTranslatable;
+        });
+
+        return ! $fails;
     }
 
     /**
