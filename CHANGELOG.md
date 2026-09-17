@@ -1,11 +1,31 @@
-# Unreleased
+# 3.1.1 — September 17th, 2026
 
 ## Bug fixes
 
+- Fixed a role holding `settings.roles.edit` being able to grant itself permissions its own role does not carry, a vertical privilege escalation; role create and update now reject any permission the acting administrator does not already hold.
+- Fixed MagicAI model discovery validating the provider URL and then fetching it with a client that follows redirects and re-resolves DNS, so a validated public URL could pivot to an internal host; the fetch is now pinned to the validated address and does not follow redirects.
+- Fixed the MagicAI connection test merging the unvalidated `extras` payload over the provider overrides, so `extras.url` replaced the validated endpoint and reached internal hosts with the response returned verbatim; extras can no longer override the keys the platform record owns, which also neutralises rows saved before the guard existed.
 - Fixed the SKU field rejecting valid values containing characters other than letters, numbers, hyphens, and underscores (such as `%`); a SKU is now only rejected for being blank, over 255 characters, padded with leading/trailing spaces, or containing a comma or semicolon (which break CSV import/export), both on the server and in the create-product form.
 - Extended the upload active-content scan from PDF to Office documents: `.docx`/`.pptx` packages shipping a VBA project, legacy `.doc`/`.ppt` files carrying a VBA stream, and RTF documents with auto-updating embedded objects are now rejected at save time, with the reason reported in the validation message.
 - Added a pick-time scan to the media widgets (files, gallery, image) so a rejected upload is reported as soon as it is chosen, before the form is submitted.
 - Fixed the product-edit category tree and the datagrid category filter requiring every subcategory to be ticked individually: clicking a category's folder icon now selects (or deselects) it together with every descendant in one action, resolved through a single nested-set query regardless of branch depth.
+- Fixed a product export writing a column for every attribute in the installation instead of only the ones the profile selected, contradicting the "Only the selected attributes are exported" promise in the filter's own help text.
+- Fixed a product export filtered on a category code containing an uppercase letter matching nothing and completing with an empty file and a "0 records" summary, because the exact-value keyword subfield was not being queried.
+- Fixed replacing a media value on a product or category discarding the newly uploaded file.
+- Fixed the AI Agent being unable to run on Gemini models, which have their own chat completions endpoint.
+- Fixed channel deletion failing to complete.
+- Fixed concurrent boots on a cold `storage/` aborting when two processes created the HTMLPurifier cache directory at once — CI static analysis workers, Octane workers and parallel test runs all raced the same `is_dir()`/`mkdir()` check, and the loser's warning was promoted to an exception that killed the process before the application finished booting.
+- Fixed the unsaved-changes bar closing when an edit landed before the form re-baselined, which happened with rich-text fields because their edits reach the tracker from inside an iframe.
+- Fixed the datagrid toolbar and the media upload layouts misaligning, and dropdowns staying open behind a confirmation dialog.
+- Fixed gallery MIME metadata being resolved inconsistently, and file previews not covering every supported type.
+- Fixed the tags field diverging from the shared multiselect: chip styling and metrics did not match, and the typing area could be pushed out of view.
+- Fixed the product export file name label, and restored the legacy file path labels alongside it.
+## Improvements
+
+- Made the Elasticsearch mapped field limit configurable, so installations with very wide attribute sets can raise it without patching the index definition.
+- Added support for environment defaults in the Docker configuration.
+- Completed the media translations and made the upload limits explicit in the interface.
+- Bundled the flatpickr and multiselect styles with the admin assets instead of loading them separately.
 
 # 3.1.0 — August 27th, 2026
 
