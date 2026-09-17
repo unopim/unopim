@@ -179,7 +179,15 @@ test.describe('Media download button and read-only locked media fields', () => {
       await expect(createButton).toBeEnabled({ timeout: 5000 });
       await createButton.click();
 
-      await adminPage.waitForURL(/\/admin\/catalog\/products\/edit\/(\d+)/, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      // The page is already on the parent's edit URL, so a plain pattern resolves before the child exists.
+      await adminPage.waitForURL(
+        (url) => {
+          const match = url.pathname.match(/\/admin\/catalog\/products\/edit\/(\d+)/);
+
+          return !!match && Number(match[1]) !== parentId;
+        },
+        { waitUntil: 'domcontentloaded', timeout: 30000 }
+      );
       await adminPage.waitForLoadState('networkidle').catch(() => {});
       childId = Number(adminPage.url().match(/\/edit\/(\d+)/)[1]);
       expect(childId).not.toBe(parentId);
