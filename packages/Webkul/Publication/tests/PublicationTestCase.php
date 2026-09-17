@@ -152,4 +152,30 @@ class PublicationTestCase extends TestCase
 
         return [$version, $path];
     }
+
+    /**
+     * Publishes a further version of the fixture's publication whose payload references a fresh document,
+     * superseding $previous for its locale.
+     *
+     * @return array{0: PublicationVersion, 1: string}
+     */
+    protected function republishWithDocument(PublicationVersion $previous, string $filename): array
+    {
+        $publication = $previous->publication;
+
+        $path = 'publication/'.$publication->product_id.'/'.$previous->locale->code.'/'.$filename;
+
+        Storage::disk(config('publication.asset_disk'))->put($path, '%PDF-1.4 stub '.$filename);
+
+        DocumentStubPayloadBuilder::$documentPath = $path;
+
+        $version = resolve(Publisher::class)->publish(
+            $publication->product,
+            $publication->channel,
+            $previous->locale,
+            'dpp',
+        );
+
+        return [$version, $path];
+    }
 }
