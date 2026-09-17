@@ -19,6 +19,7 @@ use Webkul\Publication\Events\PublicationReinstated;
 use Webkul\Publication\Events\PublicationWithdrawn;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Repositories\PublicationRepository;
@@ -95,13 +96,16 @@ class Publisher
 
             $current?->markSuperseded();
 
+            $release = $this->mintRelease($publication, $publishedById);
+
             $version = $publication->versions()->create([
                 'locale_id'       => $locale->id,
                 'version'         => $nextVersion,
+                'release_id'      => $release->id,
                 'payload'         => $payload,
                 'checksum'        => $checksum,
                 'is_current'      => true,
-                'published_at'    => now(),
+                'published_at'    => $release->published_at,
                 'published_by_id' => $publishedById,
             ]);
 
@@ -161,13 +165,16 @@ class Publisher
 
             $current?->markSuperseded();
 
+            $release = $this->mintRelease($publication, $publishedById);
+
             $version = $publication->versions()->create([
                 'locale_id'       => $localeId,
                 'version'         => $nextVersion,
+                'release_id'      => $release->id,
                 'payload'         => $payload,
                 'checksum'        => $source->checksum,
                 'is_current'      => true,
-                'published_at'    => now(),
+                'published_at'    => $release->published_at,
                 'published_by_id' => $publishedById,
             ]);
 
@@ -247,6 +254,21 @@ class Publisher
 
             DB::afterCommit(fn () => PublicationRedacted::dispatch($publication, $reason));
         });
+    }
+
+    /**
+     * Mints the release a newly minted version belongs to. Callers hold the publication row lock,
+     * so MAX(sequence)+1 cannot race, for the same reason version numbers cannot.
+     */
+    private function mintRelease(Publication $publication, ?int $publishedById): PublicationRelease
+    {
+        $sequence = (int) $publication->releases()->max('sequence') + 1;
+
+        return $publication->releases()->create([
+            'sequence'        => $sequence,
+            'published_at'    => now(),
+            'published_by_id' => $publishedById,
+        ]);
     }
 
     /**
