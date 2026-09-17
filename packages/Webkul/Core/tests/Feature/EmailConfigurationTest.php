@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\Cache;
 use Webkul\Core\Models\CoreConfig;
 use Webkul\Core\Providers\CoreServiceProvider;
@@ -64,6 +65,19 @@ it('leaves the environment mailer untouched when no host is configured in the ad
     applyMailOverride();
 
     expect(config('mail.default'))->toBe('log');
+});
+
+it('never applies the stored SMTP host to a mailer resolved under tests', function () {
+    CoreConfig::updateOrCreate(['code' => 'emails.configure.email_settings.mail_host'], ['value' => 'smtp.example.test']);
+
+    Cache::flush();
+
+    config(['mail.default' => 'array']);
+
+    app(MailManager::class)->mailer('array');
+
+    expect(config('mail.default'))->toBe('array')
+        ->and(config('mail.mailers.smtp.host'))->not->toBe('smtp.example.test');
 });
 
 it('keeps the stored password when the masked value is posted back', function (string $mask) {

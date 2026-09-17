@@ -61,9 +61,15 @@ class CoreServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
-        $this->app->beforeResolving(MailManager::class, function (): void {
-            $this->overrideMailConfiguration();
-        });
+        /**
+         * Not hooked under tests: the stored settings would replace the array transport the
+         * test environment forces and send real mail through the admin's SMTP host.
+         */
+        if (! $this->app->runningUnitTests()) {
+            $this->app->beforeResolving(MailManager::class, function (): void {
+                $this->overrideMailConfiguration();
+            });
+        }
 
         Event::listen('core.configuration.save.after', function (): void {
             app(RequestMemo::class)->forget(self::MAIL_CONFIGURED_KEY);
