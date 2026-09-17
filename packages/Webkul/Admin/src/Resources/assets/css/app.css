@@ -1,3 +1,5 @@
+@import "flatpickr/dist/flatpickr.css";
+@import "vue-multiselect/dist/vue-multiselect.css";
 @import "@fontsource/inter/400.css";
 @import "@fontsource/inter/500.css";
 @import "@fontsource/inter/600.css";
@@ -658,29 +660,158 @@
     @apply text-gray-400;
 }
 
+/* Dialogs render into a body-level sink with the Oxide skin's own palette, so
+   they keep the stock blue chrome and controls regardless of the admin theme. */
+body .tox .tox-dialog-wrap__backdrop {
+    @apply bg-gray-900/40;
+}
+
+.dark body .tox .tox-dialog-wrap__backdrop {
+    @apply bg-gray-900/60;
+}
+
+body .tox .tox-dialog {
+    @apply rounded-lg border border-gray-200 bg-white shadow-xl;
+}
+
+.dark body .tox .tox-dialog {
+    @apply border-cherry-600 bg-cherry-900;
+}
+
+body .tox .tox-dialog__header {
+    @apply border-b border-gray-200 bg-white px-4 py-3 text-gray-800;
+}
+
+.dark body .tox .tox-dialog__header {
+    @apply border-cherry-600 bg-cherry-900 text-white;
+}
+
+body .tox .tox-dialog__title {
+    @apply font-inter text-lg font-bold text-gray-800;
+}
+
+.dark body .tox .tox-dialog__title {
+    @apply text-white;
+}
+
+body .tox .tox-dialog__body,
+body .tox .tox-dialog__body-content {
+    @apply font-inter text-gray-800;
+}
+
+.dark body .tox .tox-dialog__body,
+.dark body .tox .tox-dialog__body-content {
+    @apply text-gray-300;
+}
+
+body .tox .tox-dialog__body-content a {
+    @apply text-unopim-primary text-primary-600 dark:text-primary-400;
+}
+
+body .tox .tox-dialog__body-nav-item {
+    @apply rounded-md border-none font-inter text-gray-600 outline-none dark:text-gray-400;
+}
+
+body .tox .tox-dialog__body-nav-item--active,
+body .tox .tox-dialog__body-nav-item:focus {
+    @apply bg-unopim-primary-muted bg-primary-100 text-unopim-primary text-primary-700 dark:bg-cherry-600 dark:text-slate-50;
+}
+
+body .tox .tox-dialog__footer {
+    @apply border-t border-gray-200 bg-white px-4 py-2.5;
+}
+
+.dark body .tox .tox-dialog__footer {
+    @apply border-cherry-600 bg-cherry-900;
+}
+
+body .tox .tox-label,
+body .tox .tox-checkbox__label {
+    @apply font-inter text-sm font-medium text-gray-800 dark:text-gray-300;
+}
+
+body .tox .tox-textfield,
+body .tox .tox-textarea,
+body .tox .tox-listbox--select,
+body .tox .tox-selectfield select,
+body .tox .tox-toolbar-textfield {
+    @apply rounded-md border border-gray-300 bg-white font-inter text-gray-800;
+}
+
+.dark body .tox .tox-textfield,
+.dark body .tox .tox-textarea,
+.dark body .tox .tox-listbox--select,
+.dark body .tox .tox-selectfield select,
+.dark body .tox .tox-toolbar-textfield {
+    @apply border-cherry-600 bg-cherry-800 text-gray-300;
+}
+
+body .tox .tox-textfield:focus,
+body .tox .tox-textarea:focus,
+body .tox .tox-listbox--select:focus,
+body .tox .tox-selectfield select:focus {
+    @apply border-unopim-primary-base border-primary-600 outline-none dark:border-primary-400;
+
+    box-shadow: 0 0 0 3px rgb(var(--c-primary-600) / 0.2);
+}
+
+body .tox .tox-checkbox__icons .tox-checkbox-icon__checked svg,
+body .tox .tox-checkbox__icons .tox-checkbox-icon__indeterminate svg {
+    fill: rgb(var(--c-primary-600));
+}
+
+body .tox .tox-collection--list .tox-collection__item--active,
+body .tox .tox-collection--list .tox-collection__item--enabled {
+    @apply bg-unopim-primary-muted bg-primary-100 text-unopim-primary text-primary-700 dark:bg-cherry-600 dark:text-slate-50;
+}
+
+body .tox .tox-dialog__footer .tox-button {
+    @apply rounded-md border border-unopim-primary border-primary-700 bg-unopim-primary-base bg-primary-600 font-inter font-semibold text-gray-50;
+}
+
+body .tox .tox-dialog__footer .tox-button:hover:not(:disabled) {
+    @apply border-unopim-primary-hover border-primary-500 bg-unopim-primary-hover bg-primary-500;
+}
+
+body .tox .tox-dialog__footer .tox-button:disabled {
+    @apply cursor-not-allowed opacity-50;
+}
+
+body .tox .tox-dialog__footer .tox-button--secondary {
+    @apply border-2 border-unopim-primary-base border-primary-600 bg-white text-unopim-primary-base text-primary-600;
+}
+
+body .tox .tox-dialog__footer .tox-button--secondary:hover:not(:disabled) {
+    @apply border-unopim-primary-hover border-primary-500 bg-unopim-primary-muted bg-primary-100 text-unopim-primary-hover text-primary-500;
+}
+
+.dark body .tox .tox-dialog__footer .tox-button--secondary {
+    @apply border-primary-400 bg-cherry-900 text-primary-200;
+}
+
+.dark body .tox .tox-dialog__footer .tox-button--secondary:hover:not(:disabled) {
+    @apply border-primary-300 bg-cherry-800 text-primary-100;
+}
+
 .multiselect__option--highlight,
 .multiselect__tag,
 .multiselect__spinner:after {
-    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
-    @apply !text-unopim-primary !text-primary-600 dark:!text-slate-50;
+    @apply bg-unopim-primary-muted bg-primary-100 text-unopim-primary text-primary-600 dark:bg-cherry-600 dark:text-slate-50;
 }
 
+/* Vendor paints "selected + highlighted" red to signal that clicking removes
+   the selection; keep the cue, on the theme surface. */
+.multiselect__option--highlight.multiselect__option--selected.multiselect__option,
 .multiselect__option--selected.multiselect__option--highlight,
 .multiselect__option--highlight:after {
-    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
-    @apply !text-unopim-primary !text-primary-600 dark:!text-slate-50;
+    @apply bg-unopim-primary-muted bg-primary-100 text-red-600 dark:bg-cherry-600 dark:text-red-600;
 }
 
-.multiselect__option--highlight {
-    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
-    @apply !text-unopim-primary !text-primary-600 dark:!text-slate-50;
-
-}
-
-.multiselect__option--highlight.multiselect__option--selected.multiselect__option,
-.multiselect__option--selected.multiselect__option--highlight {
-    @apply !bg-unopim-primary-muted !bg-primary-100 dark:!bg-cherry-600;
-    @apply !text-red-600 dark:!text-red-600;
+.multiselect__content-wrapper,
+.multiselect__tags,
+.multiselect__input,
+.multiselect__single {
+    @apply bg-white dark:border-gray-600 dark:bg-cherry-900 dark:text-slate-50 dark:hover:border-slate-300;
 }
 
 /* Focus lives on the inner search input, so ringing it would draw a second
@@ -691,21 +822,17 @@
 }
 
 .multiselect--active > .multiselect__tags {
-    @apply !border-primary-600 dark:!border-primary-400;
+    @apply border-primary-600 dark:border-primary-400;
 
     box-shadow: 0 0 0 3px rgb(var(--c-primary-600) / 0.2);
 }
 
 .multiselect__tag-icon:after {
-    @apply !text-unopim-primary !text-primary-600 dark:!bg-cherry-600 dark:!text-slate-50;
+    @apply text-unopim-primary text-primary-600 dark:bg-cherry-600 dark:text-slate-50;
 }
 
 .multiselect--active .multiselect__content-wrapper {
     z-index: 1001;
-}
-
-.multiselect__content-wrapper, .multiselect__tags, .multiselect__input, .multiselect__single {
-    @apply bg-unopim-primary-muted bg-primary-100 dark:bg-cherry-900 dark:!text-slate-50 dark:hover:border-slate-300 dark:border-gray-600;
 }
 
 /* One tag is rendered per selection, so fields backed by large sets (channel
@@ -723,6 +850,133 @@
 
 .multiselect__tags::-webkit-scrollbar-thumb {
     @apply rounded bg-gray-300 dark:bg-cherry-600;
+}
+
+/* Calendar is portalled to <body> with the library's own blue/teal palette;
+   the dark variant used to be fetched from a CDN at runtime. Both themes are
+   now driven from the admin tokens instead. */
+.flatpickr-calendar {
+    @apply rounded-lg border border-gray-200 bg-white text-gray-800 shadow-lg;
+
+    font-family: theme('fontFamily.inter');
+}
+
+.dark .flatpickr-calendar {
+    @apply border-cherry-600 bg-cherry-900 text-slate-50;
+}
+
+.flatpickr-calendar.arrowTop:before,
+.flatpickr-calendar.arrowTop:after {
+    @apply border-b-white;
+}
+
+.flatpickr-calendar.arrowBottom:before,
+.flatpickr-calendar.arrowBottom:after {
+    @apply border-t-white;
+}
+
+.dark .flatpickr-calendar.arrowTop:before,
+.dark .flatpickr-calendar.arrowTop:after {
+    @apply border-b-cherry-900;
+}
+
+.dark .flatpickr-calendar.arrowBottom:before,
+.dark .flatpickr-calendar.arrowBottom:after {
+    @apply border-t-cherry-900;
+}
+
+.flatpickr-months .flatpickr-month,
+.flatpickr-current-month .flatpickr-monthDropdown-months,
+.flatpickr-current-month input.cur-year,
+.flatpickr-weekdays,
+span.flatpickr-weekday {
+    @apply bg-transparent text-gray-800 dark:text-slate-50;
+}
+
+.flatpickr-monthDropdown-months .flatpickr-monthDropdown-month {
+    @apply bg-white text-gray-800 dark:bg-cherry-900 dark:text-slate-50;
+}
+
+.flatpickr-months .flatpickr-prev-month svg,
+.flatpickr-months .flatpickr-next-month svg {
+    @apply fill-gray-800 dark:fill-slate-50;
+}
+
+.flatpickr-months .flatpickr-prev-month:hover svg,
+.flatpickr-months .flatpickr-next-month:hover svg {
+    @apply fill-primary-600 dark:fill-primary-400;
+}
+
+.flatpickr-day {
+    @apply text-gray-800 dark:text-slate-50;
+}
+
+.flatpickr-day:hover,
+.flatpickr-day:focus {
+    @apply border-unopim-primary-muted border-primary-100 bg-unopim-primary-muted bg-primary-100 text-unopim-primary text-primary-700 dark:border-cherry-600 dark:bg-cherry-600 dark:text-slate-50;
+}
+
+.flatpickr-day.today {
+    @apply border-unopim-primary-base border-primary-600 dark:border-primary-400;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange,
+.flatpickr-day.selected:hover,
+.flatpickr-day.startRange:hover,
+.flatpickr-day.endRange:hover {
+    @apply border-unopim-primary-base border-primary-600 bg-unopim-primary-base bg-primary-600 text-gray-50;
+}
+
+.flatpickr-day.inRange,
+.flatpickr-day.inRange:hover {
+    @apply border-unopim-primary-soft border-primary-50 bg-unopim-primary-soft bg-primary-50 text-unopim-primary text-primary-700 dark:border-cherry-600 dark:bg-cherry-600 dark:text-slate-50;
+
+    box-shadow: -5px 0 0 rgb(var(--c-primary-50)), 5px 0 0 rgb(var(--c-primary-50));
+}
+
+.dark .flatpickr-day.inRange,
+.dark .flatpickr-day.inRange:hover {
+    box-shadow: -5px 0 0 theme('colors.cherry.600'), 5px 0 0 theme('colors.cherry.600');
+}
+
+.flatpickr-day.prevMonthDay,
+.flatpickr-day.nextMonthDay,
+.flatpickr-day.flatpickr-disabled,
+.flatpickr-day.flatpickr-disabled:hover {
+    @apply border-transparent bg-transparent text-gray-400 dark:text-gray-500;
+}
+
+.flatpickr-weekwrapper .flatpickr-weekday,
+.flatpickr-weekwrapper span.flatpickr-day,
+.flatpickr-weekwrapper span.flatpickr-day:hover {
+    @apply bg-transparent text-gray-400 dark:text-gray-500;
+}
+
+.flatpickr-time input,
+.flatpickr-time .flatpickr-time-separator,
+.flatpickr-time .flatpickr-am-pm {
+    @apply bg-transparent text-gray-800 dark:text-slate-50;
+}
+
+.flatpickr-time input:hover,
+.flatpickr-time input:focus,
+.flatpickr-time .flatpickr-am-pm:hover,
+.flatpickr-time .flatpickr-am-pm:focus {
+    @apply bg-unopim-primary-muted bg-primary-100 dark:bg-cherry-600;
+}
+
+.numInputWrapper:hover {
+    @apply bg-unopim-primary-soft bg-primary-50 dark:bg-cherry-600;
+}
+
+.numInputWrapper span.arrowUp:after {
+    @apply border-b-gray-600 dark:border-b-slate-50;
+}
+
+.numInputWrapper span.arrowDown:after {
+    @apply border-t-gray-600 dark:border-t-slate-50;
 }
 
 /**
