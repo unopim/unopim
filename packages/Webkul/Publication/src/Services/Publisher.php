@@ -19,6 +19,7 @@ use Webkul\Publication\Events\PublicationReinstated;
 use Webkul\Publication\Events\PublicationWithdrawn;
 use Webkul\Publication\Exceptions\InvalidPublicationTransitionException;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 use Webkul\Publication\Registry\PublicationTypeRegistry;
 use Webkul\Publication\Repositories\PublicationRepository;
@@ -95,13 +96,16 @@ class Publisher
 
             $current?->markSuperseded();
 
+            $release = $this->mintRelease($publication, $publishedById);
+
             $version = $publication->versions()->create([
                 'locale_id'       => $locale->id,
                 'version'         => $nextVersion,
+                'release_id'      => $release->id,
                 'payload'         => $payload,
                 'checksum'        => $checksum,
                 'is_current'      => true,
-                'published_at'    => now(),
+                'published_at'    => $release->published_at,
                 'published_by_id' => $publishedById,
             ]);
 
@@ -161,13 +165,16 @@ class Publisher
 
             $current?->markSuperseded();
 
+            $release = $this->mintRelease($publication, $publishedById);
+
             $version = $publication->versions()->create([
                 'locale_id'       => $localeId,
                 'version'         => $nextVersion,
+                'release_id'      => $release->id,
                 'payload'         => $payload,
                 'checksum'        => $source->checksum,
                 'is_current'      => true,
-                'published_at'    => now(),
+                'published_at'    => $release->published_at,
                 'published_by_id' => $publishedById,
             ]);
 
@@ -217,7 +224,12 @@ class Publisher
     }
 
     /**
-     * GDPR Art. 17 erasure: redacts every current version and flips the publication to Redacted (sticky).
+     * GDPR Art. 17 erasure: redacts every not-yet-redacted version of the publication, superseded ones
+     * included, and flips the publication to Redacted (sticky).
+     *
+     * A superseded version is still a sealed record of the same data. Redacting only the current ones
+     * left every earlier payload readable in the database, so the erasure held only for as long as
+     * nothing ever read history. Versions redacted individually earlier are left as they are.
      */
     public function redactAll(Publication $publication, int $redactedById, string $reason): void
     {
@@ -231,15 +243,15 @@ class Publisher
                 );
             }
 
-            $currentVersions = $publication->versions()->where('is_current', true)->get();
+            $versions = $publication->versions()->whereNull('redacted_at')->get();
 
-            if ($currentVersions->isEmpty()) {
+            if ($versions->isEmpty()) {
                 throw new InvalidPublicationTransitionException(
-                    'Publication '.$publication->id.' has no current versions to redact.'
+                    'Publication '.$publication->id.' has no versions left to redact.'
                 );
             }
 
-            foreach ($currentVersions as $version) {
+            foreach ($versions as $version) {
                 $version->redact($redactedById, $reason);
             }
 
@@ -247,6 +259,21 @@ class Publisher
 
             DB::afterCommit(fn () => PublicationRedacted::dispatch($publication, $reason));
         });
+    }
+
+    /**
+     * Mints the release a newly minted version belongs to. Callers hold the publication row lock,
+     * so MAX(sequence)+1 cannot race, for the same reason version numbers cannot.
+     */
+    private function mintRelease(Publication $publication, ?int $publishedById): PublicationRelease
+    {
+        $sequence = (int) $publication->releases()->max('sequence') + 1;
+
+        return $publication->releases()->create([
+            'sequence'        => $sequence,
+            'published_at'    => now(),
+            'published_by_id' => $publishedById,
+        ]);
     }
 
     /**
