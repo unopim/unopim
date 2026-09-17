@@ -51,5 +51,11 @@ return [
             'heading' => 'هذا الجواز لم يعد متاحًا.',
             'notice'  => 'يُحتفظ بهذا السجل لأغراض الشفافية، لكنه لم يعد يُحدَّث بشكل نشط.',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
