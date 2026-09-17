@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ms',
   '\n' +
   '<p>Untuk bergerak dari satu bahagian UI ke yang sebelumnya, tekan <strong>Shift+Tab</strong>.</p>\n' +
   '\n' +
-  '<p>Tertib <strong>Tab</strong> bahagian UI ini ialah:\n' +
+  '<p>Tertib <strong>Tab</strong> bahagian UI ini ialah:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Bar menu</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ms',
   '<p>Jika bahagian UI tidak wujud, ia dilangkau.</p>\n' +
   '\n' +
   '<p>Jika pengaki mempunyai fokus navigasi papan kekunci dan tiada bar sisi kelihatan, menekan <strong>Shift+Tab</strong>\n' +
-  '  akan mengalihkan fokus ke kumpulan bar alat pertama, bukannya yang terakhir.\n' +
+  '  akan mengalihkan fokus ke kumpulan bar alat pertama, bukannya yang terakhir.</p>\n' +
   '\n' +
   '<h1>Navigasi dalam bahagian UI</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ms',
   '  <li>Laluan elemen dalam pengaki.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Kekunci anak panah <strong>Bawah</strong> dan <strong>Atas</strong>\n' +
+  '<p>Kekunci anak panah <strong>Bawah</strong> dan <strong>Atas</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>bergerak antara item menu dalam menu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ms',
   '\n' +
   '<p>Kekunci <strong>Anak Panah</strong> berkitar dalam bahagian UI difokuskan.</p>\n' +
   '\n' +
-  '<p>Untuk menutup menu buka, submenu terbuka atau menu timbul terbuka, tekan kekunci <strong>Esc</strong>.\n' +
+  '<p>Untuk menutup menu buka, submenu terbuka atau menu timbul terbuka, tekan kekunci <strong>Esc</strong>.</p>\n' +
   '\n' +
   "<p>Jika fokus semasa berada di bahagian 'atas' bahagian UI tertentu, menekan kekunci <strong>Esc</strong> juga akan keluar daripada\n" +
   '  navigasi papan kekunci sepenuhnya.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ms',
   '<h1>Laksanakan item menu atau butang bar alat</h1>\n' +
   '\n' +
   '<p>Apabila item menu atau butang bar alat yang diinginkan diserlahkan, tekan <strong>Return</strong>, <strong>Enter</strong>,\n' +
-  '  atau <strong>bar Space</strong> untuk melaksanakan item.\n' +
+  '  atau <strong>bar Space</strong> untuk melaksanakan item.</p>\n' +
   '\n' +
   '<h1>Navigasi ke dialog tidak bertab</h1>\n' +
   '\n' +

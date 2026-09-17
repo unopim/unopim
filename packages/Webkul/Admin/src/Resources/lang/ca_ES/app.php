@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'Sense resultats',
                 'search' => 'Cerca',
             ],
+            'tags'            => [
+                'placeholder'     => 'Escriviu o enganxeu valors separats per comes o salts de línia',
+                'remove'          => 'Elimina :value',
+                'clear-all'       => 'Esborra-ho tot',
+                'tag-placeholder' => 'Premeu Retorn per afegir',
+            ],
             'ajax-error'      => 'Alguna cosa ha anat malament en desar. Torneu-ho a provar.',
             'file-uploader'   => [
                 'upload-cta'  => 'Fes clic per pujar',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'Solo se permiten archivos de vídeo (.mp4, .mov, .ogg ..)',
             ],
             'files' => [
-                'add-file-btn'      => 'Añadir archivo',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Solo se permiten archivos pdf',
+                'add-file-btn'        => 'Añadir archivo',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Solo se permiten archivos pdf',
+                'preview-unavailable' => 'La previsualització no està disponible per a aquest tipus de fitxer.',
             ],
         ],
         'tinymce' => [

@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Ничего не найдено',
                 'search' => 'Поиск',
             ],
+            'tags'            => [
+                'placeholder'     => 'Введите или вставьте значения, разделяя их запятыми или переносами строк',
+                'remove'          => 'Удалить :value',
+                'clear-all'       => 'Очистить всё',
+                'tag-placeholder' => 'Нажмите Enter, чтобы добавить',
+            ],
             'ajax-error'      => 'Произошла ошибка при сохранении. Пожалуйста, попробуйте снова.',
             'file-uploader'   => [
                 'upload-cta'  => 'Нажмите для загрузки',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Разрешены только файлы видео (.mp4, .mov, .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => 'Добавить файл',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Разрешены только файлы PDF',
+                'add-file-btn'        => 'Добавить файл',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Разрешены только файлы PDF',
+                'preview-unavailable' => 'Предварительный просмотр недоступен для этого типа файла.',
             ],
         ],
         'tinymce' => [

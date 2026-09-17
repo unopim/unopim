@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'कोई परिणाम नहीं मिला',
                 'search' => 'खोजें',
             ],
+            'tags'            => [
+                'placeholder'     => 'मान टाइप करें या चिपकाएँ, अल्पविराम या नई पंक्ति से अलग करें',
+                'remove'          => ':value हटाएँ',
+                'clear-all'       => 'सभी हटाएँ',
+                'tag-placeholder' => 'जोड़ने के लिए Enter दबाएँ',
+            ],
             'ajax-error'      => 'सहेजते समय कुछ गलत हो गया। कृपया पुनः प्रयास करें।',
             'file-uploader'   => [
                 'upload-cta'  => 'अपलोड करने के लिए क्लिक करें',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'केवल वीडियो फ़ाइलें (.mp4, .mov, .ogg ..) की अनुमति है।',
             ],
             'files' => [
-                'add-file-btn'      => 'फ़ाइल जोड़ें',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'केवल पीडीएफ फ़ाइलों की अनुमति है',
+                'add-file-btn'        => 'फ़ाइल जोड़ें',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'केवल पीडीएफ फ़ाइलों की अनुमति है',
+                'preview-unavailable' => 'इस प्रकार की फ़ाइल का पूर्वावलोकन उपलब्ध नहीं है।',
             ],
         ],
         'tinymce' => [

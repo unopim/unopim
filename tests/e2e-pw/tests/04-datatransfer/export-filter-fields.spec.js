@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, generateUid, clickSaveAndExpect } = require('../../utils/helpers');
+const { navigateTo, generateUid, clickSaveAndExpect, openFilterDrawer } = require('../../utils/helpers');
 
 const filter = (page, name) => page.locator(`[name="filters[${name}]"]`);
 
@@ -166,7 +166,7 @@ test.describe('Export filter fields — reusable input components', () => {
 
   test('datagrid column filters render through the shared field component', async ({ adminPage }) => {
     await navigateTo(adminPage, 'exports');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
 
     // Column filters render via the shared component but sit collapsed; assert shape, not visibility.
     const codeFilter = adminPage.locator('input[name="code"]');

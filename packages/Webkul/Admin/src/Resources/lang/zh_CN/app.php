@@ -2488,6 +2488,12 @@ return [
                 'empty'  => '未找到结果',
                 'search' => '搜索',
             ],
+            'tags'            => [
+                'placeholder'     => '输入或粘贴值，使用逗号或换行分隔',
+                'remove'          => '移除 :value',
+                'clear-all'       => '全部清除',
+                'tag-placeholder' => '按 Enter 键添加',
+            ],
             'ajax-error'      => '保存时出现问题。请重试。',
             'file-uploader'   => [
                 'upload-cta'  => '点击上传',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => '仅允许视频文件（.mp4，.mov，.ogg ..）。',
             ],
             'files' => [
-                'add-file-btn'      => '添加文件',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => '仅允许PDF文件',
+                'add-file-btn'        => '添加文件',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => '仅允许PDF文件',
+                'preview-unavailable' => '此文件类型不支持预览。',
             ],
         ],
         'tinymce' => [

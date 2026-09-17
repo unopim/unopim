@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Нічого не знайдено',
                 'search' => 'Пошук',
             ],
+            'tags'            => [
+                'placeholder'     => 'Введіть або вставте значення, розділені комами чи новими рядками',
+                'remove'          => 'Вилучити :value',
+                'clear-all'       => 'Очистити все',
+                'tag-placeholder' => 'Натисніть Enter, щоб додати',
+            ],
             'ajax-error'      => 'Під час збереження сталася помилка. Будь ласка, спробуйте ще раз.',
             'file-uploader'   => [
                 'upload-cta'  => 'Натисніть, щоб завантажити',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Дозволені тільки відео файли (.mp4, .mov, .ogg ..)',
             ],
             'files' => [
-                'add-file-btn'      => 'Додати файл',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Дозволені тільки pdf файли',
+                'add-file-btn'        => 'Додати файл',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Дозволені тільки pdf файли',
+                'preview-unavailable' => 'Попередній перегляд недоступний для цього типу файлу.',
             ],
         ],
         'tinymce' => [

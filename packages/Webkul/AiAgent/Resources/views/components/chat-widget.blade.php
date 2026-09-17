@@ -558,6 +558,9 @@ body.ap-panel-open #app { contain: paint; }
 /* Lift the FAB above the sticky unsaved-changes save bar (bottom-0, ~60px tall)
    so it never overlaps the Save button. Body class set by v-unsaved-changes. */
 body.unsaved-bar-open .ap-fab { bottom: 84px; }
+body.datagrid-bar-open .ap-fab { bottom: 88px; }
+
+body.overlay-open .ap-fab { display: none; }
 
 /* Tablet & mobile: full-screen overlay above navbar */
 @media (max-width: 1024px) {

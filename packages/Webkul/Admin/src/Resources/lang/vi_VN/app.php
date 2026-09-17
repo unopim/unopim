@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Không có kết quả',
                 'search' => 'Tìm kiếm',
             ],
+            'tags'            => [
+                'placeholder'     => 'Nhập hoặc dán các giá trị, phân tách bằng dấu phẩy hoặc dòng mới',
+                'remove'          => 'Xóa :value',
+                'clear-all'       => 'Xóa tất cả',
+                'tag-placeholder' => 'Nhấn Enter để thêm',
+            ],
             'ajax-error'      => 'Đã xảy ra lỗi khi lưu. Vui lòng thử lại.',
             'file-uploader'   => [
                 'upload-cta'  => 'Nhấp để tải lên',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Chỉ cho phép các tệp video (.mp4, .mov, .ogg, ..)',
             ],
             'files' => [
-                'add-file-btn'      => 'Thêm tệp',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Chỉ cho phép các tệp pdf',
+                'add-file-btn'        => 'Thêm tệp',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Chỉ cho phép các tệp pdf',
+                'preview-unavailable' => 'Không thể xem trước loại tệp này.',
             ],
         ],
         'tinymce' => [

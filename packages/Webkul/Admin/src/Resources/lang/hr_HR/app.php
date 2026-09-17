@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'Nema rezultata',
                 'search' => 'Pretraži',
             ],
+            'tags'            => [
+                'placeholder'     => 'Upišite ili zalijepite vrijednosti odvojene zarezima ili novim redovima',
+                'remove'          => 'Ukloni :value',
+                'clear-all'       => 'Očisti sve',
+                'tag-placeholder' => 'Pritisnite Enter za dodavanje',
+            ],
             'ajax-error'      => 'Nešto je pošlo po zlu prilikom spremanja. Pokušajte ponovno.',
             'file-uploader'   => [
                 'upload-cta'  => 'Kliknite za učitavanje',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'Dozvoljeni su samo video datoteke (.mp4, .mov, .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => 'Dodaj datoteku',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Dozvoljeni su samo PDF datoteke',
+                'add-file-btn'        => 'Dodaj datoteku',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Dozvoljeni su samo PDF datoteke',
+                'preview-unavailable' => 'Pretpregled nije dostupan za ovu vrstu datoteke.',
             ],
         ],
         'tinymce' => [

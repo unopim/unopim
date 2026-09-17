@@ -2485,6 +2485,12 @@ return [
                 'empty'  => '結果がありません',
                 'search' => '検索',
             ],
+            'tags'            => [
+                'placeholder'     => '値を入力するか、カンマまたは改行で区切って貼り付けてください',
+                'remove'          => ':value を削除',
+                'clear-all'       => 'すべてクリア',
+                'tag-placeholder' => 'Enter キーで追加',
+            ],
             'ajax-error'      => '保存中に問題が発生しました。もう一度お試しください。',
             'file-uploader'   => [
                 'upload-cta'  => 'クリックしてアップロード',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'ビデオ ファイル (.mp4、.mov、.ogg など) のみが許可されます。',
             ],
             'files' => [
-                'add-file-btn'      => 'ファイルを追加',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'pdf ファイルのみ許可されます',
+                'add-file-btn'        => 'ファイルを追加',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'pdf ファイルのみ許可されます',
+                'preview-unavailable' => 'この種類のファイルはプレビューできません。',
             ],
         ],
         'tinymce' => [

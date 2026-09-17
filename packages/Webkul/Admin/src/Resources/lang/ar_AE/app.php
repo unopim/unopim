@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'لا توجد نتائج',
                 'search' => 'بحث',
             ],
+            'tags'            => [
+                'placeholder'     => 'اكتب القيم أو الصقها مفصولة بفواصل أو أسطر جديدة',
+                'remove'          => 'إزالة :value',
+                'clear-all'       => 'مسح الكل',
+                'tag-placeholder' => 'اضغط Enter للإضافة',
+            ],
             'ajax-error'      => 'حدث خطأ ما أثناء الحفظ. يرجى المحاولة مرة أخرى.',
             'file-uploader'   => [
                 'upload-cta'  => 'انقر للتحميل',
@@ -2781,9 +2787,10 @@ return [
                 'not-allowed-error' => 'يُسمح فقط بملفات الفيديو (.mp4، .mov، .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => 'اضف ملف',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'يسمح فقط بملفات pdf',
+                'add-file-btn'        => 'اضف ملف',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'يسمح فقط بملفات pdf',
+                'preview-unavailable' => 'المعاينة غير متاحة لهذا النوع من الملفات.',
             ],
         ],
         'tinymce' => [

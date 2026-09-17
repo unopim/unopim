@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'Tidak ada hasil',
                 'search' => 'Cari',
             ],
+            'tags'            => [
+                'placeholder'     => 'Ketik atau tempel nilai yang dipisahkan koma atau baris baru',
+                'remove'          => 'Hapus :value',
+                'clear-all'       => 'Hapus semua',
+                'tag-placeholder' => 'Tekan Enter untuk menambahkan',
+            ],
             'ajax-error'      => 'Terjadi kesalahan saat menyimpan. Silakan coba lagi.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik untuk mengunggah',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'Hanya file video (.mp4, .mov, .ogg ..) yang diizinkan.',
             ],
             'files' => [
-                'add-file-btn'      => 'Tambah berkas',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Hanya file PDF yang diizinkan',
+                'add-file-btn'        => 'Tambah berkas',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Hanya file PDF yang diizinkan',
+                'preview-unavailable' => 'Pratinjau tidak tersedia untuk jenis berkas ini.',
             ],
         ],
         'tinymce' => [

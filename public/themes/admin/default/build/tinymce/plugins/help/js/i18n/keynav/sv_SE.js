@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.sv_SE',
   '\n' +
   '<p>Flytta från ett UI-avsnitt till det föregående genom att trycka på <strong>Skift+Tabb</strong>.</p>\n' +
   '\n' +
-  '<p><strong>Tabb</strong>-ordningen för dessa UI-avsnitt är:\n' +
+  '<p><strong>Tabb</strong>-ordningen för dessa UI-avsnitt är:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Menyrad</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.sv_SE',
   '<p>Om ett UI-avsnitt inte finns hoppas det över.</p>\n' +
   '\n' +
   '<p>Om sidfoten har fokus på tangentbordsnavigering, och det inte finns någon synlig sidoruta, flyttas fokus till den första verktygsradsgruppen\n' +
-  '  när du trycker på <strong>Skift+Tabb</strong>, inte till den sista.\n' +
+  '  när du trycker på <strong>Skift+Tabb</strong>, inte till den sista.</p>\n' +
   '\n' +
   '<h1>Navigera i UI-avsnitt</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.sv_SE',
   '  <li>flytta mellan objekt i sidfotens elementsökväg.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p><strong>Nedpil</strong> och <strong>uppil</strong>\n' +
+  '<p><strong>Nedpil</strong> och <strong>uppil</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>flytta mellan menyalternativ på en meny.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.sv_SE',
   '\n' +
   '<p><strong>Piltangenterna</strong> cirkulerar inom det fokuserade UI-avsnittet.</p>\n' +
   '\n' +
-  '<p>Tryck på <strong>Esc</strong>-tangenten om du vill stänga en öppen meny, undermeny eller popup-meny.\n' +
+  '<p>Tryck på <strong>Esc</strong>-tangenten om du vill stänga en öppen meny, undermeny eller popup-meny.</p>\n' +
   '\n' +
   '<p>Om det aktuella fokuset är högst upp i ett UI-avsnitt avlutas även tangentbordsnavigeringen helt när\n' +
   '  du trycker på <strong>Esc</strong>-tangenten.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.sv_SE',
   '<h1>Köra ett menyalternativ eller en verktygfältsknapp</h1>\n' +
   '\n' +
   '<p>När menyalternativet eller verktygsradsknappen är markerad trycker du på <strong>Retur</strong>, <strong>Enter</strong>\n' +
-  '  eller <strong>blanksteg</strong> för att köra alternativet.\n' +
+  '  eller <strong>blanksteg</strong> för att köra alternativet.</p>\n' +
   '\n' +
   '<h1>Navigera i dialogrutor utan flikar</h1>\n' +
   '\n' +

@@ -114,6 +114,8 @@
                         window.lockBodyScroll();
                     }
 
+                    window.dispatchEvent(new CustomEvent('overlay:opened'));
+
                     this.isOpen = true;
 
                     this.title = title;

@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'Keine Ergebnisse',
                 'search' => 'Suchen',
             ],
+            'tags'            => [
+                'placeholder'     => 'Werte eingeben oder einfügen, getrennt durch Kommas oder Zeilenumbrüche',
+                'remove'          => ':value entfernen',
+                'clear-all'       => 'Alle entfernen',
+                'tag-placeholder' => 'Zum Hinzufügen Enter drücken',
+            ],
             'ajax-error'      => 'Beim Speichern ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.',
             'file-uploader'   => [
                 'upload-cta'  => 'Zum Hochladen klicken',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'Nur Videodateien (.mp4, .mov, .ogg ..) sind zulässig.',
             ],
             'files' => [
-                'add-file-btn'      => 'Datei hinzufügen',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Nur PDF-Dateien sind zulässig',
+                'add-file-btn'        => 'Datei hinzufügen',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Nur PDF-Dateien sind zulässig',
+                'preview-unavailable' => 'Für diesen Dateityp ist keine Vorschau verfügbar.',
             ],
         ],
         'tinymce' => [

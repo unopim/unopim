@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { openFilterDrawer } = require('../../utils/helpers');
 
 test.describe('UnoPim Measurement Feature', () => {
 
@@ -378,11 +379,8 @@ test.describe('UnoPim Measurement Feature', () => {
 
         test('TC10 - Filter functionality loads', async ({ adminPage }) => {
             await goToFamilies(adminPage);
-            const filterBtn = adminPage.getByText(/Filter|filter/).first();
-            if (await filterBtn.isVisible()) {
-                await filterBtn.click();
-                await adminPage.waitForTimeout(500);
-            }
+            await openFilterDrawer(adminPage);
+            await adminPage.waitForTimeout(500);
         });
     });
 

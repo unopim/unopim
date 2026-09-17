@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Inga resultat',
                 'search' => 'Sök',
             ],
+            'tags'            => [
+                'placeholder'     => 'Skriv eller klistra in värden separerade med kommatecken eller nya rader',
+                'remove'          => 'Ta bort :value',
+                'clear-all'       => 'Rensa alla',
+                'tag-placeholder' => 'Tryck på Enter för att lägga till',
+            ],
             'ajax-error'      => 'Något gick fel när det skulle sparas. Försök igen.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klicka för att ladda upp',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Endast videofiler (.mp4, .mov, .ogg ..) är tillåtna.',
             ],
             'files' => [
-                'add-file-btn'      => 'Lägg Till Fil',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Endast PDF-filer är tillåtna',
+                'add-file-btn'        => 'Lägg Till Fil',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Endast PDF-filer är tillåtna',
+                'preview-unavailable' => 'Förhandsvisning är inte tillgänglig för den här filtypen.',
             ],
         ],
         'tinymce' => [

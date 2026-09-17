@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'No results found',
                 'search' => 'Search',
             ],
+            'tags'            => [
+                'placeholder'     => 'Type or paste values, separated by commas or new lines',
+                'remove'          => 'Remove :value',
+                'clear-all'       => 'Clear all',
+                'tag-placeholder' => 'Press Enter to add',
+            ],
             'ajax-error'      => 'Something went wrong while saving. Please try again.',
             'file-uploader'   => [
                 'upload-cta'  => 'Click to upload',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'Only video files (.mp4, .mov, .ogg ..) are allowed.',
             ],
             'files' => [
-                'add-file-btn'      => 'Add File',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Only PDF files are allowed',
+                'add-file-btn'        => 'Add File',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Only PDF files are allowed',
+                'preview-unavailable' => 'Preview is not available for this file type.',
             ],
         ],
         'tinymce' => [

@@ -2488,6 +2488,12 @@ return [
                 'empty'  => '找不到結果',
                 'search' => '搜尋',
             ],
+            'tags'            => [
+                'placeholder'     => '輸入或貼上值，使用逗號或換行分隔',
+                'remove'          => '移除 :value',
+                'clear-all'       => '全部清除',
+                'tag-placeholder' => '按 Enter 鍵新增',
+            ],
             'ajax-error'      => '儲存時發生問題。請再試一次。',
             'file-uploader'   => [
                 'upload-cta'  => '點擊上傳',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => '僅允許視頻文件 (.mp4, .mov, .ogg ..)。',
             ],
             'files' => [
-                'add-file-btn'      => '添加文件',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => '僅允許pdf文件',
+                'add-file-btn'        => '添加文件',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => '僅允許pdf文件',
+                'preview-unavailable' => '此檔案類型不支援預覽。',
             ],
         ],
         'tinymce' => [

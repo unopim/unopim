@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Үр дүн олдсонгүй',
                 'search' => 'Хайх',
             ],
+            'tags'            => [
+                'placeholder'     => 'Утгуудыг таслал эсвэл шинэ мөрөөр тусгаарлан бичих эсвэл буулгана уу',
+                'remove'          => ':value-г хасах',
+                'clear-all'       => 'Бүгдийг арилгах',
+                'tag-placeholder' => 'Нэмэхийн тулд Enter дарна уу',
+            ],
             'ajax-error'      => 'Хадгалах явцад алдаа гарлаа. Дахин оролдоно уу.',
             'file-uploader'   => [
                 'upload-cta'  => 'Дарж байршуулах',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Зөвхөн видео файлууд (.mp4, .mov, .mov, .mov,.) Зөвшөөрнө ..',
             ],
             'files' => [
-                'add-file-btn'      => 'Нэмэх',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Зөвхөн PDF файлуудыг зөвшөөрдөг',
+                'add-file-btn'        => 'Нэмэх',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Зөвхөн PDF файлуудыг зөвшөөрдөг',
+                'preview-unavailable' => 'Энэ төрлийн файлыг урьдчилан харах боломжгүй.',
             ],
         ],
         'tinymce' => [

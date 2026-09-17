@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Geen resultaten',
                 'search' => 'Zoeken',
             ],
+            'tags'            => [
+                'placeholder'     => 'Typ of plak waarden, gescheiden door komma’s of nieuwe regels',
+                'remove'          => ':value verwijderen',
+                'clear-all'       => 'Alles wissen',
+                'tag-placeholder' => 'Druk op Enter om toe te voegen',
+            ],
             'ajax-error'      => 'Er is iets misgegaan tijdens het opslaan. Probeer het opnieuw.',
             'file-uploader'   => [
                 'upload-cta'  => 'Klik om te uploaden',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Alleen videobestanden zijn toegestaan (.mp4, .mov, .ogg, enz.).',
             ],
             'files' => [
-                'add-file-btn'      => 'Bestand toevoegen',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Alleen PDF-bestanden zijn toegestaan.',
+                'add-file-btn'        => 'Bestand toevoegen',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Alleen PDF-bestanden zijn toegestaan.',
+                'preview-unavailable' => 'Er is geen voorbeeld beschikbaar voor dit bestandstype.',
             ],
         ],
         'tinymce' => [

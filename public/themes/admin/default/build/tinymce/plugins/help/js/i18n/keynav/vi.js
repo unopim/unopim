@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.vi',
   '\n' +
   '<p>Để di chuyển từ một phần UI về phần trước đó, ấn <strong>Shift+Tab</strong>.</p>\n' +
   '\n' +
-  '<p>Thứ tự <strong>Tab</strong> của các phần UI này như sau:\n' +
+  '<p>Thứ tự <strong>Tab</strong> của các phần UI này như sau:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Thanh menu</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.vi',
   '<p>Nếu người dùng không thấy một phần UI, thì có nghĩa phần đó bị bỏ qua.</p>\n' +
   '\n' +
   '<p>Nếu ở chân trang có tính năng tập trung điều hướng bàn phím, mà không có thanh bên nào hiện hữu, thao tác ấn <strong>Shift+Tab</strong>\n' +
-  '  sẽ chuyển hướng tập trung vào nhóm thanh công cụ đầu tiên, không phải cuối cùng.\n' +
+  '  sẽ chuyển hướng tập trung vào nhóm thanh công cụ đầu tiên, không phải cuối cùng.</p>\n' +
   '\n' +
   '<h1>Di chuyển qua lại trong các phần UI</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.vi',
   '  <li>di chuyển giữa các mục trong đường dẫn phần tử của chân trang.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Các phím mũi tên <strong>Hướng xuống</strong> và <strong>Hướng lên</strong>\n' +
+  '<p>Các phím mũi tên <strong>Hướng xuống</strong> và <strong>Hướng lên</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>di chuyển giữa các mục menu trong menu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.vi',
   '\n' +
   '<p>Các phím <strong>mũi tên</strong> xoay vòng trong một phần UI tập trung.</p>\n' +
   '\n' +
-  '<p>Để đóng một menu mở, một menu phụ đang mở, hoặc một menu dạng bật lên đang mở, hãy ấn phím <strong>Esc</strong>.\n' +
+  '<p>Để đóng một menu mở, một menu phụ đang mở, hoặc một menu dạng bật lên đang mở, hãy ấn phím <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Nếu trọng tâm hiện tại là ở phần “đầu” của một phần UI cụ thể, thao tác ấn phím <strong>Esc</strong> cũng sẽ thoát\n' +
   '  toàn bộ phần điều hướng bàn phím.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.vi',
   '<h1>Thực hiện chức năng của một mục menu hoặc nút thanh công cụ</h1>\n' +
   '\n' +
   '<p>Khi mục menu hoặc nút thanh công cụ muốn dùng được tô sáng, hãy ấn <strong>Return</strong>, <strong>Enter</strong>,\n' +
-  '  hoặc <strong>Phím cách</strong> để thực hiện chức năng mục đó.\n' +
+  '  hoặc <strong>Phím cách</strong> để thực hiện chức năng mục đó.</p>\n' +
   '\n' +
   '<h1>Điều hướng giữa các hộp thoại không có nhiều tab</h1>\n' +
   '\n' +

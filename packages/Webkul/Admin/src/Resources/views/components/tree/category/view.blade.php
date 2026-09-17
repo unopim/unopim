@@ -192,6 +192,10 @@
                     type: [Number, String],
                     default: 0
                 },
+                expandRoots: {
+                    type: Boolean,
+                    default: false
+                },
                 showToolbar: {
                     type: Boolean,
                     default: false
@@ -303,6 +307,10 @@
             mounted() {
                 this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
                 this.$emitter.on('form-saved', this.commitValues);
+
+                if (this.expandRoots) {
+                    this.nodes.filter(node => node.level === 1).forEach(node => node.expandBranch());
+                }
             },
 
             beforeUnmount() {

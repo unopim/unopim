@@ -3,7 +3,64 @@
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Webkul\Core\Rules\FileMimeExtensionMatch;
 use Webkul\Core\Rules\FileOrImageValidValue;
+
+it('accepts matching JPEG aliases for uploads and existing media', function (string $extension) {
+    Storage::fake(config('filesystems.default'));
+
+    $image = UploadedFile::fake()->image('photo.jpg');
+    $file = new UploadedFile($image->getRealPath(), 'photo.'.$extension, test: true);
+    $path = 'product/25/photo/photo.'.$extension;
+    Storage::put($path, file_get_contents($image->getRealPath()));
+
+    $rule = new FileOrImageValidValue(
+        isImage: true,
+        allowedMimes: [strtolower($extension)],
+        allowedExtensions: [strtolower($extension)],
+        allowedPathPrefixes: ['product/25/photo'],
+    );
+
+    expect(Validator::make(['image' => $file], ['image' => [$rule]])->passes())->toBeTrue()
+        ->and(Validator::make(['image' => $path], ['image' => [$rule]])->passes())->toBeTrue()
+        ->and(Validator::make(['image' => $file], ['image' => [new FileMimeExtensionMatch]])->passes())->toBeTrue();
+})->with(['jpg', 'jpeg', 'jfif', 'jif', 'JPG', 'JFIF']);
+
+it('accepts both TIFF extensions with matching content', function (string $extension) {
+    $file = UploadedFile::fake()->create('photo.'.$extension, 1, 'image/tiff');
+
+    $validator = Validator::make(['image' => $file], [
+        'image' => [new FileOrImageValidValue(isImage: true, allowedMimes: [$extension], allowedExtensions: [$extension])],
+    ]);
+
+    expect($validator->passes())->toBeTrue();
+})->with(['tif', 'tiff']);
+
+it('does not broaden a configured extension allowlist to JPEG aliases', function () {
+    $image = UploadedFile::fake()->image('photo.jpg');
+    $file = new UploadedFile($image->getRealPath(), 'photo.jfif', test: true);
+
+    $validator = Validator::make(['image' => $file], [
+        'image' => [new FileOrImageValidValue(isImage: true, allowedExtensions: ['jpg'])],
+    ]);
+
+    expect($validator->fails())->toBeTrue();
+});
+
+it('rejects mismatched content renamed to an allowed image alias', function (string $extension, string $contentType) {
+    Storage::fake(config('filesystems.default'));
+
+    $content = $contentType === 'png'
+        ? UploadedFile::fake()->image('source.png')
+        : UploadedFile::fake()->createWithContent('source.html', '<html>not an image</html>');
+    $file = new UploadedFile($content->getRealPath(), 'photo.'.$extension, test: true);
+    $path = 'product/25/photo/photo.'.$extension;
+    Storage::put($path, file_get_contents($content->getRealPath()));
+    $rule = new FileOrImageValidValue(isImage: true, allowedPathPrefixes: ['product/25/photo']);
+
+    expect(Validator::make(['image' => $file], ['image' => [$rule]])->fails())->toBeTrue()
+        ->and(Validator::make(['image' => $path], ['image' => [$rule]])->fails())->toBeTrue();
+})->with(['jfif', 'jif', 'tiff'])->with(['html', 'png']);
 
 it('enforces gallery file-count limits', function () {
     $files = [

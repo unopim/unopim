@@ -2488,6 +2488,12 @@ return [
                 'empty'  => '결과가 없습니다',
                 'search' => '검색',
             ],
+            'tags'            => [
+                'placeholder'     => '값을 입력하거나 쉼표 또는 줄바꿈으로 구분하여 붙여넣으세요',
+                'remove'          => ':value 제거',
+                'clear-all'       => '모두 지우기',
+                'tag-placeholder' => 'Enter 키를 눌러 추가',
+            ],
             'ajax-error'      => '저장하는 동안 문제가 발생했습니다. 다시 시도해 주세요.',
             'file-uploader'   => [
                 'upload-cta'  => '클릭하여 업로드',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => '비디오 파일만 허용됩니다 (.mp4, .mov, .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => '파일 추가',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'PDF 파일만 허용됩니다',
+                'add-file-btn'        => '파일 추가',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'PDF 파일만 허용됩니다',
+                'preview-unavailable' => '이 파일 형식은 미리보기를 지원하지 않습니다.',
             ],
         ],
         'tinymce' => [

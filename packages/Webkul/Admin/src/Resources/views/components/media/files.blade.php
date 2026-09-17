@@ -31,13 +31,16 @@
         id="v-media-files-template"
     >
         <div class="grid">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div
+                class="grid gap-3"
+                :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${width}, 1fr))` }"
+            >
                 {{-- Add File tile (shared dropzone; hidden once a file exists) --}}
                 <v-media-add-tile
                     v-if="0 == inputFiles.length"
                     title="@lang('admin::app.components.media.files.add-file-btn')"
                     hint="@lang('admin::app.components.media.images.drag-drop-hint')"
-                    allowed-types="@lang('admin::app.components.media.files.allowed-types')"
+                    :allowed-types="acceptedExtensions.join(', ')"
                     :accept="acceptAttribute"
                     :input-id="$.uid + '_fileInput'"
                     icon="icon-file"
@@ -105,12 +108,19 @@
                 @change="edit"
             />
 
-            <x-admin::modal ref="filePreviewModal" type="large">
-                <x-slot:header>
+            <x-admin::modal ref="filePreviewModal" no-class="true">
+                <x-slot:header class="bg-white dark:bg-gray-900">
                     <p class="text-lg font-bold text-gray-800 dark:text-white" v-text="cardMedia.name"></p>
                 </x-slot>
-                <x-slot:content>
-                    <iframe :src="previewUrl" :sandbox="previewSandbox" class="h-[70vh] w-full rounded"></iframe>
+                <x-slot:content class="flex h-[calc(100vh-60px)] items-center justify-center bg-gray-900 p-6">
+                    <iframe v-if="canPreview" :src="previewUrl" :sandbox="previewSandbox" class="h-full w-full rounded"></iframe>
+                    <div v-else class="flex flex-col items-center gap-4 text-center text-white">
+                        <span class="icon-file text-5xl text-gray-300"></span>
+                        <p class="text-base">@lang('admin::app.components.media.files.preview-unavailable')</p>
+                        <a v-if="allowDownload" :href="downloadUrl" class="primary-button" download>
+                            @lang('admin::app.export.download')
+                        </a>
+                    </div>
                 </x-slot>
             </x-admin::modal>
         </div>
@@ -118,6 +128,7 @@
 
     <script type="module">
         const mediaPreviewRoute = @json(route('admin.media.preview'));
+        const mediaDownloadRoute = @json(route('admin.media.download'));
 
         app.component('v-media-files', {
             template: '#v-media-files-template',
@@ -302,14 +313,29 @@
                     return mediaPreviewRoute + '?path=' + encodeURIComponent(this.inputFile.value);
                 },
 
+                canPreview() {
+                    return ['pdf', 'svg'].includes(this.cardMedia.extension);
+                },
+
+                downloadUrl() {
+                    if (this.inputFile.is_new || ! this.inputFile.value) {
+                        return this.inputFile.url;
+                    }
+
+                    return mediaDownloadRoute + '?path=' + encodeURIComponent(this.inputFile.value);
+                },
+
                 cardMedia() {
                     const fileName = this.inputFile?.file?.name ?? this.inputFile?.fileName ?? '';
+                    const extensionSource = fileName.includes('.')
+                        ? fileName
+                        : (this.inputFile?.value ?? fileName);
 
                     return {
                         url: this.inputFile.url,
                         name: fileName,
                         type: this.inputFile?.file?.type ?? 'application/pdf',
-                        extension: (fileName.split('.').pop() || 'pdf').toLowerCase(),
+                        extension: (extensionSource.split('.').pop() || 'pdf').toLowerCase(),
                         value: this.inputFile?.value,
                         is_new: this.inputFile?.is_new,
                     };

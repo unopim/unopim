@@ -7,6 +7,7 @@
  *
  * Fixture: scripts/seed-passport-template-e2e.php (idempotent).
  */
+const { closeDropdown } = require('../../utils/helpers');
 const { execFileSync } = require('child_process');
 
 const { test, expect } = require('@playwright/test');
@@ -124,7 +125,7 @@ async function pickInMultiselect(scope, hiddenName, optionLabel) {
     await option.click({ timeout: 8_000 }).catch(() => {});
 
     if (await hidden.inputValue().catch(() => '')) {
-      await (scope.keyboard ?? scope.page().keyboard).press('Escape');
+      await closeDropdown(scope.page?.() ?? scope);
 
       return;
     }

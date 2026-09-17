@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Sonuç bulunamadı',
                 'search' => 'Ara',
             ],
+            'tags'            => [
+                'placeholder'     => 'Değerleri yazın veya virgül ya da yeni satırla ayırarak yapıştırın',
+                'remove'          => ':value öğesini kaldır',
+                'clear-all'       => 'Tümünü temizle',
+                'tag-placeholder' => 'Eklemek için Enter tuşuna basın',
+            ],
             'ajax-error'      => 'Kaydedilirken bir hata oluştu. Lütfen tekrar deneyin.',
             'file-uploader'   => [
                 'upload-cta'  => 'Yüklemek için tıklayın',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Sadece video dosyaları (.mp4, .mov, .ogg ..) kabul edilmektedir.',
             ],
             'files' => [
-                'add-file-btn'      => 'Dosya Ekle',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Sadece pdf dosyaları kabul edilmektedir',
+                'add-file-btn'        => 'Dosya Ekle',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Sadece pdf dosyaları kabul edilmektedir',
+                'preview-unavailable' => 'Bu dosya türü için önizleme kullanılamıyor.',
             ],
         ],
         'tinymce' => [

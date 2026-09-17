@@ -62,6 +62,10 @@ class CoreServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->app->beforeResolving(MailManager::class, function (): void {
+            if ($this->mailTransportIsPinnedByEnvironment()) {
+                return;
+            }
+
             $this->overrideMailConfiguration();
         });
 
@@ -123,6 +127,17 @@ class CoreServiceProvider extends ServiceProvider
         $forgetConfigMemo = fn () => app(RequestMemo::class)->forget('core_config.');
         CoreConfig::saved($forgetConfigMemo);
         CoreConfig::deleted($forgetConfigMemo);
+    }
+
+    /**
+     * Whether the environment pinned a transport the stored settings must not replace.
+     *
+     * The array transport is the one the test environment forces, so overriding it
+     * would dial the admin's SMTP host and send real mail from the suite.
+     */
+    private function mailTransportIsPinnedByEnvironment(): bool
+    {
+        return config('mail.default') === 'array';
     }
 
     /**

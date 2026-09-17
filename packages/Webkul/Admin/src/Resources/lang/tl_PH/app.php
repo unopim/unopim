@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Walang resulta',
                 'search' => 'Maghanap',
             ],
+            'tags'            => [
+                'placeholder'     => 'Mag-type o mag-paste ng mga halaga na pinaghihiwalay ng kuwit o bagong linya',
+                'remove'          => 'Alisin ang :value',
+                'clear-all'       => 'I-clear lahat',
+                'tag-placeholder' => 'Pindutin ang Enter upang idagdag',
+            ],
             'ajax-error'      => 'May nangyaring mali habang nagse-save. Pakisubukang muli.',
             'file-uploader'   => [
                 'upload-cta'  => 'I-click para mag-upload',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Tanging mga file ng video (.mp4, .mov, .ogg ..) ang pinapayagan.',
             ],
             'files' => [
-                'add-file-btn'      => 'Magdagdag ng File',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Tanging mga pdf file ang pinapayagan',
+                'add-file-btn'        => 'Magdagdag ng File',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Tanging mga pdf file ang pinapayagan',
+                'preview-unavailable' => 'Hindi available ang paunang pagtingin para sa ganitong uri ng file.',
             ],
         ],
         'tinymce' => [

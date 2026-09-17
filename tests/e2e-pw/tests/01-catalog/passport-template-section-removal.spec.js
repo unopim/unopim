@@ -1,4 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
+const { closeDropdown } = require('../../utils/helpers');
 
 const SUFFIX = Date.now().toString().slice(-6);
 const TEMPLATE_CODE = `tpl_section_removal_${SUFFIX}`;
@@ -28,7 +29,7 @@ async function pickInMultiselect(scope, hiddenName, optionLabel) {
     await option.click({ timeout: 8_000 }).catch(() => {});
 
     if (await hidden.inputValue().catch(() => '')) {
-      await (scope.keyboard ?? scope.page().keyboard).press('Escape');
+      await closeDropdown(scope.page?.() ?? scope);
 
       return;
     }

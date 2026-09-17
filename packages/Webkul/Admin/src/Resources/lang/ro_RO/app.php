@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Niciun rezultat',
                 'search' => 'Caută',
             ],
+            'tags'            => [
+                'placeholder'     => 'Tastați sau lipiți valori separate prin virgule sau rânduri noi',
+                'remove'          => 'Elimină :value',
+                'clear-all'       => 'Șterge tot',
+                'tag-placeholder' => 'Apăsați Enter pentru a adăuga',
+            ],
             'ajax-error'      => 'A apărut o eroare la salvare. Vă rugăm să încercați din nou.',
             'file-uploader'   => [
                 'upload-cta'  => 'Faceți clic pentru a încărca',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Doar fișiere video (.mp4, .mov, .ogg ..) sunt permise.',
             ],
             'files' => [
-                'add-file-btn'      => 'Adaugă Fișier',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Doar fișiere PDF sunt permise.',
+                'add-file-btn'        => 'Adaugă Fișier',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Doar fișiere PDF sunt permise.',
+                'preview-unavailable' => 'Previzualizarea nu este disponibilă pentru acest tip de fișier.',
             ],
         ],
         'tinymce' => [

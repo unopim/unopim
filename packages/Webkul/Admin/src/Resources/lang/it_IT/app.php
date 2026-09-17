@@ -2485,6 +2485,12 @@ return [
                 'empty'  => 'Nessun risultato',
                 'search' => 'Cerca',
             ],
+            'tags'            => [
+                'placeholder'     => 'Digita o incolla i valori separati da virgole o a capo',
+                'remove'          => 'Rimuovi :value',
+                'clear-all'       => 'Cancella tutto',
+                'tag-placeholder' => 'Premi Invio per aggiungere',
+            ],
             'ajax-error'      => 'Si è verificato un errore durante il salvataggio. Riprova.',
             'file-uploader'   => [
                 'upload-cta'  => 'Fai clic per caricare',
@@ -2782,9 +2788,10 @@ return [
                 'not-allowed-error' => 'Sono consentiti solo file video (.mp4, .mov, .ogg ..).',
             ],
             'files' => [
-                'add-file-btn'      => 'Aggiungi file',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Sono consentiti solo file PDF',
+                'add-file-btn'        => 'Aggiungi file',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Sono consentiti solo file PDF',
+                'preview-unavailable' => 'L’anteprima non è disponibile per questo tipo di file.',
             ],
         ],
         'tinymce' => [

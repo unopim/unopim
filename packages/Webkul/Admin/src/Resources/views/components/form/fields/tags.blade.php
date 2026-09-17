@@ -1,49 +1,46 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-field-tags-template">
-        <div
-            class="flex flex-wrap items-center gap-2 w-full min-h-[44px] px-3 py-2.5 border rounded-md text-sm transition-all hover:border-gray-400 dark:hover:border-gray-400 focus-within:border-gray-400 dark:bg-cherry-900 dark:border-gray-600 cursor-text"
-            :class="hasErrors ? 'border !border-red-600' : ''"
-            @click="focusInput"
-        >
-            <span
-                v-for="(tag, index) in tags"
-                :key="tag"
-                class="flex items-center gap-1 px-1 py-1 rounded bg-primary-100 dark:bg-cherry-800 text-primary-700 dark:text-primary-200 text-sm"
-            >
-                <span v-text="tag"></span>
-
-                <button
-                    type="button"
-                    :aria-label="'Remove ' + tag"
-                    @click.stop="removeTag(index)"
-                    class="icon-cross-large text-base leading-none text-primary-500 dark:text-primary-300 hover:text-primary-700 dark:hover:text-white"
-                >
-                </button>
-            </span>
-
-            <input
-                ref="input"
-                type="text"
-                :id="inputId"
-                v-model="draft"
-                :placeholder="tags.length ? '' : (field.placeholder ?? field.label)"
+        <div class="relative w-full">
+            <v-multiselect
+                :options="tags"
+                v-model="tags"
+                :multiple="true"
+                :taggable="true"
+                :searchable="true"
+                :close-on-select="false"
+                :clear-on-select="true"
+                :preserve-search="false"
+                :hide-selected="true"
+                :show-no-options="false"
+                :show-no-results="false"
+                :placeholder="placeholder"
+                :tag-placeholder="tagPlaceholder"
                 :disabled="disabled"
-                :aria-invalid="hasErrors"
-                class="flex-1 min-w-[60px] px-0 py-0.5 bg-transparent border-0 text-sm text-gray-600 dark:text-gray-300 focus:ring-0 focus:outline-none"
-                @keydown="onKeydown"
-                @paste="onPaste"
-                @blur="commitDraft"
-            />
+                :name="name"
+                :id="inputId"
+                @tag="addTag"
+                @search-change="onSearchChange"
+            >
+                <template v-slot:clear>
+                    <span
+                        v-if="tags.length && ! disabled"
+                        role="button"
+                        tabindex="0"
+                        :aria-label="clearLabel"
+                        :title="clearLabel"
+                        @mousedown.prevent.stop="clearTags"
+                        @keydown.enter.prevent.stop="clearTags"
+                        class="icon-cancel absolute right-7 top-2.5 z-10 cursor-pointer text-xl leading-none text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white"
+                    ></span>
+                </template>
+            </v-multiselect>
 
             <input type="hidden" :name="name" :value="serialized" />
         </div>
     </script>
 
     <script type="module">
-        const TAG_SEPARATOR = /[\s,]+/;
-        const TAB_KEY = 'Tab';
-        const REMOVE_KEY = 'Backspace';
-        const COMMIT_KEYS = ['Enter', ',', ' ', TAB_KEY];
+        const TAG_SEPARATOR = /[\r\n\t;,]+/;
 
         app.component('v-field-tags', {
             template: '#v-field-tags-template',
@@ -53,13 +50,24 @@
             data() {
                 return {
                     tags: this.splitTags(this.modelValue),
-                    draft: '',
                 };
             },
 
             computed: {
                 serialized() {
                     return this.tags.join(',');
+                },
+
+                placeholder() {
+                    return this.field.placeholder ?? @json(trans('admin::app.components.form.tags.placeholder'));
+                },
+
+                clearLabel() {
+                    return @json(trans('admin::app.components.form.tags.clear-all'));
+                },
+
+                tagPlaceholder() {
+                    return @json(trans('admin::app.components.form.tags.tag-placeholder'));
                 },
             },
 
@@ -93,54 +101,30 @@
                     return tags;
                 },
 
+                clearTags() {
+                    this.tags = [];
+                },
+
                 addTag(tag) {
-                    const value = `${tag ?? ''}`.trim();
+                    this.splitTags(tag).forEach(value => {
+                        if (! this.tags.includes(value)) {
+                            this.tags.push(value);
+                        }
+                    });
+                },
 
-                    if (! value || this.tags.includes(value)) {
+                /**
+                 * Pasting a comma or newline separated list commits every value at once,
+                 * so the field accepts a column copied straight out of a spreadsheet.
+                 */
+                onSearchChange(query) {
+                    if (! TAG_SEPARATOR.test(query)) {
                         return;
                     }
 
-                    this.tags.push(value);
-                },
+                    this.addTag(query);
 
-                removeTag(index) {
-                    this.tags.splice(index, 1);
-                },
-
-                commitDraft() {
-                    this.splitTags(this.draft).forEach(tag => this.addTag(tag));
-
-                    this.draft = '';
-                },
-
-                onKeydown(event) {
-                    if (event.key === REMOVE_KEY && this.draft === '' && this.tags.length) {
-                        this.removeTag(this.tags.length - 1);
-
-                        return;
-                    }
-
-                    if (! COMMIT_KEYS.includes(event.key) || this.draft.trim() === '') {
-                        return;
-                    }
-
-                    if (event.key !== TAB_KEY) {
-                        event.preventDefault();
-                    }
-
-                    this.commitDraft();
-                },
-
-                onPaste(event) {
-                    event.preventDefault();
-
-                    const pasted = (event.clipboardData || window.clipboardData).getData('text');
-
-                    this.splitTags(pasted).forEach(tag => this.addTag(tag));
-                },
-
-                focusInput() {
-                    this.$refs.input?.focus();
+                    this.$el.querySelector('.multiselect__input').value = '';
                 },
             },
         });

@@ -2488,6 +2488,12 @@ return [
                 'empty'  => 'Nenhum resultado',
                 'search' => 'Pesquisar',
             ],
+            'tags'            => [
+                'placeholder'     => 'Escreva ou cole valores separados por vírgulas ou novas linhas',
+                'remove'          => 'Remover :value',
+                'clear-all'       => 'Limpar tudo',
+                'tag-placeholder' => 'Prima Enter para adicionar',
+            ],
             'ajax-error'      => 'Algo correu mal ao guardar. Por favor, tente novamente.',
             'file-uploader'   => [
                 'upload-cta'  => 'Clique para carregar',
@@ -2785,9 +2791,10 @@ return [
                 'not-allowed-error' => 'Apenas arquivos de vídeo (.mp4, .mov, .ogg ..) são permitidos.',
             ],
             'files' => [
-                'add-file-btn'      => 'Adicionar Arquivo',
-                'allowed-types'     => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
-                'not-allowed-error' => 'Apenas arquivos PDF são permitidos.',
+                'add-file-btn'        => 'Adicionar Arquivo',
+                'allowed-types'       => 'csv, doc, docx, mp3, pdf, ppt, pptx, rtf, svg, txt, wav',
+                'not-allowed-error'   => 'Apenas arquivos PDF são permitidos.',
+                'preview-unavailable' => 'A pré-visualização não está disponível para este tipo de ficheiro.',
             ],
         ],
         'tinymce' => [

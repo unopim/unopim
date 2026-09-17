@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, clickEditOnRow } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, clickEditOnRow, closeDropdown } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 
@@ -310,7 +310,7 @@ test('2.8 - Configure Image Generation with OpenAI platform', async ({ adminPage
         break;
       }
     }
-    await adminPage.keyboard.press('Escape');
+    await closeDropdown(adminPage);
   }
 
   await clickSave(adminPage, 'Save Configuration');
@@ -514,7 +514,7 @@ test('4.5 - Verify Purpose field has Text Generation and Image Generation', asyn
   await adminPage.locator('input[name="purpose"]').locator('..').locator('.multiselect__placeholder, .multiselect__single').first().click();
   await expect(adminPage.getByRole('option', { name: 'Text Generation' }).first()).toBeVisible();
   await expect(adminPage.getByRole('option', { name: 'Image Generation' }).first()).toBeVisible();
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 });
 
 test('4.6 - Verify Entity Type has Product and Category options', async ({ adminPage }) => {
@@ -952,7 +952,7 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     const hindiOption = adminPage.getByRole('option', { name: /Hindi/ }).first();
     if (await hindiOption.isVisible({ timeout: 5000 }).catch(() => false)) {
       await hindiOption.click();
-      await adminPage.keyboard.press('Escape');
+      await closeDropdown(adminPage);
       await clickSave(adminPage, 'Save Channel');
       await adminPage.waitForLoadState('networkidle');
     }
