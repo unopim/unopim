@@ -79,6 +79,7 @@
                 return {
                     initial: {},
                     elementInitial: null,
+                    nameGroups: null,
                     badgeLabel: "@lang('admin::app.components.form.unsaved-changes.field-badge')",
                     touched: {},
                     touchedGroups: {},
@@ -284,9 +285,54 @@
                     this.controls().forEach(el => {
                         this.elementInitial.set(el, this.captureElementValue(el));
                     });
+
+                    this.rememberGroups();
+                },
+
+                rememberGroups() {
+                    if (! this.nameGroups) {
+                        this.nameGroups = new Map();
+                    }
+
+                    this.nameGroups.forEach((group, name) => {
+                        if (! this.$refs.root.contains(group)) {
+                            this.nameGroups.delete(name);
+                        }
+                    });
+
+                    this.controls().forEach(el => {
+                        const group = el.closest('[data-control-group]');
+
+                        if (group) {
+                            this.nameGroups.set(el.name, group);
+                        }
+                    });
+                },
+
+                resolveAnchor(name) {
+                    const el = this.$refs.root.querySelector('[name="' + CSS.escape(name) + '"]');
+
+                    if (el) {
+                        return el;
+                    }
+
+                    const remembered = this.nameGroups && this.nameGroups.get(name);
+
+                    if (remembered && this.$refs.root.contains(remembered)) {
+                        return remembered;
+                    }
+
+                    const base = Object.keys(this.touchedGroups)
+                        .find(candidate => name === candidate || name.startsWith(candidate + '['));
+
+                    return base
+                        ? this.$refs.root.querySelector('[name="' + CSS.escape(base) + '"]')
+                        : null;
                 },
 
                 recompute() {
+                    this.rememberGroups();
+
                     const current = this.serializeForm();
                     const dirty = new Set();
                     const names = new Set([...Object.keys(current), ...Object.keys(this.initial)]);
@@ -328,8 +374,8 @@
                     const sections = new Set();
 
                     dirtySet.forEach(name => {
-                        const el = this.$refs.root.querySelector('[name="' + CSS.escape(name) + '"]');
-                        const section = el && el.closest('[data-dirty-section]');
+                        const anchor = this.resolveAnchor(name);
+                        const section = anchor && anchor.closest('[data-dirty-section]');
 
                         if (section) {
                             sections.add(section);
@@ -344,8 +390,8 @@
                     this.$refs.root.querySelectorAll('[data-unsaved-injected]').forEach(b => b.remove());
 
                     dirtySet.forEach(name => {
-                        const el = this.$refs.root.querySelector('[name="' + CSS.escape(name) + '"]');
-                        const group = el && el.closest('[data-control-group]');
+                        const anchor = this.resolveAnchor(name);
+                        const group = anchor && anchor.closest('[data-control-group]');
 
                         if (! group) {
                             return;
