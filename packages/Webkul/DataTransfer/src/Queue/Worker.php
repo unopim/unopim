@@ -29,7 +29,7 @@ class Worker extends BaseWorker
             );
 
             if ($supportsAsyncSignals) {
-                $this->registerTimeoutHandler($job, $options);
+                $this->registerTimeoutHandler($connectionName, $queue, $job, $options);
             }
 
             // If the daemon should run (not in maintenance mode, etc.), then we can run
