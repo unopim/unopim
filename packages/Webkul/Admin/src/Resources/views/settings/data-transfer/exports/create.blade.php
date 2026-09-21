@@ -182,7 +182,7 @@
                                 @lang('admin::app.settings.data-transfer.exports.create.output')
                             </p>
 
-                            {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.accordion.filters.output.befor') !!}
+                            {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.card.accordion.filters.output.before') !!}
                             <x-admin::data-transfer.filter-fields
                                 ::entity-type="entityType"
                                 :exporter-config="$exporterConfig"
