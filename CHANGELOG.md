@@ -1,3 +1,34 @@
+# Unreleased
+
+## Features
+
+- Added a "Maximum Output Tokens" setting to the Magic AI text generation configuration, so an installation can raise the default generation ceiling without editing a prompt one at a time.
+- Added Concentrate AI to the supported Magic AI providers.
+- Added an allow list and an auto-selection limit for Magic AI model discovery, configurable through `MAGIC_AI_ALLOWED_MODELS` and `MAGIC_AI_AUTO_SELECT_LIMIT`, so an installation can restrict which models are offered and how many are pre-selected after a fetch.
+
+## Improvements
+
+- Raised the default generation ceiling from 1024 to 4096 tokens, and raised the seeded system prompts still holding the old value; a ceiling an administrator tuned themselves is left alone. HTML output spends tokens on markup, so the old ceiling truncated a table-heavy description mid-tag.
+- A generation that stops because it ran out of tokens is now reported as such instead of silently returning a half sentence, and a fragment cut mid-tag is dropped rather than rendered as stray text.
+- Magic AI model discovery now runs against the platform's own base URL, so a proxy or a regional endpoint lists the models it will actually serve; a custom endpoint typed without a version segment is retried with one.
+- Model recommendations are now ranked, so the handful pre-selected after a fetch are the cheap, widely used tiers rather than whatever sorted first alphabetically, and safeguard models are excluded alongside the other non-chat variants.
+- An Azure platform now addresses a model by its configured deployment name, which is what the Azure endpoint expects.
+- A failed model fetch now reports the host and status instead of rendering the upstream error page verbatim.
+- Reworked the product translation dialog: source channel and locale are now named separately from the targets, the attribute picker shows the value each attribute currently holds, and the dialog warns before replacing existing content in the target locales.
+
+## Bug fixes
+
+- Fixed Magic AI model discovery for OpenAI, Anthropic, and Google Gemini following redirects and re-resolving DNS when the platform supplies its own base URL; the fetch is now pinned to the validated address and does not follow redirects, matching every other provider.
+- Fixed an AI chat failure that originated in the database surfacing the connection host, schema, and full SQL in the chat window; an infrastructure failure now returns the generic message.
+- Fixed a product attribute whose code is not identifier-shaped — one starting with a digit, or containing a hyphen or a space — breaking every MySQL JSON path query it appeared in with error 3143.
+- Fixed AI translation writing every translated value into the channel-and-locale bucket regardless of the attribute's own scope, so a locale-only attribute was saved where nothing would read it; each value now lands in the bucket its scope dictates, and an attribute that no longer exists is skipped instead of failing the job.
+- Fixed the translate action offering attributes it cannot translate: a field is now offered only when it is locale-scoped and holds a value in the source scope.
+- Fixed the AI translate button appearing on a field the current user cannot edit.
+- Fixed AI image generation ignoring the platform and model configured for image generation and running on the conversation's text platform instead, and leaving the provider credentials it set behind in the process configuration.
+- Fixed a confirmation dialog rendering behind the element that opened it.
+- Fixed clearing a file picker being treated as a new file to scan.
+- Fixed the product attribute and content generation endpoints accepting an unvalidated channel, locale, and resource reference.
+
 # 3.1.1 — September 17th, 2026
 
 ## Bug fixes
