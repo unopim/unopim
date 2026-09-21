@@ -71,9 +71,17 @@ class MySQLGrammar implements Grammar
     /**
      * Escape a JSON path segment so it cannot break out of the single-quoted
      * SQL string literal the path is embedded in (SQL injection guard).
+     *
+     * MySQL only accepts a bare path member that looks like an identifier;
+     * anything else (a leading digit, a hyphen, a space) must be wrapped in
+     * double quotes or the server rejects the whole path with error 3143.
      */
     protected function escapeJsonPathSegment(string $segment): string
     {
+        if (! preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $segment)) {
+            $segment = '"'.str_replace(['\\', '"'], ['\\\\', '\\"'], $segment).'"';
+        }
+
         return str_replace(['\\', "'"], ['\\\\', "''"], $segment);
     }
 
