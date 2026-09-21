@@ -1106,7 +1106,7 @@
                 async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
-                    if (imageInput.files == undefined) {
+                    if (! imageInput.files || ! imageInput.files.length) {
                         return;
                     }
 
