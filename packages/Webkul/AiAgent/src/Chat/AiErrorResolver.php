@@ -3,10 +3,12 @@
 namespace Webkul\AiAgent\Chat;
 
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Client\RequestException;
 use Laravel\Ai\Exceptions\InsufficientCreditsException;
 use Laravel\Ai\Exceptions\ProviderOverloadedException;
 use Laravel\Ai\Exceptions\RateLimitedException;
+use PDOException;
 use Throwable;
 
 /**
@@ -73,11 +75,35 @@ class AiErrorResolver
             ];
         }
 
+        $message = self::isInfrastructureException($e)
+            ? ''
+            : self::sanitizeRawMessage($e);
+
         return [
-            'message'  => self::sanitizeRawMessage($e) ?: trans('ai-agent::app.common.error-generic'),
+            'message'  => $message ?: trans('ai-agent::app.common.error-generic'),
             'status'   => 500,
             'is_known' => false,
         ];
+    }
+
+    /**
+     * Whether the failure came from the database rather than the AI provider.
+     * Such a message carries the connection host, schema and full SQL, so it
+     * is replaced with the generic message instead of being surfaced.
+     */
+    protected static function isInfrastructureException(Throwable $e): bool
+    {
+        $current = $e;
+
+        while ($current instanceof Throwable) {
+            if ($current instanceof QueryException || $current instanceof PDOException) {
+                return true;
+            }
+
+            $current = $current->getPrevious();
+        }
+
+        return false;
     }
 
     protected static function sanitizeRawMessage(Throwable $e): string
