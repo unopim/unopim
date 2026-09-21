@@ -212,7 +212,7 @@
                                 <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                     @lang('admin::app.settings.data-transfer.exports.create.output')
                                 </p>
-                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.output.befor') !!}
+                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.output.before') !!}
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
                                     :values="$exportFilters"
