@@ -176,7 +176,7 @@ class MagicAIController extends Controller
             if ($systemPromptText !== null) {
                 $toneText = $systemPromptText;
                 $temperature = (float) ($temperature ?? 0.7);
-                $maxTokens = (int) ($maxTokens ?? 1054);
+                $maxTokens = (int) ($maxTokens ?: MagicAIService::defaultMaxTokens());
             } else {
                 $toneData = MagicAISystemPrompt::where('id', $tone)->first(['tone', 'temperature', 'max_tokens']);
 
@@ -187,17 +187,18 @@ class MagicAIController extends Controller
                 } else {
                     $toneText = '';
                     $temperature = (float) ($temperature ?? 0.7);
-                    $maxTokens = (int) ($maxTokens ?? 1054);
+                    $maxTokens = (int) ($maxTokens ?: MagicAIService::defaultMaxTokens());
                 }
             }
 
             $prompt .= "\n\nGenerated content should be in {$locale}.";
 
-            $prompt = $this->promptService->getPrompt(
-                $prompt,
-                request()->input('resource_id'),
-                request()->input('resource_type')
-            );
+            $resourceId = $request->validated('resource_id');
+            $resourceType = $request->validated('resource_type');
+
+            if ($resourceId !== null && $resourceType !== null) {
+                $prompt = $this->promptService->getPrompt($prompt, (int) $resourceId, $resourceType);
+            }
 
             $magicAi = $this->resolvePlatform();
 
@@ -207,10 +208,11 @@ class MagicAIController extends Controller
                 ->setMaxTokens($maxTokens)
                 ->setSystemPrompt($toneText)
                 ->setPrompt($prompt)
-                ->ask();
+                ->askResult();
 
             return new JsonResponse([
-                'content' => $response,
+                'content'   => $response->text,
+                'truncated' => $response->truncated,
             ]);
         } catch (\Exception $e) {
             report($e);
@@ -373,16 +375,20 @@ class MagicAIController extends Controller
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
-        $productId = request()->resource_id;
-        $product = $this->productRepository->find($productId);
-        $productData = $product->toArray();
-        $locale = core()->getRequestedLocaleCode();
-        $channel = core()->getRequestedChannelCode();
-        $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
+        $product = $this->productRepository->find(request()->resource_id);
+
+        $values = ProductValueMapperFacade::getScopedFields(
+            $product->toArray(),
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
+        $field = request()->field;
+        $sourceData = $values[$field] ?? null;
 
         return new JsonResponse([
-            'isTranslatable' => ! empty($arr) && array_key_exists(request()->field, $arr),
-            'sourceData'     => ! empty($arr) && array_key_exists(request()->field, $arr) ? $arr[request()->field] : null,
+            'isTranslatable' => $this->isFieldTranslatable($field, $sourceData),
+            'sourceData'     => $sourceData,
         ]);
     }
 
@@ -444,28 +450,33 @@ class MagicAIController extends Controller
             return new JsonResponse(['error' => trans('admin::app.common.unauthorized')], 403);
         }
 
-        $productId = request()->resource_id;
-        $product = $this->productRepository->find($productId);
-        $productData = $product->toArray();
-        $locale = core()->getRequestedLocaleCode();
-        $channel = core()->getRequestedChannelCode();
-        $arr = ProductValueMapperFacade::getChannelLocaleSpecificFields($productData, $channel, $locale);
-        $sourceField = explode(',', request()->input('attributes'));
+        $product = $this->productRepository->find(request()->resource_id);
+
+        $values = ProductValueMapperFacade::getScopedFields(
+            $product->toArray(),
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
         $result = [];
 
-        foreach ($sourceField as $field) {
-            if (! empty($arr) && array_key_exists($field, $arr)) {
-                $attribute = $this->attributeRepository->where('code', $field)->first();
+        foreach (explode(',', request()->input('attributes')) as $field) {
+            $sourceData = $values[$field] ?? null;
 
-                $result[$field] = [
-                    'fieldLabel'     => $attribute->name,
-                    'fieldName'      => $field,
-                    'isTranslatable' => true,
-                    'sourceData'     => $arr[$field],
-                    'translatedData' => null,
-                    'type'           => $attribute->type,
-                ];
+            if (! $this->isFieldTranslatable($field, $sourceData)) {
+                continue;
             }
+
+            $attribute = $this->attributeRepository->findOneByField('code', $field);
+
+            $result[$field] = [
+                'fieldLabel'     => $attribute->name,
+                'fieldName'      => $field,
+                'isTranslatable' => true,
+                'sourceData'     => $sourceData,
+                'translatedData' => null,
+                'type'           => $attribute->type,
+            ];
         }
 
         return $result;
@@ -536,6 +547,20 @@ class MagicAIController extends Controller
         SaveTranslatedAllAttributesJob::dispatch($productId, $translatedValues, $channel);
 
         return response()->json(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
+    }
+
+    /**
+     * A field is translatable only when it holds a scalar value in the source scope and is localizable.
+     */
+    protected function isFieldTranslatable(string $field, mixed $sourceData): bool
+    {
+        if ($sourceData === null || $sourceData === '' || is_array($sourceData)) {
+            return false;
+        }
+
+        $attribute = $this->attributeRepository->findOneByField('code', $field);
+
+        return (bool) $attribute?->value_per_locale;
     }
 
     /**

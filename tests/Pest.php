@@ -48,6 +48,7 @@ uses(AttributeTestCase::class)->in('../packages/Webkul/Attribute/tests');
 uses(CategoryTestCase::class)->in('../packages/Webkul/Category/tests');
 uses(MeasurementTestCase::class)->in('../packages/Webkul/Measurement/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/AiAgent/tests');
+uses(AdminTestCase::class)->in('../packages/Webkul/MagicAI/tests');
 uses(CoreTestCase::class)->in('../packages/Webkul/Webhook/tests');
 uses(AdminTestCase::class)->in('../packages/Webkul/AppUrlGuard/tests');
 uses(ResourceTestCase::class)->in('../packages/Webkul/Resource/tests/Feature');

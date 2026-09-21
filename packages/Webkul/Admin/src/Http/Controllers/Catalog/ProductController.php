@@ -34,6 +34,7 @@ use Webkul\Core\Rules\Sku;
 use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Product\Contracts\ProductAssociation as ProductAssociationContract;
 use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Jobs\MassDeleteProducts;
 use Webkul\Product\Jobs\MassUpdateProductsStatus;
@@ -1565,20 +1566,28 @@ class ProductController extends Controller
     public function getAttribute(ProductAttributeForm $request): JsonResponse
     {
         $product = $this->productRepository->findOrFail((int) $request->validated('productId'));
-        $attributes = $product->getEditableAttributes()->where('ai_translate', 1)->select('code', 'name', 'type', 'ai_translate');
-        $attributeOptions = [];
 
-        if ($attributes) {
-            foreach ($attributes as $attribute) {
-                $attributeOptions[] = [
-                    'id'    => $attribute['code'],
-                    'label' => $attribute['name'],
-                ];
-            }
+        $sourceValues = ProductValueMapperFacade::getScopedFields(
+            $product->toArray(),
+            core()->getRequestedChannelCode(),
+            core()->getRequestedLocaleCode()
+        );
+
+        $attributeOptions = [];
+        $values = [];
+
+        foreach ($product->getEditableAttributes()->where('ai_translate', 1) as $attribute) {
+            $attributeOptions[] = [
+                'id'    => $attribute->code,
+                'label' => $attribute->name,
+            ];
+
+            $values[$attribute->code] = $sourceValues[$attribute->code] ?? null;
         }
 
         return new JsonResponse([
             'attributes' => $attributeOptions,
+            'values'     => $values,
         ]);
     }
 }

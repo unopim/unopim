@@ -17,7 +17,7 @@ class ContentGenerationRequest extends FormRequest
     /**
      * Get the validation rules.
      *
-     * @return array<string, string>
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
@@ -27,6 +27,8 @@ class ContentGenerationRequest extends FormRequest
             'system_prompt_text' => ['nullable', 'string', 'max:4000'],
             'temperature'        => ['nullable', 'numeric', 'between:0,2'],
             'max_tokens'         => ['nullable', 'integer', 'min:1', 'max:16384'],
+            'resource_id'        => ['nullable', 'integer', 'min:1', 'required_with:resource_type'],
+            'resource_type'      => ['nullable', 'in:product,category', 'required_with:resource_id'],
         ];
     }
 }
