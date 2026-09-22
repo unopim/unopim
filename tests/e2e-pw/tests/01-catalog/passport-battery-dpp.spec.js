@@ -138,6 +138,42 @@ async function selectByLabel(modal, name, optionLabel) {
   await pickInMultiselect(modal, name, optionLabel);
 }
 
+/**
+ * Both saves in this suite raise the same "updated successfully" flash, so
+ * asserting on that text can match the previous save's flash and let the test
+ * move on while the current update is still in flight. The response is the only
+ * signal tied to the save being asserted, and the admin form posts with a
+ * spoofed `_method=PUT`, so match the route rather than the verb. A
+ * `redirect_url` in the payload then swaps `#app` through the SPA navigation
+ * layer, which fires no load event — wait for its own success event instead.
+ */
+async function saveTemplate(page) {
+  await page.evaluate(() => {
+    window.__navigated = false;
+
+    document.addEventListener('unopim:navigate:success', () => {
+      window.__navigated = true;
+    }, { once: true });
+  });
+
+  const [response] = await Promise.all([
+    page.waitForResponse((res) => res.request().method() === 'POST'
+      && /\/admin\/catalog\/passports\/templates\/\d+$/.test(new URL(res.url()).pathname)),
+    page.getByRole('button', { name: /^Save changes$/ }).click(),
+  ]);
+
+  expect(response.ok()).toBeTruthy();
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (payload.redirect_url) {
+    await expect.poll(
+      () => page.evaluate(() => window.__navigated === true),
+      { timeout: 15_000 },
+    ).toBe(true);
+  }
+}
+
 async function openFieldModal(page) {
   await page.getByRole('button', { name: 'Add Field' }).click();
 
@@ -228,11 +264,12 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
     await pickInMultiselect(page, 'families', fixture.family_name);
     await page.locator('label[for="is_enabled"]').click();
-    await page.getByRole('button', { name: /^Save changes$/ }).click();
-    await expect(page.getByText(/updated successfully/i)).toBeVisible();
-    await page.waitForLoadState('load');
-    await page.waitForTimeout(1500);
+
+    await saveTemplate(page);
+
     await closeAgentShell(page);
+
+    await expect(page.getByRole('button', { name: 'Add Section' })).toBeEnabled();
 
     await page.getByRole('button', { name: 'Add Section' }).click();
     await closeAgentShell(page);
@@ -272,9 +309,8 @@ test.describe.serial('EU battery Digital Product Passport', () => {
     }
 
     await closeAgentShell(page);
-    await page.getByRole('button', { name: /^Save changes$/ }).click();
 
-    await expect(page.getByText(/updated successfully/i)).toBeVisible();
+    await saveTemplate(page);
   });
 
   test('the saved template reports every required field as sourced', async ({ page }) => {
@@ -306,11 +342,7 @@ test.describe.serial('EU battery Digital Product Passport', () => {
 
     const previewUrl = await preview.getAttribute('href');
 
-    /**
-     * The template save in the previous test and this fetch are two separate
-     * requests; retrying the read absorbs any commit-visibility lag between
-     * them instead of asserting against a single, possibly-early snapshot.
-     */
+    /** The rendered page is a separate request, so retry the read rather than trust one snapshot. */
     await expect(async () => {
       const rendered = await page.request.get(previewUrl);
 
