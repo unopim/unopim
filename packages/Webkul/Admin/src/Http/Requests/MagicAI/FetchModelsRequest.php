@@ -3,9 +3,12 @@
 namespace Webkul\Admin\Http\Requests\MagicAI;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Webkul\Admin\Http\Requests\MagicAI\Concerns\GuardsManagedPlatform;
 
 class FetchModelsRequest extends FormRequest
 {
+    use GuardsManagedPlatform;
+
     /**
      * Determine whether the user is authorized.
      */

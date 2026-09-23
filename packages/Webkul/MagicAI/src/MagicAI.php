@@ -9,6 +9,7 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Responses\GeneratedContent;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
+use Webkul\MagicAI\Services\ManagedPlatform;
 
 class MagicAI
 {
@@ -218,9 +219,10 @@ class MagicAI
             );
         }
 
-        $model = $this->model ?? $platform->model_list[0] ?? throw new \RuntimeException(
-            trans('admin::app.configuration.platform.message.no-model-configured')
-        );
+        $model = resolve(ManagedPlatform::class)->resolveModel($platform, $this->model ?? $platform->model_list[0] ?? null)
+            ?? throw new \RuntimeException(
+                trans('admin::app.configuration.platform.message.no-model-configured')
+            );
 
         return new LaravelAiAdapter(
             platform: $platform,

@@ -7,6 +7,7 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Ai\AiManager;
 use Laravel\Ai\Providers\OpenAiProvider;
+use Webkul\MagicAI\Console\Commands\ProvisionManagedPlatform;
 use Webkul\MagicAI\Facades\MagicAI as MagicAIFacade;
 use Webkul\MagicAI\Gateways\OpenAiImageGateway;
 use Webkul\MagicAI\MagicAI;
@@ -23,6 +24,12 @@ class MagicAIServiceProvider extends ServiceProvider
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->extendOpenAiImageGateway();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ProvisionManagedPlatform::class,
+            ]);
+        }
     }
 
     protected function extendOpenAiImageGateway(): void
@@ -57,5 +64,7 @@ class MagicAIServiceProvider extends ServiceProvider
     public function registerConfig(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/default_prompts.php', 'default_prompts');
+
+        $this->mergeConfigFrom(dirname(__DIR__).'/Config/magic_ai.php', 'magic_ai');
     }
 }

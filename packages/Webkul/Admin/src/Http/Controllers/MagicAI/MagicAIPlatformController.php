@@ -16,6 +16,7 @@ use Webkul\Admin\Http\Requests\MagicAI\PlatformTestRequest;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ManagedPlatform;
 use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\MagicAI\Support\ModelRecommender;
@@ -293,6 +294,16 @@ class MagicAIPlatformController extends Controller
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.platform.message.fetch-models-fail'),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $managedPlatform = app(ManagedPlatform::class);
+
+        if ($managedPlatform->isManagedKey($this->resolveApiKey())) {
+            return new JsonResponse([
+                'models'      => $managedPlatform->models(),
+                'recommended' => $managedPlatform->models(),
+                'api_url'     => $managedPlatform->apiUrl(),
+            ]);
         }
 
         try {
