@@ -134,6 +134,8 @@
             : \Webkul\Core\Rules\FileOrImageValidValue::FILE_ALLOWED_EXTENSION;
 
         $fieldType = $field->type;
+
+        $isDisabled = $isLocked && ! $isReadOnlyMedia;
     @endphp
 
     {!! view_render_event('unopim.admin.products.dynamic-attribute-fields.field.before', ['field' => $field]) !!}
@@ -175,7 +177,8 @@
                 @endif
 
                 @if (
-                    $globaltranslationEnabled == 1
+                    ! $isDisabled
+                    && $globaltranslationEnabled == 1
                     && ($fieldType == 'text' || $fieldType == 'textarea')
                     && $field->ai_translate == 1
                     && bouncer()->hasPermission('ai-agent')
@@ -205,8 +208,8 @@
             </div>
         </div>
 
-        <fieldset @disabled($isLocked && ! $isReadOnlyMedia) class="border-0 p-0 m-0 min-w-0 {{ $isLocked && ! $isReadOnlyMedia ? 'opacity-60 cursor-not-allowed' : '' }}">
-        @if ($isLocked && ! $isReadOnlyMedia)
+        <fieldset @disabled($isDisabled) class="border-0 p-0 m-0 min-w-0 {{ $isDisabled ? 'opacity-60 cursor-not-allowed' : '' }}">
+        @if ($isDisabled)
             <div class="pointer-events-none">
         @endif
 

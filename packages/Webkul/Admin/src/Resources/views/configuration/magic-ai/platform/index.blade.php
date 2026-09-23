@@ -5,6 +5,12 @@
 
     @php
         $canCreatePlatform = bouncer()->hasPermission('ai-agent.platform.create');
+
+        $providerLabels = collect(\Webkul\MagicAI\Enums\AiProvider::cases())
+            ->mapWithKeys(fn ($provider) => [$provider->value => $provider->label()]);
+
+        $providerDefaultUrls = collect(\Webkul\MagicAI\Enums\AiProvider::cases())
+            ->mapWithKeys(fn ($provider) => [$provider->value => $provider->defaultUrl()]);
     @endphp
 
     <v-magic-ai-platform>
@@ -175,6 +181,22 @@
                                     <x-admin::form.control-group.error control-name="label" />
                                 </x-admin::form.control-group>
 
+                                <!-- API URL -->
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label>
+                                        @lang('admin::app.configuration.platform.fields.api-url')
+                                    </x-admin::form.control-group.label>
+                                    <x-admin::form.control-group.control
+                                        type="text"
+                                        name="api_url"
+                                        v-model="form.api_url"
+                                        :label="trans('admin::app.configuration.platform.fields.api-url')"
+                                        @input="onApiUrlInput($event)"
+                                    />
+                                    <p class="mt-1 text-xs text-gray-500">@lang('admin::app.configuration.platform.fields.api-url-hint')</p>
+                                    <x-admin::form.control-group.error control-name="api_url" />
+                                </x-admin::form.control-group>
+
                                 <!-- API Key (not for Ollama) -->
                                 <x-admin::form.control-group v-if="form.provider !== 'ollama'">
                                     <x-admin::form.control-group.label class="required">
@@ -191,21 +213,6 @@
                                     />
                                     <p v-if="fetchingModels" class="mt-1 text-xs text-primary-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
                                     <x-admin::form.control-group.error control-name="api_key" />
-                                </x-admin::form.control-group>
-
-                                <!-- API URL -->
-                                <x-admin::form.control-group>
-                                    <x-admin::form.control-group.label>
-                                        @lang('admin::app.configuration.platform.fields.api-url')
-                                    </x-admin::form.control-group.label>
-                                    <input
-                                        type="text"
-                                        name="api_url"
-                                        v-model="form.api_url"
-                                        class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:bg-cherry-800 dark:border-cherry-800"
-                                    />
-                                    <p class="mt-1 text-xs text-gray-500">@lang('admin::app.configuration.platform.fields.api-url-hint')</p>
-                                    <x-admin::form.control-group.error control-name="api_url" />
                                 </x-admin::form.control-group>
 
                                 <!-- Azure-specific fields -->
@@ -349,13 +356,9 @@
                             status: true,
                         },
 
-                        providerLabels: {
-                            openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Google Gemini',
-                            groq: 'Groq', ollama: 'Ollama', xai: 'xAI (Grok)',
-                            mistral: 'Mistral', deepseek: 'DeepSeek',
-                            azure: 'Azure OpenAI', openrouter: 'OpenRouter',
-                            custom: 'Custom (OpenAI-compatible)',
-                        },
+                        providerLabels: @json($providerLabels),
+
+                        providerDefaultUrls: @json($providerDefaultUrls),
                     };
                 },
 
@@ -374,17 +377,6 @@
                         return this.fetchedModels.filter(m => m.toLowerCase().includes(search));
                     },
 
-                    providerDefaultUrls() {
-                        return {
-                            openai: 'https://api.openai.com/v1', anthropic: 'https://api.anthropic.com/v1',
-                            gemini: 'https://generativelanguage.googleapis.com/v1beta',
-                            groq: 'https://api.groq.com/openai/v1', ollama: 'http://localhost:11434',
-                            xai: 'https://api.x.ai/v1', mistral: 'https://api.mistral.ai/v1',
-                            deepseek: 'https://api.deepseek.com', azure: '',
-                            openrouter: 'https://openrouter.ai/api/v1',
-                            custom: '',
-                        };
-                    },
                 },
 
                 methods: {
@@ -447,14 +439,43 @@
                         }, 500);
                     },
 
+                    onApiUrlEntered() {
+                        let url = (this.form.api_url || '').trim();
+
+                        if (! /^https?:\/\/[^\s\/]+/i.test(url)) {
+                            return;
+                        }
+
+                        let hasSavedKey = !! this.form.id;
+                        let hasTypedKey = this.form.api_key && this.form.api_key.length >= 10 && ! this.form.api_key.match(/^\*+$/);
+
+                        if (! hasSavedKey && ! hasTypedKey) {
+                            return;
+                        }
+
+                        this.fetchModels();
+                    },
+
+                    onApiUrlInput(event) {
+                        if (this._apiUrlInputTimer) {
+                            clearTimeout(this._apiUrlInputTimer);
+                        }
+
+                        this._apiUrlInputTimer = setTimeout(() => {
+                            this.onApiUrlEntered();
+                        }, 500);
+                    },
+
                     fetchModels() {
                         this.fetchingModels = true;
                         this.fetchError = '';
 
+                        let requestedUrl = this.form.api_url || '';
+
                         this.$axios.post("{{ route('admin.magic_ai.platform.fetch_models') }}", {
                             provider: this.form.provider,
                             api_key: this.form.api_key,
-                            api_url: this.form.api_url || undefined,
+                            api_url: requestedUrl || undefined,
                             id: this.form.id || undefined,
                         }).then((response) => {
                             this.fetchingModels = false;
@@ -462,13 +483,14 @@
                             let recommended = response.data.recommended || [];
                             this.fetchedModels = models;
 
+                            let urlUnchangedSinceRequest = this.form.api_url === requestedUrl;
+
+                            if (models.length && response.data.api_url && urlUnchangedSinceRequest) {
+                                this.form.api_url = response.data.api_url;
+                            }
+
                             if (models.length && this.selectedModels.length === 0) {
-                                if (recommended.length) {
-                                    this.selectedModels = recommended.filter(m => models.includes(m));
-                                }
-                                if (!this.selectedModels.length) {
-                                    this.selectedModels = models.slice(0, 3);
-                                }
+                                this.selectedModels = recommended.filter(m => models.includes(m));
                             }
 
                             if (!models.length) {

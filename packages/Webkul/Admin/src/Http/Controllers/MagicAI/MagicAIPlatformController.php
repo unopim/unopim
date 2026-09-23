@@ -297,10 +297,12 @@ class MagicAIPlatformController extends Controller
 
         try {
             $provider = AiProvider::from(request()->input('provider'));
-            $models = $provider->fetchModels(
+            $discovery = $provider->discoverModels(
                 $this->resolveApiKey(),
                 request()->input('api_url'),
             );
+
+            $models = ModelRecommender::chatCapable(ModelRecommender::allowed($discovery['models']));
 
             // Pick recommended models to auto-select (includes image models)
             $recommended = ModelRecommender::recommend($models);
@@ -308,6 +310,7 @@ class MagicAIPlatformController extends Controller
             return new JsonResponse([
                 'models'      => $models,
                 'recommended' => $recommended,
+                'api_url'     => $discovery['api_url'],
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([

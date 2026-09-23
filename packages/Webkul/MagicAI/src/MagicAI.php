@@ -3,9 +3,11 @@
 namespace Webkul\MagicAI;
 
 use Webkul\MagicAI\Contracts\LLMModelInterface;
+use Webkul\MagicAI\Contracts\ReportsTruncation;
 use Webkul\MagicAI\Contracts\SupportsStructuredTranslation;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Responses\GeneratedContent;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
 class MagicAI
@@ -27,6 +29,18 @@ class MagicAI
     const SUFFIX_TEXT_PROMPT = 'Generate a response in plain text only, avoiding Markdown or any other formatting.';
 
     /**
+     * Fallback output ceiling when the install has not configured one. HTML
+     * output spends tokens on markup, so a table-heavy description needs far
+     * more headroom than the prose it renders.
+     */
+    const DEFAULT_MAX_TOKENS = 4096;
+
+    /**
+     * Upper bound accepted from configuration; mirrors the modal's input max.
+     */
+    const MAX_TOKENS_CEILING = 32768;
+
+    /**
      * AI platform record from database.
      */
     protected ?MagicAIPlatform $platformRecord = null;
@@ -43,7 +57,7 @@ class MagicAI
 
     protected float $temperature = 0.7;
 
-    protected int $maxTokens = 1054;
+    protected int $maxTokens = self::DEFAULT_MAX_TOKENS;
 
     /**
      * LLM prompt text.
@@ -145,7 +159,32 @@ class MagicAI
 
     public function ask(): string
     {
-        return $this->getModelInstance()->ask();
+        return $this->askResult()->text;
+    }
+
+    /**
+     * The install-wide output ceiling, falling back to the code default when
+     * configuration holds nothing usable.
+     */
+    public static function defaultMaxTokens(): int
+    {
+        $configured = (int) core()->getConfigData('general.magic_ai.settings.max_tokens');
+
+        return $configured > 0 ? min($configured, self::MAX_TOKENS_CEILING) : self::DEFAULT_MAX_TOKENS;
+    }
+
+    /**
+     * Generate content along with whether the model ran into the token ceiling.
+     *
+     * Adapters that cannot report a finish reason are assumed to have finished.
+     */
+    public function askResult(): GeneratedContent
+    {
+        $instance = $this->getModelInstance();
+
+        return $instance instanceof ReportsTruncation
+            ? $instance->askResult()
+            : new GeneratedContent($instance->ask());
     }
 
     public function images(array $options): array

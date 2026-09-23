@@ -378,7 +378,7 @@
                 async edit() {
                     let inputs = this.$refs[this.$.uid + '_fileInput_' + this.index];
 
-                    if (inputs.files == undefined) {
+                    if (! inputs.files || ! inputs.files.length) {
                         return;
                     }
 

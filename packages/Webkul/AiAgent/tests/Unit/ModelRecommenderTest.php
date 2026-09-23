@@ -31,6 +31,8 @@ it('excludes whisper / audio / tts / moderation / computer-use / guard models', 
         'computer-use-preview',
         'computer-use-preview-2025-03-11',
         'llama-guard-3-8b',
+        'gpt-oss-safeguard-20b',
+        'gpt-oss-safeguard-120b',
     ];
 
     $recommended = ModelRecommender::recommend($models);
@@ -99,7 +101,7 @@ it('works with a realistic OpenAI catalogue and keeps both chat and image models
         'whisper-1',
     ];
 
-    $recommended = ModelRecommender::recommend($models);
+    $recommended = ModelRecommender::chatCapable($models);
 
     // Chat models kept
     expect($recommended)->toContain('gpt-3.5-turbo');
@@ -155,7 +157,7 @@ it('keeps models from non-OpenAI providers without hardcoded knowledge', functio
         'grok-2-vision',
     ];
 
-    $recommended = ModelRecommender::recommend($models);
+    $recommended = ModelRecommender::chatCapable($models);
 
     // All of them should be kept — none match an exclusion pattern.
     expect($recommended)->toEqualCanonicalizing($models);
@@ -273,7 +275,7 @@ it('produces a clean list for the realistic OpenAI catalogue from the bug report
         'sora-2-pro',
     ];
 
-    $recommended = ModelRecommender::recommend($models);
+    $recommended = ModelRecommender::chatCapable($models);
 
     // Kept: rolling aliases + sensible variants
     $expectedKeeps = [

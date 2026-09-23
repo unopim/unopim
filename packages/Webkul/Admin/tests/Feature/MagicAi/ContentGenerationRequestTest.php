@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Validator;
 use Webkul\Admin\Http\Requests\MagicAI\ContentGenerationRequest;
+use Webkul\MagicAI\MagicAI;
 
 /*
  * The content generation request must bound the AI overrides so an oversized
@@ -32,4 +33,22 @@ it('accepts bounded overrides', function () {
     );
 
     expect($validator->fails())->toBeFalse();
+});
+
+it('accepts the configurable max tokens ceiling', function () {
+    $validator = Validator::make(
+        ['model' => 'gpt-4', 'prompt' => 'x', 'max_tokens' => MagicAI::MAX_TOKENS_CEILING],
+        contentRules()
+    );
+
+    expect($validator->errors()->has('max_tokens'))->toBeFalse();
+});
+
+it('rejects a max_tokens above the ceiling', function () {
+    $validator = Validator::make(
+        ['model' => 'gpt-4', 'prompt' => 'x', 'max_tokens' => MagicAI::MAX_TOKENS_CEILING + 1],
+        contentRules()
+    );
+
+    expect($validator->errors()->has('max_tokens'))->toBeTrue();
 });

@@ -1,6 +1,7 @@
 <?php
 
 use GuzzleHttp\Psr7\Response as PsrResponse;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
 use Laravel\Ai\Exceptions\AiException;
@@ -197,4 +198,30 @@ it('keeps the gateway placeholder when Unknown error has no upstream body to ext
     $resolved = AiErrorResolver::resolve($exception);
 
     expect($resolved['message'])->toBe('Groq Error [402]: Unknown error');
+});
+
+it('never leaks database connection or SQL details from a query exception', function () {
+    $exception = new QueryException(
+        'mysql',
+        'select `p`.`values` from `products` as `p` where `p`.`sku` like ?',
+        ['%shirt%'],
+        new PDOException('SQLSTATE[42000]: Syntax error or access violation: 3143 Invalid JSON path expression.')
+    );
+
+    $resolved = AiErrorResolver::resolve($exception);
+
+    expect($resolved['status'])->toBe(500);
+    expect($resolved['is_known'])->toBeFalse();
+    expect($resolved['message'])->toBe(trans('ai-agent::app.common.error-generic'));
+    expect($resolved['message'])->not->toContain('SQLSTATE');
+    expect($resolved['message'])->not->toContain('products');
+});
+
+it('never leaks details from a bare PDO exception', function () {
+    $resolved = AiErrorResolver::resolve(
+        new PDOException('SQLSTATE[HY000] [1045] Access denied for user \'root\'@\'127.0.0.1\'')
+    );
+
+    expect($resolved['message'])->toBe(trans('ai-agent::app.common.error-generic'));
+    expect($resolved['message'])->not->toContain('root');
 });
