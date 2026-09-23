@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Models\PublicationVersionDocumentProxy;
 use Webkul\Publication\Services\Publisher;
 
 it('serves a document referenced by the current published version', function (): void {
@@ -59,4 +60,28 @@ it('404s a document once the per-channel kill switch is disabled, even though th
     app('config')->set('core_config', null);
 
     $this->get('/p/'.$version->publication->uuid.'/asset/'.$path)->assertNotFound();
+});
+
+it('keeps the document index rows of a superseded version', function (): void {
+    [$first, $firstPath] = $this->passportWithDocumentFixture();
+
+    [$second, $secondPath] = $this->republishWithDocument($first, 'certificate-reissued.pdf');
+
+    $rows = PublicationVersionDocumentProxy::modelClass()::query()
+        ->where('publication_id', $first->publication_id)
+        ->pluck('path', 'publication_version_id');
+
+    expect($rows->get($first->id))->toBe($firstPath)
+        ->and($rows->get($second->id))->toBe($secondPath);
+});
+
+it('serves only the paths the current version references once a version is superseded', function (): void {
+    [$first, $firstPath] = $this->passportWithDocumentFixture();
+
+    [, $secondPath] = $this->republishWithDocument($first, 'certificate-reissued.pdf');
+
+    $uuid = $first->publication->uuid;
+
+    $this->get('/p/'.$uuid.'/asset/'.$secondPath)->assertOk();
+    $this->get('/p/'.$uuid.'/asset/'.$firstPath)->assertNotFound();
 });
