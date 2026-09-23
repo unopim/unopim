@@ -4,7 +4,6 @@
 
 - Added a "Maximum Output Tokens" setting to the Magic AI text generation configuration, so an installation can raise the default generation ceiling without editing a prompt one at a time.
 - Added Concentrate AI to the supported Magic AI providers.
-- Added an allow list and an auto-selection limit for Magic AI model discovery, configurable through `MAGIC_AI_ALLOWED_MODELS` and `MAGIC_AI_AUTO_SELECT_LIMIT`, so an installation can restrict which models are offered and how many are pre-selected after a fetch.
 - Raised the default generation ceiling from 1024 to 4096 tokens, and raised the seeded system prompts still holding the old value; a ceiling an administrator tuned themselves is left alone. HTML output spends tokens on markup, so the old ceiling truncated a table-heavy description mid-tag.
 - A generation that stops because it ran out of tokens is now reported as such instead of silently returning a half sentence, and a fragment cut mid-tag is dropped rather than rendered as stray text.
 - Magic AI model discovery now runs against the platform's own base URL, so a proxy or a regional endpoint lists the models it will actually serve; a custom endpoint typed without a version segment is retried with one.

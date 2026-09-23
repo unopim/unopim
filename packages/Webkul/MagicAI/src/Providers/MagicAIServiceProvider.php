@@ -57,7 +57,5 @@ class MagicAIServiceProvider extends ServiceProvider
     public function registerConfig(): void
     {
         $this->mergeConfigFrom(dirname(__DIR__).'/Config/default_prompts.php', 'default_prompts');
-
-        $this->mergeConfigFrom(dirname(__DIR__).'/Config/magic_ai.php', 'magic_ai');
     }
 }

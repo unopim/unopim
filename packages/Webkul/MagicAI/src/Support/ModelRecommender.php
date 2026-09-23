@@ -118,6 +118,11 @@ class ModelRecommender
     ];
 
     /**
+     * How many recommended models are pre-selected after a fetch.
+     */
+    public const AUTO_SELECT_LIMIT = 5;
+
+    /**
      * Weighted patterns used to rank the recommendation list, so the handful of
      * models pre-selected on the form are the cheap, widely used tiers rather
      * than whatever sorts first alphabetically.
@@ -132,48 +137,22 @@ class ModelRecommender
     ];
 
     /**
-     * Return the models the install allows, in the order the provider returned
-     * them. An empty allow list means every fetched model is offered.
-     *
-     * @param  string[]  $models
-     * @return string[]
-     */
-    public static function allowed(array $models): array
-    {
-        $allowed = array_filter(array_map(
-            static fn ($model): string => mb_strtolower(trim((string) $model)),
-            (array) config('magic_ai.models.allowed', [])
-        ));
-
-        if ($allowed === []) {
-            return array_values($models);
-        }
-
-        return array_values(array_filter(
-            $models,
-            static fn ($model): bool => in_array(mb_strtolower(trim((string) $model)), $allowed, true)
-        ));
-    }
-
-    /**
      * Return the models to auto-select after a fetch: the chat/image-capable
-     * subset, ranked cheapest-and-most-common first and capped at the
-     * configured limit. Falls back to the unfiltered list when the category
+     * subset, ranked cheapest-and-most-common first and capped at
+     * AUTO_SELECT_LIMIT. Falls back to the unfiltered list when the category
      * filter removes everything, so an unusual provider still yields a
      * selection.
      *
      * @param  string[]  $models
      * @return string[]
      */
-    public static function recommend(array $models, ?int $limit = null): array
+    public static function recommend(array $models): array
     {
         if ($models === []) {
             return [];
         }
 
-        $limit ??= (int) config('magic_ai.models.auto_select_limit', 5);
-
-        return $limit > 0 ? array_slice(self::rank(self::chatCapable($models)), 0, $limit) : [];
+        return array_slice(self::rank(self::chatCapable($models)), 0, self::AUTO_SELECT_LIMIT);
     }
 
     /**

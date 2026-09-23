@@ -302,7 +302,7 @@ class MagicAIPlatformController extends Controller
                 request()->input('api_url'),
             );
 
-            $models = ModelRecommender::chatCapable(ModelRecommender::allowed($discovery['models']));
+            $models = ModelRecommender::chatCapable($discovery['models']);
 
             // Pick recommended models to auto-select (includes image models)
             $recommended = ModelRecommender::recommend($models);
