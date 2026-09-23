@@ -275,3 +275,53 @@ it('should save all translated attributes successfully', function () {
         ->assertOk()
         ->assertJson(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
 });
+
+it('treats a locale only attribute as translatable and saves the translation in the locale bucket', function () {
+    Locale::whereIn('code', ['fr_FR', 'en_US'])->update(['status' => 1]);
+
+    $defaultChannel = core()->getDefaultChannel();
+    $defaultChannelLocale = $defaultChannel->locales->first()->code;
+
+    $attribute = Attribute::factory()->create([
+        'value_per_locale'  => true,
+        'value_per_channel' => false,
+        'type'              => 'textarea',
+    ]);
+
+    $product = Product::factory()->simple()->create([
+        'values' => [
+            'locale_specific' => [
+                $defaultChannelLocale => [
+                    $attribute->code => '220 gsm · Organic cotton',
+                ],
+            ],
+        ],
+    ]);
+
+    $product->attribute_family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    $this->post(route('admin.magic_ai.check.is_translatable', [
+        'resource_id' => $product->id,
+        'field'       => $attribute->code,
+        'locale'      => $defaultChannelLocale,
+        'channel'     => 'default',
+    ]))
+        ->assertOk()
+        ->assertJson([
+            'isTranslatable' => true,
+            'sourceData'     => '220 gsm · Organic cotton',
+        ]);
+
+    $this->post(route('admin.magic_ai.store.translated'), [
+        'resource_id'    => $product->id,
+        'resource_type'  => 'product',
+        'field'          => $attribute->code,
+        'translatedData' => json_encode([['locale' => 'fr_FR', 'content' => '220 g/m² · Coton biologique']]),
+        'targetChannel'  => 'default',
+    ])->assertOk();
+
+    $values = $product->refresh()->values;
+
+    expect($values['locale_specific']['fr_FR'][$attribute->code])->toBe('220 g/m² · Coton biologique')
+        ->and($values['channel_locale_specific'] ?? [])->toBe([]);
+});

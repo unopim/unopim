@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Attribute\Models\Attribute;
 use Webkul\Product\Services\ProductValueMapper;
 
 beforeEach(function () {
@@ -377,5 +378,59 @@ describe('getAssociations', function () {
         $result = $this->mapper->getAssociations($data, 'related');
 
         expect($result)->toBe('');
+    });
+});
+
+describe('getScopedFields', function () {
+    it('merges every scope bucket for the requested channel and locale', function () {
+        $data = [
+            'values' => [
+                'common'                  => ['sku' => 'TEST-001'],
+                'locale_specific'         => ['en_US' => ['highlights' => 'Organic cotton']],
+                'channel_specific'        => ['default' => ['status' => true]],
+                'channel_locale_specific' => ['default' => ['en_US' => ['name' => 'Tee']]],
+            ],
+        ];
+
+        expect($this->mapper->getScopedFields($data, 'default', 'en_US'))->toBe([
+            'sku'        => 'TEST-001',
+            'highlights' => 'Organic cotton',
+            'status'     => true,
+            'name'       => 'Tee',
+        ]);
+    });
+
+    it('returns an empty array when the product has no values', function () {
+        expect($this->mapper->getScopedFields([], 'default', 'en_US'))->toBe([]);
+    });
+});
+
+describe('scoped writes', function () {
+    it('stores a locale only attribute value under the locale bucket', function () {
+        $attribute = new Attribute;
+        $attribute->forceFill(['code' => 'highlights', 'value_per_locale' => 1, 'value_per_channel' => 0]);
+
+        $values = $this->mapper->setScopedValue([], $attribute, 'default', 'fr_FR', 'Coton biologique');
+
+        expect($values)->toBe(['locale_specific' => ['fr_FR' => ['highlights' => 'Coton biologique']]]);
+    });
+
+    it('stores a channel and locale attribute value under the channel locale bucket', function () {
+        $attribute = new Attribute;
+        $attribute->forceFill(['code' => 'name', 'value_per_locale' => 1, 'value_per_channel' => 1]);
+
+        $values = $this->mapper->setScopedValue([], $attribute, 'default', 'fr_FR', 'Tee-shirt');
+
+        expect($values)->toBe(['channel_locale_specific' => ['default' => ['fr_FR' => ['name' => 'Tee-shirt']]]]);
+    });
+
+    it('reads back the value it wrote for the attribute scope', function () {
+        $attribute = new Attribute;
+        $attribute->forceFill(['code' => 'highlights', 'value_per_locale' => 1, 'value_per_channel' => 0]);
+
+        $values = $this->mapper->setScopedValue([], $attribute, 'default', 'fr_FR', 'Coton biologique');
+
+        expect($this->mapper->getScopedValue($values, $attribute, 'default', 'fr_FR'))->toBe('Coton biologique')
+            ->and($this->mapper->getScopedValue($values, $attribute, 'default', 'de_DE'))->toBeNull();
     });
 });

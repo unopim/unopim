@@ -244,9 +244,9 @@
     /* Fields already draw their own border, so an offset ring reads as a second
        frame around them. Recolour that border and add a tight halo instead:
        identical box geometry, no double outline, still a 3:1 focus indicator. */
-    input:focus-visible:not(.multiselect__input),
-    textarea:focus-visible,
-    select:focus-visible,
+    input:focus-visible:not(.multiselect__input):not(.no-focus-ring),
+    textarea:focus-visible:not(.no-focus-ring),
+    select:focus-visible:not(.no-focus-ring),
     .focus-ring-within:focus-within {
         @apply outline-none !border-primary-600 dark:!border-primary-400;
 
@@ -833,6 +833,68 @@ body .tox .tox-dialog__footer .tox-button--secondary:hover:not(:disabled) {
 
 .multiselect--active .multiselect__content-wrapper {
     z-index: 1001;
+}
+
+/* Compact select mounted in a modal footer: the control stays pill-sized while
+   its dropdown keeps the width of its longest option. Written as plain CSS
+   because Tailwind reads `_` in an arbitrary variant as a descendant space,
+   which silently mangles BEM class names like `multiselect__tags`. */
+.multiselect-compact .multiselect {
+    min-height: 0;
+}
+
+.multiselect-compact .multiselect__tags {
+    min-height: 0;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
+
+/* Caret is sized for the 40px control, so it needs re-centring once the
+   compact variant shrinks the box. */
+.multiselect-compact .multiselect__select {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    bottom: 0;
+    height: auto;
+    padding: 0 0.5rem;
+    width: 2rem;
+}
+
+.multiselect-compact .multiselect__single,
+.multiselect-compact .multiselect__input,
+.multiselect-compact .multiselect__placeholder {
+    margin-bottom: 0;
+    padding-top: 0;
+    font-size: 0.75rem;
+    line-height: 1.25rem;
+}
+
+.multiselect-compact .multiselect__content-wrapper {
+    width: max-content;
+    min-width: 100%;
+    max-width: 20rem;
+}
+
+.multiselect-compact .multiselect__option {
+    padding: 0.5rem 0.75rem;
+    min-height: 0;
+    white-space: normal;
+}
+
+/* Vendor paints the "Press enter to select" hint as an absolutely positioned
+   ::after, which sits on top of the label once the control is this narrow. */
+.multiselect-compact .multiselect__option:after {
+    display: none;
+}
+
+/* Single-select label must stay on one line; wrapping grows the control and
+   breaks rows that size their columns from it. */
+.multiselect__single {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 /* One tag is rendered per selection, so fields backed by large sets (channel

@@ -32,18 +32,20 @@ class Worker extends BaseWorker
                 $this->registerJobTimeoutHandler($connectionName, $queue, $job, $options);
             }
 
-            if ($job) {
+            try {
+                if (! $job) {
+                    break;
+                }
+
                 $this->runJob($job, $connectionName, $options);
 
                 if ($options->rest > 0) {
                     $this->sleep($options->rest);
                 }
-            } else {
-                break;
-            }
-
-            if ($supportsAsyncSignals) {
-                $this->resetTimeoutHandler();
+            } finally {
+                if ($supportsAsyncSignals) {
+                    $this->resetTimeoutHandler();
+                }
             }
         }
     }
@@ -53,7 +55,7 @@ class Worker extends BaseWorker
      */
     protected function registerJobTimeoutHandler(string $connectionName, string $queue, $job, WorkerOptions $options): void
     {
-        $this->timeoutHandlerTakesQueueContext ??= (new ReflectionMethod(parent::class, 'registerTimeoutHandler'))->getNumberOfParameters() >= 4;
+        $this->timeoutHandlerTakesQueueContext ??= new ReflectionMethod(parent::class, 'registerTimeoutHandler')->getNumberOfParameters() >= 4;
 
         $arguments = $this->timeoutHandlerTakesQueueContext
             ? [$connectionName, $queue, $job, $options]

@@ -1010,7 +1010,8 @@ test('7.7 - Translate product content to Hindi and verify', async ({ adminPage }
     await nextBtn.click();
     await adminPage.waitForTimeout(1000);
 
-    const translateBtn = adminPage.getByRole('button', { name: /Translate/i }).first();
+    // Scope to the open modal: the per-field translate buttons behind it also match.
+    const translateBtn = adminPage.locator('[data-unsaved-ignore]').getByRole('button', { name: /Translate/i }).first();
     if (await translateBtn.isVisible({ timeout: 5000 }).catch(() => false)) {
       await translateBtn.click();
       // Wait for translation API call to complete.

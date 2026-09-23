@@ -232,7 +232,7 @@
                         </button>
                     </div>
 
-                    <div ref="messagesEl" style="flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:18px;min-height:0;">
+                    <div ref="messagesEl" @scroll.passive="onMessagesScroll" class="flex flex-1 flex-col gap-[18px] min-h-0 overflow-y-auto px-4 py-3.5">
                         {{-- Empty state --}}
                         <div v-if="messages.length === 0 && !isLoading" class="flex flex-col items-center justify-center h-full text-center py-8">
                             <svg class="w-10 h-10 text-primary-200 dark:text-primary-800 mb-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
@@ -348,17 +348,11 @@
                             </div>
                         </template>
 
-                        {{-- Typing / Streaming indicator --}}
-                        <div v-if="isLoading" aria-live="polite" role="status">
-                            <div style="padding:2px 0;">
-                                <div class="flex items-center gap-2">
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:0ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:150ms"></span>
-                                    <span class="w-1.5 h-1.5 bg-primary-400 rounded-full animate-bounce" style="animation-delay:300ms"></span>
-                                    <span v-if="streamingStatus" class="text-xs text-primary-500 dark:text-primary-400 ml-1 font-medium" v-text="streamingStatus"></span>
-                                </div>
-                            </div>
-                        </div>
+                    </div>
+
+                    <div v-if="isLoading" class="ap-live-status" aria-live="polite" role="status">
+                        <span class="ap-live-status-dot"></span>
+                        <span v-text="streamingStatus || trans.processing"></span>
                     </div>
 
                     {{-- Pending files --}}
@@ -718,6 +712,22 @@ body.overlay-open .ap-fab { display: none; }
 .ap-clear-chat-btn:hover { background:#ffe7e7; }
 .dark .ap-clear-chat-btn:hover { background:#4a2733; }
 
+.ap-live-status {
+    display:flex; align-items:center; gap:8px; padding:7px 16px; flex-shrink:0;
+    font-size:11px; font-weight:600; letter-spacing:.01em;
+    color:rgb(var(--c-primary-600)); background:rgb(var(--c-primary-50));
+    border-top:1px solid rgb(var(--c-primary-100));
+}
+.dark .ap-live-status {
+    color:rgb(var(--c-primary-300)); background:rgb(var(--c-primary-900) / 0.35);
+    border-top-color:rgb(var(--c-primary-800));
+}
+.ap-live-status-dot {
+    width:6px; height:6px; border-radius:9999px; flex-shrink:0;
+    background:rgb(var(--c-primary-500)); animation:ap-live-pulse 1s ease-in-out infinite;
+}
+@keyframes ap-live-pulse { 0%,100% { opacity:.3; transform:scale(.8); } 50% { opacity:1; transform:scale(1.2); } }
+
 .ap-pending-files {
     display:flex; flex-wrap:wrap; gap:6px; padding:8px 16px;
     border-top:1px solid #e5e7eb; background:#f9fafb; flex-shrink:0;
@@ -877,6 +887,7 @@ app.component('v-agenting-pim', {
             newSession: `@lang('ai-agent::app.widget.new-session')`,
             noSessions: `@lang('ai-agent::app.widget.no-sessions')`,
             sessionDefaultName: `@lang('ai-agent::app.widget.session-default-name')`,
+            messages: `@lang('ai-agent::app.widget.messages')`,
             deleteSession: `@lang('ai-agent::app.widget.delete-session')`,
             renameSession: `@lang('ai-agent::app.widget.rename-session')`,
             readyFor: `@lang('ai-agent::app.widget.ready-for')`,
@@ -959,6 +970,7 @@ app.component('v-agenting-pim', {
             pendingFiles: [],
             isLoading: false,
             streamingStatus: '',
+            autoScroll: true,
             productContext: null,
             noTransition: false,
             capabilitySearch: '',
@@ -1100,13 +1112,13 @@ app.component('v-agenting-pim', {
         },
         fileInputTitle() { return this.activeCapability?.acceptsSpreadsheet ? this.trans.attachCsvXlsx : this.trans.attachImage; },
         inputPlaceholder() {
-            if (this.isLoading) return this.trans.processing;
             if (this.activeCapability) return this.activeCapability.hint;
             return this.trans.askCatalog;
         },
     },
 
     mounted() {
+        this.$nextTick(() => this.observeMessages());
         this.loadSessions();
         this.detectProductContext();
         this.restoreState();
@@ -1136,7 +1148,8 @@ app.component('v-agenting-pim', {
             this.saveState();
 
             if (val && this.activeTab === 'chat') {
-                this.scrollBottom();
+                this.$nextTick(() => this.observeMessages());
+                this.scrollBottom(true);
                 this.$nextTick(() => this.$refs.textInput?.focus());
             }
         },
@@ -1145,7 +1158,8 @@ app.component('v-agenting-pim', {
             this.saveState();
 
             if (val === 'chat' && this.isOpen) {
-                this.scrollBottom();
+                this.$nextTick(() => this.observeMessages());
+                this.scrollBottom(true);
             }
         },
         activeCapability: { deep: true, handler() { this.saveState(); } },
@@ -1432,7 +1446,7 @@ app.component('v-agenting-pim', {
             // Build user message for display
             const userMsg = { role: 'user', content: text || (files.length ? '📎 ' + files.map(f => f.name).join(', ') : ''), files: files.map(f => ({ type: f.type, preview: f.preview, name: f.name })) };
             this.messages.push(userMsg);
-            this.inputText = ''; this.resetTextarea(); this.scrollBottom(); this.isLoading = true;
+            this.inputText = ''; this.resetTextarea(); this.scrollBottom(true); this.isLoading = true;
             this.streamingStatus = files.length > 0 ? this.trans.analyzingFiles : this.trans.thinking;
 
             try {
@@ -1501,7 +1515,7 @@ app.component('v-agenting-pim', {
             } finally {
                 this.isLoading = false;
                 this.streamingStatus = '';
-                this.scrollBottom();
+                this.scrollBottom(true);
                 this.focusInput();
             }
         },
@@ -1652,6 +1666,7 @@ app.component('v-agenting-pim', {
             this.messages[idx] = { ...this.messages[idx], _confirmed: true };
             // Send the user's answer as a chat message
             this.inputText = answer === 'yes' ? 'Yes, proceed' : 'No, cancel';
+            this.scrollBottom(true);
             this.$nextTick(() => this.send());
         },
 
@@ -1708,7 +1723,21 @@ app.component('v-agenting-pim', {
             return lastSegment || 'generated-image';
         },
 
-        scrollBottom() {
+        /**
+         * Pin the transcript to the latest message.
+         *
+         * Skipped while the user is reading further up, unless forced by an
+         * action the user just took (sending, confirming, switching session).
+         */
+        scrollBottom(force = false) {
+            if (force) {
+                this.autoScroll = true;
+            }
+
+            if (! this.autoScroll) {
+                return;
+            }
+
             this.$nextTick(() => {
                 requestAnimationFrame(() => {
                     const el = this.$refs.messagesEl;
@@ -1718,6 +1747,35 @@ app.component('v-agenting-pim', {
                     }
                 });
             });
+        },
+
+        onMessagesScroll() {
+            const el = this.$refs.messagesEl;
+
+            if (! el) {
+                return;
+            }
+
+            this.autoScroll = (el.scrollHeight - el.scrollTop - el.clientHeight) <= 80;
+        },
+
+        /**
+         * Keep the transcript pinned while streamed text, tool-status rows,
+         * markdown blocks and lazily loaded images change its height. Images
+         * settle their height after the mutation that inserted them, so their
+         * load event is listened to as well.
+         */
+        observeMessages() {
+            const el = this.$refs.messagesEl;
+
+            if (! el || this.messagesObserver) {
+                return;
+            }
+
+            this.messagesObserver = new MutationObserver(() => this.scrollBottom());
+            this.messagesObserver.observe(el, { childList: true, subtree: true, characterData: true });
+
+            el.addEventListener('load', () => this.scrollBottom(), true);
         },
         autoResize() { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 160) + 'px'; } },
         resetTextarea() { this.$nextTick(() => { const el = this.$refs.textInput; if (el) { el.style.height = 'auto'; el.style.height = '72px'; } }); },
@@ -1733,7 +1791,8 @@ app.component('v-agenting-pim', {
 
         renderMarkdown(text) {
             if (!text) return '';
-            const html = text
+            const html = this.renderMarkdownTables(text)
+                .replace(/^[*-] (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>')
                 .replace(/`([^`]+)`/g, '<code class="bg-gray-100 dark:bg-cherry-800 px-1 py-0.5 rounded text-xs font-mono text-primary-700 dark:text-primary-400">$1</code>')
@@ -1746,10 +1805,11 @@ app.component('v-agenting-pim', {
                 .replace(/^### (.+)$/gm, '<p class="font-semibold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^## (.+)$/gm, '<p class="font-bold text-sm mt-2 mb-1">$1</p>')
                 .replace(/^# (.+)$/gm, '<p class="font-bold text-base mt-2 mb-1">$1</p>')
-                .replace(/^- (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">&bull;</span><span>$1</span></p>')
                 .replace(/^(\d+)\. (.+)$/gm, '<p class="flex gap-1.5 my-0.5"><span class="text-primary-400 font-bold flex-shrink-0">$1.</span><span>$2</span></p>')
                 .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>');
+                .replace(/\n/g, '<br>')
+                .replace(/(<br>\s*)+(<table)/g, '$2')
+                .replace(/(<\/table>)(\s*<br>)+/g, '$1');
 
             // Sanitize HTML to prevent XSS from AI-generated or injected content.
             if (typeof DOMPurify !== 'undefined') {
@@ -1764,6 +1824,52 @@ app.component('v-agenting-pim', {
             // flows into v-html, so returning it raw is an XSS sink. Strip every
             // tag to plain (escaped) text instead — formatting is lost, safety isn't.
             return this.stripToText(html);
+        },
+
+        /**
+         * Convert GitHub-style pipe tables into HTML before the line-based
+         * rules run, since those turn every newline into a <br> and would
+         * leave the table as literal pipes.
+         */
+        renderMarkdownTables(text) {
+            const lines = text.split('\n');
+            const output = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const isDivider = /^\s*\|?[\s:|-]*-[\s:|-]*\|?\s*$/.test(lines[i + 1] || '')
+                    && (lines[i + 1] || '').includes('-');
+
+                if (!this.isTableRow(lines[i]) || !isDivider || !this.isTableRow(lines[i + 1])) {
+                    output.push(lines[i]);
+                    continue;
+                }
+
+                const header = this.splitTableRow(lines[i]);
+                const body = [];
+                let cursor = i + 2;
+
+                while (cursor < lines.length && this.isTableRow(lines[cursor])) {
+                    body.push(this.splitTableRow(lines[cursor]));
+                    cursor++;
+                }
+
+                const headCells = header.map(cell => `<th class="text-left font-semibold px-2 py-1 border-b border-gray-200 dark:border-cherry-800">${cell}</th>`).join('');
+                const bodyRows = body.map(row => `<tr>${row.map(cell => `<td class="px-2 py-1 align-top border-b border-gray-100 dark:border-cherry-900">${cell}</td>`).join('')}</tr>`).join('');
+
+                output.push(`<table class="w-full my-1.5 text-[12px] border-collapse"><thead><tr>${headCells}</tr></thead><tbody>${bodyRows}</tbody></table>`);
+
+                i = cursor - 1;
+            }
+
+            return output.join('\n');
+        },
+
+        isTableRow(line) {
+            return typeof line === 'string' && /^\s*\|.*\|\s*$/.test(line);
+        },
+
+        splitTableRow(line) {
+            return line.trim().replace(/^\||\|$/g, '').split('|').map(cell => cell.trim());
         },
 
         sanitizeSvg(svgHtml) {
@@ -1832,6 +1938,9 @@ app.component('v-agenting-pim', {
     },
 
     beforeUnmount() {
+        this.messagesObserver?.disconnect();
+        this.messagesObserver = null;
+
         const appEl = document.getElementById('app');
         if (appEl) appEl.style.marginRight = '';
 

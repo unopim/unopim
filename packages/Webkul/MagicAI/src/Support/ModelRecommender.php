@@ -39,6 +39,7 @@ class ModelRecommender
         // Content moderation / safety
         '/moderation/i',
         '/(^|[-_])guard([-_]|$)/i',
+        '/safeguard/i',
 
         // Realtime / audio API variants (different API surface — not usable
         // as regular chat completions)
@@ -117,23 +118,110 @@ class ModelRecommender
     ];
 
     /**
-     * Return the recommended subset of $models. Never returns an empty array
-     * when $models is non-empty — if the filter removes everything (e.g. an
-     * unusual provider), the original list is returned so the form stays
-     * usable.
+     * Weighted patterns used to rank the recommendation list, so the handful of
+     * models pre-selected on the form are the cheap, widely used tiers rather
+     * than whatever sorts first alphabetically.
+     *
+     * @var array<string, int>
+     */
+    protected const RANK_PATTERNS = [
+        '/(^|[-_.])(mini|nano|lite|small|flash|haiku|turbo|instant)([-_.]|$)/i'    => 4,
+        '/^(gpt|claude|gemini|llama|mistral|deepseek|qwen|grok|command)/i'         => 2,
+        '/(preview|experimental|(^|[-_.])exp([-_.]|$)|beta|alpha|(^|[-_.])rc\d)/i' => -4,
+        '/(^|[-_.])(pro|max|opus|ultra|large|thinking|reasoning)([-_.]|$)/i'       => -2,
+    ];
+
+    /**
+     * Return the models the install allows, in the order the provider returned
+     * them. An empty allow list means every fetched model is offered.
      *
      * @param  string[]  $models
      * @return string[]
      */
-    public static function recommend(array $models): array
+    public static function allowed(array $models): array
+    {
+        $allowed = array_filter(array_map(
+            static fn ($model): string => mb_strtolower(trim((string) $model)),
+            (array) config('magic_ai.models.allowed', [])
+        ));
+
+        if ($allowed === []) {
+            return array_values($models);
+        }
+
+        return array_values(array_filter(
+            $models,
+            static fn ($model): bool => in_array(mb_strtolower(trim((string) $model)), $allowed, true)
+        ));
+    }
+
+    /**
+     * Return the models to auto-select after a fetch: the chat/image-capable
+     * subset, ranked cheapest-and-most-common first and capped at the
+     * configured limit. Falls back to the unfiltered list when the category
+     * filter removes everything, so an unusual provider still yields a
+     * selection.
+     *
+     * @param  string[]  $models
+     * @return string[]
+     */
+    public static function recommend(array $models, ?int $limit = null): array
     {
         if ($models === []) {
             return [];
         }
 
-        $recommended = array_values(array_filter($models, static fn ($model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, (string) $model))));
+        $limit ??= (int) config('magic_ai.models.auto_select_limit', 5);
 
-        return $recommended ?: $models;
+        return $limit > 0 ? array_slice(self::rank(self::chatCapable($models)), 0, $limit) : [];
+    }
+
+    /**
+     * The chat- and image-capable subset of $models, in the provider's own
+     * order. Returns the input untouched when every model is filtered out, so
+     * an unusual provider still yields a usable list.
+     *
+     * @param  string[]  $models
+     * @return string[]
+     */
+    public static function chatCapable(array $models): array
+    {
+        $capable = array_values(array_filter($models, static fn ($model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, (string) $model))));
+
+        return $capable ?: array_values($models);
+    }
+
+    /**
+     * Order by descending preference score, keeping the provider's own order
+     * among equally scored models.
+     *
+     * @param  string[]  $models
+     * @return string[]
+     */
+    protected static function rank(array $models): array
+    {
+        $ranked = array_map(
+            static fn (int $position, $model): array => ['model' => (string) $model, 'position' => $position, 'score' => self::score((string) $model)],
+            array_keys($models),
+            array_values($models)
+        );
+
+        usort($ranked, static fn (array $a, array $b): int => [$b['score'], $a['position']] <=> [$a['score'], $b['position']]);
+
+        return array_column($ranked, 'model');
+    }
+
+    protected static function score(string $model): int
+    {
+        $score = 0;
+
+        foreach (self::RANK_PATTERNS as $pattern => $weight) {
+            if (preg_match($pattern, $model)) {
+                $score += $weight;
+            }
+        }
+
+        return $score;
     }
 
     /**

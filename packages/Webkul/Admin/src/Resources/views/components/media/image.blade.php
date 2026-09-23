@@ -763,6 +763,10 @@
                 },
 
                 async addFiles(files) {
+                    if (! files || ! files.length) {
+                        return false;
+                    }
+
                     const validFiles = Array.from(files).every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
@@ -1107,7 +1111,7 @@
                 async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
-                    if (imageInput.files == undefined) {
+                    if (! imageInput.files || ! imageInput.files.length) {
                         return;
                     }
 
