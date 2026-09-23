@@ -104,3 +104,11 @@ it('prefers the configured image model when the platform exposes it', function (
 
     expect((new GenerateImage)->resolveImageModel(imageChatContext($platform), $platform))->toBe('dall-e-3');
 });
+
+it('scopes the image platform credentials instead of mutating provider config', function () {
+    $source = file_get_contents(base_path('packages/Webkul/AiAgent/src/Chat/Tools/GenerateImage.php'));
+
+    expect($source)->toContain('ScopedProviderConfig::run');
+    expect($source)->not->toContain('config(["ai.providers.');
+    expect($source)->not->toContain('config($originalConfig)');
+});

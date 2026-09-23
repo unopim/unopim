@@ -1577,12 +1577,22 @@ class ProductController extends Controller
         $values = [];
 
         foreach ($product->getEditableAttributes()->where('ai_translate', 1) as $attribute) {
+            if (! $attribute->isLocaleBasedAttribute()) {
+                continue;
+            }
+
+            $sourceValue = $sourceValues[$attribute->code] ?? null;
+
+            if (! is_scalar($sourceValue) || trim((string) $sourceValue) === '') {
+                continue;
+            }
+
             $attributeOptions[] = [
                 'id'    => $attribute->code,
                 'label' => $attribute->name,
             ];
 
-            $values[$attribute->code] = $sourceValues[$attribute->code] ?? null;
+            $values[$attribute->code] = $sourceValue;
         }
 
         return new JsonResponse([

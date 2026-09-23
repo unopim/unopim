@@ -7,6 +7,7 @@ use Illuminate\Http\File;
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Image;
+use Laravel\Ai\Responses\ImageResponse;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
@@ -15,6 +16,7 @@ use Webkul\Core\Filesystem\FileStorer;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\Product\Repositories\ProductRepository;
 
 class GenerateImage implements PimTool
@@ -71,19 +73,13 @@ class GenerateImage implements PimTool
                     ]);
                 }
 
-                $configKey = $aiProvider->configKey();
-                $originalConfig = [
-                    "ai.providers.{$configKey}.key" => config("ai.providers.{$configKey}.key"),
-                    "ai.providers.{$configKey}.url" => config("ai.providers.{$configKey}.url"),
-                ];
+                $overrides = ['key' => $platform->api_key];
+
+                if ($platform->api_url) {
+                    $overrides['url'] = $platform->api_url;
+                }
 
                 try {
-                    config(["ai.providers.{$configKey}.key" => $platform->api_key]);
-
-                    if ($platform->api_url) {
-                        config(["ai.providers.{$configKey}.url" => $platform->api_url]);
-                    }
-
                     $imageModel = $this->outer->resolveImageModel($this->context, $platform);
 
                     $sizeMap = [
@@ -92,13 +88,17 @@ class GenerateImage implements PimTool
                         '1792x1024' => '3:2',
                     ];
 
-                    $response = Image::of($prompt)
-                        ->size($sizeMap[$size] ?? '1:1')
-                        ->quality('high')
-                        ->generate(
-                            provider: $aiProvider->toLab(),
-                            model: $imageModel,
-                        );
+                    $response = ScopedProviderConfig::run(
+                        $aiProvider->configKey(),
+                        $overrides,
+                        fn (): ImageResponse => Image::of($prompt)
+                            ->size($sizeMap[$size] ?? '1:1')
+                            ->quality('high')
+                            ->generate(
+                                provider: $aiProvider->toLab(),
+                                model: $imageModel,
+                            ),
+                    );
 
                     if (empty($response->images)) {
                         return json_encode(['error' => 'Image generation returned no images.']);
@@ -167,8 +167,6 @@ class GenerateImage implements PimTool
                     ]);
                 } catch (\Throwable $e) {
                     return json_encode(['error' => 'Image generation failed: '.$e->getMessage()]);
-                } finally {
-                    config($originalConfig);
                 }
             }
         };

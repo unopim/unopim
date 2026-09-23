@@ -116,3 +116,56 @@ it('returns the source value of a locale only attribute', function () {
 
     expect($response->json('values.name'))->toBe('Corallae Paeonia Tee');
 });
+
+it('omits attributes that are not locale scoped', function () {
+    $this->loginAsAdmin();
+
+    $channel = Channel::first();
+    $locale = $channel->locales()->first();
+
+    $product = Product::factory()->create(['type' => 'simple']);
+
+    $attribute = $product->getEditableAttributes()->firstWhere('code', 'name');
+
+    $attribute->forceFill(['ai_translate' => 1, 'value_per_locale' => 0, 'value_per_channel' => 0])->save();
+
+    $product->forceFill(['values' => ['common' => ['name' => 'Corallae Paeonia Tee']]])->save();
+
+    $response = get(route('admin.catalog.product.get_attribute', [
+        'productId' => $product->id,
+        'channel'   => $channel->code,
+        'locale'    => $locale->code,
+    ]), ['Accept' => 'application/json'])->assertOk();
+
+    expect(collect($response->json('attributes'))->pluck('id'))->not->toContain('name');
+});
+
+it('omits translatable attributes without a scalar source value', function () {
+    $this->loginAsAdmin();
+
+    $channel = Channel::first();
+    $locale = $channel->locales()->first();
+
+    $product = Product::factory()->create(['type' => 'simple']);
+
+    $attribute = $product->getEditableAttributes()->firstWhere('code', 'name');
+
+    $attribute->forceFill(['ai_translate' => 1, 'value_per_locale' => 1, 'value_per_channel' => 0])->save();
+
+    $product->forceFill([
+        'values' => [
+            'locale_specific' => [
+                $locale->code => ['name' => '  '],
+            ],
+        ],
+    ])->save();
+
+    $response = get(route('admin.catalog.product.get_attribute', [
+        'productId' => $product->id,
+        'channel'   => $channel->code,
+        'locale'    => $locale->code,
+    ]), ['Accept' => 'application/json'])->assertOk();
+
+    expect(collect($response->json('attributes'))->pluck('id'))->not->toContain('name')
+        ->and($response->json('values'))->not->toHaveKey('name');
+});
