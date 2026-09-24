@@ -17,20 +17,26 @@ trait GuardsManagedPlatform
      *
      * @return array<int, Closure>
      */
-    public function after(): array
+    public function after()
     {
         return [
             function (Validator $validator): void {
+                if ($validator->errors()->isNotEmpty()) {
+                    return;
+                }
+
                 $managedPlatform = app(ManagedPlatform::class);
 
                 $apiKey = $this->input('api_key');
+                $provider = $this->input('provider');
+                $apiUrl = $this->input('api_url');
 
                 $violations = $managedPlatform->violations(
-                    $this->storedPlatform(),
+                    $this->managedStoredPlatform(),
                     $managedPlatform->usesStoredKey(is_string($apiKey) ? $apiKey : null),
-                    $this->input('provider'),
-                    $this->input('api_url'),
-                    $this->submittedModels(),
+                    is_string($provider) ? $provider : null,
+                    is_string($apiUrl) ? $apiUrl : null,
+                    $this->managedSubmittedModels(),
                     ProviderOverrides::decode($this->input('extras')),
                 );
 
@@ -44,7 +50,7 @@ trait GuardsManagedPlatform
     /**
      * The saved platform the submission refers to, if any.
      */
-    protected function storedPlatform(): ?MagicAIPlatform
+    protected function managedStoredPlatform(): ?MagicAIPlatform
     {
         $platformId = (int) ($this->route('id') ?? $this->input('id'));
 
@@ -56,11 +62,13 @@ trait GuardsManagedPlatform
     /**
      * @return string[]
      */
-    protected function submittedModels(): array
+    protected function managedSubmittedModels(): array
     {
+        $models = $this->input('models');
+
         return array_values(array_filter(array_map(
             static fn (string $model): string => ltrim(trim($model), '~'),
-            explode(',', (string) $this->input('models'))
+            explode(',', is_string($models) ? $models : '')
         )));
     }
 }

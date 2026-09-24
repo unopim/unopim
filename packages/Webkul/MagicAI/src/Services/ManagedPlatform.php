@@ -28,7 +28,7 @@ class ManagedPlatform
      */
     public function usesStoredKey(?string $apiKey): bool
     {
-        return $apiKey === null || $apiKey === '' || preg_match('/^\*+$/', $apiKey) === 1;
+        return $apiKey === null || $apiKey === '' || $apiKey === '0' || preg_match('/^\*+$/', $apiKey) === 1;
     }
 
     /**

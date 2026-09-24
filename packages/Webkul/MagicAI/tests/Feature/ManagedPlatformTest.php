@@ -304,3 +304,30 @@ it('locks each managed platform to its own saved models', function () {
 
     expect(app(ManagedPlatform::class)->resolveModel($second, 'gpt-oss-120b'))->toBe('qwen3-32b');
 });
+
+it('keeps the stored key when the literal key 0 is submitted', function () {
+    $this->loginWithPermissions('all');
+
+    $platform = MagicAIPlatform::factory()->create(['api_key' => 'sk-original']);
+
+    putJson(route('admin.magic_ai.platform.update', $platform->id), [
+        'label'    => $platform->label,
+        'provider' => $platform->provider,
+        'api_url'  => $platform->api_url,
+        'api_key'  => '0',
+        'models'   => $platform->models,
+        'status'   => 1,
+    ])->assertOk();
+
+    expect($platform->fresh()->api_key)->toBe('sk-original');
+});
+
+it('answers a malformed payload with 422 instead of a server error', function (string $route, array $payload) {
+    $this->loginWithPermissions('all');
+
+    postJson(route($route), $payload)->assertUnprocessable();
+})->with([
+    'fetch with array values'  => ['admin.magic_ai.platform.fetch_models', ['provider' => ['x'], 'api_url' => ['x']]],
+    'test with array provider' => ['admin.magic_ai.platform.test', ['provider' => ['x'], 'models' => 'gpt-4o']],
+    'store with array models'  => ['admin.magic_ai.platform.store', ['label' => 'x', 'provider' => 'openai', 'models' => ['a']]],
+]);

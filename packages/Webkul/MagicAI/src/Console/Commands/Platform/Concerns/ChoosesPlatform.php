@@ -2,7 +2,6 @@
 
 namespace Webkul\MagicAI\Console\Commands\Platform\Concerns;
 
-use Illuminate\Console\Command;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 
 use function Laravel\Prompts\error;
