@@ -1,13 +1,15 @@
 # Dependabot configuration
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 #
-# Major dependency bumps are breaking, so they target `master`, the next-major
-# integration branch. The current release line `3.x` only accepts minor and
-# patch bumps. Dependabot reads this file from the default branch only.
+# The current release line `3.x` only accepts patch bumps: a minor release can
+# change framework internals the codebase extends (Laravel 13.32 changed the
+# queue worker's protected timeout handler), so minor and major bumps target
+# `master`, the next-major integration branch. Dependabot reads this file from
+# the default branch only.
 
 version: 2
 updates:
-  # Composer (PHP) — current release line: minor + patch only
+  # Composer (PHP) — current release line: patch only
   - package-ecosystem: "composer"
     directory: "/"
     target-branch: "3.x"
@@ -21,6 +23,7 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "php"
@@ -38,7 +41,7 @@ updates:
       dev-dependencies:
         dependency-type: "development"
 
-  # Composer (PHP) — next major: breaking bumps only
+  # Composer (PHP) — next major: minor and major bumps
   - package-ecosystem: "composer"
     directory: "/"
     target-branch: "master"
@@ -51,7 +54,6 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types:
-          - "version-update:semver-minor"
           - "version-update:semver-patch"
     labels:
       - "dependencies"
@@ -75,6 +77,7 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "javascript"
@@ -101,7 +104,6 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types:
-          - "version-update:semver-minor"
           - "version-update:semver-patch"
     labels:
       - "dependencies"
@@ -126,6 +128,7 @@ updates:
       - dependency-name: "*"
         update-types:
           - "version-update:semver-major"
+          - "version-update:semver-minor"
     labels:
       - "dependencies"
       - "ci"
@@ -153,5 +156,4 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types:
-          - "version-update:semver-minor"
           - "version-update:semver-patch"
