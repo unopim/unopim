@@ -249,11 +249,12 @@ class ModelRecommender
     /**
      * The generation number in a model name (gpt-4.1 → 4.1, claude-sonnet-4-5
      * → 4.5, gemini-3.1-flash → 3.1). Four-digit and longer runs are dates or
-     * snapshot stamps, not versions.
+     * snapshot stamps, and numbers ending in b or k are parameter counts or
+     * context sizes (gpt-oss-20b, gpt-3.5-turbo-16k), not versions.
      */
     protected static function version(string $model): float
     {
-        if (! preg_match('/(?<!\d)(\d{1,2})(?:[.\-](\d{1,2}))?(?!\d)/', $model, $matches)) {
+        if (! preg_match('/(?<!\d)(\d{1,2})(?:[.\-](\d{1,2}))?(?![\dbk])/i', $model, $matches)) {
             return 0.0;
         }
 

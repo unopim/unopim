@@ -408,3 +408,8 @@ it('pre-selects one model per family and skips speech models', function () {
         ->not->toContain('voxtral-mini-2602')
         ->toHaveCount(5);
 });
+
+it('does not read parameter counts as versions', function () {
+    expect(ModelRecommender::recommend(['gpt-oss-120b', 'gpt-oss-20b']))->toBe(['gpt-oss-120b', 'gpt-oss-20b'])
+        ->and(ModelRecommender::recommend(['llama-3.1-8b', 'llama-3.3-70b'], 1))->toBe(['llama-3.3-70b']);
+});
