@@ -195,8 +195,9 @@ class LaravelAiAdapter implements LLMModelInterface, ReportsTruncation, Supports
      * Determine if the model is a Claude model that rejects `temperature`.
      *
      * Claude 3.x, Haiku 4.x and Opus/Sonnet up to 4.6 accept sampling
-     * parameters; newer Claude models return a 400, so any other Claude
-     * model omits them rather than failing on the next release.
+     * parameters, including dated, Vertex (`@`) and Bedrock (`-v1:0`) ids;
+     * newer Claude models return a 400, so any other Claude model omits
+     * them rather than failing on the next release.
      */
     protected function rejectsSamplingParameters(string $model): bool
     {
@@ -206,7 +207,7 @@ class LaravelAiAdapter implements LLMModelInterface, ReportsTruncation, Supports
             return false;
         }
 
-        return ! preg_match('/claude-(3|haiku-4|(opus|sonnet)-4(-[0-6])?(-\d{8}|@|$))/', $model);
+        return ! preg_match('/claude-(3|haiku-4|(opus|sonnet)-4(-[0-6])?(-\d{8})?(-v\d+(:\d+)?)?(@|$))/', $model);
     }
 
     /**
