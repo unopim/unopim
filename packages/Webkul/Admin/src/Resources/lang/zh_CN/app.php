@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => '获取中',
             'set-default'     => '设为默认',
             'managed-badge'   => '托管',
+            'managed-note'    => '此平台通过服务器命令行管理，此处只能更改其状态和默认设置。',
 
             'command' => [
+
+                'select-platform' => '哪个平台？',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '留空则保留已保存的密钥。',
+
+                'key-unchanged' => '未更改',
+
+                'missing-argument' => '以非交互方式运行时必须提供参数 :argument。',
+
+                'delete-confirm' => '要删除平台“:label”吗？',
+
+                'deleted' => 'AI 平台“:label”已删除。',
+
+                'force-required' => '以非交互方式删除时请使用 --force。',
+
+                'default-set' => '“:label”现在是默认 AI 平台。',
+
+                'no-platforms' => '尚未配置任何 AI 平台。',
+
+                'id'                 => 'ID',
                 'fetching-models'    => '正在从 :provider 获取模型...',
                 'models-manual'      => '模型（以逗号分隔）',
                 'models-additional'  => '其他模型，以逗号分隔（可选）',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => '此 API 密钥只能用于其自身的提供商和端点。',
                 'managed-models-only'                => '此 API 密钥只能使用以下模型：:allowed。',
                 'managed-cannot-delete'              => '托管平台无法删除。',
+                'managed-cli-only'                   => '托管平台只能通过服务器命令行修改。',
                 'default-requires-enabled'           => '不能将已禁用的平台设为默认。请先启用该平台。',
             ],
         ],

@@ -2547,8 +2547,31 @@ return [
             'fetching-models' => 'Fetching',
             'set-default'     => 'Set as Default',
             'managed-badge'   => 'Managed',
+            'managed-note'    => 'This platform is managed from the server command line. Only its status and default setting can be changed here.',
 
             'command' => [
+
+                'select-platform' => 'Which platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Leave empty to keep the stored key.',
+
+                'key-unchanged' => 'Unchanged',
+
+                'missing-argument' => 'The :argument argument is required when running without interaction.',
+
+                'delete-confirm' => 'Delete the platform ":label"?',
+
+                'deleted' => 'The AI platform ":label" is deleted.',
+
+                'force-required' => 'Pass --force to delete without interaction.',
+
+                'default-set' => '":label" is now the default AI platform.',
+
+                'no-platforms' => 'No AI platforms are configured.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Fetching models from :provider...',
                 'models-manual'      => 'Models (comma-separated)',
                 'models-additional'  => 'Additional models, comma-separated (optional)',
@@ -2633,6 +2656,7 @@ return [
                 'managed-connection-locked'        => 'This API key can only be used with its own provider and endpoint.',
                 'managed-models-only'              => 'This API key can only use these models: :allowed.',
                 'managed-cannot-delete'            => 'The managed platform cannot be deleted.',
+                'managed-cli-only'                 => 'A managed platform can only be changed from the server command line.',
                 'default-requires-enabled'         => 'A disabled platform cannot be marked as default. Please enable the platform first.',
             ],
         ],

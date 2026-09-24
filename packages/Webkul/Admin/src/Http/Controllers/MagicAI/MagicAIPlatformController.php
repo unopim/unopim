@@ -3,7 +3,6 @@
 namespace Webkul\Admin\Http\Controllers\MagicAI;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -133,10 +132,11 @@ class MagicAIPlatformController extends Controller
 
         $this->ensureDefaultPlatformIsEnabled($data);
 
-        $apiKey = $request->validated('api_key');
-        $usesStoredKey = app(ManagedPlatform::class)->usesStoredKey($apiKey);
+        $managedPlatform = app(ManagedPlatform::class);
 
-        if (! $usesStoredKey) {
+        $apiKey = $request->validated('api_key');
+
+        if (! $managedPlatform->usesStoredKey($apiKey)) {
             $data['api_key'] = $apiKey;
         }
 
@@ -144,13 +144,13 @@ class MagicAIPlatformController extends Controller
             $data['extras'] = ProviderOverrides::decode($request->validated('extras'));
         }
 
-        DB::transaction(function () use ($platform, $data, $id, $usesStoredKey): void {
-            $this->platformRepository->update($data, $id);
+        if ($managedPlatform->changesLockedFields($platform, $data)) {
+            throw ValidationException::withMessages([
+                'platform' => trans('admin::app.configuration.platform.message.managed-cli-only'),
+            ]);
+        }
 
-            if ($platform->is_managed && ! $usesStoredKey) {
-                $platform->refresh()->forceFill(['is_managed' => false])->save();
-            }
-        });
+        $this->platformRepository->update($data, $id);
 
         return new JsonResponse([
             'message' => trans('admin::app.configuration.platform.message.update-success'),
@@ -198,10 +198,7 @@ class MagicAIPlatformController extends Controller
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        DB::transaction(function () use ($id) {
-            DB::table('magic_ai_platforms')->where('is_default', true)->update(['is_default' => false]);
-            $this->platformRepository->update(['is_default' => true], $id);
-        });
+        $this->platformRepository->makeDefault($id);
 
         return new JsonResponse([
             'message' => trans('admin::app.configuration.platform.message.set-default-success'),

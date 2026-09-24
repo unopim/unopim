@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Obteniendo',
             'set-default'     => 'Establecer como predeterminado',
             'managed-badge'   => 'Gestionada',
+            'managed-note'    => 'Esta plataforma se gestiona desde la línea de comandos del servidor. Aquí solo se puede cambiar su estado y si es la predeterminada.',
 
             'command' => [
+
+                'select-platform' => '¿Qué plataforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Déjelo vacío para conservar la clave guardada.',
+
+                'key-unchanged' => 'Sin cambios',
+
+                'missing-argument' => 'El argumento :argument es obligatorio al ejecutar sin interacción.',
+
+                'delete-confirm' => '¿Eliminar la plataforma «:label»?',
+
+                'deleted' => 'Se ha eliminado la plataforma de IA «:label».',
+
+                'force-required' => 'Use --force para eliminar sin interacción.',
+
+                'default-set' => '«:label» es ahora la plataforma de IA predeterminada.',
+
+                'no-platforms' => 'No hay plataformas de IA configuradas.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Obteniendo modelos de :provider...',
                 'models-manual'      => 'Modelos (separados por comas)',
                 'models-additional'  => 'Modelos adicionales, separados por comas (opcional)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Esta clave de API solo se puede usar con su propio proveedor y endpoint.',
                 'managed-models-only'                => 'Esta clave de API solo puede usar estos modelos: :allowed.',
                 'managed-cannot-delete'              => 'La plataforma gestionada no se puede eliminar.',
+                'managed-cli-only'                   => 'Una plataforma gestionada solo se puede modificar desde la línea de comandos del servidor.',
                 'default-requires-enabled'           => 'Una plataforma desactivada no se puede marcar como predeterminada. Actívala primero.',
             ],
         ],

@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Recupero in corso',
             'set-default'     => 'Imposta come predefinito',
             'managed-badge'   => 'Gestita',
+            'managed-note'    => 'Questa piattaforma è gestita dalla riga di comando del server. Qui puoi cambiare solo lo stato e l\'impostazione predefinita.',
 
             'command' => [
+
+                'select-platform' => 'Quale piattaforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lascia vuoto per mantenere la chiave salvata.',
+
+                'key-unchanged' => 'Invariata',
+
+                'missing-argument' => 'L\'argomento :argument è obbligatorio quando il comando viene eseguito senza interazione.',
+
+                'delete-confirm' => 'Eliminare la piattaforma ":label"?',
+
+                'deleted' => 'La piattaforma di IA ":label" è stata eliminata.',
+
+                'force-required' => 'Usa --force per eliminare senza interazione.',
+
+                'default-set' => '":label" è ora la piattaforma di IA predefinita.',
+
+                'no-platforms' => 'Nessuna piattaforma di IA configurata.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Recupero dei modelli da :provider...',
                 'models-manual'      => 'Modelli (separati da virgole)',
                 'models-additional'  => 'Modelli aggiuntivi, separati da virgole (facoltativo)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Questa chiave API può essere usata solo con il proprio provider ed endpoint.',
                 'managed-models-only'                => 'Questa chiave API può usare solo questi modelli: :allowed.',
                 'managed-cannot-delete'              => 'La piattaforma gestita non può essere eliminata.',
+                'managed-cli-only'                   => 'Una piattaforma gestita può essere modificata solo dalla riga di comando del server.',
                 'default-requires-enabled'           => 'Una piattaforma disabilitata non può essere impostata come predefinita. Abilitala prima.',
             ],
         ],

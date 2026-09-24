@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'Getiriliyor',
             'set-default'     => 'Varsayılan Olarak Ayarla',
             'managed-badge'   => 'Yönetilen',
+            'managed-note'    => 'Bu platform sunucunun komut satırından yönetilir. Burada yalnızca durumu ve varsayılan ayarı değiştirilebilir.',
 
             'command' => [
+
+                'select-platform' => 'Hangi platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Kayıtlı anahtarı korumak için boş bırakın.',
+
+                'key-unchanged' => 'Değişmedi',
+
+                'missing-argument' => 'Etkileşimsiz çalıştırırken :argument bağımsız değişkeni zorunludur.',
+
+                'delete-confirm' => '":label" platformu silinsin mi?',
+
+                'deleted' => '":label" yapay zeka platformu silindi.',
+
+                'force-required' => 'Etkileşimsiz silmek için --force kullanın.',
+
+                'default-set' => '":label" artık varsayılan yapay zeka platformu.',
+
+                'no-platforms' => 'Yapılandırılmış yapay zeka platformu yok.',
+
+                'id'                 => 'Kimlik',
                 'fetching-models'    => ':provider üzerinden modeller alınıyor...',
                 'models-manual'      => 'Modeller (virgülle ayrılmış)',
                 'models-additional'  => 'Ek modeller, virgülle ayrılmış (isteğe bağlı)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Bu API anahtarı yalnızca kendi sağlayıcısı ve uç noktasıyla kullanılabilir.',
                 'managed-models-only'                => 'Bu API anahtarı yalnızca şu modelleri kullanabilir: :allowed.',
                 'managed-cannot-delete'              => 'Yönetilen platform silinemez.',
+                'managed-cli-only'                   => 'Yönetilen bir platform yalnızca sunucunun komut satırından değiştirilebilir.',
                 'default-requires-enabled'           => 'Devre dışı bir platform varsayılan olarak işaretlenemez. Lütfen platformu önce etkinleştirin.',
             ],
         ],

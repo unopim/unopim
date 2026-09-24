@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'Se preia',
             'set-default'     => 'Setează ca implicit',
             'managed-badge'   => 'Gestionată',
+            'managed-note'    => 'Această platformă este gestionată din linia de comandă a serverului. Aici se pot schimba doar starea și setarea implicită.',
 
             'command' => [
+
+                'select-platform' => 'Ce platformă?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lăsați gol pentru a păstra cheia salvată.',
+
+                'key-unchanged' => 'Neschimbată',
+
+                'missing-argument' => 'Argumentul :argument este obligatoriu la rularea fără interacțiune.',
+
+                'delete-confirm' => 'Ștergeți platforma „:label”?',
+
+                'deleted' => 'Platforma AI „:label” a fost ștearsă.',
+
+                'force-required' => 'Folosiți --force pentru a șterge fără interacțiune.',
+
+                'default-set' => '„:label” este acum platforma AI implicită.',
+
+                'no-platforms' => 'Nu este configurată nicio platformă AI.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Se preiau modelele de la :provider...',
                 'models-manual'      => 'Modele (separate prin virgulă)',
                 'models-additional'  => 'Modele suplimentare, separate prin virgulă (opțional)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Această cheie API poate fi folosită doar cu propriul furnizor și propriul endpoint.',
                 'managed-models-only'                => 'Această cheie API poate folosi doar aceste modele: :allowed.',
                 'managed-cannot-delete'              => 'Platforma gestionată nu poate fi ștearsă.',
+                'managed-cli-only'                   => 'O platformă gestionată poate fi modificată doar din linia de comandă a serverului.',
                 'default-requires-enabled'           => 'O platformă dezactivată nu poate fi setată ca implicită. Activați mai întâi platforma.',
             ],
         ],

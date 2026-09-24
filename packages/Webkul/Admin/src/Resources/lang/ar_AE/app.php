@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'جاري الجلب',
             'set-default'     => 'تعيين كافتراضي',
             'managed-badge'   => 'مُدارة',
+            'managed-note'    => 'تُدار هذه المنصة من سطر أوامر الخادم. يمكن هنا تغيير حالتها وإعدادها الافتراضي فقط.',
 
             'command' => [
+
+                'select-platform' => 'أي منصة؟',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'اتركه فارغًا للإبقاء على المفتاح المحفوظ.',
+
+                'key-unchanged' => 'دون تغيير',
+
+                'missing-argument' => 'الوسيط :argument مطلوب عند التشغيل دون تفاعل.',
+
+                'delete-confirm' => 'هل تريد حذف المنصة ":label"؟',
+
+                'deleted' => 'تم حذف منصة الذكاء الاصطناعي ":label".',
+
+                'force-required' => 'مرّر --force للحذف دون تفاعل.',
+
+                'default-set' => 'أصبحت ":label" منصة الذكاء الاصطناعي الافتراضية.',
+
+                'no-platforms' => 'لا توجد منصات ذكاء اصطناعي مهيأة.',
+
+                'id'                 => 'المعرّف',
                 'fetching-models'    => 'جارٍ جلب النماذج من :provider...',
                 'models-manual'      => 'النماذج (مفصولة بفواصل)',
                 'models-additional'  => 'نماذج إضافية مفصولة بفواصل (اختياري)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'لا يمكن استخدام مفتاح API هذا إلا مع المزوّد ونقطة الاتصال الخاصة به.',
                 'managed-models-only'                => 'لا يمكن لمفتاح API هذا استخدام سوى هذه النماذج: :allowed.',
                 'managed-cannot-delete'              => 'لا يمكن حذف المنصة المُدارة.',
+                'managed-cli-only'                   => 'لا يمكن تغيير المنصة المُدارة إلا من سطر أوامر الخادم.',
                 'default-requires-enabled'           => 'لا يمكن تعيين منصة معطلة كافتراضية. يرجى تفعيل المنصة أولاً.',
             ],
         ],

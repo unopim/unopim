@@ -145,6 +145,10 @@
                         </x-slot>
 
                         <x-slot:content>
+                            <p v-if="form.is_managed" class="mb-4 text-sm text-gray-600 dark:text-gray-300">
+                                @lang('admin::app.configuration.platform.managed-note')
+                            </p>
+
                             <x-admin::form.control-group.control type="hidden" name="id" v-model="form.id" />
 
                             <!-- Provider -->
@@ -171,7 +175,7 @@
                                     :options="json_encode($providerOptions)"
                                     track-by="id"
                                     label-by="label"
-                                    ::disabled="isManagedLocked"
+                                    ::disabled="form.is_managed"
                                     @input="onProviderChange($event)"
                                 >
                                 </x-admin::form.control-group.control>
@@ -190,6 +194,7 @@
                                         v-model="form.label"
                                         rules="required"
                                         :label="trans('admin::app.configuration.platform.fields.label')"
+                                        ::readonly="form.is_managed"
                                     />
                                     <x-admin::form.control-group.error control-name="label" />
                                 </x-admin::form.control-group>
@@ -204,7 +209,7 @@
                                         name="api_url"
                                         v-model="form.api_url"
                                         :label="trans('admin::app.configuration.platform.fields.api-url')"
-                                        ::readonly="isManagedLocked"
+                                        ::readonly="form.is_managed"
                                         @input="onApiUrlInput($event)"
                                     />
                                     <p class="mt-1 text-xs text-gray-500">@lang('admin::app.configuration.platform.fields.api-url-hint')</p>
@@ -222,6 +227,7 @@
                                         v-model="form.api_key"
                                         rules="required"
                                         :label="trans('admin::app.configuration.platform.fields.api-key')"
+                                        ::readonly="form.is_managed"
                                         @change="onApiKeyEntered()"
                                         @input="onApiKeyInput($event)"
                                     />
@@ -235,13 +241,13 @@
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.configuration.platform.fields.azure-deployment')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" />
+                                        <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" ::readonly="form.is_managed" />
                                     </x-admin::form.control-group>
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
                                             @lang('admin::app.configuration.platform.fields.azure-api-version')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" />
+                                        <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" ::readonly="form.is_managed" />
                                     </x-admin::form.control-group>
                                 </template>
 
@@ -258,11 +264,11 @@
                                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                                         >
                                             @{{ model }}
-                                            <button v-if="! isManagedLocked" type="button" @click="removeModel(index)" class="hover:text-danger" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
+                                            <button v-if="! form.is_managed" type="button" @click="removeModel(index)" class="hover:text-danger" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
                                         </span>
                                     </div>
 
-                                    <div v-if="fetchedModels.length && ! isManagedLocked">
+                                    <div v-if="fetchedModels.length && ! form.is_managed">
                                         <input
                                             type="text"
                                             v-model="modelSearch"
@@ -292,7 +298,7 @@
                                         @lang('admin::app.configuration.platform.fields.enter-key-to-fetch')
                                     </p>
 
-                                    <div class="flex gap-2" v-if="! isManagedLocked">
+                                    <div class="flex gap-2" v-if="! form.is_managed">
                                         <input
                                             type="text"
                                             v-model="customModel"
@@ -390,10 +396,6 @@
                         }
                         let search = this.modelSearch.toLowerCase().trim();
                         return this.fetchedModels.filter(m => m.toLowerCase().includes(search));
-                    },
-
-                    isManagedLocked() {
-                        return this.form.is_managed && (! this.form.api_key || /^\*+$/.test(this.form.api_key));
                     },
 
                 },

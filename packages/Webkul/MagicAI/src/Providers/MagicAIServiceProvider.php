@@ -7,7 +7,11 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Ai\AiManager;
 use Laravel\Ai\Providers\OpenAiProvider;
-use Webkul\MagicAI\Console\Commands\AddPlatform;
+use Webkul\MagicAI\Console\Commands\Platform\AddPlatform;
+use Webkul\MagicAI\Console\Commands\Platform\DeletePlatform;
+use Webkul\MagicAI\Console\Commands\Platform\EditPlatform;
+use Webkul\MagicAI\Console\Commands\Platform\ListPlatforms;
+use Webkul\MagicAI\Console\Commands\Platform\SetDefaultPlatform;
 use Webkul\MagicAI\Facades\MagicAI as MagicAIFacade;
 use Webkul\MagicAI\Gateways\OpenAiImageGateway;
 use Webkul\MagicAI\MagicAI;
@@ -27,7 +31,11 @@ class MagicAIServiceProvider extends ServiceProvider
 
         if ($this->app->runningInConsole()) {
             $this->commands([
+                ListPlatforms::class,
                 AddPlatform::class,
+                EditPlatform::class,
+                DeletePlatform::class,
+                SetDefaultPlatform::class,
             ]);
         }
     }

@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Obtenint',
             'set-default'     => 'Estableix com a predeterminat',
             'managed-badge'   => 'Gestionada',
+            'managed-note'    => 'Aquesta plataforma es gestiona des de la línia d\'ordres del servidor. Aquí només se\'n pot canviar l\'estat i si és la predeterminada.',
 
             'command' => [
+
+                'select-platform' => 'Quina plataforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Deixeu-ho buit per conservar la clau desada.',
+
+                'key-unchanged' => 'Sense canvis',
+
+                'missing-argument' => 'L\'argument :argument és obligatori quan s\'executa sense interacció.',
+
+                'delete-confirm' => 'Voleu eliminar la plataforma ":label"?',
+
+                'deleted' => 'S\'ha eliminat la plataforma d\'IA ":label".',
+
+                'force-required' => 'Afegiu --force per eliminar sense interacció.',
+
+                'default-set' => '":label" és ara la plataforma d\'IA per defecte.',
+
+                'no-platforms' => 'No hi ha cap plataforma d\'IA configurada.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'S\'estan obtenint els models de :provider...',
                 'models-manual'      => 'Models (separats per comes)',
                 'models-additional'  => 'Models addicionals, separats per comes (opcional)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Aquesta clau d\'API només es pot fer servir amb el seu propi proveïdor i punt d\'accés.',
                 'managed-models-only'                => 'Aquesta clau d\'API només pot fer servir aquests models: :allowed.',
                 'managed-cannot-delete'              => 'La plataforma gestionada no es pot eliminar.',
+                'managed-cli-only'                   => 'Una plataforma gestionada només es pot modificar des de la línia d\'ordres del servidor.',
                 'default-requires-enabled'           => 'Una plataforma desactivada no es pot marcar com a per defecte. Activa-la primer.',
             ],
         ],

@@ -90,6 +90,30 @@ class ManagedPlatform
     }
 
     /**
+     * Whether an admin update would change a managed platform beyond its
+     * status and default flag, which only the server command line may do.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function changesLockedFields(MagicAIPlatform $platform, array $data): bool
+    {
+        if (! $this->isManagedPlatform($platform)) {
+            return false;
+        }
+
+        $models = array_values(array_unique(array_filter(
+            array_map(trim(...), explode(',', (string) ($data['models'] ?? '')))
+        )));
+
+        return array_key_exists('api_key', $data)
+            || (string) ($data['label'] ?? '') !== (string) $platform->label
+            || ($data['provider'] ?? null) !== $platform->provider
+            || $this->effectiveUrl($data['provider'] ?? null, $data['api_url'] ?? null) !== $this->apiUrl($platform)
+            || $models !== $this->models($platform)
+            || (array_key_exists('extras', $data) && ($data['extras'] ?: []) !== ($platform->extras ?: []));
+    }
+
+    /**
      * The model to send on the platform's credentials. An unmanaged platform
      * keeps the requested model; a managed one swaps a model outside its
      * saved list for one on it, so a stale selection never reaches the

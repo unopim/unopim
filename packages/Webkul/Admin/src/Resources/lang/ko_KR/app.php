@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => '가져오는 중',
             'set-default'     => '기본값으로 설정',
             'managed-badge'   => '관리형',
+            'managed-note'    => '이 플랫폼은 서버 명령줄에서 관리됩니다. 여기서는 상태와 기본 설정만 변경할 수 있습니다.',
 
             'command' => [
+
+                'select-platform' => '어떤 플랫폼입니까?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '저장된 키를 유지하려면 비워 두세요.',
+
+                'key-unchanged' => '변경 없음',
+
+                'missing-argument' => '상호 작용 없이 실행할 때는 :argument 인수가 필요합니다.',
+
+                'delete-confirm' => '플랫폼 ":label"을(를) 삭제하시겠습니까?',
+
+                'deleted' => 'AI 플랫폼 ":label"이(가) 삭제되었습니다.',
+
+                'force-required' => '상호 작용 없이 삭제하려면 --force를 지정하세요.',
+
+                'default-set' => '이제 ":label"이(가) 기본 AI 플랫폼입니다.',
+
+                'no-platforms' => '구성된 AI 플랫폼이 없습니다.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => ':provider에서 모델을 가져오는 중...',
                 'models-manual'      => '모델 (쉼표로 구분)',
                 'models-additional'  => '추가 모델, 쉼표로 구분 (선택 사항)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => '이 API 키는 자체 공급자와 엔드포인트에서만 사용할 수 있습니다.',
                 'managed-models-only'                => '이 API 키는 다음 모델만 사용할 수 있습니다: :allowed.',
                 'managed-cannot-delete'              => '관리형 플랫폼은 삭제할 수 없습니다.',
+                'managed-cli-only'                   => '관리형 플랫폼은 서버 명령줄에서만 변경할 수 있습니다.',
                 'default-requires-enabled'           => '비활성화된 플랫폼은 기본값으로 설정할 수 없습니다. 먼저 플랫폼을 활성화하세요.',
             ],
         ],

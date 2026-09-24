@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Mengambil',
             'set-default'     => 'Atur sebagai Default',
             'managed-badge'   => 'Terkelola',
+            'managed-note'    => 'Platform ini dikelola dari baris perintah server. Di sini hanya status dan pengaturan bawaannya yang dapat diubah.',
 
             'command' => [
+
+                'select-platform' => 'Platform mana?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Kosongkan untuk mempertahankan kunci yang tersimpan.',
+
+                'key-unchanged' => 'Tidak berubah',
+
+                'missing-argument' => 'Argumen :argument wajib diisi saat dijalankan tanpa interaksi.',
+
+                'delete-confirm' => 'Hapus platform ":label"?',
+
+                'deleted' => 'Platform AI ":label" telah dihapus.',
+
+                'force-required' => 'Gunakan --force untuk menghapus tanpa interaksi.',
+
+                'default-set' => '":label" sekarang menjadi platform AI bawaan.',
+
+                'no-platforms' => 'Belum ada platform AI yang dikonfigurasi.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Mengambil model dari :provider...',
                 'models-manual'      => 'Model (dipisahkan koma)',
                 'models-additional'  => 'Model tambahan, dipisahkan koma (opsional)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Kunci API ini hanya dapat digunakan dengan penyedia dan endpoint miliknya sendiri.',
                 'managed-models-only'                => 'Kunci API ini hanya dapat menggunakan model berikut: :allowed.',
                 'managed-cannot-delete'              => 'Platform terkelola tidak dapat dihapus.',
+                'managed-cli-only'                   => 'Platform terkelola hanya dapat diubah dari baris perintah server.',
                 'default-requires-enabled'           => 'Platform yang nonaktif tidak dapat dijadikan default. Aktifkan platform terlebih dahulu.',
             ],
         ],

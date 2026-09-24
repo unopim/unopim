@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Henter',
             'set-default'     => 'Angiv som standard',
             'managed-badge'   => 'Administreret',
+            'managed-note'    => 'Denne platform administreres fra serverens kommandolinje. Kun status og standardindstilling kan ændres her.',
 
             'command' => [
+
+                'select-platform' => 'Hvilken platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lad feltet være tomt for at beholde den gemte nøgle.',
+
+                'key-unchanged' => 'Uændret',
+
+                'missing-argument' => 'Argumentet :argument er påkrævet, når kommandoen køres uden interaktion.',
+
+                'delete-confirm' => 'Vil du slette platformen ":label"?',
+
+                'deleted' => 'AI-platformen ":label" er slettet.',
+
+                'force-required' => 'Angiv --force for at slette uden interaktion.',
+
+                'default-set' => '":label" er nu standard-AI-platformen.',
+
+                'no-platforms' => 'Der er ikke konfigureret nogen AI-platforme.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Henter modeller fra :provider...',
                 'models-manual'      => 'Modeller (kommasepareret)',
                 'models-additional'  => 'Yderligere modeller, kommasepareret (valgfrit)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Denne API-nøgle kan kun bruges med sin egen udbyder og sit eget endpoint.',
                 'managed-models-only'                => 'Denne API-nøgle kan kun bruge disse modeller: :allowed.',
                 'managed-cannot-delete'              => 'Den administrerede platform kan ikke slettes.',
+                'managed-cli-only'                   => 'En administreret platform kan kun ændres fra serverens kommandolinje.',
                 'default-requires-enabled'           => 'En deaktiveret platform kan ikke markeres som standard. Aktivér platformen først.',
             ],
         ],

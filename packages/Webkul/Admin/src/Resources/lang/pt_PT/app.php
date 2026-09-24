@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'A obter',
             'set-default'     => 'Definir como predefinido',
             'managed-badge'   => 'Gerida',
+            'managed-note'    => 'Esta plataforma é gerida a partir da linha de comandos do servidor. Aqui só é possível alterar o estado e a predefinição.',
 
             'command' => [
+
+                'select-platform' => 'Que plataforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Deixe em branco para manter a chave guardada.',
+
+                'key-unchanged' => 'Inalterada',
+
+                'missing-argument' => 'O argumento :argument é obrigatório ao executar sem interação.',
+
+                'delete-confirm' => 'Eliminar a plataforma ":label"?',
+
+                'deleted' => 'A plataforma de IA ":label" foi eliminada.',
+
+                'force-required' => 'Utilize --force para eliminar sem interação.',
+
+                'default-set' => '":label" é agora a plataforma de IA predefinida.',
+
+                'no-platforms' => 'Não existem plataformas de IA configuradas.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'A obter modelos de :provider...',
                 'models-manual'      => 'Modelos (separados por vírgulas)',
                 'models-additional'  => 'Modelos adicionais, separados por vírgulas (opcional)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Esta chave de API só pode ser utilizada com o próprio fornecedor e endpoint.',
                 'managed-models-only'                => 'Esta chave de API só pode utilizar estes modelos: :allowed.',
                 'managed-cannot-delete'              => 'A plataforma gerida não pode ser eliminada.',
+                'managed-cli-only'                   => 'Uma plataforma gerida só pode ser alterada a partir da linha de comandos do servidor.',
                 'default-requires-enabled'           => 'Uma plataforma desativada não pode ser definida como predefinida. Ative a plataforma primeiro.',
             ],
         ],

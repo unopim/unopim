@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'Hämtar',
             'set-default'     => 'Ange som standard',
             'managed-badge'   => 'Hanterad',
+            'managed-note'    => 'Den här plattformen hanteras från serverns kommandorad. Här kan bara status och standardinställning ändras.',
 
             'command' => [
+
+                'select-platform' => 'Vilken plattform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lämna tomt för att behålla den sparade nyckeln.',
+
+                'key-unchanged' => 'Oförändrad',
+
+                'missing-argument' => 'Argumentet :argument krävs när kommandot körs utan interaktion.',
+
+                'delete-confirm' => 'Ta bort plattformen ":label"?',
+
+                'deleted' => 'AI-plattformen ":label" har tagits bort.',
+
+                'force-required' => 'Ange --force för att ta bort utan interaktion.',
+
+                'default-set' => '":label" är nu standard-AI-plattformen.',
+
+                'no-platforms' => 'Inga AI-plattformar är konfigurerade.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Hämtar modeller från :provider...',
                 'models-manual'      => 'Modeller (kommaseparerade)',
                 'models-additional'  => 'Ytterligare modeller, kommaseparerade (valfritt)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Den här API-nyckeln kan bara användas med sin egen leverantör och sin egen slutpunkt.',
                 'managed-models-only'                => 'Den här API-nyckeln kan bara använda dessa modeller: :allowed.',
                 'managed-cannot-delete'              => 'Den hanterade plattformen kan inte tas bort.',
+                'managed-cli-only'                   => 'En hanterad plattform kan bara ändras från serverns kommandorad.',
                 'default-requires-enabled'           => 'En inaktiverad plattform kan inte markeras som standard. Aktivera plattformen först.',
             ],
         ],

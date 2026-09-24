@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'Kinukuha',
             'set-default'     => 'Itakda bilang Default',
             'managed-badge'   => 'Pinamamahalaan',
+            'managed-note'    => 'Pinamamahalaan ang platform na ito mula sa command line ng server. Ang status at default na setting lamang nito ang mababago rito.',
 
             'command' => [
+
+                'select-platform' => 'Aling platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Iwanang blangko para panatilihin ang naka-save na key.',
+
+                'key-unchanged' => 'Walang pagbabago',
+
+                'missing-argument' => 'Kailangan ang argumentong :argument kapag pinatakbo nang walang interaksyon.',
+
+                'delete-confirm' => 'Burahin ang platform na ":label"?',
+
+                'deleted' => 'Nabura na ang AI platform na ":label".',
+
+                'force-required' => 'Gamitin ang --force para magbura nang walang interaksyon.',
+
+                'default-set' => 'Ang ":label" na ngayon ang default na AI platform.',
+
+                'no-platforms' => 'Walang naka-configure na AI platform.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Kinukuha ang mga model mula sa :provider...',
                 'models-manual'      => 'Mga model (hiwalay sa kuwit)',
                 'models-additional'  => 'Karagdagang mga model, hiwalay sa kuwit (opsyonal)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Magagamit lang ang API key na ito sa sarili nitong provider at endpoint.',
                 'managed-models-only'                => 'Ang API key na ito ay makakagamit lang ng mga modelong ito: :allowed.',
                 'managed-cannot-delete'              => 'Hindi maaaring burahin ang pinamamahalaang platform.',
+                'managed-cli-only'                   => 'Ang pinamamahalaang platform ay mababago lamang mula sa command line ng server.',
                 'default-requires-enabled'           => 'Hindi maaaring markahan bilang default ang isang naka-disable na platform. I-enable muna ang platform.',
             ],
         ],

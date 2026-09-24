@@ -10,7 +10,7 @@ use Webkul\MagicAI\Services\ModelDiscovery;
 
 use function Pest\Laravel\artisan;
 
-const WIZARD = 'unopim:magic-ai:add-platform';
+const WIZARD = 'unopim:magic-ai:platform:add';
 
 function wizardLabel(string $key): string
 {
@@ -228,4 +228,136 @@ it('rejects an unsafe endpoint without interaction', function () {
         '--models'         => 'llama-3',
         '--key-stdin'      => true,
     ])->expectsOutputToContain(trans('admin::app.configuration.platform.message.unsafe-api-url'))->assertFailed();
+});
+
+it('lists the platforms without their keys', function () {
+    $platform = MagicAIPlatform::factory()->managed()->create(['label' => 'Listed AI', 'api_key' => 'sk-secret-listed']);
+
+    artisan('unopim:magic-ai:platform:list')
+        ->expectsOutputToContain('Listed AI')
+        ->doesntExpectOutputToContain('sk-secret-listed')
+        ->assertSuccessful();
+
+    expect($platform->fresh()->safeApiKey())->toBe('sk-secret-listed');
+});
+
+it('edits a platform, keeping its key and turning the managed lock off', function () {
+    $platform = MagicAIPlatform::factory()->managed()->create([
+        'label'    => 'Hosted AI',
+        'provider' => AiProvider::OpenAI->value,
+        'api_key'  => 'sk-stored-key',
+        'models'   => 'gpt-4o,legacy-model',
+    ]);
+
+    fakeDiscovery(['gpt-4o', 'gpt-4o-mini']);
+
+    $command = answerConnection(artisan('unopim:magic-ai:platform:edit', ['id' => $platform->id]), 'Hosted AI renamed', '')
+        ->expectsQuestion(wizardLabel('fields.models'), ['gpt-4o-mini'])
+        ->expectsQuestion(wizardLabel('command.models-additional'), '');
+
+    answerFlags($command, default: false, managed: false)->assertSuccessful()->run();
+
+    $platform->refresh();
+
+    expect(MagicAIPlatform::whereIn('label', ['Hosted AI', 'Hosted AI renamed'])->count())->toBe(1)
+        ->and($platform->label)->toBe('Hosted AI renamed')
+        ->and($platform->safeApiKey())->toBe('sk-stored-key')
+        ->and($platform->models)->toBe('gpt-4o-mini')
+        ->and($platform->is_managed)->toBeFalse();
+});
+
+it('asks which platform to edit when no id is given', function () {
+    $platform = MagicAIPlatform::factory()->create(['provider' => AiProvider::OpenAI->value, 'api_key' => 'sk-stored-key']);
+
+    fakeDiscovery(['gpt-4o']);
+
+    $command = artisan('unopim:magic-ai:platform:edit')
+        ->expectsQuestion(wizardLabel('command.select-platform'), (string) $platform->id);
+
+    $command = answerConnection($command, 'Picked AI', 'sk-new-key')
+        ->expectsQuestion(wizardLabel('fields.models'), ['gpt-4o'])
+        ->expectsQuestion(wizardLabel('command.models-additional'), '');
+
+    answerFlags($command, default: false)->assertSuccessful()->run();
+
+    expect($platform->fresh()->safeApiKey())->toBe('sk-new-key')
+        ->and($platform->fresh()->is_managed)->toBeTrue();
+});
+
+it('edits a platform from options without interaction', function () {
+    $platform = MagicAIPlatform::factory()->managed()->create(['api_key' => 'sk-stored-key']);
+
+    artisan('unopim:magic-ai:platform:edit', [
+        'id'               => $platform->id,
+        '--no-interaction' => true,
+        '--models'         => 'gpt-4o',
+        '--unmanaged'      => true,
+    ])->assertSuccessful();
+
+    $platform->refresh();
+
+    expect($platform->safeApiKey())->toBe('sk-stored-key')
+        ->and($platform->models)->toBe('gpt-4o')
+        ->and($platform->is_managed)->toBeFalse();
+
+    artisan('unopim:magic-ai:platform:edit', ['--no-interaction' => true])
+        ->expectsOutputToContain(trans('admin::app.configuration.platform.command.missing-argument', ['argument' => 'id']))
+        ->assertFailed();
+});
+
+it('deletes a managed platform from the command line', function () {
+    $platform = MagicAIPlatform::factory()->managed()->create(['label' => 'To delete']);
+
+    artisan('unopim:magic-ai:platform:delete', ['id' => $platform->id])
+        ->expectsConfirmation(trans('admin::app.configuration.platform.command.delete-confirm', ['label' => 'To delete']), 'no')
+        ->assertSuccessful();
+
+    expect($platform->fresh())->not->toBeNull();
+
+    artisan('unopim:magic-ai:platform:delete', ['id' => $platform->id])
+        ->expectsConfirmation(trans('admin::app.configuration.platform.command.delete-confirm', ['label' => 'To delete']), 'yes')
+        ->assertSuccessful();
+
+    expect($platform->fresh())->toBeNull();
+});
+
+it('deletes without a prompt only when forced', function () {
+    $platform = MagicAIPlatform::factory()->create();
+
+    artisan('unopim:magic-ai:platform:delete', ['id' => $platform->id, '--no-interaction' => true])
+        ->expectsOutputToContain(trans('admin::app.configuration.platform.command.force-required'))
+        ->assertFailed();
+
+    expect($platform->fresh())->not->toBeNull();
+
+    artisan('unopim:magic-ai:platform:delete', ['id' => $platform->id, '--force' => true])->assertSuccessful();
+
+    expect($platform->fresh())->toBeNull();
+});
+
+it('refuses to delete the default platform', function () {
+    $platform = MagicAIPlatform::factory()->default()->create();
+
+    artisan('unopim:magic-ai:platform:delete', ['id' => $platform->id, '--force' => true])
+        ->expectsOutputToContain(trans('admin::app.configuration.platform.message.cannot-delete-default'))
+        ->assertFailed();
+
+    expect($platform->fresh())->not->toBeNull();
+});
+
+it('sets the default platform only when it is enabled', function () {
+    $previous = MagicAIPlatform::factory()->default()->create();
+    $disabled = MagicAIPlatform::factory()->disabled()->create();
+    $enabled = MagicAIPlatform::factory()->create();
+
+    artisan('unopim:magic-ai:platform:default', ['id' => $disabled->id])
+        ->expectsOutputToContain(trans('admin::app.configuration.platform.message.default-requires-enabled'))
+        ->assertFailed();
+
+    expect($disabled->fresh()->is_default)->toBeFalse();
+
+    artisan('unopim:magic-ai:platform:default', ['id' => $enabled->id])->assertSuccessful();
+
+    expect($enabled->fresh()->is_default)->toBeTrue()
+        ->and($previous->fresh()->is_default)->toBeFalse();
 });

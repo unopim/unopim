@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => '取得中',
             'set-default'     => '設為預設',
             'managed-badge'   => '受管理',
+            'managed-note'    => '此平台透過伺服器命令列管理，此處只能變更其狀態與預設設定。',
 
             'command' => [
+
+                'select-platform' => '哪個平台？',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '留空則保留已儲存的金鑰。',
+
+                'key-unchanged' => '未變更',
+
+                'missing-argument' => '以非互動方式執行時必須提供參數 :argument。',
+
+                'delete-confirm' => '要刪除平台「:label」嗎？',
+
+                'deleted' => '已刪除 AI 平台「:label」。',
+
+                'force-required' => '以非互動方式刪除時請使用 --force。',
+
+                'default-set' => '「:label」現在是預設的 AI 平台。',
+
+                'no-platforms' => '尚未設定任何 AI 平台。',
+
+                'id'                 => 'ID',
                 'fetching-models'    => '正在從 :provider 取得模型...',
                 'models-manual'      => '模型（以逗號分隔）',
                 'models-additional'  => '其他模型，以逗號分隔（選填）',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => '此 API 金鑰只能搭配其專屬的供應商與端點使用。',
                 'managed-models-only'                => '此 API 金鑰只能使用以下模型：:allowed。',
                 'managed-cannot-delete'              => '無法刪除受管理的平台。',
+                'managed-cli-only'                   => '受管理的平台只能透過伺服器命令列變更。',
                 'default-requires-enabled'           => '無法將已停用的平台設為預設。請先啟用該平台。',
             ],
         ],

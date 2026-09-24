@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'Pobieranie',
             'set-default'     => 'Ustaw jako domyślną',
             'managed-badge'   => 'Zarządzana',
+            'managed-note'    => 'Ta platforma jest zarządzana z wiersza poleceń serwera. Tutaj można zmienić tylko jej status i ustawienie domyślne.',
 
             'command' => [
+
+                'select-platform' => 'Która platforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Pozostaw puste, aby zachować zapisany klucz.',
+
+                'key-unchanged' => 'Bez zmian',
+
+                'missing-argument' => 'Argument :argument jest wymagany przy uruchamianiu bez interakcji.',
+
+                'delete-confirm' => 'Usunąć platformę „:label”?',
+
+                'deleted' => 'Platforma AI „:label” została usunięta.',
+
+                'force-required' => 'Użyj --force, aby usunąć bez interakcji.',
+
+                'default-set' => '„:label” jest teraz domyślną platformą AI.',
+
+                'no-platforms' => 'Nie skonfigurowano żadnej platformy AI.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Pobieranie modeli z :provider...',
                 'models-manual'      => 'Modele (oddzielone przecinkami)',
                 'models-additional'  => 'Dodatkowe modele, oddzielone przecinkami (opcjonalnie)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Tego klucza API można używać tylko z jego własnym dostawcą i punktem końcowym.',
                 'managed-models-only'                => 'Ten klucz API może używać tylko tych modeli: :allowed.',
                 'managed-cannot-delete'              => 'Zarządzanej platformy nie można usunąć.',
+                'managed-cli-only'                   => 'Platformę zarządzaną można zmienić tylko z wiersza poleceń serwera.',
                 'default-requires-enabled'           => 'Wyłączona platforma nie może być ustawiona jako domyślna. Najpierw ją włącz.',
             ],
         ],

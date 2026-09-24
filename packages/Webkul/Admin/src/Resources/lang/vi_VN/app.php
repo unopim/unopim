@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'Đang lấy',
             'set-default'     => 'Đặt làm mặc định',
             'managed-badge'   => 'Được quản lý',
+            'managed-note'    => 'Nền tảng này được quản lý từ dòng lệnh của máy chủ. Tại đây chỉ có thể thay đổi trạng thái và cài đặt mặc định.',
 
             'command' => [
+
+                'select-platform' => 'Nền tảng nào?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Để trống để giữ khóa đã lưu.',
+
+                'key-unchanged' => 'Không đổi',
+
+                'missing-argument' => 'Cần có đối số :argument khi chạy không tương tác.',
+
+                'delete-confirm' => 'Xóa nền tảng ":label"?',
+
+                'deleted' => 'Đã xóa nền tảng AI ":label".',
+
+                'force-required' => 'Dùng --force để xóa khi chạy không tương tác.',
+
+                'default-set' => '":label" hiện là nền tảng AI mặc định.',
+
+                'no-platforms' => 'Chưa có nền tảng AI nào được cấu hình.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Đang lấy danh sách model từ :provider...',
                 'models-manual'      => 'Model (phân tách bằng dấu phẩy)',
                 'models-additional'  => 'Model bổ sung, phân tách bằng dấu phẩy (không bắt buộc)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Khóa API này chỉ có thể dùng với nhà cung cấp và endpoint riêng của nó.',
                 'managed-models-only'                => 'Khóa API này chỉ có thể dùng các mô hình sau: :allowed.',
                 'managed-cannot-delete'              => 'Không thể xóa nền tảng được quản lý.',
+                'managed-cli-only'                   => 'Nền tảng được quản lý chỉ có thể thay đổi từ dòng lệnh của máy chủ.',
                 'default-requires-enabled'           => 'Không thể đặt nền tảng đã vô hiệu hóa làm mặc định. Vui lòng kích hoạt nền tảng trước.',
             ],
         ],

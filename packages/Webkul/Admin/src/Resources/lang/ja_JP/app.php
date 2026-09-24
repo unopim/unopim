@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => '取得中',
             'set-default'     => 'デフォルトに設定',
             'managed-badge'   => '管理対象',
+            'managed-note'    => 'このプラットフォームはサーバーのコマンドラインで管理されています。ここで変更できるのはステータスと既定の設定のみです。',
 
             'command' => [
+
+                'select-platform' => 'どのプラットフォームですか？',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '保存済みのキーを使い続ける場合は空欄のままにしてください。',
+
+                'key-unchanged' => '変更なし',
+
+                'missing-argument' => '対話なしで実行する場合は引数 :argument が必要です。',
+
+                'delete-confirm' => 'プラットフォーム「:label」を削除しますか？',
+
+                'deleted' => 'AI プラットフォーム「:label」を削除しました。',
+
+                'force-required' => '対話なしで削除するには --force を指定してください。',
+
+                'default-set' => '「:label」が既定の AI プラットフォームになりました。',
+
+                'no-platforms' => 'AI プラットフォームが設定されていません。',
+
+                'id'                 => 'ID',
                 'fetching-models'    => ':provider からモデルを取得しています...',
                 'models-manual'      => 'モデル（カンマ区切り）',
                 'models-additional'  => '追加のモデル（カンマ区切り、任意）',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'この API キーは、専用のプロバイダーとエンドポイントでのみ使用できます。',
                 'managed-models-only'                => 'この API キーで使用できるモデルは次のみです: :allowed。',
                 'managed-cannot-delete'              => '管理対象のプラットフォームは削除できません。',
+                'managed-cli-only'                   => '管理対象のプラットフォームはサーバーのコマンドラインからのみ変更できます。',
                 'default-requires-enabled'           => '無効化されたプラットフォームをデフォルトに設定することはできません。先にプラットフォームを有効化してください。',
             ],
         ],

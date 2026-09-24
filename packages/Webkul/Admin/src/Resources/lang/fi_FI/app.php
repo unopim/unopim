@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Haetaan',
             'set-default'     => 'Aseta oletukseksi',
             'managed-badge'   => 'Hallinnoitu',
+            'managed-note'    => 'Tätä alustaa hallinnoidaan palvelimen komentoriviltä. Täällä voi muuttaa vain sen tilaa ja oletusasetusta.',
 
             'command' => [
+
+                'select-platform' => 'Mikä alusta?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Jätä tyhjäksi, jos haluat säilyttää tallennetun avaimen.',
+
+                'key-unchanged' => 'Ennallaan',
+
+                'missing-argument' => 'Argumentti :argument on pakollinen, kun komento suoritetaan ilman vuorovaikutusta.',
+
+                'delete-confirm' => 'Poistetaanko alusta ":label"?',
+
+                'deleted' => 'Tekoälyalusta ":label" on poistettu.',
+
+                'force-required' => 'Käytä valitsinta --force, jos haluat poistaa ilman vuorovaikutusta.',
+
+                'default-set' => '":label" on nyt oletusarvoinen tekoälyalusta.',
+
+                'no-platforms' => 'Tekoälyalustoja ei ole määritetty.',
+
+                'id'                 => 'Tunnus',
                 'fetching-models'    => 'Haetaan malleja palvelusta :provider...',
                 'models-manual'      => 'Mallit (pilkuin eroteltuina)',
                 'models-additional'  => 'Lisämallit pilkuin eroteltuina (valinnainen)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Tätä API-avainta voi käyttää vain sen omalla palveluntarjoajalla ja päätepisteellä.',
                 'managed-models-only'                => 'Tämä API-avain voi käyttää vain näitä malleja: :allowed.',
                 'managed-cannot-delete'              => 'Hallinnoitua alustaa ei voi poistaa.',
+                'managed-cli-only'                   => 'Hallinnoitua alustaa voi muuttaa vain palvelimen komentoriviltä.',
                 'default-requires-enabled'           => 'Poistettua alustaa ei voi merkitä oletukseksi. Ota alusta ensin käyttöön.',
             ],
         ],

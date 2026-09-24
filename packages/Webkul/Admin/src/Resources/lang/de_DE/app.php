@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Abruf läuft',
             'set-default'     => 'Als Standard festlegen',
             'managed-badge'   => 'Verwaltet',
+            'managed-note'    => 'Diese Plattform wird über die Kommandozeile des Servers verwaltet. Hier lassen sich nur Status und Standardeinstellung ändern.',
 
             'command' => [
+
+                'select-platform' => 'Welche Plattform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Leer lassen, um den gespeicherten Schlüssel zu behalten.',
+
+                'key-unchanged' => 'Unverändert',
+
+                'missing-argument' => 'Das Argument :argument ist bei einer Ausführung ohne Interaktion erforderlich.',
+
+                'delete-confirm' => 'Die Plattform „:label“ löschen?',
+
+                'deleted' => 'Die KI-Plattform „:label“ wurde gelöscht.',
+
+                'force-required' => 'Übergeben Sie --force, um ohne Interaktion zu löschen.',
+
+                'default-set' => '„:label“ ist jetzt die Standard-KI-Plattform.',
+
+                'no-platforms' => 'Es sind keine KI-Plattformen eingerichtet.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Modelle werden von :provider abgerufen...',
                 'models-manual'      => 'Modelle (durch Kommas getrennt)',
                 'models-additional'  => 'Weitere Modelle, durch Kommas getrennt (optional)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Dieser API-Schlüssel kann nur mit seinem eigenen Anbieter und Endpunkt verwendet werden.',
                 'managed-models-only'                => 'Dieser API-Schlüssel kann nur diese Modelle verwenden: :allowed.',
                 'managed-cannot-delete'              => 'Die verwaltete Plattform kann nicht gelöscht werden.',
+                'managed-cli-only'                   => 'Eine verwaltete Plattform kann nur über die Kommandozeile des Servers geändert werden.',
                 'default-requires-enabled'           => 'Eine deaktivierte Plattform kann nicht als Standard festgelegt werden. Bitte aktivieren Sie sie zuerst.',
             ],
         ],

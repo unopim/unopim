@@ -2393,8 +2393,31 @@ return [
             'fetching-models' => 'Dohvaćanje',
             'set-default'     => 'Postavi kao zadano',
             'managed-badge'   => 'Upravljana',
+            'managed-note'    => 'Ovom platformom upravlja se iz naredbenog retka poslužitelja. Ovdje se mogu mijenjati samo njezin status i zadana postavka.',
 
             'command' => [
+
+                'select-platform' => 'Koja platforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Ostavite prazno da biste zadržali spremljeni ključ.',
+
+                'key-unchanged' => 'Nepromijenjeno',
+
+                'missing-argument' => 'Argument :argument obavezan je pri pokretanju bez interakcije.',
+
+                'delete-confirm' => 'Izbrisati platformu ":label"?',
+
+                'deleted' => 'AI platforma ":label" je izbrisana.',
+
+                'force-required' => 'Dodajte --force za brisanje bez interakcije.',
+
+                'default-set' => '":label" je sada zadana AI platforma.',
+
+                'no-platforms' => 'Nije konfigurirana nijedna AI platforma.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Dohvaćanje modela s :provider...',
                 'models-manual'      => 'Modeli (odvojeni zarezima)',
                 'models-additional'  => 'Dodatni modeli, odvojeni zarezima (neobavezno)',
@@ -2477,6 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Ovaj API ključ može se koristiti samo sa svojim pružateljem usluge i krajnjom točkom.',
                 'managed-models-only'                => 'Ovaj API ključ može koristiti samo ove modele: :allowed.',
                 'managed-cannot-delete'              => 'Upravljana platforma ne može se izbrisati.',
+                'managed-cli-only'                   => 'Upravljana platforma može se mijenjati samo iz naredbenog retka poslužitelja.',
                 'default-requires-enabled'           => 'Onemogućena platforma ne može biti označena kao zadana. Najprije omogućite platformu.',
             ],
         ],

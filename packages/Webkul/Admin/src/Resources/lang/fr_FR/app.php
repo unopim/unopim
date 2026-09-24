@@ -2392,8 +2392,31 @@ return [
             'fetching-models' => 'Récupération',
             'set-default'     => 'Définir par défaut',
             'managed-badge'   => 'Gérée',
+            'managed-note'    => 'Cette plateforme est gérée depuis la ligne de commande du serveur. Seuls son statut et son choix par défaut peuvent être modifiés ici.',
 
             'command' => [
+
+                'select-platform' => 'Quelle plateforme ?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Laissez vide pour conserver la clé enregistrée.',
+
+                'key-unchanged' => 'Inchangée',
+
+                'missing-argument' => 'L\'argument :argument est obligatoire en mode non interactif.',
+
+                'delete-confirm' => 'Supprimer la plateforme « :label » ?',
+
+                'deleted' => 'La plateforme d\'IA « :label » est supprimée.',
+
+                'force-required' => 'Ajoutez --force pour supprimer en mode non interactif.',
+
+                'default-set' => '« :label » est désormais la plateforme d\'IA par défaut.',
+
+                'no-platforms' => 'Aucune plateforme d\'IA n\'est configurée.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Récupération des modèles depuis :provider...',
                 'models-manual'      => 'Modèles (séparés par des virgules)',
                 'models-additional'  => 'Modèles supplémentaires, séparés par des virgules (facultatif)',
@@ -2476,6 +2499,7 @@ return [
                 'managed-connection-locked'          => 'Cette clé API ne peut être utilisée qu\'avec son propre fournisseur et son propre point de terminaison.',
                 'managed-models-only'                => 'Cette clé API ne peut utiliser que ces modèles : :allowed.',
                 'managed-cannot-delete'              => 'La plateforme gérée ne peut pas être supprimée.',
+                'managed-cli-only'                   => 'Une plateforme gérée ne peut être modifiée que depuis la ligne de commande du serveur.',
                 'default-requires-enabled'           => 'Une plateforme désactivée ne peut pas être définie comme plateforme par défaut. Activez-la d\'abord.',
             ],
         ],

@@ -2396,8 +2396,31 @@ return [
             'fetching-models' => 'Ophalen…',
             'set-default'     => 'Instellen als standaard',
             'managed-badge'   => 'Beheerd',
+            'managed-note'    => 'Dit platform wordt beheerd via de opdrachtregel van de server. Hier kunt u alleen de status en de standaardinstelling wijzigen.',
 
             'command' => [
+
+                'select-platform' => 'Welk platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Laat leeg om de opgeslagen sleutel te behouden.',
+
+                'key-unchanged' => 'Ongewijzigd',
+
+                'missing-argument' => 'Het argument :argument is verplicht wanneer de opdracht zonder interactie wordt uitgevoerd.',
+
+                'delete-confirm' => 'Het platform ":label" verwijderen?',
+
+                'deleted' => 'Het AI-platform ":label" is verwijderd.',
+
+                'force-required' => 'Geef --force op om zonder interactie te verwijderen.',
+
+                'default-set' => '":label" is nu het standaard AI-platform.',
+
+                'no-platforms' => 'Er zijn geen AI-platforms ingesteld.',
+
+                'id'                 => 'ID',
                 'fetching-models'    => 'Modellen ophalen bij :provider...',
                 'models-manual'      => 'Modellen (door komma\'s gescheiden)',
                 'models-additional'  => 'Extra modellen, door komma\'s gescheiden (optioneel)',
@@ -2480,6 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Deze API-sleutel kan alleen worden gebruikt met de eigen provider en het eigen endpoint.',
                 'managed-models-only'                => 'Deze API-sleutel kan alleen deze modellen gebruiken: :allowed.',
                 'managed-cannot-delete'              => 'Het beheerde platform kan niet worden verwijderd.',
+                'managed-cli-only'                   => 'Een beheerd platform kan alleen via de opdrachtregel van de server worden gewijzigd.',
                 'default-requires-enabled'           => 'Een uitgeschakeld platform kan niet als standaard worden gemarkeerd. Schakel het platform eerst in.',
             ],
         ],

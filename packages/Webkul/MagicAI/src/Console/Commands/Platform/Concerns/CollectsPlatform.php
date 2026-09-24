@@ -1,20 +1,15 @@
 <?php
 
-namespace Webkul\MagicAI\Console\Commands;
+namespace Webkul\MagicAI\Console\Commands\Platform\Concerns;
 
-use Illuminate\Console\Attributes\Description;
-use Illuminate\Console\Attributes\Signature;
-use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Webkul\MagicAI\Console\Support\StdinReader;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Models\MagicAIPlatform;
-use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Services\ModelDiscovery;
 use Webkul\MagicAI\Support\ModelRecommender;
-use Webkul\MagicAI\Validator\PlatformValidator;
 
 use function Laravel\Prompts\confirm;
 use function Laravel\Prompts\error;
@@ -27,48 +22,31 @@ use function Laravel\Prompts\table;
 use function Laravel\Prompts\text;
 use function Laravel\Prompts\warning;
 
-#[Signature('unopim:magic-ai:add-platform
-    {--provider= : Provider code, e.g. concentrate}
-    {--label= : Platform label}
-    {--api-url= : API URL, empty for the provider default}
-    {--models= : Comma-separated model IDs}
-    {--azure-deployment= : Azure deployment name}
-    {--azure-api-version= : Azure API version}
-    {--default : Make it the default platform}
-    {--disabled : Save it disabled}
-    {--unmanaged : Save it without the managed lock}
-    {--key-stdin : Read the API key from the first line of standard input}')]
-#[Description('Add a Magic AI platform, optionally managed, storing its API key encrypted in the database')]
-class AddPlatform extends Command
+/**
+ * Collects a platform the way the admin form does and saves it through the
+ * repository with the form's validation.
+ */
+trait CollectsPlatform
 {
     protected const AZURE_DEPLOYMENT = 'gpt-4o';
 
     protected const AZURE_API_VERSION = '2024-10-21';
 
-    protected MagicAIPlatformRepository $platformRepository;
-
-    protected PlatformValidator $platformValidator;
-
     /**
-     * Collect a new platform the same way the admin form does, then save it
-     * through the repository. The key is never taken as an option value, so
-     * it stays out of the process list and shell history.
+     * Collect the platform, confirm it interactively and save it.
      */
-    public function handle(MagicAIPlatformRepository $platformRepository, PlatformValidator $platformValidator): int
+    protected function collectAndSave(?MagicAIPlatform $platform): int
     {
-        $this->platformRepository = $platformRepository;
-        $this->platformValidator = $platformValidator;
-
         $data = $this->input->isInteractive()
-            ? $this->collectInteractively()
-            : $this->collectFromOptions();
+            ? $this->collectInteractively($platform)
+            : $this->collectFromOptions($platform);
 
         if ($data === null) {
             return self::FAILURE;
         }
 
         if ($this->input->isInteractive()) {
-            $this->summarise($data);
+            $this->summarise($data, $platform);
 
             if (! confirm(trans('admin::app.configuration.platform.command.confirm-save'))) {
                 info(trans('admin::app.configuration.platform.command.cancelled'));
@@ -77,67 +55,77 @@ class AddPlatform extends Command
             }
         }
 
-        return $this->save($data);
+        return $this->save($data, $platform);
     }
 
     /**
      * @return array<string, mixed>
      */
-    protected function collectInteractively(): array
+    protected function collectInteractively(?MagicAIPlatform $platform): array
     {
         $provider = AiProvider::from(select(
             label: trans('admin::app.configuration.platform.fields.provider'),
             options: collect(AiProvider::cases())->mapWithKeys(fn (AiProvider $provider): array => [$provider->value => $provider->label()])->all(),
-            default: AiProvider::tryFrom((string) $this->option('provider'))?->value ?? AiProvider::Concentrate->value,
+            default: $platform->provider ?? AiProvider::tryFrom((string) $this->option('provider'))?->value ?? AiProvider::Concentrate->value,
         ));
+
+        $sameProvider = $platform?->provider === $provider->value;
 
         $label = text(
             label: trans('admin::app.configuration.platform.fields.label'),
-            default: $provider->label(),
+            default: $platform->label ?? $provider->label(),
             required: true,
             validate: fn (string $value): ?string => $this->fieldError('label', $value),
         );
 
         $apiUrl = trim(text(
             label: trans('admin::app.configuration.platform.fields.api-url'),
-            default: $provider->defaultUrl(),
+            default: $sameProvider ? (string) $platform?->api_url : $provider->defaultUrl(),
             validate: fn (string $value): ?string => $this->fieldError('api_url', trim($value) ?: null)
                 ?? $this->platformValidator->apiUrlError($provider->value, $value),
             hint: trans('admin::app.configuration.platform.fields.api-url-hint'),
         ));
 
-        $apiKey = $provider === AiProvider::Ollama ? null : password(
+        $apiKey = $provider === AiProvider::Ollama ? null : (password(
             label: trans('admin::app.configuration.platform.fields.api-key'),
-            required: true,
-        );
+            required: ! $platform?->safeApiKey(),
+            hint: $platform instanceof MagicAIPlatform ? trans('admin::app.configuration.platform.command.api-key-keep-hint') : '',
+        ) ?: null);
 
         $extras = $provider === AiProvider::Azure ? [
             'deployment' => text(
                 label: trans('admin::app.configuration.platform.fields.azure-deployment'),
-                default: self::AZURE_DEPLOYMENT,
+                default: (string) ($platform->extras['deployment'] ?? self::AZURE_DEPLOYMENT),
                 required: true,
             ),
             'api_version' => text(
                 label: trans('admin::app.configuration.platform.fields.azure-api-version'),
-                default: self::AZURE_API_VERSION,
+                default: (string) ($platform->extras['api_version'] ?? self::AZURE_API_VERSION),
                 required: true,
             ),
         ] : [];
 
-        $models = $this->askModels($provider, $apiKey, $apiUrl);
+        $models = $this->askModels(
+            $provider,
+            $apiKey ?? $platform?->safeApiKey(),
+            $apiUrl,
+            $platform instanceof MagicAIPlatform && $sameProvider ? $this->managedPlatform->models($platform) : [],
+        );
 
         $isDefault = confirm(
             label: trans('admin::app.configuration.platform.fields.is-default'),
-            default: $this->platformRepository->getDefault() === null,
+            default: $platform->is_default ?? $this->platformRepository->getDefault() === null,
         );
 
         $status = confirm(
             label: trans('admin::app.configuration.platform.fields.status'),
+            default: $platform->status ?? true,
             validate: fn (bool $enabled): ?string => $this->platformValidator->defaultStatusError($isDefault, $enabled),
         );
 
         $isManaged = confirm(
             label: trans('admin::app.configuration.platform.command.managed'),
+            default: $platform->is_managed ?? true,
             validate: fn (bool $managed): ?string => $this->managedExtrasError($managed, $extras),
         );
 
@@ -158,15 +146,17 @@ class AddPlatform extends Command
      * Offer the models the provider serves, falling back to a typed list
      * when they cannot be fetched.
      *
+     * @param  string[]  $stored
      * @return string[]
      */
-    protected function askModels(AiProvider $provider, ?string $apiKey, string $apiUrl): array
+    protected function askModels(AiProvider $provider, ?string $apiKey, string $apiUrl, array $stored): array
     {
         $fetched = $this->fetchModels($provider, $apiKey, $apiUrl);
 
         if ($fetched === []) {
             return $this->platformValidator->splitModels(text(
                 label: trans('admin::app.configuration.platform.command.models-manual'),
+                default: implode(',', $stored),
                 required: true,
                 validate: fn (string $value): ?string => $this->platformValidator->modelNamesError($value),
             ));
@@ -174,8 +164,8 @@ class AddPlatform extends Command
 
         $selected = multiselect(
             label: trans('admin::app.configuration.platform.fields.models'),
-            options: ModelRecommender::chatCapable($fetched),
-            default: ModelRecommender::recommend($fetched),
+            options: array_values(array_unique([...ModelRecommender::chatCapable($fetched), ...$stored])),
+            default: $stored !== [] ? $stored : ModelRecommender::recommend($fetched),
             scroll: 10,
             required: trans('admin::app.configuration.platform.command.models-required'),
         );
@@ -225,9 +215,9 @@ class AddPlatform extends Command
     /**
      * @return array<string, mixed>|null
      */
-    protected function collectFromOptions(): ?array
+    protected function collectFromOptions(?MagicAIPlatform $platform): ?array
     {
-        $providerValue = $this->option('provider');
+        $providerValue = $this->option('provider') ?? $platform?->provider;
 
         if (! $providerValue) {
             return $this->missingOption('provider');
@@ -244,28 +234,38 @@ class AddPlatform extends Command
             return null;
         }
 
+        $sameProvider = $platform?->provider === $provider->value;
+
         $apiKey = $this->option('key-stdin') ? resolve(StdinReader::class)->readLine() : '';
 
-        if ($apiKey === '' && $provider !== AiProvider::Ollama) {
+        if ($apiKey === '' && $provider !== AiProvider::Ollama && ! $platform?->safeApiKey()) {
             error(trans('admin::app.configuration.platform.command.key-stdin-required'));
 
             return null;
         }
 
-        $models = $this->option('models');
+        $models = $this->option('models') ?? ($sameProvider ? $platform?->models : null);
 
         if (! $models) {
             return $this->missingOption('models');
         }
 
         $extras = $provider === AiProvider::Azure ? [
-            'deployment'  => $this->option('azure-deployment') ?? self::AZURE_DEPLOYMENT,
-            'api_version' => $this->option('azure-api-version') ?? self::AZURE_API_VERSION,
+            'deployment'  => $this->option('azure-deployment') ?? $platform->extras['deployment'] ?? self::AZURE_DEPLOYMENT,
+            'api_version' => $this->option('azure-api-version') ?? $platform->extras['api_version'] ?? self::AZURE_API_VERSION,
         ] : [];
 
-        $status = ! $this->option('disabled');
+        $status = match (true) {
+            $this->flag('disabled') => false,
+            $this->flag('enabled')  => true,
+            default                 => $platform->status ?? true,
+        };
 
-        $isManaged = ! $this->option('unmanaged');
+        $isManaged = match (true) {
+            $this->flag('unmanaged') => false,
+            $this->flag('managed')   => true,
+            default                  => $platform->is_managed ?? true,
+        };
 
         if ($error = $this->managedExtrasError($isManaged, $extras)) {
             error($error);
@@ -275,12 +275,14 @@ class AddPlatform extends Command
 
         return [
             'provider'   => $provider->value,
-            'label'      => $this->option('label') ?? $provider->label(),
-            'api_url'    => $this->option('api-url') ?? $provider->defaultUrl(),
+            'label'      => $this->option('label') ?? $platform->label ?? $provider->label(),
+            'api_url'    => $this->option('api-url') ?? ($sameProvider ? (string) $platform?->api_url : $provider->defaultUrl()),
             'api_key'    => $apiKey ?: null,
             'models'     => $models,
             'extras'     => $extras,
-            'is_default' => $this->option('default') || ($status && $this->platformRepository->getDefault() === null),
+            'is_default' => $this->flag('default') || ($platform instanceof MagicAIPlatform
+                ? $platform->is_default
+                : $status && $this->platformRepository->getDefault() === null),
             'status'     => $status,
             'is_managed' => $isManaged,
         ];
@@ -289,10 +291,8 @@ class AddPlatform extends Command
     /**
      * @param  array<string, mixed>  $data
      */
-    protected function summarise(array $data): void
+    protected function summarise(array $data, ?MagicAIPlatform $platform): void
     {
-        $yesNo = fn (bool $value): string => trans($value ? 'admin::app.common.yes' : 'admin::app.common.no');
-
         table(
             headers: [
                 trans('admin::app.configuration.platform.command.field'),
@@ -302,34 +302,41 @@ class AddPlatform extends Command
                 [trans('admin::app.configuration.platform.fields.provider'), AiProvider::from($data['provider'])->label()],
                 [trans('admin::app.configuration.platform.fields.label'), $data['label']],
                 [trans('admin::app.configuration.platform.fields.api-url'), $data['api_url'] ?: trans('admin::app.configuration.platform.command.provider-default')],
-                [trans('admin::app.configuration.platform.fields.api-key'), $data['api_key'] === null ? '' : str_repeat('*', 8)],
+                [trans('admin::app.configuration.platform.fields.api-key'), match (true) {
+                    $data['api_key'] !== null       => str_repeat('*', 8),
+                    (bool) $platform?->safeApiKey() => trans('admin::app.configuration.platform.command.key-unchanged'),
+                    default                         => '',
+                }],
                 [trans('admin::app.configuration.platform.fields.models'), str_replace(',', ', ', $data['models'])],
                 [trans('admin::app.configuration.platform.command.extras'), $data['extras'] === [] ? '' : (string) json_encode($data['extras'])],
-                [trans('admin::app.configuration.platform.fields.is-default'), $yesNo($data['is_default'])],
-                [trans('admin::app.configuration.platform.fields.status'), trans($data['status'] ? 'admin::app.common.enable' : 'admin::app.common.disable')],
-                [trans('admin::app.configuration.platform.managed-badge'), $yesNo($data['is_managed'])],
+                [trans('admin::app.configuration.platform.fields.is-default'), $this->yesNo($data['is_default'])],
+                [trans('admin::app.configuration.platform.fields.status'), $this->enabledLabel($data['status'])],
+                [trans('admin::app.configuration.platform.managed-badge'), $this->yesNo($data['is_managed'])],
             ],
         );
     }
 
     /**
-     * Validate the platform with the form's rules and create it through the
+     * Validate the platform with the form's rules and save it through the
      * repository, as the admin form does.
      *
      * @param  array<string, mixed>  $data
      */
-    protected function save(array $data): int
+    protected function save(array $data, ?MagicAIPlatform $platform): int
     {
         $payload = [
             'label'      => $data['label'],
             'provider'   => $data['provider'],
             'api_url'    => $data['api_url'] ?: null,
-            'api_key'    => $data['api_key'],
             'models'     => $data['models'],
             'extras'     => $data['extras'] === [] ? null : json_encode($data['extras']),
             'is_default' => $data['is_default'],
             'status'     => $data['status'],
         ];
+
+        if ($data['api_key'] !== null) {
+            $payload['api_key'] = $data['api_key'];
+        }
 
         try {
             $payload = $this->platformValidator->validate($payload);
@@ -343,15 +350,17 @@ class AddPlatform extends Command
 
         $payload['extras'] = $data['extras'] ?: null;
 
-        $platform = DB::transaction(function () use ($payload, $data): MagicAIPlatform {
-            $platform = $this->platformRepository->create($payload);
+        $saved = DB::transaction(function () use ($payload, $platform, $data): MagicAIPlatform {
+            $saved = $platform instanceof MagicAIPlatform
+                ? $this->platformRepository->update($payload, $platform->id)
+                : $this->platformRepository->create($payload);
 
-            $platform->forceFill(['is_managed' => $data['is_managed']])->save();
+            $saved->forceFill(['is_managed' => $data['is_managed']])->save();
 
-            return $platform;
+            return $saved;
         });
 
-        info(trans('admin::app.configuration.platform.command.saved', ['label' => $platform->label]));
+        info(trans('admin::app.configuration.platform.command.saved', ['label' => $saved->label]));
 
         return self::SUCCESS;
     }
@@ -374,12 +383,5 @@ class AddPlatform extends Command
         return $isManaged && $extras !== []
             ? trans('admin::app.configuration.platform.command.managed-extras')
             : null;
-    }
-
-    protected function missingOption(string $option): null
-    {
-        error(trans('admin::app.configuration.platform.command.missing-option', ['option' => $option]));
-
-        return null;
     }
 }
