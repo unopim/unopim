@@ -188,14 +188,16 @@
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.platform.fields.label')
                                     </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="label"
-                                        v-model="form.label"
-                                        rules="required"
-                                        :label="trans('admin::app.configuration.platform.fields.label')"
-                                        ::readonly="form.is_managed"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="label"
+                                            v-model="form.label"
+                                            rules="required"
+                                            :label="trans('admin::app.configuration.platform.fields.label')"
+                                            ::readonly="form.is_managed"
+                                        />
+                                    </div>
                                     <x-admin::form.control-group.error control-name="label" />
                                 </x-admin::form.control-group>
 
@@ -204,14 +206,16 @@
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.configuration.platform.fields.api-url')
                                     </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="api_url"
-                                        v-model="form.api_url"
-                                        :label="trans('admin::app.configuration.platform.fields.api-url')"
-                                        ::readonly="form.is_managed"
-                                        @input="onApiUrlInput($event)"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="api_url"
+                                            v-model="form.api_url"
+                                            :label="trans('admin::app.configuration.platform.fields.api-url')"
+                                            ::readonly="form.is_managed"
+                                            @input="onApiUrlInput($event)"
+                                        />
+                                    </div>
                                     <p class="mt-1 text-xs text-gray-500">@lang('admin::app.configuration.platform.fields.api-url-hint')</p>
                                     <x-admin::form.control-group.error control-name="api_url" />
                                 </x-admin::form.control-group>
@@ -221,16 +225,18 @@
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.platform.fields.api-key')
                                     </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="password"
-                                        name="api_key"
-                                        v-model="form.api_key"
-                                        rules="required"
-                                        :label="trans('admin::app.configuration.platform.fields.api-key')"
-                                        ::readonly="form.is_managed"
-                                        @change="onApiKeyEntered()"
-                                        @input="onApiKeyInput($event)"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="password"
+                                            name="api_key"
+                                            v-model="form.api_key"
+                                            rules="required"
+                                            :label="trans('admin::app.configuration.platform.fields.api-key')"
+                                            ::readonly="form.is_managed"
+                                            @change="onApiKeyEntered()"
+                                            @input="onApiKeyInput($event)"
+                                        />
+                                    </div>
                                     <p v-if="fetchingModels" class="mt-1 text-xs text-primary-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
                                     <x-admin::form.control-group.error control-name="api_key" />
                                 </x-admin::form.control-group>
@@ -241,13 +247,17 @@
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.configuration.platform.fields.azure-deployment')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" ::readonly="form.is_managed" />
+                                        <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                            <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" ::readonly="form.is_managed" />
+                                        </div>
                                     </x-admin::form.control-group>
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
                                             @lang('admin::app.configuration.platform.fields.azure-api-version')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" ::readonly="form.is_managed" />
+                                        <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                            <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" ::readonly="form.is_managed" />
+                                        </div>
                                     </x-admin::form.control-group>
                                 </template>
 
