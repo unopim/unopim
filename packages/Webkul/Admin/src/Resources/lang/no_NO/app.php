@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Henter',
             'set-default'     => 'Angi som standard',
             'managed-badge'   => 'Administrert',
-            'managed-note'    => 'Denne plattformen administreres fra serverens kommandolinje. Bare status og standardinnstilling kan endres her.',
+            'managed-note'    => 'Denne plattformen leveres og administreres for deg. Her kan bare statusen og standardinnstillingen endres.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Denne API-nøkkelen kan bare brukes med sin egen leverandør og sitt eget endepunkt.',
                 'managed-models-only'                => 'Denne API-nøkkelen kan bare bruke disse modellene: :allowed.',
                 'managed-cannot-delete'              => 'Den administrerte plattformen kan ikke slettes.',
-                'managed-cli-only'                   => 'En administrert plattform kan bare endres fra serverens kommandolinje.',
+                'managed-cli-only'                   => 'Denne plattformen administreres for deg. Bare statusen og standardinnstillingen kan endres.',
                 'default-requires-enabled'           => 'En deaktivert plattform kan ikke settes som standard. Aktiver plattformen først.',
             ],
         ],

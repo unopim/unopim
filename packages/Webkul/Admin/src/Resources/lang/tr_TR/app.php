@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Getiriliyor',
             'set-default'     => 'Varsayılan Olarak Ayarla',
             'managed-badge'   => 'Yönetilen',
-            'managed-note'    => 'Bu platform sunucunun komut satırından yönetilir. Burada yalnızca durumu ve varsayılan ayarı değiştirilebilir.',
+            'managed-note'    => 'Bu platform sizin için sağlanır ve yönetilir. Burada yalnızca durumu ve varsayılan ayarı değiştirilebilir.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Bu API anahtarı yalnızca kendi sağlayıcısı ve uç noktasıyla kullanılabilir.',
                 'managed-models-only'                => 'Bu API anahtarı yalnızca şu modelleri kullanabilir: :allowed.',
                 'managed-cannot-delete'              => 'Yönetilen platform silinemez.',
-                'managed-cli-only'                   => 'Yönetilen bir platform yalnızca sunucunun komut satırından değiştirilebilir.',
+                'managed-cli-only'                   => 'Bu platform sizin için yönetilir. Yalnızca durumu ve varsayılan ayarı değiştirilebilir.',
                 'default-requires-enabled'           => 'Devre dışı bir platform varsayılan olarak işaretlenemez. Lütfen platformu önce etkinleştirin.',
             ],
         ],

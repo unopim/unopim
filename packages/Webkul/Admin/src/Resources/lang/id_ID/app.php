@@ -2393,7 +2393,7 @@ return [
             'fetching-models' => 'Mengambil',
             'set-default'     => 'Atur sebagai Default',
             'managed-badge'   => 'Terkelola',
-            'managed-note'    => 'Platform ini dikelola dari baris perintah server. Di sini hanya status dan pengaturan bawaannya yang dapat diubah.',
+            'managed-note'    => 'Platform ini disediakan dan dikelola untuk Anda. Di sini hanya status dan pengaturan default-nya yang dapat diubah.',
 
             'command' => [
 
@@ -2500,7 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Kunci API ini hanya dapat digunakan dengan penyedia dan endpoint miliknya sendiri.',
                 'managed-models-only'                => 'Kunci API ini hanya dapat menggunakan model berikut: :allowed.',
                 'managed-cannot-delete'              => 'Platform terkelola tidak dapat dihapus.',
-                'managed-cli-only'                   => 'Platform terkelola hanya dapat diubah dari baris perintah server.',
+                'managed-cli-only'                   => 'Platform ini dikelola untuk Anda. Hanya status dan pengaturan default-nya yang dapat diubah.',
                 'default-requires-enabled'           => 'Platform yang nonaktif tidak dapat dijadikan default. Aktifkan platform terlebih dahulu.',
             ],
         ],

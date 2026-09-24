@@ -2392,7 +2392,7 @@ return [
             'fetching-models' => 'Récupération',
             'set-default'     => 'Définir par défaut',
             'managed-badge'   => 'Gérée',
-            'managed-note'    => 'Cette plateforme est gérée depuis la ligne de commande du serveur. Seuls son statut et son choix par défaut peuvent être modifiés ici.',
+            'managed-note'    => 'Cette plateforme est fournie et gérée pour vous. Seuls son statut et son paramètre par défaut peuvent être modifiés ici.',
 
             'command' => [
 
@@ -2499,7 +2499,7 @@ return [
                 'managed-connection-locked'          => 'Cette clé API ne peut être utilisée qu\'avec son propre fournisseur et son propre point de terminaison.',
                 'managed-models-only'                => 'Cette clé API ne peut utiliser que ces modèles : :allowed.',
                 'managed-cannot-delete'              => 'La plateforme gérée ne peut pas être supprimée.',
-                'managed-cli-only'                   => 'Une plateforme gérée ne peut être modifiée que depuis la ligne de commande du serveur.',
+                'managed-cli-only'                   => 'Cette plateforme est gérée pour vous. Seuls son statut et son paramètre par défaut peuvent être modifiés.',
                 'default-requires-enabled'           => 'Une plateforme désactivée ne peut pas être définie comme plateforme par défaut. Activez-la d\'abord.',
             ],
         ],

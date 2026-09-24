@@ -2393,7 +2393,7 @@ return [
             'fetching-models' => 'Fetching',
             'set-default'     => 'Set as Default',
             'managed-badge'   => 'Managed',
-            'managed-note'    => 'This platform is managed from the server command line. Only its status and default setting can be changed here.',
+            'managed-note'    => 'This platform is provided and managed for you. Only its status and default setting can be changed here.',
 
             'command' => [
 
@@ -2500,7 +2500,7 @@ return [
                 'managed-connection-locked'          => 'This API key can only be used with its own provider and endpoint.',
                 'managed-models-only'                => 'This API key can only use these models: :allowed.',
                 'managed-cannot-delete'              => 'The managed platform cannot be deleted.',
-                'managed-cli-only'                   => 'A managed platform can only be changed from the server command line.',
+                'managed-cli-only'                   => 'This platform is managed for you. Only its status and default setting can be changed.',
                 'default-requires-enabled'           => 'A disabled platform cannot be marked as default. Please enable the platform first.',
             ],
         ],

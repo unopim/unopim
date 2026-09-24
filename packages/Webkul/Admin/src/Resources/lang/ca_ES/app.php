@@ -2393,7 +2393,7 @@ return [
             'fetching-models' => 'Obtenint',
             'set-default'     => 'Estableix com a predeterminat',
             'managed-badge'   => 'Gestionada',
-            'managed-note'    => 'Aquesta plataforma es gestiona des de la línia d\'ordres del servidor. Aquí només se\'n pot canviar l\'estat i si és la predeterminada.',
+            'managed-note'    => 'Aquesta plataforma es proporciona i es gestiona per a vós. Aquí només en podeu canviar l\'estat i si és la predeterminada.',
 
             'command' => [
 
@@ -2500,7 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Aquesta clau d\'API només es pot fer servir amb el seu propi proveïdor i punt d\'accés.',
                 'managed-models-only'                => 'Aquesta clau d\'API només pot fer servir aquests models: :allowed.',
                 'managed-cannot-delete'              => 'La plataforma gestionada no es pot eliminar.',
-                'managed-cli-only'                   => 'Una plataforma gestionada només es pot modificar des de la línia d\'ordres del servidor.',
+                'managed-cli-only'                   => 'Aquesta plataforma es gestiona per a vós. Només se\'n pot canviar l\'estat i si és la predeterminada.',
                 'default-requires-enabled'           => 'Una plataforma desactivada no es pot marcar com a per defecte. Activa-la primer.',
             ],
         ],

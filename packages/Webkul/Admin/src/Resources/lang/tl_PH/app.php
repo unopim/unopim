@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Kinukuha',
             'set-default'     => 'Itakda bilang Default',
             'managed-badge'   => 'Pinamamahalaan',
-            'managed-note'    => 'Pinamamahalaan ang platform na ito mula sa command line ng server. Ang status at default na setting lamang nito ang mababago rito.',
+            'managed-note'    => 'Ang platform na ito ay ibinibigay at pinamamahalaan para sa iyo. Dito, ang status at default na setting lang nito ang mababago.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Magagamit lang ang API key na ito sa sarili nitong provider at endpoint.',
                 'managed-models-only'                => 'Ang API key na ito ay makakagamit lang ng mga modelong ito: :allowed.',
                 'managed-cannot-delete'              => 'Hindi maaaring burahin ang pinamamahalaang platform.',
-                'managed-cli-only'                   => 'Ang pinamamahalaang platform ay mababago lamang mula sa command line ng server.',
+                'managed-cli-only'                   => 'Ang platform na ito ay pinamamahalaan para sa iyo. Ang status at default na setting lang nito ang mababago.',
                 'default-requires-enabled'           => 'Hindi maaaring markahan bilang default ang isang naka-disable na platform. I-enable muna ang platform.',
             ],
         ],

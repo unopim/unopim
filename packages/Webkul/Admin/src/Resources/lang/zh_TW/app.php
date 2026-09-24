@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => '取得中',
             'set-default'     => '設為預設',
             'managed-badge'   => '受管理',
-            'managed-note'    => '此平台透過伺服器命令列管理，此處只能變更其狀態與預設設定。',
+            'managed-note'    => '此平台由系統為您提供並管理。此處只能變更其狀態與預設設定。',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => '此 API 金鑰只能搭配其專屬的供應商與端點使用。',
                 'managed-models-only'                => '此 API 金鑰只能使用以下模型：:allowed。',
                 'managed-cannot-delete'              => '無法刪除受管理的平台。',
-                'managed-cli-only'                   => '受管理的平台只能透過伺服器命令列變更。',
+                'managed-cli-only'                   => '此平台由系統為您管理。只能變更其狀態與預設設定。',
                 'default-requires-enabled'           => '無法將已停用的平台設為預設。請先啟用該平台。',
             ],
         ],

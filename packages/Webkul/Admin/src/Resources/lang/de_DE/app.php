@@ -2393,7 +2393,7 @@ return [
             'fetching-models' => 'Abruf läuft',
             'set-default'     => 'Als Standard festlegen',
             'managed-badge'   => 'Verwaltet',
-            'managed-note'    => 'Diese Plattform wird über die Kommandozeile des Servers verwaltet. Hier lassen sich nur Status und Standardeinstellung ändern.',
+            'managed-note'    => 'Diese Plattform wird für Sie bereitgestellt und verwaltet. Hier können nur ihr Status und die Standardeinstellung geändert werden.',
 
             'command' => [
 
@@ -2500,7 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Dieser API-Schlüssel kann nur mit seinem eigenen Anbieter und Endpunkt verwendet werden.',
                 'managed-models-only'                => 'Dieser API-Schlüssel kann nur diese Modelle verwenden: :allowed.',
                 'managed-cannot-delete'              => 'Die verwaltete Plattform kann nicht gelöscht werden.',
-                'managed-cli-only'                   => 'Eine verwaltete Plattform kann nur über die Kommandozeile des Servers geändert werden.',
+                'managed-cli-only'                   => 'Diese Plattform wird für Sie verwaltet. Nur ihr Status und die Standardeinstellung können geändert werden.',
                 'default-requires-enabled'           => 'Eine deaktivierte Plattform kann nicht als Standard festgelegt werden. Bitte aktivieren Sie sie zuerst.',
             ],
         ],

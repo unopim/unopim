@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Hämtar',
             'set-default'     => 'Ange som standard',
             'managed-badge'   => 'Hanterad',
-            'managed-note'    => 'Den här plattformen hanteras från serverns kommandorad. Här kan bara status och standardinställning ändras.',
+            'managed-note'    => 'Den här plattformen tillhandahålls och hanteras åt dig. Här kan bara dess status och standardinställning ändras.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Den här API-nyckeln kan bara användas med sin egen leverantör och sin egen slutpunkt.',
                 'managed-models-only'                => 'Den här API-nyckeln kan bara använda dessa modeller: :allowed.',
                 'managed-cannot-delete'              => 'Den hanterade plattformen kan inte tas bort.',
-                'managed-cli-only'                   => 'En hanterad plattform kan bara ändras från serverns kommandorad.',
+                'managed-cli-only'                   => 'Den här plattformen hanteras åt dig. Bara dess status och standardinställning kan ändras.',
                 'default-requires-enabled'           => 'En inaktiverad plattform kan inte markeras som standard. Aktivera plattformen först.',
             ],
         ],

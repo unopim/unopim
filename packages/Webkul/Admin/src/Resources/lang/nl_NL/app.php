@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Ophalen…',
             'set-default'     => 'Instellen als standaard',
             'managed-badge'   => 'Beheerd',
-            'managed-note'    => 'Dit platform wordt beheerd via de opdrachtregel van de server. Hier kunt u alleen de status en de standaardinstelling wijzigen.',
+            'managed-note'    => 'Dit platform wordt voor u geleverd en beheerd. Hier kunnen alleen de status en de standaardinstelling worden gewijzigd.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Deze API-sleutel kan alleen worden gebruikt met de eigen provider en het eigen endpoint.',
                 'managed-models-only'                => 'Deze API-sleutel kan alleen deze modellen gebruiken: :allowed.',
                 'managed-cannot-delete'              => 'Het beheerde platform kan niet worden verwijderd.',
-                'managed-cli-only'                   => 'Een beheerd platform kan alleen via de opdrachtregel van de server worden gewijzigd.',
+                'managed-cli-only'                   => 'Dit platform wordt voor u beheerd. Alleen de status en de standaardinstelling kunnen worden gewijzigd.',
                 'default-requires-enabled'           => 'Een uitgeschakeld platform kan niet als standaard worden gemarkeerd. Schakel het platform eerst in.',
             ],
         ],

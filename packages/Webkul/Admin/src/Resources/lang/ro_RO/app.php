@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Se preia',
             'set-default'     => 'Setează ca implicit',
             'managed-badge'   => 'Gestionată',
-            'managed-note'    => 'Această platformă este gestionată din linia de comandă a serverului. Aici se pot schimba doar starea și setarea implicită.',
+            'managed-note'    => 'Această platformă este furnizată și gestionată pentru dvs. Aici se pot modifica doar starea și setarea implicită.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Această cheie API poate fi folosită doar cu propriul furnizor și propriul endpoint.',
                 'managed-models-only'                => 'Această cheie API poate folosi doar aceste modele: :allowed.',
                 'managed-cannot-delete'              => 'Platforma gestionată nu poate fi ștearsă.',
-                'managed-cli-only'                   => 'O platformă gestionată poate fi modificată doar din linia de comandă a serverului.',
+                'managed-cli-only'                   => 'Această platformă este gestionată pentru dvs. Se pot modifica doar starea și setarea implicită.',
                 'default-requires-enabled'           => 'O platformă dezactivată nu poate fi setată ca implicită. Activați mai întâi platforma.',
             ],
         ],

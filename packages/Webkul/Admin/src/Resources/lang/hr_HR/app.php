@@ -2393,7 +2393,7 @@ return [
             'fetching-models' => 'Dohvaćanje',
             'set-default'     => 'Postavi kao zadano',
             'managed-badge'   => 'Upravljana',
-            'managed-note'    => 'Ovom platformom upravlja se iz naredbenog retka poslužitelja. Ovdje se mogu mijenjati samo njezin status i zadana postavka.',
+            'managed-note'    => 'Ova se platforma pruža i njome se upravlja za vas. Ovdje se mogu promijeniti samo njezin status i zadana postavka.',
 
             'command' => [
 
@@ -2500,7 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Ovaj API ključ može se koristiti samo sa svojim pružateljem usluge i krajnjom točkom.',
                 'managed-models-only'                => 'Ovaj API ključ može koristiti samo ove modele: :allowed.',
                 'managed-cannot-delete'              => 'Upravljana platforma ne može se izbrisati.',
-                'managed-cli-only'                   => 'Upravljana platforma može se mijenjati samo iz naredbenog retka poslužitelja.',
+                'managed-cli-only'                   => 'Ovom se platformom upravlja za vas. Mogu se promijeniti samo njezin status i zadana postavka.',
                 'default-requires-enabled'           => 'Onemogućena platforma ne može biti označena kao zadana. Najprije omogućite platformu.',
             ],
         ],

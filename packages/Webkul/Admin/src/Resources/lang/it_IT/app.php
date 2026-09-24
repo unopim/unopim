@@ -2393,7 +2393,7 @@ return [
             'fetching-models' => 'Recupero in corso',
             'set-default'     => 'Imposta come predefinito',
             'managed-badge'   => 'Gestita',
-            'managed-note'    => 'Questa piattaforma è gestita dalla riga di comando del server. Qui puoi cambiare solo lo stato e l\'impostazione predefinita.',
+            'managed-note'    => 'Questa piattaforma è fornita e gestita per te. Qui puoi modificare solo lo stato e l\'impostazione predefinita.',
 
             'command' => [
 
@@ -2500,7 +2500,7 @@ return [
                 'managed-connection-locked'          => 'Questa chiave API può essere usata solo con il proprio provider ed endpoint.',
                 'managed-models-only'                => 'Questa chiave API può usare solo questi modelli: :allowed.',
                 'managed-cannot-delete'              => 'La piattaforma gestita non può essere eliminata.',
-                'managed-cli-only'                   => 'Una piattaforma gestita può essere modificata solo dalla riga di comando del server.',
+                'managed-cli-only'                   => 'Questa piattaforma è gestita per te. Si possono modificare solo lo stato e l\'impostazione predefinita.',
                 'default-requires-enabled'           => 'Una piattaforma disabilitata non può essere impostata come predefinita. Abilitala prima.',
             ],
         ],

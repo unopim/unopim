@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'A obter',
             'set-default'     => 'Definir como predefinido',
             'managed-badge'   => 'Gerida',
-            'managed-note'    => 'Esta plataforma é gerida a partir da linha de comandos do servidor. Aqui só é possível alterar o estado e a predefinição.',
+            'managed-note'    => 'Esta plataforma é fornecida e gerida para si. Aqui só é possível alterar o estado e a definição predefinida.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Esta chave de API só pode ser utilizada com o próprio fornecedor e endpoint.',
                 'managed-models-only'                => 'Esta chave de API só pode utilizar estes modelos: :allowed.',
                 'managed-cannot-delete'              => 'A plataforma gerida não pode ser eliminada.',
-                'managed-cli-only'                   => 'Uma plataforma gerida só pode ser alterada a partir da linha de comandos do servidor.',
+                'managed-cli-only'                   => 'Esta plataforma é gerida para si. Só é possível alterar o estado e a definição predefinida.',
                 'default-requires-enabled'           => 'Uma plataforma desativada não pode ser definida como predefinida. Ative a plataforma primeiro.',
             ],
         ],

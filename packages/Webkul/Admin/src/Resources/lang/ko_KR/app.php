@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => '가져오는 중',
             'set-default'     => '기본값으로 설정',
             'managed-badge'   => '관리형',
-            'managed-note'    => '이 플랫폼은 서버 명령줄에서 관리됩니다. 여기서는 상태와 기본 설정만 변경할 수 있습니다.',
+            'managed-note'    => '이 플랫폼은 사용자를 위해 제공 및 관리됩니다. 여기서는 상태와 기본 설정만 변경할 수 있습니다.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => '이 API 키는 자체 공급자와 엔드포인트에서만 사용할 수 있습니다.',
                 'managed-models-only'                => '이 API 키는 다음 모델만 사용할 수 있습니다: :allowed.',
                 'managed-cannot-delete'              => '관리형 플랫폼은 삭제할 수 없습니다.',
-                'managed-cli-only'                   => '관리형 플랫폼은 서버 명령줄에서만 변경할 수 있습니다.',
+                'managed-cli-only'                   => '이 플랫폼은 사용자를 위해 관리됩니다. 상태와 기본 설정만 변경할 수 있습니다.',
                 'default-requires-enabled'           => '비활성화된 플랫폼은 기본값으로 설정할 수 없습니다. 먼저 플랫폼을 활성화하세요.',
             ],
         ],

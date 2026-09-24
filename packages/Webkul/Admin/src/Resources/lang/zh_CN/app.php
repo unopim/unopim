@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => '获取中',
             'set-default'     => '设为默认',
             'managed-badge'   => '托管',
-            'managed-note'    => '此平台通过服务器命令行管理，此处只能更改其状态和默认设置。',
+            'managed-note'    => '此平台由系统为您提供和管理。此处只能更改其状态和默认设置。',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => '此 API 密钥只能用于其自身的提供商和端点。',
                 'managed-models-only'                => '此 API 密钥只能使用以下模型：:allowed。',
                 'managed-cannot-delete'              => '托管平台无法删除。',
-                'managed-cli-only'                   => '托管平台只能通过服务器命令行修改。',
+                'managed-cli-only'                   => '此平台由系统为您管理。只能更改其状态和默认设置。',
                 'default-requires-enabled'           => '不能将已禁用的平台设为默认。请先启用该平台。',
             ],
         ],

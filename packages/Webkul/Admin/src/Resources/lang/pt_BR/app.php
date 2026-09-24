@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Buscando',
             'set-default'     => 'Definir como padrão',
             'managed-badge'   => 'Gerenciada',
-            'managed-note'    => 'Esta plataforma é gerenciada pela linha de comando do servidor. Aqui só é possível alterar o status e a configuração padrão.',
+            'managed-note'    => 'Esta plataforma é fornecida e gerenciada para você. Aqui só é possível alterar o status e a configuração padrão.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Esta chave de API só pode ser usada com o próprio provedor e endpoint.',
                 'managed-models-only'                => 'Esta chave de API só pode usar estes modelos: :allowed.',
                 'managed-cannot-delete'              => 'A plataforma gerenciada não pode ser excluída.',
-                'managed-cli-only'                   => 'Uma plataforma gerenciada só pode ser alterada pela linha de comando do servidor.',
+                'managed-cli-only'                   => 'Esta plataforma é gerenciada para você. Só é possível alterar o status e a configuração padrão.',
                 'default-requires-enabled'           => 'Uma plataforma desativada não pode ser definida como padrão. Ative a plataforma primeiro.',
             ],
         ],

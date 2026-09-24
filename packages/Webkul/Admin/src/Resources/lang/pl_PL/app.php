@@ -2396,7 +2396,7 @@ return [
             'fetching-models' => 'Pobieranie',
             'set-default'     => 'Ustaw jako domyślną',
             'managed-badge'   => 'Zarządzana',
-            'managed-note'    => 'Ta platforma jest zarządzana z wiersza poleceń serwera. Tutaj można zmienić tylko jej status i ustawienie domyślne.',
+            'managed-note'    => 'Ta platforma jest udostępniana i zarządzana za Ciebie. Tutaj można zmienić tylko jej status i ustawienie domyślne.',
 
             'command' => [
 
@@ -2503,7 +2503,7 @@ return [
                 'managed-connection-locked'          => 'Tego klucza API można używać tylko z jego własnym dostawcą i punktem końcowym.',
                 'managed-models-only'                => 'Ten klucz API może używać tylko tych modeli: :allowed.',
                 'managed-cannot-delete'              => 'Zarządzanej platformy nie można usunąć.',
-                'managed-cli-only'                   => 'Platformę zarządzaną można zmienić tylko z wiersza poleceń serwera.',
+                'managed-cli-only'                   => 'Ta platforma jest zarządzana za Ciebie. Można zmienić tylko jej status i ustawienie domyślne.',
                 'default-requires-enabled'           => 'Wyłączona platforma nie może być ustawiona jako domyślna. Najpierw ją włącz.',
             ],
         ],
