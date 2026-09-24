@@ -165,7 +165,7 @@ class ModelRecommender
      */
     public static function chatCapable(array $models): array
     {
-        $capable = array_values(array_filter($models, static fn ($model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, (string) $model))));
+        $capable = array_values(array_filter($models, static fn (string $model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, $model))));
 
         return $capable ?: array_values($models);
     }

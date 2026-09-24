@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -46,12 +47,18 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
         });
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function active($query)
     {
         return $query->where('status', true);
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function default($query)
     {
