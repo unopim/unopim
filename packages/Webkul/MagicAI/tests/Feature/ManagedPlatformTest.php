@@ -3,6 +3,7 @@
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\ManagedPlatform;
+use Webkul\MagicAI\Support\ModelRecommender;
 
 use function Pest\Laravel\artisan;
 use function Pest\Laravel\postJson;
@@ -188,4 +189,40 @@ it('refuses to provision without a managed key', function () {
     config(['magic_ai.managed.api_key' => null]);
 
     artisan('unopim:magic-ai:managed-platform')->assertFailed();
+});
+
+it('rejects an empty endpoint when the managed endpoint is not the provider default', function () {
+    config(['magic_ai.managed.api_url' => 'https://api.openai.com/v1']);
+
+    $this->loginWithPermissions('all');
+
+    postJson(route('admin.magic_ai.platform.store'), managedPayload())
+        ->assertJsonValidationErrors('api_key');
+
+    postJson(route('admin.magic_ai.platform.store'), managedPayload(['api_url' => 'https://api.openai.com/v1']))
+        ->assertOk();
+});
+
+it('caps the pre-selected managed models at the auto-select limit', function () {
+    config(['magic_ai.managed.models' => ['gpt-oss-120b', 'gpt-oss-20b', 'qwen3-32b', 'llama-4-scout', 'glm-4.6', 'kimi-k2-5', 'mistral-small-3.2']]);
+
+    $this->loginWithPermissions('all');
+
+    $response = postJson(route('admin.magic_ai.platform.fetch_models'), [
+        'provider' => AiProvider::Concentrate->value,
+        'api_key'  => MANAGED_KEY,
+    ])->assertOk();
+
+    expect($response->json('models'))->toHaveCount(7)
+        ->and($response->json('recommended'))->toHaveCount(ModelRecommender::AUTO_SELECT_LIMIT);
+});
+
+it('makes an existing managed platform the default again when none is set', function () {
+    $platform = managedPlatformRecord();
+
+    MagicAIPlatform::query()->update(['is_default' => false]);
+
+    artisan('unopim:magic-ai:managed-platform')->assertSuccessful();
+
+    expect($platform->fresh()->is_default)->toBeTrue();
 });

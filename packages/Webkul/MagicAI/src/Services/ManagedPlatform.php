@@ -92,7 +92,9 @@ class ManagedPlatform
 
         $apiUrl = rtrim(trim((string) $apiUrl), '/');
 
-        if ($provider !== $this->provider() || ($apiUrl !== '' && $apiUrl !== $this->apiUrl()) || $extras !== []) {
+        $apiUrl = $apiUrl === '' ? $this->fallbackUrl($provider) : $apiUrl;
+
+        if ($provider !== $this->provider() || $apiUrl !== $this->apiUrl() || $extras !== []) {
             $errors['api_key'] = trans('admin::app.configuration.platform.message.managed-connection-locked');
         }
 
@@ -103,6 +105,15 @@ class ManagedPlatform
         }
 
         return $errors;
+    }
+
+    /**
+     * The endpoint a platform saved without a URL is called on, which is the
+     * provider's default.
+     */
+    protected function fallbackUrl(?string $provider): string
+    {
+        return rtrim((string) AiProvider::tryFrom((string) $provider)?->defaultUrl(), '/');
     }
 
     /**

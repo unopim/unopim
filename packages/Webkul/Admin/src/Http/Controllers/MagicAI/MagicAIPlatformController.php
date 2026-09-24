@@ -301,7 +301,7 @@ class MagicAIPlatformController extends Controller
         if ($managedPlatform->isManagedKey($this->resolveApiKey())) {
             return new JsonResponse([
                 'models'      => $managedPlatform->models(),
-                'recommended' => $managedPlatform->models(),
+                'recommended' => ModelRecommender::recommend($managedPlatform->models()),
                 'api_url'     => $managedPlatform->apiUrl(),
             ]);
         }

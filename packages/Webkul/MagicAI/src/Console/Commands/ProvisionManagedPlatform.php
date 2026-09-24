@@ -33,17 +33,19 @@ class ProvisionManagedPlatform extends Command
             'extras'   => null,
         ];
 
+        $makeDefault = $platformRepository->getDefault() === null;
+
         $existing = $platformRepository->findWhere(['provider' => $managedPlatform->provider()])
             ->first(fn (MagicAIPlatform $platform): bool => $managedPlatform->isManagedPlatform($platform));
 
         if ($existing) {
-            $platformRepository->update($attributes, $existing->id);
+            $platformRepository->update($attributes + ($makeDefault ? ['status' => true, 'is_default' => true] : []), $existing->id);
         } else {
             $platformRepository->create($attributes + [
                 'label'      => $managedPlatform->label(),
                 'api_key'    => $managedPlatform->apiKey(),
                 'status'     => true,
-                'is_default' => $platformRepository->getDefault() === null,
+                'is_default' => $makeDefault,
             ]);
         }
 
