@@ -7,22 +7,12 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Services\ManagedPlatform;
 use Webkul\MagicAI\Support\ModelRecommender;
 
-use function Pest\Laravel\artisan;
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\putJson;
 
 const MANAGED_KEY = 'sk-managed-account';
-
-beforeEach(function () {
-    config([
-        'magic_ai.managed.provider' => AiProvider::Concentrate->value,
-        'magic_ai.managed.label'    => 'Concentrate AI',
-        'magic_ai.managed.api_url'  => null,
-        'magic_ai.managed.models'   => ['gpt-oss-120b', 'gpt-oss-20b'],
-    ]);
-});
 
 function managedPayload(array $overrides = []): array
 {
@@ -35,22 +25,15 @@ function managedPayload(array $overrides = []): array
     ], $overrides);
 }
 
-function managedPlatformRecord(): MagicAIPlatform
+function managedPlatformRecord(array $attributes = []): MagicAIPlatform
 {
-    return MagicAIPlatform::factory()->managed()->create([
+    return MagicAIPlatform::factory()->managed()->create(array_merge([
         'label'    => 'Concentrate AI',
         'provider' => AiProvider::Concentrate->value,
         'api_url'  => null,
         'api_key'  => MANAGED_KEY,
         'models'   => 'gpt-oss-120b,gpt-oss-20b',
-    ]);
-}
-
-function provisionManagedPlatform(string $answer = MANAGED_KEY): void
-{
-    artisan('unopim:magic-ai:managed-platform')
-        ->expectsQuestion(trans('admin::app.configuration.platform.message.managed-key-prompt'), $answer)
-        ->assertSuccessful();
+    ], $attributes));
 }
 
 it('never lets a request set the managed flag', function () {
@@ -69,81 +52,6 @@ it('never lets a request set the managed flag', function () {
     putJson(route('admin.magic_ai.platform.update', $platform->id), managedPayload(['is_managed' => 1]))->assertOk();
 
     expect($platform->fresh()->is_managed)->toBeFalse();
-});
-
-it('stores the key encrypted and flags the platform when provisioning', function () {
-    provisionManagedPlatform();
-
-    $platform = MagicAIPlatform::where('is_managed', true)->sole();
-
-    $storedKey = DB::table('magic_ai_platforms')->where('id', $platform->id)->value('api_key');
-
-    expect($storedKey)->not->toBe(MANAGED_KEY)
-        ->and(Crypt::decryptString($storedKey))->toBe(MANAGED_KEY)
-        ->and($platform->provider)->toBe(AiProvider::Concentrate->value)
-        ->and($platform->api_url)->toBe(AiProvider::Concentrate->defaultUrl())
-        ->and($platform->models)->toBe('gpt-oss-120b,gpt-oss-20b')
-        ->and($platform->extras)->toBeNull()
-        ->and($platform->status)->toBeTrue();
-});
-
-it('provisions one managed platform and keeps its key on an empty answer', function () {
-    provisionManagedPlatform();
-    provisionManagedPlatform('');
-
-    $platform = MagicAIPlatform::where('is_managed', true)->sole();
-
-    expect($platform->safeApiKey())->toBe(MANAGED_KEY);
-
-    provisionManagedPlatform('sk-rotated-key');
-
-    expect(MagicAIPlatform::where('is_managed', true)->sole()->safeApiKey())->toBe('sk-rotated-key');
-});
-
-it('makes the managed platform the default only when none is set', function () {
-    MagicAIPlatform::query()->update(['is_default' => false]);
-
-    provisionManagedPlatform();
-
-    expect(MagicAIPlatform::where('is_managed', true)->sole()->is_default)->toBeTrue();
-
-    $client = MagicAIPlatform::factory()->default()->create();
-
-    provisionManagedPlatform('');
-
-    expect(MagicAIPlatform::where('is_managed', true)->sole()->is_default)->toBeFalse()
-        ->and($client->fresh()->is_default)->toBeTrue();
-});
-
-it('makes an existing managed platform the default again when none is set', function () {
-    $platform = managedPlatformRecord();
-
-    MagicAIPlatform::query()->update(['is_default' => false, 'status' => false]);
-
-    provisionManagedPlatform('');
-
-    expect($platform->fresh()->is_default)->toBeTrue()
-        ->and($platform->fresh()->status)->toBeTrue();
-});
-
-it('refuses to provision without managed models', function () {
-    config(['magic_ai.managed.models' => []]);
-
-    artisan('unopim:magic-ai:managed-platform')->assertFailed();
-
-    expect(MagicAIPlatform::where('is_managed', true)->exists())->toBeFalse();
-});
-
-it('refuses to provision without a key when no managed platform exists', function () {
-    artisan('unopim:magic-ai:managed-platform', ['--no-interaction' => true])
-        ->expectsOutputToContain(trans('admin::app.configuration.platform.message.managed-key-required'))
-        ->assertFailed();
-
-    artisan('unopim:magic-ai:managed-platform')
-        ->expectsQuestion(trans('admin::app.configuration.platform.message.managed-key-prompt'), '')
-        ->assertFailed();
-
-    expect(MagicAIPlatform::where('is_managed', true)->exists())->toBeFalse();
 });
 
 it('refuses to delete the managed platform', function () {
@@ -225,6 +133,9 @@ it('saves the managed platform within its models and endpoint', function () {
 
     expect($platform->fresh()->models)->toBe('gpt-oss-20b')
         ->and($platform->fresh()->is_managed)->toBeTrue();
+
+    putJson(route('admin.magic_ai.platform.update', $platform->id), managedPayload(['models' => 'gpt-oss-20b,gpt-oss-120b']))
+        ->assertJsonValidationErrors('models');
 });
 
 it('never sends the stored managed key elsewhere on a connection test or model fetch', function (string $route) {
@@ -280,12 +191,10 @@ it('offers only the managed models on a fetch without calling the provider', fun
 });
 
 it('caps the pre-selected managed models at the auto-select limit', function () {
-    config(['magic_ai.managed.models' => ['gpt-oss-120b', 'gpt-oss-20b', 'qwen3-32b', 'llama-4-scout', 'glm-4.6', 'kimi-k2-5', 'mistral-small-3.2']]);
-
     $this->loginWithPermissions('all');
 
     $response = postJson(route('admin.magic_ai.platform.fetch_models'), [
-        'id'       => managedPlatformRecord()->id,
+        'id'       => managedPlatformRecord(['models' => 'gpt-oss-120b,gpt-oss-20b,qwen3-32b,llama-4-scout,glm-4.6,kimi-k2-5,mistral-small-3.2'])->id,
         'provider' => AiProvider::Concentrate->value,
         'api_key'  => '********',
     ])->assertOk();
@@ -295,11 +204,9 @@ it('caps the pre-selected managed models at the auto-select limit', function () 
 });
 
 it('rejects an empty endpoint when the managed endpoint is not the provider default', function () {
-    config(['magic_ai.managed.api_url' => 'https://api.openai.com/v1']);
-
     $this->loginWithPermissions('all');
 
-    $platform = managedPlatformRecord();
+    $platform = managedPlatformRecord(['api_url' => 'https://api.openai.com/v1']);
 
     putJson(route('admin.magic_ai.platform.update', $platform->id), managedPayload())
         ->assertJsonValidationErrors('api_key');
@@ -363,4 +270,19 @@ it('swaps a model outside the managed list at generation time', function () {
     $clientPlatform = MagicAIPlatform::factory()->create(['provider' => AiProvider::Concentrate->value, 'api_key' => MANAGED_KEY]);
 
     expect($managedPlatform->resolveModel($clientPlatform, 'gpt-5.1'))->toBe('gpt-5.1');
+});
+
+it('locks each managed platform to its own saved models', function () {
+    $this->loginWithPermissions('all');
+
+    $first = managedPlatformRecord();
+    $second = managedPlatformRecord(['label' => 'Second', 'models' => 'qwen3-32b']);
+
+    putJson(route('admin.magic_ai.platform.update', $second->id), managedPayload(['models' => 'gpt-oss-120b']))
+        ->assertJsonValidationErrors('models');
+
+    putJson(route('admin.magic_ai.platform.update', $first->id), managedPayload(['models' => 'gpt-oss-120b']))
+        ->assertOk();
+
+    expect(app(ManagedPlatform::class)->resolveModel($second, 'gpt-oss-120b'))->toBe('qwen3-32b');
 });

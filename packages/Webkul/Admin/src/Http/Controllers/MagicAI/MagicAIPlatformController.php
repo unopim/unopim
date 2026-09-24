@@ -17,10 +17,11 @@ use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Services\ManagedPlatform;
+use Webkul\MagicAI\Services\ModelDiscovery;
 use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\MagicAI\Support\ModelRecommender;
-use Webkul\Webhook\Validators\SafeWebhookUrl;
+use Webkul\MagicAI\Validator\PlatformValidator;
 
 class MagicAIPlatformController extends Controller
 {
@@ -57,7 +58,7 @@ class MagicAIPlatformController extends Controller
         $data = $request->only(['label', 'provider', 'api_url', 'api_key', 'models', 'is_default', 'status']);
 
         $this->validateModelNames($data['models']);
-        $this->validatePlatformApiUrl($data);
+        $this->platformValidator()->validateApiUrl($data['provider'] ?? null, $data['api_url'] ?? null);
 
         if (! isset($data['status'])) {
             $data['status'] = true;
@@ -120,7 +121,7 @@ class MagicAIPlatformController extends Controller
         $data = request()->only(['label', 'provider', 'api_url', 'models', 'is_default', 'status']);
 
         $this->validateModelNames($data['models']);
-        $this->validatePlatformApiUrl($data);
+        $this->platformValidator()->validateApiUrl($data['provider'] ?? null, $data['api_url'] ?? null);
 
         if (! isset($data['status'])) {
             $data['status'] = false;
@@ -213,7 +214,7 @@ class MagicAIPlatformController extends Controller
             abort(403);
         }
 
-        if (! $this->isSafeApiUrl(request()->input('api_url'))) {
+        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
             return new JsonResponse([
                 'success' => false,
                 'message' => trans('admin::app.configuration.platform.message.test-fail'),
@@ -307,7 +308,7 @@ class MagicAIPlatformController extends Controller
             abort(403);
         }
 
-        if (! $this->isSafeApiUrl(request()->input('api_url'))) {
+        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.platform.message.fetch-models-fail'),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
@@ -315,20 +316,24 @@ class MagicAIPlatformController extends Controller
 
         $managedPlatform = app(ManagedPlatform::class);
 
-        if (
-            $managedPlatform->usesStoredKey(request()->input('api_key'))
-            && $managedPlatform->isManagedPlatform($this->platformRepository->find((int) request()->input('id')))
-        ) {
+        $platform = $managedPlatform->usesStoredKey(request()->input('api_key'))
+            ? $this->platformRepository->find((int) request()->input('id'))
+            : null;
+
+        if ($platform && $managedPlatform->isManagedPlatform($platform)) {
+            $models = $managedPlatform->models($platform);
+
             return new JsonResponse([
-                'models'      => $managedPlatform->models(),
-                'recommended' => ModelRecommender::recommend($managedPlatform->models()),
-                'api_url'     => $managedPlatform->apiUrl(),
+                'models'      => $models,
+                'recommended' => ModelRecommender::recommend($models),
+                'api_url'     => $managedPlatform->apiUrl($platform),
             ]);
         }
 
         try {
             $provider = AiProvider::from(request()->input('provider'));
-            $discovery = $provider->discoverModels(
+            $discovery = app(ModelDiscovery::class)->discover(
+                $provider,
                 $this->resolveApiKey(),
                 request()->input('api_url'),
             );
@@ -351,63 +356,13 @@ class MagicAIPlatformController extends Controller
     }
 
     /**
-     * Guard persisted platforms: Custom providers must carry an explicit
-     * api_url (otherwise generation would fall back to the global
-     * openai-compatible URL and ship the key to an unrelated host), and any
-     * supplied api_url must pass the SSRF safety check.
-     *
-     * @param  array<string, mixed>  $data
-     *
-     * @throws ValidationException
-     */
-    private function validatePlatformApiUrl(array $data): void
-    {
-        $apiUrl = trim((string) ($data['api_url'] ?? ''));
-
-        if (($data['provider'] ?? null) === AiProvider::Custom->value && $apiUrl === '') {
-            throw ValidationException::withMessages([
-                'api_url' => trans('admin::app.configuration.platform.message.custom-api-url-required'),
-            ]);
-        }
-
-        if ($apiUrl !== '' && ! $this->isSafeApiUrl($apiUrl)) {
-            throw ValidationException::withMessages([
-                'api_url' => trans('admin::app.configuration.platform.message.unsafe-api-url'),
-            ]);
-        }
-    }
-
-    private function isSafeApiUrl(?string $apiUrl): bool
-    {
-        $apiUrl = trim((string) $apiUrl);
-
-        return $apiUrl === '' || SafeWebhookUrl::validate($apiUrl)['valid'];
-    }
-
-    /**
      * Validate each model name in the comma-separated models string.
      *
      * @throws ValidationException
      */
     protected function validateModelNames(string &$models): void
     {
-        $modelList = array_map(fn ($m) => ltrim(trim($m), '~'), explode(',', $models));
-        $models = implode(',', $modelList);
-        $invalid = [];
-
-        foreach ($modelList as $model) {
-            if ($model === '' || ! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\-._:\/@]+$/', $model)) {
-                $invalid[] = $model;
-            }
-        }
-
-        if (! empty($invalid)) {
-            throw ValidationException::withMessages([
-                'models' => trans('admin::app.configuration.platform.message.invalid-model-names', [
-                    'names' => implode(', ', $invalid),
-                ]),
-            ]);
-        }
+        $models = $this->platformValidator()->validateModelNames($models);
     }
 
     /**
@@ -417,11 +372,12 @@ class MagicAIPlatformController extends Controller
      */
     protected function ensureDefaultPlatformIsEnabled(array $data): void
     {
-        if (! empty($data['is_default']) && empty($data['status'])) {
-            throw ValidationException::withMessages([
-                'is_default' => trans('admin::app.configuration.platform.message.default-requires-enabled'),
-            ]);
-        }
+        $this->platformValidator()->ensureDefaultIsEnabled($data);
+    }
+
+    protected function platformValidator(): PlatformValidator
+    {
+        return app(PlatformValidator::class);
     }
 
     /**
