@@ -8,8 +8,6 @@ return [
 
         'api_url' => env('MAGIC_AI_MANAGED_API_URL'),
 
-        'api_key' => env('MAGIC_AI_MANAGED_API_KEY'),
-
         'models' => array_values(array_filter(array_map(
             trim(...),
             explode(',', (string) env('MAGIC_AI_MANAGED_MODELS', ''))

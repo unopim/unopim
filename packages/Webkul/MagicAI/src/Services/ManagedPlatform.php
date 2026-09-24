@@ -7,37 +7,35 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Support\ModelRecommender;
 
 /**
- * The platform account the installation ships with. Its key is recognised on
- * every request, so it stays pinned to its provider, endpoint and model list
- * wherever it is used; any other key or provider is left unrestricted.
+ * The platform the hosting owner provisions from the CLI. Its stored key stays
+ * pinned to its provider, endpoint and model list wherever it is used; any
+ * other platform, or a managed one given the client's own key, is unrestricted.
  */
 class ManagedPlatform
 {
     /**
-     * Whether a managed account is configured.
+     * Whether the managed provider and model list are configured.
      */
     public function isConfigured(): bool
     {
-        return $this->apiKey() !== '' && AiProvider::tryFrom($this->provider()) instanceof AiProvider;
+        return AiProvider::tryFrom($this->provider()) instanceof AiProvider && $this->models() !== [];
     }
 
     /**
-     * Whether the given API key is the managed account's key.
+     * Whether the platform record is the managed one.
      */
-    public function isManagedKey(?string $apiKey): bool
+    public function isManagedPlatform(?MagicAIPlatform $platform): bool
     {
-        return $this->isConfigured()
-            && $apiKey !== null
-            && $apiKey !== ''
-            && hash_equals($this->apiKey(), $apiKey);
+        return (bool) $platform?->is_managed;
     }
 
     /**
-     * Whether the platform record runs on the managed account's key.
+     * Whether a submitted key stands for the stored one, as a masked or
+     * omitted key does.
      */
-    public function isManagedPlatform(MagicAIPlatform $platform): bool
+    public function usesStoredKey(?string $apiKey): bool
     {
-        return $this->isManagedKey($platform->safeApiKey());
+        return $apiKey === null || $apiKey === '' || preg_match('/^\*+$/', $apiKey) === 1;
     }
 
     public function provider(): string
@@ -55,13 +53,8 @@ class ManagedPlatform
         return rtrim((string) (config('magic_ai.managed.api_url') ?: AiProvider::from($this->provider())->defaultUrl()), '/');
     }
 
-    public function apiKey(): string
-    {
-        return (string) config('magic_ai.managed.api_key');
-    }
-
     /**
-     * The only models the managed account may use.
+     * The only models the managed platform may use.
      *
      * @return string[]
      */
@@ -74,17 +67,17 @@ class ManagedPlatform
     }
 
     /**
-     * Validation errors, keyed by field, for a platform submission that uses
-     * the managed key outside its provider, endpoint, extras or model list.
-     * Empty when the key is not the managed one.
+     * Validation errors, keyed by field, for a submission that would send the
+     * managed platform's stored key outside its provider, endpoint, extras or
+     * model list. Empty for any other platform or when a new key is supplied.
      *
      * @param  string[]  $models
      * @param  array<string, mixed>  $extras
      * @return array<string, string>
      */
-    public function violations(?string $apiKey, ?string $provider, ?string $apiUrl, array $models, array $extras = []): array
+    public function violations(?MagicAIPlatform $platform, bool $usesStoredKey, ?string $provider, ?string $apiUrl, array $models, array $extras = []): array
     {
-        if (! $this->isManagedKey($apiKey)) {
+        if (! $usesStoredKey || ! $this->isManagedPlatform($platform)) {
             return [];
         }
 

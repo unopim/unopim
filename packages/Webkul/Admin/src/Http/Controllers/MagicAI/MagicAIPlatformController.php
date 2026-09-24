@@ -97,6 +97,7 @@ class MagicAIPlatformController extends Controller
                 'models'            => $platform->models,
                 'extras'            => $platform->extras ? json_encode($platform->extras) : '',
                 'is_default'        => $platform->is_default,
+                'is_managed'        => $platform->is_managed,
                 'status'            => $platform->status,
                 'api_key_corrupted' => $apiKeyError !== null,
             ],
@@ -108,7 +109,9 @@ class MagicAIPlatformController extends Controller
 
     public function update(PlatformRequest $request, int $id): JsonResponse
     {
-        if (! $this->platformRepository->find($id)) {
+        $platform = $this->platformRepository->find($id);
+
+        if (! $platform) {
             return new JsonResponse([
                 'message' => trans('admin::app.configuration.platform.message.not-found'),
             ], JsonResponse::HTTP_NOT_FOUND);
@@ -129,8 +132,10 @@ class MagicAIPlatformController extends Controller
 
         $this->ensureDefaultPlatformIsEnabled($data);
 
-        $apiKey = request()->input('api_key');
-        if ($apiKey && ! preg_match('/^\*+$/', $apiKey)) {
+        $apiKey = $request->validated('api_key');
+        $usesStoredKey = app(ManagedPlatform::class)->usesStoredKey($apiKey);
+
+        if (! $usesStoredKey) {
             $data['api_key'] = $apiKey;
         }
 
@@ -138,7 +143,13 @@ class MagicAIPlatformController extends Controller
             $data['extras'] = ProviderOverrides::decode($request->validated('extras'));
         }
 
-        $this->platformRepository->update($data, $id);
+        DB::transaction(function () use ($platform, $data, $id, $usesStoredKey): void {
+            $this->platformRepository->update($data, $id);
+
+            if ($platform->is_managed && ! $usesStoredKey) {
+                $platform->refresh()->forceFill(['is_managed' => false])->save();
+            }
+        });
 
         return new JsonResponse([
             'message' => trans('admin::app.configuration.platform.message.update-success'),
@@ -149,6 +160,12 @@ class MagicAIPlatformController extends Controller
     {
         try {
             $platform = $this->platformRepository->findOrFail($id);
+
+            if ($platform->is_managed) {
+                return new JsonResponse([
+                    'message' => trans('admin::app.configuration.platform.message.managed-cannot-delete'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
+            }
 
             if ($platform->is_default) {
                 return new JsonResponse([
@@ -298,7 +315,10 @@ class MagicAIPlatformController extends Controller
 
         $managedPlatform = app(ManagedPlatform::class);
 
-        if ($managedPlatform->isManagedKey($this->resolveApiKey())) {
+        if (
+            $managedPlatform->usesStoredKey(request()->input('api_key'))
+            && $managedPlatform->isManagedPlatform($this->platformRepository->find((int) request()->input('id')))
+        ) {
             return new JsonResponse([
                 'models'      => $managedPlatform->models(),
                 'recommended' => ModelRecommender::recommend($managedPlatform->models()),

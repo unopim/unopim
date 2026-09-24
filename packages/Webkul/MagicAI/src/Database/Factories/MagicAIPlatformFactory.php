@@ -37,6 +37,11 @@ class MagicAIPlatformFactory extends Factory
         return $this->state(fn (): array => ['status' => false, 'is_default' => false]);
     }
 
+    public function managed(): self
+    {
+        return $this->state(fn (): array => ['is_managed' => true]);
+    }
+
     public function provider(AiProvider $provider): self
     {
         return $this->state(fn (): array => [

@@ -101,7 +101,13 @@
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="editRow(record)"
                     >
-                        <p v-text="record.label" class="truncate" :title="record.label"></p>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <p v-text="record.label" class="truncate" :title="record.label"></p>
+
+                            <x-admin::badge variant="info" v-if="record.is_managed">
+                                @lang('admin::app.configuration.platform.managed-badge')
+                            </x-admin::badge>
+                        </div>
                         <p v-html="record.provider"></p>
                         <p v-text="record.models" class="truncate" :title="record.models"></p>
                         <p v-html="record.is_default"></p>
@@ -127,9 +133,15 @@
                 <form @submit="handleSubmit($event, saveWithTest)" ref="platformForm">
                     <x-admin::modal ref="platformModal">
                         <x-slot:header>
-                            <span class="dark:text-slate-50 text-lg font-semibold">
-                                @{{ isEditing ? '@lang('admin::app.configuration.platform.edit-title')' : '@lang('admin::app.configuration.platform.create-title')' }}
-                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="dark:text-slate-50 text-lg font-semibold">
+                                    @{{ isEditing ? '@lang('admin::app.configuration.platform.edit-title')' : '@lang('admin::app.configuration.platform.create-title')' }}
+                                </span>
+
+                                <x-admin::badge variant="info" v-if="form.is_managed">
+                                    @lang('admin::app.configuration.platform.managed-badge')
+                                </x-admin::badge>
+                            </div>
                         </x-slot>
 
                         <x-slot:content>
@@ -159,6 +171,7 @@
                                     :options="json_encode($providerOptions)"
                                     track-by="id"
                                     label-by="label"
+                                    ::disabled="isManagedLocked"
                                     @input="onProviderChange($event)"
                                 >
                                 </x-admin::form.control-group.control>
@@ -191,6 +204,7 @@
                                         name="api_url"
                                         v-model="form.api_url"
                                         :label="trans('admin::app.configuration.platform.fields.api-url')"
+                                        ::readonly="isManagedLocked"
                                         @input="onApiUrlInput($event)"
                                     />
                                     <p class="mt-1 text-xs text-gray-500">@lang('admin::app.configuration.platform.fields.api-url-hint')</p>
@@ -244,11 +258,11 @@
                                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                                         >
                                             @{{ model }}
-                                            <button type="button" @click="removeModel(index)" class="hover:text-red-600" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
+                                            <button v-if="! isManagedLocked" type="button" @click="removeModel(index)" class="hover:text-danger" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
                                         </span>
                                     </div>
 
-                                    <div v-if="fetchedModels.length">
+                                    <div v-if="fetchedModels.length && ! isManagedLocked">
                                         <input
                                             type="text"
                                             v-model="modelSearch"
@@ -278,7 +292,7 @@
                                         @lang('admin::app.configuration.platform.fields.enter-key-to-fetch')
                                     </p>
 
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-2" v-if="! isManagedLocked">
                                         <input
                                             type="text"
                                             v-model="customModel"
@@ -353,6 +367,7 @@
                             azure_deployment: 'gpt-4o',
                             azure_api_version: '2024-10-21',
                             is_default: false,
+                            is_managed: false,
                             status: true,
                         },
 
@@ -377,6 +392,10 @@
                         return this.fetchedModels.filter(m => m.toLowerCase().includes(search));
                     },
 
+                    isManagedLocked() {
+                        return this.form.is_managed && (! this.form.api_key || /^\*+$/.test(this.form.api_key));
+                    },
+
                 },
 
                 methods: {
@@ -393,7 +412,7 @@
                         this.form = {
                             id: null, label: '', provider: '', api_url: '', api_key: '',
                             azure_deployment: 'gpt-4o', azure_api_version: '2024-10-21',
-                            is_default: false, status: true,
+                            is_default: false, is_managed: false, status: true,
                         };
                         this.selectedModels = [];
                         this.fetchedModels = [];
@@ -650,7 +669,7 @@
                                 api_url: data.api_url || '', api_key: data.api_key || '',
                                 azure_deployment: extras.deployment || 'gpt-4o',
                                 azure_api_version: extras.api_version || '2024-10-21',
-                                is_default: data.is_default, status: data.status,
+                                is_default: data.is_default, is_managed: data.is_managed, status: data.status,
                             };
                             this.selectedModels = data.models ? data.models.split(',').map(m => m.trim()).filter(m => m) : [];
                             this.fetchedModels = [];

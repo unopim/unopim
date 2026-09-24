@@ -2546,6 +2546,7 @@ return [
             'fetch-models'    => 'Fetch Models',
             'fetching-models' => 'Fetching',
             'set-default'     => 'Set as Default',
+            'managed-badge'   => 'Managed',
 
             'datagrid' => [
                 'label'      => 'Label',
@@ -2611,8 +2612,11 @@ return [
                 'invalid-model-names'              => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
                 'managed-connection-locked'        => 'This API key can only be used with its own provider and endpoint.',
                 'managed-models-only'              => 'This API key can only use these models: :allowed.',
-                'managed-not-configured'           => 'The managed AI platform is not configured. Set MAGIC_AI_MANAGED_API_KEY and MAGIC_AI_MANAGED_MODELS.',
+                'managed-not-configured'           => 'The managed AI platform is not configured. Set MAGIC_AI_MANAGED_MODELS.',
                 'managed-provisioned'              => 'The managed AI platform ":label" is ready.',
+                'managed-cannot-delete'            => 'The managed platform cannot be deleted.',
+                'managed-key-prompt'               => 'API key for the managed platform (leave empty to keep the stored key)',
+                'managed-key-required'             => 'An API key is required to create the managed platform. Run the command interactively and enter the key.',
                 'default-requires-enabled'         => 'A disabled platform cannot be marked as default. Please enable the platform first.',
             ],
         ],

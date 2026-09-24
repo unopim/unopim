@@ -99,6 +99,7 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
         return [
             'extras'     => 'array',
             'is_default' => 'boolean',
+            'is_managed' => 'boolean',
             'status'     => 'boolean',
             'api_key'    => 'encrypted',
         ];
