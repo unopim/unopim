@@ -1,4 +1,4 @@
-# Unreleased
+# 3.1.2 — September 24th, 2026
 
 ## Improvements
 
@@ -8,10 +8,11 @@
 - Raised the default generation ceiling from 1024 to 4096 tokens, and raised the seeded system prompts still holding the old value; a ceiling an administrator tuned themselves is left alone. HTML output spends tokens on markup, so the old ceiling truncated a table-heavy description mid-tag.
 - A generation that stops because it ran out of tokens is now reported as such instead of silently returning a half sentence, and a fragment cut mid-tag is dropped rather than rendered as stray text.
 - Magic AI model discovery now runs against the platform's own base URL, so a proxy or a regional endpoint lists the models it will actually serve; a custom endpoint typed without a version segment is retried with one.
-- Model recommendations are now ranked, so the handful pre-selected after a fetch are the cheap, widely used tiers rather than whatever sorted first alphabetically, and safeguard models are excluded alongside the other non-chat variants.
+- Model recommendations are now ranked by the release date each provider reports, falling back to the version in the model name, so the models pre-selected after a fetch are the newest text model per family plus the newest image model rather than legacy variants that sorted first alphabetically. Gemini lists only models that support `generateContent` or `predict`; legacy fine-tunes, completion-only, search, speech and safeguard models are excluded; and the connection test tries up to three selected text models before failing.
 - An Azure platform now addresses a model by its configured deployment name, which is what the Azure endpoint expects.
 - A failed model fetch now reports the host and status instead of rendering the upstream error page verbatim.
 - Reworked the product translation dialog: source channel and locale are now named separately from the targets, the attribute picker shows the value each attribute currently holds, and the dialog warns before replacing existing content in the target locales.
+- Added view events to the export profile create and edit pages, so a package can render additional filters in the output section.
 
 ## Bug fixes
 
@@ -25,6 +26,13 @@
 - Fixed a confirmation dialog rendering behind the element that opened it.
 - Fixed clearing a file picker being treated as a new file to scan.
 - Fixed the product attribute and content generation endpoints accepting an unvalidated channel, locale, and resource reference.
+- Fixed Magic AI content generation failing with a 400 on Claude Opus and Sonnet 4.7 and later, including the Claude 5 family, which reject `temperature`; those models now omit it, while Claude 3.x, Haiku 4.x and Opus/Sonnet up to 4.6 keep the configured value.
+- Fixed unticking AI translate on an attribute not saving, because the form's fallback value overrode the checkbox on submit.
+- Fixed clearing a channel's name failing on PostgreSQL with a not-null violation; `channel_translations.name` is now nullable, and the channel grid falls back to the default locale's name for a cleared one.
+- Fixed removing a gallery image not showing the "Unsaved" badge on the product edit page.
+- Fixed import filter selections being discarded on every re-render, which left a filter that depends on another field with an empty dropdown.
+- Fixed a price attribute's currency inputs stretching to the height of a neighbouring currency's validation message.
+- Fixed the data transfer queue worker leaving its timeout alarm armed after the queue drained, so a process that ran `unopim:queue:work` in-process was killed `--timeout` seconds later; the worker's timeout handler also now matches the Laravel 13.32 signature.
 
 # 3.1.1 — September 17th, 2026
 
