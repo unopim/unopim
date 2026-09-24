@@ -480,6 +480,26 @@ it('should update the ai_translate property in Attribute', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
 });
 
+it('should render the ai_translate fallback before the checkbox so the checkbox value wins on submit', function (int $stored) {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'             => 'text',
+        'value_per_locale' => 1,
+        'ai_translate'     => $stored,
+    ]);
+
+    get(route('admin.catalog.attributes.edit', $attribute->id))
+        ->assertOk()
+        ->assertSeeInOrder([
+            'type="hidden" name="ai_translate" value="0"',
+            'id="ai_translate"',
+        ], false);
+})->with([
+    'stored disabled' => [0],
+    'stored enabled'  => [1],
+]);
+
 it('should create attribute option with color swatch_value for select type', function () {
     $this->loginAsAdmin();
 
