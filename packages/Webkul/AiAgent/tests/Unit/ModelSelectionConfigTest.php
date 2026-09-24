@@ -11,15 +11,14 @@ it('caps the auto-selected models at the limit', function () {
     expect(ModelRecommender::recommend($models))->toHaveCount(ModelRecommender::AUTO_SELECT_LIMIT);
 });
 
-it('prefers cost-effective tiers over flagship and preview models', function () {
+it('prefers the newest generation and the cost-effective tier within it', function () {
     $recommended = ModelRecommender::recommend([
+        'gpt-3.5-turbo',
+        'gpt-4o-mini',
         'gpt-5-pro',
-        'claude-opus-5',
-        'gemini-3-flash-preview',
+        'gpt-4.1-nano',
         'gpt-5-mini',
-        'claude-haiku-4-5',
-        'gemini-3-flash',
-    ]);
+    ], 3);
 
-    expect(array_slice($recommended, 0, 3))->toBe(['gpt-5-mini', 'claude-haiku-4-5', 'gemini-3-flash']);
+    expect($recommended)->toBe(['gpt-5-mini', 'gpt-5-pro', 'gpt-4.1-nano']);
 });

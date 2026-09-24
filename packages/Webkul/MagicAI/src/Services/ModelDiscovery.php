@@ -10,7 +10,7 @@ class ModelDiscovery
      * List the models a provider serves on the given credentials, with the
      * base URL that answered.
      *
-     * @return array{models: list<string>, api_url: string}
+     * @return array{models: list<string>, released: array<string, int|null>, api_url: string}
      *
      * @throws \RuntimeException
      */

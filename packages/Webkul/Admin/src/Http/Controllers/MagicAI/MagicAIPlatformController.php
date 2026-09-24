@@ -24,6 +24,12 @@ use Webkul\MagicAI\Validator\PlatformValidator;
 
 class MagicAIPlatformController extends Controller
 {
+    /**
+     * Ticked text models tried in turn before a connection test fails, since a
+     * provider can list a model the account is not allowed to call.
+     */
+    private const CONNECTION_TEST_ATTEMPTS = 3;
+
     public function __construct(
         protected MagicAIPlatformRepository $platformRepository,
     ) {
@@ -236,12 +242,9 @@ class MagicAIPlatformController extends Controller
                 explode(',', (string) request()->input('models'))
             )));
 
-            // Pick a model that actually supports text completion. Image-only
-            // models like chatgpt-image-latest / dall-e-3 would make the test
-            // fail with "model not found" even though the API key is valid.
-            $model = ModelRecommender::pickTextModel($models);
+            $candidates = array_slice(ModelRecommender::textModels($models), 0, self::CONNECTION_TEST_ATTEMPTS);
 
-            if ($model === null || $model === '') {
+            if ($candidates === []) {
                 return new JsonResponse([
                     'success' => false,
                     'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.no-test-model'),
@@ -254,16 +257,32 @@ class MagicAIPlatformController extends Controller
                 tools: [],
             );
 
-            ScopedProviderConfig::run(
-                $provider->configKey(),
-                $this->providerOverridesFromRequest(),
-                fn () => $agent->prompt(
-                    'Say OK',
-                    provider: $provider->toLab(),
-                    model: $model,
-                    timeout: 15,
-                ),
-            );
+            $failure = null;
+
+            foreach ($candidates as $model) {
+                try {
+                    ScopedProviderConfig::run(
+                        $provider->configKey(),
+                        $this->providerOverridesFromRequest(),
+                        fn () => $agent->prompt(
+                            'Say OK',
+                            provider: $provider->toLab(),
+                            model: $model,
+                            timeout: 15,
+                        ),
+                    );
+
+                    $failure = null;
+
+                    break;
+                } catch (\Throwable $e) {
+                    $failure ??= $e;
+                }
+            }
+
+            if ($failure instanceof \Throwable) {
+                throw $failure;
+            }
 
             return new JsonResponse([
                 'success' => true,
@@ -337,8 +356,7 @@ class MagicAIPlatformController extends Controller
 
             $models = ModelRecommender::chatCapable($discovery['models']);
 
-            // Pick recommended models to auto-select (includes image models)
-            $recommended = ModelRecommender::recommend($models);
+            $recommended = ModelRecommender::recommend($models, released: $discovery['released']);
 
             return new JsonResponse([
                 'models'      => $models,
