@@ -111,8 +111,21 @@ enum AiProvider: string
 
     /**
      * Fetch available models from the provider API.
+     *
+     * @return list<string>
      */
     public function fetchModels(?string $apiKey, ?string $apiUrl = null, ?Client $client = null): array
+    {
+        return array_map(strval(...), array_keys($this->fetchModelCatalog($apiKey, $apiUrl, $client)));
+    }
+
+    /**
+     * Fetch available models keyed by id, each with the release timestamp the
+     * provider reports (null when it reports none), sorted by id.
+     *
+     * @return array<string, int|null>
+     */
+    public function fetchModelCatalog(?string $apiKey, ?string $apiUrl = null, ?Client $client = null): array
     {
         $client ??= new Client(['timeout' => 15]);
 
@@ -123,7 +136,7 @@ enum AiProvider: string
                 self::Gemini                                                                              => $this->fetchGeminiModels($client, $apiKey, $apiUrl),
                 self::Ollama                                                                              => $this->fetchOllamaModels($client, $apiUrl ?: $this->defaultUrl()),
                 self::Azure                                                                               => $this->fetchAzureModels($client, $apiKey, $apiUrl),
-                self::Custom                                                                              => $this->discoverModels($apiKey, $apiUrl, $client)['models'],
+                self::Custom                                                                              => $this->discoverModels($apiKey, $apiUrl, $client)['released'],
                 self::Groq, self::XAI, self::Mistral, self::DeepSeek, self::OpenRouter, self::Concentrate => $this->fetchOpenAiCompatModels(
                     $client,
                     $apiKey,
@@ -156,31 +169,25 @@ enum AiProvider: string
      * Fetch the models of an OpenAI-compatible endpoint along with the base URL
      * that answered, which the caller stores so generation targets the same base.
      *
-     * @return array{models: list<string>, api_url: string}
+     * @return array{models: list<string>, released: array<string, int|null>, api_url: string}
      */
     public function discoverModels(?string $apiKey, ?string $apiUrl = null, ?Client $client = null): array
     {
         $client ??= new Client(['timeout' => 15]);
 
         if ($this !== self::Custom) {
-            return [
-                'models'  => $this->fetchModels($apiKey, $apiUrl, $client),
-                'api_url' => (string) $apiUrl,
-            ];
+            return $this->discovery($this->fetchModelCatalog($apiKey, $apiUrl, $client), (string) $apiUrl);
         }
 
         if (! $apiUrl) {
-            return ['models' => [], 'api_url' => ''];
+            return $this->discovery([], '');
         }
 
         $failure = null;
 
         foreach ($this->customBaseUrls($apiUrl) as $base) {
             try {
-                return [
-                    'models'  => $this->fetchOpenAiCompatModels($client, $apiKey, $base.'/models', harden: true),
-                    'api_url' => $base,
-                ];
+                return $this->discovery($this->fetchOpenAiCompatModels($client, $apiKey, $base.'/models', harden: true), $base);
             } catch (RequestException $e) {
                 report($e);
 
@@ -189,6 +196,52 @@ enum AiProvider: string
         }
 
         throw $failure ?? new \RuntimeException(trans('admin::app.configuration.platform.message.fetch-models-fail'));
+    }
+
+    /**
+     * @param  array<string, int|null>  $catalog
+     * @return array{models: list<string>, released: array<string, int|null>, api_url: string}
+     */
+    private function discovery(array $catalog, string $apiUrl): array
+    {
+        return [
+            'models'   => array_map(strval(...), array_keys($catalog)),
+            'released' => $catalog,
+            'api_url'  => $apiUrl,
+        ];
+    }
+
+    /**
+     * Index a provider's model listing by id with its release timestamp, which
+     * providers report as a unix time (created) or an ISO date (created_at).
+     *
+     * @param  iterable<array<string, mixed>>  $rows
+     * @return array<string, int|null>
+     */
+    private function catalog(iterable $rows, string $idKey, ?string $releasedKey, ?\Closure $normalizeId = null): array
+    {
+        $catalog = [];
+
+        foreach ($rows as $row) {
+            $id = (string) ($row[$idKey] ?? '');
+            $id = $normalizeId instanceof \Closure ? $normalizeId($id) : $id;
+
+            if ($id === '') {
+                continue;
+            }
+
+            $released = $releasedKey === null ? null : ($row[$releasedKey] ?? null);
+
+            $catalog[$id] = match (true) {
+                is_int($released)                        => $released,
+                is_string($released) && $released !== '' => strtotime($released) ?: null,
+                default                                  => null,
+            };
+        }
+
+        ksort($catalog, SORT_STRING);
+
+        return $catalog;
     }
 
     /**
@@ -246,10 +299,8 @@ enum AiProvider: string
         ]));
 
         $data = json_decode($response->getBody()->getContents(), true);
-        $models = array_column($data['data'] ?? [], 'id');
-        sort($models);
 
-        return $models;
+        return $this->catalog($data['data'] ?? [], 'id', 'created');
     }
 
     private function fetchGeminiModels(Client $client, ?string $apiKey, ?string $apiUrl = null): array
@@ -261,16 +312,14 @@ enum AiProvider: string
         ]));
 
         $data = json_decode($response->getBody()->getContents(), true);
-        $models = [];
 
-        foreach ($data['models'] ?? [] as $model) {
-            $name = $model['name'] ?? '';
-            $models[] = str_replace('models/', '', $name);
-        }
+        $generative = array_filter(
+            $data['models'] ?? [],
+            static fn (array $model): bool => ! isset($model['supportedGenerationMethods'])
+                || array_intersect(['generateContent', 'predict'], $model['supportedGenerationMethods']) !== [],
+        );
 
-        sort($models);
-
-        return $models;
+        return $this->catalog($generative, 'name', null, static fn (string $name): string => str_replace('models/', '', $name));
     }
 
     /**
@@ -298,13 +347,8 @@ enum AiProvider: string
         $response = $client->get($url, $harden ? $this->ssrfGuardedOptions($url, $options) : $options);
 
         $data = json_decode($response->getBody()->getContents(), true);
-        $models = array_map(
-            fn ($id): string => ltrim((string) $id, '~'),
-            array_column($data['data'] ?? [], 'id')
-        );
-        sort($models);
 
-        return $models;
+        return $this->catalog($data['data'] ?? [], 'id', 'created', static fn (string $id): string => ltrim($id, '~'));
     }
 
     private function fetchOllamaModels(Client $client, string $baseUrl): array
@@ -314,10 +358,8 @@ enum AiProvider: string
         $response = $client->get($url, $this->ssrfGuardedOptions($url));
 
         $data = json_decode($response->getBody()->getContents(), true);
-        $models = array_column($data['models'] ?? [], 'name');
-        sort($models);
 
-        return $models;
+        return $this->catalog($data['models'] ?? [], 'name', 'modified_at');
     }
 
     /**
@@ -348,10 +390,8 @@ enum AiProvider: string
         ]));
 
         $data = json_decode($response->getBody()->getContents(), true);
-        $models = array_column($data['data'] ?? [], 'id');
-        sort($models);
 
-        return $models;
+        return $this->catalog($data['data'] ?? [], 'id', 'created_at');
     }
 
     private function fetchAzureModels(Client $client, ?string $apiKey, ?string $apiUrl): array
@@ -374,10 +414,8 @@ enum AiProvider: string
                 ]));
 
                 $data = json_decode($response->getBody()->getContents(), true);
-                $models = array_column($data['data'] ?? [], 'id');
-                sort($models);
 
-                return $models;
+                return $this->catalog($data['data'] ?? [], 'id', 'created_at');
             } catch (RequestException $e) {
                 report($e);
 

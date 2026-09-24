@@ -56,7 +56,7 @@ it('excludes legacy GPT-3 completion bases but keeps chat models', function () {
     expect($recommended)->toBe(['gpt-3.5-turbo']);
 });
 
-it('includes image generation models (dall-e, chatgpt-image-latest, imagen)', function () {
+it('keeps image generation models and pre-selects one alongside the text models', function () {
     $models = [
         'gpt-4o',
         'dall-e-2',
@@ -65,13 +65,13 @@ it('includes image generation models (dall-e, chatgpt-image-latest, imagen)', fu
         'imagen-3.0-generate-002',
     ];
 
+    expect(ModelRecommender::chatCapable($models))->toBe($models);
+
     $recommended = ModelRecommender::recommend($models);
 
-    expect($recommended)->toContain('gpt-4o');
-    expect($recommended)->toContain('dall-e-2');
-    expect($recommended)->toContain('dall-e-3');
-    expect($recommended)->toContain('chatgpt-image-latest');
-    expect($recommended)->toContain('imagen-3.0-generate-002');
+    expect($recommended)->toHaveCount(2)
+        ->and($recommended[0])->toBe('gpt-4o')
+        ->and($recommended[1])->toBe('dall-e-3');
 });
 
 it('works with a realistic OpenAI catalogue and keeps both chat and image models', function () {
@@ -105,7 +105,6 @@ it('works with a realistic OpenAI catalogue and keeps both chat and image models
 
     // Chat models kept
     expect($recommended)->toContain('gpt-3.5-turbo');
-    expect($recommended)->toContain('gpt-3.5-turbo-instruct');
     expect($recommended)->toContain('gpt-4');
     expect($recommended)->toContain('gpt-4-turbo');
     expect($recommended)->toContain('gpt-4o');
@@ -118,6 +117,7 @@ it('works with a realistic OpenAI catalogue and keeps both chat and image models
 
     // Non-chat / non-image types filtered out
     expect($recommended)->not->toContain('babbage-002');
+    expect($recommended)->not->toContain('gpt-3.5-turbo-instruct');
     expect($recommended)->not->toContain('computer-use-preview');
     expect($recommended)->not->toContain('davinci-002');
     expect($recommended)->not->toContain('gpt-4o-audio-preview');
@@ -355,4 +355,56 @@ it('pickTextModel skips Ideogram, Recraft, Kling, Luma, Pika image/video models 
     ];
 
     expect(ModelRecommender::pickTextModel($models))->toBe('llama-3.1-70b-instruct');
+});
+
+it('pre-selects the newest models by the release date the provider reports', function () {
+    $models = ['chat-latest', 'gpt-3.5-turbo', 'gpt-3.5-turbo-0125', 'gpt-3.5-turbo-1106', 'gpt-3.5-turbo-16k', 'gpt-4o-mini', 'gpt-4.1-mini', 'gpt-5-mini', 'gpt-5', 'gpt-image-1'];
+
+    $released = [
+        'chat-latest'        => 1754000000,
+        'gpt-3.5-turbo'      => 1677610602,
+        'gpt-3.5-turbo-0125' => 1706048358,
+        'gpt-3.5-turbo-1106' => 1698959748,
+        'gpt-3.5-turbo-16k'  => 1683758102,
+        'gpt-4o-mini'        => 1721172741,
+        'gpt-4.1-mini'       => 1744318173,
+        'gpt-5-mini'         => 1754425928,
+        'gpt-5'              => 1754425777,
+        'gpt-image-1'        => 1745517030,
+    ];
+
+    expect(ModelRecommender::recommend($models, 5, $released))
+        ->toBe(['gpt-5-mini', 'gpt-5', 'chat-latest', 'gpt-4.1-mini', 'gpt-image-1']);
+});
+
+it('pre-selects the newest Gemini generation and one image model when no dates are reported', function () {
+    $models = ['gemini-2.5-flash', 'gemini-2.5-flash-image', 'gemini-2.5-flash-lite', 'gemini-2.5-pro', 'gemini-3-flash-preview', 'gemini-3.1-flash-image', 'gemini-3.1-flash-lite'];
+
+    expect(ModelRecommender::recommend($models, 4))
+        ->toBe(['gemini-3.1-flash-lite', 'gemini-3-flash-preview', 'gemini-2.5-flash', 'gemini-3.1-flash-image']);
+});
+
+it('drops legacy fine-tunes, completion-only and search models from the list', function () {
+    $models = ['curie:ft-webkul-2023-09-19-13-17-44', 'gpt-3.5-turbo-instruct', 'gpt-4o-search-preview', 'aqa', 'gpt-4o'];
+
+    expect(ModelRecommender::chatCapable($models))->toBe(['gpt-4o']);
+});
+
+it('pickTextModel skips Gemini image models', function () {
+    expect(ModelRecommender::pickTextModel(['gemini-2.5-flash-image', 'gemini-3-pro-image-preview', 'gemini-3.1-flash-lite']))
+        ->toBe('gemini-3.1-flash-lite');
+});
+
+it('pre-selects one model per family and skips speech models', function () {
+    $models = ['codestral-latest', 'magistral-medium-latest', 'magistral-small-latest', 'ministral-8b-latest', 'mistral-large-latest', 'mistral-small-2603', 'mistral-small-latest', 'voxtral-mini-2602', 'voxtral-mini-latest'];
+
+    $released = array_fill_keys($models, 1790000000);
+
+    $recommended = ModelRecommender::recommend($models, 5, $released);
+
+    expect($recommended)->toContain('mistral-small-latest')
+        ->not->toContain('mistral-small-2603')
+        ->not->toContain('voxtral-mini-latest')
+        ->not->toContain('voxtral-mini-2602')
+        ->toHaveCount(5);
 });

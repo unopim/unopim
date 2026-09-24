@@ -30,6 +30,7 @@ class ModelRecommender
 
         // Speech-to-text
         '/whisper/i',
+        '/voxtral/i',
         '/transcribe/i',
 
         // Text-to-speech
@@ -74,6 +75,12 @@ class ModelRecommender
 
         // User-fine-tuned models (org-specific, not generally reusable)
         '/^ft:/i',
+        '/:ft-/i',
+
+        '/-instruct$/i',
+        '/(^|[-_])search([-_]|$)/i',
+
+        '/^aqa$/i',
     ];
 
     /**
@@ -113,6 +120,7 @@ class ModelRecommender
         '/animate-?diff/i',
 
         // Generic "image" / "video" families (catch-all)
+        '/(^|[-_])image([-_]|$)/i',
         '/(^|[-_])image-?\d/i',
         '/(^|[-_])video-?\d/i',
     ];
@@ -156,24 +164,42 @@ class ModelRecommender
     }
 
     /**
-     * Return the models to auto-select after a fetch: the chat/image-capable
-     * subset, ranked cheapest-and-most-common first and capped at the
-     * configured limit. Falls back to the unfiltered list when the category
-     * filter removes everything, so an unusual provider still yields a
-     * selection.
+     * Return the models to auto-select after a fetch: the newest text models,
+     * which serve chat, content generation and the AI agent, plus the newest
+     * image model when the provider offers one, capped at the configured limit.
+     *
+     * Models are ordered by the release timestamp the provider's API reports,
+     * falling back to the version in the model name for providers that report
+     * none. Falls back to the unfiltered list when the category filter removes
+     * everything, so an unusual provider still yields a selection.
      *
      * @param  string[]  $models
+     * @param  array<string, int|null>  $released
      * @return string[]
      */
-    public static function recommend(array $models, ?int $limit = null): array
+    public static function recommend(array $models, ?int $limit = null, array $released = []): array
     {
-        if ($models === []) {
+        $limit ??= (int) config('magic_ai.models.auto_select_limit', 5);
+
+        if ($models === [] || $limit <= 0) {
             return [];
         }
 
-        $limit ??= (int) config('magic_ai.models.auto_select_limit', 5);
+        $candidates = array_map(strval(...), self::chatCapable($models));
+        $imageModels = array_values(array_filter($candidates, self::isImageOnly(...)));
+        $textModels = array_values(array_diff($candidates, $imageModels));
 
-        return $limit > 0 ? array_slice(self::rank(self::chatCapable($models)), 0, $limit) : [];
+        if ($textModels === [] || $imageModels === []) {
+            return array_slice(self::distinctFamilies(self::newestFirst($candidates, $released)), 0, $limit);
+        }
+
+        $picked = array_slice(self::distinctFamilies(self::newestFirst($textModels, $released)), 0, max($limit - 1, 1));
+
+        if (count($picked) < $limit) {
+            $picked[] = self::distinctFamilies(self::newestFirst($imageModels, $released))[0];
+        }
+
+        return $picked;
     }
 
     /**
@@ -192,23 +218,65 @@ class ModelRecommender
     }
 
     /**
-     * Order by descending preference score, keeping the provider's own order
-     * among equally scored models.
+     * Order newest first: by the provider-reported release timestamp, then the
+     * version in the model name, then the preference score, keeping the
+     * provider's own order among otherwise equal models.
      *
      * @param  string[]  $models
+     * @param  array<string, int|null>  $released
      * @return string[]
      */
-    protected static function rank(array $models): array
+    protected static function newestFirst(array $models, array $released): array
     {
         $ranked = array_map(
-            static fn (int $position, $model): array => ['model' => (string) $model, 'position' => $position, 'score' => self::score((string) $model)],
+            static fn (int $position, string $model): array => [
+                'model' => $model,
+                'key'   => [$released[$model] ?? 0, self::version($model), self::score($model), -$position],
+            ],
             array_keys($models),
             array_values($models)
         );
 
-        usort($ranked, static fn (array $a, array $b): int => [$b['score'], $a['position']] <=> [$a['score'], $b['position']]);
+        usort($ranked, static fn (array $a, array $b): int => $b['key'] <=> $a['key']);
 
         return array_column($ranked, 'model');
+    }
+
+    /**
+     * Keep one model per family, so a rolling alias and its dated snapshots
+     * (mistral-small-latest, mistral-small-2603) take a single slot. The
+     * -latest alias wins because it keeps tracking the provider's updates.
+     *
+     * @param  string[]  $models
+     * @return string[]
+     */
+    protected static function distinctFamilies(array $models): array
+    {
+        $families = [];
+
+        foreach ($models as $model) {
+            $family = (string) preg_replace('/-(latest|\d{4})$/i', '', $model);
+
+            if (! isset($families[$family]) || str_ends_with($model, '-latest')) {
+                $families[$family] = $model;
+            }
+        }
+
+        return array_values($families);
+    }
+
+    /**
+     * The generation number in a model name (gpt-4.1 → 4.1, claude-sonnet-4-5
+     * → 4.5, gemini-3.1-flash → 3.1). Four-digit and longer runs are dates or
+     * snapshot stamps, not versions.
+     */
+    protected static function version(string $model): float
+    {
+        if (! preg_match('/(?<!\d)(\d{1,2})(?:[.\-](\d{1,2}))?(?!\d)/', $model, $matches)) {
+            return 0.0;
+        }
+
+        return (float) ($matches[1].'.'.($matches[2] ?? '0'));
     }
 
     protected static function score(string $model): int
@@ -242,17 +310,26 @@ class ModelRecommender
      */
     public static function pickTextModel(array $models): ?string
     {
+        return self::textModels($models)[0] ?? null;
+    }
+
+    /**
+     * The models safe to send a text prompt to, in the given order. When every
+     * model looks image-only the first one is returned alone, so the caller
+     * can still attempt the request and surface the provider's error.
+     *
+     * @param  string[]  $models
+     * @return string[]
+     */
+    public static function textModels(array $models): array
+    {
         if ($models === []) {
-            return null;
+            return [];
         }
 
-        foreach ($models as $model) {
-            if (! self::isImageOnly($model)) {
-                return $model;
-            }
-        }
+        $textModels = array_values(array_filter($models, static fn (string $model): bool => ! self::isImageOnly($model)));
 
-        return $models[0];
+        return $textModels ?: [$models[0]];
     }
 
     protected static function isImageOnly(string $model): bool
