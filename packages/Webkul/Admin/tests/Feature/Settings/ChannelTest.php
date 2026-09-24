@@ -287,3 +287,34 @@ it('should not delete the last channel', function () {
         'code' => 'default',
     ]);
 });
+
+it('should clear the channel name when it is removed on update', function () {
+    $this->loginAsAdmin();
+
+    $category = Category::factory()->create(['parent_id' => null]);
+    $locale = Locale::where('code', 'en_US')->first();
+    $currency = Currency::factory()->create();
+
+    $demoChannel = Channel::factory()->create([
+        'root_category_id' => $category->id,
+    ]);
+
+    expect($demoChannel->hasTranslation('en_US'))->toBeTrue();
+
+    $response = putJson(route('admin.settings.channels.update', ['id' => $demoChannel->id]), [
+        'code'             => $demoChannel->code,
+        'root_category_id' => $demoChannel->root_category_id,
+        'locales'          => [$locale->id],
+        'currencies'       => [$currency->id],
+        'en_US'            => ['name' => ''],
+    ]);
+
+    $response->assertStatus(302);
+    $response->assertSessionHas('success');
+
+    $this->assertDatabaseHas('channel_translations', [
+        'channel_id' => $demoChannel->id,
+        'locale'     => 'en_US',
+        'name'       => null,
+    ]);
+});
