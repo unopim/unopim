@@ -171,7 +171,7 @@ class LaravelAiAdapter implements LLMModelInterface, ReportsTruncation, Supports
 
         return new MagicContentAgent(
             systemPrompt: $this->systemPrompt,
-            temperature: $isReasoningModel ? null : $this->temperature,
+            temperature: $isReasoningModel || $this->rejectsSamplingParameters($this->model) ? null : $this->temperature,
             maxTokens: $isReasoningModel ? max($this->maxTokens, 16000) : $this->maxTokens,
         );
     }
@@ -189,6 +189,25 @@ class LaravelAiAdapter implements LLMModelInterface, ReportsTruncation, Supports
         }
 
         return (bool) preg_match('/^chat-latest|^o[1-9]\b|^o[1-9]-|^gpt-5/', $model);
+    }
+
+    /**
+     * Determine if the model is a Claude model that rejects `temperature`.
+     *
+     * Claude 3.x, Haiku 4.x and Opus/Sonnet up to 4.6 accept sampling
+     * parameters, including dated, Vertex (`@`) and Bedrock (`-v1:0`) ids;
+     * newer Claude models return a 400, so any other Claude model omits
+     * them rather than failing on the next release.
+     */
+    protected function rejectsSamplingParameters(string $model): bool
+    {
+        $model = strtolower($model);
+
+        if (! preg_match('/(^|[.\/:])claude-/', $model)) {
+            return false;
+        }
+
+        return ! preg_match('/claude-(3|haiku-4|(opus|sonnet)-4(-[0-6])?(-\d{8})?(-v\d+(:\d+)?)?(@|$))/', $model);
     }
 
     /**
