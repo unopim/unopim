@@ -368,7 +368,7 @@
                 <div class="grid gap-4 [grid-template-columns:repeat(auto-fit,_minmax(200px,_1fr))]">
                     @foreach ($channelCurrencies as $currency)
                         @php $currencyValue = $value[$currency->code] ?? ''; @endphp
-                        <div class="grid w-full">
+                        <div class="grid content-start w-full">
                             <x-admin::form.control-group.control
                                 type="price"
                                 :id="$field->code . '_' . $currency->code"
