@@ -19,19 +19,18 @@ it('honours a limit of zero by selecting nothing', function () {
     expect(ModelRecommender::recommend(['gpt-5.1', 'gpt-5-mini']))->toBe([]);
 });
 
-it('prefers cost-effective tiers over flagship and preview models', function () {
+it('prefers the newest generation and the cost-effective tier within it', function () {
     config(['magic_ai.models.auto_select_limit' => 3]);
 
     $recommended = ModelRecommender::recommend([
+        'gpt-3.5-turbo',
+        'gpt-4o-mini',
         'gpt-5-pro',
-        'claude-opus-5',
-        'gemini-3-flash-preview',
+        'gpt-4.1-nano',
         'gpt-5-mini',
-        'claude-haiku-4-5',
-        'gemini-3-flash',
     ]);
 
-    expect($recommended)->toBe(['gpt-5-mini', 'claude-haiku-4-5', 'gemini-3-flash']);
+    expect($recommended)->toBe(['gpt-5-mini', 'gpt-5-pro', 'gpt-4.1-nano']);
 });
 
 it('returns every fetched model when no allow list is configured', function () {

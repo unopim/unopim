@@ -122,7 +122,7 @@ it('discovers a custom endpoint by retrying with the version segment appended', 
 
     $discovery = AiProvider::Custom->discoverModels('key', 'https://api.cerebras.ai', $client);
 
-    expect($discovery)->toBe(['models' => ['llama3.1-8b'], 'api_url' => 'https://api.cerebras.ai/v1'])
+    expect($discovery)->toBe(['models' => ['llama3.1-8b'], 'released' => ['llama3.1-8b' => null], 'api_url' => 'https://api.cerebras.ai/v1'])
         ->and($history)->toHaveCount(2);
 });
 
@@ -137,7 +137,7 @@ it('does not retry a custom endpoint that already carries a version segment', fu
 });
 
 it('returns nothing for a custom provider with no base url', function () {
-    expect(AiProvider::Custom->discoverModels('key', null))->toBe(['models' => [], 'api_url' => '']);
+    expect(AiProvider::Custom->discoverModels('key', null))->toBe(['models' => [], 'released' => [], 'api_url' => '']);
 });
 
 it('summarises an upstream failure instead of surfacing the raw response body', function () {
@@ -153,4 +153,30 @@ it('summarises an upstream failure instead of surfacing the raw response body', 
     } catch (RuntimeException $e) {
         expect($e->getMessage())->not->toContain('<html>');
     }
+});
+
+it('keeps the release date each provider reports alongside the model id', function () {
+    $client = fakeProviderClient([
+        new Response(200, [], json_encode(['data' => [['id' => 'gpt-5-mini', 'created' => 1754425928], ['id' => 'gpt-3.5-turbo', 'created' => 1677610602]]])),
+        new Response(200, [], json_encode(['data' => [['id' => 'claude-sonnet-4-5', 'created_at' => '2025-09-29T00:00:00Z']]])),
+    ]);
+
+    expect(AiProvider::OpenAI->fetchModelCatalog('sk-test', null, $client))
+        ->toBe(['gpt-3.5-turbo' => 1677610602, 'gpt-5-mini' => 1754425928])
+        ->and(AiProvider::Anthropic->fetchModelCatalog('key', null, $client))
+        ->toBe(['claude-sonnet-4-5' => strtotime('2025-09-29T00:00:00Z')]);
+});
+
+it('lists only the Gemini models that can generate content or images', function () {
+    $client = fakeProviderClient([
+        new Response(200, [], json_encode(['models' => [
+            ['name' => 'models/gemini-3.1-flash-lite', 'supportedGenerationMethods' => ['generateContent', 'countTokens']],
+            ['name' => 'models/imagen-4.0-generate-001', 'supportedGenerationMethods' => ['predict']],
+            ['name' => 'models/gemini-embedding-001', 'supportedGenerationMethods' => ['embedContent']],
+            ['name' => 'models/aqa', 'supportedGenerationMethods' => ['generateAnswer']],
+        ]])),
+    ]);
+
+    expect(AiProvider::Gemini->fetchModels('key', null, $client))
+        ->toBe(['gemini-3.1-flash-lite', 'imagen-4.0-generate-001']);
 });

@@ -118,3 +118,41 @@ it('requires a provider to fetch models', function () {
     postJson(route('admin.magic_ai.platform.fetch_models'), ['api_key' => 'sk-secret-key'])
         ->assertJsonValidationErrors('provider');
 });
+
+it('falls back to the next text model when the provider refuses the first one', function () {
+    $this->loginWithPermissions('all');
+
+    $calls = 0;
+
+    AnonymousAgent::fake(function () use (&$calls): string {
+        if (++$calls === 1) {
+            throw new RuntimeException('This model is no longer available to new users');
+        }
+
+        return 'OK';
+    });
+
+    postJson(route('admin.magic_ai.platform.test'), testConnectionPayload(['models' => 'gemini-2.5-flash,gemini-3.1-flash-lite']))
+        ->assertOk()
+        ->assertJson(['success' => true]);
+
+    expect($calls)->toBe(2);
+});
+
+it('stops after three refused models and reports the first failure', function () {
+    $this->loginWithPermissions('all');
+
+    $calls = 0;
+
+    AnonymousAgent::fake(function () use (&$calls): string {
+        $calls++;
+
+        throw new RuntimeException('Incorrect API key provided');
+    });
+
+    postJson(route('admin.magic_ai.platform.test'), testConnectionPayload(['models' => 'a-1,b-1,c-1,d-1']))
+        ->assertBadRequest()
+        ->assertJson(['success' => false]);
+
+    expect($calls)->toBe(3);
+});

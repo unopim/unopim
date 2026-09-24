@@ -849,7 +849,7 @@ const AGENTIC_PIM_IMAGE_ONLY_PATTERNS = [
     /(^|[-_])pika([-_]|$)/i, /(^|[-_])runway([-_]|$)/i,
     /hunyuan-?video/i, /(^|[-_])cogvideo/i, /(^|[-_])wan-?\d/i, /animate-?diff/i,
     // Generic "image" / "video" families (catch-all)
-    /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
+    /(^|[-_])image([-_]|$)/i, /(^|[-_])image-?\d/i, /(^|[-_])video-?\d/i,
 ];
 const pickTextModel = (models) => {
     if (!Array.isArray(models) || models.length === 0) return '';
