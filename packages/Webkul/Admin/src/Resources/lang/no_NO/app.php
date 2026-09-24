@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Hent modeller',
             'fetching-models' => 'Henter',
             'set-default'     => 'Angi som standard',
+            'managed-badge'   => 'Administrert',
+            'managed-note'    => 'Denne plattformen leveres og administreres for deg. Her kan bare statusen og standardinnstillingen endres.',
+
+            'command' => [
+
+                'select-platform' => 'Hvilken plattform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'La feltet stå tomt for å beholde den lagrede nøkkelen.',
+
+                'key-unchanged' => 'Uendret',
+
+                'missing-argument' => 'Argumentet :argument er påkrevd når kommandoen kjøres uten interaksjon.',
+
+                'delete-confirm' => 'Vil du slette plattformen ":label"?',
+
+                'deleted' => 'AI-plattformen ":label" er slettet.',
+
+                'force-required' => 'Bruk --force for å slette uten interaksjon.',
+
+                'default-set' => '":label" er nå standard AI-plattform.',
+
+                'no-platforms' => 'Ingen AI-plattformer er konfigurert.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Henter modeller fra :provider...',
+                'models-manual'      => 'Modeller (kommaseparert)',
+                'models-additional'  => 'Flere modeller, kommaseparert (valgfritt)',
+                'models-required'    => 'Velg minst én modell.',
+                'models-unlisted'    => 'Leverandøren returnerte ikke disse modellene, og de lagres slik de ble skrevet inn: :models',
+                'managed'            => 'Skal dette være en administrert plattform? Den lagrede nøkkelen forblir låst til denne leverandøren, dette endepunktet og denne modellisten.',
+                'managed-extras'     => 'En administrert plattform kan ikke ha leverandørspesifikke innstillinger. La den være uadministrert, eller velg en annen leverandør.',
+                'field'              => 'Felt',
+                'value'              => 'Verdi',
+                'provider-default'   => 'Leverandørens standard',
+                'extras'             => 'Leverandørinnstillinger',
+                'confirm-save'       => 'Vil du lagre denne plattformen?',
+                'cancelled'          => 'Ingenting ble lagret.',
+                'saved'              => 'AI-plattformen ":label" er lagret.',
+                'missing-option'     => 'Alternativet --:option er påkrevd når kommandoen kjøres uten interaksjon.',
+                'key-stdin-required' => 'Send API-nøkkelen til kommandoen via standard inndata og bruk --key-stdin når du kjører uten interaksjon.',
+                'invalid-provider'   => 'Ukjent leverandør ":provider". Bruk en av: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etikett',
                 'provider'   => 'Leverandør',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'Endepunktet på :host returnerte HTTP :status.',
                 'fetch-models-unreachable'           => 'Endepunktet på :host kunne ikke nås.',
                 'invalid-model-names'                => 'Ugyldige modellnavn: :names. Modellnavn må starte med en bokstav eller et tall og kun inneholde bokstaver, tall, bindestreker, punktum, kolon og skråstreker.',
+                'managed-connection-locked'          => 'Denne API-nøkkelen kan bare brukes med sin egen leverandør og sitt eget endepunkt.',
+                'managed-models-only'                => 'Denne API-nøkkelen kan bare bruke disse modellene: :allowed.',
+                'managed-cannot-delete'              => 'Den administrerte plattformen kan ikke slettes.',
+                'managed-cli-only'                   => 'Denne plattformen administreres for deg. Bare statusen og standardinnstillingen kan endres.',
                 'default-requires-enabled'           => 'En deaktivert plattform kan ikke settes som standard. Aktiver plattformen først.',
             ],
         ],

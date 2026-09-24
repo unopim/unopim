@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Recupera modelli',
             'fetching-models' => 'Recupero in corso',
             'set-default'     => 'Imposta come predefinito',
+            'managed-badge'   => 'Gestita',
+            'managed-note'    => 'Questa piattaforma è fornita e gestita per te. Qui puoi modificare solo lo stato e l\'impostazione predefinita.',
+
+            'command' => [
+
+                'select-platform' => 'Quale piattaforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lascia vuoto per mantenere la chiave salvata.',
+
+                'key-unchanged' => 'Invariata',
+
+                'missing-argument' => 'L\'argomento :argument è obbligatorio quando il comando viene eseguito senza interazione.',
+
+                'delete-confirm' => 'Eliminare la piattaforma ":label"?',
+
+                'deleted' => 'La piattaforma di IA ":label" è stata eliminata.',
+
+                'force-required' => 'Usa --force per eliminare senza interazione.',
+
+                'default-set' => '":label" è ora la piattaforma di IA predefinita.',
+
+                'no-platforms' => 'Nessuna piattaforma di IA configurata.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Recupero dei modelli da :provider...',
+                'models-manual'      => 'Modelli (separati da virgole)',
+                'models-additional'  => 'Modelli aggiuntivi, separati da virgole (facoltativo)',
+                'models-required'    => 'Seleziona almeno un modello.',
+                'models-unlisted'    => 'Il fornitore non ha restituito questi modelli, che verranno salvati così come inseriti: :models',
+                'managed'            => 'Rendere questa piattaforma gestita? La sua chiave salvata resterà vincolata a questo fornitore, endpoint ed elenco di modelli.',
+                'managed-extras'     => 'Una piattaforma gestita non può avere impostazioni specifiche del fornitore. Lasciala non gestita o scegli un altro fornitore.',
+                'field'              => 'Campo',
+                'value'              => 'Valore',
+                'provider-default'   => 'Predefinito del fornitore',
+                'extras'             => 'Impostazioni del fornitore',
+                'confirm-save'       => 'Salvare questa piattaforma?',
+                'cancelled'          => 'Non è stato salvato nulla.',
+                'saved'              => 'La piattaforma di IA ":label" è stata salvata.',
+                'missing-option'     => 'L\'opzione --:option è obbligatoria quando il comando viene eseguito senza interazione.',
+                'key-stdin-required' => 'Passa la chiave API al comando tramite lo standard input e usa --key-stdin quando esegui senza interazione.',
+                'invalid-provider'   => 'Fornitore sconosciuto ":provider". Usa uno di questi: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etichetta',
                 'provider'   => 'Fornitore',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'L\'endpoint su :host ha restituito HTTP :status.',
                 'fetch-models-unreachable'           => 'Impossibile raggiungere l\'endpoint su :host.',
                 'invalid-model-names'                => 'Nomi del modello non validi: :names. I nomi del modello devono iniziare con una lettera o un numero e contenere solo lettere, numeri, trattini, punti, due punti e barre.',
+                'managed-connection-locked'          => 'Questa chiave API può essere usata solo con il proprio provider ed endpoint.',
+                'managed-models-only'                => 'Questa chiave API può usare solo questi modelli: :allowed.',
+                'managed-cannot-delete'              => 'La piattaforma gestita non può essere eliminata.',
+                'managed-cli-only'                   => 'Questa piattaforma è gestita per te. Si possono modificare solo lo stato e l\'impostazione predefinita.',
                 'default-requires-enabled'           => 'Una piattaforma disabilitata non può essere impostata come predefinita. Abilitala prima.',
             ],
         ],

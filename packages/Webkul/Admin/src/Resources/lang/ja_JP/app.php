@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'モデルを取得',
             'fetching-models' => '取得中',
             'set-default'     => 'デフォルトに設定',
+            'managed-badge'   => '管理対象',
+            'managed-note'    => 'このプラットフォームはお客様のために提供・管理されています。ここで変更できるのはステータスとデフォルト設定のみです。',
+
+            'command' => [
+
+                'select-platform' => 'どのプラットフォームですか？',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '保存済みのキーを使い続ける場合は空欄のままにしてください。',
+
+                'key-unchanged' => '変更なし',
+
+                'missing-argument' => '対話なしで実行する場合は引数 :argument が必要です。',
+
+                'delete-confirm' => 'プラットフォーム「:label」を削除しますか？',
+
+                'deleted' => 'AI プラットフォーム「:label」を削除しました。',
+
+                'force-required' => '対話なしで削除するには --force を指定してください。',
+
+                'default-set' => '「:label」が既定の AI プラットフォームになりました。',
+
+                'no-platforms' => 'AI プラットフォームが設定されていません。',
+
+                'id'                 => 'ID',
+                'fetching-models'    => ':provider からモデルを取得しています...',
+                'models-manual'      => 'モデル（カンマ区切り）',
+                'models-additional'  => '追加のモデル（カンマ区切り、任意）',
+                'models-required'    => 'モデルを 1 つ以上選択してください。',
+                'models-unlisted'    => '次のモデルはプロバイダーから返されなかったため、入力どおりに保存されます: :models',
+                'managed'            => '管理対象のプラットフォームにしますか？保存済みのキーはこのプロバイダー、エンドポイント、モデル一覧に固定されます。',
+                'managed-extras'     => '管理対象のプラットフォームにはプロバイダー固有の設定を持たせられません。管理対象外にするか、別のプロバイダーを選択してください。',
+                'field'              => '項目',
+                'value'              => '値',
+                'provider-default'   => 'プロバイダーの既定値',
+                'extras'             => 'プロバイダー設定',
+                'confirm-save'       => 'このプラットフォームを保存しますか？',
+                'cancelled'          => '何も保存されませんでした。',
+                'saved'              => 'AI プラットフォーム「:label」を保存しました。',
+                'missing-option'     => '対話なしで実行する場合は --:option オプションが必要です。',
+                'key-stdin-required' => '対話なしで実行する場合は、API キーを標準入力でコマンドに渡し、--key-stdin を指定してください。',
+                'invalid-provider'   => '不明なプロバイダー「:provider」です。次のいずれかを使用してください: :providers',
+            ],
+
             'datagrid'        => [
                 'label'      => 'ラベル',
                 'provider'   => 'プロバイダー',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => ':host のエンドポイントが HTTP :status を返しました。',
                 'fetch-models-unreachable'           => ':host のエンドポイントに接続できませんでした。',
                 'invalid-model-names'                => '無効なモデル名: :names。モデル名は英数字で始まり、英数字、ハイフン、ドット、コロン、スラッシュのみ使用できます。',
+                'managed-connection-locked'          => 'この API キーは、専用のプロバイダーとエンドポイントでのみ使用できます。',
+                'managed-models-only'                => 'この API キーで使用できるモデルは次のみです: :allowed。',
+                'managed-cannot-delete'              => '管理対象のプラットフォームは削除できません。',
+                'managed-cli-only'                   => 'このプラットフォームはお客様のために管理されています。変更できるのはステータスとデフォルト設定のみです。',
                 'default-requires-enabled'           => '無効化されたプラットフォームをデフォルトに設定することはできません。先にプラットフォームを有効化してください。',
             ],
         ],

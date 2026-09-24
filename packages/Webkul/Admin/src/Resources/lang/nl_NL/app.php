@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Modellen ophalen',
             'fetching-models' => 'Ophalen…',
             'set-default'     => 'Instellen als standaard',
+            'managed-badge'   => 'Beheerd',
+            'managed-note'    => 'Dit platform wordt voor u geleverd en beheerd. Hier kunnen alleen de status en de standaardinstelling worden gewijzigd.',
+
+            'command' => [
+
+                'select-platform' => 'Welk platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Laat leeg om de opgeslagen sleutel te behouden.',
+
+                'key-unchanged' => 'Ongewijzigd',
+
+                'missing-argument' => 'Het argument :argument is verplicht wanneer de opdracht zonder interactie wordt uitgevoerd.',
+
+                'delete-confirm' => 'Het platform ":label" verwijderen?',
+
+                'deleted' => 'Het AI-platform ":label" is verwijderd.',
+
+                'force-required' => 'Geef --force op om zonder interactie te verwijderen.',
+
+                'default-set' => '":label" is nu het standaard AI-platform.',
+
+                'no-platforms' => 'Er zijn geen AI-platforms ingesteld.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Modellen ophalen bij :provider...',
+                'models-manual'      => 'Modellen (door komma\'s gescheiden)',
+                'models-additional'  => 'Extra modellen, door komma\'s gescheiden (optioneel)',
+                'models-required'    => 'Selecteer ten minste één model.',
+                'models-unlisted'    => 'Deze modellen zijn niet door de provider teruggegeven en worden opgeslagen zoals ingevoerd: :models',
+                'managed'            => 'Dit een beheerd platform maken? De opgeslagen sleutel blijft dan vastgezet op deze provider, dit endpoint en deze modellenlijst.',
+                'managed-extras'     => 'Een beheerd platform kan geen providerspecifieke instellingen hebben. Laat het onbeheerd of kies een andere provider.',
+                'field'              => 'Veld',
+                'value'              => 'Waarde',
+                'provider-default'   => 'Standaard van de provider',
+                'extras'             => 'Providerinstellingen',
+                'confirm-save'       => 'Dit platform opslaan?',
+                'cancelled'          => 'Er is niets opgeslagen.',
+                'saved'              => 'Het AI-platform ":label" is opgeslagen.',
+                'missing-option'     => 'De optie --:option is verplicht wanneer de opdracht zonder interactie wordt uitgevoerd.',
+                'key-stdin-required' => 'Geef de API-sleutel via standaardinvoer door aan de opdracht en gebruik --key-stdin wanneer u zonder interactie werkt.',
+                'invalid-provider'   => 'Onbekende provider ":provider". Gebruik een van: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Label',
                 'provider'   => 'Aanbieder',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'Het endpoint op :host gaf HTTP :status terug.',
                 'fetch-models-unreachable'           => 'Het endpoint op :host is niet bereikbaar.',
                 'invalid-model-names'                => 'Ongeldige modelnamen: :names. Modelnamen moeten beginnen met een letter of cijfer en mogen alleen letters, cijfers, koppeltekens, punten, dubbele punten en schuine strepen bevatten.',
+                'managed-connection-locked'          => 'Deze API-sleutel kan alleen worden gebruikt met de eigen provider en het eigen endpoint.',
+                'managed-models-only'                => 'Deze API-sleutel kan alleen deze modellen gebruiken: :allowed.',
+                'managed-cannot-delete'              => 'Het beheerde platform kan niet worden verwijderd.',
+                'managed-cli-only'                   => 'Dit platform wordt voor u beheerd. Alleen de status en de standaardinstelling kunnen worden gewijzigd.',
                 'default-requires-enabled'           => 'Een uitgeschakeld platform kan niet als standaard worden gemarkeerd. Schakel het platform eerst in.',
             ],
         ],

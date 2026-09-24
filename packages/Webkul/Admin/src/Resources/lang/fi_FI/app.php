@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Hae mallit',
             'fetching-models' => 'Haetaan',
             'set-default'     => 'Aseta oletukseksi',
+            'managed-badge'   => 'Hallinnoitu',
+            'managed-note'    => 'Tämä alusta tarjotaan ja hallinnoidaan puolestasi. Täällä voit muuttaa vain sen tilaa ja oletusasetusta.',
+
+            'command' => [
+
+                'select-platform' => 'Mikä alusta?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Jätä tyhjäksi, jos haluat säilyttää tallennetun avaimen.',
+
+                'key-unchanged' => 'Ennallaan',
+
+                'missing-argument' => 'Argumentti :argument on pakollinen, kun komento suoritetaan ilman vuorovaikutusta.',
+
+                'delete-confirm' => 'Poistetaanko alusta ":label"?',
+
+                'deleted' => 'Tekoälyalusta ":label" on poistettu.',
+
+                'force-required' => 'Käytä valitsinta --force, jos haluat poistaa ilman vuorovaikutusta.',
+
+                'default-set' => '":label" on nyt oletusarvoinen tekoälyalusta.',
+
+                'no-platforms' => 'Tekoälyalustoja ei ole määritetty.',
+
+                'id'                 => 'Tunnus',
+                'fetching-models'    => 'Haetaan malleja palvelusta :provider...',
+                'models-manual'      => 'Mallit (pilkuin eroteltuina)',
+                'models-additional'  => 'Lisämallit pilkuin eroteltuina (valinnainen)',
+                'models-required'    => 'Valitse vähintään yksi malli.',
+                'models-unlisted'    => 'Palveluntarjoaja ei palauttanut näitä malleja, ja ne tallennetaan sellaisinaan: :models',
+                'managed'            => 'Tehdäänkö tästä hallinnoitu alusta? Sen tallennettu avain pysyy lukittuna tähän palveluntarjoajaan, päätepisteeseen ja malliluetteloon.',
+                'managed-extras'     => 'Hallinnoidulla alustalla ei voi olla palveluntarjoajakohtaisia asetuksia. Jätä se hallinnoimattomaksi tai valitse toinen palveluntarjoaja.',
+                'field'              => 'Kenttä',
+                'value'              => 'Arvo',
+                'provider-default'   => 'Palveluntarjoajan oletus',
+                'extras'             => 'Palveluntarjoajan asetukset',
+                'confirm-save'       => 'Tallennetaanko tämä alusta?',
+                'cancelled'          => 'Mitään ei tallennettu.',
+                'saved'              => 'Tekoälyalusta ":label" on tallennettu.',
+                'missing-option'     => 'Valitsin --:option on pakollinen, kun komento suoritetaan ilman vuorovaikutusta.',
+                'key-stdin-required' => 'Syötä API-avain komennolle vakiosyötteen kautta ja käytä valitsinta --key-stdin, kun suoritat ilman vuorovaikutusta.',
+                'invalid-provider'   => 'Tuntematon palveluntarjoaja ":provider". Käytä jotakin näistä: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Nimi',
                 'provider'   => 'Palveluntarjoaja',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'Päätepiste osoitteessa :host palautti HTTP :status.',
                 'fetch-models-unreachable'           => 'Päätepisteeseen osoitteessa :host ei saatu yhteyttä.',
                 'invalid-model-names'                => 'Virheelliset mallien nimet: :names. Mallien nimien on alettava kirjaimella tai numerolla ja sisällettävä vain kirjaimia, numeroita, väliviivoja, pisteitä, kaksoispisteitä ja kauttaviivoja.',
+                'managed-connection-locked'          => 'Tätä API-avainta voi käyttää vain sen omalla palveluntarjoajalla ja päätepisteellä.',
+                'managed-models-only'                => 'Tämä API-avain voi käyttää vain näitä malleja: :allowed.',
+                'managed-cannot-delete'              => 'Hallinnoitua alustaa ei voi poistaa.',
+                'managed-cli-only'                   => 'Tätä alustaa hallinnoidaan puolestasi. Vain sen tilaa ja oletusasetusta voi muuttaa.',
                 'default-requires-enabled'           => 'Poistettua alustaa ei voi merkitä oletukseksi. Ota alusta ensin käyttöön.',
             ],
         ],

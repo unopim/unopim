@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Modelleri Getir',
             'fetching-models' => 'Getiriliyor',
             'set-default'     => 'Varsayılan Olarak Ayarla',
+            'managed-badge'   => 'Yönetilen',
+            'managed-note'    => 'Bu platform sizin için sağlanır ve yönetilir. Burada yalnızca durumu ve varsayılan ayarı değiştirilebilir.',
+
+            'command' => [
+
+                'select-platform' => 'Hangi platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Kayıtlı anahtarı korumak için boş bırakın.',
+
+                'key-unchanged' => 'Değişmedi',
+
+                'missing-argument' => 'Etkileşimsiz çalıştırırken :argument bağımsız değişkeni zorunludur.',
+
+                'delete-confirm' => '":label" platformu silinsin mi?',
+
+                'deleted' => '":label" yapay zeka platformu silindi.',
+
+                'force-required' => 'Etkileşimsiz silmek için --force kullanın.',
+
+                'default-set' => '":label" artık varsayılan yapay zeka platformu.',
+
+                'no-platforms' => 'Yapılandırılmış yapay zeka platformu yok.',
+
+                'id'                 => 'Kimlik',
+                'fetching-models'    => ':provider üzerinden modeller alınıyor...',
+                'models-manual'      => 'Modeller (virgülle ayrılmış)',
+                'models-additional'  => 'Ek modeller, virgülle ayrılmış (isteğe bağlı)',
+                'models-required'    => 'En az bir model seçin.',
+                'models-unlisted'    => 'Bu modeller sağlayıcı tarafından döndürülmedi ve girildiği gibi kaydedilecek: :models',
+                'managed'            => 'Bu platform yönetilen bir platform olsun mu? Kayıtlı anahtarı bu sağlayıcıya, uç noktaya ve model listesine kilitli kalır.',
+                'managed-extras'     => 'Yönetilen bir platform sağlayıcıya özgü ayarlar içeremez. Yönetilmeyen olarak bırakın veya başka bir sağlayıcı seçin.',
+                'field'              => 'Alan',
+                'value'              => 'Değer',
+                'provider-default'   => 'Sağlayıcı varsayılanı',
+                'extras'             => 'Sağlayıcı ayarları',
+                'confirm-save'       => 'Bu platform kaydedilsin mi?',
+                'cancelled'          => 'Hiçbir şey kaydedilmedi.',
+                'saved'              => '":label" yapay zeka platformu kaydedildi.',
+                'missing-option'     => 'Etkileşimsiz çalıştırırken --:option seçeneği zorunludur.',
+                'key-stdin-required' => 'Etkileşimsiz çalıştırırken API anahtarını komuta standart girdi üzerinden iletin ve --key-stdin kullanın.',
+                'invalid-provider'   => 'Bilinmeyen sağlayıcı ":provider". Şunlardan birini kullanın: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etiket',
                 'provider'   => 'Sağlayıcı',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => ':host adresindeki uç nokta HTTP :status döndürdü.',
                 'fetch-models-unreachable'           => ':host adresindeki uç noktaya ulaşılamadı.',
                 'invalid-model-names'                => 'Geçersiz model adları: :names. Model adları bir harf veya rakamla başlamalı ve yalnızca harf, rakam, tire, nokta, iki nokta üst üste ve eğik çizgi içermelidir.',
+                'managed-connection-locked'          => 'Bu API anahtarı yalnızca kendi sağlayıcısı ve uç noktasıyla kullanılabilir.',
+                'managed-models-only'                => 'Bu API anahtarı yalnızca şu modelleri kullanabilir: :allowed.',
+                'managed-cannot-delete'              => 'Yönetilen platform silinemez.',
+                'managed-cli-only'                   => 'Bu platform sizin için yönetilir. Yalnızca durumu ve varsayılan ayarı değiştirilebilir.',
                 'default-requires-enabled'           => 'Devre dışı bir platform varsayılan olarak işaretlenemez. Lütfen platformu önce etkinleştirin.',
             ],
         ],

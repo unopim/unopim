@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Kunin ang mga Model',
             'fetching-models' => 'Kinukuha',
             'set-default'     => 'Itakda bilang Default',
+            'managed-badge'   => 'Pinamamahalaan',
+            'managed-note'    => 'Ang platform na ito ay ibinibigay at pinamamahalaan para sa iyo. Dito, ang status at default na setting lang nito ang mababago.',
+
+            'command' => [
+
+                'select-platform' => 'Aling platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Iwanang blangko para panatilihin ang naka-save na key.',
+
+                'key-unchanged' => 'Walang pagbabago',
+
+                'missing-argument' => 'Kailangan ang argumentong :argument kapag pinatakbo nang walang interaksyon.',
+
+                'delete-confirm' => 'Burahin ang platform na ":label"?',
+
+                'deleted' => 'Nabura na ang AI platform na ":label".',
+
+                'force-required' => 'Gamitin ang --force para magbura nang walang interaksyon.',
+
+                'default-set' => 'Ang ":label" na ngayon ang default na AI platform.',
+
+                'no-platforms' => 'Walang naka-configure na AI platform.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Kinukuha ang mga model mula sa :provider...',
+                'models-manual'      => 'Mga model (hiwalay sa kuwit)',
+                'models-additional'  => 'Karagdagang mga model, hiwalay sa kuwit (opsyonal)',
+                'models-required'    => 'Pumili ng kahit isang model.',
+                'models-unlisted'    => 'Hindi ibinalik ng provider ang mga model na ito at ise-save ayon sa inilagay: :models',
+                'managed'            => 'Gawin itong pinamamahalaang platform? Mananatiling nakakandado ang naka-save na key nito sa provider, endpoint at listahan ng model na ito.',
+                'managed-extras'     => 'Hindi puwedeng magkaroon ng mga setting na partikular sa provider ang pinamamahalaang platform. Iwan itong hindi pinamamahalaan o pumili ng ibang provider.',
+                'field'              => 'Field',
+                'value'              => 'Halaga',
+                'provider-default'   => 'Default ng provider',
+                'extras'             => 'Mga setting ng provider',
+                'confirm-save'       => 'I-save ang platform na ito?',
+                'cancelled'          => 'Walang na-save.',
+                'saved'              => 'Na-save ang AI platform na ":label".',
+                'missing-option'     => 'Kailangan ang opsyong --:option kapag pinatakbo nang walang interaksyon.',
+                'key-stdin-required' => 'Kapag walang interaksyon, ipasa ang API key sa command sa pamamagitan ng standard input at gamitin ang --key-stdin.',
+                'invalid-provider'   => 'Hindi kilalang provider na ":provider". Gamitin ang isa sa: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Label',
                 'provider'   => 'Provider',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'Nagbalik ang endpoint sa :host ng HTTP :status.',
                 'fetch-models-unreachable'           => 'Hindi maabot ang endpoint sa :host.',
                 'invalid-model-names'                => 'Hindi wastong mga pangalan ng modelo: :names. Ang mga pangalan ng modelo ay dapat magsimula sa titik o numero at maglaman lamang ng mga titik, numero, gitling, tuldok, tutuldok, at pahilis.',
+                'managed-connection-locked'          => 'Magagamit lang ang API key na ito sa sarili nitong provider at endpoint.',
+                'managed-models-only'                => 'Ang API key na ito ay makakagamit lang ng mga modelong ito: :allowed.',
+                'managed-cannot-delete'              => 'Hindi maaaring burahin ang pinamamahalaang platform.',
+                'managed-cli-only'                   => 'Ang platform na ito ay pinamamahalaan para sa iyo. Ang status at default na setting lang nito ang mababago.',
                 'default-requires-enabled'           => 'Hindi maaaring markahan bilang default ang isang naka-disable na platform. I-enable muna ang platform.',
             ],
         ],

@@ -126,6 +126,11 @@ class ModelRecommender
     ];
 
     /**
+     * How many recommended models are pre-selected after a fetch.
+     */
+    public const AUTO_SELECT_LIMIT = 5;
+
+    /**
      * Weighted patterns used to rank the recommendation list, so the handful of
      * models pre-selected on the form are the cheap, widely used tiers rather
      * than whatever sorts first alphabetically.
@@ -140,33 +145,9 @@ class ModelRecommender
     ];
 
     /**
-     * Return the models the install allows, in the order the provider returned
-     * them. An empty allow list means every fetched model is offered.
-     *
-     * @param  string[]  $models
-     * @return string[]
-     */
-    public static function allowed(array $models): array
-    {
-        $allowed = array_filter(array_map(
-            static fn ($model): string => mb_strtolower(trim((string) $model)),
-            (array) config('magic_ai.models.allowed', [])
-        ));
-
-        if ($allowed === []) {
-            return array_values($models);
-        }
-
-        return array_values(array_filter(
-            $models,
-            static fn ($model): bool => in_array(mb_strtolower(trim((string) $model)), $allowed, true)
-        ));
-    }
-
-    /**
      * Return the models to auto-select after a fetch: the newest text models,
      * which serve chat, content generation and the AI agent, plus the newest
-     * image model when the provider offers one, capped at the configured limit.
+     * image model when the provider offers one, capped at AUTO_SELECT_LIMIT.
      *
      * Models are ordered by the release timestamp the provider's API reports,
      * falling back to the version in the model name for providers that report
@@ -179,7 +160,7 @@ class ModelRecommender
      */
     public static function recommend(array $models, ?int $limit = null, array $released = []): array
     {
-        $limit ??= (int) config('magic_ai.models.auto_select_limit', 5);
+        $limit ??= self::AUTO_SELECT_LIMIT;
 
         if ($models === [] || $limit <= 0) {
             return [];
@@ -212,7 +193,7 @@ class ModelRecommender
      */
     public static function chatCapable(array $models): array
     {
-        $capable = array_values(array_filter($models, static fn ($model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, (string) $model))));
+        $capable = array_values(array_filter($models, static fn (string $model): bool => array_all(self::EXCLUDE_PATTERNS, fn (string $pattern): bool => ! preg_match($pattern, $model))));
 
         return $capable ?: array_values($models);
     }
@@ -268,11 +249,12 @@ class ModelRecommender
     /**
      * The generation number in a model name (gpt-4.1 → 4.1, claude-sonnet-4-5
      * → 4.5, gemini-3.1-flash → 3.1). Four-digit and longer runs are dates or
-     * snapshot stamps, not versions.
+     * snapshot stamps, and numbers ending in b or k are parameter counts or
+     * context sizes (gpt-oss-20b, gpt-3.5-turbo-16k), not versions.
      */
     protected static function version(string $model): float
     {
-        if (! preg_match('/(?<!\d)(\d{1,2})(?:[.\-](\d{1,2}))?(?!\d)/', $model, $matches)) {
+        if (! preg_match('/(?<!\d)(\d{1,2})(?:[.\-](\d{1,2}))?(?![\dbk])/i', $model, $matches)) {
             return 0.0;
         }
 

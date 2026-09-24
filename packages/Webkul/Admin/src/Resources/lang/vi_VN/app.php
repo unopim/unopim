@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Lấy mô hình',
             'fetching-models' => 'Đang lấy',
             'set-default'     => 'Đặt làm mặc định',
+            'managed-badge'   => 'Được quản lý',
+            'managed-note'    => 'Nền tảng này được cung cấp và quản lý cho bạn. Tại đây chỉ có thể thay đổi trạng thái và thiết lập mặc định của nó.',
+
+            'command' => [
+
+                'select-platform' => 'Nền tảng nào?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Để trống để giữ khóa đã lưu.',
+
+                'key-unchanged' => 'Không đổi',
+
+                'missing-argument' => 'Cần có đối số :argument khi chạy không tương tác.',
+
+                'delete-confirm' => 'Xóa nền tảng ":label"?',
+
+                'deleted' => 'Đã xóa nền tảng AI ":label".',
+
+                'force-required' => 'Dùng --force để xóa khi chạy không tương tác.',
+
+                'default-set' => '":label" hiện là nền tảng AI mặc định.',
+
+                'no-platforms' => 'Chưa có nền tảng AI nào được cấu hình.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Đang lấy danh sách model từ :provider...',
+                'models-manual'      => 'Model (phân tách bằng dấu phẩy)',
+                'models-additional'  => 'Model bổ sung, phân tách bằng dấu phẩy (không bắt buộc)',
+                'models-required'    => 'Hãy chọn ít nhất một model.',
+                'models-unlisted'    => 'Nhà cung cấp không trả về các model này, chúng sẽ được lưu như đã nhập: :models',
+                'managed'            => 'Đặt đây là nền tảng được quản lý? Khóa đã lưu của nó sẽ bị khóa vào nhà cung cấp, endpoint và danh sách model này.',
+                'managed-extras'     => 'Nền tảng được quản lý không thể có cài đặt riêng của nhà cung cấp. Hãy để nó không được quản lý hoặc chọn nhà cung cấp khác.',
+                'field'              => 'Trường',
+                'value'              => 'Giá trị',
+                'provider-default'   => 'Mặc định của nhà cung cấp',
+                'extras'             => 'Cài đặt nhà cung cấp',
+                'confirm-save'       => 'Lưu nền tảng này?',
+                'cancelled'          => 'Không có gì được lưu.',
+                'saved'              => 'Đã lưu nền tảng AI ":label".',
+                'missing-option'     => 'Cần có tùy chọn --:option khi chạy không tương tác.',
+                'key-stdin-required' => 'Khi chạy không tương tác, hãy truyền khóa API vào lệnh qua đầu vào chuẩn và dùng --key-stdin.',
+                'invalid-provider'   => 'Nhà cung cấp ":provider" không xác định. Hãy dùng một trong: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Nhãn',
                 'provider'   => 'Nhà cung cấp',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'Điểm cuối tại :host đã trả về HTTP :status.',
                 'fetch-models-unreachable'           => 'Không thể kết nối tới điểm cuối tại :host.',
                 'invalid-model-names'                => 'Tên mô hình không hợp lệ: :names. Tên mô hình phải bắt đầu bằng chữ cái hoặc số và chỉ chứa chữ cái, số, dấu gạch ngang, dấu chấm, dấu hai chấm và dấu gạch chéo.',
+                'managed-connection-locked'          => 'Khóa API này chỉ có thể dùng với nhà cung cấp và endpoint riêng của nó.',
+                'managed-models-only'                => 'Khóa API này chỉ có thể dùng các mô hình sau: :allowed.',
+                'managed-cannot-delete'              => 'Không thể xóa nền tảng được quản lý.',
+                'managed-cli-only'                   => 'Nền tảng này được quản lý cho bạn. Chỉ có thể thay đổi trạng thái và thiết lập mặc định của nó.',
                 'default-requires-enabled'           => 'Không thể đặt nền tảng đã vô hiệu hóa làm mặc định. Vui lòng kích hoạt nền tảng trước.',
             ],
         ],

@@ -101,7 +101,13 @@
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="editRow(record)"
                     >
-                        <p v-text="record.label" class="truncate" :title="record.label"></p>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <p v-text="record.label" class="truncate" :title="record.label"></p>
+
+                            <x-admin::badge variant="info" v-if="record.is_managed">
+                                @lang('admin::app.configuration.platform.managed-badge')
+                            </x-admin::badge>
+                        </div>
                         <p v-html="record.provider"></p>
                         <p v-text="record.models" class="truncate" :title="record.models"></p>
                         <p v-html="record.is_default"></p>
@@ -127,12 +133,22 @@
                 <form @submit="handleSubmit($event, saveWithTest)" ref="platformForm">
                     <x-admin::modal ref="platformModal">
                         <x-slot:header>
-                            <span class="dark:text-slate-50 text-lg font-semibold">
-                                @{{ isEditing ? '@lang('admin::app.configuration.platform.edit-title')' : '@lang('admin::app.configuration.platform.create-title')' }}
-                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="dark:text-slate-50 text-lg font-semibold">
+                                    @{{ isEditing ? '@lang('admin::app.configuration.platform.edit-title')' : '@lang('admin::app.configuration.platform.create-title')' }}
+                                </span>
+
+                                <x-admin::badge variant="info" v-if="form.is_managed">
+                                    @lang('admin::app.configuration.platform.managed-badge')
+                                </x-admin::badge>
+                            </div>
                         </x-slot>
 
                         <x-slot:content>
+                            <p v-if="form.is_managed" class="mb-4 text-sm text-gray-600 dark:text-gray-300">
+                                @lang('admin::app.configuration.platform.managed-note')
+                            </p>
+
                             <x-admin::form.control-group.control type="hidden" name="id" v-model="form.id" />
 
                             <!-- Provider -->
@@ -159,6 +175,7 @@
                                     :options="json_encode($providerOptions)"
                                     track-by="id"
                                     label-by="label"
+                                    ::disabled="form.is_managed"
                                     @input="onProviderChange($event)"
                                 >
                                 </x-admin::form.control-group.control>
@@ -171,13 +188,16 @@
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.platform.fields.label')
                                     </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="label"
-                                        v-model="form.label"
-                                        rules="required"
-                                        :label="trans('admin::app.configuration.platform.fields.label')"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="label"
+                                            v-model="form.label"
+                                            rules="required"
+                                            :label="trans('admin::app.configuration.platform.fields.label')"
+                                            ::readonly="form.is_managed"
+                                        />
+                                    </div>
                                     <x-admin::form.control-group.error control-name="label" />
                                 </x-admin::form.control-group>
 
@@ -186,13 +206,16 @@
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.configuration.platform.fields.api-url')
                                     </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="api_url"
-                                        v-model="form.api_url"
-                                        :label="trans('admin::app.configuration.platform.fields.api-url')"
-                                        @input="onApiUrlInput($event)"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="api_url"
+                                            v-model="form.api_url"
+                                            :label="trans('admin::app.configuration.platform.fields.api-url')"
+                                            ::readonly="form.is_managed"
+                                            @input="onApiUrlInput($event)"
+                                        />
+                                    </div>
                                     <p class="mt-1 text-xs text-gray-500">@lang('admin::app.configuration.platform.fields.api-url-hint')</p>
                                     <x-admin::form.control-group.error control-name="api_url" />
                                 </x-admin::form.control-group>
@@ -202,15 +225,18 @@
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.platform.fields.api-key')
                                     </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="password"
-                                        name="api_key"
-                                        v-model="form.api_key"
-                                        rules="required"
-                                        :label="trans('admin::app.configuration.platform.fields.api-key')"
-                                        @change="onApiKeyEntered()"
-                                        @input="onApiKeyInput($event)"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="password"
+                                            name="api_key"
+                                            v-model="form.api_key"
+                                            rules="required"
+                                            :label="trans('admin::app.configuration.platform.fields.api-key')"
+                                            ::readonly="form.is_managed"
+                                            @change="onApiKeyEntered()"
+                                            @input="onApiKeyInput($event)"
+                                        />
+                                    </div>
                                     <p v-if="fetchingModels" class="mt-1 text-xs text-primary-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
                                     <x-admin::form.control-group.error control-name="api_key" />
                                 </x-admin::form.control-group>
@@ -221,13 +247,17 @@
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.configuration.platform.fields.azure-deployment')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" />
+                                        <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                            <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" ::readonly="form.is_managed" />
+                                        </div>
                                     </x-admin::form.control-group>
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
                                             @lang('admin::app.configuration.platform.fields.azure-api-version')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" />
+                                        <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                            <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" ::readonly="form.is_managed" />
+                                        </div>
                                     </x-admin::form.control-group>
                                 </template>
 
@@ -244,11 +274,11 @@
                                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                                         >
                                             @{{ model }}
-                                            <button type="button" @click="removeModel(index)" class="hover:text-red-600" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
+                                            <button v-if="! form.is_managed" type="button" @click="removeModel(index)" class="hover:text-danger" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
                                         </span>
                                     </div>
 
-                                    <div v-if="fetchedModels.length">
+                                    <div v-if="fetchedModels.length && ! form.is_managed">
                                         <input
                                             type="text"
                                             v-model="modelSearch"
@@ -278,7 +308,7 @@
                                         @lang('admin::app.configuration.platform.fields.enter-key-to-fetch')
                                     </p>
 
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-2" v-if="! form.is_managed">
                                         <input
                                             type="text"
                                             v-model="customModel"
@@ -353,6 +383,7 @@
                             azure_deployment: 'gpt-4o',
                             azure_api_version: '2024-10-21',
                             is_default: false,
+                            is_managed: false,
                             status: true,
                         },
 
@@ -393,7 +424,7 @@
                         this.form = {
                             id: null, label: '', provider: '', api_url: '', api_key: '',
                             azure_deployment: 'gpt-4o', azure_api_version: '2024-10-21',
-                            is_default: false, status: true,
+                            is_default: false, is_managed: false, status: true,
                         };
                         this.selectedModels = [];
                         this.fetchedModels = [];
@@ -650,7 +681,7 @@
                                 api_url: data.api_url || '', api_key: data.api_key || '',
                                 azure_deployment: extras.deployment || 'gpt-4o',
                                 azure_api_version: extras.api_version || '2024-10-21',
-                                is_default: data.is_default, status: data.status,
+                                is_default: data.is_default, is_managed: data.is_managed, status: data.status,
                             };
                             this.selectedModels = data.models ? data.models.split(',').map(m => m.trim()).filter(m => m) : [];
                             this.fetchedModels = [];

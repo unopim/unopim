@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => '모델 가져오기',
             'fetching-models' => '가져오는 중',
             'set-default'     => '기본값으로 설정',
+            'managed-badge'   => '관리형',
+            'managed-note'    => '이 플랫폼은 사용자를 위해 제공 및 관리됩니다. 여기서는 상태와 기본 설정만 변경할 수 있습니다.',
+
+            'command' => [
+
+                'select-platform' => '어떤 플랫폼입니까?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '저장된 키를 유지하려면 비워 두세요.',
+
+                'key-unchanged' => '변경 없음',
+
+                'missing-argument' => '상호 작용 없이 실행할 때는 :argument 인수가 필요합니다.',
+
+                'delete-confirm' => '플랫폼 ":label"을(를) 삭제하시겠습니까?',
+
+                'deleted' => 'AI 플랫폼 ":label"이(가) 삭제되었습니다.',
+
+                'force-required' => '상호 작용 없이 삭제하려면 --force를 지정하세요.',
+
+                'default-set' => '이제 ":label"이(가) 기본 AI 플랫폼입니다.',
+
+                'no-platforms' => '구성된 AI 플랫폼이 없습니다.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => ':provider에서 모델을 가져오는 중...',
+                'models-manual'      => '모델 (쉼표로 구분)',
+                'models-additional'  => '추가 모델, 쉼표로 구분 (선택 사항)',
+                'models-required'    => '모델을 하나 이상 선택하세요.',
+                'models-unlisted'    => '다음 모델은 공급자가 반환하지 않아 입력한 그대로 저장됩니다: :models',
+                'managed'            => '관리형 플랫폼으로 만드시겠습니까? 저장된 키는 이 공급자, 엔드포인트, 모델 목록에 고정됩니다.',
+                'managed-extras'     => '관리형 플랫폼에는 공급자별 설정을 둘 수 없습니다. 비관리형으로 두거나 다른 공급자를 선택하세요.',
+                'field'              => '항목',
+                'value'              => '값',
+                'provider-default'   => '공급자 기본값',
+                'extras'             => '공급자 설정',
+                'confirm-save'       => '이 플랫폼을 저장하시겠습니까?',
+                'cancelled'          => '저장된 내용이 없습니다.',
+                'saved'              => 'AI 플랫폼 ":label"이(가) 저장되었습니다.',
+                'missing-option'     => '상호 작용 없이 실행할 때는 --:option 옵션이 필요합니다.',
+                'key-stdin-required' => '상호 작용 없이 실행할 때는 API 키를 표준 입력으로 명령에 전달하고 --key-stdin을 지정하세요.',
+                'invalid-provider'   => '알 수 없는 공급자 ":provider"입니다. 다음 중 하나를 사용하세요: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => '라벨',
                 'provider'   => '제공업체',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => ':host 엔드포인트가 HTTP :status 를 반환했습니다.',
                 'fetch-models-unreachable'           => ':host 엔드포인트에 연결할 수 없습니다.',
                 'invalid-model-names'                => '잘못된 모델 이름: :names. 모델 이름은 문자 또는 숫자로 시작해야 하며 문자, 숫자, 하이픈, 점, 콜론, 슬래시만 포함해야 합니다.',
+                'managed-connection-locked'          => '이 API 키는 자체 공급자와 엔드포인트에서만 사용할 수 있습니다.',
+                'managed-models-only'                => '이 API 키는 다음 모델만 사용할 수 있습니다: :allowed.',
+                'managed-cannot-delete'              => '관리형 플랫폼은 삭제할 수 없습니다.',
+                'managed-cli-only'                   => '이 플랫폼은 사용자를 위해 관리됩니다. 상태와 기본 설정만 변경할 수 있습니다.',
                 'default-requires-enabled'           => '비활성화된 플랫폼은 기본값으로 설정할 수 없습니다. 먼저 플랫폼을 활성화하세요.',
             ],
         ],

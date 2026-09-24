@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Ambil Model',
             'fetching-models' => 'Mengambil',
             'set-default'     => 'Atur sebagai Default',
+            'managed-badge'   => 'Terkelola',
+            'managed-note'    => 'Platform ini disediakan dan dikelola untuk Anda. Di sini hanya status dan pengaturan default-nya yang dapat diubah.',
+
+            'command' => [
+
+                'select-platform' => 'Platform mana?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Kosongkan untuk mempertahankan kunci yang tersimpan.',
+
+                'key-unchanged' => 'Tidak berubah',
+
+                'missing-argument' => 'Argumen :argument wajib diisi saat dijalankan tanpa interaksi.',
+
+                'delete-confirm' => 'Hapus platform ":label"?',
+
+                'deleted' => 'Platform AI ":label" telah dihapus.',
+
+                'force-required' => 'Gunakan --force untuk menghapus tanpa interaksi.',
+
+                'default-set' => '":label" sekarang menjadi platform AI bawaan.',
+
+                'no-platforms' => 'Belum ada platform AI yang dikonfigurasi.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Mengambil model dari :provider...',
+                'models-manual'      => 'Model (dipisahkan koma)',
+                'models-additional'  => 'Model tambahan, dipisahkan koma (opsional)',
+                'models-required'    => 'Pilih setidaknya satu model.',
+                'models-unlisted'    => 'Model berikut tidak dikembalikan oleh penyedia dan disimpan sesuai yang dimasukkan: :models',
+                'managed'            => 'Jadikan platform terkelola? Kunci tersimpannya tetap terkunci pada penyedia, endpoint, dan daftar model ini.',
+                'managed-extras'     => 'Platform terkelola tidak boleh memiliki pengaturan khusus penyedia. Biarkan tidak terkelola atau pilih penyedia lain.',
+                'field'              => 'Kolom',
+                'value'              => 'Nilai',
+                'provider-default'   => 'Bawaan penyedia',
+                'extras'             => 'Pengaturan penyedia',
+                'confirm-save'       => 'Simpan platform ini?',
+                'cancelled'          => 'Tidak ada yang disimpan.',
+                'saved'              => 'Platform AI ":label" telah disimpan.',
+                'missing-option'     => 'Opsi --:option wajib diisi saat dijalankan tanpa interaksi.',
+                'key-stdin-required' => 'Kirim kunci API ke perintah melalui input standar dan gunakan --key-stdin saat dijalankan tanpa interaksi.',
+                'invalid-provider'   => 'Penyedia ":provider" tidak dikenal. Gunakan salah satu dari: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Label',
                 'provider'   => 'Penyedia',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'Endpoint di :host mengembalikan HTTP :status.',
                 'fetch-models-unreachable'           => 'Endpoint di :host tidak dapat dijangkau.',
                 'invalid-model-names'                => 'Nama model tidak valid: :names. Nama model harus dimulai dengan huruf atau angka dan hanya berisi huruf, angka, tanda hubung, titik, titik dua, dan garis miring.',
+                'managed-connection-locked'          => 'Kunci API ini hanya dapat digunakan dengan penyedia dan endpoint miliknya sendiri.',
+                'managed-models-only'                => 'Kunci API ini hanya dapat menggunakan model berikut: :allowed.',
+                'managed-cannot-delete'              => 'Platform terkelola tidak dapat dihapus.',
+                'managed-cli-only'                   => 'Platform ini dikelola untuk Anda. Hanya status dan pengaturan default-nya yang dapat diubah.',
                 'default-requires-enabled'           => 'Platform yang nonaktif tidak dapat dijadikan default. Aktifkan platform terlebih dahulu.',
             ],
         ],

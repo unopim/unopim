@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Hämta modeller',
             'fetching-models' => 'Hämtar',
             'set-default'     => 'Ange som standard',
+            'managed-badge'   => 'Hanterad',
+            'managed-note'    => 'Den här plattformen tillhandahålls och hanteras åt dig. Här kan bara dess status och standardinställning ändras.',
+
+            'command' => [
+
+                'select-platform' => 'Vilken plattform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lämna tomt för att behålla den sparade nyckeln.',
+
+                'key-unchanged' => 'Oförändrad',
+
+                'missing-argument' => 'Argumentet :argument krävs när kommandot körs utan interaktion.',
+
+                'delete-confirm' => 'Ta bort plattformen ":label"?',
+
+                'deleted' => 'AI-plattformen ":label" har tagits bort.',
+
+                'force-required' => 'Ange --force för att ta bort utan interaktion.',
+
+                'default-set' => '":label" är nu standard-AI-plattformen.',
+
+                'no-platforms' => 'Inga AI-plattformar är konfigurerade.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Hämtar modeller från :provider...',
+                'models-manual'      => 'Modeller (kommaseparerade)',
+                'models-additional'  => 'Ytterligare modeller, kommaseparerade (valfritt)',
+                'models-required'    => 'Välj minst en modell.',
+                'models-unlisted'    => 'Leverantören returnerade inte dessa modeller, och de sparas som de angavs: :models',
+                'managed'            => 'Ska detta vara en hanterad plattform? Den sparade nyckeln förblir låst till den här leverantören, slutpunkten och modellistan.',
+                'managed-extras'     => 'En hanterad plattform kan inte ha leverantörsspecifika inställningar. Låt den vara ohanterad eller välj en annan leverantör.',
+                'field'              => 'Fält',
+                'value'              => 'Värde',
+                'provider-default'   => 'Leverantörens standard',
+                'extras'             => 'Leverantörsinställningar',
+                'confirm-save'       => 'Spara den här plattformen?',
+                'cancelled'          => 'Inget sparades.',
+                'saved'              => 'AI-plattformen ":label" har sparats.',
+                'missing-option'     => 'Alternativet --:option krävs när kommandot körs utan interaktion.',
+                'key-stdin-required' => 'Skicka API-nyckeln till kommandot via standard in och ange --key-stdin när du kör utan interaktion.',
+                'invalid-provider'   => 'Okänd leverantör ":provider". Använd någon av: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etikett',
                 'provider'   => 'Leverantör',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'Slutpunkten på :host returnerade HTTP :status.',
                 'fetch-models-unreachable'           => 'Slutpunkten på :host kunde inte nås.',
                 'invalid-model-names'                => 'Ogiltiga modellnamn: :names. Modellnamn måste börja med en bokstav eller siffra och får bara innehålla bokstäver, siffror, bindestreck, punkter, kolon och snedstreck.',
+                'managed-connection-locked'          => 'Den här API-nyckeln kan bara användas med sin egen leverantör och sin egen slutpunkt.',
+                'managed-models-only'                => 'Den här API-nyckeln kan bara använda dessa modeller: :allowed.',
+                'managed-cannot-delete'              => 'Den hanterade plattformen kan inte tas bort.',
+                'managed-cli-only'                   => 'Den här plattformen hanteras åt dig. Bara dess status och standardinställning kan ändras.',
                 'default-requires-enabled'           => 'En inaktiverad plattform kan inte markeras som standard. Aktivera plattformen först.',
             ],
         ],

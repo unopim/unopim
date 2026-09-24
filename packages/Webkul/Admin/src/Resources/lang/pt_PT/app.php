@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Obter modelos',
             'fetching-models' => 'A obter',
             'set-default'     => 'Definir como predefinido',
+            'managed-badge'   => 'Gerida',
+            'managed-note'    => 'Esta plataforma é fornecida e gerida para si. Aqui só é possível alterar o estado e a definição predefinida.',
+
+            'command' => [
+
+                'select-platform' => 'Que plataforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Deixe em branco para manter a chave guardada.',
+
+                'key-unchanged' => 'Inalterada',
+
+                'missing-argument' => 'O argumento :argument é obrigatório ao executar sem interação.',
+
+                'delete-confirm' => 'Eliminar a plataforma ":label"?',
+
+                'deleted' => 'A plataforma de IA ":label" foi eliminada.',
+
+                'force-required' => 'Utilize --force para eliminar sem interação.',
+
+                'default-set' => '":label" é agora a plataforma de IA predefinida.',
+
+                'no-platforms' => 'Não existem plataformas de IA configuradas.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'A obter modelos de :provider...',
+                'models-manual'      => 'Modelos (separados por vírgulas)',
+                'models-additional'  => 'Modelos adicionais, separados por vírgulas (opcional)',
+                'models-required'    => 'Selecione pelo menos um modelo.',
+                'models-unlisted'    => 'O fornecedor não devolveu estes modelos, que serão guardados tal como foram introduzidos: :models',
+                'managed'            => 'Tornar esta uma plataforma gerida? A chave guardada ficará restrita a este fornecedor, endpoint e lista de modelos.',
+                'managed-extras'     => 'Uma plataforma gerida não pode ter definições específicas do fornecedor. Deixe-a não gerida ou escolha outro fornecedor.',
+                'field'              => 'Campo',
+                'value'              => 'Valor',
+                'provider-default'   => 'Predefinição do fornecedor',
+                'extras'             => 'Definições do fornecedor',
+                'confirm-save'       => 'Guardar esta plataforma?',
+                'cancelled'          => 'Nada foi guardado.',
+                'saved'              => 'A plataforma de IA ":label" foi guardada.',
+                'missing-option'     => 'A opção --:option é obrigatória ao executar sem interação.',
+                'key-stdin-required' => 'Ao executar sem interação, envie a chave de API ao comando pela entrada padrão e use --key-stdin.',
+                'invalid-provider'   => 'Fornecedor desconhecido ":provider". Utilize um destes: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Rótulo',
                 'provider'   => 'Fornecedor',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'O ponto final em :host devolveu HTTP :status.',
                 'fetch-models-unreachable'           => 'Não foi possível alcançar o ponto final em :host.',
                 'invalid-model-names'                => 'Nomes de modelo inválidos: :names. Os nomes de modelo devem começar com uma letra ou número e conter apenas letras, números, hífens, pontos, dois pontos e barras.',
+                'managed-connection-locked'          => 'Esta chave de API só pode ser utilizada com o próprio fornecedor e endpoint.',
+                'managed-models-only'                => 'Esta chave de API só pode utilizar estes modelos: :allowed.',
+                'managed-cannot-delete'              => 'A plataforma gerida não pode ser eliminada.',
+                'managed-cli-only'                   => 'Esta plataforma é gerida para si. Só é possível alterar o estado e a definição predefinida.',
                 'default-requires-enabled'           => 'Uma plataforma desativada não pode ser definida como predefinida. Ative a plataforma primeiro.',
             ],
         ],

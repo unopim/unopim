@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Fetch Models',
             'fetching-models' => 'Fetching',
             'set-default'     => 'Set as Default',
+            'managed-badge'   => 'Managed',
+            'managed-note'    => 'This platform is provided and managed for you. Only its status and default setting can be changed here.',
+
+            'command' => [
+
+                'select-platform' => 'Which platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Leave empty to keep the stored key.',
+
+                'key-unchanged' => 'Unchanged',
+
+                'missing-argument' => 'The :argument argument is required when running without interaction.',
+
+                'delete-confirm' => 'Delete the platform ":label"?',
+
+                'deleted' => 'The AI platform ":label" is deleted.',
+
+                'force-required' => 'Pass --force to delete without interaction.',
+
+                'default-set' => '":label" is now the default AI platform.',
+
+                'no-platforms' => 'No AI platforms are configured.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Fetching models from :provider...',
+                'models-manual'      => 'Models (comma-separated)',
+                'models-additional'  => 'Additional models, comma-separated (optional)',
+                'models-required'    => 'Select at least one model.',
+                'models-unlisted'    => 'These models were not returned by the provider and are saved as entered: :models',
+                'managed'            => 'Make this a managed platform? Its stored key stays locked to this provider, endpoint and model list.',
+                'managed-extras'     => 'A managed platform cannot carry provider-specific settings. Leave it unmanaged or choose another provider.',
+                'field'              => 'Field',
+                'value'              => 'Value',
+                'provider-default'   => 'Provider default',
+                'extras'             => 'Provider settings',
+                'confirm-save'       => 'Save this platform?',
+                'cancelled'          => 'Nothing was saved.',
+                'saved'              => 'The AI platform ":label" is saved.',
+                'missing-option'     => 'The --:option option is required when running without interaction.',
+                'key-stdin-required' => 'Pipe the API key to the command and pass --key-stdin when running without interaction.',
+                'invalid-provider'   => 'Unknown provider ":provider". Use one of: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Label',
                 'provider'   => 'Provider',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'The endpoint at :host returned HTTP :status.',
                 'fetch-models-unreachable'           => 'The endpoint at :host could not be reached.',
                 'invalid-model-names'                => 'Invalid model names: :names. Model names must start with a letter or number and contain only letters, numbers, hyphens, dots, colons, and slashes.',
+                'managed-connection-locked'          => 'This API key can only be used with its own provider and endpoint.',
+                'managed-models-only'                => 'This API key can only use these models: :allowed.',
+                'managed-cannot-delete'              => 'The managed platform cannot be deleted.',
+                'managed-cli-only'                   => 'This platform is managed for you. Only its status and default setting can be changed.',
                 'default-requires-enabled'           => 'A disabled platform cannot be marked as default. Please enable the platform first.',
             ],
         ],

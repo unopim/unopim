@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Modelle abrufen',
             'fetching-models' => 'Abruf läuft',
             'set-default'     => 'Als Standard festlegen',
+            'managed-badge'   => 'Verwaltet',
+            'managed-note'    => 'Diese Plattform wird für Sie bereitgestellt und verwaltet. Hier können nur ihr Status und die Standardeinstellung geändert werden.',
+
+            'command' => [
+
+                'select-platform' => 'Welche Plattform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Leer lassen, um den gespeicherten Schlüssel zu behalten.',
+
+                'key-unchanged' => 'Unverändert',
+
+                'missing-argument' => 'Das Argument :argument ist bei einer Ausführung ohne Interaktion erforderlich.',
+
+                'delete-confirm' => 'Die Plattform „:label“ löschen?',
+
+                'deleted' => 'Die KI-Plattform „:label“ wurde gelöscht.',
+
+                'force-required' => 'Übergeben Sie --force, um ohne Interaktion zu löschen.',
+
+                'default-set' => '„:label“ ist jetzt die Standard-KI-Plattform.',
+
+                'no-platforms' => 'Es sind keine KI-Plattformen eingerichtet.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Modelle werden von :provider abgerufen...',
+                'models-manual'      => 'Modelle (durch Kommas getrennt)',
+                'models-additional'  => 'Weitere Modelle, durch Kommas getrennt (optional)',
+                'models-required'    => 'Wählen Sie mindestens ein Modell aus.',
+                'models-unlisted'    => 'Diese Modelle wurden vom Anbieter nicht zurückgegeben und werden wie eingegeben gespeichert: :models',
+                'managed'            => 'Soll dies eine verwaltete Plattform sein? Ihr gespeicherter Schlüssel bleibt an diesen Anbieter, diesen Endpunkt und diese Modellliste gebunden.',
+                'managed-extras'     => 'Eine verwaltete Plattform kann keine anbieterspezifischen Einstellungen haben. Lassen Sie sie unverwaltet oder wählen Sie einen anderen Anbieter.',
+                'field'              => 'Feld',
+                'value'              => 'Wert',
+                'provider-default'   => 'Standard des Anbieters',
+                'extras'             => 'Anbietereinstellungen',
+                'confirm-save'       => 'Diese Plattform speichern?',
+                'cancelled'          => 'Es wurde nichts gespeichert.',
+                'saved'              => 'Die KI-Plattform „:label“ wurde gespeichert.',
+                'missing-option'     => 'Die Option --:option ist bei einer Ausführung ohne Interaktion erforderlich.',
+                'key-stdin-required' => 'Übergeben Sie den API-Schlüssel über die Standardeingabe und verwenden Sie --key-stdin, wenn der Befehl ohne Interaktion läuft.',
+                'invalid-provider'   => 'Unbekannter Anbieter „:provider“. Verwenden Sie einen der folgenden: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Bezeichnung',
                 'provider'   => 'Anbieter',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'Der Endpunkt unter :host hat HTTP :status zurückgegeben.',
                 'fetch-models-unreachable'           => 'Der Endpunkt unter :host war nicht erreichbar.',
                 'invalid-model-names'                => 'Ungültige Modellnamen: :names. Modellnamen müssen mit einem Buchstaben oder einer Zahl beginnen und dürfen nur Buchstaben, Zahlen, Bindestriche, Punkte, Doppelpunkte und Schrägstriche enthalten.',
+                'managed-connection-locked'          => 'Dieser API-Schlüssel kann nur mit seinem eigenen Anbieter und Endpunkt verwendet werden.',
+                'managed-models-only'                => 'Dieser API-Schlüssel kann nur diese Modelle verwenden: :allowed.',
+                'managed-cannot-delete'              => 'Die verwaltete Plattform kann nicht gelöscht werden.',
+                'managed-cli-only'                   => 'Diese Plattform wird für Sie verwaltet. Nur ihr Status und die Standardeinstellung können geändert werden.',
                 'default-requires-enabled'           => 'Eine deaktivierte Plattform kann nicht als Standard festgelegt werden. Bitte aktivieren Sie sie zuerst.',
             ],
         ],

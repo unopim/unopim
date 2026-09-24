@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Dohvati modele',
             'fetching-models' => 'Dohvaćanje',
             'set-default'     => 'Postavi kao zadano',
+            'managed-badge'   => 'Upravljana',
+            'managed-note'    => 'Ova se platforma pruža i njome se upravlja za vas. Ovdje se mogu promijeniti samo njezin status i zadana postavka.',
+
+            'command' => [
+
+                'select-platform' => 'Koja platforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Ostavite prazno da biste zadržali spremljeni ključ.',
+
+                'key-unchanged' => 'Nepromijenjeno',
+
+                'missing-argument' => 'Argument :argument obavezan je pri pokretanju bez interakcije.',
+
+                'delete-confirm' => 'Izbrisati platformu ":label"?',
+
+                'deleted' => 'AI platforma ":label" je izbrisana.',
+
+                'force-required' => 'Dodajte --force za brisanje bez interakcije.',
+
+                'default-set' => '":label" je sada zadana AI platforma.',
+
+                'no-platforms' => 'Nije konfigurirana nijedna AI platforma.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Dohvaćanje modela s :provider...',
+                'models-manual'      => 'Modeli (odvojeni zarezima)',
+                'models-additional'  => 'Dodatni modeli, odvojeni zarezima (neobavezno)',
+                'models-required'    => 'Odaberite barem jedan model.',
+                'models-unlisted'    => 'Pružatelj nije vratio ove modele pa će biti spremljeni kako su uneseni: :models',
+                'managed'            => 'Želite li da ovo bude upravljana platforma? Njezin spremljeni ključ ostaje vezan uz ovog pružatelja, krajnju točku i popis modela.',
+                'managed-extras'     => 'Upravljana platforma ne može imati postavke specifične za pružatelja. Ostavite je neupravljanom ili odaberite drugog pružatelja.',
+                'field'              => 'Polje',
+                'value'              => 'Vrijednost',
+                'provider-default'   => 'Zadano za pružatelja',
+                'extras'             => 'Postavke pružatelja',
+                'confirm-save'       => 'Spremiti ovu platformu?',
+                'cancelled'          => 'Ništa nije spremljeno.',
+                'saved'              => 'AI platforma ":label" je spremljena.',
+                'missing-option'     => 'Opcija --:option obavezna je pri pokretanju bez interakcije.',
+                'key-stdin-required' => 'Pri pokretanju bez interakcije proslijedite API ključ naredbi putem standardnog ulaza i dodajte --key-stdin.',
+                'invalid-provider'   => 'Nepoznat pružatelj ":provider". Upotrijebite jednog od: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Oznaka',
                 'provider'   => 'Pružatelj',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'Krajnja točka na :host vratila je HTTP :status.',
                 'fetch-models-unreachable'           => 'Krajnja točka na :host nije dostupna.',
                 'invalid-model-names'                => 'Nevažeći nazivi modela: :names. Nazivi modela moraju započinjati slovom ili brojem i sadržavati samo slova, brojeve, crtice, točke, dvotočke i kose crte.',
+                'managed-connection-locked'          => 'Ovaj API ključ može se koristiti samo sa svojim pružateljem usluge i krajnjom točkom.',
+                'managed-models-only'                => 'Ovaj API ključ može koristiti samo ove modele: :allowed.',
+                'managed-cannot-delete'              => 'Upravljana platforma ne može se izbrisati.',
+                'managed-cli-only'                   => 'Ovom se platformom upravlja za vas. Mogu se promijeniti samo njezin status i zadana postavka.',
                 'default-requires-enabled'           => 'Onemogućena platforma ne može biti označena kao zadana. Najprije omogućite platformu.',
             ],
         ],

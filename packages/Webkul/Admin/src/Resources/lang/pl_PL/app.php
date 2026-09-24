@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Pobierz modele',
             'fetching-models' => 'Pobieranie',
             'set-default'     => 'Ustaw jako domyślną',
+            'managed-badge'   => 'Zarządzana',
+            'managed-note'    => 'Ta platforma jest udostępniana i zarządzana za Ciebie. Tutaj można zmienić tylko jej status i ustawienie domyślne.',
+
+            'command' => [
+
+                'select-platform' => 'Która platforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Pozostaw puste, aby zachować zapisany klucz.',
+
+                'key-unchanged' => 'Bez zmian',
+
+                'missing-argument' => 'Argument :argument jest wymagany przy uruchamianiu bez interakcji.',
+
+                'delete-confirm' => 'Usunąć platformę „:label”?',
+
+                'deleted' => 'Platforma AI „:label” została usunięta.',
+
+                'force-required' => 'Użyj --force, aby usunąć bez interakcji.',
+
+                'default-set' => '„:label” jest teraz domyślną platformą AI.',
+
+                'no-platforms' => 'Nie skonfigurowano żadnej platformy AI.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Pobieranie modeli z :provider...',
+                'models-manual'      => 'Modele (oddzielone przecinkami)',
+                'models-additional'  => 'Dodatkowe modele, oddzielone przecinkami (opcjonalnie)',
+                'models-required'    => 'Wybierz co najmniej jeden model.',
+                'models-unlisted'    => 'Dostawca nie zwrócił tych modeli, więc zostaną zapisane w podanej postaci: :models',
+                'managed'            => 'Czy ma to być platforma zarządzana? Jej zapisany klucz pozostanie przypisany do tego dostawcy, punktu końcowego i listy modeli.',
+                'managed-extras'     => 'Platforma zarządzana nie może mieć ustawień specyficznych dla dostawcy. Pozostaw ją niezarządzaną lub wybierz innego dostawcę.',
+                'field'              => 'Pole',
+                'value'              => 'Wartość',
+                'provider-default'   => 'Domyślny dostawcy',
+                'extras'             => 'Ustawienia dostawcy',
+                'confirm-save'       => 'Zapisać tę platformę?',
+                'cancelled'          => 'Nic nie zostało zapisane.',
+                'saved'              => 'Platforma AI „:label” została zapisana.',
+                'missing-option'     => 'Opcja --:option jest wymagana przy uruchamianiu bez interakcji.',
+                'key-stdin-required' => 'Przy uruchamianiu bez interakcji przekaż klucz API do polecenia przez standardowe wejście i użyj --key-stdin.',
+                'invalid-provider'   => 'Nieznany dostawca „:provider”. Użyj jednego z: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etykieta',
                 'provider'   => 'Dostawca',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'Punkt końcowy pod adresem :host zwrócił HTTP :status.',
                 'fetch-models-unreachable'           => 'Nie można połączyć się z punktem końcowym pod adresem :host.',
                 'invalid-model-names'                => 'Nieprawidłowe nazwy modeli: :names. Nazwy modeli muszą zaczynać się od litery lub cyfry i zawierać tylko litery, cyfry, myślniki, kropki, dwukropki i ukośniki.',
+                'managed-connection-locked'          => 'Tego klucza API można używać tylko z jego własnym dostawcą i punktem końcowym.',
+                'managed-models-only'                => 'Ten klucz API może używać tylko tych modeli: :allowed.',
+                'managed-cannot-delete'              => 'Zarządzanej platformy nie można usunąć.',
+                'managed-cli-only'                   => 'Ta platforma jest zarządzana za Ciebie. Można zmienić tylko jej status i ustawienie domyślne.',
                 'default-requires-enabled'           => 'Wyłączona platforma nie może być ustawiona jako domyślna. Najpierw ją włącz.',
             ],
         ],

@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => '获取模型',
             'fetching-models' => '获取中',
             'set-default'     => '设为默认',
+            'managed-badge'   => '托管',
+            'managed-note'    => '此平台由系统为您提供和管理。此处只能更改其状态和默认设置。',
+
+            'command' => [
+
+                'select-platform' => '哪个平台？',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '留空则保留已保存的密钥。',
+
+                'key-unchanged' => '未更改',
+
+                'missing-argument' => '以非交互方式运行时必须提供参数 :argument。',
+
+                'delete-confirm' => '要删除平台“:label”吗？',
+
+                'deleted' => 'AI 平台“:label”已删除。',
+
+                'force-required' => '以非交互方式删除时请使用 --force。',
+
+                'default-set' => '“:label”现在是默认 AI 平台。',
+
+                'no-platforms' => '尚未配置任何 AI 平台。',
+
+                'id'                 => 'ID',
+                'fetching-models'    => '正在从 :provider 获取模型...',
+                'models-manual'      => '模型（以逗号分隔）',
+                'models-additional'  => '其他模型，以逗号分隔（可选）',
+                'models-required'    => '请至少选择一个模型。',
+                'models-unlisted'    => '提供商未返回以下模型，将按输入内容保存：:models',
+                'managed'            => '是否设为托管平台？其已保存的密钥将锁定在此提供商、端点和模型列表上。',
+                'managed-extras'     => '托管平台不能包含提供商专属设置。请保持非托管，或选择其他提供商。',
+                'field'              => '字段',
+                'value'              => '值',
+                'provider-default'   => '提供商默认值',
+                'extras'             => '提供商设置',
+                'confirm-save'       => '是否保存此平台？',
+                'cancelled'          => '未保存任何内容。',
+                'saved'              => 'AI 平台“:label”已保存。',
+                'missing-option'     => '以非交互方式运行时必须提供 --:option 选项。',
+                'key-stdin-required' => '以非交互方式运行时，请通过标准输入将 API 密钥传给命令，并使用 --key-stdin。',
+                'invalid-provider'   => '未知的提供商“:provider”。请使用以下之一：:providers。',
+            ],
+
             'datagrid'        => [
                 'label'      => '标签',
                 'provider'   => '提供商',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => ':host 的接口返回了 HTTP :status。',
                 'fetch-models-unreachable'           => '无法连接到 :host 的接口。',
                 'invalid-model-names'                => '无效的模型名称：:names。模型名称必须以字母或数字开头，且仅包含字母、数字、连字符、点、冒号和斜杠。',
+                'managed-connection-locked'          => '此 API 密钥只能用于其自身的提供商和端点。',
+                'managed-models-only'                => '此 API 密钥只能使用以下模型：:allowed。',
+                'managed-cannot-delete'              => '托管平台无法删除。',
+                'managed-cli-only'                   => '此平台由系统为您管理。只能更改其状态和默认设置。',
                 'default-requires-enabled'           => '不能将已禁用的平台设为默认。请先启用该平台。',
             ],
         ],

@@ -14,6 +14,7 @@ use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ManagedPlatform;
 use Webkul\MagicAI\Support\ModelRecommender;
 
 /**
@@ -167,8 +168,10 @@ class ChatController extends Controller
         // would select whichever model sorted first, so providers like OpenAI
         // that expose image-only entries (e.g. chatgpt-image-latest, dall-e-*)
         // could land on a model the text agent cannot call.
-        $model = (string) $request->input('model', '')
-            ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o');
+        $model = (string) resolve(ManagedPlatform::class)->resolveModel(
+            $platform,
+            (string) $request->input('model', '') ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o'),
+        );
 
         // Store uploaded images — persist across conversation turns via session.
         // The image is uploaded in the first message, but the user may confirm

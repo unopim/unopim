@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Hent modeller',
             'fetching-models' => 'Henter',
             'set-default'     => 'Angiv som standard',
+            'managed-badge'   => 'Administreret',
+            'managed-note'    => 'Denne platform leveres og administreres for dig. Her kan du kun ændre dens status og standardindstilling.',
+
+            'command' => [
+
+                'select-platform' => 'Hvilken platform?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lad feltet være tomt for at beholde den gemte nøgle.',
+
+                'key-unchanged' => 'Uændret',
+
+                'missing-argument' => 'Argumentet :argument er påkrævet, når kommandoen køres uden interaktion.',
+
+                'delete-confirm' => 'Vil du slette platformen ":label"?',
+
+                'deleted' => 'AI-platformen ":label" er slettet.',
+
+                'force-required' => 'Angiv --force for at slette uden interaktion.',
+
+                'default-set' => '":label" er nu standard-AI-platformen.',
+
+                'no-platforms' => 'Der er ikke konfigureret nogen AI-platforme.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Henter modeller fra :provider...',
+                'models-manual'      => 'Modeller (kommasepareret)',
+                'models-additional'  => 'Yderligere modeller, kommasepareret (valgfrit)',
+                'models-required'    => 'Vælg mindst én model.',
+                'models-unlisted'    => 'Udbyderen returnerede ikke disse modeller, og de gemmes som indtastet: :models',
+                'managed'            => 'Skal dette være en administreret platform? Den gemte nøgle forbliver låst til denne udbyder, dette endpoint og denne modelliste.',
+                'managed-extras'     => 'En administreret platform kan ikke have udbyderspecifikke indstillinger. Lad den være uadministreret, eller vælg en anden udbyder.',
+                'field'              => 'Felt',
+                'value'              => 'Værdi',
+                'provider-default'   => 'Udbyderens standard',
+                'extras'             => 'Udbyderindstillinger',
+                'confirm-save'       => 'Vil du gemme denne platform?',
+                'cancelled'          => 'Intet blev gemt.',
+                'saved'              => 'AI-platformen ":label" er gemt.',
+                'missing-option'     => 'Indstillingen --:option er påkrævet, når kommandoen køres uden interaktion.',
+                'key-stdin-required' => 'Send API-nøglen til kommandoen via standardinput, og angiv --key-stdin, når der køres uden interaktion.',
+                'invalid-provider'   => 'Ukendt udbyder ":provider". Brug en af: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etiket',
                 'provider'   => 'Udbyder',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'Endpointet på :host returnerede HTTP :status.',
                 'fetch-models-unreachable'           => 'Endpointet på :host kunne ikke nås.',
                 'invalid-model-names'                => 'Ugyldige modelnavne: :names. Modelnavne skal starte med et bogstav eller tal og kun indeholde bogstaver, tal, bindestreger, punktummer, koloner og skråstreger.',
+                'managed-connection-locked'          => 'Denne API-nøgle kan kun bruges med sin egen udbyder og sit eget endpoint.',
+                'managed-models-only'                => 'Denne API-nøgle kan kun bruge disse modeller: :allowed.',
+                'managed-cannot-delete'              => 'Den administrerede platform kan ikke slettes.',
+                'managed-cli-only'                   => 'Denne platform administreres for dig. Kun dens status og standardindstilling kan ændres.',
                 'default-requires-enabled'           => 'En deaktiveret platform kan ikke markeres som standard. Aktivér platformen først.',
             ],
         ],

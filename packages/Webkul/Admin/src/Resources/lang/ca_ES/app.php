@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Obtenir models',
             'fetching-models' => 'Obtenint',
             'set-default'     => 'Estableix com a predeterminat',
+            'managed-badge'   => 'Gestionada',
+            'managed-note'    => 'Aquesta plataforma es proporciona i es gestiona per a vós. Aquí només en podeu canviar l\'estat i si és la predeterminada.',
+
+            'command' => [
+
+                'select-platform' => 'Quina plataforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Deixeu-ho buit per conservar la clau desada.',
+
+                'key-unchanged' => 'Sense canvis',
+
+                'missing-argument' => 'L\'argument :argument és obligatori quan s\'executa sense interacció.',
+
+                'delete-confirm' => 'Voleu eliminar la plataforma ":label"?',
+
+                'deleted' => 'S\'ha eliminat la plataforma d\'IA ":label".',
+
+                'force-required' => 'Afegiu --force per eliminar sense interacció.',
+
+                'default-set' => '":label" és ara la plataforma d\'IA per defecte.',
+
+                'no-platforms' => 'No hi ha cap plataforma d\'IA configurada.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'S\'estan obtenint els models de :provider...',
+                'models-manual'      => 'Models (separats per comes)',
+                'models-additional'  => 'Models addicionals, separats per comes (opcional)',
+                'models-required'    => 'Seleccioneu almenys un model.',
+                'models-unlisted'    => 'El proveïdor no ha retornat aquests models i es desaran tal com s\'han introduït: :models',
+                'managed'            => 'Voleu que sigui una plataforma gestionada? La clau desada quedarà limitada a aquest proveïdor, punt d\'accés i llista de models.',
+                'managed-extras'     => 'Una plataforma gestionada no pot tenir paràmetres específics del proveïdor. Deixeu-la sense gestionar o trieu un altre proveïdor.',
+                'field'              => 'Camp',
+                'value'              => 'Valor',
+                'provider-default'   => 'Valor per defecte del proveïdor',
+                'extras'             => 'Paràmetres del proveïdor',
+                'confirm-save'       => 'Voleu desar aquesta plataforma?',
+                'cancelled'          => 'No s\'ha desat res.',
+                'saved'              => 'S\'ha desat la plataforma d\'IA ":label".',
+                'missing-option'     => 'L\'opció --:option és obligatòria quan s\'executa sense interacció.',
+                'key-stdin-required' => 'Passeu la clau d\'API a l\'ordre per l\'entrada estàndard i afegiu --key-stdin quan s\'executa sense interacció.',
+                'invalid-provider'   => 'Proveïdor desconegut ":provider". Utilitzeu-ne un d\'aquests: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etiqueta',
                 'provider'   => 'Proveïdor',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'L\'extrem a :host ha retornat HTTP :status.',
                 'fetch-models-unreachable'           => 'No s\'ha pogut connectar amb l\'extrem a :host.',
                 'invalid-model-names'                => 'Noms de model no vàlids: :names. Els noms de model han de començar amb una lletra o un número i contenir només lletres, números, guions, punts, dos punts i barres.',
+                'managed-connection-locked'          => 'Aquesta clau d\'API només es pot fer servir amb el seu propi proveïdor i punt d\'accés.',
+                'managed-models-only'                => 'Aquesta clau d\'API només pot fer servir aquests models: :allowed.',
+                'managed-cannot-delete'              => 'La plataforma gestionada no es pot eliminar.',
+                'managed-cli-only'                   => 'Aquesta plataforma es gestiona per a vós. Només se\'n pot canviar l\'estat i si és la predeterminada.',
                 'default-requires-enabled'           => 'Una plataforma desactivada no es pot marcar com a per defecte. Activa-la primer.',
             ],
         ],

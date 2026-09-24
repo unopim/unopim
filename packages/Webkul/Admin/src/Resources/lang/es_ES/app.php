@@ -2392,6 +2392,51 @@ return [
             'fetch-models'    => 'Obtener modelos',
             'fetching-models' => 'Obteniendo',
             'set-default'     => 'Establecer como predeterminado',
+            'managed-badge'   => 'Gestionada',
+            'managed-note'    => 'Esta plataforma se proporciona y gestiona por usted. Aquí solo se puede cambiar su estado y si es la predeterminada.',
+
+            'command' => [
+
+                'select-platform' => '¿Qué plataforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Déjelo vacío para conservar la clave guardada.',
+
+                'key-unchanged' => 'Sin cambios',
+
+                'missing-argument' => 'El argumento :argument es obligatorio al ejecutar sin interacción.',
+
+                'delete-confirm' => '¿Eliminar la plataforma «:label»?',
+
+                'deleted' => 'Se ha eliminado la plataforma de IA «:label».',
+
+                'force-required' => 'Use --force para eliminar sin interacción.',
+
+                'default-set' => '«:label» es ahora la plataforma de IA predeterminada.',
+
+                'no-platforms' => 'No hay plataformas de IA configuradas.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Obteniendo modelos de :provider...',
+                'models-manual'      => 'Modelos (separados por comas)',
+                'models-additional'  => 'Modelos adicionales, separados por comas (opcional)',
+                'models-required'    => 'Seleccione al menos un modelo.',
+                'models-unlisted'    => 'El proveedor no devolvió estos modelos y se guardarán tal como se introdujeron: :models',
+                'managed'            => '¿Quiere que sea una plataforma gestionada? Su clave guardada quedará limitada a este proveedor, punto de acceso y lista de modelos.',
+                'managed-extras'     => 'Una plataforma gestionada no puede tener ajustes específicos del proveedor. Déjela sin gestionar o elija otro proveedor.',
+                'field'              => 'Campo',
+                'value'              => 'Valor',
+                'provider-default'   => 'Predeterminado del proveedor',
+                'extras'             => 'Ajustes del proveedor',
+                'confirm-save'       => '¿Guardar esta plataforma?',
+                'cancelled'          => 'No se ha guardado nada.',
+                'saved'              => 'Se ha guardado la plataforma de IA «:label».',
+                'missing-option'     => 'La opción --:option es obligatoria al ejecutar sin interacción.',
+                'key-stdin-required' => 'Pase la clave de API al comando por la entrada estándar y use --key-stdin al ejecutar sin interacción.',
+                'invalid-provider'   => 'Proveedor desconocido «:provider». Use uno de estos: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etiqueta',
                 'provider'   => 'Proveedor',
@@ -2452,6 +2497,10 @@ return [
                 'fetch-models-http-error'            => 'El endpoint de :host devolvió HTTP :status.',
                 'fetch-models-unreachable'           => 'No se pudo acceder al endpoint de :host.',
                 'invalid-model-names'                => 'Nombres de modelo no válidos: :names. Los nombres de modelo deben comenzar con una letra o número y contener solo letras, números, guiones, puntos, dos puntos y barras.',
+                'managed-connection-locked'          => 'Esta clave de API solo se puede usar con su propio proveedor y endpoint.',
+                'managed-models-only'                => 'Esta clave de API solo puede usar estos modelos: :allowed.',
+                'managed-cannot-delete'              => 'La plataforma gestionada no se puede eliminar.',
+                'managed-cli-only'                   => 'Esta plataforma se gestiona por usted. Solo se puede cambiar su estado y si es la predeterminada.',
                 'default-requires-enabled'           => 'Una plataforma desactivada no se puede marcar como predeterminada. Actívala primero.',
             ],
         ],

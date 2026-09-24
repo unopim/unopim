@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Preluare modele',
             'fetching-models' => 'Se preia',
             'set-default'     => 'Setează ca implicit',
+            'managed-badge'   => 'Gestionată',
+            'managed-note'    => 'Această platformă este furnizată și gestionată pentru dvs. Aici se pot modifica doar starea și setarea implicită.',
+
+            'command' => [
+
+                'select-platform' => 'Ce platformă?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Lăsați gol pentru a păstra cheia salvată.',
+
+                'key-unchanged' => 'Neschimbată',
+
+                'missing-argument' => 'Argumentul :argument este obligatoriu la rularea fără interacțiune.',
+
+                'delete-confirm' => 'Ștergeți platforma „:label”?',
+
+                'deleted' => 'Platforma AI „:label” a fost ștearsă.',
+
+                'force-required' => 'Folosiți --force pentru a șterge fără interacțiune.',
+
+                'default-set' => '„:label” este acum platforma AI implicită.',
+
+                'no-platforms' => 'Nu este configurată nicio platformă AI.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Se preiau modelele de la :provider...',
+                'models-manual'      => 'Modele (separate prin virgulă)',
+                'models-additional'  => 'Modele suplimentare, separate prin virgulă (opțional)',
+                'models-required'    => 'Selectați cel puțin un model.',
+                'models-unlisted'    => 'Furnizorul nu a returnat aceste modele, care vor fi salvate așa cum au fost introduse: :models',
+                'managed'            => 'Faceți din aceasta o platformă gestionată? Cheia salvată rămâne legată de acest furnizor, endpoint și listă de modele.',
+                'managed-extras'     => 'O platformă gestionată nu poate avea setări specifice furnizorului. Lăsați-o negestionată sau alegeți alt furnizor.',
+                'field'              => 'Câmp',
+                'value'              => 'Valoare',
+                'provider-default'   => 'Implicit al furnizorului',
+                'extras'             => 'Setări furnizor',
+                'confirm-save'       => 'Salvați această platformă?',
+                'cancelled'          => 'Nu s-a salvat nimic.',
+                'saved'              => 'Platforma AI „:label” a fost salvată.',
+                'missing-option'     => 'Opțiunea --:option este obligatorie la rularea fără interacțiune.',
+                'key-stdin-required' => 'La rularea fără interacțiune, transmiteți cheia API comenzii prin intrarea standard și folosiți --key-stdin.',
+                'invalid-provider'   => 'Furnizor necunoscut „:provider”. Folosiți unul dintre: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Etichetă',
                 'provider'   => 'Furnizor',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'Punctul final de la :host a returnat HTTP :status.',
                 'fetch-models-unreachable'           => 'Punctul final de la :host nu a putut fi accesat.',
                 'invalid-model-names'                => 'Nume de model invalide: :names. Numele de model trebuie să înceapă cu o literă sau un număr și să conțină doar litere, cifre, cratime, puncte, două puncte și bare oblice.',
+                'managed-connection-locked'          => 'Această cheie API poate fi folosită doar cu propriul furnizor și propriul endpoint.',
+                'managed-models-only'                => 'Această cheie API poate folosi doar aceste modele: :allowed.',
+                'managed-cannot-delete'              => 'Platforma gestionată nu poate fi ștearsă.',
+                'managed-cli-only'                   => 'Această platformă este gestionată pentru dvs. Se pot modifica doar starea și setarea implicită.',
                 'default-requires-enabled'           => 'O platformă dezactivată nu poate fi setată ca implicită. Activați mai întâi platforma.',
             ],
         ],

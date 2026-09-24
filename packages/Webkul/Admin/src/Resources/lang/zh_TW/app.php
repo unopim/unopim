@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => '取得模型',
             'fetching-models' => '取得中',
             'set-default'     => '設為預設',
+            'managed-badge'   => '受管理',
+            'managed-note'    => '此平台由系統為您提供並管理。此處只能變更其狀態與預設設定。',
+
+            'command' => [
+
+                'select-platform' => '哪個平台？',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => '留空則保留已儲存的金鑰。',
+
+                'key-unchanged' => '未變更',
+
+                'missing-argument' => '以非互動方式執行時必須提供參數 :argument。',
+
+                'delete-confirm' => '要刪除平台「:label」嗎？',
+
+                'deleted' => '已刪除 AI 平台「:label」。',
+
+                'force-required' => '以非互動方式刪除時請使用 --force。',
+
+                'default-set' => '「:label」現在是預設的 AI 平台。',
+
+                'no-platforms' => '尚未設定任何 AI 平台。',
+
+                'id'                 => 'ID',
+                'fetching-models'    => '正在從 :provider 取得模型...',
+                'models-manual'      => '模型（以逗號分隔）',
+                'models-additional'  => '其他模型，以逗號分隔（選填）',
+                'models-required'    => '請至少選擇一個模型。',
+                'models-unlisted'    => '供應商未回傳下列模型，將依輸入內容儲存：:models',
+                'managed'            => '是否設為受管理的平台？其已儲存的金鑰將鎖定在此供應商、端點與模型清單。',
+                'managed-extras'     => '受管理的平台不能包含供應商專屬設定。請維持不受管理，或選擇其他供應商。',
+                'field'              => '欄位',
+                'value'              => '值',
+                'provider-default'   => '供應商預設值',
+                'extras'             => '供應商設定',
+                'confirm-save'       => '要儲存此平台嗎？',
+                'cancelled'          => '未儲存任何內容。',
+                'saved'              => 'AI 平台「:label」已儲存。',
+                'missing-option'     => '以非互動方式執行時必須提供 --:option 選項。',
+                'key-stdin-required' => '以非互動方式執行時，請透過標準輸入將 API 金鑰傳給指令，並使用 --key-stdin。',
+                'invalid-provider'   => '未知的供應商「:provider」。請使用下列其中之一：:providers。',
+            ],
+
             'datagrid'        => [
                 'label'      => '標籤',
                 'provider'   => '供應商',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => ':host 的端點回傳了 HTTP :status。',
                 'fetch-models-unreachable'           => '無法連線到 :host 的端點。',
                 'invalid-model-names'                => '無效的模型名稱：:names。模型名稱必須以字母或數字開頭，且僅包含字母、數字、連字號、點、冒號和斜線。',
+                'managed-connection-locked'          => '此 API 金鑰只能搭配其專屬的供應商與端點使用。',
+                'managed-models-only'                => '此 API 金鑰只能使用以下模型：:allowed。',
+                'managed-cannot-delete'              => '無法刪除受管理的平台。',
+                'managed-cli-only'                   => '此平台由系統為您管理。只能變更其狀態與預設設定。',
                 'default-requires-enabled'           => '無法將已停用的平台設為預設。請先啟用該平台。',
             ],
         ],

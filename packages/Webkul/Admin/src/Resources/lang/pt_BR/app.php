@@ -2395,6 +2395,51 @@ return [
             'fetch-models'    => 'Buscar modelos',
             'fetching-models' => 'Buscando',
             'set-default'     => 'Definir como padrão',
+            'managed-badge'   => 'Gerenciada',
+            'managed-note'    => 'Esta plataforma é fornecida e gerenciada para você. Aqui só é possível alterar o status e a configuração padrão.',
+
+            'command' => [
+
+                'select-platform' => 'Qual plataforma?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Deixe em branco para manter a chave salva.',
+
+                'key-unchanged' => 'Inalterada',
+
+                'missing-argument' => 'O argumento :argument é obrigatório ao executar sem interação.',
+
+                'delete-confirm' => 'Excluir a plataforma ":label"?',
+
+                'deleted' => 'A plataforma de IA ":label" foi excluída.',
+
+                'force-required' => 'Use --force para excluir sem interação.',
+
+                'default-set' => '":label" agora é a plataforma de IA padrão.',
+
+                'no-platforms' => 'Nenhuma plataforma de IA configurada.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Buscando modelos em :provider...',
+                'models-manual'      => 'Modelos (separados por vírgula)',
+                'models-additional'  => 'Modelos adicionais, separados por vírgula (opcional)',
+                'models-required'    => 'Selecione pelo menos um modelo.',
+                'models-unlisted'    => 'O provedor não retornou estes modelos, que serão salvos como informados: :models',
+                'managed'            => 'Tornar esta uma plataforma gerenciada? A chave salva ficará restrita a este provedor, endpoint e lista de modelos.',
+                'managed-extras'     => 'Uma plataforma gerenciada não pode ter configurações específicas do provedor. Deixe-a sem gerenciamento ou escolha outro provedor.',
+                'field'              => 'Campo',
+                'value'              => 'Valor',
+                'provider-default'   => 'Padrão do provedor',
+                'extras'             => 'Configurações do provedor',
+                'confirm-save'       => 'Salvar esta plataforma?',
+                'cancelled'          => 'Nada foi salvo.',
+                'saved'              => 'A plataforma de IA ":label" foi salva.',
+                'missing-option'     => 'A opção --:option é obrigatória ao executar sem interação.',
+                'key-stdin-required' => 'Ao executar sem interação, envie a chave de API ao comando pela entrada padrão e use --key-stdin.',
+                'invalid-provider'   => 'Provedor desconhecido ":provider". Use um destes: :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Rótulo',
                 'provider'   => 'Provedor',
@@ -2455,6 +2500,10 @@ return [
                 'fetch-models-http-error'            => 'O endpoint em :host retornou HTTP :status.',
                 'fetch-models-unreachable'           => 'Não foi possível acessar o endpoint em :host.',
                 'invalid-model-names'                => 'Nomes de modelo inválidos: :names. Os nomes de modelo devem começar com uma letra ou número e conter apenas letras, números, hifens, pontos, dois pontos e barras.',
+                'managed-connection-locked'          => 'Esta chave de API só pode ser usada com o próprio provedor e endpoint.',
+                'managed-models-only'                => 'Esta chave de API só pode usar estes modelos: :allowed.',
+                'managed-cannot-delete'              => 'A plataforma gerenciada não pode ser excluída.',
+                'managed-cli-only'                   => 'Esta plataforma é gerenciada para você. Só é possível alterar o status e a configuração padrão.',
                 'default-requires-enabled'           => 'Uma plataforma desativada não pode ser definida como padrão. Ative a plataforma primeiro.',
             ],
         ],

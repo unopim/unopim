@@ -2391,6 +2391,51 @@ return [
             'fetch-models'    => 'Récupérer les modèles',
             'fetching-models' => 'Récupération',
             'set-default'     => 'Définir par défaut',
+            'managed-badge'   => 'Gérée',
+            'managed-note'    => 'Cette plateforme est fournie et gérée pour vous. Seuls son statut et son paramètre par défaut peuvent être modifiés ici.',
+
+            'command' => [
+
+                'select-platform' => 'Quelle plateforme ?',
+
+                'platform-option' => ':label (:provider)',
+
+                'api-key-keep-hint' => 'Laissez vide pour conserver la clé enregistrée.',
+
+                'key-unchanged' => 'Inchangée',
+
+                'missing-argument' => 'L\'argument :argument est obligatoire en mode non interactif.',
+
+                'delete-confirm' => 'Supprimer la plateforme « :label » ?',
+
+                'deleted' => 'La plateforme d\'IA « :label » est supprimée.',
+
+                'force-required' => 'Ajoutez --force pour supprimer en mode non interactif.',
+
+                'default-set' => '« :label » est désormais la plateforme d\'IA par défaut.',
+
+                'no-platforms' => 'Aucune plateforme d\'IA n\'est configurée.',
+
+                'id'                 => 'ID',
+                'fetching-models'    => 'Récupération des modèles depuis :provider...',
+                'models-manual'      => 'Modèles (séparés par des virgules)',
+                'models-additional'  => 'Modèles supplémentaires, séparés par des virgules (facultatif)',
+                'models-required'    => 'Sélectionnez au moins un modèle.',
+                'models-unlisted'    => 'Le fournisseur n\'a pas renvoyé ces modèles ; ils seront enregistrés tels quels : :models',
+                'managed'            => 'En faire une plateforme gérée ? Sa clé enregistrée restera limitée à ce fournisseur, ce point de terminaison et cette liste de modèles.',
+                'managed-extras'     => 'Une plateforme gérée ne peut pas avoir de paramètres propres au fournisseur. Laissez-la non gérée ou choisissez un autre fournisseur.',
+                'field'              => 'Champ',
+                'value'              => 'Valeur',
+                'provider-default'   => 'Valeur par défaut du fournisseur',
+                'extras'             => 'Paramètres du fournisseur',
+                'confirm-save'       => 'Enregistrer cette plateforme ?',
+                'cancelled'          => 'Rien n\'a été enregistré.',
+                'saved'              => 'La plateforme d\'IA « :label » est enregistrée.',
+                'missing-option'     => 'L\'option --:option est obligatoire en mode non interactif.',
+                'key-stdin-required' => 'Transmettez la clé API à la commande via l\'entrée standard et ajoutez --key-stdin en mode non interactif.',
+                'invalid-provider'   => 'Fournisseur inconnu « :provider ». Utilisez l\'un de ceux-ci : :providers.',
+            ],
+
             'datagrid'        => [
                 'label'      => 'Libellé',
                 'provider'   => 'Fournisseur',
@@ -2451,6 +2496,10 @@ return [
                 'fetch-models-http-error'            => 'Le point de terminaison sur :host a renvoyé HTTP :status.',
                 'fetch-models-unreachable'           => 'Le point de terminaison sur :host est injoignable.',
                 'invalid-model-names'                => 'Noms de modèle invalides : :names. Les noms de modèle doivent commencer par une lettre ou un chiffre et ne contenir que des lettres, chiffres, tirets, points, deux-points et barres obliques.',
+                'managed-connection-locked'          => 'Cette clé API ne peut être utilisée qu\'avec son propre fournisseur et son propre point de terminaison.',
+                'managed-models-only'                => 'Cette clé API ne peut utiliser que ces modèles : :allowed.',
+                'managed-cannot-delete'              => 'La plateforme gérée ne peut pas être supprimée.',
+                'managed-cli-only'                   => 'Cette plateforme est gérée pour vous. Seuls son statut et son paramètre par défaut peuvent être modifiés.',
                 'default-requires-enabled'           => 'Une plateforme désactivée ne peut pas être définie comme plateforme par défaut. Activez-la d\'abord.',
             ],
         ],
