@@ -10,11 +10,7 @@ use Webkul\MagicAI\Services\ModelDiscovery;
 
 use function Pest\Laravel\artisan;
 
-const WIZARD = 'unopim:magic-ai:managed-platform';
-
-beforeEach(function () {
-    MagicAIPlatform::query()->update(['is_managed' => false]);
-});
+const WIZARD = 'unopim:magic-ai:add-platform';
 
 function wizardLabel(string $key): string
 {
@@ -91,34 +87,6 @@ it('falls back to typed models when the fetch fails', function () {
     expect(MagicAIPlatform::where('label', 'Typed models')->sole()->models)->toBe('gpt-5.1,my-model');
 });
 
-it('edits a managed platform and keeps its key when none is entered', function () {
-    $platform = MagicAIPlatform::factory()->managed()->create([
-        'label'    => 'Hosted AI',
-        'provider' => AiProvider::OpenAI->value,
-        'api_key'  => 'sk-stored-key',
-        'models'   => 'gpt-4o,legacy-model',
-    ]);
-
-    fakeDiscovery(['gpt-4o', 'gpt-4o-mini']);
-
-    $command = artisan(WIZARD)
-        ->expectsQuestion(wizardLabel('command.target'), (string) $platform->id);
-
-    $command = answerConnection($command, 'Hosted AI', '')
-        ->expectsQuestion(wizardLabel('fields.models'), ['legacy-model'])
-        ->expectsQuestion(wizardLabel('command.models-additional'), 'gpt-4o-mini')
-        ->expectsOutputToContain(trans('admin::app.configuration.platform.command.models-unlisted', ['models' => 'legacy-model']));
-
-    answerFlags($command, default: false)->assertSuccessful()->run();
-
-    $platform->refresh();
-
-    expect(MagicAIPlatform::where('label', 'Hosted AI')->count())->toBe(1)
-        ->and($platform->safeApiKey())->toBe('sk-stored-key')
-        ->and($platform->models)->toBe('legacy-model,gpt-4o-mini')
-        ->and($platform->is_managed)->toBeTrue();
-});
-
 it('rejects a default platform that is disabled', function () {
     fakeDiscovery(['gpt-4o']);
 
@@ -138,11 +106,23 @@ it('creates an unmanaged platform', function () {
 
     $command = answerConnection(artisan(WIZARD), 'Client AI', 'sk-client-key')
         ->expectsQuestion(wizardLabel('fields.models'), ['gpt-4o'])
-        ->expectsQuestion(wizardLabel('command.models-additional'), '');
+        ->expectsQuestion(wizardLabel('command.models-additional'), 'my-finetune')
+        ->expectsOutputToContain(trans('admin::app.configuration.platform.command.models-unlisted', ['models' => 'my-finetune']));
 
     answerFlags($command, default: false, managed: false)->assertSuccessful()->run();
 
-    expect(MagicAIPlatform::where('label', 'Client AI')->sole()->is_managed)->toBeFalse();
+    $platform = MagicAIPlatform::where('label', 'Client AI')->sole();
+
+    expect($platform->is_managed)->toBeFalse()
+        ->and($platform->models)->toBe('gpt-4o,my-finetune');
+});
+
+it('requires an API key when adding a platform', function () {
+    $count = MagicAIPlatform::count();
+
+    answerConnection(artisan(WIZARD), 'No key', '')->assertFailed();
+
+    expect(MagicAIPlatform::count())->toBe($count);
 });
 
 it('saves nothing when the summary is declined', function () {
@@ -179,33 +159,17 @@ it('creates a platform from options with the key read from standard input', func
         ->and($platform->models)->toBe('gpt-4o,gpt-4o-mini');
 });
 
-it('updates a platform from options and keeps its key without standard input', function () {
-    $platform = MagicAIPlatform::factory()->managed()->create(['api_key' => 'sk-stored-key']);
-
-    artisan(WIZARD, [
-        '--no-interaction' => true,
-        '--platform'       => $platform->id,
-        '--models'         => 'gpt-4o',
-        '--unmanaged'      => true,
-    ])->assertSuccessful();
-
-    $platform->refresh();
-
-    expect($platform->safeApiKey())->toBe('sk-stored-key')
-        ->and($platform->models)->toBe('gpt-4o')
-        ->and($platform->is_managed)->toBeFalse();
-});
-
 it('fails without interaction when a required value is missing', function (array $options, string $message) {
+    $count = MagicAIPlatform::count();
+
     artisan(WIZARD, ['--no-interaction' => true] + $options)
         ->expectsOutputToContain($message)
         ->assertFailed();
 
-    expect(MagicAIPlatform::where('is_managed', true)->exists())->toBeFalse();
+    expect(MagicAIPlatform::count())->toBe($count);
 })->with([
     'provider' => fn () => [[], trans('admin::app.configuration.platform.command.missing-option', ['option' => 'provider'])],
     'key'      => fn () => [['--provider' => 'openai', '--models' => 'gpt-4o'], trans('admin::app.configuration.platform.command.key-stdin-required')],
-    'platform' => fn () => [['--platform' => 999999], trans('admin::app.configuration.platform.message.not-found')],
 ]);
 
 it('fails without interaction when the models are missing or invalid', function (?string $models, string $message) {
