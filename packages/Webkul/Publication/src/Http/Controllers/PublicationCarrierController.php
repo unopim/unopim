@@ -2,13 +2,10 @@
 
 namespace Webkul\Publication\Http\Controllers;
 
-use BaconQrCode\Renderer\Image\SvgImageBackEnd;
-use BaconQrCode\Renderer\ImageRenderer;
-use BaconQrCode\Renderer\RendererStyle\RendererStyle;
-use BaconQrCode\Writer;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Symfony\Component\HttpFoundation\Response;
+use Webkul\Publication\Services\CarrierSvg;
 use Webkul\Publication\Services\Gs1DigitalLink;
 use Webkul\Publication\Services\PublicationResolver;
 
@@ -17,6 +14,7 @@ class PublicationCarrierController extends Controller
     public function __construct(
         private readonly PublicationResolver $resolver,
         private readonly Gs1DigitalLink $gs1,
+        private readonly CarrierSvg $svg,
     ) {}
 
     /**
@@ -41,9 +39,7 @@ class PublicationCarrierController extends Controller
         $target = $this->gs1->for($publication)
             ?: route('publication.public.'.$type.'.show', ['uuid' => $uuid]);
 
-        $writer = new Writer(new ImageRenderer(new RendererStyle(256), new SvgImageBackEnd));
-
-        return response($writer->writeString($target))
+        return response($this->svg->render($target))
             ->header('Content-Type', 'image/svg+xml')
             ->header('Cache-Control', 'public, max-age=0, s-maxage=86400, must-revalidate');
     }

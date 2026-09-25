@@ -99,6 +99,23 @@ return [
         'republished'                 => '버전이 다시 게시되었습니다.',
         'republish-invalid'           => '이 버전은 다시 게시할 수 없습니다.',
         'republish-noop'              => '이 버전은 이미 현재 버전입니다.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => '여권 버전 기록',
             'subtitle'      => 'SKU :sku · 채널 :channel',

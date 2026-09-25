@@ -51,5 +51,11 @@ return [
             'heading' => 'Энэ паспорт цаашид боломжгүй.',
             'notice'  => 'Энэ бүртгэлийг ил тод байдлын үүднээс хадгалж байгаа боловч цаашид идэвхтэй арчилахгүй.',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
