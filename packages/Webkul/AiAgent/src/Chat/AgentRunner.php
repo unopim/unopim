@@ -103,10 +103,7 @@ class AgentRunner
                 session()->save();
             }
 
-            // Disable output buffering for real-time streaming
-            while (ob_get_level()) {
-                ob_end_flush();
-            }
+            $this->disableOutputBuffering();
 
             $statusMsg = $context->hasImages()
                 ? trans('ai-agent::app.common.status-analyzing-image')
@@ -185,6 +182,10 @@ class AgentRunner
             } catch (\Throwable $e) {
                 $resolved = AiErrorResolver::resolve($e);
 
+                if (AiErrorResolver::rejectsImageInput($e)) {
+                    resolve(ChatUploadStore::class)->forgetImages($context->uploadedImagePaths);
+                }
+
                 if ($resolved['is_known']) {
                     Log::warning('AI Agent stream provider error', [
                         'type'    => $e::class,
@@ -202,6 +203,16 @@ class AgentRunner
             'Connection'        => 'keep-alive',
             'X-Accel-Buffering' => 'no',
         ]);
+    }
+
+    /**
+     * Flush and close every output buffer so SSE events reach the client as they are sent.
+     */
+    protected function disableOutputBuffering(): void
+    {
+        while (ob_get_level()) {
+            ob_end_flush();
+        }
     }
 
     /**

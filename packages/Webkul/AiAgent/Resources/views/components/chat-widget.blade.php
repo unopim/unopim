@@ -1356,6 +1356,10 @@ app.component('v-agenting-pim', {
             this.saveState();
         },
         activateCapability(cap) {
+            if (this.messages.length > 0) {
+                this.createNewSession();
+            }
+
             this.activeCapability = cap;
             this.activeTab = 'chat';
 
@@ -1460,6 +1464,7 @@ app.component('v-agenting-pim', {
                 if (this.selectedPlatformId) fd.append('platform_id', this.selectedPlatformId);
                 if (this.selectedModel) fd.append('model', this.selectedModel);
                 files.forEach((f, i) => { if (f.type === 'image') fd.append('images[' + i + ']', f.file); else fd.append('files[' + i + ']', f.file); });
+                fd.append('conversation_id', this.activeSessionId);
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
                 if (this.productContext) {
@@ -1477,7 +1482,7 @@ app.component('v-agenting-pim', {
                         headers: {
                             'Accept': 'text/event-stream',
                             'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                     });
 
@@ -1515,6 +1520,7 @@ app.component('v-agenting-pim', {
                 }
             } catch (err) {
                 if (files.length > 0 && this.pendingFiles.length === 0) this.pendingFiles = files;
+                if (err.response?.data?.discard_images) this.pendingFiles = this.pendingFiles.filter(f => f.type !== 'image');
                 this.messages.push({ role: 'assistant', content: err.response?.data?.reply || err.response?.data?.message || this.trans.errorGeneric });
             } finally {
                 this.isLoading = false;
