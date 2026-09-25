@@ -1421,6 +1421,10 @@ app.component('v-agenting-pim', {
                 return false;
             }
 
+            if (!data.mutated) {
+                return false;
+            }
+
             if (data.product_url || data.download_url) {
                 return false;
             }
