@@ -1536,6 +1536,8 @@ app.component('v-agenting-pim', {
             let buffer = '';
             let streamedText = '';
             let resultData = {};
+            let streamFailed = false;
+            let discardImages = false;
 
             // Add a placeholder message for streaming
             const msgIndex = this.messages.length;
@@ -1573,6 +1575,8 @@ app.component('v-agenting-pim', {
                                         resultData = eventData;
                                         break;
                                     case 'error':
+                                        streamFailed = true;
+                                        discardImages = eventData.discard_images === true;
                                         streamedText = eventData.message || this.trans.errorGeneric;
                                         this.messages[msgIndex].content = streamedText;
                                         break;
@@ -1583,11 +1587,14 @@ app.component('v-agenting-pim', {
                     }
                 }
             } catch (e) {
+                streamFailed = true;
                 if (!streamedText) streamedText = this.trans.errorGeneric;
             }
 
             // Finalize the message
-            this.pendingFiles = [];
+            this.pendingFiles = streamFailed
+                ? files.filter(f => !discardImages || f.type !== 'image')
+                : [];
             this.messages[msgIndex] = {
                 role: 'assistant',
                 content: streamedText || this.trans.noResponse,

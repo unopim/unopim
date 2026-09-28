@@ -181,8 +181,9 @@ class AgentRunner
                 $this->sendSSE('complete', $result);
             } catch (\Throwable $e) {
                 $resolved = AiErrorResolver::resolve($e);
+                $rejectsImages = AiErrorResolver::rejectsImageInput($e);
 
-                if (AiErrorResolver::rejectsImageInput($e)) {
+                if ($rejectsImages) {
                     resolve(ChatUploadStore::class)->forgetImages($context->uploadedImagePaths);
                 }
 
@@ -195,7 +196,10 @@ class AgentRunner
                     Log::error('AI Agent stream error', ['exception' => $e]);
                 }
 
-                $this->sendSSE('error', ['message' => $resolved['message']]);
+                $this->sendSSE('error', [
+                    'message'        => $resolved['message'],
+                    'discard_images' => $rejectsImages,
+                ]);
             }
         }, 200, [
             'Content-Type'      => 'text/event-stream',
