@@ -7,6 +7,7 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Maatwebsite\Excel\Facades\Excel;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -21,6 +22,11 @@ abstract class DataGrid
      * Guards against unbounded payloads and stays within Elasticsearch's default result window.
      */
     const MASS_ACTION_ID_LIMIT = 10000;
+
+    /**
+     * Rows fetched per round trip while streaming the ids behind a "select all matching" mass action.
+     */
+    const MATCHING_IDS_BATCH_SIZE = 1000;
 
     /**
      * Primary column.
@@ -210,6 +216,7 @@ abstract class DataGrid
             method: $massAction['method'],
             url: $massAction['url'],
             options: $massAction['options'] ?? [],
+            supportsSelectAll: (bool) ($massAction['supports_select_all'] ?? false),
         );
     }
 
@@ -445,6 +452,40 @@ abstract class DataGrid
         }
 
         $this->paginator = $this->processRequestedPagination($requestedParams['pagination'] ?? []);
+    }
+
+    /**
+     * Stream the primary key of every record matching the requested filters.
+     *
+     * Backs "select all matching" mass actions, which carry the grid's filters instead of an
+     * id list, so the selection is not bounded by what a single response can hold.
+     *
+     * @return LazyCollection<int, mixed>
+     */
+    public function getMatchingIds(): LazyCollection
+    {
+        $this->prepareColumns();
+
+        $this->setQueryBuilder();
+
+        $this->queryBuilder = $this->processRequestedFilters($this->validatedRequest()['filters'] ?? []);
+
+        return $this->queryBuilder
+            ->reorder()
+            ->lazyById(static::MATCHING_IDS_BATCH_SIZE, $this->getPrimaryDatabaseColumn(), $this->primaryColumn)
+            ->pluck($this->primaryColumn);
+    }
+
+    /**
+     * Qualified database column behind the primary column, used to page through matching records.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        $name = collect($this->columns)
+            ->first(fn ($column): bool => $column->index === $this->primaryColumn)
+            ?->getDatabaseColumnName();
+
+        return is_string($name) ? $name : $this->primaryColumn;
     }
 
     /**

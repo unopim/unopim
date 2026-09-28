@@ -109,6 +109,8 @@
 
                     applied: null,
 
+                    resolveSelection: null,
+
                     supportedTypes: @json($supportedType),
 
                     routes: {},
@@ -138,13 +140,25 @@
                     this.$emitter.on('change-datagrid', this.updateProperties);
                 },
 
-                updateProperties({available, applied }) {
+                updateProperties({ available, applied, resolveSelection }) {
                     this.available = available;
 
                     this.applied = applied;
+
+                    this.resolveSelection = resolveSelection ?? null;
                 },
 
                 download() {
+                    if (this.resolveSelection && this.available?.records?.length) {
+                        this.resolveSelection().then(({ indices }) => this.export(indices));
+
+                        return;
+                    }
+
+                    this.export(this?.applied?.massActions?.indices);
+                },
+
+                export(productIds) {
                     if (! this.available?.records?.length) {
                         this.$emitter.emit('add-flash', { type: 'warning', message: '@lang('admin::app.export.no-records')' });
 
@@ -161,7 +175,7 @@
 
                             with_media: withMedia,
 
-                            productIds: this?.applied?.massActions?.indices,
+                            productIds: productIds,
 
                             filters: {},
 

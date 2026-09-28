@@ -155,6 +155,8 @@
                                 mode: 'none',
 
                                 action: null,
+
+                                allMatching: false,
                             },
 
                             indices: [],
@@ -277,7 +279,16 @@
                 isAllMatchingSelected() {
                     const total = this.available.meta?.total ?? 0;
 
-                    return total > 0 && this.applied.massActions.indices.length >= total;
+                    return total > 0 && (
+                        this.applied.massActions.meta.allMatching
+                        || this.applied.massActions.indices.length >= total
+                    );
+                },
+
+                selectedCount() {
+                    return this.applied.massActions.meta.allMatching
+                        ? (this.available.meta?.total ?? 0)
+                        : this.applied.massActions.indices.length;
                 },
 
                 canSelectAllMatching() {
@@ -296,8 +307,19 @@
                     immediate: true,
                 },
 
+                /**
+                 * Unticking any row on the page leaves "all matching" mode, falling back to the
+                 * rows still ticked.
+                 */
                 'applied.massActions.indices': {
                     handler() {
+                        if (
+                            this.applied.massActions.meta.allMatching
+                            && this.available.records.some(record => ! this.applied.massActions.indices.includes(record[this.available.meta.primary_column]))
+                        ) {
+                            this.applied.massActions.meta.allMatching = false;
+                        }
+
                         this.setCurrentSelectionMode();
                     },
 
@@ -448,32 +470,8 @@
                             per_page: this.applied.pagination.perPage,
                         },
 
-                        sort: {},
-
-                        filters: {},
+                        ...this.queryParams(),
                     };
-
-                    if (
-                        this.applied.sort.column &&
-                        this.applied.sort.order
-                    ) {
-                        params.sort = this.applied.sort;
-                    }
-
-                    this.applied.filters.columns.forEach(column => {
-                        params.filters[column.index] = column.value;
-                    });
-
-                    if (this.viewScope?.channel) {
-                        params.channel = this.viewScope.channel;
-                    }
-
-                    if (this.viewScope?.locale) {
-                        params.locale = this.viewScope.locale;
-                    }
-
-                    params.managedColumns = this.available.meta?.managedColumn?.columns;
-                    params.manageableColumn = this.available.meta?.managedColumn?.columns;
 
                     this.isLoading = true;
 
@@ -532,6 +530,10 @@
 
                             this.available.records = records;
 
+                            if (this.applied.massActions.meta.allMatching) {
+                                this.addPageToSelection();
+                            }
+
                             this.available.meta = meta;
 
                             this.available.searchPlaceholder = search_placeholder;
@@ -582,11 +584,50 @@
                             */
                             this.$emitter.emit('change-datagrid', {
                                 available: this.available,
-                                applied: this.applied
+                                applied: this.applied,
+                                resolveSelection: () => this.resolveSelection({}),
                             });
 
                             this.isLoading = false;
                         });
+                },
+
+                /**
+                 * Sort, filter and scope params describing the current result set, shared by the
+                 * listing request and by mass actions that target every matching record.
+                 *
+                 * @returns {object}
+                 */
+                queryParams() {
+                    let params = {
+                        sort: {},
+
+                        filters: {},
+                    };
+
+                    if (
+                        this.applied.sort.column &&
+                        this.applied.sort.order
+                    ) {
+                        params.sort = this.applied.sort;
+                    }
+
+                    this.applied.filters.columns.forEach(column => {
+                        params.filters[column.index] = column.value;
+                    });
+
+                    if (this.viewScope?.channel) {
+                        params.channel = this.viewScope.channel;
+                    }
+
+                    if (this.viewScope?.locale) {
+                        params.locale = this.viewScope.locale;
+                    }
+
+                    params.managedColumns = this.available.meta?.managedColumn?.columns;
+                    params.manageableColumn = this.available.meta?.managedColumn?.columns;
+
+                    return params;
                 },
 
                 /**
@@ -1105,43 +1146,62 @@
                 },
 
                 /**
-                 * Select every record matching the current filters/search across all pages by
-                 * resolving their ids server-side, then filling them into the existing indices
-                 * array so mass actions keep sending a plain id list.
+                 * Select every record matching the current filters/search across all pages. No ids
+                 * are fetched: mass actions that support it receive the grid's filters instead, so
+                 * the selection is not capped by what the browser can hold.
                  *
                  * @returns {void}
                  */
                 selectAllMatching() {
-                    if (this.isSelectingAllMatching) {
-                        return;
-                    }
+                    this.addPageToSelection();
 
-                    let params = {
-                        sort: {},
-                        filters: {},
-                        mass_action_ids: 1,
-                    };
+                    this.applied.massActions.meta.allMatching = true;
+                },
 
-                    if (this.applied.sort.column && this.applied.sort.order) {
-                        params.sort = this.applied.sort;
-                    }
+                addPageToSelection() {
+                    this.available.records.forEach(record => {
+                        const id = record[this.available.meta.primary_column];
 
-                    this.applied.filters.columns.forEach(column => {
-                        params.filters[column.index] = column.value;
+                        if (! this.applied.massActions.indices.includes(id)) {
+                            this.applied.massActions.indices.push(id);
+                        }
                     });
+                },
+
+                /**
+                 * Resolve the request payload describing the selection for a mass action. In "all
+                 * matching" mode, actions that support it get the grid's filters; any other action
+                 * falls back to the id list resolved server-side. Empty sort and filter values are
+                 * dropped: the listing's query string never carries them, and in a JSON body the grid
+                 * rejects an empty sort and turns an empty search into a filter matching nothing.
+                 *
+                 * @param {object} action
+                 * @returns {Promise<object>}
+                 */
+                resolveSelection(action) {
+                    if (! this.applied.massActions.meta.allMatching) {
+                        return Promise.resolve({ indices: this.applied.massActions.indices });
+                    }
+
+                    if (action.supportsSelectAll) {
+                        const { sort, filters, ...params } = this.queryParams();
+
+                        const appliedFilters = Object.fromEntries(
+                            Object.entries(filters).filter(([, value]) => ! Array.isArray(value) || value.length)
+                        );
+
+                        return Promise.resolve({
+                            ...params,
+                            ...(Object.keys(appliedFilters).length ? { filters: appliedFilters } : {}),
+                            select_all: 1,
+                        });
+                    }
 
                     this.isSelectingAllMatching = true;
 
-                    this.$axios
-                        .get(this.src, { params })
-                        .then(response => {
-                            const ids = response.data?.ids;
-
-                            if (Array.isArray(ids)) {
-                                this.applied.massActions.indices = ids;
-                                this.applied.massActions.meta.mode = 'all';
-                            }
-                        })
+                    return this.$axios
+                        .get(this.src, { params: { ...this.queryParams(), mass_action_ids: 1 } })
+                        .then(response => ({ indices: response.data?.ids ?? [] }))
                         .finally(() => {
                             this.isSelectingAllMatching = false;
                         });
@@ -1150,6 +1210,7 @@
                 clearMassSelection() {
                     this.applied.massActions.indices = [];
                     this.applied.massActions.meta.mode = 'none';
+                    this.applied.massActions.meta.allMatching = false;
                 },
 
                 validateMassAction() {
@@ -1206,67 +1267,71 @@
 
                     this.$emitter.emit(modalEvent, {
                         agree: (data) => {
-                            switch (method) {
-                                case 'post':
-                                case 'put':
-                                case 'patch':
-                                    this.$axios[method](action.url, {
-                                            indices: this.applied.massActions.indices,
-                                            value: this.applied.massActions.value,
-                                            filter: data
-                                        })
-                                        .then(response => {
-                                            if (response.data.redirect && actionType === 'redirect') {
-                                                this.$navigate(response.data.redirect);
-                                                return;
-                                            }
+                            const value = this.applied.massActions.value;
 
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'success',
-                                                message: response.data.message
-                                            });
+                            this.resolveSelection(action).then(selection => this.sendMassAction(action, method, actionType, selection, value, data));
 
-                                            this.get();
-                                        })
-                                        .catch((error) => {
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'error',
-                                                message: error.response.data.message
-                                            });
-                                        });
-
-                                    break;
-
-                                case 'delete':
-                                    this.$axios[method](action.url, {
-                                            indices: this.applied.massActions.indices
-                                        })
-                                        .then(response => {
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'success',
-                                                message: response.data.message
-                                            });
-
-                                            this.get();
-                                        })
-                                        .catch((error) => {
-                                            this.$emitter.emit('add-flash', {
-                                                type: 'error',
-                                                message: error.response.data.message
-                                            });
-                                        });
-
-                                    break;
-
-                                default:
-                                    console.error('Method not supported.');
-
-                                    break;
-                            }
-
-                            this.applied.massActions.indices = [];
+                            this.clearMassSelection();
                         }
                     });
+                },
+
+                sendMassAction(action, method, actionType, selection, value, data) {
+                    switch (method) {
+                        case 'post':
+                        case 'put':
+                        case 'patch':
+                            this.$axios[method](action.url, {
+                                    ...selection,
+                                    value: value,
+                                    filter: data
+                                })
+                                .then(response => {
+                                    if (response.data.redirect && actionType === 'redirect') {
+                                        this.$navigate(response.data.redirect);
+                                        return;
+                                    }
+
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'success',
+                                        message: response.data.message
+                                    });
+
+                                    this.get();
+                                })
+                                .catch((error) => {
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'error',
+                                        message: error.response.data.message
+                                    });
+                                });
+
+                            break;
+
+                        case 'delete':
+                            this.$axios[method](action.url, selection)
+                                .then(response => {
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'success',
+                                        message: response.data.message
+                                    });
+
+                                    this.get();
+                                })
+                                .catch((error) => {
+                                    this.$emitter.emit('add-flash', {
+                                        type: 'error',
+                                        message: error.response.data.message
+                                    });
+                                });
+
+                            break;
+
+                        default:
+                            console.error('Method not supported.');
+
+                            break;
+                    }
                 },
 
                 //=======================================================================================

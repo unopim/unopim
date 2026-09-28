@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -16,11 +17,11 @@ use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CheckVariantUniquenessForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Admin\Http\Requests\ProductAttributeForm;
 use Webkul\Admin\Http\Requests\ProductAttributeGroupsForm;
 use Webkul\Admin\Http\Requests\ProductForm;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
 use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
@@ -1370,8 +1371,19 @@ class ProductController extends Controller
     /**
      * Mass delete the products.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
+        if ($massDestroyRequest->selectsAllMatching()) {
+            $this->dispatchInChunks(
+                $massDestroyRequest->selectedIds(ProductDataGrid::class),
+                fn (array $productIds) => MassDeleteProducts::dispatch($productIds),
+            );
+
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.mass-delete-queued'),
+            ]);
+        }
+
         $productIds = $massDestroyRequest->input('indices');
 
         if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
@@ -1398,11 +1410,22 @@ class ProductController extends Controller
     /**
      * Mass update the products.
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $productIds = $massUpdateRequest->input('indices');
-
         $status = (bool) $massUpdateRequest->input('value');
+
+        if ($massUpdateRequest->selectsAllMatching()) {
+            $this->dispatchInChunks(
+                $massUpdateRequest->selectedIds(ProductDataGrid::class),
+                fn (array $productIds) => MassUpdateProductsStatus::dispatch($productIds, $status),
+            );
+
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-queued'),
+            ], JsonResponse::HTTP_OK);
+        }
+
+        $productIds = $massUpdateRequest->input('indices');
 
         if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
             MassUpdateProductsStatus::dispatch($productIds, $status);
@@ -1417,6 +1440,19 @@ class ProductController extends Controller
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success'),
         ], JsonResponse::HTTP_OK);
+    }
+
+    /**
+     * Queue a mass action over a streamed selection, one job per chunk of ids.
+     *
+     * @param  LazyCollection<int, mixed>  $productIds
+     * @param  callable(array<int, int>): mixed  $dispatch
+     */
+    protected function dispatchInChunks(LazyCollection $productIds, callable $dispatch): void
+    {
+        $productIds
+            ->chunk(ProductDataGrid::MATCHING_IDS_BATCH_SIZE)
+            ->each(fn (LazyCollection $chunk) => $dispatch($chunk->map(fn ($id): int => (int) $id)->values()->all()));
     }
 
     /**
