@@ -1356,6 +1356,10 @@ app.component('v-agenting-pim', {
             this.saveState();
         },
         activateCapability(cap) {
+            if (this.messages.length > 0) {
+                this.createNewSession();
+            }
+
             this.activeCapability = cap;
             this.activeTab = 'chat';
 
@@ -1421,6 +1425,10 @@ app.component('v-agenting-pim', {
                 return false;
             }
 
+            if (!data.mutated) {
+                return false;
+            }
+
             if (data.product_url || data.download_url) {
                 return false;
             }
@@ -1456,6 +1464,7 @@ app.component('v-agenting-pim', {
                 if (this.selectedPlatformId) fd.append('platform_id', this.selectedPlatformId);
                 if (this.selectedModel) fd.append('model', this.selectedModel);
                 files.forEach((f, i) => { if (f.type === 'image') fd.append('images[' + i + ']', f.file); else fd.append('files[' + i + ']', f.file); });
+                fd.append('conversation_id', this.activeSessionId);
                 fd.append('history', JSON.stringify(this.messages.slice(0, -1).map(m => ({ role: m.role, content: m.content || '' }))));
                 fd.append('context[current_page]', window.location.pathname);
                 if (this.productContext) {
@@ -1473,7 +1482,7 @@ app.component('v-agenting-pim', {
                         headers: {
                             'Accept': 'text/event-stream',
                             'X-Requested-With': 'XMLHttpRequest',
-                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
                         },
                     });
 
@@ -1511,6 +1520,7 @@ app.component('v-agenting-pim', {
                 }
             } catch (err) {
                 if (files.length > 0 && this.pendingFiles.length === 0) this.pendingFiles = files;
+                if (err.response?.data?.discard_images) this.pendingFiles = this.pendingFiles.filter(f => f.type !== 'image');
                 this.messages.push({ role: 'assistant', content: err.response?.data?.reply || err.response?.data?.message || this.trans.errorGeneric });
             } finally {
                 this.isLoading = false;
@@ -1526,6 +1536,8 @@ app.component('v-agenting-pim', {
             let buffer = '';
             let streamedText = '';
             let resultData = {};
+            let streamFailed = false;
+            let discardImages = false;
 
             // Add a placeholder message for streaming
             const msgIndex = this.messages.length;
@@ -1563,6 +1575,8 @@ app.component('v-agenting-pim', {
                                         resultData = eventData;
                                         break;
                                     case 'error':
+                                        streamFailed = true;
+                                        discardImages = eventData.discard_images === true;
                                         streamedText = eventData.message || this.trans.errorGeneric;
                                         this.messages[msgIndex].content = streamedText;
                                         break;
@@ -1573,11 +1587,14 @@ app.component('v-agenting-pim', {
                     }
                 }
             } catch (e) {
+                streamFailed = true;
                 if (!streamedText) streamedText = this.trans.errorGeneric;
             }
 
             // Finalize the message
-            this.pendingFiles = [];
+            this.pendingFiles = streamFailed
+                ? files.filter(f => !discardImages || f.type !== 'image')
+                : [];
             this.messages[msgIndex] = {
                 role: 'assistant',
                 content: streamedText || this.trans.noResponse,

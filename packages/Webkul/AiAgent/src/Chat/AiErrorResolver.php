@@ -16,6 +16,8 @@ use Throwable;
  */
 class AiErrorResolver
 {
+    protected const IMAGE_INPUT_REJECTION_PATTERN = '/input\.image|image_url is only supported|(?:does not|doesn\'t|do not) support (?:image|vision)|(?:image|vision) inputs? (?:is|are) not supported/i';
+
     /**
      * Resolve a thrown exception to a translated message and HTTP status code.
      *
@@ -75,6 +77,14 @@ class AiErrorResolver
             ];
         }
 
+        if (self::rejectsImageInput($e)) {
+            return [
+                'message'  => trans('ai-agent::app.common.error-image-input-unsupported'),
+                'status'   => 422,
+                'is_known' => true,
+            ];
+        }
+
         $message = self::isInfrastructureException($e)
             ? ''
             : self::sanitizeRawMessage($e);
@@ -84,6 +94,19 @@ class AiErrorResolver
             'status'   => 500,
             'is_known' => false,
         ];
+    }
+
+    /**
+     * Whether the provider refused the request because the chosen model cannot read images.
+     *
+     * Providers word this differently (OpenAI, OpenRouter-style gateways, Groq,
+     * Ollama), so the upstream body is matched as well as the exception message.
+     */
+    public static function rejectsImageInput(Throwable $e): bool
+    {
+        $haystack = $e->getMessage().' '.self::extractUpstreamBody($e);
+
+        return (bool) preg_match(self::IMAGE_INPUT_REJECTION_PATTERN, $haystack);
     }
 
     /**

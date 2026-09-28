@@ -1,8 +1,19 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
 use Webkul\User\Models\Admin;
+
+/**
+ * Published passport versions restrict deleting their locale, and a demo-seeded catalog ships them.
+ */
+function keepOnlyLocale(int $localeId): void
+{
+    DB::table('publication_versions')->whereNot('locale_id', $localeId)->delete();
+
+    Locale::whereNot('id', $localeId)->delete();
+}
 
 it('should return the locale index datagrid page', function () {
     $this->loginAsAdmin();
@@ -216,7 +227,7 @@ it('should not delete the last locale', function () {
 
     Admin::whereNot('id', $user->id)->delete();
 
-    Locale::whereNot('id', $localeId)->delete();
+    keepOnlyLocale($localeId);
 
     $response = $this->delete(route('admin.settings.locales.delete', ['id' => $localeId]));
 
@@ -426,7 +437,7 @@ it('should return error when deleting the last locale through mass delete', func
 
     Admin::whereNot('id', $user->id)->delete();
 
-    Locale::whereNot('id', $localeId)->delete();
+    keepOnlyLocale($localeId);
 
     $response = $this->post(route('admin.settings.locales.mass_delete'), [
         'indices' => [$localeId],

@@ -11,6 +11,7 @@ use Laravel\Ai\Files\Image;
 use Laravel\Ai\Messages\AssistantMessage;
 use Laravel\Ai\Messages\UserMessage;
 use Laravel\Ai\Responses\AgentResponse;
+use Laravel\Ai\Responses\Data\ToolResult;
 use Laravel\Ai\Streaming\Events\TextDelta;
 use Laravel\Ai\Streaming\Events\ToolCall;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -102,10 +103,7 @@ class AgentRunner
                 session()->save();
             }
 
-            // Disable output buffering for real-time streaming
-            while (ob_get_level()) {
-                ob_end_flush();
-            }
+            $this->disableOutputBuffering();
 
             $statusMsg = $context->hasImages()
                 ? trans('ai-agent::app.common.status-analyzing-image')
@@ -183,6 +181,11 @@ class AgentRunner
                 $this->sendSSE('complete', $result);
             } catch (\Throwable $e) {
                 $resolved = AiErrorResolver::resolve($e);
+                $rejectsImages = AiErrorResolver::rejectsImageInput($e);
+
+                if ($rejectsImages) {
+                    resolve(ChatUploadStore::class)->forgetImages($context->uploadedImagePaths);
+                }
 
                 if ($resolved['is_known']) {
                     Log::warning('AI Agent stream provider error', [
@@ -193,7 +196,10 @@ class AgentRunner
                     Log::error('AI Agent stream error', ['exception' => $e]);
                 }
 
-                $this->sendSSE('error', ['message' => $resolved['message']]);
+                $this->sendSSE('error', [
+                    'message'        => $resolved['message'],
+                    'discard_images' => $rejectsImages,
+                ]);
             }
         }, 200, [
             'Content-Type'      => 'text/event-stream',
@@ -201,6 +207,16 @@ class AgentRunner
             'Connection'        => 'keep-alive',
             'X-Accel-Buffering' => 'no',
         ]);
+    }
+
+    /**
+     * Flush and close every output buffer so SSE events reach the client as they are sent.
+     */
+    protected function disableOutputBuffering(): void
+    {
+        while (ob_get_level()) {
+            ob_end_flush();
+        }
     }
 
     /**
@@ -566,6 +582,7 @@ MODE;
                 : null;
 
             $this->mergeActionPayload($payload, $result);
+            $this->flagMutation($toolResult, $payload, $result);
         }
     }
 
@@ -598,7 +615,37 @@ MODE;
                 : null;
 
             $this->mergeActionPayload($payload, $result);
+            $this->flagMutation($event->toolResult, $payload, $result);
         }
+    }
+
+    /**
+     * Flag the response as mutated when a write tool changed data, so the widget
+     * reloads the edit page only after a real write and not after a read-only tool.
+     *
+     * @param  array<string, mixed>  $result
+     */
+    protected function flagMutation(ToolResult $toolResult, mixed $payload, array &$result): void
+    {
+        if ($toolResult->failed
+            || $toolResult->denied
+            || ! is_array($payload)
+            || isset($payload['error'])
+            || ! ($this->toolRegistry->metadata($toolResult->name)['write'] ?? false)) {
+            return;
+        }
+
+        $toolPayload = is_array($payload['result'] ?? null) ? $payload['result'] : [];
+
+        if (is_string($toolPayload['status'] ?? null) && str_starts_with(strtolower($toolPayload['status']), 'error')) {
+            return;
+        }
+
+        if (is_numeric($toolPayload['updated'] ?? null) && $toolPayload['updated'] < 1) {
+            return;
+        }
+
+        $result['mutated'] = true;
     }
 
     /**
