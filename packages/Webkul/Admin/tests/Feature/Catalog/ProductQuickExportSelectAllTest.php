@@ -22,6 +22,8 @@ class RowLimitedExportDataGridSelection extends ExportDataGridSelection
 }
 
 beforeEach(function () {
+    config(['elasticsearch.enabled' => false]);
+
     Storage::fake('private');
 
     $this->loginAsAdmin();

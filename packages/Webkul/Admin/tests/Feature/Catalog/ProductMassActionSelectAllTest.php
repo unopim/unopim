@@ -28,6 +28,8 @@ class SmallChunkMassActionSelection extends ProcessMassActionSelection
 }
 
 beforeEach(function () {
+    config(['elasticsearch.enabled' => false]);
+
     app()->bind(ProductDataGrid::class, SmallBatchProductDataGrid::class);
     app()->bind(CategoryDataGrid::class, SmallBatchCategoryDataGrid::class);
 
