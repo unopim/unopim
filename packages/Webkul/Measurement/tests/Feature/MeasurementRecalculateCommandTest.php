@@ -4,7 +4,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -42,7 +42,7 @@ function productWithStaleMeasurement(Attribute $attribute, string $amount = '500
 {
     $product = new Product;
     $product->sku = 'recalc-'.uniqid();
-    $product->type = ProductTypeEnum::Simple->value;
+    $product->type = ProductType::Simple->value;
     $product->attribute_family_id = AttributeFamily::first()->id;
     $product->values = [
         'common' => [
@@ -105,7 +105,7 @@ it('leaves an already correct value untouched', function () {
 
     $product = new Product;
     $product->sku = 'recalc-ok-'.uniqid();
-    $product->type = ProductTypeEnum::Simple->value;
+    $product->type = ProductType::Simple->value;
     $product->attribute_family_id = AttributeFamily::first()->id;
     $product->values = [
         'common' => [

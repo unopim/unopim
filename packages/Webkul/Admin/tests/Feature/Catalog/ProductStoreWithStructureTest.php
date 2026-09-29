@@ -2,7 +2,7 @@
 
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\User\Models\Admin;
 
@@ -21,7 +21,7 @@ it('returns the family variant structures for a configurable create', function (
 
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.store'), [
-            'type'                => ProductTypeEnum::Configurable->value,
+            'type'                => ProductType::Configurable->value,
             'attribute_family_id' => $family->id,
             'sku'                 => 'CFG-1',
         ])
@@ -37,7 +37,7 @@ it('blocks configurable create when the family has no variant structures', funct
 
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.store'), [
-            'type'                => ProductTypeEnum::Configurable->value,
+            'type'                => ProductType::Configurable->value,
             'attribute_family_id' => $family->id,
             'sku'                 => 'CFG-3',
         ])
@@ -61,7 +61,7 @@ it('rejects a structure that does not belong to the family', function () {
 
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.store'), [
-            'type'                 => ProductTypeEnum::Configurable->value,
+            'type'                 => ProductType::Configurable->value,
             'attribute_family_id'  => $family->id,
             'sku'                  => 'CFG-2',
             'variant_structure_id' => $foreign->id,

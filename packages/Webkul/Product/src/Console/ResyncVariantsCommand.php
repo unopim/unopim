@@ -6,7 +6,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\Completeness\Jobs\ProductCompletenessJob;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\ProductProxy;
 
 #[Description('Rebuild derived data (completeness scores, search index) for variant subtrees. A safety net when a queued propagation job was dropped; the source tree is always authoritative.')]
@@ -27,7 +27,7 @@ class ResyncVariantsCommand extends Command
         }
 
         $roots = ProductProxy::modelClass()::query()
-            ->where('type', ProductTypeEnum::Configurable->value)
+            ->where('type', ProductType::Configurable->value)
             ->with('variants.variants');
 
         if ($id = $this->option('product')) {

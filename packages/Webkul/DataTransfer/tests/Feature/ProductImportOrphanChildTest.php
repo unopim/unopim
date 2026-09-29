@@ -4,7 +4,7 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Error;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 use function Pest\Laravel\assertDatabaseMissing;
@@ -32,7 +32,7 @@ it('does not create a child whose parent never made it into the catalogue', func
     $childSku = $missingParent.'-green';
 
     resolve(Importer::class)->saveProducts([
-        'insert' => [$childSku => insertRowFor(ProductTypeEnum::VariantGroup->value, $childSku, $missingParent)],
+        'insert' => [$childSku => insertRowFor(ProductType::VariantGroup->value, $childSku, $missingParent)],
     ]);
 
     assertDatabaseMissing($this->getFullTableName(Product::class), ['sku' => $childSku]);
@@ -45,8 +45,8 @@ it('drops the whole branch when the configurable is rejected', function () {
 
     resolve(Importer::class)->saveProducts([
         'insert' => [
-            $group  => insertRowFor(ProductTypeEnum::VariantGroup->value, $group, $parent),
-            $simple => insertRowFor(ProductTypeEnum::Simple->value, $simple, $group),
+            $group  => insertRowFor(ProductType::VariantGroup->value, $group, $parent),
+            $simple => insertRowFor(ProductType::Simple->value, $simple, $group),
         ],
     ]);
 
@@ -59,7 +59,7 @@ it('still creates a child whose parent exists', function () {
 
     $parent = Product::factory()->create([
         'sku'                 => 'present-'.Str::random(6),
-        'type'                => ProductTypeEnum::Configurable->value,
+        'type'                => ProductType::Configurable->value,
         'attribute_family_id' => $family->id,
     ]);
 
@@ -68,7 +68,7 @@ it('still creates a child whose parent exists', function () {
     $importer = resolve(Importer::class);
 
     $importer->saveProducts([
-        'insert' => [$childSku => insertRowFor(ProductTypeEnum::VariantGroup->value, $childSku, $parent->sku)],
+        'insert' => [$childSku => insertRowFor(ProductType::VariantGroup->value, $childSku, $parent->sku)],
     ]);
 
     $child = Product::query()->where('sku', $childSku)->first();
@@ -81,7 +81,7 @@ it('still creates a row that declares no parent at all', function () {
     $sku = 'standalone-'.Str::random(6);
 
     resolve(Importer::class)->saveProducts([
-        'insert' => [$sku => insertRowFor(ProductTypeEnum::Simple->value, $sku, null)],
+        'insert' => [$sku => insertRowFor(ProductType::Simple->value, $sku, null)],
     ]);
 
     expect(Product::query()->where('sku', $sku)->exists())->toBeTrue();
@@ -106,8 +106,8 @@ it('reports every dropped row against the line it came from', function () {
 
     $importer->saveProducts([
         'insert' => [
-            $group  => insertRowFor(ProductTypeEnum::VariantGroup->value, $group, $parent),
-            $simple => insertRowFor(ProductTypeEnum::Simple->value, $simple, $group),
+            $group  => insertRowFor(ProductType::VariantGroup->value, $group, $parent),
+            $simple => insertRowFor(ProductType::Simple->value, $simple, $group),
         ],
     ]);
 

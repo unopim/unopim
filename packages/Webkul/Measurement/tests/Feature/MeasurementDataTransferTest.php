@@ -9,7 +9,7 @@ use Webkul\DataTransfer\Helpers\Importers\Product\Importer as CoreImporter;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 beforeEach(function () {
     $this->loginAsAdmin();
@@ -69,7 +69,7 @@ it('imports a measurement column together with its (unit) column', function () {
 
     $rowData = [
         'sku'                              => 'measurement-import-'.uniqid(),
-        'type'                             => ProductTypeEnum::Simple->value,
+        'type'                             => ProductType::Simple->value,
         'attribute_family'                 => $family->code,
         $measurement->code                 => '12.5',
         $measurement->code.'(unit)'        => 'Centimeter',
@@ -98,7 +98,7 @@ it('does not let the (unit) column overwrite the measurement amount', function (
 
     $rowData = [
         'sku'                       => 'measurement-import-'.uniqid(),
-        'type'                      => ProductTypeEnum::Simple->value,
+        'type'                      => ProductType::Simple->value,
         'attribute_family'          => $family->code,
         $measurement->code          => '3',
         $measurement->code.'(unit)' => 'Meter',
@@ -121,7 +121,7 @@ it('still imports a plain attribute whose code ends in _unit', function () {
 
     $rowData = [
         'sku'              => 'measurement-import-'.uniqid(),
-        'type'             => ProductTypeEnum::Simple->value,
+        'type'             => ProductType::Simple->value,
         'attribute_family' => $family->code,
         $unitNamed->code   => 'box',
     ];
@@ -189,7 +189,7 @@ it('does not store a malformed structure when the unit is missing (R7)', functio
 
     $rowData = [
         'sku'              => 'measurement-import-'.uniqid(),
-        'type'             => ProductTypeEnum::Simple->value,
+        'type'             => ProductType::Simple->value,
         'attribute_family' => $family->code,
         $measurement->code => '7',
     ];
@@ -208,7 +208,7 @@ it('unescapes a formula-escaped amount before casting it (R8)', function () {
 
     $rowData = [
         'sku'                       => 'measurement-import-'.uniqid(),
-        'type'                      => ProductTypeEnum::Simple->value,
+        'type'                      => ProductType::Simple->value,
         'attribute_family'          => $family->code,
         $measurement->code          => EscapeFormulaOperators::escapeValue('-5'),
         $measurement->code.'(unit)' => 'Meter',

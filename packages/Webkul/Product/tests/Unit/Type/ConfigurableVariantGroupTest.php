@@ -6,8 +6,8 @@ use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Contracts\VariantValueResolver;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -41,11 +41,11 @@ it('materializes configurable → variant_group → simple and resolves the chai
         ['variant_structure_id' => $structure->id, 'attribute_id' => $size->id, 'level' => 'level_2', 'position' => 0],
     ]);
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $swatch->id, 'level' => VariantLevelEnum::SubParent->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $swatch->id, 'level' => VariantLevel::SubParent->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -63,7 +63,7 @@ it('materializes configurable → variant_group → simple and resolves the chai
         'sku'               => $configurable->sku.'-RED',
     ]);
 
-    expect($group->type)->toBe(ProductTypeEnum::VariantGroup->value)
+    expect($group->type)->toBe(ProductType::VariantGroup->value)
         ->and($group->parent_id)->toBe($configurable->id)
         ->and($group->values['common'])->toMatchArray([$colorCode => 'red', $swatchCode => 'red.png']);
 
@@ -105,7 +105,7 @@ it('rejects an ancestor-owned field change through updateVariant() bulk path', f
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -151,7 +151,7 @@ it('allows an own-axis rename through updateVariantGroupValues() with no collisi
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -192,7 +192,7 @@ it('rejects an own-axis rename through updateVariantGroupValues() that collides 
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -228,7 +228,7 @@ it('fails loudly when a legacy 1-level createVariant call omits a required axis'
     $family = AttributeFamily::factory()->create();
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                => ProductTypeEnum::Configurable->value,
+        'type'                => ProductType::Configurable->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'TEE-'.Str::random(8),
         'super_attributes'    => [$colorCode, $sizeCode],

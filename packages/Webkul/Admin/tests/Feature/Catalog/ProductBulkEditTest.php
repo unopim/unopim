@@ -7,8 +7,8 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\DataTransfer\Jobs\System\BulkProductUpdate;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -271,11 +271,11 @@ function bulkSaveVariantFixture(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => VariantLevelEnum::Common->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => VariantLevel::Common->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'BS-'.$suffix,
         'variant_structure_id' => $structure->id,
@@ -428,15 +428,15 @@ function bulkEditGridFixture(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => VariantLevelEnum::Common->value],
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $groupNote->id, 'level' => VariantLevelEnum::SubParent->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => VariantLevel::Common->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $groupNote->id, 'level' => VariantLevel::SubParent->value],
     ]);
 
     $colorOption = $color->options->first()->code;
     $sizeOption = $size->options->first()->code;
 
     $configurable = Product::factory()->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'BEG-'.$suffix,
         'variant_structure_id' => $structure->id,
@@ -446,7 +446,7 @@ function bulkEditGridFixture(): array
     $configurable->save();
 
     $group = Product::factory()->create([
-        'type'                => ProductTypeEnum::VariantGroup->value,
+        'type'                => ProductType::VariantGroup->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'BEG-'.$suffix.'-G1',
         'parent_id'           => $configurable->id,
@@ -456,7 +456,7 @@ function bulkEditGridFixture(): array
     $group->save();
 
     $variant = Product::factory()->create([
-        'type'                => ProductTypeEnum::Simple->value,
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'BEG-'.$suffix.'-G1-S1',
         'parent_id'           => $group->id,

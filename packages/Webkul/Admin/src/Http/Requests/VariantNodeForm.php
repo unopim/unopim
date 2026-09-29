@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Webkul\Core\Rules\Sku;
 use Webkul\Product\Contracts\VariantStructurePlanner;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -49,7 +49,7 @@ class VariantNodeForm extends FormRequest
     {
         $configurable = $this->productRepository->find($this->route('configurableId'));
 
-        abort_if(! $configurable || $configurable->type !== ProductTypeEnum::Configurable->value || ! $configurable->variantStructure, 404);
+        abort_if(! $configurable || $configurable->type !== ProductType::Configurable->value || ! $configurable->variantStructure, 404);
 
         $structure = $configurable->variantStructure;
 
@@ -61,7 +61,7 @@ class VariantNodeForm extends FormRequest
 
         $rules = [
             'parent_id' => ['nullable', 'integer'],
-            'role'      => ['required', 'string', Rule::in(ProductTypeEnum::VARIANT_CHILD_VALUES)],
+            'role'      => ['required', 'string', Rule::in(ProductType::VARIANT_CHILD_VALUES)],
             'values'    => ['required', 'array', function (string $attribute, mixed $value, callable $fail) use ($axisCodes) {
                 $unknown = array_diff(array_keys((array) $value), $axisCodes);
 
@@ -90,7 +90,7 @@ class VariantNodeForm extends FormRequest
      */
     protected function axisLevel(VariantStructure $structure): string
     {
-        if ($this->input('role') === ProductTypeEnum::VariantGroup->value) {
+        if ($this->input('role') === ProductType::VariantGroup->value) {
             return 'level_1';
         }
 

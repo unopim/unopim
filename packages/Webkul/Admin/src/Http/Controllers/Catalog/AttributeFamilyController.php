@@ -17,7 +17,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Core\Rules\Code;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -178,8 +178,8 @@ class AttributeFamilyController extends Controller
                             ->values()
                             ->all(),
                     ],
-                    'placements' => collect(VariantLevelEnum::cases())
-                        ->mapWithKeys(fn (VariantLevelEnum $level) => [
+                    'placements' => collect(VariantLevel::cases())
+                        ->mapWithKeys(fn (VariantLevel $level) => [
                             $level->value => $structure->placements->where('level', $level->value)->map(fn ($placement) => $placement->attribute?->code)->filter()->values()->all(),
                         ])
                         ->all(),
@@ -393,11 +393,11 @@ class AttributeFamilyController extends Controller
             }
 
             foreach (($structure['placements'] ?? []) as $level => $codes) {
-                if (! in_array($level, VariantLevelEnum::VALUES, true)) {
+                if (! in_array($level, VariantLevel::VALUES, true)) {
                     abort(422, trans('validation.in', ['attribute' => $level]));
                 }
 
-                if ($levels === 1 && $level === VariantLevelEnum::SubParent->value && count($codes)) {
+                if ($levels === 1 && $level === VariantLevel::SubParent->value && count($codes)) {
                     abort(422, trans('validation.in', ['attribute' => $level]));
                 }
 
@@ -546,11 +546,11 @@ class AttributeFamilyController extends Controller
         }
 
         foreach (($structureData['placements'] ?? []) as $level => $codes) {
-            if (! in_array($level, VariantLevelEnum::VALUES, true)) {
+            if (! in_array($level, VariantLevel::VALUES, true)) {
                 abort(422, trans('validation.in', ['attribute' => $level]));
             }
 
-            if ($levels === 1 && $level === VariantLevelEnum::SubParent->value && count($codes)) {
+            if ($levels === 1 && $level === VariantLevel::SubParent->value && count($codes)) {
                 abort(422, trans('validation.in', ['attribute' => $level]));
             }
 
@@ -739,7 +739,7 @@ class AttributeFamilyController extends Controller
 
         $relocated = [];
 
-        foreach ([VariantLevelEnum::Common->value, VariantLevelEnum::SubParent->value] as $level) {
+        foreach ([VariantLevel::Common->value, VariantLevel::SubParent->value] as $level) {
             if (empty($placements[$level])) {
                 continue;
             }
@@ -756,7 +756,7 @@ class AttributeFamilyController extends Controller
         }
 
         if ($relocated !== []) {
-            $placements[VariantLevelEnum::Variant->value] = array_values(array_unique([...($placements[VariantLevelEnum::Variant->value] ?? []), ...$relocated]));
+            $placements[VariantLevel::Variant->value] = array_values(array_unique([...($placements[VariantLevel::Variant->value] ?? []), ...$relocated]));
         }
 
         return $placements;

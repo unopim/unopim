@@ -8,7 +8,7 @@ use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -43,10 +43,10 @@ it('should return the list of all simple products', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Product::where('type', ProductTypeEnum::Simple->value)->count()])
+        ->assertJsonFragment(['total' => Product::where('type', ProductType::Simple->value)->count()])
         ->json('data');
 
-    $product = Product::where('type', ProductTypeEnum::Simple->value)->orderBy('id')->first();
+    $product = Product::where('type', ProductType::Simple->value)->orderBy('id')->first();
 
     $responseProduct = collect($response)->firstWhere('sku', $product->sku);
 
@@ -62,7 +62,7 @@ it('should return the list of all simple products', function () {
 
 it('should return the simple product using the code', function () {
     $product = Product::factory()->simple()->create();
-    $simpleProduct = Product::where('type', ProductTypeEnum::Simple->value)->first();
+    $simpleProduct = Product::where('type', ProductType::Simple->value)->first();
 
     $this->withHeaders($this->headers)->json('GET', route('admin.api.products.get', ['code' => $simpleProduct->sku]))
         ->assertOK()

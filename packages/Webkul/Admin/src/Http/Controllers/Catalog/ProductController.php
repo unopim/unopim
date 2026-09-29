@@ -34,10 +34,10 @@ use Webkul\Core\Rules\Sku;
 use Webkul\Product\Contracts\Product as ProductContract;
 use Webkul\Product\Contracts\ProductAssociation as ProductAssociationContract;
 use Webkul\Product\Contracts\VariantStructurePlanner;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Facades\ProductValueMapper as ProductValueMapperFacade;
-use Webkul\Product\Helpers\ProductType;
+use Webkul\Product\Helpers\ProductType as ProductTypeHelper;
 use Webkul\Product\Jobs\MassDeleteProducts;
 use Webkul\Product\Jobs\MassUpdateProductsStatus;
 use Webkul\Product\Models\Product;
@@ -141,7 +141,7 @@ class ProductController extends Controller
 
         $data['variant_structure_id'] = request()->input('variant_structure_id');
 
-        if (ProductType::hasVariants($data['type'])) {
+        if (ProductTypeHelper::hasVariants($data['type'])) {
             $structures = $this->variantStructureRepository->findWhere([
                 'attribute_family_id' => $data['attribute_family_id'],
             ])->filter(fn ($structure) => $structure->hasAllAxisAttributesInFamily())->values();
@@ -206,7 +206,7 @@ class ProductController extends Controller
     {
         $configurable = $this->productRepository->findOrFail($configurableId);
 
-        if ($configurable->type !== ProductTypeEnum::Configurable->value || ! $configurable->variantStructure) {
+        if ($configurable->type !== ProductType::Configurable->value || ! $configurable->variantStructure) {
             abort(404);
         }
 
@@ -229,7 +229,7 @@ class ProductController extends Controller
 
             $typeInstance = $configurable->getTypeInstance();
 
-            if ($role === ProductTypeEnum::VariantGroup->value) {
+            if ($role === ProductType::VariantGroup->value) {
                 return $typeInstance->createVariantGroup($configurable, [
                     'group_values' => $axisValues,
                     'sku'          => $request->input('sku') ?: $this->uniqueVariantNodeSku($configurable, $configurable, $axisValues),
@@ -272,14 +272,14 @@ class ProductController extends Controller
         $levels = (int) $configurable->variantStructure->levels;
 
         if (empty($parentId) || (int) $parentId === $configurable->id) {
-            if ($role === ProductTypeEnum::VariantGroup->value) {
+            if ($role === ProductType::VariantGroup->value) {
                 return $levels === 2 ? $configurable : null;
             }
 
             return $levels === 1 ? $configurable : null;
         }
 
-        if ($role !== ProductTypeEnum::Simple->value) {
+        if ($role !== ProductType::Simple->value) {
             return null;
         }
 
@@ -287,7 +287,7 @@ class ProductController extends Controller
 
         if (
             ! $parent
-            || $parent->type !== ProductTypeEnum::VariantGroup->value
+            || $parent->type !== ProductType::VariantGroup->value
             || (int) $parent->parent_id !== $configurable->id
         ) {
             return null;
@@ -348,7 +348,7 @@ class ProductController extends Controller
     {
         $configurable = $this->productRepository->findOrFail($configurableId);
 
-        if ($configurable->type !== ProductTypeEnum::Configurable->value || ! $configurable->variantStructure) {
+        if ($configurable->type !== ProductType::Configurable->value || ! $configurable->variantStructure) {
             abort(404);
         }
 
@@ -363,8 +363,8 @@ class ProductController extends Controller
         $perPage = min(max((int) ($request->input('perPage') ?: self::VARIANT_CHILDREN_PER_PAGE), 1), self::VARIANT_CHILDREN_MAX_PER_PAGE);
 
         $expectedRole = $parent->id === $configurable->id && (int) $configurable->variantStructure->levels === 2
-            ? ProductTypeEnum::VariantGroup->value
-            : ProductTypeEnum::Simple->value;
+            ? ProductType::VariantGroup->value
+            : ProductType::Simple->value;
 
         $axes = $this->variantChildrenAxisCodes($configurable, $expectedRole);
 
@@ -416,7 +416,7 @@ class ProductController extends Controller
                 ->pluck('score', 'product_id')
             : collect();
 
-        $isGroupList = $expectedRole === ProductTypeEnum::VariantGroup->value;
+        $isGroupList = $expectedRole === ProductType::VariantGroup->value;
 
         $leafTotals = $isGroupList
             ? ProductProxy::modelClass()::whereIn('parent_id', $childIds)
@@ -504,7 +504,7 @@ class ProductController extends Controller
 
         $byLevel = $this->variantStructurePlanner->axisCodesByLevel($structure);
 
-        $level = $expectedRole === ProductTypeEnum::VariantGroup->value || (int) $structure->levels === 1
+        $level = $expectedRole === ProductType::VariantGroup->value || (int) $structure->levels === 1
             ? 'level_1'
             : 'level_2';
 
@@ -527,7 +527,7 @@ class ProductController extends Controller
 
         if (
             ! $parent
-            || $parent->type !== ProductTypeEnum::VariantGroup->value
+            || $parent->type !== ProductType::VariantGroup->value
             || (int) $parent->parent_id !== $configurable->id
         ) {
             return null;
@@ -767,7 +767,7 @@ class ProductController extends Controller
             return null;
         }
 
-        $currentLevel = ProductTypeEnum::tryFrom((string) $product->type)?->variantLevel();
+        $currentLevel = ProductType::tryFrom((string) $product->type)?->variantLevel();
 
         if ($currentLevel === null) {
             return null;
@@ -777,13 +777,13 @@ class ProductController extends Controller
 
         $allAxisCodes = $this->variantStructurePlanner->allAxisCodes($structure);
 
-        $groupAncestor = $product->type === ProductTypeEnum::Simple->value && $product->parent?->type === ProductTypeEnum::VariantGroup->value
+        $groupAncestor = $product->type === ProductType::Simple->value && $product->parent?->type === ProductType::VariantGroup->value
             ? $product->parent
             : null;
 
         $ownerByLevel = [
-            VariantLevelEnum::Common->value    => $configurable,
-            VariantLevelEnum::SubParent->value => $groupAncestor,
+            VariantLevel::Common->value    => $configurable,
+            VariantLevel::SubParent->value => $groupAncestor,
         ];
 
         $channelCode = core()->getRequestedChannelCode();
@@ -805,9 +805,9 @@ class ProductController extends Controller
         }
 
         $fixedAxisDepth = match ($currentLevel) {
-            VariantLevelEnum::SubParent => 1,
-            VariantLevelEnum::Variant   => (int) $structure->levels,
-            VariantLevelEnum::Common    => 0,
+            VariantLevel::SubParent => 1,
+            VariantLevel::Variant   => (int) $structure->levels,
+            VariantLevel::Common    => 0,
         };
 
         foreach ($configurable->attribute_family->customAttributes as $attribute) {
@@ -820,13 +820,13 @@ class ProductController extends Controller
 
                 if ($axisDepth < $fixedAxisDepth) {
                     $axisLevel = (int) $structure->levels === 2
-                        ? ($axisDepth === 1 ? VariantLevelEnum::SubParent->value : VariantLevelEnum::Variant->value)
+                        ? ($axisDepth === 1 ? VariantLevel::SubParent->value : VariantLevel::Variant->value)
                         : null;
 
                     $locks[$attribute->code] = [
                         'axis'    => true,
                         'level'   => $axisLevel,
-                        'ownerId' => $axisLevel === VariantLevelEnum::SubParent->value ? $groupAncestor?->id : null,
+                        'ownerId' => $axisLevel === VariantLevel::SubParent->value ? $groupAncestor?->id : null,
                         'value'   => $attribute->getValueFromProductValues($resolvedValues, $channelCode, $localeCode),
                     ];
                 } elseif ($axisDepth > $fixedAxisDepth) {
@@ -838,7 +838,7 @@ class ProductController extends Controller
 
             $placement = $this->variantStructurePlanner->placementOf($structure, $attribute->code);
 
-            $placementOrder = VariantLevelEnum::tryFrom($placement)?->order() ?? 0;
+            $placementOrder = VariantLevel::tryFrom($placement)?->order() ?? 0;
 
             if ($placementOrder === $currentOrder) {
                 continue;
@@ -930,13 +930,13 @@ class ProductController extends Controller
      */
     protected function countVariantLeaves(Product $configurable, int $levels): int
     {
-        $leaves = ProductProxy::modelClass()::where('type', ProductTypeEnum::Simple->value);
+        $leaves = ProductProxy::modelClass()::where('type', ProductType::Simple->value);
 
         if ($levels === 2) {
             return $leaves->whereIn(
                 'parent_id',
                 ProductProxy::modelClass()::where('parent_id', $configurable->id)
-                    ->where('type', ProductTypeEnum::VariantGroup->value)
+                    ->where('type', ProductType::VariantGroup->value)
                     ->select('id')
             )->count();
         }
@@ -983,22 +983,22 @@ class ProductController extends Controller
      */
     protected function resolveConfigurableForVariantTree(Product $product): ?Product
     {
-        if ($product->type === ProductTypeEnum::Configurable->value) {
+        if ($product->type === ProductType::Configurable->value) {
             return $product;
         }
 
-        if (! in_array($product->type, ProductTypeEnum::VARIANT_CHILD_VALUES, true)) {
+        if (! in_array($product->type, ProductType::VARIANT_CHILD_VALUES, true)) {
             return null;
         }
 
         $ancestor = $product->parent;
         $guard = 0;
 
-        while ($ancestor && $ancestor->type !== ProductTypeEnum::Configurable->value && $guard++ < 10) {
+        while ($ancestor && $ancestor->type !== ProductType::Configurable->value && $guard++ < 10) {
             $ancestor = $ancestor->parent;
         }
 
-        return $ancestor?->type === ProductTypeEnum::Configurable->value ? $ancestor : null;
+        return $ancestor?->type === ProductType::Configurable->value ? $ancestor : null;
     }
 
     /**
@@ -1042,7 +1042,7 @@ class ProductController extends Controller
             : collect();
 
         $groupIds = array_values(array_filter(array_map(
-            fn (Product $n) => $n->type === ProductTypeEnum::VariantGroup->value ? $n->id : null,
+            fn (Product $n) => $n->type === ProductType::VariantGroup->value ? $n->id : null,
             $chain
         )));
 
@@ -1078,7 +1078,7 @@ class ProductController extends Controller
 
             $imagePath = $ancestor->getProductDisplayImage($channelCode, $localeCode, $imageAttributes);
 
-            $isGroup = $ancestor->type === ProductTypeEnum::VariantGroup->value;
+            $isGroup = $ancestor->type === ProductType::VariantGroup->value;
 
             $nodes[(string) $ancestor->id] = [
                 'id'              => $ancestor->id,
@@ -1247,7 +1247,7 @@ class ProductController extends Controller
             );
 
             if (! $isUnique) {
-                $messageKey = $product->type === ProductTypeEnum::VariantGroup->value
+                $messageKey = $product->type === ProductType::VariantGroup->value
                     ? 'admin::app.catalog.products.edit.types.configurable.variant-group-combination-exists'
                     : 'admin::app.catalog.products.edit.types.configurable.variant-combination-exists';
 

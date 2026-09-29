@@ -2,7 +2,7 @@
 
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductCursor;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 function buildBoolQuery(array $filters): array
@@ -24,14 +24,14 @@ it('restricts to the ids matching the sku filter', function () {
 
     $matched = Product::create([
         'sku'                 => 'ES-SKU-1',
-        'type'                => ProductTypeEnum::Simple->value,
+        'type'                => ProductType::Simple->value,
         'status'              => 1,
         'attribute_family_id' => $family->id,
     ]);
 
     Product::create([
         'sku'                 => 'ES-SKU-2',
-        'type'                => ProductTypeEnum::Simple->value,
+        'type'                => ProductType::Simple->value,
         'status'              => 1,
         'attribute_family_id' => $family->id,
     ]);

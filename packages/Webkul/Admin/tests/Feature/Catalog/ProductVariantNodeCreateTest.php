@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -49,7 +49,7 @@ function makeConfigurableForVariantNodeCreate(): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -69,7 +69,7 @@ it('creates a variant_group node under a configurable', function () {
     $response = $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => null,
-            'role'      => ProductTypeEnum::VariantGroup->value,
+            'role'      => ProductType::VariantGroup->value,
             'values'    => [$colorCode => $redOptionCode],
         ])
         ->assertOk();
@@ -82,7 +82,7 @@ it('creates a variant_group node under a configurable', function () {
 
     $group = Product::find($newId);
 
-    expect($group->type)->toBe(ProductTypeEnum::VariantGroup->value)
+    expect($group->type)->toBe(ProductType::VariantGroup->value)
         ->and($group->parent_id)->toBe($configurable->id)
         ->and($group->values['common'][$colorCode] ?? null)->toBe($redOptionCode);
 });
@@ -104,7 +104,7 @@ it('creates a simple node under a variant_group', function () {
     $response = $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => $group->id,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => [$sizeCode => $sizeOptionCode],
         ])
         ->assertOk();
@@ -117,7 +117,7 @@ it('creates a simple node under a variant_group', function () {
 
     $leaf = Product::find($newId);
 
-    expect($leaf->type)->toBe(ProductTypeEnum::Simple->value)
+    expect($leaf->type)->toBe(ProductType::Simple->value)
         ->and($leaf->parent_id)->toBe($group->id)
         ->and($leaf->values['common'][$sizeCode] ?? null)->toBe($sizeOptionCode);
 });
@@ -139,7 +139,7 @@ it('rejects a parent_id that does not belong to the configurable subtree', funct
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => $foreignGroup->id,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => [$sizeCode => $sizeOptionCode],
         ])
         ->assertNotFound();
@@ -157,7 +157,7 @@ it('rejects an axis code that is not part of the configurable variant structure'
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => null,
-            'role'      => ProductTypeEnum::VariantGroup->value,
+            'role'      => ProductType::VariantGroup->value,
             'values'    => [$foreignAxisCode => 'whatever'],
         ])
         ->assertStatus(422)
@@ -201,7 +201,7 @@ function makeMultiAxisConfigurable(): array
     );
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'MULTI-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -221,7 +221,7 @@ it('creates a leaf fixed on every axis of a multi axis level', function () {
     $newId = $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => null,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => array_combine($codes, $options),
         ])
         ->assertOk()
@@ -229,7 +229,7 @@ it('creates a leaf fixed on every axis of a multi axis level', function () {
 
     $leaf = Product::find($newId);
 
-    expect($leaf->type)->toBe(ProductTypeEnum::Simple->value)
+    expect($leaf->type)->toBe(ProductType::Simple->value)
         ->and($leaf->parent_id)->toBe($configurable->id);
 
     foreach ($codes as $index => $code) {
@@ -247,7 +247,7 @@ it('rejects a node that leaves one axis of a multi axis level unset', function (
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => null,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => [$codes[0] => $options[0]],
         ])
         ->assertStatus(422)
@@ -264,7 +264,7 @@ it('rejects an option that belongs to another attribute', function () {
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => null,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => [
                 $codes[0] => $options[1],
                 $codes[1] => $options[1],
@@ -284,7 +284,7 @@ it('rejects a second node fixed on the same axis combination', function () {
 
     $payload = [
         'parent_id' => null,
-        'role'      => ProductTypeEnum::Simple->value,
+        'role'      => ProductType::Simple->value,
         'values'    => array_combine($codes, $options),
     ];
 
@@ -308,7 +308,7 @@ it('rejects a sku already taken by another product', function () {
     $this->actingAs($admin, 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => null,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => array_combine($codes, $options),
             'sku'       => $configurable->sku,
         ])
@@ -331,7 +331,7 @@ it('announces a leaf variant created from the variations sidebar', function () {
     $response = $this->actingAs(Admin::factory()->create(), 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => $group->id,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => [$sizeCode => $sizeOptionCode],
         ])
         ->assertOk();
@@ -369,14 +369,14 @@ it('queues exactly one product webhook for a leaf variant created from the sideb
     $response = $this->actingAs(Admin::factory()->create(), 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => $group->id,
-            'role'      => ProductTypeEnum::Simple->value,
+            'role'      => ProductType::Simple->value,
             'values'    => [$sizeCode => $sizeOptionCode],
         ])
         ->assertOk();
 
     Queue::assertPushed(SendProductWebhook::class, 1);
 
-    expect(Product::find($response->json('data.id'))->type)->toBe(ProductTypeEnum::Simple->value);
+    expect(Product::find($response->json('data.id'))->type)->toBe(ProductType::Simple->value);
 });
 
 it('stays silent when the requested variant node already exists', function () {
@@ -393,7 +393,7 @@ it('stays silent when the requested variant node already exists', function () {
 
     $payload = [
         'parent_id' => $group->id,
-        'role'      => ProductTypeEnum::Simple->value,
+        'role'      => ProductType::Simple->value,
         'values'    => [$sizeCode => $sizeOptionCode],
     ];
 
@@ -420,7 +420,7 @@ it('announces a variant group created from the variations sidebar', function () 
     $response = $this->actingAs(Admin::factory()->create(), 'admin')
         ->postJson(route('admin.catalog.products.variant_node.create', $configurable->id), [
             'parent_id' => $configurable->id,
-            'role'      => ProductTypeEnum::VariantGroup->value,
+            'role'      => ProductType::VariantGroup->value,
             'values'    => [$colorCode => $redOptionCode],
         ])
         ->assertOk();
@@ -429,6 +429,6 @@ it('announces a variant group created from the variations sidebar', function () 
 
     Event::assertDispatched(
         'catalog.product.create.after',
-        fn ($event, $product): bool => $product->id === $newId && $product->type === ProductTypeEnum::VariantGroup->value
+        fn ($event, $product): bool => $product->id === $newId && $product->type === ProductType::VariantGroup->value
     );
 });

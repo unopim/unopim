@@ -7,7 +7,7 @@ use Webkul\DataTransfer\Jobs\Export\File\JSONFileBuffer;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 /**
@@ -85,7 +85,7 @@ describe('Product export "with_associations" opt-in flag', function () {
 
         $this->product = Product::create([
             'sku'                 => $sku,
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $familyId,
         ]);

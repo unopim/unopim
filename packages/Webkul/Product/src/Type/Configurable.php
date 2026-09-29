@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
 use Webkul\Product\Contracts\VariantStructurePlanner;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Repositories\ProductRepository;
@@ -62,7 +62,7 @@ class Configurable extends AbstractType
     public function getDefaultVariant()
     {
         return $this->product->variants()
-            ->where('type', '!=', ProductTypeEnum::VariantGroup->value)
+            ->where('type', '!=', ProductType::VariantGroup->value)
             ->find($this->getDefaultVariantId());
     }
 
@@ -209,7 +209,7 @@ class Configurable extends AbstractType
         $groupAxis = $planner->axisCodesByLevel($product->variantStructure)['level_1'][0] ?? null;
 
         $existingGroups = $product->variants()
-            ->where('type', ProductTypeEnum::VariantGroup->value)
+            ->where('type', ProductType::VariantGroup->value)
             ->with('variants')
             ->get()
             ->keyBy('id');
@@ -317,7 +317,7 @@ class Configurable extends AbstractType
     {
         $group = $this->productRepository->getModel()->create([
             'parent_id'           => $product->id,
-            'type'                => ProductTypeEnum::VariantGroup->value,
+            'type'                => ProductType::VariantGroup->value,
             'attribute_family_id' => $product->attribute_family_id,
             'sku'                 => $groupData['sku'],
         ]);
@@ -354,7 +354,7 @@ class Configurable extends AbstractType
     {
         $variant = $this->productRepository->getModel()->create([
             'parent_id'           => $data['parent_id'] ?? $product->id,
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'attribute_family_id' => $product->attribute_family_id,
             'sku'                 => $data['sku'],
         ]);
@@ -410,7 +410,7 @@ class Configurable extends AbstractType
         $persist = function () use ($variant, $data, $suppliedCommonValues): Product {
             $variantValues = $variant->values;
 
-            $isTwoLevelVariant = $variant->parent?->type === ProductTypeEnum::VariantGroup->value
+            $isTwoLevelVariant = $variant->parent?->type === ProductType::VariantGroup->value
                 || ($this->product->variant_structure_id && $this->product->variantStructure?->levels === 2);
 
             foreach ($data['super_attributes'] ?? [] as $attribute) {
@@ -472,7 +472,7 @@ class Configurable extends AbstractType
 
         $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
 
-        foreach ($planner->attributeCodesAtLevel($structure, VariantLevelEnum::Variant->value) as $attributeCode) {
+        foreach ($planner->attributeCodesAtLevel($structure, VariantLevel::Variant->value) as $attributeCode) {
             if (
                 $attributeCode === 'sku'
                 || in_array($attributeCode, $axisCodes, true)

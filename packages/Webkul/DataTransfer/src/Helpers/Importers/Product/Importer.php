@@ -38,8 +38,8 @@ use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
 use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\Product as ProductModel;
 use Webkul\Product\Models\VariantStructure;
@@ -52,7 +52,7 @@ class Importer extends AbstractImporter
     /**
      * Product type simple
      */
-    public const PRODUCT_TYPE_SIMPLE = ProductTypeEnum::Simple->value;
+    public const PRODUCT_TYPE_SIMPLE = ProductType::Simple->value;
 
     /**
      * Product type virtual
@@ -67,12 +67,12 @@ class Importer extends AbstractImporter
     /**
      * Product type configurable
      */
-    public const PRODUCT_TYPE_CONFIGURABLE = ProductTypeEnum::Configurable->value;
+    public const PRODUCT_TYPE_CONFIGURABLE = ProductType::Configurable->value;
 
     /**
      * Product type variant group
      */
-    public const PRODUCT_TYPE_VARIANT_GROUP = ProductTypeEnum::VariantGroup->value;
+    public const PRODUCT_TYPE_VARIANT_GROUP = ProductType::VariantGroup->value;
 
     /**
      * Product type grouped
@@ -542,7 +542,7 @@ class Importer extends AbstractImporter
                 $skuChunk[] = $rowData['parent'];
             }
 
-            if (in_array($rowData['type'] ?? null, ProductTypeEnum::VARIANT_PARENT_VALUES, true)) {
+            if (in_array($rowData['type'] ?? null, ProductType::VARIANT_PARENT_VALUES, true)) {
                 $this->fileParentRows[$rowData['sku']] = [
                     'type'       => $rowData['type'],
                     'family'     => $rowData[self::ATTRIBUTE_FAMILY_CODE] ?? null,
@@ -886,7 +886,7 @@ class Importer extends AbstractImporter
          * always batched before its children, so children never reference a row that
          * has not been inserted yet — whatever order the file itself uses.
          */
-        foreach ([[ProductTypeEnum::Configurable->value], [ProductTypeEnum::VariantGroup->value], []] as $types) {
+        foreach ([[ProductType::Configurable->value], [ProductType::VariantGroup->value], []] as $types) {
             $source->rewind();
 
             while ($source->valid()) {
@@ -902,7 +902,7 @@ class Importer extends AbstractImporter
                 $rowType = $rowData['type'] ?? null;
 
                 $belongsToPass = $types === []
-                    ? ! in_array($rowType, ProductTypeEnum::VARIANT_PARENT_VALUES, true)
+                    ? ! in_array($rowType, ProductType::VARIANT_PARENT_VALUES, true)
                     : in_array($rowType, $types, true);
 
                 if ($belongsToPass && isset($this->validatedRows[$rowNumber]) && ! $this->errorHelper->isRowInvalid($rowNumber)) {
@@ -1251,7 +1251,7 @@ class Importer extends AbstractImporter
 
         $this->validatUniqueAttributeValues($rowData, $rowNumber);
 
-        if ($rowData['type'] == ProductTypeEnum::Configurable->value && empty($rowData['variant_structure'])) {
+        if ($rowData['type'] == ProductType::Configurable->value && empty($rowData['variant_structure'])) {
             if (empty($rowData['configurable_attributes'])) {
                 $this->skipRow(
                     $rowNumber,
@@ -1319,7 +1319,7 @@ class Importer extends AbstractImporter
             return $this->attributesOwnedByAncestors($rowData);
         }
 
-        $rowLevel = ProductTypeEnum::VARIANT_LEVEL_BY_TYPE[(string) $rowData['type']] ?? VariantLevelEnum::Variant->value;
+        $rowLevel = ProductType::VARIANT_LEVEL_BY_TYPE[(string) $rowData['type']] ?? VariantLevel::Variant->value;
 
         $levelByCode = [];
 
@@ -1330,19 +1330,19 @@ class Importer extends AbstractImporter
         }
 
         $axisLevel = (int) $structure->levels === 2
-            ? ['level_1' => VariantLevelEnum::SubParent->value, 'level_2' => VariantLevelEnum::Variant->value]
-            : ['level_1' => VariantLevelEnum::Variant->value, 'level_2' => VariantLevelEnum::Variant->value];
+            ? ['level_1' => VariantLevel::SubParent->value, 'level_2' => VariantLevel::Variant->value]
+            : ['level_1' => VariantLevel::Variant->value, 'level_2' => VariantLevel::Variant->value];
 
         foreach ($structure->axes as $axis) {
             if ($code = $axis->attribute?->code) {
-                $levelByCode[$code] = $axisLevel[$axis->level] ?? VariantLevelEnum::Variant->value;
+                $levelByCode[$code] = $axisLevel[$axis->level] ?? VariantLevel::Variant->value;
             }
         }
 
         $codes = [];
 
         foreach ($this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]) as $attribute) {
-            if (($levelByCode[$attribute->code] ?? VariantLevelEnum::Common->value) !== $rowLevel) {
+            if (($levelByCode[$attribute->code] ?? VariantLevel::Common->value) !== $rowLevel) {
                 $codes[] = $attribute->code;
             }
         }
@@ -1491,8 +1491,8 @@ class Importer extends AbstractImporter
     protected function isAllowedParentType(string $type, ?string $parentType): bool
     {
         return match ($parentType) {
-            ProductTypeEnum::Configurable->value  => in_array($type, ProductTypeEnum::VARIANT_CHILD_VALUES, true),
-            ProductTypeEnum::VariantGroup->value  => $type === ProductTypeEnum::Simple->value,
+            ProductType::Configurable->value      => in_array($type, ProductType::VARIANT_CHILD_VALUES, true),
+            ProductType::VariantGroup->value      => $type === ProductType::Simple->value,
             default                               => false,
         };
     }
@@ -1540,7 +1540,7 @@ class Importer extends AbstractImporter
 
         $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
 
-        $skipAttributes = $rowData['type'] == ProductTypeEnum::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
+        $skipAttributes = $rowData['type'] == ProductType::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
 
         $skipAttributes = array_map(trim(...), $skipAttributes);
 
@@ -1593,7 +1593,7 @@ class Importer extends AbstractImporter
     {
         $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
 
-        $skipAttributes = $rowData['type'] == ProductTypeEnum::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
+        $skipAttributes = $rowData['type'] == ProductType::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
         $skipAttributes = array_map(trim(...), $skipAttributes);
         $skipAttributes[] = 'sku';
 
@@ -2249,8 +2249,8 @@ class Importer extends AbstractImporter
 
         foreach ($insertProducts as $sku => $productData) {
             $tier = match ($productData['type'] ?? null) {
-                ProductTypeEnum::Configurable->value  => 0,
-                ProductTypeEnum::VariantGroup->value  => 1,
+                ProductType::Configurable->value      => 0,
+                ProductType::VariantGroup->value      => 1,
                 default                               => 2,
             };
 
@@ -2837,7 +2837,7 @@ class Importer extends AbstractImporter
      */
     public function prepareConfigurableAttributes(array $rowData, array &$products, bool $isExisting): void
     {
-        if ($rowData['type'] !== ProductTypeEnum::Configurable->value) {
+        if ($rowData['type'] !== ProductType::Configurable->value) {
             return;
         }
 
@@ -3152,7 +3152,7 @@ class Importer extends AbstractImporter
      */
     protected function isUniqueVariation(array $productData, int $rowNumber): void
     {
-        if (empty($productData['parent']) || $productData['type'] !== ProductTypeEnum::Simple->value) {
+        if (empty($productData['parent']) || $productData['type'] !== ProductType::Simple->value) {
             return;
         }
 
@@ -3196,7 +3196,7 @@ class Importer extends AbstractImporter
     {
         $configurableAttributes = [];
 
-        if ($rowData['type'] == ProductTypeEnum::Configurable->value && ! empty($rowData['configurable_attributes'])) {
+        if ($rowData['type'] == ProductType::Configurable->value && ! empty($rowData['configurable_attributes'])) {
             $configurableAttributes = str_contains($rowData['configurable_attributes'], ',') ? explode(',', $rowData['configurable_attributes'] ?? '') : [$rowData['configurable_attributes']];
 
             $configurableAttirbutes = array_filter($configurableAttributes, trim(...));

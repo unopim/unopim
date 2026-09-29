@@ -5,7 +5,7 @@ namespace Webkul\AdminApi\ApiDataSource\Catalog;
 use Illuminate\Database\Query\Builder;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Repositories\VariantStructureRepository;
 use Webkul\Product\Services\VariantStructurePlanner;
@@ -148,7 +148,7 @@ class VariantStructureDataSource extends ApiDataSource
      */
     protected function groupPlacements(VariantStructure $structure): array
     {
-        $grouped = array_fill_keys(VariantLevelEnum::VALUES, []);
+        $grouped = array_fill_keys(VariantLevel::VALUES, []);
 
         foreach ($structure->placements as $placement) {
             $code = $placement->attribute?->code;

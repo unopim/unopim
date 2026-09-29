@@ -16,7 +16,7 @@ use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Jobs\TranslateProductValuesJob;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\Core\Filesystem\FileStorer;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 class CreateProduct implements PimTool
@@ -86,7 +86,7 @@ class CreateProduct implements PimTool
                 $family = $request->string('family')->toString() ?: null;
                 $attach_image = $request->has('attach_image') ? $request->boolean('attach_image') : true;
                 $attributes_json = $request->string('attributes_json')->toString() ?: null;
-                $product_type = $request->string('product_type')->toString() ?: ProductTypeEnum::Simple->value;
+                $product_type = $request->string('product_type')->toString() ?: ProductType::Simple->value;
                 $super_attributes = $request->string('super_attributes')->toString() ?: null;
                 $variants_json = $request->string('variants_json')->toString() ?: null;
 
@@ -104,7 +104,7 @@ class CreateProduct implements PimTool
                     return json_encode(['error' => 'Product name is required']);
                 }
 
-                $type = ($product_type === ProductTypeEnum::Configurable->value || ! empty($super_attributes)) ? ProductTypeEnum::Configurable->value : ProductTypeEnum::Simple->value;
+                $type = ($product_type === ProductType::Configurable->value || ! empty($super_attributes)) ? ProductType::Configurable->value : ProductType::Simple->value;
 
                 $allAttrs = array_filter(array_merge($extraAttrs, [
                     'name'              => $name,
@@ -139,19 +139,19 @@ class CreateProduct implements PimTool
 
                 $repo = resolve(ProductRepository::class);
 
-                if ($type === ProductTypeEnum::Configurable->value && $super_attributes) {
+                if ($type === ProductType::Configurable->value && $super_attributes) {
                     $superAttrCodes = array_map(trim(...), explode(',', $super_attributes));
 
                     $product = $repo->create([
                         'sku'                 => $sku,
-                        'type'                => ProductTypeEnum::Configurable->value,
+                        'type'                => ProductType::Configurable->value,
                         'attribute_family_id' => $familyId,
                         'super_attributes'    => $superAttrCodes,
                     ]);
                 } else {
                     $product = $repo->create([
                         'sku'                 => $sku,
-                        'type'                => ProductTypeEnum::Simple->value,
+                        'type'                => ProductType::Simple->value,
                         'attribute_family_id' => $familyId,
                     ]);
                 }
@@ -331,7 +331,7 @@ class CreateProduct implements PimTool
 
                 $variantsCreated = 0;
 
-                if ($type === ProductTypeEnum::Configurable->value && $variants_json) {
+                if ($type === ProductType::Configurable->value && $variants_json) {
                     $variants = json_decode($variants_json, true) ?? [];
 
                     if (! empty($variants) && $super_attributes) {
@@ -405,7 +405,7 @@ class CreateProduct implements PimTool
 
                             $variant = $repo->getModel()->create([
                                 'parent_id'           => $product->id,
-                                'type'                => ProductTypeEnum::Simple->value,
+                                'type'                => ProductType::Simple->value,
                                 'attribute_family_id' => $familyId,
                                 'sku'                 => $variantSku,
                             ]);
@@ -448,7 +448,7 @@ class CreateProduct implements PimTool
                     ],
                 ];
 
-                if ($type === ProductTypeEnum::Configurable->value) {
+                if ($type === ProductType::Configurable->value) {
                     $result['result']['variants_created'] = $variantsCreated;
                     $result['result']['super_attributes'] = array_map(trim(...), explode(',', $super_attributes ?? ''));
                 }

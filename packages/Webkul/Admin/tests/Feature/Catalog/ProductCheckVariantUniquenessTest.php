@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -30,7 +30,7 @@ function makeConfigurableForUniquenessCheck(): array
     AttributeFamily::factory()->linkAttributesToFamily($family, collect([$color, $size]));
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                => ProductTypeEnum::Configurable->value,
+        'type'                => ProductType::Configurable->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'CVU-'.Str::random(8),
         'super_attributes'    => [$color->code, $size->code],

@@ -50,7 +50,7 @@
 
         <template #footer>
             <p
-                v-if="{{ $list }}.length <= {{ $level === \Webkul\Product\Enums\VariantLevelEnum::SubParent->value ? 'subParentAxisAttributes' : 'variantAxisAttributes' }}.length"
+                v-if="{{ $list }}.length <= {{ $level === \Webkul\Product\Enums\VariantLevel::SubParent->value ? 'subParentAxisAttributes' : 'variantAxisAttributes' }}.length"
                 class="px-2 py-3 text-center text-xs text-gray-400"
             >
                 @lang('admin::app.catalog.families.edit.level-empty-info')

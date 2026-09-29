@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Illuminate\Validation\Rule;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Services\VariantStructureWriter;
 
 /**
@@ -26,7 +26,7 @@ class UpdateVariantStructureRequest extends VariantStructureRequest
             'axes.level_1.*' => ['string'],
             'axes.level_2'   => ['sometimes', 'array'],
             'axes.level_2.*' => ['string'],
-            'placements'     => ['sometimes', 'array', $this->onlyKeys(VariantLevelEnum::VALUES)],
+            'placements'     => ['sometimes', 'array', $this->onlyKeys(VariantLevel::VALUES)],
             'placements.*'   => ['array'],
             'placements.*.*' => ['string'],
         ];

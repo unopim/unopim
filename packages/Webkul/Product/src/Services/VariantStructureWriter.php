@@ -8,7 +8,7 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -26,7 +26,7 @@ class VariantStructureWriter
 {
     public const AXIS_LEVELS = ['level_1', 'level_2'];
 
-    public const PLACEMENT_LEVELS = VariantLevelEnum::VALUES;
+    public const PLACEMENT_LEVELS = VariantLevel::VALUES;
 
     /**
      * Whether any product at all points at the structure.
@@ -117,7 +117,7 @@ class VariantStructureWriter
                 }
             }
 
-            foreach (VariantLevelEnum::VALUES as $level) {
+            foreach (VariantLevel::VALUES as $level) {
                 foreach ($placements[$level] as $attributeCode) {
                     VariantStructureAttribute::create([
                         'variant_structure_id' => $structure->id,
@@ -191,7 +191,7 @@ class VariantStructureWriter
     public function currentState(VariantStructure $structure): array
     {
         $axes = array_fill_keys(self::AXIS_LEVELS, []);
-        $placements = array_fill_keys(VariantLevelEnum::VALUES, []);
+        $placements = array_fill_keys(VariantLevel::VALUES, []);
 
         foreach ($structure->axes as $axis) {
             if ($axis->attribute?->code !== null && isset($axes[$axis->level])) {
@@ -251,9 +251,9 @@ class VariantStructureWriter
      */
     protected function normalizePlacements(array $placements): array
     {
-        $normalized = array_fill_keys(VariantLevelEnum::VALUES, []);
+        $normalized = array_fill_keys(VariantLevel::VALUES, []);
 
-        foreach (VariantLevelEnum::VALUES as $level) {
+        foreach (VariantLevel::VALUES as $level) {
             $normalized[$level] = array_values(array_filter(
                 array_map(fn ($code): string => is_string($code) ? trim($code) : '', (array) ($placements[$level] ?? [])),
                 fn (string $code): bool => $code !== ''
@@ -291,7 +291,7 @@ class VariantStructureWriter
             $errors['axes.level_2'][] = trans('validation.in', ['attribute' => 'axes.level_2']);
         }
 
-        if ($levels === 1 && $placements[VariantLevelEnum::SubParent->value] !== []) {
+        if ($levels === 1 && $placements[VariantLevel::SubParent->value] !== []) {
             $errors['placements.sub_parent'][] = trans('validation.in', ['attribute' => 'placements.sub_parent']);
         }
 
@@ -316,7 +316,7 @@ class VariantStructureWriter
 
         $placedAttributes = [];
 
-        foreach (VariantLevelEnum::VALUES as $level) {
+        foreach (VariantLevel::VALUES as $level) {
             foreach ($placements[$level] as $attributeCode) {
                 if (! $familyAttributes->has($attributeCode)) {
                     $errors['placements.'.$level][] = trans('validation.exists', ['attribute' => $attributeCode]);

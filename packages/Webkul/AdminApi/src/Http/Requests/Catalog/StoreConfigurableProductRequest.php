@@ -4,7 +4,7 @@ namespace Webkul\AdminApi\Http\Requests\Catalog;
 
 use Illuminate\Validation\Rule;
 use Webkul\AdminApi\Http\Requests\ApiFormRequest;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 class StoreConfigurableProductRequest extends ApiFormRequest
 {
@@ -19,13 +19,13 @@ class StoreConfigurableProductRequest extends ApiFormRequest
      */
     public function rules(): array
     {
-        $isVariantGroup = $this->input('type') === ProductTypeEnum::VariantGroup->value;
+        $isVariantGroup = $this->input('type') === ProductType::VariantGroup->value;
 
         $hasVariantStructure = filled($this->input('variant_structure'));
 
         return [
             'status'            => ['nullable', 'boolean'],
-            'type'              => ['nullable', Rule::in(ProductTypeEnum::VARIANT_PARENT_VALUES)],
+            'type'              => ['nullable', Rule::in(ProductType::VARIANT_PARENT_VALUES)],
             'parent'            => [Rule::requiredIf($isVariantGroup), 'nullable', 'string'],
             'channel'           => ['nullable', 'string'],
             'locale'            => ['nullable', 'string'],

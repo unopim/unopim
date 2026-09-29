@@ -3,7 +3,7 @@
 use Webkul\AiAgent\Services\ProductImportCsvNormalizer;
 use Webkul\AiAgent\Services\ProductWriterService;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 /**
  * Parse the generated (semicolon-delimited) CSV back into header + rows.
@@ -64,7 +64,7 @@ it('injects family code, channel, locale, type and default-active status per row
     $row = parseGeneratedCsv($csv)['rows'][0];
 
     expect($row['sku'])->toBe('SHOE-1');
-    expect($row['type'])->toBe(ProductTypeEnum::Simple->value);
+    expect($row['type'])->toBe(ProductType::Simple->value);
     expect($row['attribute_family'])->toBe('default');
     expect($row['channel'])->toBe('default');
     expect($row['locale'])->toBe('en_US');

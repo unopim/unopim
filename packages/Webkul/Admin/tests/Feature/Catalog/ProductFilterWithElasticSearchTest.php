@@ -2,7 +2,7 @@
 
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Facades\ElasticSearch;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -133,7 +133,7 @@ it('should filter products by type using Elasticsearch', function () {
         ],
 
         'filters' => [
-            'type' => [ProductTypeEnum::Simple->value],
+            'type' => [ProductType::Simple->value],
         ],
     ];
 
@@ -147,7 +147,7 @@ it('should filter products by type using Elasticsearch', function () {
                             'filter' => [
                                 [
                                     'terms' => [
-                                        'type' => [ProductTypeEnum::Simple->value],
+                                        'type' => [ProductType::Simple->value],
                                     ],
                                 ],
                             ],

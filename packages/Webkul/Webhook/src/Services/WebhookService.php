@@ -7,7 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\Product\Contracts\Product;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Webhook\Helpers\ProductComparer;
 use Webkul\Webhook\Models\Webhook;
@@ -327,7 +327,7 @@ class WebhookService
             'changes' => $productChanges,
         ];
 
-        if ($type === ProductTypeEnum::Configurable->value) {
+        if ($type === ProductType::Configurable->value) {
             $normalized['variants'] = $product->variants->map(fn ($variant): array => [
                 'sku'    => $variant->sku,
                 'status' => (bool) $variant->status,

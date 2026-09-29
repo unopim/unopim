@@ -14,7 +14,7 @@ use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateConfigurableProductReques
 use Webkul\AdminApi\Http\Requests\Catalog\StoreConfigurableProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateConfigurableProductRequest;
 use Webkul\Core\Rules\Sku;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\VariantStructureRepository;
 use Webkul\Product\Services\VariantStructurePlanner;
 use Webkul\Product\Type\AbstractType;
@@ -96,7 +96,7 @@ class ConfigurableProductController extends ProductController
      */
     public function store(StoreConfigurableProductRequest $request): JsonResponse
     {
-        if ($request->input('type') === ProductTypeEnum::VariantGroup->value) {
+        if ($request->input('type') === ProductType::VariantGroup->value) {
             try {
                 return $this->storeVariantGroup($request);
             } catch (\Exception $e) {
@@ -118,7 +118,7 @@ class ConfigurableProductController extends ProductController
 
         try {
             $family = $this->findFamilyOr404($data['family']);
-            $data['type'] = ProductTypeEnum::Configurable->value;
+            $data['type'] = ProductType::Configurable->value;
 
             $structureCode = $data['variant_structure'] ?? null;
 
@@ -180,7 +180,7 @@ class ConfigurableProductController extends ProductController
     {
         $parent = $this->findParentProductOr404($request->input('parent'));
 
-        if ($parent->type !== ProductTypeEnum::Configurable->value || (int) ($parent->variantStructure?->levels ?? 1) !== 2) {
+        if ($parent->type !== ProductType::Configurable->value || (int) ($parent->variantStructure?->levels ?? 1) !== 2) {
             throw new ModelNotFoundException(
                 trans('admin::app.catalog.products.product-not-found', ['sku' => $request->input('parent')])
             );
@@ -213,7 +213,7 @@ class ConfigurableProductController extends ProductController
         $node = DB::transaction(function () use ($parent, $sku, $axisTuple, $common) {
             $this->productRepository->getModel()::query()->whereKey($parent->id)->lockForUpdate()->first();
 
-            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($parent->id, $axisTuple, null, '', ProductTypeEnum::VariantGroup->value)) {
+            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($parent->id, $axisTuple, null, '', ProductType::VariantGroup->value)) {
                 return null;
             }
 
@@ -274,7 +274,7 @@ class ConfigurableProductController extends ProductController
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
 
-            if ($product->type === ProductTypeEnum::Configurable->value) {
+            if ($product->type === ProductType::Configurable->value) {
                 $data['super_attributes'] = $product->super_attributes->pluck('code')?->toArray();
                 $data['variants'] = $this->setVaraints($product, $data, $data['sku']);
             }
@@ -335,7 +335,7 @@ class ConfigurableProductController extends ProductController
         try {
             $product = $this->findProductOr404($code);
 
-            if ($product->type === ProductTypeEnum::VariantGroup->value) {
+            if ($product->type === ProductType::VariantGroup->value) {
                 $deleted = DB::transaction(function () use ($product) {
                     $this->productRepository->getModel()::query()->whereKey($product->id)->lockForUpdate()->first();
 

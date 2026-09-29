@@ -4,7 +4,7 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -72,7 +72,7 @@ function simpleVariant(Product $parent, AttributeFamily $family, string $sku, ar
 {
     $variant = Product::factory()->create([
         'sku'                 => $sku,
-        'type'                => ProductTypeEnum::Simple->value,
+        'type'                => ProductType::Simple->value,
         'parent_id'           => $parent->id,
         'attribute_family_id' => $family->id,
     ]);

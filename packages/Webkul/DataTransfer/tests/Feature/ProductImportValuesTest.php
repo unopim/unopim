@@ -5,8 +5,8 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -159,7 +159,7 @@ function placementTree(string $imageLevel): array
         ['variant_structure_id' => $structure->id, 'attribute_id' => $colour->id, 'level' => 'level_1', 'position' => 0],
     ]);
 
-    if ($imageLevel !== VariantLevelEnum::Common->value) {
+    if ($imageLevel !== VariantLevel::Common->value) {
         VariantStructureAttribute::insert([
             ['variant_structure_id' => $structure->id, 'attribute_id' => $image->id, 'level' => $imageLevel],
         ]);
@@ -169,7 +169,7 @@ function placementTree(string $imageLevel): array
 
     $configurable = Product::factory()->create([
         'sku'                  => $sku,
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
         'values'               => ['common' => ['sku' => $sku, $image->code => 'product/1/image/parent.png']],
@@ -177,7 +177,7 @@ function placementTree(string $imageLevel): array
 
     $group = Product::factory()->create([
         'sku'                 => $sku.'-green',
-        'type'                => ProductTypeEnum::VariantGroup->value,
+        'type'                => ProductType::VariantGroup->value,
         'parent_id'           => $configurable->id,
         'attribute_family_id' => $family->id,
         'values'              => ['common' => ['sku' => $sku.'-green', $image->code => 'product/2/image/group.png']],
@@ -185,7 +185,7 @@ function placementTree(string $imageLevel): array
 
     $simple = Product::factory()->create([
         'sku'                 => $sku.'-green-m',
-        'type'                => ProductTypeEnum::Simple->value,
+        'type'                => ProductType::Simple->value,
         'parent_id'           => $group->id,
         'attribute_family_id' => $family->id,
         'values'              => ['common' => ['sku' => $sku.'-green-m', $image->code => 'product/3/image/simple.png']],
@@ -195,7 +195,7 @@ function placementTree(string $imageLevel): array
 }
 
 it('drops a value the imported row is not allowed to own', function () {
-    [$configurable, $group, $simple, $code] = placementTree(VariantLevelEnum::Common->value);
+    [$configurable, $group, $simple, $code] = placementTree(VariantLevel::Common->value);
 
     resolve(Importer::class)->stripUnownedValues([$configurable->id, $group->id, $simple->id]);
 
@@ -205,7 +205,7 @@ it('drops a value the imported row is not allowed to own', function () {
 });
 
 it('keeps a value on the level the structure places it at', function () {
-    [$configurable, $group, $simple, $code] = placementTree(VariantLevelEnum::Variant->value);
+    [$configurable, $group, $simple, $code] = placementTree(VariantLevel::Variant->value);
 
     resolve(Importer::class)->stripUnownedValues([$configurable->id, $group->id, $simple->id]);
 
@@ -215,7 +215,7 @@ it('keeps a value on the level the structure places it at', function () {
 });
 
 it('never strips the sku that identifies each row', function () {
-    [$configurable, $group, $simple] = placementTree(VariantLevelEnum::Common->value);
+    [$configurable, $group, $simple] = placementTree(VariantLevel::Common->value);
 
     resolve(Importer::class)->stripUnownedValues([$configurable->id, $group->id, $simple->id]);
 
@@ -228,7 +228,7 @@ it('leaves a product outside any variant structure untouched', function () {
     $attribute = Attribute::factory()->create(['code' => 'plain_'.Str::random(6), 'type' => 'image']);
 
     $product = Product::factory()->create([
-        'type'   => ProductTypeEnum::Simple->value,
+        'type'   => ProductType::Simple->value,
         'values' => ['common' => [$attribute->code => 'product/9/image/kept.png']],
     ]);
 

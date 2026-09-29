@@ -14,9 +14,9 @@ use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Facades\ValueSetter;
-use Webkul\Product\Helpers\ProductType;
+use Webkul\Product\Helpers\ProductType as ProductTypeHelper;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\VariantStructurePlanner;
@@ -182,7 +182,7 @@ class ProductController extends ApiController
                 $product->update($data);
             }
 
-            if ($product->type === ProductTypeEnum::Configurable->value) {
+            if ($product->type === ProductType::Configurable->value) {
                 $this->updateVaraints($product, $data);
             }
 
@@ -399,7 +399,7 @@ class ProductController extends ApiController
     {
         $parentProduct = $this->findParentProductOr404($data['parent']);
 
-        if ($parentProduct->type === ProductTypeEnum::VariantGroup->value) {
+        if ($parentProduct->type === ProductType::VariantGroup->value) {
             return $this->createVariantUnderGroup($parentProduct, $data);
         }
 
@@ -484,7 +484,7 @@ class ProductController extends ApiController
         return DB::transaction(function () use ($group, $configurable, $axisTuple, $axisAttributes, $variantData): Product {
             $this->productRepository->getModel()::query()->whereKey($group->id)->lockForUpdate()->first();
 
-            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($group->id, $axisTuple, null, '', ProductTypeEnum::Simple->value)) {
+            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($group->id, $axisTuple, null, '', ProductType::Simple->value)) {
                 throw new UnprocessableEntityHttpException(
                     trans('admin::app.catalog.products.edit.types.configurable.variant-given-exists', ['variants' => json_encode($axisTuple)])
                 );
@@ -509,7 +509,7 @@ class ProductController extends ApiController
     protected function validateSuperAttributes(array $data, AttributeFamily $family): void
     {
         if (
-            ProductType::hasVariants($data['type'])
+            ProductTypeHelper::hasVariants($data['type'])
             && isset($data['super_attributes'])
         ) {
             $configurableAttributes = $family->getConfigurableAttributes()->pluck('code')->toArray();

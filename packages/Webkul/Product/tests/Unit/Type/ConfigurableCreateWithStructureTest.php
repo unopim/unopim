@@ -4,7 +4,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Repositories\ProductRepository;
@@ -32,7 +32,7 @@ it('persists the structure id and axis super_attributes on create', function () 
     ]);
 
     $product = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'CFG-STRUCT-'.Str::random(8),
         'variant_structure_id' => $structure->id,

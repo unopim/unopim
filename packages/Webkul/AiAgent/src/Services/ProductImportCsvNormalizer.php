@@ -4,7 +4,7 @@ namespace Webkul\AiAgent\Services;
 
 use Illuminate\Support\Str;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 /**
  * Normalizes AI-uploaded product rows into a CSV the core DataTransfer
@@ -161,7 +161,7 @@ class ProductImportCsvNormalizer
             case 'sku':
                 return (string) ($row['sku'] ?? '');
             case 'type':
-                return ((string) ($row['type'] ?? '')) ?: ProductTypeEnum::Simple->value;
+                return ((string) ($row['type'] ?? '')) ?: ProductType::Simple->value;
             case 'attribute_family':
                 return $familyCode;
             case 'parent':

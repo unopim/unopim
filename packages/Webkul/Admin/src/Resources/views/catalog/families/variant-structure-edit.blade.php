@@ -191,7 +191,7 @@
 
                 <x-admin::catalog.families.variant-level-card
                     v-if="structure.levels === 2"
-                    :level="\Webkul\Product\Enums\VariantLevelEnum::SubParent->value"
+                    :level="\Webkul\Product\Enums\VariantLevel::SubParent->value"
                     number="1"
                     list="subParentAttributes"
                     axis-label="axisGroupLabel(structure.axes.level_1)"
@@ -205,7 +205,7 @@
                 </div>
 
                 <x-admin::catalog.families.variant-level-card
-                    :level="\Webkul\Product\Enums\VariantLevelEnum::Variant->value"
+                    :level="\Webkul\Product\Enums\VariantLevel::Variant->value"
                     number="structure.levels"
                     list="variantAttributes"
                     axis-label="leafAxisLabel"

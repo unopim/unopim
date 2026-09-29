@@ -3,7 +3,7 @@
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -40,7 +40,7 @@ function vsrTwoAxisTree(string $prefix): array
 
     $configurable = app(ProductRepository::class)->create([
         'sku'                  => $prefix.'-config-'.uniqid(),
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
@@ -56,13 +56,13 @@ it('creates two variant groups that differ only in the second level-1 axis', fun
     $secondBrand = $brand->options->last()->code;
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => ProductTypeEnum::VariantGroup->value,
+        'type'   => ProductType::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'vsr1-group-a', $color->code => $colorOption, $brand->code => $firstBrand]],
     ])->assertStatus(201);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => ProductTypeEnum::VariantGroup->value,
+        'type'   => ProductType::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'vsr1-group-b', $color->code => $colorOption, $brand->code => $secondBrand]],
     ])->assertStatus(201);
@@ -81,13 +81,13 @@ it('rejects a variant group whose full level-1 axis tuple already exists', funct
     $brandOption = $brand->options->first()->code;
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => ProductTypeEnum::VariantGroup->value,
+        'type'   => ProductType::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'vsr2-group-a', $color->code => $colorOption, $brand->code => $brandOption]],
     ])->assertStatus(201);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => ProductTypeEnum::VariantGroup->value,
+        'type'   => ProductType::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'vsr2-group-b', $color->code => $colorOption, $brand->code => $brandOption]],
     ])->assertStatus(422);
@@ -99,7 +99,7 @@ it('rejects a variant group create that omits one of the level-1 axes', function
     [$family, $structure, $color, $brand, $size, $configurable] = vsrTwoAxisTree('vsr3');
 
     $response = $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => ProductTypeEnum::VariantGroup->value,
+        'type'   => ProductType::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'vsr3-group-a', $color->code => $color->options->first()->code]],
     ])->assertStatus(422);
@@ -216,7 +216,7 @@ it('builds a full two-level variant tree through the REST API', function () {
     ])->assertStatus(201);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => ProductTypeEnum::VariantGroup->value,
+        'type'   => ProductType::VariantGroup->value,
         'parent' => 'vsr11-config',
         'values' => ['common' => ['sku' => 'vsr11-group', $color->code => $colorOption, $brand->code => $brandOption]],
     ])->assertStatus(201);
@@ -234,9 +234,9 @@ it('builds a full two-level variant tree through the REST API', function () {
 
     expect($root->variant_structure_id)->toBe($structure->id);
     expect($group->parent_id)->toBe($root->id);
-    expect($group->type)->toBe(ProductTypeEnum::VariantGroup->value);
+    expect($group->type)->toBe(ProductType::VariantGroup->value);
     expect($leaf->parent_id)->toBe($group->id);
-    expect($leaf->type)->toBe(ProductTypeEnum::Simple->value);
+    expect($leaf->type)->toBe(ProductType::Simple->value);
     expect($leaf->values['common'][$size->code])->toBe($sizeOption);
 });
 
@@ -254,7 +254,7 @@ it('resolves a leaf axis from variant attributes over values common, and checks 
     ])->assertStatus(201);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => ProductTypeEnum::VariantGroup->value,
+        'type'   => ProductType::VariantGroup->value,
         'parent' => 'vsr12-config',
         'values' => ['common' => ['sku' => 'vsr12-group', $color->code => $colorOption, $brand->code => $brandOption]],
     ])->assertStatus(201);

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\AiAgent\DTOs\ImageProductContext;
 use Webkul\Core\Filesystem\FileStorer;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 /**
@@ -73,7 +73,7 @@ class ProductWriterService
 
         $product = $repo->create([
             'sku'                 => $sku,
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'attribute_family_id' => $familyId,
         ]);
 

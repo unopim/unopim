@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -43,7 +43,7 @@ it('should return the list of all configurable products', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Product::where('type', ProductTypeEnum::Configurable->value)->count()])
+        ->assertJsonFragment(['total' => Product::where('type', ProductType::Configurable->value)->count()])
         ->json('data');
 
     $product->refresh();
@@ -124,7 +124,7 @@ it('should return error message when creating variant product non existing paren
 
     $productData = [
         'parent' => 'not_existing_product1_1',
-        'type'   => ProductTypeEnum::Simple->value,
+        'type'   => ProductType::Simple->value,
         'family' => AttributeFamily::first()->code,
         'values' => [
             'common' => [
@@ -151,7 +151,7 @@ it('should return error message when creating variant product without super attr
 
     $productData = [
         'parent' => $configurableProduct->sku,
-        'type'   => ProductTypeEnum::Simple->value,
+        'type'   => ProductType::Simple->value,
         'family' => $configurableProduct->attribute_family->code,
         'values' => [
             'common' => [
@@ -184,7 +184,7 @@ it('should create a variant product successfully', function () {
 
     $productData = [
         'parent' => $configurableProduct->sku,
-        'type'   => ProductTypeEnum::Simple->value,
+        'type'   => ProductType::Simple->value,
         'family' => $configurableProduct->attribute_family->code,
         'values' => [
             'common' => [

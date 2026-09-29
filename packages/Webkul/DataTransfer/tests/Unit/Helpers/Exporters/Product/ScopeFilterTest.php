@@ -11,7 +11,7 @@ use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 /**
@@ -269,7 +269,7 @@ it('preserves the fixed column order and values for existing exports', function 
     seedProductScopeChannels();
     Attribute::factory()->create(['code' => 'scoped_text', 'type' => 'text']);
     $family = AttributeFamily::factory()->create(['code' => 'column_family']);
-    $parent = Product::factory()->create(['sku' => 'PARENT-COLUMNS', 'type' => ProductTypeEnum::Configurable->value]);
+    $parent = Product::factory()->create(['sku' => 'PARENT-COLUMNS', 'type' => ProductType::Configurable->value]);
     $product = Product::factory()->create([
         'sku'                 => 'CHILD-COLUMNS',
         'status'              => false,
@@ -293,7 +293,7 @@ it('preserves the fixed column order and values for existing exports', function 
         'locale'                  => 'en_US',
         'sku'                     => 'CHILD-COLUMNS',
         'status'                  => 'false',
-        'type'                    => ProductTypeEnum::Simple->value,
+        'type'                    => ProductType::Simple->value,
         'parent'                  => 'PARENT-COLUMNS',
         'attribute_family'        => 'column_family',
         'variant_structure'       => null,
@@ -360,7 +360,7 @@ it('streams each product row to the export buffer separately to bound memory', f
     foreach ($skus as $sku) {
         $product = Product::create([
             'sku'                 => $sku,
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $family->id,
         ]);

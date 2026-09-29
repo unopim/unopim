@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 it('separates the more-actions dropdown from the side rail collapse toggle', function () {
@@ -12,7 +12,7 @@ it('separates the more-actions dropdown from the side rail collapse toggle', fun
         ['value' => '1', 'created_at' => now(), 'updated_at' => now()]
     );
 
-    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value]);
 
     $content = $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()

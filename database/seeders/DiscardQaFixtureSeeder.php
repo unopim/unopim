@@ -10,7 +10,7 @@ use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeGroupRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Core\Models\LocaleProxy;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -103,7 +103,7 @@ class DiscardQaFixtureSeeder extends Seeder
         if (! ProductProxy::modelClass()::where('sku', self::PRODUCT_SKU)->exists()) {
             $this->products->create([
                 'sku'                 => self::PRODUCT_SKU,
-                'type'                => ProductTypeEnum::Simple->value,
+                'type'                => ProductType::Simple->value,
                 'attribute_family_id' => AttributeFamilyProxy::modelClass()::where('code', self::FAMILY_CODE)->value('id'),
             ]);
         }

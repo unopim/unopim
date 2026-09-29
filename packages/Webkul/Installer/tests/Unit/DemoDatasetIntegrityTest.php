@@ -2,7 +2,7 @@
 
 use Webkul\Core\Rules\Code;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 /**
  * Guards the demo datasets against drift: every code a product references has
@@ -88,7 +88,7 @@ describe('demo dataset integrity', function () {
 
     it('gives every configurable an axis set its variants agree with', function () {
         foreach (demoCatalog() as $product) {
-            if ($product['type'] !== ProductTypeEnum::Configurable->value) {
+            if ($product['type'] !== ProductType::Configurable->value) {
                 continue;
             }
 

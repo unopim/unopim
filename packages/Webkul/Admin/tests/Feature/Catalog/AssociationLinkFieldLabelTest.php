@@ -1,12 +1,12 @@
 <?php
 
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 it('labels every association link field control so validation messages never expose the request path', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value]);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value]);
 
     $content = $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()

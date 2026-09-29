@@ -6,8 +6,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -74,11 +74,11 @@ function lockedMediaFieldFixture(): array
     VariantStructureAttribute::create([
         'variant_structure_id' => $structure->id,
         'attribute_id'         => $ownedGallery->id,
-        'level'                => VariantLevelEnum::Variant->value,
+        'level'                => VariantLevel::Variant->value,
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'CFG-'.Str::random(8),
         'variant_structure_id' => $structure->id,

@@ -5,8 +5,8 @@ use Illuminate\Support\Str;
 use Webkul\Admin\Http\Controllers\Catalog\ProductController;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -62,12 +62,12 @@ it('returns the full variant tree blueprint for a 2-level variant structure', fu
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $meta->id, 'level' => VariantLevelEnum::SubParent->value],
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $desc->id, 'level' => VariantLevelEnum::Variant->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $meta->id, 'level' => VariantLevel::SubParent->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $desc->id, 'level' => VariantLevel::Variant->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -110,9 +110,9 @@ it('returns the full variant tree blueprint for a 2-level variant structure', fu
         ->and($attributesByCode[$colorCode]['attributeId'])->not->toBeNull()
         ->and($attributesByCode[$sizeCode]['isAxis'])->toBeTrue()
         ->and($attributesByCode[$metaCode]['isAxis'])->toBeFalse()
-        ->and($attributesByCode[$metaCode]['placement'])->toBe(VariantLevelEnum::SubParent->value)
+        ->and($attributesByCode[$metaCode]['placement'])->toBe(VariantLevel::SubParent->value)
         ->and($attributesByCode[$descCode]['isAxis'])->toBeFalse()
-        ->and($attributesByCode[$descCode]['placement'])->toBe(VariantLevelEnum::Variant->value);
+        ->and($attributesByCode[$descCode]['placement'])->toBe(VariantLevel::Variant->value);
 
     $nodes = $tree['nodes'];
 
@@ -122,7 +122,7 @@ it('returns the full variant tree blueprint for a 2-level variant structure', fu
 
     $configurableNode = $nodes[(string) $configurable->id];
 
-    expect($configurableNode['role'])->toBe(ProductTypeEnum::Configurable->value)
+    expect($configurableNode['role'])->toBe(ProductType::Configurable->value)
         ->and($configurableNode['parentId'])->toBeNull()
         ->and($configurableNode['sku'])->toBe($configurable->sku);
 });
@@ -177,7 +177,7 @@ it('builds only the ancestry chain - configurable + group + leaf - never a sibli
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,

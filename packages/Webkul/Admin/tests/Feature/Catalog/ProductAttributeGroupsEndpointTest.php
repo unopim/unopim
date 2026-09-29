@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 function productWithNamedGroups(array $codes): Product
@@ -27,7 +27,7 @@ function productWithNamedGroups(array $codes): Product
         ]);
     }
 
-    return Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
+    return Product::factory()->create(['type' => ProductType::Simple->value, 'attribute_family_id' => $family->id]);
 }
 
 it('serves a page of groups with attribute counts', function () {

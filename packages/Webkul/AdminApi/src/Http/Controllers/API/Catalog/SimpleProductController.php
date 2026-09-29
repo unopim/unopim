@@ -10,7 +10,7 @@ use Webkul\AdminApi\ApiDataSource\Catalog\SimpleProductDataSource;
 use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateSimpleProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreSimpleProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateSimpleProductRequest;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Type\AbstractType;
 
 class SimpleProductController extends ProductController
@@ -85,7 +85,7 @@ class SimpleProductController extends ProductController
             $data['attribute_family_id'] = $family->id;
             unset($data['family']);
 
-            $data['type'] = ProductTypeEnum::Simple->value;
+            $data['type'] = ProductType::Simple->value;
             $data['sku'] = $this->getSkuFromValues($data);
 
             try {

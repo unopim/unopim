@@ -5,7 +5,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -39,7 +39,7 @@ function makeTwoLevelStructureWithAxes(): array
 
     $configurable = Product::factory()->create([
         'sku'                  => 'guard-config-'.Str::random(8),
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
@@ -50,11 +50,11 @@ function makeTwoLevelStructureWithAxes(): array
 it('rejects a change to an ancestor-owned attribute', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-a']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-a']);
     $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-a']];
     $group->save();
 
-    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'grp-a-s']);
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductType::Simple->value, 'sku' => 'grp-a-s']);
     $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-a-s']];
     $simple->save();
 
@@ -67,11 +67,11 @@ it('rejects a change to an ancestor-owned attribute', function () {
 it('allows a same-value resubmission of an ancestor-owned attribute', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-b']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-b']);
     $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-b']];
     $group->save();
 
-    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'grp-b-s']);
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductType::Simple->value, 'sku' => 'grp-b-s']);
     $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-b-s']];
     $simple->save();
 
@@ -83,7 +83,7 @@ it('allows a same-value resubmission of an ancestor-owned attribute', function (
 it('allows an own-axis rename with no sibling collision', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-c']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-c']);
     $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-c']];
     $group->save();
 
@@ -95,11 +95,11 @@ it('allows an own-axis rename with no sibling collision', function () {
 it('rejects an own-axis rename that collides with a sibling', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $red = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-d-red']);
+    $red = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-d-red']);
     $red->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-d-red']];
     $red->save();
 
-    $pink = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-d-pink']);
+    $pink = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-d-pink']);
     $pink->values = ['common' => [$colorCode => 'pink', 'sku' => 'grp-d-pink']];
     $pink->save();
 
@@ -121,11 +121,11 @@ it('rejects a change to an axis attribute submitted directly on the root configu
 it('detects a real violation on an array-valued ancestor-owned attribute instead of collapsing it to the string Array', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-e']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-e']);
     $group->values = ['common' => [$colorCode => ['red', 'blue'], 'sku' => 'grp-e']];
     $group->save();
 
-    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'grp-e-s']);
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductType::Simple->value, 'sku' => 'grp-e-s']);
     $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-e-s']];
     $simple->save();
 
@@ -138,11 +138,11 @@ it('detects a real violation on an array-valued ancestor-owned attribute instead
 it('allows a same-value resubmission of an array-valued ancestor-owned attribute', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-f']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-f']);
     $group->values = ['common' => [$colorCode => ['red', 'blue'], 'sku' => 'grp-f']];
     $group->save();
 
-    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'grp-f-s']);
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductType::Simple->value, 'sku' => 'grp-f-s']);
     $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-f-s']];
     $simple->save();
 
@@ -155,7 +155,7 @@ it('allows a same-value resubmission of an array-valued ancestor-owned attribute
 it('runs the persist closure inside the guarded transaction after a successful own-axis rename', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-g']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-g']);
     $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-g']];
     $group->save();
 
@@ -174,11 +174,11 @@ it('runs the persist closure inside the guarded transaction after a successful o
 it('does not run the persist closure when an own-axis rename collides with a sibling', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $red = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-h-red']);
+    $red = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-h-red']);
     $red->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-h-red']];
     $red->save();
 
-    $pink = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-h-pink']);
+    $pink = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-h-pink']);
     $pink->values = ['common' => [$colorCode => 'pink', 'sku' => 'grp-h-pink']];
     $pink->save();
 
@@ -196,7 +196,7 @@ it('does not run the persist closure when an own-axis rename collides with a sib
 it('runs the persist closure directly, without the collision-check transaction, when an own-axis value is resubmitted unchanged', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-i']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-i']);
     $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-i']];
     $group->save();
 
@@ -215,11 +215,11 @@ it('runs the persist closure directly, without the collision-check transaction, 
 it('allows a structured variant to be renamed, since the sku is its identity and not a level-owned attribute', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-sku']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-sku']);
     $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-sku']];
     $group->save();
 
-    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'grp-sku-s']);
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductType::Simple->value, 'sku' => 'grp-sku-s']);
     $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-sku-s']];
     $simple->save();
 
@@ -233,11 +233,11 @@ it('allows a structured variant to be renamed, since the sku is its identity and
 it('still rejects an ancestor-owned attribute submitted alongside a rename', function () {
     [$configurable, $colorCode, $sizeCode] = makeTwoLevelStructureWithAxes();
 
-    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'grp-both']);
+    $group = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::VariantGroup->value, 'sku' => 'grp-both']);
     $group->values = ['common' => [$colorCode => 'red', 'sku' => 'grp-both']];
     $group->save();
 
-    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'grp-both-s']);
+    $simple = Product::factory()->create(['parent_id' => $group->id, 'type' => ProductType::Simple->value, 'sku' => 'grp-both-s']);
     $simple->values = ['common' => [$sizeCode => 's', 'sku' => 'grp-both-s']];
     $simple->save();
 

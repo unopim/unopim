@@ -24,7 +24,7 @@ use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Measurement\Helpers\MeasurementHelper;
 use Webkul\Product\Contracts\VariantValueResolver;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Exporter extends AbstractExporter
@@ -522,10 +522,10 @@ class Exporter extends AbstractExporter
                 'sku'               => $product->sku,
                 'status'            => $product->status,
                 'parent'            => $product->parent?->sku,
-                'variant_structure' => $product->type === ProductTypeEnum::Configurable->value
+                'variant_structure' => $product->type === ProductType::Configurable->value
                     ? $product->variantStructure?->code
                     : null,
-                'super_attributes' => $product->type === ProductTypeEnum::Configurable->value
+                'super_attributes' => $product->type === ProductType::Configurable->value
                     ? $product->super_attributes->toArray()
                     : [],
                 'attribute_family' => ['code' => $product->attribute_family?->code],

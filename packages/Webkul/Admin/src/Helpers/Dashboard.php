@@ -13,7 +13,7 @@ use Webkul\Admin\Helpers\Reporting\Channel;
 use Webkul\Admin\Helpers\Reporting\Currency;
 use Webkul\Admin\Helpers\Reporting\Locale;
 use Webkul\Admin\Helpers\Reporting\Product;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 class Dashboard
 {
@@ -172,7 +172,7 @@ class Dashboard
                 ->count();
 
             $withVariants = DB::table('products as parents')
-                ->where('parents.type', ProductTypeEnum::Configurable->value)
+                ->where('parents.type', ProductType::Configurable->value)
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
                         ->from('products as variants')

@@ -8,7 +8,7 @@ use Webkul\DataTransfer\Helpers\Importers\Product\Importer as CoreImporter;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -70,7 +70,7 @@ function verifyImpExpImport(AttributeFamily $family, array $extraRow): array
 
     $rowData = array_merge([
         'sku'              => 'measurement-'.uniqid(),
-        'type'             => ProductTypeEnum::Simple->value,
+        'type'             => ProductType::Simple->value,
         'attribute_family' => $family->code,
     ], $extraRow);
 

@@ -5,8 +5,8 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Contracts\VariantValueResolver;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -45,11 +45,11 @@ function makeTwoLevelConfigurableWithVariantAttribute(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => VariantLevelEnum::Variant->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => VariantLevel::Variant->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -99,7 +99,7 @@ it('leaves legacy/no-structure createVariant unaffected by the variant-level att
     $family = AttributeFamily::factory()->create(['code' => 'fam_'.Str::random(8)]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                => ProductTypeEnum::Configurable->value,
+        'type'                => ProductType::Configurable->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'TEE-'.Str::random(8),
         'super_attributes'    => [$colorCode, $sizeCode],
@@ -150,8 +150,8 @@ it('persists a variant-level common attribute from the payload on updateVariant 
 
     $configurable->refresh();
 
-    $group = $configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
-    $variant = $group->variants()->where('type', ProductTypeEnum::Simple->value)->first();
+    $group = $configurable->variants()->where('type', ProductType::VariantGroup->value)->first();
+    $variant = $group->variants()->where('type', ProductType::Simple->value)->first();
 
     $type = $configurable->getTypeInstance();
 

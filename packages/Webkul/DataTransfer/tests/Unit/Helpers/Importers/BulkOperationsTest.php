@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Importers\Product\SKUStorage;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 describe('Product Importer Bulk Operations', function () {
     beforeEach(function () {
@@ -20,7 +20,7 @@ describe('Product Importer Bulk Operations', function () {
         foreach ($skus as $sku) {
             $insertData[] = [
                 'sku'                 => $sku,
-                'type'                => ProductTypeEnum::Simple->value,
+                'type'                => ProductType::Simple->value,
                 'parent_id'           => null,
                 'attribute_family_id' => $attributeFamily->id,
                 'values'              => json_encode(['common' => ['sku' => $sku]]),
@@ -48,7 +48,7 @@ describe('Product Importer Bulk Operations', function () {
         /** First create a product */
         DB::table('products')->insert([
             'sku'                 => $sku,
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'parent_id'           => null,
             'attribute_family_id' => $attributeFamily->id,
             'values'              => json_encode(['common' => ['sku' => $sku]]),
@@ -64,7 +64,7 @@ describe('Product Importer Bulk Operations', function () {
             [[
                 'id'                  => $product->id,
                 'sku'                 => $sku,
-                'type'                => ProductTypeEnum::Simple->value,
+                'type'                => ProductType::Simple->value,
                 'parent_id'           => null,
                 'attribute_family_id' => $attributeFamily->id,
                 'values'              => json_encode(['common' => ['sku' => $sku, 'name' => 'Updated']]),
@@ -97,7 +97,7 @@ describe('Product Importer Bulk Operations', function () {
 
         $insertData = array_map(fn ($sku) => [
             'sku'                 => $sku,
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'parent_id'           => null,
             'attribute_family_id' => $attributeFamily->id,
             'values'              => json_encode(['common' => ['sku' => $sku]]),
@@ -131,7 +131,7 @@ describe('SKUStorage Optimized Loading', function () {
 
         DB::table('products')->insert([
             'sku'                 => $sku,
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'parent_id'           => null,
             'attribute_family_id' => $attributeFamily->id,
             'values'              => json_encode(['common' => ['sku' => $sku]]),
@@ -148,7 +148,7 @@ describe('SKUStorage Optimized Loading', function () {
 
         $info = $skuStorage->get($sku);
         expect($info)->toHaveKeys(['id', 'type', 'attribute_family_id']);
-        expect($info['type'])->toBe(ProductTypeEnum::Simple->value);
+        expect($info['type'])->toBe(ProductType::Simple->value);
 
         /** Second load should not fail — already cached */
         $skuStorage->load([$sku]);

@@ -4,7 +4,7 @@ namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\Product\Database\Eloquent\Builder;
-use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\ProductType;
 
 class ConfigurableProductDataSource extends ProductDataSource
 {
@@ -58,7 +58,7 @@ class ConfigurableProductDataSource extends ProductDataSource
      */
     protected function requestedTypes(): array
     {
-        $supported = ProductTypeEnum::VARIANT_PARENT_VALUES;
+        $supported = ProductType::VARIANT_PARENT_VALUES;
 
         $requested = request()->input('type');
 

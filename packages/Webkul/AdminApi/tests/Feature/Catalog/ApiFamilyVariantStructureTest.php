@@ -3,8 +3,8 @@
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
-use Webkul\Product\Enums\ProductTypeEnum;
-use Webkul\Product\Enums\VariantLevelEnum;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -55,7 +55,7 @@ function apiVsFixture(string $prefix): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => VariantLevelEnum::Common->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => VariantLevel::Common->value],
     ]);
 
     return compact('family', 'structure', 'color', 'brand', 'size', 'material', 'localised');
@@ -69,7 +69,7 @@ function apiVsAttachProduct(array $fixture, string $sku, bool $withVariant): Pro
 {
     $root = app(ProductRepository::class)->create([
         'sku'                  => $sku,
-        'type'                 => ProductTypeEnum::Configurable->value,
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $fixture['family']->id,
         'variant_structure_id' => $fixture['structure']->id,
     ]);
@@ -77,7 +77,7 @@ function apiVsAttachProduct(array $fixture, string $sku, bool $withVariant): Pro
     if ($withVariant) {
         Product::create([
             'sku'                 => $sku.'-child',
-            'type'                => ProductTypeEnum::Simple->value,
+            'type'                => ProductType::Simple->value,
             'parent_id'           => $root->id,
             'attribute_family_id' => $fixture['family']->id,
         ]);
@@ -186,9 +186,9 @@ it('returns one variant structure with its axes and placements grouped by level'
         'level_2' => [$fixture['size']->code],
     ]);
     expect($response->json('placements'))->toBe([
-        VariantLevelEnum::Common->value     => [$fixture['material']->code],
-        VariantLevelEnum::SubParent->value  => [],
-        VariantLevelEnum::Variant->value    => [],
+        VariantLevel::Common->value     => [$fixture['material']->code],
+        VariantLevel::SubParent->value  => [],
+        VariantLevel::Variant->value    => [],
     ]);
     expect($response->json())->toHaveKeys(['created_at', 'updated_at']);
 });
@@ -259,14 +259,14 @@ it('reports the tier that governs every family attribute on a two level structur
 
     $effective = $response->json('effective_placements');
 
-    expect(collect($effective[VariantLevelEnum::SubParent->value])->sort()->values()->all())
+    expect(collect($effective[VariantLevel::SubParent->value])->sort()->values()->all())
         ->toBe(collect([$fixture['color']->code, $fixture['brand']->code])->sort()->values()->all());
-    expect($effective[VariantLevelEnum::Variant->value])->toBe([$fixture['size']->code]);
-    expect($effective[VariantLevelEnum::Common->value])->toContain($fixture['material']->code);
-    expect($effective[VariantLevelEnum::Common->value])->toContain($fixture['localised']->code);
-    expect($effective[VariantLevelEnum::Common->value])->not->toContain($fixture['color']->code);
+    expect($effective[VariantLevel::Variant->value])->toBe([$fixture['size']->code]);
+    expect($effective[VariantLevel::Common->value])->toContain($fixture['material']->code);
+    expect($effective[VariantLevel::Common->value])->toContain($fixture['localised']->code);
+    expect($effective[VariantLevel::Common->value])->not->toContain($fixture['color']->code);
 
-    $listed = [...$effective[VariantLevelEnum::Common->value], ...$effective[VariantLevelEnum::SubParent->value], ...$effective[VariantLevelEnum::Variant->value]];
+    $listed = [...$effective[VariantLevel::Common->value], ...$effective[VariantLevel::SubParent->value], ...$effective[VariantLevel::Variant->value]];
 
     expect(collect($listed)->sort()->values()->all())
         ->toBe(collect(apiVsFamilyCodes($fixture))->sort()->values()->all());
@@ -284,10 +284,10 @@ it('reports a single level structure axis as variant rather than sub parent', fu
     $effective = $response->json('effective_placements');
 
     expect($response->json('levels'))->toBe(1);
-    expect($effective[VariantLevelEnum::Variant->value])->toBe([$fixture['color']->code]);
-    expect($effective[VariantLevelEnum::SubParent->value])->toBe([]);
-    expect($effective[VariantLevelEnum::Common->value])->toContain($fixture['brand']->code);
-    expect($effective[VariantLevelEnum::Common->value])->toContain($fixture['size']->code);
+    expect($effective[VariantLevel::Variant->value])->toBe([$fixture['color']->code]);
+    expect($effective[VariantLevel::SubParent->value])->toBe([]);
+    expect($effective[VariantLevel::Common->value])->toContain($fixture['brand']->code);
+    expect($effective[VariantLevel::Common->value])->toContain($fixture['size']->code);
 });
 
 it('lets an explicit placement row override the common default', function () {
@@ -295,7 +295,7 @@ it('lets an explicit placement row override the common default', function () {
 
     $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture), [
-            'placements' => [VariantLevelEnum::Variant->value => [$fixture['material']->code]],
+            'placements' => [VariantLevel::Variant->value => [$fixture['material']->code]],
         ])
         ->assertOk();
 
@@ -305,9 +305,9 @@ it('lets an explicit placement row override the common default', function () {
 
     $effective = $response->json('effective_placements');
 
-    expect($effective[VariantLevelEnum::Variant->value])->toContain($fixture['material']->code);
-    expect($effective[VariantLevelEnum::Common->value])->not->toContain($fixture['material']->code);
-    expect($effective[VariantLevelEnum::Common->value])->toContain($fixture['localised']->code);
+    expect($effective[VariantLevel::Variant->value])->toContain($fixture['material']->code);
+    expect($effective[VariantLevel::Common->value])->not->toContain($fixture['material']->code);
+    expect($effective[VariantLevel::Common->value])->toContain($fixture['localised']->code);
 });
 
 it('includes the effective placements on the listing endpoint', function () {
@@ -333,7 +333,7 @@ it('ignores effective placements sent back on a write and creates no placement r
         ->assertOk()
         ->json();
 
-    expect($body['effective_placements'][VariantLevelEnum::Common->value])->not->toBeEmpty();
+    expect($body['effective_placements'][VariantLevel::Common->value])->not->toBeEmpty();
 
     $body['name'] = 'round tripped';
 
@@ -362,8 +362,8 @@ it('updates the writable fields of an unused structure through PUT', function ()
         ->json('PUT', apiVsRoute('update', $fixture), [
             'name'       => 'reshaped',
             'placements' => [
-                VariantLevelEnum::Common->value  => [$fixture['material']->code],
-                VariantLevelEnum::Variant->value => [$fixture['localised']->code],
+                VariantLevel::Common->value  => [$fixture['material']->code],
+                VariantLevel::Variant->value => [$fixture['localised']->code],
             ],
         ])
         ->assertOk();
@@ -376,9 +376,9 @@ it('updates the writable fields of an unused structure through PUT', function ()
         'level_2' => [$fixture['size']->code],
     ]);
     expect($response->json('placements'))->toBe([
-        VariantLevelEnum::Common->value     => [$fixture['material']->code],
-        VariantLevelEnum::SubParent->value  => [],
-        VariantLevelEnum::Variant->value    => [$fixture['localised']->code],
+        VariantLevel::Common->value     => [$fixture['material']->code],
+        VariantLevel::SubParent->value  => [],
+        VariantLevel::Variant->value    => [$fixture['localised']->code],
     ]);
 });
 
@@ -557,16 +557,16 @@ it('updates only the placements through PATCH', function () {
 
     $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture), [
-            'placements' => [VariantLevelEnum::Variant->value => [$fixture['material']->code]],
+            'placements' => [VariantLevel::Variant->value => [$fixture['material']->code]],
         ])
         ->assertOk();
 
     $response = $this->withHeaders($this->headers)->json('GET', apiVsRoute('get', $fixture))->assertOk();
 
     expect($response->json('placements'))->toBe([
-        VariantLevelEnum::Common->value     => [],
-        VariantLevelEnum::SubParent->value  => [],
-        VariantLevelEnum::Variant->value    => [$fixture['material']->code],
+        VariantLevel::Common->value     => [],
+        VariantLevel::SubParent->value  => [],
+        VariantLevel::Variant->value    => [$fixture['material']->code],
     ]);
     expect($response->json('axes.level_1'))->toBe([$fixture['color']->code, $fixture['brand']->code]);
 });
@@ -609,19 +609,19 @@ it('allows a placements change on a structure that already has variants', functi
 
     $response = $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture), [
-            'placements' => [VariantLevelEnum::Variant->value => [$fixture['material']->code]],
+            'placements' => [VariantLevel::Variant->value => [$fixture['material']->code]],
         ])
         ->assertOk();
 
     expect($response->json('data.placements'))->toBe([
-        VariantLevelEnum::Common->value     => [],
-        VariantLevelEnum::SubParent->value  => [],
-        VariantLevelEnum::Variant->value    => [$fixture['material']->code],
+        VariantLevel::Common->value     => [],
+        VariantLevel::SubParent->value  => [],
+        VariantLevel::Variant->value    => [$fixture['material']->code],
     ]);
 
     $placement = VariantStructureAttribute::where('variant_structure_id', $fixture['structure']->id)->first();
 
-    expect($placement->level)->toBe(VariantLevelEnum::Variant->value);
+    expect($placement->level)->toBe(VariantLevel::Variant->value);
 });
 
 it('allows a full placements rewrite through PUT on a structure that already has variants', function () {
@@ -632,8 +632,8 @@ it('allows a full placements rewrite through PUT on a structure that already has
         ->json('PUT', apiVsRoute('update', $fixture), [
             'name'       => 'placements rewritten in use',
             'placements' => [
-                VariantLevelEnum::SubParent->value  => [$fixture['material']->code],
-                VariantLevelEnum::Variant->value    => [$fixture['localised']->code],
+                VariantLevel::SubParent->value  => [$fixture['material']->code],
+                VariantLevel::Variant->value    => [$fixture['localised']->code],
             ],
         ])
         ->assertOk();
@@ -641,9 +641,9 @@ it('allows a full placements rewrite through PUT on a structure that already has
     $response = $this->withHeaders($this->headers)->json('GET', apiVsRoute('get', $fixture))->assertOk();
 
     expect($response->json('placements'))->toBe([
-        VariantLevelEnum::Common->value     => [],
-        VariantLevelEnum::SubParent->value  => [$fixture['material']->code],
-        VariantLevelEnum::Variant->value    => [$fixture['localised']->code],
+        VariantLevel::Common->value     => [],
+        VariantLevel::SubParent->value  => [$fixture['material']->code],
+        VariantLevel::Variant->value    => [$fixture['localised']->code],
     ]);
     expect($response->json('effective_placements.sub_parent'))->toContain($fixture['material']->code);
 });
@@ -671,7 +671,7 @@ it('accepts a PUT that restates the identical shape of a structure in use', func
                 'level_1' => [$fixture['color']->code, $fixture['brand']->code],
                 'level_2' => [$fixture['size']->code],
             ],
-            'placements' => [VariantLevelEnum::Common->value => [$fixture['material']->code]],
+            'placements' => [VariantLevel::Common->value => [$fixture['material']->code]],
         ])
         ->assertOk();
 
@@ -701,13 +701,13 @@ it('allows a placements change while the referencing product has no variants yet
 
     $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture), [
-            'placements' => [VariantLevelEnum::Variant->value => [$fixture['material']->code]],
+            'placements' => [VariantLevel::Variant->value => [$fixture['material']->code]],
         ])
         ->assertOk();
 
     $placement = VariantStructureAttribute::where('variant_structure_id', $fixture['structure']->id)->first();
 
-    expect($placement->level)->toBe(VariantLevelEnum::Variant->value);
+    expect($placement->level)->toBe(VariantLevel::Variant->value);
 });
 
 /** Validation */
@@ -771,7 +771,7 @@ it('rejects a placement attribute that is not in the family', function () {
 
     $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture), [
-            'placements' => [VariantLevelEnum::Common->value => [$outsider->code]],
+            'placements' => [VariantLevel::Common->value => [$outsider->code]],
         ])
         ->assertStatus(422)
         ->assertJsonValidationErrors('placements.common');
@@ -782,7 +782,7 @@ it('rejects an explicit placement for an attribute that is already an axis', fun
 
     $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture), [
-            'placements' => [VariantLevelEnum::Common->value => [$fixture['color']->code]],
+            'placements' => [VariantLevel::Common->value => [$fixture['color']->code]],
         ])
         ->assertStatus(422)
         ->assertJsonValidationErrors('placements.common');
@@ -794,7 +794,7 @@ it('rejects a sub parent placement on a single level structure', function () {
 
     $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture, $oneLevel->code), [
-            'placements' => [VariantLevelEnum::SubParent->value => [$fixture['material']->code]],
+            'placements' => [VariantLevel::SubParent->value => [$fixture['material']->code]],
         ])
         ->assertStatus(422)
         ->assertJsonValidationErrors('placements.sub_parent');
@@ -806,8 +806,8 @@ it('rejects the same attribute placed at two levels', function () {
     $this->withHeaders($this->headers)
         ->json('PATCH', apiVsRoute('patch', $fixture), [
             'placements' => [
-                VariantLevelEnum::Common->value  => [$fixture['material']->code],
-                VariantLevelEnum::Variant->value => [$fixture['material']->code],
+                VariantLevel::Common->value  => [$fixture['material']->code],
+                VariantLevel::Variant->value => [$fixture['material']->code],
             ],
         ])
         ->assertStatus(422)
@@ -902,9 +902,9 @@ it('creates a two level structure and returns it with its effective placements',
     $response = $this->withHeaders($this->headers)
         ->json('POST', apiVsStoreRoute($fixture), apiVsCreateBody($fixture, 'vsc1_created', [
             'placements' => [
-                VariantLevelEnum::Common->value     => [],
-                VariantLevelEnum::SubParent->value  => [$fixture['material']->code],
-                VariantLevelEnum::Variant->value    => [$fixture['localised']->code],
+                VariantLevel::Common->value     => [],
+                VariantLevel::SubParent->value  => [$fixture['material']->code],
+                VariantLevel::Variant->value    => [$fixture['localised']->code],
             ],
         ]))
         ->assertStatus(201);
@@ -918,9 +918,9 @@ it('creates a two level structure and returns it with its effective placements',
         'level_2' => [$fixture['size']->code],
     ]);
     expect($response->json('data.placements'))->toBe([
-        VariantLevelEnum::Common->value     => [],
-        VariantLevelEnum::SubParent->value  => [$fixture['material']->code],
-        VariantLevelEnum::Variant->value    => [$fixture['localised']->code],
+        VariantLevel::Common->value     => [],
+        VariantLevel::SubParent->value  => [$fixture['material']->code],
+        VariantLevel::Variant->value    => [$fixture['localised']->code],
     ]);
     expect($response->json('data.effective_placements.variant'))
         ->toBe([$fixture['size']->code, $fixture['localised']->code]);
@@ -1229,7 +1229,7 @@ it('rejects a placement attribute that is not in the family on create', function
 
     $this->withHeaders($this->headers)
         ->json('POST', apiVsStoreRoute($fixture), apiVsCreateBody($fixture, 'vscv14_created', [
-            'placements' => [VariantLevelEnum::Common->value => [$outsider->code]],
+            'placements' => [VariantLevel::Common->value => [$outsider->code]],
         ]))
         ->assertStatus(422)
         ->assertJsonValidationErrors('placements.common');
@@ -1240,7 +1240,7 @@ it('rejects an explicit placement for an attribute created as an axis', function
 
     $this->withHeaders($this->headers)
         ->json('POST', apiVsStoreRoute($fixture), apiVsCreateBody($fixture, 'vscv15_created', [
-            'placements' => [VariantLevelEnum::Common->value => [$fixture['color']->code]],
+            'placements' => [VariantLevel::Common->value => [$fixture['color']->code]],
         ]))
         ->assertStatus(422)
         ->assertJsonValidationErrors('placements.common');
@@ -1252,8 +1252,8 @@ it('rejects the same attribute placed at two levels on create', function () {
     $this->withHeaders($this->headers)
         ->json('POST', apiVsStoreRoute($fixture), apiVsCreateBody($fixture, 'vscv16_created', [
             'placements' => [
-                VariantLevelEnum::Common->value  => [$fixture['material']->code],
-                VariantLevelEnum::Variant->value => [$fixture['material']->code],
+                VariantLevel::Common->value  => [$fixture['material']->code],
+                VariantLevel::Variant->value => [$fixture['material']->code],
             ],
         ]))
         ->assertStatus(422)
@@ -1267,7 +1267,7 @@ it('rejects a sub parent placement on a single level create', function () {
         ->json('POST', apiVsStoreRoute($fixture), apiVsCreateBody($fixture, 'vscv17_created', [
             'levels'     => 1,
             'axes'       => ['level_1' => [$fixture['color']->code]],
-            'placements' => [VariantLevelEnum::SubParent->value => [$fixture['material']->code]],
+            'placements' => [VariantLevel::SubParent->value => [$fixture['material']->code]],
         ]))
         ->assertStatus(422)
         ->assertJsonValidationErrors('placements.sub_parent');
@@ -1280,7 +1280,7 @@ it('writes neither the structure nor its axes when a create is rejected', functi
 
     $this->withHeaders($this->headers)
         ->json('POST', apiVsStoreRoute($fixture), apiVsCreateBody($fixture, 'vscv18_created', [
-            'placements' => [VariantLevelEnum::Common->value => [$fixture['color']->code]],
+            'placements' => [VariantLevel::Common->value => [$fixture['color']->code]],
         ]))
         ->assertStatus(422);
 
