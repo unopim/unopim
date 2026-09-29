@@ -282,6 +282,11 @@ First boot installs Composer dependencies into `./vendor`. The stack defaults to
   </a>
 </p>
 
+Pre-configured AMIs — Ubuntu LEMP with Redis, Elasticsearch and phpMyAdmin:
+
+- [**UnoPim on AWS (x86_64)**](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i)
+- [**UnoPim on AWS (ARM64 / Graviton)**](https://aws.amazon.com/marketplace/pp/prodview-flks5cupod5mi)
+
 ## 🤝 Contributing
 
 Found a bug or want to add a feature? Open an issue or submit a pull request — see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the full flow.
