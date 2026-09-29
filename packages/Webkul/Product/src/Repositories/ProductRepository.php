@@ -108,12 +108,13 @@ class ProductRepository extends Repository
      * Delete the given products as one unit, so a failure part way leaves every product in place.
      *
      * One transaction also means one durable commit for the chunk instead of several per product.
+     * The after events wait for that commit, so their listeners never queue work against rows that may roll back.
      *
      * @param  array<int>  $productIds
      */
     public function massDelete(array $productIds): void
     {
-        DB::transaction(function () use ($productIds): void {
+        Event::defer(fn () => DB::transaction(function () use ($productIds): void {
             foreach ($productIds as $productId) {
                 $product = $this->find($productId);
 
@@ -127,19 +128,20 @@ class ProductRepository extends Repository
 
                 Event::dispatch('catalog.product.delete.after', $productId);
             }
-        });
+        }), ['catalog.product.delete.after']);
     }
 
     /**
      * Update the status of the given products as one unit, so a failure part way leaves every status unchanged.
      *
      * One transaction also means one durable commit for the chunk instead of several per product.
+     * The after events wait for that commit, so their listeners never queue work against rows that may roll back.
      *
      * @param  array<int>  $productIds
      */
     public function massUpdateStatus(array $productIds, bool $status): void
     {
-        DB::transaction(function () use ($productIds, $status): void {
+        Event::defer(fn () => DB::transaction(function () use ($productIds, $status): void {
             foreach ($productIds as $productId) {
                 Event::dispatch('catalog.product.update.before', $productId);
 
@@ -147,7 +149,7 @@ class ProductRepository extends Repository
 
                 Event::dispatch('catalog.product.update.after', $product);
             }
-        });
+        }), ['catalog.product.update.after']);
     }
 
     /**

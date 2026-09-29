@@ -5,19 +5,21 @@ use Illuminate\Support\Facades\Bus;
 use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\User\Tests\Concerns\UserAssertions;
 use Webkul\Webhook\Jobs\MassDeleteWebhookLogs;
+use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Models\WebhookLog;
 
 uses(UserAssertions::class);
 
-function createWebhookLogs(string $sku, int $count): array
+function createWebhookLogs(string $sku, int $count, ?int $webhookId = null): array
 {
     return collect(range(1, $count))
         ->map(fn (int $index) => WebhookLog::create([
-            'sku'       => $sku.$index,
-            'event'     => 'product.updated',
-            'user'      => 'tester',
-            'status'    => true,
-            'http_code' => 200,
+            'webhook_id' => $webhookId,
+            'sku'        => $sku.$index,
+            'event'      => 'product.updated',
+            'user'       => 'tester',
+            'status'     => true,
+            'http_code'  => 200,
         ])->id)
         ->all();
 }
@@ -84,4 +86,33 @@ it('forbids mass deletion without the permission', function () {
     $this->postJson(route('webhook.logs.mass_delete'), ['select_all' => true])->assertForbidden();
 
     expect(WebhookLog::whereIn('id', $ids)->count())->toBe(2);
+});
+
+it('keeps a select-all deletion from a webhook tab to the logs of that webhook', function () {
+    $this->loginAsAdmin();
+
+    $webhook = Webhook::create(['name' => 'Scoped', 'url' => 'https://8.8.8.8/scoped', 'is_active' => true, 'events' => ['product.updated']]);
+    $otherWebhook = Webhook::create(['name' => 'Other', 'url' => 'https://8.8.8.8/other', 'is_active' => true, 'events' => ['product.updated']]);
+
+    $scoped = createWebhookLogs('LOGSCOPE-', 3, $webhook->id);
+    $other = createWebhookLogs('LOGSCOPE-', 2, $otherWebhook->id);
+
+    $massDeleteUrl = collect($this->getJson(route('webhook.logs.for-webhook', $webhook->id))->assertOk()->json('mass_actions'))
+        ->firstWhere('options.actionType', 'delete')['url'];
+
+    $this->postJson($massDeleteUrl, [
+        'select_all' => true,
+        'filters'    => ['sku' => ['LOGSCOPE-']],
+    ])->assertOk();
+
+    expect(WebhookLog::whereIn('id', $scoped)->count())->toBe(0)
+        ->and(WebhookLog::whereIn('id', $other)->count())->toBe(2);
+});
+
+it('rejects a webhook scope that is not an id', function () {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('webhook.logs.mass_delete', ['webhook_id' => 'all']), ['select_all' => true])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('webhook_id');
 });

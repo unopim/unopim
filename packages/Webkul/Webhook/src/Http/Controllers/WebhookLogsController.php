@@ -4,9 +4,9 @@ namespace Webkul\Webhook\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
-use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
+use Webkul\Webhook\Http\Requests\LogsMassDestroyRequest;
 use Webkul\Webhook\Jobs\MassDeleteWebhookLogs;
 use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Repositories\LogsRepository;
@@ -96,7 +96,7 @@ class WebhookLogsController
     /**
      * Mass delete webhook logs, either the listed ids or every log matching the grid filters.
      */
-    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(LogsMassDestroyRequest $massDestroyRequest): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('configuration.webhook.logs.mass_delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
