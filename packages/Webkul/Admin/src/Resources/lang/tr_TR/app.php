@@ -249,6 +249,13 @@ return [
                             'completed' => ':count ürün silindi.',
                             'failed'    => ':count ürünün silinmesi hatalarla tamamlandı. Bazı ürünler silinmedi.',
                         ],
+                        'export' => [
+                            'queued'        => 'Eşleşen tüm ürünlerin dışa aktarımı kuyruğa alındı. Hazır olduğunda indirme bağlantısıyla bildirim alacaksınız.',
+                            'title'         => 'Ürün dışa aktarımı',
+                            'completed'     => ':count ürünün dışa aktarımı hazır. İndirmek için tıklayın.',
+                            'failed'        => 'Ürün dışa aktarımı tamamlanamadı.',
+                            'too-many-rows' => 'Dışa aktarım bu biçimin izin verdiğinden (:limit) fazla satır içeriyor. Bunun yerine CSV olarak dışa aktarın.',
+                        ],
                     ],
                     'name'                    => 'Ad',
                     'out-of-stock'            => 'Stokta yok',
@@ -2656,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Seçili kayıt yok.',
+                'selection-truncated'              => 'Bu işlem, eşleşen :total kaydın yalnızca ilk :limit kaydını işleyebilir.',
                 'must-select-a-mass-action-option' => 'Bir toplu eylem seçmelisiniz.',
                 'must-select-a-mass-action'        => 'Bir toplu eylem seçmelisiniz.',
                 'link-copied'                      => 'Bağlantı panoya kopyalandı.',

@@ -109,3 +109,54 @@ test('a queued select-all action flashes its message and reloads the grid', asyn
   await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
   expect(requests).toBe(1);
 });
+
+test('quick export with every matching product selected is queued from the grid filters', async ({ page }) => {
+  test.setTimeout(120000);
+
+  await selectAllMatching(page);
+
+  let payload = null;
+
+  await page.route('**/admin/catalog/products/quick-export/queue', async (route) => {
+    payload = route.request().postDataJSON();
+
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Export queued' }) });
+  });
+
+  await page.getByRole('button', { name: 'Quick Export' }).first().click();
+  await page.getByRole('button', { name: 'Quick Export', exact: true }).last().click();
+
+  await expect(page.getByText('Export queued', { exact: true })).toBeVisible();
+
+  expect(payload.select_all).toBe(1);
+  expect(payload.format).toBe('xls');
+  expect(payload.productIds).toBeUndefined();
+  expect(payload.indices).toBeUndefined();
+});
+
+test('mass delete with every matching product selected sends the grid filters after the delete confirmation', async ({ page }) => {
+  test.setTimeout(120000);
+
+  await selectAllMatching(page);
+
+  let payload = null;
+
+  await page.route('**/admin/catalog/products/mass-delete', async (route) => {
+    payload = route.request().postDataJSON();
+
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Deletion queued' }) });
+  });
+
+  await page.getByRole('button', { name: 'Select Action' }).click();
+  await page.getByText('Delete', { exact: true }).first().click();
+
+  await expect(page.getByText('Confirm Deletion', { exact: true })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Delete', exact: true }).last().click();
+
+  await expect(page.getByText('Deletion queued', { exact: true })).toBeVisible();
+
+  expect(payload.select_all).toBe(1);
+  expect(payload.indices).toBeUndefined();
+  expect(payload.sort).toBeUndefined();
+});

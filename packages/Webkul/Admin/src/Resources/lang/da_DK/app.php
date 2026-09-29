@@ -249,6 +249,13 @@ return [
                             'completed' => ':count produkter er slettet.',
                             'failed'    => 'Sletningen af :count produkter blev afsluttet med fejl. Nogle produkter blev ikke slettet.',
                         ],
+                        'export' => [
+                            'queued'        => 'Eksport af alle matchende produkter er sat i kø. Du får besked med et downloadlink, når den er klar.',
+                            'title'         => 'Produkteksport',
+                            'completed'     => 'Eksporten af :count produkter er klar. Klik for at downloade.',
+                            'failed'        => 'Produkteksporten kunne ikke gennemføres.',
+                            'too-many-rows' => 'Eksporten har flere rækker, end dette format tillader (:limit). Eksportér som CSV i stedet.',
+                        ],
                     ],
                     'name'                    => 'Navn',
                     'out-of-stock'            => 'Udsolgt',
@@ -2653,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Ingen poster er valgt.',
+                'selection-truncated'              => 'Denne handling kan kun behandle de første :limit af de :total matchende poster.',
                 'must-select-a-mass-action-option' => 'Du skal vælge en massehandling.',
                 'must-select-a-mass-action'        => 'Du skal vælge en massehandling.',
                 'link-copied'                      => 'Linket er kopieret til udklipsholderen.',

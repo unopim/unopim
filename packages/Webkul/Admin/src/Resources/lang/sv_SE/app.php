@@ -249,6 +249,13 @@ return [
                             'completed' => ':count produkter har tagits bort.',
                             'failed'    => 'Borttagningen av :count produkter slutfördes med fel. Vissa produkter togs inte bort.',
                         ],
+                        'export' => [
+                            'queued'        => 'Export av alla matchande produkter har köats. Du får en avisering med nedladdningslänk när den är klar.',
+                            'title'         => 'Produktexport',
+                            'completed'     => 'Exporten av :count produkter är klar. Klicka för att ladda ned.',
+                            'failed'        => 'Produktexporten kunde inte slutföras.',
+                            'too-many-rows' => 'Exporten har fler rader än formatet tillåter (:limit). Exportera som CSV i stället.',
+                        ],
                     ],
                     'name'                    => 'Namn',
                     'out-of-stock'            => 'Slut på lager',
@@ -2656,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Inga poster har valts.',
+                'selection-truncated'              => 'Den här åtgärden kan bara bearbeta de första :limit av de :total matchande posterna.',
                 'must-select-a-mass-action-option' => 'Du måste välja ett massaktionsval.',
                 'must-select-a-mass-action'        => 'Du måste välja en massaktion.',
                 'link-copied'                      => 'Länken har kopierats till urklipp.',

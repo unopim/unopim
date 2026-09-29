@@ -6,10 +6,10 @@ use Illuminate\Bus\Batch;
 use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\LazyCollection;
+use Webkul\Admin\Jobs\Concerns\ResolvesDataGridSelection;
 use Webkul\DataGrid\DataGrid;
 use Webkul\Notification\Events\NotificationEvent;
 
@@ -19,7 +19,7 @@ use Webkul\Notification\Events\NotificationEvent;
  */
 class ProcessMassActionSelection implements ShouldQueue
 {
-    use Batchable, Queueable;
+    use Batchable, Queueable, ResolvesDataGridSelection;
 
     /**
      * Records per chunk job, kept small because each record fires its own events and must finish inside the worker timeout.
@@ -76,15 +76,9 @@ class ProcessMassActionSelection implements ShouldQueue
             return;
         }
 
-        $previousRequest = app('request');
-
-        app()->instance('request', Request::create('/', 'GET', $this->gridParams));
-
         $count = 0;
 
-        try {
-            $dataGrid = app($this->dataGrid);
-
+        $this->withGridRequest(function (DataGrid $dataGrid) use (&$count): void {
             $dataGrid->getMatchingIds()
                 ->chunk(static::CHUNK_SIZE)
                 ->each(function (LazyCollection $ids) use (&$count): void {
@@ -92,9 +86,7 @@ class ProcessMassActionSelection implements ShouldQueue
 
                     $this->dispatchChunk($ids->map(fn ($id): int => (int) $id)->values()->all());
                 });
-        } finally {
-            app()->instance('request', $previousRequest);
-        }
+        });
 
         if ($batch = $this->batch()) {
             Cache::put(self::countCacheKey($batch->id), $count, now()->addDay());

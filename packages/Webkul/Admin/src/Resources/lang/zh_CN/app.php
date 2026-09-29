@@ -249,6 +249,13 @@ return [
                             'completed' => '已删除 :count 个产品。',
                             'failed'    => ':count 个产品的删除已完成，但出现错误。部分产品未删除。',
                         ],
+                        'export' => [
+                            'queued'        => '已将所有匹配商品的导出加入队列。准备就绪后，您将收到附带下载链接的通知。',
+                            'title'         => '商品导出',
+                            'completed'     => ':count 个商品的导出已就绪。点击下载。',
+                            'failed'        => '无法完成商品导出。',
+                            'too-many-rows' => '导出的行数超出此格式的上限（:limit）。请改用 CSV 导出。',
+                        ],
                     ],
                     'name'                    => '姓名',
                     'out-of-stock'            => '缺货',
@@ -2656,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => '没有选择记录。',
+                'selection-truncated'              => '此操作只能处理 :total 条匹配记录中的前 :limit 条。',
                 'must-select-a-mass-action-option' => '您必须选择质量行动\'s option.',
                 'must-select-a-mass-action'        => '您必须选择质量行动。',
                 'link-copied'                      => '链接已复制到剪贴板。',

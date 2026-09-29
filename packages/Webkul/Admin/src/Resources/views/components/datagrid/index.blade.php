@@ -587,7 +587,7 @@
                             this.$emitter.emit('change-datagrid', {
                                 available: this.available,
                                 applied: this.applied,
-                                resolveSelection: () => this.resolveSelection({}),
+                                resolveSelection: (action = {}) => this.resolveSelection(action),
                             });
 
                             this.isLoading = false;
@@ -1201,12 +1201,39 @@
 
                     this.isSelectingAllMatching = true;
 
+                    const truncationMessage = action.warnTruncation ? this.selectionTruncationMessage(action) : null;
+
+                    if (truncationMessage) {
+                        this.$emitter.emit('add-flash', { type: 'warning', message: truncationMessage });
+                    }
+
                     return this.$axios
                         .get(this.src, { params: { ...this.queryParams(), mass_action_ids: 1 } })
                         .then(response => ({ indices: response.data?.ids ?? [] }))
                         .finally(() => {
                             this.isSelectingAllMatching = false;
                         });
+                },
+
+                /**
+                 * Warning shown when "all matching" is selected but the action can only receive the
+                 * id list, which the server caps.
+                 *
+                 * @param {object} action
+                 * @returns {string|null}
+                 */
+                selectionTruncationMessage(action) {
+                    const limit = this.available.meta?.mass_action_id_limit;
+
+                    const total = this.available.meta?.total ?? 0;
+
+                    if (! this.applied.massActions.meta.allMatching || action.supportsSelectAll || ! limit || total <= limit) {
+                        return null;
+                    }
+
+                    return "@lang('admin::app.components.datagrid.index.selection-truncated')"
+                        .replace(':limit', limit)
+                        .replace(':total', total);
                 },
 
                 clearMassSelection() {
@@ -1267,7 +1294,14 @@
                         modalEvent = modal;
                     }
 
+                    const truncationMessage = this.selectionTruncationMessage(action);
+
+                    if (truncationMessage && modal) {
+                        this.$emitter.emit('add-flash', { type: 'warning', message: truncationMessage });
+                    }
+
                     this.$emitter.emit(modalEvent, {
+                        ...(truncationMessage && ! modal ? { message: truncationMessage } : {}),
                         agree: (data) => {
                             const value = this.applied.massActions.value;
 

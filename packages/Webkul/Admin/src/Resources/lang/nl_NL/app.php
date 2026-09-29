@@ -250,6 +250,13 @@ return [
                             'completed' => ':count producten verwijderd.',
                             'failed'    => 'Het verwijderen van :count producten is met fouten voltooid. Sommige producten zijn niet verwijderd.',
                         ],
+                        'export' => [
+                            'queued'        => 'De export van alle overeenkomende producten staat in de wachtrij. Je ontvangt een melding met een downloadlink zodra deze klaar is.',
+                            'title'         => 'Productexport',
+                            'completed'     => 'De export van :count producten is klaar. Klik om te downloaden.',
+                            'failed'        => 'De productexport kon niet worden voltooid.',
+                            'too-many-rows' => 'De export bevat meer rijen dan dit formaat toestaat (:limit). Exporteer in plaats daarvan als CSV.',
+                        ],
                     ],
                     'name'                    => 'Naam',
                     'out-of-stock'            => 'Niet meer op voorraad',
@@ -2656,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Er zijn geen records geselecteerd.',
+                'selection-truncated'              => 'Deze actie kan alleen de eerste :limit van de :total overeenkomende records verwerken.',
                 'must-select-a-mass-action-option' => 'Je moet een optie voor de bulkactie selecteren.',
                 'must-select-a-mass-action'        => 'Je moet een bulkactie selecteren.',
                 'link-copied'                      => 'Link gekopieerd naar het klembord.',

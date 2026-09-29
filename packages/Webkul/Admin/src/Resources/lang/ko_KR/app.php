@@ -250,6 +250,13 @@ return [
                             'completed' => ':count개 제품을 삭제했습니다.',
                             'failed'    => ':count개 제품 삭제가 오류와 함께 종료되었습니다. 일부 제품이 삭제되지 않았습니다.',
                         ],
+                        'export' => [
+                            'queued'        => '일치하는 모든 상품의 내보내기가 대기열에 추가되었습니다. 준비되면 다운로드 링크가 포함된 알림을 받게 됩니다.',
+                            'title'         => '상품 내보내기',
+                            'completed'     => ':count개 상품의 내보내기가 준비되었습니다. 클릭하여 다운로드하세요.',
+                            'failed'        => '상품 내보내기를 완료할 수 없습니다.',
+                            'too-many-rows' => '내보내기 행 수가 이 형식의 허용 한도(:limit)를 초과합니다. 대신 CSV로 내보내세요.',
+                        ],
                     ],
                     'name'                    => '이름',
                     'out-of-stock'            => '재고 없음',
@@ -2656,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => '선택된 기록이 없습니다.',
+                'selection-truncated'              => '이 작업은 일치하는 :total개 레코드 중 처음 :limit개만 처리할 수 있습니다.',
                 'must-select-a-mass-action-option' => '대량 작업 옵션을 선택해야 합니다.',
                 'must-select-a-mass-action'        => '대량 작업을 선택해야 합니다.',
                 'link-copied'                      => '링크가 클립보드에 복사되었습니다.',

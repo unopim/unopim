@@ -250,6 +250,13 @@ return [
                             'completed' => ':count produtos excluídos.',
                             'failed'    => 'A exclusão de :count produtos terminou com erros. Alguns produtos não foram excluídos.',
                         ],
+                        'export' => [
+                            'queued'        => 'A exportação de todos os produtos correspondentes foi colocada na fila. Você receberá uma notificação com o link de download quando estiver pronta.',
+                            'title'         => 'Exportação de produtos',
+                            'completed'     => 'A exportação de :count produtos está pronta. Clique para baixar.',
+                            'failed'        => 'Não foi possível concluir a exportação de produtos.',
+                            'too-many-rows' => 'A exportação tem mais linhas do que este formato permite (:limit). Exporte em CSV.',
+                        ],
                     ],
                     'name'                    => 'Nome',
                     'out-of-stock'            => 'Fora de estoque',
@@ -2656,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Nenhum registro selecionado.',
+                'selection-truncated'              => 'Esta ação só pode processar os primeiros :limit dos :total registros correspondentes.',
                 'must-select-a-mass-action-option' => 'Você deve selecionar uma opção de ação em massa.',
                 'must-select-a-mass-action'        => 'Você deve selecionar uma ação em massa.',
                 'link-copied'                      => 'Link copiado para a área de transferência.',

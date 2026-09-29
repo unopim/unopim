@@ -477,6 +477,39 @@ abstract class DataGrid
     }
 
     /**
+     * Build the export rows for the given records, one slice of a queued "select all matching" export.
+     *
+     * @param  array<int, int|string>  $ids
+     * @return array{columns: array<int, string>, records: array<int, array<string, mixed>>}
+     */
+    public function getExportableRows(array $ids): array
+    {
+        $this->prepareColumns();
+
+        $this->setQueryBuilder();
+
+        $this->queryBuilder->whereIn($this->getPrimaryDatabaseColumn(), $ids);
+
+        $gridData = $this instanceof ExportableInterface
+            ? $this->getExportableData(['productIds' => $ids])
+            : $this->queryBuilder->get();
+
+        if (isset($gridData['columns'], $gridData['records']) && is_array($gridData['columns'])) {
+            return [
+                'columns' => array_values($gridData['columns']),
+                'records' => array_map(fn ($record): array => (array) $record, [...$gridData['records']]),
+            ];
+        }
+
+        $records = collect($gridData)->map(fn ($record): array => (array) $record)->values()->all();
+
+        return [
+            'columns' => array_keys($records[0] ?? []),
+            'records' => $records,
+        ];
+    }
+
+    /**
      * Qualified database column behind the primary column, used to page through matching records.
      */
     protected function getPrimaryDatabaseColumn(): string
@@ -564,15 +597,16 @@ abstract class DataGrid
             'search_placeholder' => __($this->searchPlaceholder),
             'records'            => $paginator['data'],
             'meta'               => [
-                'primary_column'     => $this->primaryColumn,
-                'select_all_enabled' => $this->enableSelectAll,
-                'from'               => $paginator['from'],
-                'to'                 => $paginator['to'],
-                'total'              => $paginator['total'],
-                'per_page_options'   => [10, 20, 30, 40, 50],
-                'per_page'           => $paginator['per_page'],
-                'current_page'       => $paginator['current_page'],
-                'last_page'          => $paginator['last_page'],
+                'primary_column'       => $this->primaryColumn,
+                'select_all_enabled'   => $this->enableSelectAll,
+                'mass_action_id_limit' => static::MASS_ACTION_ID_LIMIT,
+                'from'                 => $paginator['from'],
+                'to'                   => $paginator['to'],
+                'total'                => $paginator['total'],
+                'per_page_options'     => [10, 20, 30, 40, 50],
+                'per_page'             => $paginator['per_page'],
+                'current_page'         => $paginator['current_page'],
+                'last_page'            => $paginator['last_page'],
             ],
         ];
     }

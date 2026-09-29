@@ -187,7 +187,13 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::controller(ProductController::class)->prefix('products')->group(function () {
             Route::get('', 'index')->name('admin.catalog.products.index');
 
-            Route::get('quick-export', 'quickExport')->name('admin.catalog.products.quick-export');
+            Route::match(['get', 'post'], 'quick-export', 'quickExport')->name('admin.catalog.products.quick-export');
+
+            Route::post('quick-export/queue', 'queueQuickExport')->name('admin.catalog.products.quick-export.queue');
+
+            Route::get('quick-export/download/{file}', 'downloadQuickExport')
+                ->where('file', '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\\.(csv|xls|xlsx)')
+                ->name('admin.catalog.products.quick-export.download');
 
             Route::post('create', 'store')->name('admin.catalog.products.store');
 

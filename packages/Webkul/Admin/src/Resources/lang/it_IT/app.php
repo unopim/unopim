@@ -249,6 +249,13 @@ return [
                             'completed' => ':count prodotti eliminati.',
                             'failed'    => 'L\'eliminazione di :count prodotti è terminata con errori. Alcuni prodotti non sono stati eliminati.',
                         ],
+                        'export' => [
+                            'queued'        => 'L\'esportazione di tutti i prodotti corrispondenti è stata messa in coda. Riceverai una notifica con il link per il download quando sarà pronta.',
+                            'title'         => 'Esportazione prodotti',
+                            'completed'     => 'L\'esportazione di :count prodotti è pronta. Fai clic per scaricarla.',
+                            'failed'        => 'Impossibile completare l\'esportazione dei prodotti.',
+                            'too-many-rows' => 'L\'esportazione contiene più righe di quante ne consenta questo formato (:limit). Esporta in CSV.',
+                        ],
                     ],
                     'name'                    => 'Nome',
                     'out-of-stock'            => 'Esaurito',
@@ -2653,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Nessuna voce selezionata.',
+                'selection-truncated'              => 'Questa azione può elaborare solo i primi :limit dei :total record corrispondenti.',
                 'must-select-a-mass-action-option' => 'È necessario selezionare un\'opzione per l\'azione in massa.',
                 'must-select-a-mass-action'        => 'È necessario selezionare un\'azione in massa.',
                 'link-copied'                      => 'Link copiato negli appunti.',

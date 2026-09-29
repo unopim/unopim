@@ -249,6 +249,13 @@ return [
                             'completed' => 'S\'han eliminat :count productes.',
                             'failed'    => 'L\'eliminació de :count productes ha finalitzat amb errors. Alguns productes no s\'han eliminat.',
                         ],
+                        'export' => [
+                            'queued'        => 'S\'ha posat a la cua l\'exportació de tots els productes coincidents. Rebràs una notificació amb l\'enllaç de baixada quan estigui llesta.',
+                            'title'         => 'Exportació de productes',
+                            'completed'     => 'L\'exportació de :count productes està llesta. Fes clic per baixar-la.',
+                            'failed'        => 'No s\'ha pogut completar l\'exportació de productes.',
+                            'too-many-rows' => 'L\'exportació té més files de les que permet aquest format (:limit). Exporta-la en CSV.',
+                        ],
                     ],
                     'name'                    => 'Nom',
                     'out-of-stock'            => 'Sense estoc',
@@ -2653,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'No se han seleccionado registros.',
+                'selection-truncated'              => 'Aquesta acció només pot processar els primers :limit dels :total registres coincidents.',
                 'must-select-a-mass-action-option' => 'Debes seleccionar una opción de acción masiva.',
                 'must-select-a-mass-action'        => 'Debes seleccionar una acción masiva.',
                 'link-copied'                      => 'Enllaç copiat al porta-retalls.',
