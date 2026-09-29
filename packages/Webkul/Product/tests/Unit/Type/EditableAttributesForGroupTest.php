@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 function mapGroupToFamily(AttributeFamily $family, AttributeGroup $group, iterable $attributes, int $position): void
@@ -36,7 +37,7 @@ it('returns only the requested group of the family', function () {
     mapGroupToFamily($family, AttributeGroup::factory()->create(), $elsewhere, 2);
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => $family->id,
     ]);
 
@@ -46,7 +47,7 @@ it('returns only the requested group of the family', function () {
 });
 
 it('returns an empty collection for a group that is not in the family', function () {
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value]);
 
     expect($product->getEditableAttributesForGroup(987654)->all())->toBe([]);
 });
@@ -59,7 +60,7 @@ it('returns an eloquent collection for a group holding no editable attributes', 
     mapGroupToFamily($family, $empty, [], 1);
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'attribute_family_id' => $family->id,
     ]);
 
