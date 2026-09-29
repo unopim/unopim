@@ -237,6 +237,27 @@ return [
                     'mass-delete-success'     => 'De valgte produktene ble slettet vellykket',
                     'mass-update-queued'      => 'Valgte produkter oppdateres i bakgrunnen',
                     'mass-update-success'     => 'De valgte produktene ble oppdatert vellykket',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Statusoppdateringen er satt i kø for alle samsvarende produkter. Du får beskjed når den er ferdig.',
+                            'title'     => 'Oppdatering av produktstatus',
+                            'completed' => 'Status er oppdatert for :count produkter.',
+                            'failed'    => 'Statusoppdateringen av :count produkter ble fullført med feil. Noen produkter ble ikke oppdatert.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Slettingen er satt i kø for alle samsvarende produkter. Du får beskjed når den er ferdig.',
+                            'title'     => 'Sletting av produkter',
+                            'completed' => ':count produkter er slettet.',
+                            'failed'    => 'Slettingen av :count produkter ble fullført med feil. Noen produkter ble ikke slettet.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Eksport av alle samsvarende produkter er satt i kø. Du får et varsel med nedlastingslenke når den er klar.',
+                            'title'         => 'Produkteksport',
+                            'completed'     => 'Eksporten av :count produkter er klar. Klikk for å laste ned.',
+                            'failed'        => 'Produkteksporten kunne ikke fullføres.',
+                            'too-many-rows' => 'Eksporten har flere rader enn dette formatet tillater (:limit). Eksporter som CSV i stedet.',
+                        ],
+                    ],
                     'name'                    => 'Navn',
                     'out-of-stock'            => 'Utsolgt',
                     'price'                   => 'Pris',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Ingen oppføringer valgt.',
+                'selection-truncated'              => 'Denne handlingen kan bare behandle de første :limit av de :total samsvarende postene.',
                 'must-select-a-mass-action-option' => 'Du må velge et mass action-alternativ.',
                 'must-select-a-mass-action'        => 'Du må velge en mass action.',
                 'link-copied'                      => 'Lenken er kopiert til utklippstavlen.',

@@ -237,6 +237,27 @@ return [
                     'mass-delete-success'     => 'Produsele selectate au fost șterse cu succes',
                     'mass-update-queued'      => 'Produsele selectate sunt actualizate în fundal',
                     'mass-update-success'     => 'Produsele selectate au fost actualizate cu succes',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Actualizarea stării a fost pusă în coadă pentru toate produsele corespunzătoare. Vei fi notificat când se termină.',
+                            'title'     => 'Actualizarea stării produselor',
+                            'completed' => 'Starea a fost actualizată pentru :count produse.',
+                            'failed'    => 'Actualizarea stării pentru :count produse s-a încheiat cu erori. Unele produse nu au fost actualizate.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Ștergerea a fost pusă în coadă pentru toate produsele corespunzătoare. Vei fi notificat când se termină.',
+                            'title'     => 'Ștergerea produselor',
+                            'completed' => 'Au fost șterse :count produse.',
+                            'failed'    => 'Ștergerea a :count produse s-a încheiat cu erori. Unele produse nu au fost șterse.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Exportul tuturor produselor corespunzătoare a fost pus în coadă. Vei primi o notificare cu linkul de descărcare când este gata.',
+                            'title'         => 'Export produse',
+                            'completed'     => 'Exportul a :count produse este gata. Fă clic pentru descărcare.',
+                            'failed'        => 'Exportul produselor nu a putut fi finalizat.',
+                            'too-many-rows' => 'Exportul are mai multe rânduri decât permite acest format (:limit). Exportă în CSV.',
+                        ],
+                    ],
                     'name'                    => 'Nume',
                     'out-of-stock'            => 'Fără stoc',
                     'price'                   => 'Preț',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Nu au fost selectate înregistrări.',
+                'selection-truncated'              => 'Această acțiune poate procesa doar primele :limit din cele :total înregistrări corespunzătoare.',
                 'must-select-a-mass-action-option' => 'Trebuie să selectați o opțiune de acțiune în masă.',
                 'must-select-a-mass-action'        => 'Trebuie să selectați o acțiune în masă.',
                 'link-copied'                      => 'Linkul a fost copiat în clipboard.',

@@ -12,18 +12,22 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Filters\ProductPropertyFilters;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CheckVariantUniquenessForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
 use Webkul\Admin\Http\Requests\ProductAttributeForm;
 use Webkul\Admin\Http\Requests\ProductAttributeGroupsForm;
 use Webkul\Admin\Http\Requests\ProductForm;
+use Webkul\Admin\Http\Requests\QueueQuickExportRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
 use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
+use Webkul\Admin\Jobs\ExportDataGridSelection;
+use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeOptionProxy;
@@ -118,6 +122,39 @@ class ProductController extends Controller
         abort_unless(request()->boolean('export'), 404);
 
         return app(ProductDataGrid::class)->toJson();
+    }
+
+    /**
+     * Queue the quick export of every product matching the grid's filters.
+     */
+    public function queueQuickExport(QueueQuickExportRequest $queueQuickExportRequest): JsonResponse
+    {
+        ExportDataGridSelection::dispatch(
+            ProductDataGrid::class,
+            $queueQuickExportRequest->selectionParams(),
+            $queueQuickExportRequest->input('format'),
+            auth()->guard('admin')->id(),
+            'admin::app.catalog.products.index.datagrid.select-all.export',
+            'admin.catalog.products.quick-export.download',
+        );
+
+        return new JsonResponse([
+            'message' => trans('admin::app.catalog.products.index.datagrid.select-all.export.queued'),
+        ]);
+    }
+
+    /**
+     * Download a finished quick export, only ever from the signed-in admin's own exports.
+     */
+    public function downloadQuickExport(string $file): StreamedResponse
+    {
+        $path = sprintf('%s/%d/%s', ExportDataGridSelection::DIRECTORY, auth()->guard('admin')->id(), $file);
+
+        $disk = Storage::disk(ExportDataGridSelection::DISK);
+
+        abort_unless($disk->exists($path), 404);
+
+        return $disk->download($path, 'products.'.pathinfo($file, PATHINFO_EXTENSION));
     }
 
     /**
@@ -1366,8 +1403,23 @@ class ProductController extends Controller
     /**
      * Mass delete the products.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
+        if ($massDestroyRequest->selectsAllMatching()) {
+            ProcessMassActionSelection::queue(
+                ProductDataGrid::class,
+                $massDestroyRequest->selectionParams(),
+                MassDeleteProducts::class,
+                [],
+                auth()->guard('admin')->id(),
+                'admin::app.catalog.products.index.datagrid.select-all.delete',
+            );
+
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.select-all.delete.queued'),
+            ]);
+        }
+
         $productIds = $massDestroyRequest->input('indices');
 
         if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
@@ -1394,11 +1446,26 @@ class ProductController extends Controller
     /**
      * Mass update the products.
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $productIds = $massUpdateRequest->input('indices');
-
         $status = (bool) $massUpdateRequest->input('value');
+
+        if ($massUpdateRequest->selectsAllMatching()) {
+            ProcessMassActionSelection::queue(
+                ProductDataGrid::class,
+                $massUpdateRequest->selectionParams(),
+                MassUpdateProductsStatus::class,
+                [$status],
+                auth()->guard('admin')->id(),
+                'admin::app.catalog.products.index.datagrid.select-all.update-status',
+            );
+
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.products.index.datagrid.select-all.update-status.queued'),
+            ], JsonResponse::HTTP_OK);
+        }
+
+        $productIds = $massUpdateRequest->input('indices');
 
         if (count($productIds) > (int) config('products.mass_action_async_threshold')) {
             MassUpdateProductsStatus::dispatch($productIds, $status);

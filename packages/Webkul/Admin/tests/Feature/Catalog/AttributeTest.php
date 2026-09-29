@@ -688,3 +688,39 @@ it('should render add-option modal with a unified layout for image swatch attrib
         'The add-option modal must not split swatch input and form fields into two disconnected grid divs'
     );
 });
+
+it('mass deletes only the attributes matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => Attribute::factory()->create(['code' => 'seldel_match_'.$i])->id)->all();
+    $other = Attribute::factory()->create(['code' => 'seldel_other'])->id;
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['seldel_match_']],
+    ])->assertOk();
+
+    expect(Attribute::whereIn('id', $matching)->count())->toBe(0)
+        ->and(Attribute::whereKey($other)->exists())->toBeTrue();
+});
+
+it('keeps the sku attribute when all attributes are selected for mass delete', function () {
+    $this->loginAsAdmin();
+
+    $skuId = Attribute::where('code', 'sku')->value('id');
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['sku']],
+    ])->assertStatus(400);
+
+    expect(Attribute::whereKey($skuId)->exists())->toBeTrue();
+});
+
+it('still requires an id list on attribute mass delete when all matching are not selected', function () {
+    $this->loginAsAdmin();
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('indices');
+});

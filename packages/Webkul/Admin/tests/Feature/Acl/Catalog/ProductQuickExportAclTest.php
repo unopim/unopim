@@ -139,3 +139,16 @@ it('registers quick export as an assignable permission with a resolvable label',
 
     expect(trans('admin::app.acl.quick-export'))->toBe('Quick Export');
 });
+
+it('denies queueing a select-all quick export or downloading one without the quick export permission', function () use ($viewOnly) {
+    $this->loginWithPermissions(permissions: $viewOnly);
+
+    $this->postJson(route('admin.catalog.products.quick-export.queue'), ['select_all' => 1, 'format' => 'csv'])
+        ->assertStatus(403);
+
+    $this->get(route('admin.catalog.products.quick-export.download', ['file' => '0b0f7d52-6f3e-4a55-9a53-2b5d4f8a1c11.csv']))
+        ->assertStatus(403);
+
+    $this->post(route('admin.catalog.products.quick-export'), ['export' => 1, 'format' => 'csv', 'productIds' => [1]])
+        ->assertStatus(403);
+});

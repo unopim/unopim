@@ -450,3 +450,45 @@ it('should return error when deleting the last locale through mass delete', func
         'status' => 1,
     ]);
 });
+
+it('mass updates only the locales matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => Locale::factory()->create(['code' => 'zq_'.$i, 'status' => 0])->id)->all();
+    $other = Locale::factory()->create(['code' => 'zx_1', 'status' => 0])->id;
+
+    $this->postJson(route('admin.settings.locales.mass_update'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['zq_']],
+        'value'      => 1,
+    ])->assertOk();
+
+    expect(Locale::whereIn('id', $matching)->where('status', 1)->count())->toBe(3)
+        ->and((int) Locale::find($other)->status)->toBe(0);
+});
+
+it('mass deletes only the locales matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => Locale::factory()->create(['code' => 'zq_'.$i, 'status' => 0])->id)->all();
+    $other = Locale::factory()->create(['code' => 'zx_1', 'status' => 0])->id;
+
+    $this->postJson(route('admin.settings.locales.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['zq_']],
+    ])->assertOk();
+
+    expect(Locale::whereIn('id', $matching)->count())->toBe(0)
+        ->and(Locale::whereKey($other)->exists())->toBeTrue();
+});
+
+it('skips locales in use when all locales are selected for mass update to disabled', function () {
+    $user = $this->loginAsAdmin();
+
+    $this->postJson(route('admin.settings.locales.mass_update'), [
+        'select_all' => 1,
+        'value'      => 0,
+    ]);
+
+    expect(Locale::whereKey($user->ui_locale_id)->value('status'))->toBe(1);
+});

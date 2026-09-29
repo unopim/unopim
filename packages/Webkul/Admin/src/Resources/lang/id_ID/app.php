@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Produk yang dipilih berhasil dihapus',
                     'mass-update-queued'      => 'Produk yang dipilih sedang diperbarui di latar belakang',
                     'mass-update-success'     => 'Produk terpilih diperbarui dengan sukses',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Pembaruan status telah dijadwalkan untuk semua produk yang cocok. Anda akan diberi tahu setelah selesai.',
+                            'title'     => 'Pembaruan status produk',
+                            'completed' => 'Status :count produk telah diperbarui.',
+                            'failed'    => 'Pembaruan status :count produk selesai dengan kesalahan. Beberapa produk tidak diperbarui.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Penghapusan telah dijadwalkan untuk semua produk yang cocok. Anda akan diberi tahu setelah selesai.',
+                            'title'     => 'Penghapusan produk',
+                            'completed' => ':count produk telah dihapus.',
+                            'failed'    => 'Penghapusan :count produk selesai dengan kesalahan. Beberapa produk tidak dihapus.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Ekspor semua produk yang cocok telah masuk antrean. Anda akan menerima notifikasi berisi tautan unduhan saat siap.',
+                            'title'         => 'Ekspor produk',
+                            'completed'     => 'Ekspor :count produk sudah siap. Klik untuk mengunduh.',
+                            'failed'        => 'Ekspor produk tidak dapat diselesaikan.',
+                            'too-many-rows' => 'Ekspor memiliki lebih banyak baris daripada yang diizinkan format ini (:limit). Ekspor sebagai CSV saja.',
+                        ],
+                    ],
                     'name'                    => 'Nama',
                     'out-of-stock'            => 'Stok Habis',
                     'price'                   => 'Harga',
@@ -2639,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Tidak ada catatan yang dipilih.',
+                'selection-truncated'              => 'Tindakan ini hanya dapat memproses :limit pertama dari :total data yang cocok.',
                 'must-select-a-mass-action-option' => 'Anda harus memilih tindakan massa \'s option.',
                 'must-select-a-mass-action'        => 'Anda harus memilih tindakan massa.',
                 'link-copied'                      => 'Tautan disalin ke papan klip.',

@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Produit(s) supprimé(s) avec succès',
                     'mass-update-queued'      => 'Les produits sélectionnés sont en cours de mise à jour en arrière-plan',
                     'mass-update-success'     => 'Produit(s) mis à jour avec succès',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'La mise à jour du statut a été mise en file d\'attente pour tous les produits correspondants. Vous serez averti une fois terminée.',
+                            'title'     => 'Mise à jour du statut des produits',
+                            'completed' => 'Statut mis à jour pour :count produits.',
+                            'failed'    => 'La mise à jour du statut de :count produits s\'est terminée avec des erreurs. Certains produits n\'ont pas été mis à jour.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'La suppression a été mise en file d\'attente pour tous les produits correspondants. Vous serez averti une fois terminée.',
+                            'title'     => 'Suppression des produits',
+                            'completed' => ':count produits supprimés.',
+                            'failed'    => 'La suppression de :count produits s\'est terminée avec des erreurs. Certains produits n\'ont pas été supprimés.',
+                        ],
+                        'export' => [
+                            'queued'        => 'L\'export de tous les produits correspondants a été mis en file d\'attente. Vous recevrez une notification avec un lien de téléchargement dès qu\'il sera prêt.',
+                            'title'         => 'Export de produits',
+                            'completed'     => 'L\'export de :count produits est prêt. Cliquez pour le télécharger.',
+                            'failed'        => 'L\'export des produits n\'a pas pu aboutir.',
+                            'too-many-rows' => 'L\'export contient plus de lignes que ce format ne le permet (:limit). Exportez plutôt en CSV.',
+                        ],
+                    ],
                     'name'                    => 'Nom',
                     'out-of-stock'            => 'En rupture de stock',
                     'price'                   => 'Prix',
@@ -2638,6 +2659,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Aucun enregistrement n\'a été sélectionné.',
+                'selection-truncated'              => 'Cette action ne peut traiter que les :limit premiers des :total enregistrements correspondants.',
                 'must-select-a-mass-action-option' => 'Vous devez sélectionner une option pour l\'action de masse.',
                 'must-select-a-mass-action'        => 'Vous devez sélectionner une action de masse.',
                 'link-copied'                      => 'Lien copié dans le presse-papiers.',

@@ -283,3 +283,42 @@ it('should not delete the last currency using mass delete', function () {
         'id' => $id,
     ]);
 });
+
+it('mass updates only the currencies matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(['QA1', 'QA2', 'QA3'])->map(fn (string $code) => Currency::factory()->create(['code' => $code, 'status' => 0])->id)->all();
+    $other = Currency::factory()->create(['code' => 'QB1', 'status' => 0])->id;
+
+    $this->postJson(route('admin.settings.currencies.mass_update'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['QA']],
+        'value'      => 1,
+    ])->assertOk();
+
+    expect(Currency::whereIn('id', $matching)->where('status', 1)->count())->toBe(3)
+        ->and((int) Currency::find($other)->status)->toBe(0);
+});
+
+it('mass deletes only the currencies matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(['QA1', 'QA2', 'QA3'])->map(fn (string $code) => Currency::factory()->create(['code' => $code, 'status' => 0])->id)->all();
+    $other = Currency::factory()->create(['code' => 'QB1', 'status' => 0])->id;
+
+    $this->postJson(route('admin.settings.currencies.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['QA']],
+    ])->assertOk();
+
+    expect(Currency::whereIn('id', $matching)->count())->toBe(0)
+        ->and(Currency::whereKey($other)->exists())->toBeTrue();
+});
+
+it('still requires an id list on currency mass actions when all matching are not selected', function () {
+    $this->loginAsAdmin();
+
+    $this->postJson(route('admin.settings.currencies.mass_delete'), [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('indices');
+});

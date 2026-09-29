@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => '選中的產品已成功刪除',
                     'mass-update-queued'      => '所選產品正在背景中更新',
                     'mass-update-success'     => '選中的產品已成功更新',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => '已將所有符合條件產品的狀態更新加入佇列，完成後將通知您。',
+                            'title'     => '產品狀態更新',
+                            'completed' => '已更新 :count 項產品的狀態。',
+                            'failed'    => ':count 項產品的狀態更新已完成，但發生錯誤。部分產品未更新。',
+                        ],
+                        'delete' => [
+                            'queued'    => '已將所有符合條件產品的刪除作業加入佇列，完成後將通知您。',
+                            'title'     => '產品刪除',
+                            'completed' => '已刪除 :count 項產品。',
+                            'failed'    => ':count 項產品的刪除已完成，但發生錯誤。部分產品未刪除。',
+                        ],
+                        'export' => [
+                            'queued'        => '已將所有符合商品的匯出加入佇列。準備就緒後，您會收到附有下載連結的通知。',
+                            'title'         => '商品匯出',
+                            'completed'     => ':count 個商品的匯出已就緒。點擊下載。',
+                            'failed'        => '無法完成商品匯出。',
+                            'too-many-rows' => '匯出的列數超過此格式的上限（:limit）。請改用 CSV 匯出。',
+                        ],
+                    ],
                     'name'                    => '名稱',
                     'out-of-stock'            => '缺貨',
                     'price'                   => '價格',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => '未選擇任何記錄。',
+                'selection-truncated'              => '此操作只能處理 :total 筆符合記錄中的前 :limit 筆。',
                 'must-select-a-mass-action-option' => '必須選擇一個批量操作選項。',
                 'must-select-a-mass-action'        => '必須選擇一個批量操作。',
                 'link-copied'                      => '連結已複製到剪貼簿。',
