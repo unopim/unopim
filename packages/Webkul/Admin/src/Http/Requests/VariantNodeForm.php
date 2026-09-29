@@ -61,7 +61,7 @@ class VariantNodeForm extends FormRequest
 
         $rules = [
             'parent_id' => ['nullable', 'integer'],
-            'role'      => ['required', 'string', Rule::in(ProductTypeEnum::variantChildValues())],
+            'role'      => ['required', 'string', Rule::in(ProductTypeEnum::VARIANT_CHILD_VALUES)],
             'values'    => ['required', 'array', function (string $attribute, mixed $value, callable $fail) use ($axisCodes) {
                 $unknown = array_diff(array_keys((array) $value), $axisCodes);
 

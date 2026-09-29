@@ -10,22 +10,25 @@ enum VariantLevelEnum: string
 
     case Variant = 'variant';
 
+    const VALUES = [
+        self::Common->value,
+        self::SubParent->value,
+        self::Variant->value,
+    ];
+
+    const ORDER = [
+        self::Common->value    => 0,
+        self::SubParent->value => 1,
+        self::Variant->value   => 2,
+    ];
+
     public function order(): int
     {
-        return match ($this) {
-            self::Common    => 0,
-            self::SubParent => 1,
-            self::Variant   => 2,
-        };
+        return self::ORDER[$this->value];
     }
 
     public function isInheritedBy(self $level): bool
     {
         return $this->order() <= $level->order();
-    }
-
-    public static function values(): array
-    {
-        return array_column(self::cases(), 'value');
     }
 }

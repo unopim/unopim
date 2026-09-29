@@ -58,7 +58,7 @@ class ConfigurableProductDataSource extends ProductDataSource
      */
     protected function requestedTypes(): array
     {
-        $supported = ProductTypeEnum::variantParentValues();
+        $supported = ProductTypeEnum::VARIANT_PARENT_VALUES;
 
         $requested = request()->input('type');
 

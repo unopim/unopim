@@ -26,7 +26,7 @@ class UpdateVariantStructureRequest extends VariantStructureRequest
             'axes.level_1.*' => ['string'],
             'axes.level_2'   => ['sometimes', 'array'],
             'axes.level_2.*' => ['string'],
-            'placements'     => ['sometimes', 'array', $this->onlyKeys(VariantLevelEnum::values())],
+            'placements'     => ['sometimes', 'array', $this->onlyKeys(VariantLevelEnum::VALUES)],
             'placements.*'   => ['array'],
             'placements.*.*' => ['string'],
         ];

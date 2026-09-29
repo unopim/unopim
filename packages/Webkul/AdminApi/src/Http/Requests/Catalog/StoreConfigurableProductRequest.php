@@ -25,7 +25,7 @@ class StoreConfigurableProductRequest extends ApiFormRequest
 
         return [
             'status'            => ['nullable', 'boolean'],
-            'type'              => ['nullable', Rule::in(ProductTypeEnum::variantParentValues())],
+            'type'              => ['nullable', Rule::in(ProductTypeEnum::VARIANT_PARENT_VALUES)],
             'parent'            => [Rule::requiredIf($isVariantGroup), 'nullable', 'string'],
             'channel'           => ['nullable', 'string'],
             'locale'            => ['nullable', 'string'],

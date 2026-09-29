@@ -11,11 +11,7 @@ use Webkul\Product\Models\VariantStructureProxy;
 
 class VariantStructurePlanner implements VariantStructurePlannerContract
 {
-    const LEVEL_ORDER = [
-        VariantLevelEnum::Common->value    => 0,
-        VariantLevelEnum::SubParent->value => 1,
-        VariantLevelEnum::Variant->value   => 2,
-    ];
+    const LEVEL_ORDER = VariantLevelEnum::ORDER;
 
     /** Structure level a product sits at. */
     public function levelOf(Product $product): ?string
@@ -24,7 +20,7 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
             return null;
         }
 
-        return ProductTypeEnum::tryFrom((string) $product->type)?->variantLevel()->value;
+        return ProductTypeEnum::VARIANT_LEVEL_BY_TYPE[(string) $product->type] ?? null;
     }
 
     /** @var array<int, VariantStructure|null> */
@@ -136,9 +132,9 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
             return true;
         }
 
-        $placement = VariantLevelEnum::tryFrom($this->levelMap($structure)[$attributeCode] ?? '') ?? VariantLevelEnum::Common;
+        $placement = $this->levelMap($structure)[$attributeCode] ?? VariantLevelEnum::Common->value;
 
-        return $placement->isInheritedBy(VariantLevelEnum::tryFrom($level) ?? VariantLevelEnum::Common);
+        return (VariantLevelEnum::ORDER[$placement] ?? 0) <= (VariantLevelEnum::ORDER[$level] ?? 0);
     }
 
     /** Attribute code to structure level, axes included. */
@@ -179,7 +175,7 @@ class VariantStructurePlanner implements VariantStructurePlannerContract
     {
         $map = $this->levelMap($structure);
 
-        $grouped = array_fill_keys(VariantLevelEnum::values(), []);
+        $grouped = array_fill_keys(VariantLevelEnum::VALUES, []);
 
         foreach ($attributeCodes as $code) {
             $level = $map[$code] ?? VariantLevelEnum::Common->value;

@@ -393,7 +393,7 @@ class AttributeFamilyController extends Controller
             }
 
             foreach (($structure['placements'] ?? []) as $level => $codes) {
-                if (! in_array($level, VariantLevelEnum::values(), true)) {
+                if (! in_array($level, VariantLevelEnum::VALUES, true)) {
                     abort(422, trans('validation.in', ['attribute' => $level]));
                 }
 
@@ -546,7 +546,7 @@ class AttributeFamilyController extends Controller
         }
 
         foreach (($structureData['placements'] ?? []) as $level => $codes) {
-            if (! in_array($level, VariantLevelEnum::values(), true)) {
+            if (! in_array($level, VariantLevelEnum::VALUES, true)) {
                 abort(422, trans('validation.in', ['attribute' => $level]));
             }
 

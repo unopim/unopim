@@ -148,7 +148,7 @@ class VariantStructureDataSource extends ApiDataSource
      */
     protected function groupPlacements(VariantStructure $structure): array
     {
-        $grouped = array_fill_keys(VariantLevelEnum::values(), []);
+        $grouped = array_fill_keys(VariantLevelEnum::VALUES, []);
 
         foreach ($structure->placements as $placement) {
             $code = $placement->attribute?->code;

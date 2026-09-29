@@ -79,7 +79,7 @@ describe('demo value ownership', function () {
     });
 
     it('carries sku at every level', function () use ($placements) {
-        foreach (VariantLevelEnum::values() as $level) {
+        foreach (VariantLevelEnum::VALUES as $level) {
             expect(placementSeeder()->ownedValues(['sku' => 'a'], $placements, $level))->toBe(['sku' => 'a']);
         }
     });

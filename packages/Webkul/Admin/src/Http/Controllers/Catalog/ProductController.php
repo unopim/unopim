@@ -987,7 +987,7 @@ class ProductController extends Controller
             return $product;
         }
 
-        if (! in_array($product->type, ProductTypeEnum::variantChildValues(), true)) {
+        if (! in_array($product->type, ProductTypeEnum::VARIANT_CHILD_VALUES, true)) {
             return null;
         }
 

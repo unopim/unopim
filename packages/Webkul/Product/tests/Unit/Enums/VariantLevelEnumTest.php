@@ -6,7 +6,12 @@ use Webkul\Product\Services\VariantStructureWriter;
 
 describe('VariantLevelEnum', function () {
     it('keeps the legacy string values stored in variant_structure_attributes.level', function () {
-        expect(VariantLevelEnum::values())->toBe(['common', 'sub_parent', 'variant']);
+        expect(VariantLevelEnum::VALUES)->toBe(['common', 'sub_parent', 'variant']);
+    });
+
+    it('lists every case in VALUES and ORDER', function () {
+        expect(VariantLevelEnum::VALUES)->toBe(array_column(VariantLevelEnum::cases(), 'value'))
+            ->and(array_keys(VariantLevelEnum::ORDER))->toBe(VariantLevelEnum::VALUES);
     });
 
     it('orders the levels from the root down to the leaf', function (VariantLevelEnum $level, int $order) {
@@ -29,7 +34,7 @@ describe('VariantLevelEnum', function () {
     ]);
 
     it('keeps the deprecated placement level constants equal to the enum values', function () {
-        expect(VariantStructureWriter::PLACEMENT_LEVELS)->toBe(VariantLevelEnum::values());
+        expect(VariantStructureWriter::PLACEMENT_LEVELS)->toBe(VariantLevelEnum::VALUES);
 
         foreach (VariantLevelEnum::cases() as $level) {
             expect(VariantStructurePlanner::LEVEL_ORDER[$level->value])->toBe($level->order());

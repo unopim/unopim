@@ -34,9 +34,14 @@ describe('ProductTypeEnum', function () {
     ]);
 
     it('lists the raw values of variant parents and variant children', function () {
-        expect(ProductTypeEnum::variantParentValues())->toBe(['configurable', 'variant_group'])
-            ->and(ProductTypeEnum::variantChildValues())->toBe(['variant_group', 'simple']);
+        expect(ProductTypeEnum::VARIANT_PARENT_VALUES)->toBe(['configurable', 'variant_group'])
+            ->and(ProductTypeEnum::VARIANT_CHILD_VALUES)->toBe(['variant_group', 'simple']);
     });
+
+    it('maps every case in the variant level lookup used by the import hot path', function (ProductTypeEnum $type) {
+        expect(ProductTypeEnum::VARIANT_LEVEL_BY_TYPE)->toHaveKey($type->value)
+            ->and(ProductTypeEnum::VARIANT_LEVEL_BY_TYPE[$type->value])->toBe($type->variantLevel()->value);
+    })->with(ProductTypeEnum::cases());
 
     it('resolves a translated label', function (ProductTypeEnum $type) {
         expect($type->label())->toBe(trans(config('product_types.'.$type->value.'.name')))

@@ -10,6 +10,22 @@ enum ProductTypeEnum: string
 
     case VariantGroup = 'variant_group';
 
+    const VARIANT_PARENT_VALUES = [
+        self::Configurable->value,
+        self::VariantGroup->value,
+    ];
+
+    const VARIANT_CHILD_VALUES = [
+        self::VariantGroup->value,
+        self::Simple->value,
+    ];
+
+    const VARIANT_LEVEL_BY_TYPE = [
+        self::Configurable->value => VariantLevelEnum::Common->value,
+        self::VariantGroup->value => VariantLevelEnum::SubParent->value,
+        self::Simple->value       => VariantLevelEnum::Variant->value,
+    ];
+
     public function label(): string
     {
         return trans('product::app.type.'.str_replace('_', '-', $this->value));
@@ -17,30 +33,16 @@ enum ProductTypeEnum: string
 
     public function isVariantParent(): bool
     {
-        return $this === self::Configurable || $this === self::VariantGroup;
+        return in_array($this->value, self::VARIANT_PARENT_VALUES, true);
     }
 
     public function isVariantChild(): bool
     {
-        return $this === self::VariantGroup || $this === self::Simple;
+        return in_array($this->value, self::VARIANT_CHILD_VALUES, true);
     }
 
     public function variantLevel(): VariantLevelEnum
     {
-        return match ($this) {
-            self::Configurable => VariantLevelEnum::Common,
-            self::VariantGroup => VariantLevelEnum::SubParent,
-            self::Simple       => VariantLevelEnum::Variant,
-        };
-    }
-
-    public static function variantParentValues(): array
-    {
-        return [self::Configurable->value, self::VariantGroup->value];
-    }
-
-    public static function variantChildValues(): array
-    {
-        return [self::VariantGroup->value, self::Simple->value];
+        return VariantLevelEnum::from(self::VARIANT_LEVEL_BY_TYPE[$this->value]);
     }
 }

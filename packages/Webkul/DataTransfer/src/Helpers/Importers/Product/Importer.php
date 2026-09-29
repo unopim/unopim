@@ -542,7 +542,7 @@ class Importer extends AbstractImporter
                 $skuChunk[] = $rowData['parent'];
             }
 
-            if (in_array($rowData['type'] ?? null, ProductTypeEnum::variantParentValues(), true)) {
+            if (in_array($rowData['type'] ?? null, ProductTypeEnum::VARIANT_PARENT_VALUES, true)) {
                 $this->fileParentRows[$rowData['sku']] = [
                     'type'       => $rowData['type'],
                     'family'     => $rowData[self::ATTRIBUTE_FAMILY_CODE] ?? null,
@@ -902,7 +902,7 @@ class Importer extends AbstractImporter
                 $rowType = $rowData['type'] ?? null;
 
                 $belongsToPass = $types === []
-                    ? ! in_array($rowType, ProductTypeEnum::variantParentValues(), true)
+                    ? ! in_array($rowType, ProductTypeEnum::VARIANT_PARENT_VALUES, true)
                     : in_array($rowType, $types, true);
 
                 if ($belongsToPass && isset($this->validatedRows[$rowNumber]) && ! $this->errorHelper->isRowInvalid($rowNumber)) {
@@ -1319,7 +1319,7 @@ class Importer extends AbstractImporter
             return $this->attributesOwnedByAncestors($rowData);
         }
 
-        $rowLevel = (ProductTypeEnum::tryFrom((string) $rowData['type'])?->variantLevel() ?? VariantLevelEnum::Variant)->value;
+        $rowLevel = ProductTypeEnum::VARIANT_LEVEL_BY_TYPE[(string) $rowData['type']] ?? VariantLevelEnum::Variant->value;
 
         $levelByCode = [];
 
@@ -1491,7 +1491,7 @@ class Importer extends AbstractImporter
     protected function isAllowedParentType(string $type, ?string $parentType): bool
     {
         return match ($parentType) {
-            ProductTypeEnum::Configurable->value  => in_array($type, ProductTypeEnum::variantChildValues(), true),
+            ProductTypeEnum::Configurable->value  => in_array($type, ProductTypeEnum::VARIANT_CHILD_VALUES, true),
             ProductTypeEnum::VariantGroup->value  => $type === ProductTypeEnum::Simple->value,
             default                               => false,
         };

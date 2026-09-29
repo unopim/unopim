@@ -26,11 +26,7 @@ class VariantStructureWriter
 {
     public const AXIS_LEVELS = ['level_1', 'level_2'];
 
-    public const PLACEMENT_LEVELS = [
-        VariantLevelEnum::Common->value,
-        VariantLevelEnum::SubParent->value,
-        VariantLevelEnum::Variant->value,
-    ];
+    public const PLACEMENT_LEVELS = VariantLevelEnum::VALUES;
 
     /**
      * Whether any product at all points at the structure.
@@ -121,7 +117,7 @@ class VariantStructureWriter
                 }
             }
 
-            foreach (VariantLevelEnum::values() as $level) {
+            foreach (VariantLevelEnum::VALUES as $level) {
                 foreach ($placements[$level] as $attributeCode) {
                     VariantStructureAttribute::create([
                         'variant_structure_id' => $structure->id,
@@ -195,7 +191,7 @@ class VariantStructureWriter
     public function currentState(VariantStructure $structure): array
     {
         $axes = array_fill_keys(self::AXIS_LEVELS, []);
-        $placements = array_fill_keys(VariantLevelEnum::values(), []);
+        $placements = array_fill_keys(VariantLevelEnum::VALUES, []);
 
         foreach ($structure->axes as $axis) {
             if ($axis->attribute?->code !== null && isset($axes[$axis->level])) {
@@ -255,9 +251,9 @@ class VariantStructureWriter
      */
     protected function normalizePlacements(array $placements): array
     {
-        $normalized = array_fill_keys(VariantLevelEnum::values(), []);
+        $normalized = array_fill_keys(VariantLevelEnum::VALUES, []);
 
-        foreach (VariantLevelEnum::values() as $level) {
+        foreach (VariantLevelEnum::VALUES as $level) {
             $normalized[$level] = array_values(array_filter(
                 array_map(fn ($code): string => is_string($code) ? trim($code) : '', (array) ($placements[$level] ?? [])),
                 fn (string $code): bool => $code !== ''
@@ -320,7 +316,7 @@ class VariantStructureWriter
 
         $placedAttributes = [];
 
-        foreach (VariantLevelEnum::values() as $level) {
+        foreach (VariantLevelEnum::VALUES as $level) {
             foreach ($placements[$level] as $attributeCode) {
                 if (! $familyAttributes->has($attributeCode)) {
                     $errors['placements.'.$level][] = trans('validation.exists', ['attribute' => $attributeCode]);

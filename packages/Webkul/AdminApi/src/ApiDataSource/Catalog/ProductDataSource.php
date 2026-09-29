@@ -311,7 +311,7 @@ class ProductDataSource extends ApiDataSource
             'values'     => $mergedValues ?? $product['values'],
         ];
 
-        if (in_array($product['type'], ProductTypeEnum::variantParentValues(), true)) {
+        if (in_array($product['type'], ProductTypeEnum::VARIANT_PARENT_VALUES, true)) {
             $superAttributes = $this->getSuperAttributes($product);
 
             $responseData['super_attributes'] = $superAttributes;
