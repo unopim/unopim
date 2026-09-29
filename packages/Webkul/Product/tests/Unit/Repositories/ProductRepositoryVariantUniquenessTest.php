@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -11,7 +12,7 @@ it('scopes variant uniqueness by type when a type is given', function () {
 
     $group = Product::factory()->create([
         'parent_id' => $parent->id,
-        'type'      => 'variant_group',
+        'type'      => ProductTypeEnum::VariantGroup->value,
         'sku'       => 'group-red',
     ]);
     $group->values = ['common' => ['color' => 'red', 'sku' => 'group-red']];
@@ -19,7 +20,7 @@ it('scopes variant uniqueness by type when a type is given', function () {
 
     $simple = Product::factory()->create([
         'parent_id' => $parent->id,
-        'type'      => 'simple',
+        'type'      => ProductTypeEnum::Simple->value,
         'sku'       => 'simple-red',
     ]);
     $simple->values = ['common' => ['color' => 'red', 'sku' => 'simple-red']];
@@ -27,8 +28,8 @@ it('scopes variant uniqueness by type when a type is given', function () {
 
     $repository = app(ProductRepository::class);
 
-    expect($repository->isUniqueVariantForProduct($parent->id, ['color' => 'red'], null, '', 'variant_group'))
+    expect($repository->isUniqueVariantForProduct($parent->id, ['color' => 'red'], null, '', ProductTypeEnum::VariantGroup->value))
         ->toBeFalse()
-        ->and($repository->isUniqueVariantForProduct($parent->id, ['color' => 'red'], null, '', 'configurable'))
+        ->and($repository->isUniqueVariantForProduct($parent->id, ['color' => 'red'], null, '', ProductTypeEnum::Configurable->value))
         ->toBeTrue();
 });

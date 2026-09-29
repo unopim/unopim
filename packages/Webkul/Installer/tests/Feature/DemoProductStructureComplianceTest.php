@@ -6,6 +6,7 @@ use Webkul\Installer\Database\Seeders\Demo\DemoCoreSeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoFamilySeeder;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
 use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -80,11 +81,11 @@ it('never writes a value onto a row the variant structure does not let own it', 
 it('gives every configurable a name and every simple variant its own price', function () {
     seedDemoCatalog();
 
-    $configurable = Product::query()->where('type', 'configurable')->firstOrFail();
+    $configurable = Product::query()->where('type', ProductTypeEnum::Configurable->value)->firstOrFail();
 
     expect($configurable->values['channel_locale_specific']['default']['en_US']['name'] ?? null)->not->toBeNull();
 
-    $simple = $configurable->variants()->where('type', 'simple')->first()
+    $simple = $configurable->variants()->where('type', ProductTypeEnum::Simple->value)->first()
         ?? $configurable->variants()->firstOrFail()->variants()->firstOrFail();
 
     expect($simple->values['channel_locale_specific']['default']['en_US']['price'] ?? null)->not->toBeNull()
@@ -94,7 +95,7 @@ it('gives every configurable a name and every simple variant its own price', fun
 it('gives every row below a configurable a unique url_key and product number', function () {
     seedDemoCatalog();
 
-    $simples = Product::query()->where('type', 'simple')->whereNotNull('parent_id')->get();
+    $simples = Product::query()->where('type', ProductTypeEnum::Simple->value)->whereNotNull('parent_id')->get();
 
     $urlKeys = $simples->pluck('values.common.url_key')->filter()->all();
     $numbers = $simples->pluck('values.common.product_number')->filter()->all();

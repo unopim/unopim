@@ -1,5 +1,6 @@
 <?php
 
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 it('should not display the product list if does not have permission', function () {
@@ -29,7 +30,7 @@ it('should be able to create a product if has permission', function () {
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'simple';
+    $data['type'] = ProductTypeEnum::Simple->value;
 
     $this->post(route('admin.catalog.products.store', $data))
         ->assertOk()

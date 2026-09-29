@@ -10,6 +10,7 @@ use Webkul\DataTransfer\Helpers\Sources\CSV;
 use Webkul\DataTransfer\Helpers\Sources\Excel;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 /**
@@ -95,7 +96,7 @@ it('persists the configurable super_attributes pivot on import', function () {
     runImportBatch([
         [
             'sku'                     => 'IMP-CONFIG-PARENT',
-            'type'                    => 'configurable',
+            'type'                    => ProductTypeEnum::Configurable->value,
             'attribute_family'        => $fixture['familyCode'],
             'status'                  => 'true',
             'configurable_attributes' => $fixture['attributeCode'],
@@ -105,7 +106,7 @@ it('persists the configurable super_attributes pivot on import', function () {
     $parent = Product::where('sku', 'IMP-CONFIG-PARENT')->first();
 
     expect($parent)->not->toBeNull()
-        ->and($parent->type)->toBe('configurable')
+        ->and($parent->type)->toBe(ProductTypeEnum::Configurable->value)
         ->and($parent->super_attributes->pluck('code')->all())
         ->toContain($fixture['attributeCode']);
 });
@@ -118,7 +119,7 @@ it('links a simple child variant to its imported configurable parent', function 
     runImportBatch([
         [
             'sku'                     => 'IMP-CONFIG-PARENT',
-            'type'                    => 'configurable',
+            'type'                    => ProductTypeEnum::Configurable->value,
             'attribute_family'        => $fixture['familyCode'],
             'status'                  => 'true',
             'configurable_attributes' => $fixture['attributeCode'],
@@ -128,7 +129,7 @@ it('links a simple child variant to its imported configurable parent', function 
     runImportBatch([
         [
             'sku'                        => 'IMP-CONFIG-CHILD',
-            'type'                       => 'simple',
+            'type'                       => ProductTypeEnum::Simple->value,
             'attribute_family'           => $fixture['familyCode'],
             'status'                     => 'true',
             'parent'                     => 'IMP-CONFIG-PARENT',
@@ -158,7 +159,7 @@ it('round-trips a configurable parent through the real file reader', function (s
     $writer(
         $path,
         ['sku', 'type', 'attribute_family', 'status', 'configurable_attributes'],
-        [['RT-'.strtoupper($extension).'-PARENT', 'configurable', $fixture['familyCode'], 'true', $fixture['attributeCode']]],
+        [['RT-'.strtoupper($extension).'-PARENT', ProductTypeEnum::Configurable->value, $fixture['familyCode'], 'true', $fixture['attributeCode']]],
     );
 
     $rows = readSourceRows($makeSource($path));
@@ -170,7 +171,7 @@ it('round-trips a configurable parent through the real file reader', function (s
     $parent = Product::where('sku', 'RT-'.strtoupper($extension).'-PARENT')->first();
 
     expect($parent)->not->toBeNull()
-        ->and($parent->type)->toBe('configurable')
+        ->and($parent->type)->toBe(ProductTypeEnum::Configurable->value)
         ->and($parent->super_attributes->pluck('code')->all())->toContain($fixture['attributeCode']);
 
     Storage::disk('private')->delete($path);

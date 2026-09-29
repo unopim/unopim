@@ -4,6 +4,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Webhook\Jobs\SendProductWebhook;
 use Webkul\Webhook\Services\WebhookService;
@@ -27,7 +28,7 @@ it('dispatches SendProductWebhook with the created event and the new product sku
     Bus::fake([SendProductWebhook::class]);
 
     $data = Product::factory()->definition();
-    $data['type'] = 'simple';
+    $data['type'] = ProductTypeEnum::Simple->value;
 
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk()
@@ -51,7 +52,7 @@ it('dispatches SendProductWebhook with the created event and the new product sku
         return $eventTypeProp->getValue($job) === 'created'
             && $productIdProp->getValue($job) === $createdProduct->id
             && ($changes['added']['sku'] ?? null) === $createdProduct->sku
-            && ($changes['added']['type'] ?? null) === 'simple';
+            && ($changes['added']['type'] ?? null) === ProductTypeEnum::Simple->value;
     });
 });
 
@@ -63,7 +64,7 @@ it('does not dispatch SendProductWebhook when the webhook is inactive', function
     Bus::fake([SendProductWebhook::class]);
 
     $data = Product::factory()->definition();
-    $data['type'] = 'simple';
+    $data['type'] = ProductTypeEnum::Simple->value;
 
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk();
@@ -77,7 +78,7 @@ it('passes the dispatching admin id into the SendProductWebhook job', function (
     Bus::fake([SendProductWebhook::class]);
 
     $data = Product::factory()->definition();
-    $data['type'] = 'simple';
+    $data['type'] = ProductTypeEnum::Simple->value;
 
     $this->post(route('admin.catalog.products.store'), $data)
         ->assertOk();

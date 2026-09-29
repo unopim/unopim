@@ -4,6 +4,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -20,7 +21,7 @@ describe('create', function () {
 
         $data = [
             'sku'                 => 'REPO-SIMPLE-'.uniqid(),
-            'type'                => 'simple',
+            'type'                => ProductTypeEnum::Simple->value,
             'attribute_family_id' => $family->id,
         ];
 
@@ -28,12 +29,12 @@ describe('create', function () {
 
         expect($product)->toBeInstanceOf(Product::class)
             ->and($product->sku)->toBe($data['sku'])
-            ->and($product->type)->toBe('simple')
+            ->and($product->type)->toBe(ProductTypeEnum::Simple->value)
             ->and($product->attribute_family_id)->toBe($family->id);
 
         $this->assertDatabaseHas('products', [
             'sku'  => $data['sku'],
-            'type' => 'simple',
+            'type' => ProductTypeEnum::Simple->value,
         ]);
     });
 
@@ -43,18 +44,18 @@ describe('create', function () {
 
         $data = [
             'sku'                 => 'REPO-CONFIG-'.uniqid(),
-            'type'                => 'configurable',
+            'type'                => ProductTypeEnum::Configurable->value,
             'attribute_family_id' => $family->id,
         ];
 
         $product = $this->productRepository->create($data);
 
         expect($product)->toBeInstanceOf(Product::class)
-            ->and($product->type)->toBe('configurable');
+            ->and($product->type)->toBe(ProductTypeEnum::Configurable->value);
 
         $this->assertDatabaseHas('products', [
             'sku'  => $data['sku'],
-            'type' => 'configurable',
+            'type' => ProductTypeEnum::Configurable->value,
         ]);
     });
 });
@@ -110,7 +111,7 @@ describe('updateStatus', function () {
 describe('copy', function () {
     it('duplicates a simple product with a new SKU', function () {
         $product = Product::factory()->withInitialValues()->create([
-            'type' => 'simple',
+            'type' => ProductTypeEnum::Simple->value,
         ]);
 
         $copiedProduct = $this->productRepository->copy($product->id);
@@ -251,7 +252,7 @@ describe('isUniqueVariantForProduct', function () {
 
         Product::factory()->create([
             'parent_id' => $parent->id,
-            'type'      => 'simple',
+            'type'      => ProductTypeEnum::Simple->value,
             'sku'       => 'shared-sku',
             'values'    => [
                 'common' => ['color' => 'red'],
@@ -259,7 +260,7 @@ describe('isUniqueVariantForProduct', function () {
         ]);
 
         Product::factory()->create([
-            'type'   => 'simple',
+            'type'   => ProductTypeEnum::Simple->value,
             'sku'    => 'shared-sku-elsewhere',
             'values' => [
                 'common' => ['color' => 'blue'],
@@ -271,7 +272,7 @@ describe('isUniqueVariantForProduct', function () {
             ['color' => 'green'],
             'shared-sku-elsewhere',
             '',
-            'simple'
+            ProductTypeEnum::Simple->value
         );
 
         expect($result)->toBeTrue();
@@ -321,7 +322,7 @@ describe('isUniqueVariantForProduct', function () {
 describe('updateWithValues', function () {
     it('updates the values payload on a simple product', function () {
         $product = Product::factory()->withInitialValues()->create([
-            'type' => 'simple',
+            'type' => ProductTypeEnum::Simple->value,
         ]);
 
         $newValues = [
@@ -343,7 +344,7 @@ describe('updateWithValues', function () {
 
     it('returns a refreshed product after update', function () {
         $product = Product::factory()->withInitialValues()->create([
-            'type' => 'simple',
+            'type' => ProductTypeEnum::Simple->value,
         ]);
 
         $updated = $this->productRepository->updateWithValues([
@@ -367,7 +368,7 @@ describe('updateWithValues', function () {
     })->throws(ModelNotFoundException::class);
 
     it('marks the product dirty when values actually change', function () {
-        $product = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+        $product = Product::factory()->withInitialValues()->create(['type' => ProductTypeEnum::Simple->value]);
 
         $updated = $this->productRepository->updateWithValues([
             'sku'    => $product->sku,
@@ -383,7 +384,7 @@ describe('updateWithValues', function () {
     });
 
     it('does not mark the product dirty when the values payload is identical', function () {
-        $product = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+        $product = Product::factory()->withInitialValues()->create(['type' => ProductTypeEnum::Simple->value]);
 
         $updated = $this->productRepository->updateWithValues([
             'sku'    => $product->sku,

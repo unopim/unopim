@@ -5,6 +5,8 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Jobs\System\BulkProductUpdate;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\VariantLevelEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -70,12 +72,12 @@ function bulkVariantLevelFixture(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $groupNote->id, 'level' => 'sub_parent'],
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => 'common'],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $groupNote->id, 'level' => VariantLevelEnum::SubParent->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => VariantLevelEnum::Common->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'BV-'.$suffix,
         'variant_structure_id' => $structure->id,

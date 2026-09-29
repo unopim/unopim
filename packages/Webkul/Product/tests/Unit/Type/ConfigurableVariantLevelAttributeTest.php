@@ -5,6 +5,8 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Product\Contracts\VariantValueResolver;
+use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\VariantLevelEnum;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -43,11 +45,11 @@ function makeTwoLevelConfigurableWithVariantAttribute(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => 'variant'],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => VariantLevelEnum::Variant->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -97,7 +99,7 @@ it('leaves legacy/no-structure createVariant unaffected by the variant-level att
     $family = AttributeFamily::factory()->create(['code' => 'fam_'.Str::random(8)]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                => 'configurable',
+        'type'                => ProductTypeEnum::Configurable->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'TEE-'.Str::random(8),
         'super_attributes'    => [$colorCode, $sizeCode],
@@ -116,8 +118,6 @@ it('leaves legacy/no-structure createVariant unaffected by the variant-level att
         'sku'      => $variant->sku,
     ]);
 
-    // Existing guard logic must remain untouched: a genuinely-missing axis
-    // still fails loudly on a legacy/1-level configurable.
     expect(fn () => $type->createVariant($configurable, $configurable->super_attributes, [
         'sku'    => $configurable->sku.'-BLUE',
         'values' => ['common' => [$colorCode => 'blue']],
@@ -150,8 +150,8 @@ it('persists a variant-level common attribute from the payload on updateVariant 
 
     $configurable->refresh();
 
-    $group = $configurable->variants()->where('type', 'variant_group')->first();
-    $variant = $group->variants()->where('type', 'simple')->first();
+    $group = $configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
+    $variant = $group->variants()->where('type', ProductTypeEnum::Simple->value)->first();
 
     $type = $configurable->getTypeInstance();
 

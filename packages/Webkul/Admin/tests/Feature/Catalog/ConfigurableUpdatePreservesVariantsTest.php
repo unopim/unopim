@@ -4,6 +4,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -30,7 +31,7 @@ it('does not prune variants when the configurable is saved without a variants pa
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,

@@ -4,6 +4,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Repositories\ProductRepository;
@@ -57,7 +58,7 @@ function apiInheritanceFixture(): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'CFG-'.Str::random(8),
         'variant_structure_id' => $structure->id,

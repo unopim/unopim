@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Webkul\Product\Contracts\Product;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Webhook\Helpers\ProductComparer;
 use Webkul\Webhook\Models\Webhook;
@@ -290,7 +291,6 @@ class WebhookService
     {
         $adminName = $this->actingName();
 
-        // Store only this product's slice per row; persisting the whole batch payload per row was O(N²) storage.
         $dataBySku = collect($payload['data'] ?? [])->keyBy(fn ($entry): ?string => $entry['sku'] ?? null);
 
         $envelope = array_diff_key($payload, ['data' => true]);
@@ -327,7 +327,7 @@ class WebhookService
             'changes' => $productChanges,
         ];
 
-        if ($type === 'configurable') {
+        if ($type === ProductTypeEnum::Configurable->value) {
             $normalized['variants'] = $product->variants->map(fn ($variant): array => [
                 'sku'    => $variant->sku,
                 'status' => (bool) $variant->status,

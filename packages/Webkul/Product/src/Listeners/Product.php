@@ -2,6 +2,7 @@
 
 namespace Webkul\Product\Listeners;
 
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Repositories\ProductRepository;
 
 class Product
@@ -22,7 +23,7 @@ class Product
     {
         $productIds = [$product->id];
 
-        if ($product->type == 'simple') {
+        if ($product->type == ProductTypeEnum::Simple->value) {
             if ($product->parent_id) {
                 $productIds[] = $product->parent_id;
             }
@@ -30,7 +31,7 @@ class Product
             $productIds = array_merge(
                 $productIds,
             );
-        } elseif ($product->type == 'configurable') {
+        } elseif ($product->type == ProductTypeEnum::Configurable->value) {
             $productIds = [
                 ...$product->variants->pluck('id')->toArray(),
                 ...$productIds,

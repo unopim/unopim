@@ -1,26 +1,27 @@
 <?php
 
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Type\Configurable;
 use Webkul\Product\Type\Simple;
 use Webkul\Product\Type\VariantGroup;
 
 return [
-    'simple'       => [
-        'key'   => 'simple',
+    ProductTypeEnum::Simple->value       => [
+        'key'   => ProductTypeEnum::Simple->value,
         'name'  => 'product::app.type.simple',
         'class' => Simple::class,
         'sort'  => 1,
     ],
 
-    'configurable' => [
-        'key'   => 'configurable',
+    ProductTypeEnum::Configurable->value => [
+        'key'   => ProductTypeEnum::Configurable->value,
         'name'  => 'product::app.type.configurable',
         'class' => Configurable::class,
         'sort'  => 2,
     ],
 
-    'variant_group' => [
-        'key'      => 'variant_group',
+    ProductTypeEnum::VariantGroup->value => [
+        'key'      => ProductTypeEnum::VariantGroup->value,
         'name'     => 'product::app.type.variant-group',
         'class'    => VariantGroup::class,
         'sort'     => 3,

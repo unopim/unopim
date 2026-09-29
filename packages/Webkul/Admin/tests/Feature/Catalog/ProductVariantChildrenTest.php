@@ -6,6 +6,7 @@ use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeOption;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -48,7 +49,7 @@ function makeConfigurableForVariantChildren(int $extraSizeOptions = 0): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -209,8 +210,6 @@ it('filters children by axis option label or sku via the query parameter', funct
     $smallOption = $size->options[0];
     $mediumOption = $size->options[1];
 
-    // Distinct label/sku vocab per leaf so a "by label" query and a "by sku"
-    // query each isolate exactly one leaf, never both.
     $smallOption->translateOrNew('en_US')->label = 'Crimson Tint';
     $smallOption->save();
 

@@ -5,6 +5,7 @@ namespace Webkul\Installer\Database\Seeders\Demo;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Enums\ProductTypeEnum;
 
 /**
  * Pads the catalog to a target row count by cloning the authored products.
@@ -53,7 +54,7 @@ class DemoScaleSeeder extends Seeder
 
             $rows[] = [
                 'sku'                 => $sku,
-                'type'                => 'simple',
+                'type'                => ProductTypeEnum::Simple->value,
                 'status'              => 1,
                 'attribute_family_id' => $source->attribute_family_id,
                 'values'              => $this->rewriteIdentity($source->values, $sku, $sequence),

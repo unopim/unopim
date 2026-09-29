@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\Core\Models\Channel;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 use function Pest\Laravel\get;
@@ -11,7 +12,7 @@ it('returns the translatable attributes with their source values for the request
     $channel = Channel::first();
     $locale = $channel->locales()->first();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value]);
 
     $attribute = $product->getEditableAttributes()->firstWhere('code', 'name');
 
@@ -40,7 +41,7 @@ it('returns the translatable attributes with their source values for the request
 it('rejects a scope that does not exist', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value]);
 
     get(route('admin.catalog.product.get_attribute', [
         'productId' => $product->id,
@@ -94,7 +95,7 @@ it('returns the source value of a locale only attribute', function () {
     $channel = Channel::first();
     $locale = $channel->locales()->first();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value]);
 
     $attribute = $product->getEditableAttributes()->firstWhere('code', 'name');
 
@@ -123,7 +124,7 @@ it('omits attributes that are not locale scoped', function () {
     $channel = Channel::first();
     $locale = $channel->locales()->first();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value]);
 
     $attribute = $product->getEditableAttributes()->firstWhere('code', 'name');
 
@@ -146,7 +147,7 @@ it('omits translatable attributes without a scalar source value', function () {
     $channel = Channel::first();
     $locale = $channel->locales()->first();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value]);
 
     $attribute = $product->getEditableAttributes()->firstWhere('code', 'name');
 

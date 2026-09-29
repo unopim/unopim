@@ -13,6 +13,7 @@ use Webkul\Admin\Helpers\Reporting\Channel;
 use Webkul\Admin\Helpers\Reporting\Currency;
 use Webkul\Admin\Helpers\Reporting\Locale;
 use Webkul\Admin\Helpers\Reporting\Product;
+use Webkul\Product\Enums\ProductTypeEnum;
 
 class Dashboard
 {
@@ -118,9 +119,6 @@ class Dashboard
     public function getProductStats()
     {
         return Cache::remember('dashboard.product_stats', self::CACHE_TTL, function () {
-            // Single query for type + status using conditional aggregation.
-            // Note: `status` may be stored as tinyint (MySQL) or boolean (PostgreSQL).
-            // Use CAST to SIGNED/INTEGER for cross-database compatibility.
             $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             $stats = DB::table('products')
                 ->select(
@@ -160,7 +158,6 @@ class Dashboard
                 ->groupBy(DB::raw('DATE(created_at)'))
                 ->pluck('count', 'date');
 
-            // Fill missing days with 0
             $created = [];
             $updated = [];
 
@@ -170,17 +167,12 @@ class Dashboard
                 $updated[$date] = (int) ($updateTrends[$date] ?? 0);
             }
 
-            // Quick insights
             $newThisWeek = DB::table('products')
                 ->where('created_at', '>=', $startDate)
                 ->count();
 
-            // Variants live on `products.parent_id` (a child product row
-            // pointing at its configurable parent), NOT in `product_relations`
-            // — that table is reserved for related/up-sell links. Counting
-            // via product_relations always returned 0 (Internal-679).
             $withVariants = DB::table('products as parents')
-                ->where('parents.type', 'configurable')
+                ->where('parents.type', ProductTypeEnum::Configurable->value)
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
                         ->from('products as variants')
@@ -196,7 +188,6 @@ class Dashboard
                     ->avg('avg_completeness_score');
             }
 
-            // Enrichment velocity
             $enrichedThisWeek = 0;
             $enrichedLastWeek = 0;
 

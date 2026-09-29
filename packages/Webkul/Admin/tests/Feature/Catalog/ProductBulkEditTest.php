@@ -7,6 +7,8 @@ use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\DataTransfer\Jobs\System\BulkProductUpdate;
+use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\VariantLevelEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -23,7 +25,6 @@ it('should return the bulk edit page when products and attributes are in session
     $sku = Attribute::where('code', 'sku')->first();
     $name = Attribute::where('code', 'name')->first();
 
-    // Set up session via filters endpoint
     $response = $this->postJson(route('admin.catalog.products.bulkedit.filters'), [
         'indices' => $products->pluck('id')->toArray(),
         'filter'  => [
@@ -37,7 +38,6 @@ it('should return the bulk edit page when products and attributes are in session
     $response->assertOk();
     $response->assertJsonStructure(['message', 'redirect']);
 
-    // Now load the bulk edit page
     $this->get(route('admin.catalog.products.bulkedit'))
         ->assertOk()
         ->assertSeeText(trans('admin::app.catalog.products.bulk-edit.action'));
@@ -71,7 +71,6 @@ it('should fetch attributes for bulk edit modal', function () {
         'lastPage',
     ]);
 
-    // SKU and unsupported types should not appear
     $options = collect($response->json('options'));
 
     $this->assertTrue($options->where('code', 'sku')->isEmpty(), 'SKU should be excluded from bulk edit attributes');
@@ -88,9 +87,6 @@ it('fires catalog.product.update.after for every product changed by bulk edit', 
 
     Event::fake(['catalog.product.update.after', 'catalog.product.bulk.edit.after']);
 
-    // Sync queue in the test env runs BulkProductUpdate inline, so the event
-    // fires within this request. Payload mirrors what the bulk-edit Vue
-    // spreadsheet posts: { product_id: { attribute_code: value } }.
     $payload = [];
     foreach ($products as $product) {
         $payload[$product->id] = [$attribute->code => 'bulk-changed-'.$product->id];
@@ -101,8 +97,6 @@ it('fires catalog.product.update.after for every product changed by bulk edit', 
 
     Event::assertDispatched('catalog.product.update.after', count($products));
 
-    // One bulk event is dispatched carrying all processed product IDs.
-    // The payload is ['ids' => [...]], matching how call_user_func_array passes it.
     Event::assertDispatched('catalog.product.bulk.edit.after', function ($event, $payload) use ($products) {
         $ids = $payload['ids'] ?? [];
 
@@ -115,7 +109,6 @@ it('does not fire catalog.product.update.after for a no-op bulk edit save', func
 
     Event::fake(['catalog.product.update.after']);
 
-    // Re-posting each product's own SKU changes nothing, so no update event should fire.
     $payload = [];
     foreach ($products as $product) {
         $payload[$product->id] = ['sku' => $product->sku];
@@ -128,7 +121,6 @@ it('does not fire catalog.product.update.after for a no-op bulk edit save', func
 });
 
 it('should fetch only attributes belonging to the selected products families', function () {
-    // Helper to create a family with a linked attribute group and attribute
     $makeFamily = function (Attribute $attr): AttributeFamily {
         $group = AttributeGroup::factory()->create();
         $family = AttributeFamily::factory()->create();
@@ -145,11 +137,9 @@ it('should fetch only attributes belonging to the selected products families', f
     $attrB = Attribute::factory()->create(['type' => 'text']);
     $familyB = $makeFamily($attrB);
 
-    // Create one product per family
     $productA = Product::factory()->create(['attribute_family_id' => $familyA->id]);
     $productB = Product::factory()->create(['attribute_family_id' => $familyB->id]);
 
-    // Populate session via the filters endpoint (mirrors real usage)
     $this->postJson(route('admin.catalog.products.bulkedit.filters'), [
         'indices' => [$productA->id],
         'filter'  => [],
@@ -160,10 +150,8 @@ it('should fetch only attributes belonging to the selected products families', f
 
     $codes = collect($response->json('options'))->pluck('code')->toArray();
 
-    // attrA should appear (it belongs to productA's family)
     expect($codes)->toContain($attrA->code);
 
-    // attrB must NOT appear (it belongs to a different family not selected)
     expect($codes)->not->toContain($attrB->code);
 });
 
@@ -226,15 +214,12 @@ it('should display readable channel and locale names in column headers', functio
 
     $response->assertOk();
 
-    // If name is locale-specific, the header label should contain the locale name
-    // not just the locale code
     if ($nameAttribute->value_per_locale) {
         $locale = core()->getAllActiveLocales()->first();
 
         if ($locale && $locale->name) {
             $content = $response->getContent();
 
-            // The JSON headers passed to Vue should have locale name, not code
             $this->assertStringContainsString($locale->name, $content);
         }
     }
@@ -286,11 +271,11 @@ function bulkSaveVariantFixture(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => 'common'],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => VariantLevelEnum::Common->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'BS-'.$suffix,
         'variant_structure_id' => $structure->id,
@@ -443,15 +428,15 @@ function bulkEditGridFixture(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => 'common'],
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $groupNote->id, 'level' => 'sub_parent'],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $rootNote->id, 'level' => VariantLevelEnum::Common->value],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $groupNote->id, 'level' => VariantLevelEnum::SubParent->value],
     ]);
 
     $colorOption = $color->options->first()->code;
     $sizeOption = $size->options->first()->code;
 
     $configurable = Product::factory()->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'BEG-'.$suffix,
         'variant_structure_id' => $structure->id,
@@ -461,7 +446,7 @@ function bulkEditGridFixture(): array
     $configurable->save();
 
     $group = Product::factory()->create([
-        'type'                => 'variant_group',
+        'type'                => ProductTypeEnum::VariantGroup->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'BEG-'.$suffix.'-G1',
         'parent_id'           => $configurable->id,
@@ -471,7 +456,7 @@ function bulkEditGridFixture(): array
     $group->save();
 
     $variant = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductTypeEnum::Simple->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'BEG-'.$suffix.'-G1-S1',
         'parent_id'           => $group->id,

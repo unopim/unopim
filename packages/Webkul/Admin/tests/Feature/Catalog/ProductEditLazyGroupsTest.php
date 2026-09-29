@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeGroup;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 function familyWithGroups(int $groupCount, int $attributesPerGroup, string $prefix = 'grp'): AttributeFamily
@@ -41,7 +42,7 @@ it('renders every group at once for a family under the threshold', function () {
 
     $family = familyWithGroups(3, 2);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id))->assertOk()->original->getData();
 
@@ -57,7 +58,7 @@ it('renders only the first group for a family over the threshold', function () {
 
     $family = familyWithGroups(4, 3);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id))->assertOk()->original->getData();
 
@@ -75,7 +76,7 @@ it('starts from the group named by the query parameter', function () {
 
     $family = familyWithGroups(4, 3);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id).'?group=grp_3')
         ->assertOk()->original->getData();
@@ -91,7 +92,7 @@ it('falls back to the first group when the requested group is unknown', function
 
     $family = familyWithGroups(4, 3);
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id).'?group=nope')
         ->assertOk()->original->getData();
@@ -106,7 +107,7 @@ it('stops pointing at a next group once the last one is reached', function () {
 
     $family = familyWithGroups(2, 2, 'last');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $data = $this->get(route('admin.catalog.products.edit', $product->id).'?group=last_2')
         ->assertOk()->original->getData();
@@ -119,8 +120,8 @@ it('does not hydrate more attributes as the family grows', function () {
 
     config(['product_editor.lazy_group_threshold' => 5]);
 
-    $small = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => familyWithGroups(4, 3, 'small')->id]);
-    $large = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => familyWithGroups(40, 3, 'large')->id]);
+    $small = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => familyWithGroups(4, 3, 'small')->id]);
+    $large = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => familyWithGroups(40, 3, 'large')->id]);
 
     $smallData = $this->get(route('admin.catalog.products.edit', $small->id))->assertOk()->original->getData();
     $largeData = $this->get(route('admin.catalog.products.edit', $large->id))->assertOk()->original->getData();
@@ -137,7 +138,7 @@ it('renders the scroll loader and only the first group of a large family', funct
 
     $family = familyWithGroups(4, 3, 'page');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $codesByGroup = $family->familyGroups()
         ->orderBy('position')
@@ -166,7 +167,7 @@ it('does not render the scroll loader for a small family', function () {
     config(['product_editor.lazy_group_threshold' => 200]);
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductTypeEnum::Simple->value,
         'attribute_family_id' => familyWithGroups(3, 2, 'plain')->id,
     ]);
 
@@ -180,7 +181,7 @@ it('serves a group of fields with a pointer to the next group', function () {
 
     $family = familyWithGroups(3, 2, 'fields');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $codes = $family->customAttributesForGroup(groupIdOf($family, 'fields_2'))->pluck('code')->all();
 
@@ -203,7 +204,7 @@ it('reports no next group for the last group of fields', function () {
 
     $family = familyWithGroups(2, 2, 'tail');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $this->getJson(route('admin.catalog.products.attribute_group_fields', [
         'id'      => $product->id,
@@ -216,7 +217,7 @@ it('carries the component registrations an appended group needs', function () {
 
     $family = familyWithGroups(2, 2, 'scripts');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $html = $this->getJson(route('admin.catalog.products.attribute_group_fields', [
         'id'      => $product->id,
@@ -231,7 +232,7 @@ it('404s for a group outside the product family', function () {
     $this->loginAsAdmin();
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductTypeEnum::Simple->value,
         'attribute_family_id' => familyWithGroups(1, 1, 'own')->id,
     ]);
 
@@ -246,7 +247,7 @@ it('404s for a group outside the product family', function () {
 it('refuses an unauthenticated request for a group of fields', function () {
     $family = familyWithGroups(1, 1, 'guest');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $response = $this->getJson(route('admin.catalog.products.attribute_group_fields', [
         'id'      => $product->id,
@@ -261,7 +262,7 @@ it('returns to the submitted group after saving', function () {
 
     $family = familyWithGroups(3, 2, 'save');
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $this->put(route('admin.catalog.products.update', $product->id), [
         'sku'    => $product->sku,
@@ -275,7 +276,7 @@ it('omits the group from the redirect when none was submitted', function () {
     $this->loginAsAdmin();
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductTypeEnum::Simple->value,
         'attribute_family_id' => familyWithGroups(2, 2, 'nogroup')->id,
     ]);
 
@@ -311,7 +312,7 @@ it('never renders the same attribute twice across groups', function () {
         ]);
     }
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $content = $this->get(route('admin.catalog.products.edit', $product->id))->assertOk()->getContent();
 
@@ -346,7 +347,7 @@ it('rejects a save that leaves a required attribute of an unloaded group empty',
         ]);
     }
 
-    $product = Product::factory()->create(['type' => 'simple', 'attribute_family_id' => $family->id]);
+    $product = Product::factory()->create(['type' => ProductTypeEnum::Simple->value, 'attribute_family_id' => $family->id]);
 
     $field = 'values[common]['.$requiredElsewhere->code.']';
 
@@ -380,7 +381,7 @@ it('accepts a partial save once every required attribute holds a value', functio
     ]);
 
     $product = Product::factory()->create([
-        'type'                => 'simple',
+        'type'                => ProductTypeEnum::Simple->value,
         'attribute_family_id' => $family->id,
         'values'              => ['common' => [$required->code => 'already saved']],
     ]);

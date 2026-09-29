@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\DB;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Importers\Product\Importer;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 /**
@@ -34,7 +35,7 @@ describe('Product import association link-table sync', function () {
             'insert' => [
                 $sku => [
                     'sku'                 => $sku,
-                    'type'                => 'simple',
+                    'type'                => ProductTypeEnum::Simple->value,
                     'parent_id'           => null,
                     'attribute_family_id' => $familyId,
                     'status'              => 1,
@@ -61,11 +62,9 @@ describe('Product import association link-table sync', function () {
 
         expect($product)->not->toBeNull();
 
-        // Legacy JSON is written exactly as before (unaffected by this change).
         expect($product->values['associations']['up_sells'] ?? null)
             ->toBe([$upSellA->sku, $upSellB->sku]);
 
-        // The link table now mirrors it — this is the gap being closed.
         $upSellsCount = DB::table('product_associations')
             ->join('association_types', 'association_types.id', '=', 'product_associations.association_type_id')
             ->where('product_associations.product_id', $product->id)

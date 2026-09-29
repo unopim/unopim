@@ -4,6 +4,7 @@ namespace Webkul\Product\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 /**
@@ -35,7 +36,7 @@ class ProductFactory extends Factory
     {
         return [
             'sku'                 => fake()->unique()->regexify('[A-Z]{3}[0-9]{4}'),
-            'type'                => 'simple',
+            'type'                => ProductTypeEnum::Simple->value,
             'status'              => 1,
             'attribute_family_id' => AttributeFamily::find(1)?->id ?? AttributeFamily::factory()->withMinimalAttributesForProductTypes()->create()->id,
         ];
@@ -58,7 +59,7 @@ class ProductFactory extends Factory
     public function simple(): ProductFactory
     {
         return $this->state(fn (array $attributes): array => [
-            'type' => 'simple',
+            'type' => ProductTypeEnum::Simple->value,
         ]);
     }
 
@@ -68,7 +69,7 @@ class ProductFactory extends Factory
     public function configurable(): ProductFactory
     {
         return $this->state(fn (array $attributes): array => [
-            'type' => 'configurable',
+            'type' => ProductTypeEnum::Configurable->value,
         ]);
     }
 
@@ -78,7 +79,7 @@ class ProductFactory extends Factory
     public function withConfigurableAttributes(): ProductFactory
     {
         return $this->afterCreating(function (Product $product): void {
-            if ($product->type === 'configurable') {
+            if ($product->type === ProductTypeEnum::Configurable->value) {
                 $product->super_attributes()->attach($product->attribute_family->getConfigurableAttributes()->first());
             }
         });
@@ -90,7 +91,7 @@ class ProductFactory extends Factory
     public function withVariantProduct(): ProductFactory
     {
         return $this->afterCreating(function (Product $product): void {
-            if ($product->type === 'configurable') {
+            if ($product->type === ProductTypeEnum::Configurable->value) {
                 $product->super_attributes()->attach($product->attribute_family->getConfigurableAttributes()->first());
 
                 $attribute = $product->super_attributes->first();

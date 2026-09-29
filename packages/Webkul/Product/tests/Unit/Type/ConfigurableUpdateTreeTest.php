@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
 use Webkul\Product\Repositories\ProductRepository;
@@ -39,7 +40,7 @@ function makeTwoLevelConfigurable(): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -71,13 +72,13 @@ it('creates groups with nested variants on update for a 2-level product', functi
         ],
     ], $configurable->id);
 
-    $group = $configurable->refresh()->variants()->where('type', 'variant_group')->first();
+    $group = $configurable->refresh()->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
 
     expect($group)->not->toBeNull()
         ->and($group->values['common'][$colorCode])->toBe('red')
-        ->and($group->variants()->where('type', 'simple')->count())->toBe(1);
+        ->and($group->variants()->where('type', ProductTypeEnum::Simple->value)->count())->toBe(1);
 
-    $variant = $group->variants()->where('type', 'simple')->first();
+    $variant = $group->variants()->where('type', ProductTypeEnum::Simple->value)->first();
 
     expect($variant->values['common'][$sizeCode])->toBe('s');
 });
@@ -108,8 +109,8 @@ it('updates an existing group\'s values and its nested variant on update', funct
 
     $configurable->refresh();
 
-    $group = $configurable->variants()->where('type', 'variant_group')->first();
-    $variant = $group->variants()->where('type', 'simple')->first();
+    $group = $configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
+    $variant = $group->variants()->where('type', ProductTypeEnum::Simple->value)->first();
 
     $repository->update([
         'sku'            => $configurable->sku,
@@ -133,8 +134,8 @@ it('updates an existing group\'s values and its nested variant on update', funct
 
     expect($group->values['common'][$colorCode])->toBe('red')
         ->and($variant->values['common'][$sizeCode])->toBe('m')
-        ->and($configurable->variants()->where('type', 'variant_group')->count())->toBe(1)
-        ->and($group->variants()->where('type', 'simple')->count())->toBe(1);
+        ->and($configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->count())->toBe(1)
+        ->and($group->variants()->where('type', ProductTypeEnum::Simple->value)->count())->toBe(1);
 });
 
 it('prunes an orphaned group and its children when the group is dropped from the payload', function () {
@@ -163,8 +164,8 @@ it('prunes an orphaned group and its children when the group is dropped from the
 
     $configurable->refresh();
 
-    $oldGroup = $configurable->variants()->where('type', 'variant_group')->first();
-    $oldVariant = $oldGroup->variants()->where('type', 'simple')->first();
+    $oldGroup = $configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
+    $oldVariant = $oldGroup->variants()->where('type', ProductTypeEnum::Simple->value)->first();
 
     $repository->update([
         'sku'            => $configurable->sku,
@@ -187,8 +188,8 @@ it('prunes an orphaned group and its children when the group is dropped from the
 
     $configurable->refresh();
 
-    expect($configurable->variants()->where('type', 'variant_group')->count())->toBe(1)
-        ->and($configurable->variants()->where('type', 'variant_group')->first()->values['common'][$colorCode])->toBe('blue')
+    expect($configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->count())->toBe(1)
+        ->and($configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first()->values['common'][$colorCode])->toBe('blue')
         ->and(app(ProductRepository::class)->find($oldGroup->id))->toBeNull()
         ->and(app(ProductRepository::class)->find($oldVariant->id))->toBeNull();
 });
@@ -203,7 +204,7 @@ it('leaves the legacy flat variants update path untouched for a 1-level/legacy c
     $family = AttributeFamily::factory()->create();
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                => 'configurable',
+        'type'                => ProductTypeEnum::Configurable->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'TEE-'.Str::random(8),
         'super_attributes'    => [$colorCode, $sizeCode],
@@ -223,10 +224,10 @@ it('leaves the legacy flat variants update path untouched for a 1-level/legacy c
 
     $configurable->refresh();
 
-    expect($configurable->variants()->where('type', 'variant_group')->count())->toBe(0)
-        ->and($configurable->variants()->where('type', 'simple')->count())->toBe(1);
+    expect($configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->count())->toBe(0)
+        ->and($configurable->variants()->where('type', ProductTypeEnum::Simple->value)->count())->toBe(1);
 
-    $variant = $configurable->variants()->where('type', 'simple')->first();
+    $variant = $configurable->variants()->where('type', ProductTypeEnum::Simple->value)->first();
 
     app(ProductRepository::class)->update([
         'sku'      => $configurable->sku,
@@ -264,16 +265,13 @@ it('updates a 2-level variant whose payload omits the ancestor L1 axis without t
 
     $configurable->refresh();
 
-    $group = $configurable->variants()->where('type', 'variant_group')->first();
-    $variant = $group->variants()->where('type', 'simple')->first();
+    $group = $configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
+    $variant = $group->variants()->where('type', ProductTypeEnum::Simple->value)->first();
 
     $type = $configurable->getTypeInstance();
 
     expect(fn () => $type->updateVariant([
         'sku'              => $variant->sku,
-        // $colorCode (the L1 axis, owned by the ancestor group) is
-        // intentionally omitted here - the 2-level guard must skip it
-        // instead of throwing.
         'values'           => ['common' => [$sizeCode => 'm']],
         'super_attributes' => $configurable->super_attributes,
     ], $variant->id))->not->toThrow(Throwable::class);
@@ -291,7 +289,7 @@ it('fails loudly when a legacy 1-level updateVariant call omits a required axis'
     $family = AttributeFamily::factory()->create();
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                => 'configurable',
+        'type'                => ProductTypeEnum::Configurable->value,
         'attribute_family_id' => $family->id,
         'sku'                 => 'TEE-'.Str::random(8),
         'super_attributes'    => [$colorCode, $sizeCode],
@@ -305,9 +303,7 @@ it('fails loudly when a legacy 1-level updateVariant call omits a required axis'
     ]);
 
     expect(fn () => $type->updateVariant([
-        'sku'    => $variant->sku,
-        // $sizeCode is intentionally omitted - legacy/1-level updates must
-        // not silently skip a missing axis.
+        'sku'              => $variant->sku,
         'values'           => ['common' => [$colorCode => 'blue']],
         'super_attributes' => $configurable->super_attributes,
     ], $variant->id))->toThrow(ErrorException::class);
@@ -337,7 +333,7 @@ it('excludes variant_group nodes when resolving the default variant', function (
 
     $configurable->refresh();
 
-    $group = $configurable->variants()->where('type', 'variant_group')->first();
+    $group = $configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
 
     $type = $configurable->getTypeInstance();
     $type->setDefaultVariantId($group->id);
@@ -372,6 +368,6 @@ it('announces a variant group created from the configurable edit form', function
 
     Event::assertDispatched(
         'catalog.product.create.after',
-        fn ($event, $product): bool => $product->type === 'variant_group'
+        fn ($event, $product): bool => $product->type === ProductTypeEnum::VariantGroup->value
     );
 });

@@ -1,14 +1,15 @@
 <?php
 
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Helpers\ProductType;
 
 describe('isProductType', function () {
     it('returns true for simple product type', function () {
-        expect(ProductType::isProductType('simple'))->toBeTrue();
+        expect(ProductType::isProductType(ProductTypeEnum::Simple->value))->toBeTrue();
     });
 
     it('returns true for configurable product type', function () {
-        expect(ProductType::isProductType('configurable'))->toBeTrue();
+        expect(ProductType::isProductType(ProductTypeEnum::Configurable->value))->toBeTrue();
     });
 
     it('returns false for a nonexistent product type', function () {
@@ -22,11 +23,11 @@ describe('isProductType', function () {
 
 describe('hasVariants', function () {
     it('returns false for simple product type', function () {
-        expect(ProductType::hasVariants('simple'))->toBeFalse();
+        expect(ProductType::hasVariants(ProductTypeEnum::Simple->value))->toBeFalse();
     });
 
     it('returns true for configurable product type', function () {
-        expect(ProductType::hasVariants('configurable'))->toBeTrue();
+        expect(ProductType::hasVariants(ProductTypeEnum::Configurable->value))->toBeTrue();
     });
 });
 
@@ -35,13 +36,13 @@ describe('getAllTypesHavingVariants', function () {
         $types = ProductType::getAllTypesHavingVariants();
 
         expect($types)->toBeArray()
-            ->and($types)->toContain('configurable');
+            ->and($types)->toContain(ProductTypeEnum::Configurable->value);
     });
 
     it('does not include simple in the variant types', function () {
         $types = ProductType::getAllTypesHavingVariants();
 
-        expect($types)->not->toContain('simple');
+        expect($types)->not->toContain(ProductTypeEnum::Simple->value);
     });
 
     it('returns a non-empty array', function () {

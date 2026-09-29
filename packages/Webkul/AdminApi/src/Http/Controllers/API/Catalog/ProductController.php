@@ -14,6 +14,7 @@ use Webkul\AdminApi\Http\Controllers\API\ApiController;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Attribute\Repositories\AttributeRepository;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Facades\ValueSetter;
 use Webkul\Product\Helpers\ProductType;
 use Webkul\Product\Models\Product;
@@ -181,7 +182,7 @@ class ProductController extends ApiController
                 $product->update($data);
             }
 
-            if ($product->type == 'configurable') {
+            if ($product->type === ProductTypeEnum::Configurable->value) {
                 $this->updateVaraints($product, $data);
             }
 
@@ -398,7 +399,7 @@ class ProductController extends ApiController
     {
         $parentProduct = $this->findParentProductOr404($data['parent']);
 
-        if ($parentProduct->type === config('product_types.variant_group.key')) {
+        if ($parentProduct->type === ProductTypeEnum::VariantGroup->value) {
             return $this->createVariantUnderGroup($parentProduct, $data);
         }
 
@@ -483,7 +484,7 @@ class ProductController extends ApiController
         return DB::transaction(function () use ($group, $configurable, $axisTuple, $axisAttributes, $variantData): Product {
             $this->productRepository->getModel()::query()->whereKey($group->id)->lockForUpdate()->first();
 
-            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($group->id, $axisTuple, null, '', 'simple')) {
+            if ($axisTuple !== [] && ! $this->productRepository->isUniqueVariantForProduct($group->id, $axisTuple, null, '', ProductTypeEnum::Simple->value)) {
                 throw new UnprocessableEntityHttpException(
                     trans('admin::app.catalog.products.edit.types.configurable.variant-given-exists', ['variants' => json_encode($axisTuple)])
                 );

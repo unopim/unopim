@@ -11,6 +11,7 @@ use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 /**
@@ -105,8 +106,6 @@ function seedProductScopeChannels(): void
     $mobile->locales()->sync([$deDE->id]);
     $mobile->currencies()->sync([$gbp->id]);
 
-    // The prettus repository cache survives the test transaction; flush it so
-    // reads reflect the freshly seeded channels rather than stale instances.
     Cache::flush();
 }
 
@@ -270,7 +269,7 @@ it('preserves the fixed column order and values for existing exports', function 
     seedProductScopeChannels();
     Attribute::factory()->create(['code' => 'scoped_text', 'type' => 'text']);
     $family = AttributeFamily::factory()->create(['code' => 'column_family']);
-    $parent = Product::factory()->create(['sku' => 'PARENT-COLUMNS', 'type' => 'configurable']);
+    $parent = Product::factory()->create(['sku' => 'PARENT-COLUMNS', 'type' => ProductTypeEnum::Configurable->value]);
     $product = Product::factory()->create([
         'sku'                 => 'CHILD-COLUMNS',
         'status'              => false,
@@ -294,7 +293,7 @@ it('preserves the fixed column order and values for existing exports', function 
         'locale'                  => 'en_US',
         'sku'                     => 'CHILD-COLUMNS',
         'status'                  => 'false',
-        'type'                    => 'simple',
+        'type'                    => ProductTypeEnum::Simple->value,
         'parent'                  => 'PARENT-COLUMNS',
         'attribute_family'        => 'column_family',
         'variant_structure'       => null,
@@ -361,7 +360,7 @@ it('streams each product row to the export buffer separately to bound memory', f
     foreach ($skus as $sku) {
         $product = Product::create([
             'sku'                 => $sku,
-            'type'                => 'simple',
+            'type'                => ProductTypeEnum::Simple->value,
             'status'              => 1,
             'attribute_family_id' => $family->id,
         ]);
@@ -374,24 +373,16 @@ it('streams each product row to the export buffer separately to bound memory', f
 
     Cache::flush();
 
-    // Scope to the seeded 'web' channel so the channel-locale expansion is deterministic rather
-    // than picking up every channel already present in the database.
     $exporter = makeInitializedProductExporter(['channels' => ['web']]);
 
-    // Isolate the streaming behaviour from the catalog's attribute volume: with no attribute
-    // columns each row stays tiny, so the assertions measure flush granularity, not row width
-    // (and the test never approaches the memory limit the way the unbounded export did).
     $meta = new ReflectionProperty($exporter, 'attributeMeta');
     $meta->setAccessible(true);
     $meta->setValue($exporter, []);
 
-    // One row is produced per product per channel-locale pair.
     $channelsAndLocales = readExporterProperty($exporter, 'channelsAndLocales');
     $pairCount = collect($channelsAndLocales)->sum(fn ($locales) => count($locales));
     $expectedRows = count($skus) * $pairCount;
 
-    // A buffer spy that records the rows passed to each write() call so we can prove the
-    // exporter streams one row at a time rather than buffering the whole batch in memory.
     $buffer = new class
     {
         public array $writes = [];
@@ -410,16 +401,12 @@ it('streams each product row to the export buffer separately to bound memory', f
 
     $exporter->prepareProducts($batch, null);
 
-    // Each product × channel-locale row is streamed in its own write() call, so peak memory
-    // never holds more than a single row — not the whole batch.
     expect($buffer->writes)->toHaveCount($expectedRows);
 
     foreach ($buffer->writes as $write) {
-        // Each write carries exactly one row, wrapped to keep the buffer's array-of-rows contract.
         expect($write)->toHaveCount(1);
     }
 
-    // Every row is still produced — streaming changes when rows flush, not which rows.
     $allRows = collect($buffer->writes)->flatten(1);
 
     expect($allRows)->toHaveCount($expectedRows);
@@ -432,12 +419,10 @@ it('flags an export whose estimated buffer exceeds the disk budget', function ()
     $method = new ReflectionMethod($exporter, 'exportExceedsDiskBudget');
     $method->setAccessible(true);
 
-    $free = 1_000_000_000; // 1 GB free → budget = 0.8 GB; bytes/cell = 32
+    $free = 1_000_000_000;
 
-    // 30M cells × 32 = 960 MB > 800 MB budget → blocked
     expect($method->invoke($exporter, 30_000_000, 1, $free))->toBeTrue();
 
-    // 10M cells × 32 = 320 MB < 800 MB budget → allowed
     expect($method->invoke($exporter, 10_000_000, 1, $free))->toBeFalse();
 });
 
@@ -448,7 +433,6 @@ it('counts channel-locale pairs honouring the channel and locale filters', funct
     $method = new ReflectionMethod($webOnly, 'countChannelLocalePairs');
     $method->setAccessible(true);
 
-    // web is seeded with en_US + fr_FR
     expect($method->invoke($webOnly))->toBe(2);
 
     $webEnOnly = makeInitializedProductExporter(['channels' => ['web'], 'locales' => ['en_US']]);

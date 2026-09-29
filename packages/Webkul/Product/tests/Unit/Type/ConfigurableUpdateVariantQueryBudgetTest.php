@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
+use Webkul\Product\Enums\VariantLevelEnum;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -43,13 +45,13 @@ function makeConfigurableWithLeaves(int $leaves): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => 'variant'],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $material->id, 'level' => VariantLevelEnum::Variant->value],
     ]);
 
     $repository = app(ProductRepository::class);
 
     $configurable = $repository->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -88,8 +90,8 @@ function makeConfigurableWithLeaves(int $leaves): array
  */
 function countPlacementQueriesOnResubmit($configurable, string $sizeCode, string $materialCode): int
 {
-    $group = $configurable->variants()->where('type', 'variant_group')->first();
-    $leaves = $group->variants()->where('type', 'simple')->orderBy('id')->get();
+    $group = $configurable->variants()->where('type', ProductTypeEnum::VariantGroup->value)->first();
+    $leaves = $group->variants()->where('type', ProductTypeEnum::Simple->value)->orderBy('id')->get();
 
     $variantNodes = [];
 

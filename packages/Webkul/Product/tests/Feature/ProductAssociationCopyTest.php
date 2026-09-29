@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -19,7 +20,7 @@ beforeEach(function () {
 });
 
 it('dual-writes associations to the link table when a product is copied', function () {
-    $source = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+    $source = Product::factory()->withInitialValues()->create(['type' => ProductTypeEnum::Simple->value]);
 
     $related = Product::factory()->create();
     $upSell = Product::factory()->create();
@@ -62,7 +63,7 @@ it('dual-writes associations to the link table when a product is copied', functi
 });
 
 it('does not create link-table rows when copying a product without associations', function () {
-    $source = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+    $source = Product::factory()->withInitialValues()->create(['type' => ProductTypeEnum::Simple->value]);
 
     $copiedProduct = $this->productRepository->copy($source->id);
 

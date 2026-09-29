@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
 
@@ -64,7 +65,7 @@ it('hides a variant structure whose axis attribute left the family', function ()
 
     $response = $this->json('POST', route('admin.catalog.products.store'), [
         'sku'                 => 'sku_'.Str::random(8),
-        'type'                => 'configurable',
+        'type'                => ProductTypeEnum::Configurable->value,
         'attribute_family_id' => $family->id,
     ]);
 
@@ -82,7 +83,7 @@ it('rejects creating a configurable product on a structure with a missing axis a
 
     $this->json('POST', route('admin.catalog.products.store'), [
         'sku'                  => 'sku_'.Str::random(8),
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ])->assertStatus(422)->assertJsonPath('errors.variant_structure_id.0', trans('admin::app.catalog.products.index.create.invalid-variant-structure'));
@@ -95,7 +96,7 @@ it('still offers a variant structure whose axis attributes are all assigned', fu
 
     $response = $this->json('POST', route('admin.catalog.products.store'), [
         'sku'                 => 'sku_'.Str::random(8),
-        'type'                => 'configurable',
+        'type'                => ProductTypeEnum::Configurable->value,
         'attribute_family_id' => $family->id,
     ]);
 

@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Support\Facades\Event;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -57,7 +58,7 @@ it('should dispatch catalog.product.create.after event for each variant created 
     $this->assertDatabaseHas(Product::class, [
         'sku'       => $variantSku,
         'parent_id' => $configurableProduct->id,
-        'type'      => 'simple',
+        'type'      => ProductTypeEnum::Simple->value,
     ]);
 
     Event::assertDispatched('catalog.product.create.after', function ($event, $product) use ($variantSku) {

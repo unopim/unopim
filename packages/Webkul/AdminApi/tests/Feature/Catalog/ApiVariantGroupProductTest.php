@@ -4,6 +4,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Event;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductTypeEnum;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -33,7 +34,7 @@ it('returns a variant_group product through the configurable-products GET endpoi
 
     $configurable = $repository->create([
         'sku'                  => 'vg-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
@@ -46,7 +47,7 @@ it('returns a variant_group product through the configurable-products GET endpoi
         ->json('GET', route('admin.api.configurable_products.get', $group->sku))
         ->assertOK()
         ->assertJsonPath('sku', 'vg-group')
-        ->assertJsonPath('type', 'variant_group')
+        ->assertJsonPath('type', ProductTypeEnum::VariantGroup->value)
         ->assertJsonPath('values.common.'.$color->code, 'red');
 });
 
@@ -55,11 +56,11 @@ it('includes variant_group rows in the configurable-products listing', function 
     $repository = app(ProductRepository::class);
 
     $configurable = $repository->create([
-        'sku' => 'vgl-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku' => 'vgl-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
     ]);
 
     Product::factory()->create([
-        'parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'vgl-group',
+        'parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'vgl-group',
         'values'    => ['common' => ['sku' => 'vgl-group']],
     ]);
 
@@ -77,11 +78,11 @@ it('excludes simple products from the configurable-products listing', function (
     $repository = app(ProductRepository::class);
 
     $configurable = $repository->create([
-        'sku' => 'vgs-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku' => 'vgs-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
     ]);
 
     Product::factory()->create([
-        'parent_id' => $configurable->id, 'type' => 'simple', 'sku' => 'vgs-leaf',
+        'parent_id' => $configurable->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'vgs-leaf',
         'values'    => ['common' => ['sku' => 'vgs-leaf']],
     ]);
 
@@ -99,11 +100,11 @@ it('returns only variant_group rows when type=variant_group is requested', funct
     $repository = app(ProductRepository::class);
 
     $configurable = $repository->create([
-        'sku' => 'vgt-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku' => 'vgt-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
     ]);
 
     Product::factory()->create([
-        'parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'vgt-group',
+        'parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'vgt-group',
         'values'    => ['common' => ['sku' => 'vgt-group']],
     ]);
 
@@ -111,12 +112,12 @@ it('returns only variant_group rows when type=variant_group is requested', funct
     $configFilter = json_encode(['sku' => [['operator' => '=', 'value' => $configurable->sku]]]);
 
     $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $groupFilter, 'type' => 'variant_group']))
+        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $groupFilter, 'type' => ProductTypeEnum::VariantGroup->value]))
         ->assertOK()
         ->assertJsonPath('data.0.sku', 'vgt-group');
 
     $excluded = $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $configFilter, 'type' => 'variant_group']))
+        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $configFilter, 'type' => ProductTypeEnum::VariantGroup->value]))
         ->assertOK();
 
     expect($excluded->json('data'))->toBeEmpty();
@@ -127,11 +128,11 @@ it('returns only configurable rows when type=configurable is requested', functio
     $repository = app(ProductRepository::class);
 
     $configurable = $repository->create([
-        'sku' => 'vgtc-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku' => 'vgtc-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
     ]);
 
     Product::factory()->create([
-        'parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'vgtc-group',
+        'parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'vgtc-group',
         'values'    => ['common' => ['sku' => 'vgtc-group']],
     ]);
 
@@ -139,12 +140,12 @@ it('returns only configurable rows when type=configurable is requested', functio
     $configFilter = json_encode(['sku' => [['operator' => '=', 'value' => $configurable->sku]]]);
 
     $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $configFilter, 'type' => 'configurable']))
+        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $configFilter, 'type' => ProductTypeEnum::Configurable->value]))
         ->assertOK()
         ->assertJsonPath('data.0.sku', $configurable->sku);
 
     $excluded = $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $groupFilter, 'type' => 'configurable']))
+        ->json('GET', route('admin.api.configurable_products.index', ['filters' => $groupFilter, 'type' => ProductTypeEnum::Configurable->value]))
         ->assertOK();
 
     expect($excluded->json('data'))->toBeEmpty();
@@ -152,7 +153,7 @@ it('returns only configurable rows when type=configurable is requested', functio
 
 it('rejects an unsupported type value on the configurable-products listing', function () {
     $this->withHeaders($this->headers)
-        ->json('GET', route('admin.api.configurable_products.index', ['type' => 'simple']))
+        ->json('GET', route('admin.api.configurable_products.index', ['type' => ProductTypeEnum::Simple->value]))
         ->assertStatus(422);
 });
 
@@ -171,7 +172,7 @@ it('lists a variant_group own simple children the same way a configurable lists 
 
     $repository = app(ProductRepository::class);
     $configurable = $repository->create([
-        'sku'                  => 'vgc-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku'                  => 'vgc-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
@@ -202,19 +203,19 @@ it('creates a variant_group via the configurable-products POST endpoint', functi
 
     $repository = app(ProductRepository::class);
     $configurable = $repository->create([
-        'sku'                  => 'vgp-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku'                  => 'vgp-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => 'variant_group',
+        'type'   => ProductTypeEnum::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'vgp-group', $color->code => $color->options->first()->code]],
     ])->assertStatus(201);
 
     expect(Product::where('sku', 'vgp-group')->first())
         ->not->toBeNull()
-        ->type->toBe('variant_group');
+        ->type->toBe(ProductTypeEnum::VariantGroup->value);
 });
 
 it('rejects a variant_group create that collides with an existing sibling axis value', function () {
@@ -230,7 +231,7 @@ it('rejects a variant_group create that collides with an existing sibling axis v
 
     $repository = app(ProductRepository::class);
     $configurable = $repository->create([
-        'sku'                  => 'vgpc-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku'                  => 'vgpc-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
@@ -239,7 +240,7 @@ it('rejects a variant_group create that collides with an existing sibling axis v
     ]);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => 'variant_group',
+        'type'   => ProductTypeEnum::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'vgpc-new', $color->code => 'red']],
     ])->assertStatus(422);
@@ -249,14 +250,14 @@ it('rejects deleting a variant_group that still has children', function () {
     $family = AttributeFamily::factory()->create();
     $repository = app(ProductRepository::class);
     $configurable = $repository->create([
-        'sku' => 'vgd-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku' => 'vgd-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
     ]);
 
     $group = Product::factory()->create([
-        'parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'vgd-group',
+        'parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'vgd-group',
     ]);
     Product::factory()->create([
-        'parent_id' => $group->id, 'type' => 'simple', 'sku' => 'vgd-group-s',
+        'parent_id' => $group->id, 'type' => ProductTypeEnum::Simple->value, 'sku' => 'vgd-group-s',
     ]);
 
     $this->withHeaders($this->headers)
@@ -270,11 +271,11 @@ it('deletes a childless variant_group', function () {
     $family = AttributeFamily::factory()->create();
     $repository = app(ProductRepository::class);
     $configurable = $repository->create([
-        'sku' => 'vgd2-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku' => 'vgd2-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
     ]);
 
     Product::factory()->create([
-        'parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'vgd2-group',
+        'parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'vgd2-group',
     ]);
 
     $this->withHeaders($this->headers)
@@ -297,7 +298,7 @@ it('updates a variant_group own-level value via PUT without touching nested vari
 
     $repository = app(ProductRepository::class);
     $configurable = $repository->create([
-        'sku'                  => 'vgu-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku'                  => 'vgu-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
@@ -331,7 +332,7 @@ function vgLeafTree(string $prefix): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'sku'                  => $prefix.'-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku'                  => $prefix.'-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
@@ -357,7 +358,7 @@ it('creates a simple product under a variant_group and parents it to that group'
     $leaf = Product::where('sku', 'vgleaf-s')->first();
 
     expect($leaf)->not->toBeNull();
-    expect($leaf->type)->toBe('simple');
+    expect($leaf->type)->toBe(ProductTypeEnum::Simple->value);
     expect($leaf->parent_id)->toBe($group->id);
     expect($leaf->values['common'][$size->code])->toBe($sizeOption);
 });
@@ -443,7 +444,7 @@ it('keeps creating a variant directly under a single-level configurable parent',
     AttributeFamily::factory()->linkAttributesToFamily($family, $color);
 
     $configurable = app(ProductRepository::class)->create([
-        'sku'                 => 'vgflat-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku'                 => 'vgflat-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
         'super_attributes'    => [$color->code],
     ]);
 
@@ -473,11 +474,11 @@ it('rejects a duplicate sku on configurable create with 422 rather than a server
     $family = AttributeFamily::factory()->create();
 
     app(ProductRepository::class)->create([
-        'sku' => 'dup-config-sku', 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku' => 'dup-config-sku', 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
     ]);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'             => 'configurable',
+        'type'             => ProductTypeEnum::Configurable->value,
         'family'           => $family->code,
         'super_attributes' => ['color'],
         'values'           => ['common' => ['sku' => 'dup-config-sku']],
@@ -496,17 +497,17 @@ it('rejects a duplicate sku on variant_group create with 422 rather than a serve
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'sku'                  => 'dupvg-config-'.uniqid(), 'type' => 'configurable', 'attribute_family_id' => $family->id,
+        'sku'                  => 'dupvg-config-'.uniqid(), 'type' => ProductTypeEnum::Configurable->value, 'attribute_family_id' => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
     Product::factory()->create([
-        'parent_id' => $configurable->id, 'type' => 'variant_group', 'sku' => 'dup-group-sku',
+        'parent_id' => $configurable->id, 'type' => ProductTypeEnum::VariantGroup->value, 'sku' => 'dup-group-sku',
         'values'    => ['common' => ['sku' => 'dup-group-sku']],
     ]);
 
     $this->withHeaders($this->headers)->json('POST', route('admin.api.configurable_products.store'), [
-        'type'   => 'variant_group',
+        'type'   => ProductTypeEnum::VariantGroup->value,
         'parent' => $configurable->sku,
         'values' => ['common' => ['sku' => 'dup-group-sku', $color->code => 'red']],
     ])->assertStatus(422);
@@ -528,7 +529,7 @@ it('announces a variant group created through the REST endpoint', function () {
 
     $configurable = app(ProductRepository::class)->create([
         'sku'                  => 'vg-evt-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
@@ -537,7 +538,7 @@ it('announces a variant group created through the REST endpoint', function () {
 
     $this->withHeaders($this->headers)
         ->json('POST', route('admin.api.configurable_products.store'), [
-            'type'   => 'variant_group',
+            'type'   => ProductTypeEnum::VariantGroup->value,
             'parent' => $configurable->sku,
             'values' => [
                 'common' => [
@@ -550,7 +551,7 @@ it('announces a variant group created through the REST endpoint', function () {
 
     Event::assertDispatched(
         'catalog.product.create.after',
-        fn ($event, $product): bool => $product->type === 'variant_group'
+        fn ($event, $product): bool => $product->type === ProductTypeEnum::VariantGroup->value
     );
 });
 
@@ -580,14 +581,14 @@ it('purifies wysiwyg values when a variant group is created', function () {
 
     $configurable = app(ProductRepository::class)->create([
         'sku'                  => 'vgp-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductTypeEnum::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
     $this->withHeaders($this->headers)
         ->json('POST', route('admin.api.configurable_products.store'), [
-            'type'   => 'variant_group',
+            'type'   => ProductTypeEnum::VariantGroup->value,
             'parent' => $configurable->sku,
             'values' => ['common' => [
                 'sku'          => 'vgp-group-'.uniqid(),
@@ -597,7 +598,7 @@ it('purifies wysiwyg values when a variant group is created', function () {
         ])
         ->assertStatus(201);
 
-    $group = Product::where('type', 'variant_group')->latest('id')->first();
+    $group = Product::where('type', ProductTypeEnum::VariantGroup->value)->latest('id')->first();
 
     expect($group->values['common'][$notes->code])->not->toContain('<script>')
         ->and($group->values['common'][$notes->code])->toContain('keep');
