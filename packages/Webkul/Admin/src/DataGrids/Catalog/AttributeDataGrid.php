@@ -181,12 +181,21 @@ class AttributeDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('catalog.attributes.mass_delete')) {
             $this->addMassAction([
-                'icon'    => 'icon-delete',
-                'title'   => trans('admin::app.catalog.attributes.index.datagrid.delete'),
-                'method'  => 'POST',
-                'url'     => route('admin.catalog.attributes.mass_delete'),
-                'options' => ['actionType' => 'delete'],
+                'icon'                => 'icon-delete',
+                'title'               => trans('admin::app.catalog.attributes.index.datagrid.delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'url'                 => route('admin.catalog.attributes.mass_delete'),
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
+    }
+
+    /**
+     * The grid has no id column and its translation join carries one, so the bare key would be ambiguous.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'attributes.id';
     }
 }

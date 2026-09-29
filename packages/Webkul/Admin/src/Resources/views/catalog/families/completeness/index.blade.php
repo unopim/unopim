@@ -225,9 +225,8 @@
                             .catch(console.error)
                             .finally(() => this.isSaving = false);
                     } else {
-                        params.indices = this.$refs.completenessAttributeDatagrid.applied.massActions.indices;
-
-                        this.$axios.post("{{ route('admin.catalog.families.completeness.mass_update') }}", params)
+                        this.$refs.completenessAttributeDatagrid.resolveSelection({ supportsSelectAll: true })
+                            .then(selection => this.$axios.post("{{ route('admin.catalog.families.completeness.mass_update') }}", { ...params, ...selection }))
                             .then(response => {
                                 this.$refs.completenessModal.toggle();
 

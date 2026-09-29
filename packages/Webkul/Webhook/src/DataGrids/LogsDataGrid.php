@@ -316,10 +316,11 @@ class LogsDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
-                'url'     => route('webhook.logs.mass_delete'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
+                'url'                 => route('webhook.logs.mass_delete'),
+                'method'              => 'POST',
+                'options'             => ['actionType' => 'delete'],
+                'supports_select_all' => true,
             ]);
         }
     }
