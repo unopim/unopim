@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Seçilen ürünler başarıyla silindi',
                     'mass-update-queued'      => 'Seçili ürünler arka planda güncelleniyor',
                     'mass-update-success'     => 'Seçilen ürünler başarıyla güncellendi',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Eşleşen tüm ürünler için durum güncellemesi kuyruğa alındı. Tamamlandığında bildirim alacaksınız.',
+                            'title'     => 'Ürün durumu güncelleme',
+                            'completed' => ':count ürünün durumu güncellendi.',
+                            'failed'    => ':count ürünün durum güncellemesi hatalarla tamamlandı. Bazı ürünler güncellenmedi.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Eşleşen tüm ürünler için silme işlemi kuyruğa alındı. Tamamlandığında bildirim alacaksınız.',
+                            'title'     => 'Ürün silme',
+                            'completed' => ':count ürün silindi.',
+                            'failed'    => ':count ürünün silinmesi hatalarla tamamlandı. Bazı ürünler silinmedi.',
+                        ],
+                    ],
                     'name'                    => 'Ad',
                     'out-of-stock'            => 'Stokta yok',
                     'price'                   => 'Fiyat',

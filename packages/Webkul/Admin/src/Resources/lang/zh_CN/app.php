@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => '成功删除的选定产品成功',
                     'mass-update-queued'      => '所选产品正在后台更新',
                     'mass-update-success'     => '选定的产品成功更新了',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => '已将所有匹配产品的状态更新加入队列，完成后将通知您。',
+                            'title'     => '产品状态更新',
+                            'completed' => '已更新 :count 个产品的状态。',
+                            'failed'    => ':count 个产品的状态更新已完成，但出现错误。部分产品未更新。',
+                        ],
+                        'delete' => [
+                            'queued'    => '已将所有匹配产品的删除任务加入队列，完成后将通知您。',
+                            'title'     => '产品删除',
+                            'completed' => '已删除 :count 个产品。',
+                            'failed'    => ':count 个产品的删除已完成，但出现错误。部分产品未删除。',
+                        ],
+                    ],
                     'name'                    => '姓名',
                     'out-of-stock'            => '缺货',
                     'price'                   => '价格',

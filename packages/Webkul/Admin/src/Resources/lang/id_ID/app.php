@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Produk yang dipilih berhasil dihapus',
                     'mass-update-queued'      => 'Produk yang dipilih sedang diperbarui di latar belakang',
                     'mass-update-success'     => 'Produk terpilih diperbarui dengan sukses',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Pembaruan status telah dijadwalkan untuk semua produk yang cocok. Anda akan diberi tahu setelah selesai.',
+                            'title'     => 'Pembaruan status produk',
+                            'completed' => 'Status :count produk telah diperbarui.',
+                            'failed'    => 'Pembaruan status :count produk selesai dengan kesalahan. Beberapa produk tidak diperbarui.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Penghapusan telah dijadwalkan untuk semua produk yang cocok. Anda akan diberi tahu setelah selesai.',
+                            'title'     => 'Penghapusan produk',
+                            'completed' => ':count produk telah dihapus.',
+                            'failed'    => 'Penghapusan :count produk selesai dengan kesalahan. Beberapa produk tidak dihapus.',
+                        ],
+                    ],
                     'name'                    => 'Nama',
                     'out-of-stock'            => 'Stok Habis',
                     'price'                   => 'Harga',

@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Valgte produkter blev slettet med succes',
                     'mass-update-queued'      => 'De valgte produkter opdateres i baggrunden',
                     'mass-update-success'     => 'Valgte produkter blev opdateret med succes',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Statusopdatering er sat i kø for alle matchende produkter. Du får besked, når den er færdig.',
+                            'title'     => 'Opdatering af produktstatus',
+                            'completed' => 'Status er opdateret for :count produkter.',
+                            'failed'    => 'Statusopdateringen af :count produkter blev afsluttet med fejl. Nogle produkter blev ikke opdateret.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Sletning er sat i kø for alle matchende produkter. Du får besked, når den er færdig.',
+                            'title'     => 'Sletning af produkter',
+                            'completed' => ':count produkter er slettet.',
+                            'failed'    => 'Sletningen af :count produkter blev afsluttet med fejl. Nogle produkter blev ikke slettet.',
+                        ],
+                    ],
                     'name'                    => 'Navn',
                     'out-of-stock'            => 'Udsolgt',
                     'price'                   => 'Pris',

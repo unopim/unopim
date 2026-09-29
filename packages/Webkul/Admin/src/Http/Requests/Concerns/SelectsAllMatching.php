@@ -36,6 +36,16 @@ trait SelectsAllMatching
     }
 
     /**
+     * Grid parameters that reproduce the selection outside this request, e.g. on the queue.
+     *
+     * @return array<string, mixed>
+     */
+    public function selectionParams(): array
+    {
+        return $this->only(['filters', 'channel', 'locale', 'managedColumns']);
+    }
+
+    /**
      * @return array<string, array<int, mixed>>
      */
     protected function selectionRules(): array
@@ -45,6 +55,7 @@ trait SelectsAllMatching
             'indices'    => [Rule::requiredIf(fn (): bool => ! $this->selectsAllMatching()), 'array'],
             'indices.*'  => ['integer'],
             'filters'    => ['sometimes', 'array'],
+            'sort'       => ['sometimes', 'required', 'array'],
         ];
     }
 }

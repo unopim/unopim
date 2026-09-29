@@ -1,9 +1,15 @@
 <?php
 
+use Illuminate\Bus\PendingBatch;
+use Illuminate\Support\Facades\Bus;
 use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
+use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Notification\Models\Notification;
+use Webkul\Product\Jobs\MassDeleteProducts;
+use Webkul\Product\Jobs\MassUpdateProductsStatus;
 use Webkul\Product\Models\Product;
 
 class SmallBatchProductDataGrid extends ProductDataGrid
@@ -14,6 +20,11 @@ class SmallBatchProductDataGrid extends ProductDataGrid
 class SmallBatchCategoryDataGrid extends CategoryDataGrid
 {
     const MATCHING_IDS_BATCH_SIZE = 2;
+}
+
+class SmallChunkMassActionSelection extends ProcessMassActionSelection
+{
+    const CHUNK_SIZE = 2;
 }
 
 beforeEach(function () {
@@ -155,4 +166,71 @@ it('rejects an empty sort, which is why the grid leaves it out of a select-all p
         'value'      => true,
     ])->assertUnprocessable()
         ->assertJsonValidationErrors('sort');
+});
+
+it('only queues the selection resolver, so the request returns before any id is resolved', function () {
+    Bus::fake();
+
+    $this->postJson(route('admin.catalog.products.mass_update'), [
+        'select_all' => true,
+        'filters'    => ['sku' => ['SELQUEUE-']],
+        'value'      => true,
+    ])->assertOk()
+        ->assertJsonPath('message', trans('admin::app.catalog.products.index.datagrid.select-all.update-status.queued'));
+
+    $this->postJson(route('admin.catalog.products.mass_delete'), [
+        'select_all' => true,
+        'filters'    => ['sku' => ['SELQUEUE-']],
+    ])->assertOk()
+        ->assertJsonPath('message', trans('admin::app.catalog.products.index.datagrid.select-all.delete.queued'));
+
+    Bus::assertBatchCount(2);
+
+    Bus::assertBatched(fn (PendingBatch $batch) => $batch->name === 'admin::app.catalog.products.index.datagrid.select-all.update-status'
+        && $batch->jobs->count() === 1
+        && $batch->jobs->first() instanceof ProcessMassActionSelection);
+
+    Bus::assertBatched(fn (PendingBatch $batch) => $batch->name === 'admin::app.catalog.products.index.datagrid.select-all.delete'
+        && $batch->jobs->first() instanceof ProcessMassActionSelection);
+
+    Bus::assertNotDispatched(MassUpdateProductsStatus::class);
+    Bus::assertNotDispatched(MassDeleteProducts::class);
+});
+
+it('resolves the grid filters on the queue into one chunk job per slice of ids', function () {
+    $matching = createSkuPrefixedProducts('SELCHUNK-MATCH-', 5);
+    createSkuPrefixedProducts('SELCHUNK-OTHER-', 2);
+
+    Bus::fake([MassUpdateProductsStatus::class]);
+
+    (new SmallChunkMassActionSelection(
+        ProductDataGrid::class,
+        ['filters' => ['sku' => ['SELCHUNK-MATCH-']]],
+        MassUpdateProductsStatus::class,
+        [true],
+    ))->handle();
+
+    Bus::assertDispatchedTimes(MassUpdateProductsStatus::class, 3);
+
+    $dispatchedIds = Bus::dispatched(MassUpdateProductsStatus::class)
+        ->flatMap(fn (MassUpdateProductsStatus $job) => (fn () => $this->productIds)->call($job))
+        ->all();
+
+    expect($dispatchedIds)->toEqualCanonicalizing($matching);
+});
+
+it('notifies the admin who started the select-all action with the number of products once the batch finishes', function () {
+    createSkuPrefixedProducts('SELNOTIFY-', 3);
+
+    $this->postJson(route('admin.catalog.products.mass_update'), [
+        'select_all' => true,
+        'filters'    => ['sku' => ['SELNOTIFY-']],
+        'value'      => true,
+    ])->assertOk();
+
+    $notification = Notification::query()->latest('id')->first();
+
+    expect($notification->type)->toBe('mass_action')
+        ->and($notification->description)->toBe(trans('admin::app.catalog.products.index.datagrid.select-all.update-status.completed', ['count' => 3]))
+        ->and($notification->userNotifications()->pluck('admin_id')->all())->toBe([auth()->guard('admin')->id()]);
 });

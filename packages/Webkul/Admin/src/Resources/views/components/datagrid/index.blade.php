@@ -73,6 +73,8 @@
                 return {
                     isLoading: false,
 
+                    isMassActionPending: false,
+
                     isSelectingAllMatching: false,
 
                     priceValue: '',
@@ -1277,6 +1279,12 @@
                 },
 
                 sendMassAction(action, method, actionType, selection, value, data) {
+                    if (this.isMassActionPending) {
+                        return;
+                    }
+
+                    this.isMassActionPending = true;
+
                     switch (method) {
                         case 'post':
                         case 'put':
@@ -1302,8 +1310,11 @@
                                 .catch((error) => {
                                     this.$emitter.emit('add-flash', {
                                         type: 'error',
-                                        message: error.response.data.message
+                                        message: error.response?.data?.message
                                     });
+                                })
+                                .finally(() => {
+                                    this.isMassActionPending = false;
                                 });
 
                             break;
@@ -1321,13 +1332,18 @@
                                 .catch((error) => {
                                     this.$emitter.emit('add-flash', {
                                         type: 'error',
-                                        message: error.response.data.message
+                                        message: error.response?.data?.message
                                     });
+                                })
+                                .finally(() => {
+                                    this.isMassActionPending = false;
                                 });
 
                             break;
 
                         default:
+                            this.isMassActionPending = false;
+
                             console.error('Method not supported.');
 
                             break;

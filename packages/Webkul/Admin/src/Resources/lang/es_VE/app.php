@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Productos seleccionados eliminados con éxito',
                     'mass-update-queued'      => 'Los productos seleccionados se están actualizando en segundo plano',
                     'mass-update-success'     => 'Productos seleccionados actualizados con éxito',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'La actualización de estado quedó en cola para todos los productos coincidentes. Recibirás una notificación cuando termine.',
+                            'title'     => 'Actualización del estado de productos',
+                            'completed' => 'Se actualizó el estado de :count productos.',
+                            'failed'    => 'La actualización de estado de :count productos terminó con errores. Algunos productos no se actualizaron.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'La eliminación quedó en cola para todos los productos coincidentes. Recibirás una notificación cuando termine.',
+                            'title'     => 'Eliminación de productos',
+                            'completed' => 'Se eliminaron :count productos.',
+                            'failed'    => 'La eliminación de :count productos terminó con errores. Algunos productos no se eliminaron.',
+                        ],
+                    ],
                     'name'                    => 'Nombre',
                     'out-of-stock'            => 'Agotado',
                     'price'                   => 'Precio',

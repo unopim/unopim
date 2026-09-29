@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\LazyCollection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -25,6 +24,7 @@ use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Admin\Http\Requests\VariantChildrenForm;
 use Webkul\Admin\Http\Requests\VariantNodeForm;
 use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
+use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Admin\Traits\AttributeColumnTrait;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Attribute\Models\AttributeOptionProxy;
@@ -1374,13 +1374,17 @@ class ProductController extends Controller
     public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
         if ($massDestroyRequest->selectsAllMatching()) {
-            $this->dispatchInChunks(
-                $massDestroyRequest->selectedIds(ProductDataGrid::class),
-                fn (array $productIds) => MassDeleteProducts::dispatch($productIds),
+            ProcessMassActionSelection::queue(
+                ProductDataGrid::class,
+                $massDestroyRequest->selectionParams(),
+                MassDeleteProducts::class,
+                [],
+                auth()->guard('admin')->id(),
+                'admin::app.catalog.products.index.datagrid.select-all.delete',
             );
 
             return new JsonResponse([
-                'message' => trans('admin::app.catalog.products.index.datagrid.mass-delete-queued'),
+                'message' => trans('admin::app.catalog.products.index.datagrid.select-all.delete.queued'),
             ]);
         }
 
@@ -1415,13 +1419,17 @@ class ProductController extends Controller
         $status = (bool) $massUpdateRequest->input('value');
 
         if ($massUpdateRequest->selectsAllMatching()) {
-            $this->dispatchInChunks(
-                $massUpdateRequest->selectedIds(ProductDataGrid::class),
-                fn (array $productIds) => MassUpdateProductsStatus::dispatch($productIds, $status),
+            ProcessMassActionSelection::queue(
+                ProductDataGrid::class,
+                $massUpdateRequest->selectionParams(),
+                MassUpdateProductsStatus::class,
+                [$status],
+                auth()->guard('admin')->id(),
+                'admin::app.catalog.products.index.datagrid.select-all.update-status',
             );
 
             return new JsonResponse([
-                'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-queued'),
+                'message' => trans('admin::app.catalog.products.index.datagrid.select-all.update-status.queued'),
             ], JsonResponse::HTTP_OK);
         }
 
@@ -1440,19 +1448,6 @@ class ProductController extends Controller
         return new JsonResponse([
             'message' => trans('admin::app.catalog.products.index.datagrid.mass-update-success'),
         ], JsonResponse::HTTP_OK);
-    }
-
-    /**
-     * Queue a mass action over a streamed selection, one job per chunk of ids.
-     *
-     * @param  LazyCollection<int, mixed>  $productIds
-     * @param  callable(array<int, int>): mixed  $dispatch
-     */
-    protected function dispatchInChunks(LazyCollection $productIds, callable $dispatch): void
-    {
-        $productIds
-            ->chunk(ProductDataGrid::MATCHING_IDS_BATCH_SIZE)
-            ->each(fn (LazyCollection $chunk) => $dispatch($chunk->map(fn ($id): int => (int) $id)->values()->all()));
     }
 
     /**

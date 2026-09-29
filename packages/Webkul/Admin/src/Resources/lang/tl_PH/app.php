@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Matagumpay na tinanggal ang mga napiling produkto',
                     'mass-update-queued'      => 'Ang mga napiling produkto ay ina-update sa background',
                     'mass-update-success'     => 'Matagumpay na na-update ang mga napiling produkto',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Naka-queue na ang pag-update ng status para sa lahat ng tumutugmang produkto. Aabisuhan ka kapag natapos na.',
+                            'title'     => 'Pag-update ng status ng produkto',
+                            'completed' => 'Na-update ang status ng :count produkto.',
+                            'failed'    => 'Natapos ang pag-update ng status ng :count produkto nang may mga error. Hindi na-update ang ilang produkto.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Naka-queue na ang pagbura para sa lahat ng tumutugmang produkto. Aabisuhan ka kapag natapos na.',
+                            'title'     => 'Pagbura ng produkto',
+                            'completed' => 'Nabura ang :count produkto.',
+                            'failed'    => 'Natapos ang pagbura ng :count produkto nang may mga error. Hindi nabura ang ilang produkto.',
+                        ],
+                    ],
                     'name'                    => 'Pangalan',
                     'out-of-stock'            => 'Wala sa stock',
                     'price'                   => 'Presyo',

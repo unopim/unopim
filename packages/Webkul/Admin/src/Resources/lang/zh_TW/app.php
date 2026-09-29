@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => '選中的產品已成功刪除',
                     'mass-update-queued'      => '所選產品正在背景中更新',
                     'mass-update-success'     => '選中的產品已成功更新',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => '已將所有符合條件產品的狀態更新加入佇列，完成後將通知您。',
+                            'title'     => '產品狀態更新',
+                            'completed' => '已更新 :count 項產品的狀態。',
+                            'failed'    => ':count 項產品的狀態更新已完成，但發生錯誤。部分產品未更新。',
+                        ],
+                        'delete' => [
+                            'queued'    => '已將所有符合條件產品的刪除作業加入佇列，完成後將通知您。',
+                            'title'     => '產品刪除',
+                            'completed' => '已刪除 :count 項產品。',
+                            'failed'    => ':count 項產品的刪除已完成，但發生錯誤。部分產品未刪除。',
+                        ],
+                    ],
                     'name'                    => '名稱',
                     'out-of-stock'            => '缺貨',
                     'price'                   => '價格',

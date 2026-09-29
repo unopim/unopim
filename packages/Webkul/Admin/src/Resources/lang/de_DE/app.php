@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Ausgewählte Produkte erfolgreich gelöscht',
                     'mass-update-queued'      => 'Ausgewählte Produkte werden im Hintergrund aktualisiert',
                     'mass-update-success'     => 'Ausgewählte Produkte erfolgreich aktualisiert',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Die Statusänderung wurde für alle passenden Produkte eingeplant. Sie werden benachrichtigt, sobald sie abgeschlossen ist.',
+                            'title'     => 'Produktstatus aktualisieren',
+                            'completed' => 'Status für :count Produkte aktualisiert.',
+                            'failed'    => 'Die Statusänderung von :count Produkten wurde mit Fehlern abgeschlossen. Einige Produkte wurden nicht aktualisiert.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Das Löschen wurde für alle passenden Produkte eingeplant. Sie werden benachrichtigt, sobald es abgeschlossen ist.',
+                            'title'     => 'Produkte löschen',
+                            'completed' => ':count Produkte gelöscht.',
+                            'failed'    => 'Das Löschen von :count Produkten wurde mit Fehlern abgeschlossen. Einige Produkte wurden nicht gelöscht.',
+                        ],
+                    ],
                     'name'                    => 'Name',
                     'out-of-stock'            => 'Nicht auf Lager',
                     'price'                   => 'Preis',

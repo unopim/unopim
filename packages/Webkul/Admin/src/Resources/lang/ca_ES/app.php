@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Productes seleccionats eliminats correctament',
                     'mass-update-queued'      => 'Els productes seleccionats s\'estan actualitzant en segon pla',
                     'mass-update-success'     => 'Productes seleccionats actualitzats correctament',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'L\'actualització de l\'estat s\'ha posat a la cua per a tots els productes coincidents. Rebràs una notificació quan acabi.',
+                            'title'     => 'Actualització de l\'estat dels productes',
+                            'completed' => 'S\'ha actualitzat l\'estat de :count productes.',
+                            'failed'    => 'L\'actualització de l\'estat de :count productes ha finalitzat amb errors. Alguns productes no s\'han actualitzat.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'L\'eliminació s\'ha posat a la cua per a tots els productes coincidents. Rebràs una notificació quan acabi.',
+                            'title'     => 'Eliminació de productes',
+                            'completed' => 'S\'han eliminat :count productes.',
+                            'failed'    => 'L\'eliminació de :count productes ha finalitzat amb errors. Alguns productes no s\'han eliminat.',
+                        ],
+                    ],
                     'name'                    => 'Nom',
                     'out-of-stock'            => 'Sense estoc',
                     'price'                   => 'Preu',

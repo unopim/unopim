@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'De valda produkterna har raderats',
                     'mass-update-queued'      => 'De valda produkterna uppdateras i bakgrunden',
                     'mass-update-success'     => 'De valda produkterna har uppdaterats',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Statusuppdateringen har köats för alla matchande produkter. Du får ett meddelande när den är klar.',
+                            'title'     => 'Uppdatering av produktstatus',
+                            'completed' => 'Status uppdaterad för :count produkter.',
+                            'failed'    => 'Statusuppdateringen av :count produkter slutfördes med fel. Vissa produkter uppdaterades inte.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Borttagningen har köats för alla matchande produkter. Du får ett meddelande när den är klar.',
+                            'title'     => 'Borttagning av produkter',
+                            'completed' => ':count produkter har tagits bort.',
+                            'failed'    => 'Borttagningen av :count produkter slutfördes med fel. Vissa produkter togs inte bort.',
+                        ],
+                    ],
                     'name'                    => 'Namn',
                     'out-of-stock'            => 'Slut på lager',
                     'price'                   => 'Pris',

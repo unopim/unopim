@@ -237,6 +237,20 @@ return [
                     'mass-delete-success'     => 'Wybrane produkty zostały pomyślnie usunięte',
                     'mass-update-queued'      => 'Wybrane produkty są aktualizowane w tle',
                     'mass-update-success'     => 'Wybrane produkty zostały pomyślnie zaktualizowane',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Aktualizacja statusu wszystkich pasujących produktów została dodana do kolejki. Otrzymasz powiadomienie po jej zakończeniu.',
+                            'title'     => 'Aktualizacja statusu produktów',
+                            'completed' => 'Zaktualizowano status :count produktów.',
+                            'failed'    => 'Aktualizacja statusu :count produktów zakończyła się błędami. Niektóre produkty nie zostały zaktualizowane.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Usuwanie wszystkich pasujących produktów zostało dodane do kolejki. Otrzymasz powiadomienie po jego zakończeniu.',
+                            'title'     => 'Usuwanie produktów',
+                            'completed' => 'Usunięto :count produktów.',
+                            'failed'    => 'Usuwanie :count produktów zakończyło się błędami. Niektóre produkty nie zostały usunięte.',
+                        ],
+                    ],
                     'name'                    => 'Nazwa',
                     'out-of-stock'            => 'Brak w magazynie',
                     'price'                   => 'Cena',

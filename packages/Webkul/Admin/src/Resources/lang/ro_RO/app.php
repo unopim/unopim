@@ -237,6 +237,20 @@ return [
                     'mass-delete-success'     => 'Produsele selectate au fost șterse cu succes',
                     'mass-update-queued'      => 'Produsele selectate sunt actualizate în fundal',
                     'mass-update-success'     => 'Produsele selectate au fost actualizate cu succes',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Actualizarea stării a fost pusă în coadă pentru toate produsele corespunzătoare. Vei fi notificat când se termină.',
+                            'title'     => 'Actualizarea stării produselor',
+                            'completed' => 'Starea a fost actualizată pentru :count produse.',
+                            'failed'    => 'Actualizarea stării pentru :count produse s-a încheiat cu erori. Unele produse nu au fost actualizate.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Ștergerea a fost pusă în coadă pentru toate produsele corespunzătoare. Vei fi notificat când se termină.',
+                            'title'     => 'Ștergerea produselor',
+                            'completed' => 'Au fost șterse :count produse.',
+                            'failed'    => 'Ștergerea a :count produse s-a încheiat cu erori. Unele produse nu au fost șterse.',
+                        ],
+                    ],
                     'name'                    => 'Nume',
                     'out-of-stock'            => 'Fără stoc',
                     'price'                   => 'Preț',

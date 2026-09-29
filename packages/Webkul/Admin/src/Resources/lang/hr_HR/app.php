@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Odabrani proizvodi su uspješno obrisani',
                     'mass-update-queued'      => 'Odabrani proizvodi ažuriraju se u pozadini',
                     'mass-update-success'     => 'Odabrani proizvodi su uspješno ažurirani',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Ažuriranje statusa stavljeno je u red čekanja za sve odgovarajuće proizvode. Obavijestit ćemo vas kada završi.',
+                            'title'     => 'Ažuriranje statusa proizvoda',
+                            'completed' => 'Status je ažuriran za :count proizvoda.',
+                            'failed'    => 'Ažuriranje statusa za :count proizvoda završilo je s pogreškama. Neki proizvodi nisu ažurirani.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Brisanje je stavljeno u red čekanja za sve odgovarajuće proizvode. Obavijestit ćemo vas kada završi.',
+                            'title'     => 'Brisanje proizvoda',
+                            'completed' => 'Izbrisano je :count proizvoda.',
+                            'failed'    => 'Brisanje :count proizvoda završilo je s pogreškama. Neki proizvodi nisu izbrisani.',
+                        ],
+                    ],
                     'name'                    => 'Ime',
                     'out-of-stock'            => 'Rasprodano',
                     'price'                   => 'Cijena',

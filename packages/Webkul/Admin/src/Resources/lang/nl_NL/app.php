@@ -237,6 +237,20 @@ return [
                     'mass-delete-success'     => 'Geselecteerde producten succesvol verwijderd.',
                     'mass-update-queued'      => 'Geselecteerde producten worden op de achtergrond bijgewerkt',
                     'mass-update-success'     => 'Geselecteerde producten succesvol bijgewerkt.',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'De statuswijziging is in de wachtrij gezet voor alle overeenkomende producten. Je krijgt een melding zodra deze klaar is.',
+                            'title'     => 'Productstatus bijwerken',
+                            'completed' => 'Status bijgewerkt voor :count producten.',
+                            'failed'    => 'De statuswijziging van :count producten is met fouten voltooid. Sommige producten zijn niet bijgewerkt.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Het verwijderen is in de wachtrij gezet voor alle overeenkomende producten. Je krijgt een melding zodra het klaar is.',
+                            'title'     => 'Producten verwijderen',
+                            'completed' => ':count producten verwijderd.',
+                            'failed'    => 'Het verwijderen van :count producten is met fouten voltooid. Sommige producten zijn niet verwijderd.',
+                        ],
+                    ],
                     'name'                    => 'Naam',
                     'out-of-stock'            => 'Niet meer op voorraad',
                     'price'                   => 'Prijs',

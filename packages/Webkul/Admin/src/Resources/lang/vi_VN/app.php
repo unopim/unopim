@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Các sản phẩm được chọn đã được xóa thành công',
                     'mass-update-queued'      => 'Các sản phẩm đã chọn đang được cập nhật ở chế độ nền',
                     'mass-update-success'     => 'Các sản phẩm được chọn đã được cập nhật thành công',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Đã đưa việc cập nhật trạng thái của tất cả sản phẩm phù hợp vào hàng đợi. Bạn sẽ được thông báo khi hoàn tất.',
+                            'title'     => 'Cập nhật trạng thái sản phẩm',
+                            'completed' => 'Đã cập nhật trạng thái cho :count sản phẩm.',
+                            'failed'    => 'Cập nhật trạng thái cho :count sản phẩm đã kết thúc nhưng có lỗi. Một số sản phẩm chưa được cập nhật.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Đã đưa việc xóa tất cả sản phẩm phù hợp vào hàng đợi. Bạn sẽ được thông báo khi hoàn tất.',
+                            'title'     => 'Xóa sản phẩm',
+                            'completed' => 'Đã xóa :count sản phẩm.',
+                            'failed'    => 'Việc xóa :count sản phẩm đã kết thúc nhưng có lỗi. Một số sản phẩm chưa được xóa.',
+                        ],
+                    ],
                     'name'                    => 'Tên',
                     'out-of-stock'            => 'Hết hàng',
                     'price'                   => 'Giá',

@@ -247,6 +247,20 @@ return [
                     'mass-delete-success'    => 'Selected Products Deleted Successfully',
                     'mass-update-queued'     => 'Selected Products Are Being Updated In The Background',
                     'mass-update-success'    => 'Selected Products Updated Successfully',
+                    'select-all'             => [
+                        'update-status' => [
+                            'queued'    => 'Status update queued for every matching product. You will be notified when it finishes.',
+                            'title'     => 'Product status update',
+                            'completed' => 'Status updated for :count products.',
+                            'failed'    => 'Status update of :count products finished with errors. Some products were not updated.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Deletion queued for every matching product. You will be notified when it finishes.',
+                            'title'     => 'Product deletion',
+                            'completed' => ':count products deleted.',
+                            'failed'    => 'Deletion of :count products finished with errors. Some products were not deleted.',
+                        ],
+                    ],
                     'name'                   => 'Name',
                     'out-of-stock'           => 'Out of Stock',
                     'price'                  => 'Price',

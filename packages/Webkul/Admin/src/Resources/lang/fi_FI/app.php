@@ -236,6 +236,20 @@ return [
                     'mass-delete-success'     => 'Valitut tuotteet poistettiin onnistuneesti',
                     'mass-update-queued'      => 'Valittuja tuotteita päivitetään taustalla',
                     'mass-update-success'     => 'Valitut tuotteet päivitettiin onnistuneesti',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Tilan päivitys on lisätty jonoon kaikille vastaaville tuotteille. Saat ilmoituksen, kun se on valmis.',
+                            'title'     => 'Tuotteiden tilan päivitys',
+                            'completed' => 'Tila päivitetty :count tuotteelle.',
+                            'failed'    => ':count tuotteen tilan päivitys päättyi virheisiin. Joitakin tuotteita ei päivitetty.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Poisto on lisätty jonoon kaikille vastaaville tuotteille. Saat ilmoituksen, kun se on valmis.',
+                            'title'     => 'Tuotteiden poisto',
+                            'completed' => ':count tuotetta poistettu.',
+                            'failed'    => ':count tuotteen poisto päättyi virheisiin. Joitakin tuotteita ei poistettu.',
+                        ],
+                    ],
                     'name'                    => 'Nimi',
                     'out-of-stock'            => 'Loppunut varastosta',
                     'price'                   => 'Hinta',

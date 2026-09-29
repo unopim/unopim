@@ -80,3 +80,32 @@ test('bulk edit with every matching product selected is accepted by the server',
     expect(response.ok()).toBeTruthy();
   }
 });
+
+test('a queued select-all action flashes its message and reloads the grid', async ({ page }) => {
+  test.setTimeout(120000);
+
+  await selectAllMatching(page);
+
+  let requests = 0;
+
+  await page.route('**/admin/catalog/products/mass-update', async (route) => {
+    requests++;
+
+    await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Status update queued' }) });
+  });
+
+  await page.getByRole('button', { name: 'Select Action' }).click();
+  await page.getByText('Update Status', { exact: true }).hover();
+  await page.getByText('Enable', { exact: true }).click();
+
+  const reload = page.waitForResponse((response) => response.url().includes('/admin/catalog/products?')
+    && response.request().method() === 'GET', { timeout: 90000 });
+
+  await page.getByRole('button', { name: 'Agree', exact: true }).click();
+
+  await expect(page.getByText('Status update queued', { exact: true })).toBeVisible();
+
+  expect((await reload).ok()).toBeTruthy();
+  await expect(page.getByRole('button', { name: 'Filter' })).toBeVisible();
+  expect(requests).toBe(1);
+});
