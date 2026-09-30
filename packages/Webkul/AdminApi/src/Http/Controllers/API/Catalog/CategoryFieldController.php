@@ -193,6 +193,11 @@ class CategoryFieldController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        $payloadValidator = Validator::make($requestData, ['*' => 'array']);
+        if ($payloadValidator->fails()) {
+            return $this->validateErrorResponse($payloadValidator);
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
@@ -236,10 +241,21 @@ class CategoryFieldController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        $payloadValidator = Validator::make($requestData, ['*' => 'array']);
+        if ($payloadValidator->fails()) {
+            return $this->validateErrorResponse($payloadValidator);
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
+
+                if (! isset($optionInputs['code'])) {
+                    $errors[] = Validator::make($optionInputs, ['code' => 'required'])->errors();
+
+                    continue;
+                }
 
                 $categoryFieldOption = $this->categoryFieldOptionRepository
                     ->findOneWhere(['code' => $optionInputs['code'], 'category_field_id' => $categoryField->id]);

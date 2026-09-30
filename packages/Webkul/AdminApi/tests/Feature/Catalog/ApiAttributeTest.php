@@ -755,6 +755,41 @@ it('should update a single attribute option sent as one object instead of an arr
     ]);
 });
 
+it('should return validation errors when attribute options are sent as a list of strings on store', function () {
+    $attribute = Attribute::factory()->create(['code' => 'malformed_store_attribute', 'type' => 'select']);
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.attribute_options.store_option', $attribute->code), ['bainbridge'])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['0']);
+
+    $this->assertDatabaseMissing('attribute_options', [
+        'attribute_id' => $attribute->id,
+        'code'         => 'bainbridge',
+    ]);
+});
+
+it('should return validation errors when attribute options are sent as a list of strings on update', function () {
+    $attribute = Attribute::factory()->create(['code' => 'malformed_update_attribute', 'type' => 'select']);
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attribute_options.update_option', $attribute->code), [1, 2])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['0', '1']);
+});
+
+it('should return required validation when a single attribute option is updated without a code', function () {
+    $attribute = Attribute::factory()->create(['code' => 'missing_code_update_attribute', 'type' => 'select']);
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attribute_options.update_option', $attribute->code), ['sort_order' => 1])
+        ->assertUnprocessable()
+        ->assertJsonStructure([
+            'errors' => [
+                '*' => [
+                    'code',
+                ],
+            ],
+        ]);
+});
+
 it('should successfully upload an image swatch', function () {
     $attribute = Attribute::factory()->create([
         'code'        => 'color_attribute',

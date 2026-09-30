@@ -181,6 +181,11 @@ class AttributeController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        $payloadValidator = Validator::make($requestData, ['*' => 'array']);
+        if ($payloadValidator->fails()) {
+            return $this->validateErrorResponse($payloadValidator);
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
@@ -222,10 +227,22 @@ class AttributeController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        $payloadValidator = Validator::make($requestData, ['*' => 'array']);
+        if ($payloadValidator->fails()) {
+            return $this->validateErrorResponse($payloadValidator);
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
+
+                if (! isset($optionInputs['code'])) {
+                    $errors[] = Validator::make($optionInputs, ['code' => 'required'])->errors();
+
+                    continue;
+                }
+
                 $attributeOption = $this->attributeOptionRepository->findOneByField('code', $optionInputs['code']);
                 if (! $attributeOption) {
                     $validator = $this->optionValidate($optionInputs, $attribute->id);
