@@ -51,11 +51,10 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             return;
         }
 
-        $existing = $index->existingDocuments(array_column($documents, 'product_id'));
-
-        $staleFamilies = $this->staleAttributeFamilies($existing, $documents);
-
-        $documents = $this->rejectUnchanged($existing, $documents);
+        [$documents, $staleFamilies] = $this->partitionDocuments(
+            $index->existingDocuments(array_column($documents, 'product_id')),
+            $documents,
+        );
 
         if ($documents === [] && $staleFamilies === []) {
             return;
@@ -140,42 +139,47 @@ class IndexProductEmbeddingsJob implements ShouldQueue
      * Drop documents whose stored content hash already matches, avoiding
      * needless embedding calls and index writes.
      *
-     * @param  array<int, array{content_hash: string, attribute_family_id: ?int}>  $existing
+     * @deprecated Use partitionDocuments(); removal in the next major.
+     *
      * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>  $documents
      * @return array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>
      */
-    protected function rejectUnchanged(array $existing, array $documents): array
+    protected function rejectUnchanged(ProductEmbeddingIndex $index, array $documents): array
     {
-        return array_values(array_filter(
+        return $this->partitionDocuments(
+            $index->existingDocuments(array_column($documents, 'product_id')),
             $documents,
-            fn (array $document): bool => ($existing[$document['product_id']]['content_hash'] ?? null) !== $document['content_hash'],
-        ));
+        )[0];
     }
 
     /**
-     * Attribute families to repair on unchanged documents whose stored family
-     * is missing or outdated, keyed by product id.
+     * Split documents into those needing (re-)embedding because their content
+     * hash changed, and the attribute families to repair on unchanged documents
+     * whose stored family is missing or outdated (keyed by product id).
      *
      * @param  array<int, array{content_hash: string, attribute_family_id: ?int}>  $existing
      * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>  $documents
-     * @return array<int, ?int>
+     * @return array{0: array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>, 1: array<int, ?int>}
      */
-    protected function staleAttributeFamilies(array $existing, array $documents): array
+    protected function partitionDocuments(array $existing, array $documents): array
     {
-        $stale = [];
+        $changed = [];
+        $staleFamilies = [];
 
         foreach ($documents as $document) {
             $stored = $existing[$document['product_id']] ?? null;
 
             if ($stored === null || $stored['content_hash'] !== $document['content_hash']) {
+                $changed[] = $document;
+
                 continue;
             }
 
             if ($stored['attribute_family_id'] !== $document['attribute_family_id']) {
-                $stale[$document['product_id']] = $document['attribute_family_id'];
+                $staleFamilies[$document['product_id']] = $document['attribute_family_id'];
             }
         }
 
-        return $stale;
+        return [$changed, $staleFamilies];
     }
 }

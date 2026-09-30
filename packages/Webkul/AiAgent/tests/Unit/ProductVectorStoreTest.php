@@ -330,3 +330,28 @@ it('queues re-indexing when a product changes attribute family', function () {
 
     Queue::assertPushed(IndexProductEmbeddingsJob::class);
 });
+
+it('keeps rejectUnchanged returning only the documents whose content hash changed', function () {
+    config(['ai-agent.vector_store.enabled' => true, 'elasticsearch.enabled' => true]);
+
+    $documents = [
+        ['product_id' => 1, 'sku' => 'A', 'text' => 'a', 'content_hash' => 'same', 'attribute_family_id' => 2],
+        ['product_id' => 2, 'sku' => 'B', 'text' => 'b', 'content_hash' => 'new', 'attribute_family_id' => 1],
+        ['product_id' => 3, 'sku' => 'C', 'text' => 'c', 'content_hash' => 'fresh', 'attribute_family_id' => 1],
+    ];
+
+    (new InMemoryEmbeddingElasticSearch([
+        1 => ['content_hash' => 'same', 'attribute_family_id' => null],
+        2 => ['content_hash' => 'old', 'attribute_family_id' => 1],
+    ]))->install();
+
+    $job = new class([1, 2, 3]) extends IndexProductEmbeddingsJob
+    {
+        public function callRejectUnchanged(ProductEmbeddingIndex $index, array $documents): array
+        {
+            return $this->rejectUnchanged($index, $documents);
+        }
+    };
+
+    expect($job->callRejectUnchanged(new ProductEmbeddingIndex, $documents))->toBe([$documents[1], $documents[2]]);
+});
