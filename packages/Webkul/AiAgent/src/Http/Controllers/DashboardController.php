@@ -32,19 +32,19 @@ class DashboardController extends Controller
         // Token usage today
         $todayUsage = DB::table('ai_agent_token_usage')
             ->where('usage_date', $today)
-            ->selectRaw('SUM(tokens_used) as tokens, SUM(request_count) as requests')
+            ->selectRaw('SUM(tokens_used) as tokens, SUM(cached_tokens) as cached_tokens, SUM(request_count) as requests')
             ->first();
 
         // Token usage this week
         $weekUsage = DB::table('ai_agent_token_usage')
             ->where('usage_date', '>=', $weekAgo)
-            ->selectRaw('SUM(tokens_used) as tokens, SUM(request_count) as requests')
+            ->selectRaw('SUM(tokens_used) as tokens, SUM(cached_tokens) as cached_tokens, SUM(request_count) as requests')
             ->first();
 
         // Daily breakdown (last 7 days)
         $dailyBreakdown = DB::table('ai_agent_token_usage')
             ->where('usage_date', '>=', $weekAgo)
-            ->selectRaw('usage_date, SUM(tokens_used) as tokens, SUM(request_count) as requests')
+            ->selectRaw('usage_date, SUM(tokens_used) as tokens, SUM(cached_tokens) as cached_tokens, SUM(request_count) as requests')
             ->groupBy('usage_date')
             ->oldest('usage_date')
             ->get();
@@ -59,12 +59,14 @@ class DashboardController extends Controller
 
         return new JsonResponse([
             'today' => [
-                'tokens'   => (int) ($todayUsage->tokens ?? 0),
-                'requests' => (int) ($todayUsage->requests ?? 0),
+                'tokens'        => (int) ($todayUsage->tokens ?? 0),
+                'cached_tokens' => (int) ($todayUsage->cached_tokens ?? 0),
+                'requests'      => (int) ($todayUsage->requests ?? 0),
             ],
             'week' => [
-                'tokens'   => (int) ($weekUsage->tokens ?? 0),
-                'requests' => (int) ($weekUsage->requests ?? 0),
+                'tokens'        => (int) ($weekUsage->tokens ?? 0),
+                'cached_tokens' => (int) ($weekUsage->cached_tokens ?? 0),
+                'requests'      => (int) ($weekUsage->requests ?? 0),
             ],
             'daily_breakdown' => $dailyBreakdown,
             'budget'          => $budget > 0 ? $budget : null,

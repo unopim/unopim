@@ -76,8 +76,9 @@ class AgentRunner
             'reply'  => $response->text ?: trans('ai-agent::app.common.operation-completed'),
             'action' => 'agent_response',
             'data'   => [
-                'steps'       => $response->steps->count(),
-                'tokens_used' => $tokensUsed,
+                'steps'         => $response->steps->count(),
+                'tokens_used'   => $tokensUsed,
+                'cached_tokens' => $usage->cacheReadInputTokens ?? 0,
             ],
         ];
 
@@ -158,15 +159,17 @@ class AgentRunner
                         $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
                         $usage = $stream->usage;
                         $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
+                        $cachedTokens = $usage?->cacheReadInputTokens ?? 0;
 
-                        $this->recordStreamingTokens($context, $tokensUsed);
+                        $this->recordStreamingTokens($context, $tokensUsed, $cachedTokens);
 
                         $result = [
                             'reply'  => $finalText,
                             'action' => 'agent_response',
                             'data'   => [
-                                'steps'       => $stepCount,
-                                'tokens_used' => $tokensUsed,
+                                'steps'         => $stepCount,
+                                'tokens_used'   => $tokensUsed,
+                                'cached_tokens' => $cachedTokens,
                             ],
                         ];
 
@@ -258,9 +261,9 @@ class AgentRunner
     /**
      * Record token usage from streaming requests for budget enforcement.
      */
-    protected function recordStreamingTokens(ChatContext $context, int $tokensUsed): void
+    protected function recordStreamingTokens(ChatContext $context, int $tokensUsed, int $cachedTokens = 0): void
     {
-        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed);
+        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed, $cachedTokens);
     }
 
     /**
