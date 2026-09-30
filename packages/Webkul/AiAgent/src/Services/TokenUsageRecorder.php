@@ -90,6 +90,15 @@ class TokenUsageRecorder
     }
 
     /**
+     * Determine whether cached token counts are stored (the additive
+     * cached_tokens migration has run).
+     */
+    public function tracksCachedTokens(): bool
+    {
+        return $this->hasCachedTokensColumn();
+    }
+
+    /**
      * Check once per process whether the additive cached_tokens migration ran.
      */
     protected function hasCachedTokensColumn(): bool
