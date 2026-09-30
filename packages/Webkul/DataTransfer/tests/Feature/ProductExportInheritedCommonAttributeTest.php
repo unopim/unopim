@@ -19,16 +19,25 @@ use Webkul\Product\Repositories\ProductRepository;
  * A common attribute set only on the root parent must still export for a
  * variant group or a child variant, whether the hierarchy is 1-level
  * (Parent -> Child) or 2-level (Parent -> Variant Group -> Child).
+ *
+ * The job is scoped to one channel and locale so each product yields exactly
+ * one row however many channels and locales the database holds.
  */
 function exportInheritanceJobTrack(): JobTrack
 {
+    $channel = core()->getDefaultChannel();
+
     $jobInstance = JobInstances::create([
         'code'                => 'inherit_export_'.uniqid(),
         'entity_type'         => 'products',
         'type'                => 'export',
         'action'              => 'export',
         'validation_strategy' => 'stop-on-errors',
-        'filters'             => ['file_format' => 'Csv'],
+        'filters'             => [
+            'file_format' => 'Csv',
+            'channels'    => [$channel->code],
+            'locales'     => [$channel->locales->first()->code],
+        ],
     ]);
 
     return JobTrack::create([

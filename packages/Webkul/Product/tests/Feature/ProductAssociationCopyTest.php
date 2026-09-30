@@ -31,14 +31,14 @@ it('dual-writes associations to the link table when a product is copied', functi
         'up_sells'         => [$upSell->sku],
     ], $source->id);
 
-    $this->assertDatabaseCount('product_associations', 2);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(2);
 
     $copiedProduct = $this->productRepository->copy($source->id);
 
     expect($copiedProduct->values['associations']['related_products'] ?? null)->toBe([$related->sku])
         ->and($copiedProduct->values['associations']['up_sells'] ?? null)->toBe([$upSell->sku]);
 
-    $this->assertDatabaseCount('product_associations', 4);
+    expect(DB::table('product_associations')->where('product_id', $copiedProduct->id)->count())->toBe(2);
 
     expect(
         DB::table('product_associations')
@@ -67,7 +67,8 @@ it('does not create link-table rows when copying a product without associations'
 
     $copiedProduct = $this->productRepository->copy($source->id);
 
-    $this->assertDatabaseCount('product_associations', 0);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $source->id]);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $copiedProduct->id]);
 
     expect($copiedProduct->id)->not->toBe($source->id);
 });
