@@ -181,6 +181,10 @@ class AttributeController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
@@ -222,11 +226,23 @@ class AttributeController extends ApiController
 
         $requestData = $this->normalizeOptionsPayload(request()->all());
 
+        if ($errorResponse = $this->validateOptionsPayload($requestData)) {
+            return $errorResponse;
+        }
+
         try {
             $errors = [];
             foreach ($requestData as $optionInputs) {
                 $optionInputs = $this->setLabels($optionInputs, 'label');
-                $attributeOption = $this->attributeOptionRepository->findOneByField('code', $optionInputs['code']);
+
+                if (! isset($optionInputs['code'])) {
+                    $errors[] = Validator::make($optionInputs, ['code' => 'required'])->errors();
+
+                    continue;
+                }
+
+                $attributeOption = $this->attributeOptionRepository
+                    ->findOneWhere(['code' => $optionInputs['code'], 'attribute_id' => $attribute->id]);
                 if (! $attributeOption) {
                     $validator = $this->optionValidate($optionInputs, $attribute->id);
                     if ($validator->fails()) {
@@ -283,22 +299,6 @@ class AttributeController extends ApiController
         } catch (\Exception $e) {
             return $this->storeExceptionLog($e);
         }
-    }
-
-    /**
-     * Normalizes the options payload so a single option object is treated the
-     * same as a list containing one option.
-     *
-     * @param  array<mixed>  $requestData
-     * @return array<int, array<string, mixed>>
-     */
-    private function normalizeOptionsPayload(array $requestData): array
-    {
-        if (empty($requestData) || array_is_list($requestData)) {
-            return $requestData;
-        }
-
-        return [$requestData];
     }
 
     /**

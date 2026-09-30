@@ -4,6 +4,7 @@ namespace Webkul\AdminApi\Http\Controllers\API;
 
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Support\Facades\Validator;
 use Webkul\AdminApi\Traits\ApiResponse;
@@ -34,6 +35,34 @@ class ApiController extends BaseController
         $requestData = array_merge($requestData, $labels);
 
         return $requestData;
+    }
+
+    /**
+     * Normalizes an options payload so a single option object is treated the
+     * same as a list containing one option.
+     *
+     * @param  array<mixed>  $requestData
+     * @return array<int, mixed>
+     */
+    protected function normalizeOptionsPayload(array $requestData): array
+    {
+        if (empty($requestData) || array_is_list($requestData)) {
+            return $requestData;
+        }
+
+        return [$requestData];
+    }
+
+    /**
+     * Returns a validation error response when any item of a normalized options payload is not an object.
+     *
+     * @param  array<int, mixed>  $options
+     */
+    protected function validateOptionsPayload(array $options): ?JsonResponse
+    {
+        $validator = Validator::make($options, ['*' => 'array']);
+
+        return $validator->fails() ? $this->validateErrorResponse($validator) : null;
     }
 
     /**
