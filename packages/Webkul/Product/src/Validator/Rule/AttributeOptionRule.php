@@ -20,7 +20,7 @@ class AttributeOptionRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if (empty($value)) {
+        if (! is_filled_value($value)) {
             return;
         }
 

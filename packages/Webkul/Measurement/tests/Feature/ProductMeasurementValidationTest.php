@@ -6,6 +6,7 @@ use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Measurement\Observers\ProductObserver;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Validator\CommonValuesValidator;
 
 beforeEach(function () {
@@ -83,6 +84,30 @@ it('does not throw when an optional measurement value is empty', function () {
     app(ProductObserver::class)->saving($product);
 
     expect($product->values['common'])->not->toHaveKey($attribute->code);
+});
+
+it('stores a zero amount for a required measurement saved through the product repository', function () {
+    $attribute = requiredMeasurementAttribute();
+
+    $product = Product::factory()->withInitialValues()->create();
+
+    app(ProductRepository::class)->update([
+        'values' => ['common' => [$attribute->code => ['value' => '0', 'unit' => 'meter']]],
+    ], $product->id);
+
+    expect((float) Product::find($product->id)->values['common'][$attribute->code]['amount'])->toBe(0.0);
+});
+
+it('removes a blank measurement saved through the product repository', function () {
+    $attribute = requiredMeasurementAttribute(isRequired: false);
+
+    $product = Product::factory()->withInitialValues()->create();
+
+    app(ProductRepository::class)->update([
+        'values' => ['common' => [$attribute->code => ['value' => '', 'unit' => 'meter']]],
+    ], $product->id);
+
+    expect(Product::find($product->id)->values['common'])->not->toHaveKey($attribute->code);
 });
 
 function decimalMeasurementAttribute(bool $isRequired = false): Attribute
