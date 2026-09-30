@@ -790,6 +790,84 @@ it('should return required validation when a single attribute option is updated 
         ]);
 });
 
+it('should only update the option of the requested attribute when another attribute shares the option code', function () {
+    $otherAttribute = Attribute::factory()->create(['code' => 'shared_code_other_attribute', 'type' => 'select']);
+    $attribute = Attribute::factory()->create(['code' => 'shared_code_target_attribute', 'type' => 'select']);
+
+    $otherOption = AttributeOption::factory()->create([
+        'attribute_id' => $otherAttribute->id,
+        'code'         => 'shared',
+        'sort_order'   => 1,
+    ]);
+
+    $option = AttributeOption::factory()->create([
+        'attribute_id' => $attribute->id,
+        'code'         => 'shared',
+        'sort_order'   => 1,
+    ]);
+
+    $localeCode = Locale::where('status', 1)->first()->code;
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attribute_options.update_option', $attribute->code), [
+        'code'       => 'shared',
+        'sort_order' => 7,
+        'labels'     => [
+            $localeCode => 'Scoped Label',
+        ],
+    ])
+        ->assertOk();
+
+    $this->assertDatabaseHas('attribute_options', [
+        'id'         => $option->id,
+        'sort_order' => 7,
+    ]);
+
+    $this->assertDatabaseHas('attribute_option_translations', [
+        'attribute_option_id' => $option->id,
+        'locale'              => $localeCode,
+        'label'               => 'Scoped Label',
+    ]);
+
+    $this->assertDatabaseHas('attribute_options', [
+        'id'         => $otherOption->id,
+        'sort_order' => 1,
+    ]);
+
+    $this->assertDatabaseMissing('attribute_option_translations', [
+        'attribute_option_id' => $otherOption->id,
+        'label'               => 'Scoped Label',
+    ]);
+});
+
+it('should create the option under the requested attribute when the code only exists under another attribute', function () {
+    $otherAttribute = Attribute::factory()->create(['code' => 'foreign_code_other_attribute', 'type' => 'select']);
+    $attribute = Attribute::factory()->create(['code' => 'foreign_code_target_attribute', 'type' => 'select']);
+
+    $otherOption = AttributeOption::factory()->create([
+        'attribute_id' => $otherAttribute->id,
+        'code'         => 'foreign_only',
+        'sort_order'   => 1,
+    ]);
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attribute_options.update_option', $attribute->code), [
+        'code'       => 'foreign_only',
+        'sort_order' => 4,
+    ])
+        ->assertOk();
+
+    $this->assertDatabaseHas('attribute_options', [
+        'attribute_id' => $attribute->id,
+        'code'         => 'foreign_only',
+        'sort_order'   => 4,
+    ]);
+
+    $this->assertDatabaseHas('attribute_options', [
+        'id'           => $otherOption->id,
+        'attribute_id' => $otherAttribute->id,
+        'sort_order'   => 1,
+    ]);
+});
+
 it('should successfully upload an image swatch', function () {
     $attribute = Attribute::factory()->create([
         'code'        => 'color_attribute',

@@ -243,7 +243,8 @@ class AttributeController extends ApiController
                     continue;
                 }
 
-                $attributeOption = $this->attributeOptionRepository->findOneByField('code', $optionInputs['code']);
+                $attributeOption = $this->attributeOptionRepository
+                    ->findOneWhere(['code' => $optionInputs['code'], 'attribute_id' => $attribute->id]);
                 if (! $attributeOption) {
                     $validator = $this->optionValidate($optionInputs, $attribute->id);
                     if ($validator->fails()) {
