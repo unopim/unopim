@@ -3,8 +3,11 @@
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Tools\CategoryTree;
+use Webkul\AiAgent\Services\EmbeddingSimilarityService;
+use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Category\Models\Category;
 use Webkul\MagicAI\Models\MagicAIPlatform;
+use Webkul\Product\Models\Product;
 
 it('respects children_per_level and reports totals on the root listing', function () {
     $admin = $this->loginAsAdmin();
@@ -111,6 +114,188 @@ it('returns an error for an unknown parent_code', function () {
     expect($result['error'])->toContain('not found');
 });
 
+it('scopes the tree to branches holding products of the given family', function () {
+    $admin = $this->loginAsAdmin();
+
+    $fixture = createCategoryTreeFixture();
+
+    $family = AttributeFamily::factory()->create();
+    $otherFamily = AttributeFamily::factory()->create();
+
+    createProductInCategories($family, [$fixture['grandchildren'][1]->code]);
+    createProductInCategories($family, [$fixture['children'][2]->code]);
+    createProductInCategories($otherFamily, [$fixture['children'][3]->code]);
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code'        => $fixture['parent']->code,
+        'family_code'        => $family->code,
+        'depth'              => 2,
+        'children_per_level' => 10,
+    ]);
+
+    expect(array_column($result['categories'], 'code'))->toEqualCanonicalizing([
+        $fixture['children'][0]->code,
+        $fixture['children'][2]->code,
+    ]);
+    expect($result['total_at_level'])->toBe(2);
+    expect($result['has_more_at_level'])->toBeFalse();
+
+    $firstChild = collect($result['categories'])->firstWhere('code', $fixture['children'][0]->code);
+
+    expect($firstChild['total_children'])->toBe(1);
+    expect(array_column($firstChild['children'], 'code'))->toBe([$fixture['grandchildren'][1]->code]);
+    expect($firstChild['has_more'])->toBeFalse();
+});
+
+it('returns an empty scoped tree when the family has no categorised products', function () {
+    $admin = $this->loginAsAdmin();
+
+    $fixture = createCategoryTreeFixture();
+
+    $family = AttributeFamily::factory()->create();
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code' => $fixture['parent']->code,
+        'family_code' => $family->code,
+    ]);
+
+    expect($result['categories'])->toBeEmpty();
+    expect($result['total_at_level'])->toBe(0);
+});
+
+it('returns an error for an unknown family_code', function () {
+    $admin = $this->loginAsAdmin();
+
+    $familyCode = 'ct_missing_family_'.random_int(100000, 999999);
+
+    $result = invokeCategoryTreeTool($admin, ['family_code' => $familyCode]);
+
+    expect($result)->toHaveKey('error');
+    expect($result['error'])->toBe(trans('ai-agent::app.common.import-family-not-found', ['family' => $familyCode]));
+});
+
+it('ranks every sibling so a relevant category beyond the first 100 is reached', function () {
+    $admin = $this->loginAsAdmin();
+
+    $suffix = 'ct'.random_int(100000, 999999);
+
+    $parent = Category::factory()->create(['code' => "wide_parent_{$suffix}", 'parent_id' => null]);
+
+    for ($index = 0; $index < 105; $index++) {
+        Category::factory()->create([
+            'code'      => "wide_child_{$index}_{$suffix}",
+            'parent_id' => $parent->id,
+        ]);
+    }
+
+    $fake = fakeCategoryRelevance(["wide_child_104_{$suffix}" => 0.9]);
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code'        => $parent->code,
+        'depth'              => 1,
+        'children_per_level' => 1,
+        'relevance_query'    => 'needle',
+    ]);
+
+    expect(array_column($result['categories'], 'code'))->toBe(["wide_child_104_{$suffix}"]);
+    expect($result['total_at_level'])->toBe(105);
+    expect($result['has_more_at_level'])->toBeTrue();
+    expect(array_sum($fake->batchSizes))->toBe(105);
+});
+
+it('batches relevance embeddings and honours the configured candidate cap', function () {
+    $admin = $this->loginAsAdmin();
+
+    config([
+        'ai-agent.category_tree.relevance_batch_size'      => 4,
+        'ai-agent.category_tree.relevance_candidate_limit' => 3,
+    ]);
+
+    $fixture = createCategoryTreeFixture();
+
+    $fake = fakeCategoryRelevance([$fixture['children'][4]->code => 0.9]);
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code'        => $fixture['parent']->code,
+        'depth'              => 1,
+        'children_per_level' => 1,
+        'relevance_query'    => 'needle',
+    ]);
+
+    expect($fake->batchSizes)->toBe([3]);
+    expect(array_column($result['categories'], 'code'))->not->toContain($fixture['children'][4]->code);
+
+    config(['ai-agent.category_tree.relevance_candidate_limit' => 10]);
+
+    $fake->batchSizes = [];
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code'        => $fixture['parent']->code,
+        'depth'              => 1,
+        'children_per_level' => 1,
+        'relevance_query'    => 'needle',
+    ]);
+
+    expect($fake->batchSizes)->toBe([4, 1]);
+    expect(array_column($result['categories'], 'code'))->toBe([$fixture['children'][4]->code]);
+});
+
+it('orders deeper levels by relevance when a relevance_query is given', function () {
+    $admin = $this->loginAsAdmin();
+
+    $fixture = createCategoryTreeFixture();
+
+    $extra = Category::factory()->create([
+        'code'      => 'tree_grandchild_2_'.$fixture['suffix'],
+        'parent_id' => $fixture['children'][0]->id,
+    ]);
+
+    fakeCategoryRelevance([
+        $fixture['children'][0]->code      => 0.9,
+        $extra->code                       => 0.8,
+        $fixture['grandchildren'][1]->code => 0.5,
+    ]);
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code'        => $fixture['parent']->code,
+        'depth'              => 2,
+        'children_per_level' => 2,
+        'relevance_query'    => 'needle',
+    ]);
+
+    expect($result['categories'][0]['code'])->toBe($fixture['children'][0]->code);
+    expect(array_column($result['categories'][0]['children'], 'code'))->toBe([
+        $extra->code,
+        $fixture['grandchildren'][1]->code,
+    ]);
+    expect($result['categories'][0]['total_children'])->toBe(3);
+    expect($result['categories'][0]['has_more'])->toBeTrue();
+});
+
+it('keeps tree order and skips embeddings when no relevance_query is given', function () {
+    $admin = $this->loginAsAdmin();
+
+    $fixture = createCategoryTreeFixture();
+
+    $fake = fakeCategoryRelevance([$fixture['children'][4]->code => 0.9]);
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code'        => $fixture['parent']->code,
+        'depth'              => 2,
+        'children_per_level' => 2,
+    ]);
+
+    expect($fake->batchSizes)->toBe([]);
+    expect(array_column($result['categories'], 'code'))->toBe([
+        $fixture['children'][0]->code,
+        $fixture['children'][1]->code,
+    ]);
+    expect(array_column($result['categories'][0]['children'], 'code'))->toBe([
+        $fixture['grandchildren'][0]->code,
+        $fixture['grandchildren'][1]->code,
+    ]);
+});
+
 /**
  * Build a branch fixture: one parent with five children, the first child having two grandchildren.
  *
@@ -183,4 +368,66 @@ function invokeCategoryTreeTool($admin, array $parameters): array
         512,
         JSON_THROW_ON_ERROR
     );
+}
+
+/**
+ * Create a product of the given family assigned to the given category codes.
+ *
+ * @param  array<int, string>  $categoryCodes
+ */
+function createProductInCategories(AttributeFamily $family, array $categoryCodes): Product
+{
+    $sku = 'CT-'.random_int(100000, 999999);
+
+    return Product::factory()->create([
+        'sku'                 => $sku,
+        'attribute_family_id' => $family->id,
+        'values'              => [
+            'common'     => ['sku' => $sku],
+            'categories' => $categoryCodes,
+        ],
+    ]);
+}
+
+/**
+ * Bind a deterministic similarity service scoring documents by category code and recording batch sizes.
+ *
+ * @param  array<string, float>  $scores
+ */
+function fakeCategoryRelevance(array $scores): EmbeddingSimilarityService
+{
+    $fake = new class($scores) extends EmbeddingSimilarityService
+    {
+        /** @var array<int, int> */
+        public array $batchSizes = [];
+
+        /**
+         * @param  array<string, float>  $scores
+         */
+        public function __construct(protected array $scores)
+        {
+            parent::__construct();
+        }
+
+        public function rank(string $query, array $documents, ?int $limit = null): array
+        {
+            $this->batchSizes[] = count($documents);
+
+            $ranked = [];
+
+            foreach ($documents as $index => $document) {
+                $code = trim(explode('|', $document)[0]);
+
+                $ranked[] = ['index' => $index, 'score' => $this->scores[$code] ?? 0.1];
+            }
+
+            usort($ranked, fn (array $a, array $b): int => $b['score'] <=> $a['score']);
+
+            return array_slice($ranked, 0, $limit ?? count($ranked));
+        }
+    };
+
+    app()->instance(EmbeddingSimilarityService::class, $fake);
+
+    return $fake;
 }
