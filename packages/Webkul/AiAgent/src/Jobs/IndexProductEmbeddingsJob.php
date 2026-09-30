@@ -15,7 +15,8 @@ use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
  * persistent Elasticsearch vector store.
  *
  * Skips products whose embedded text is unchanged (content hash match), so
- * re-runs are cheap and the indexer is resumable.
+ * re-runs are cheap and the indexer is resumable. Unchanged products whose
+ * stored attribute family is stale get a metadata-only update instead.
  */
 class IndexProductEmbeddingsJob implements ShouldQueue
 {
@@ -50,15 +51,25 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             return;
         }
 
-        $documents = $this->rejectUnchanged($index, $documents);
+        $existing = $index->existingDocuments(array_column($documents, 'product_id'));
+
+        $staleFamilies = $this->staleAttributeFamilies($existing, $documents);
+
+        $documents = $this->rejectUnchanged($existing, $documents);
+
+        if ($documents === [] && $staleFamilies === []) {
+            return;
+        }
+
+        $index->ensureIndex();
+
+        $index->bulkUpdateAttributeFamilies($staleFamilies);
 
         if ($documents === []) {
             return;
         }
 
         try {
-            $index->ensureIndex();
-
             $response = Embeddings::for(array_column($documents, 'text'))
                 ->cache()
                 ->generate();
@@ -85,10 +96,11 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             }
 
             $upserts[] = [
-                'product_id'   => $document['product_id'],
-                'sku'          => $document['sku'],
-                'content_hash' => $document['content_hash'],
-                'embedding'    => $vector,
+                'product_id'          => $document['product_id'],
+                'sku'                 => $document['sku'],
+                'attribute_family_id' => $document['attribute_family_id'],
+                'content_hash'        => $document['content_hash'],
+                'embedding'           => $vector,
             ];
         }
 
@@ -98,7 +110,7 @@ class IndexProductEmbeddingsJob implements ShouldQueue
     /**
      * Load the batch rows and build their embeddable documents.
      *
-     * @return array<int, array{product_id: int, sku: ?string, text: string, content_hash: string}>
+     * @return array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>
      */
     protected function buildDocuments(ProductEmbeddingDocumentBuilder $documentBuilder): array
     {
@@ -128,16 +140,42 @@ class IndexProductEmbeddingsJob implements ShouldQueue
      * Drop documents whose stored content hash already matches, avoiding
      * needless embedding calls and index writes.
      *
-     * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string}>  $documents
-     * @return array<int, array{product_id: int, sku: ?string, text: string, content_hash: string}>
+     * @param  array<int, array{content_hash: string, attribute_family_id: ?int}>  $existing
+     * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>  $documents
+     * @return array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>
      */
-    protected function rejectUnchanged(ProductEmbeddingIndex $index, array $documents): array
+    protected function rejectUnchanged(array $existing, array $documents): array
     {
-        $existingHashes = $index->existingContentHashes(array_column($documents, 'product_id'));
-
         return array_values(array_filter(
             $documents,
-            fn (array $document): bool => ($existingHashes[$document['product_id']] ?? null) !== $document['content_hash'],
+            fn (array $document): bool => ($existing[$document['product_id']]['content_hash'] ?? null) !== $document['content_hash'],
         ));
+    }
+
+    /**
+     * Attribute families to repair on unchanged documents whose stored family
+     * is missing or outdated, keyed by product id.
+     *
+     * @param  array<int, array{content_hash: string, attribute_family_id: ?int}>  $existing
+     * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string, attribute_family_id: ?int}>  $documents
+     * @return array<int, ?int>
+     */
+    protected function staleAttributeFamilies(array $existing, array $documents): array
+    {
+        $stale = [];
+
+        foreach ($documents as $document) {
+            $stored = $existing[$document['product_id']] ?? null;
+
+            if ($stored === null || $stored['content_hash'] !== $document['content_hash']) {
+                continue;
+            }
+
+            if ($stored['attribute_family_id'] !== $document['attribute_family_id']) {
+                $stale[$document['product_id']] = $document['attribute_family_id'];
+            }
+        }
+
+        return $stale;
     }
 }
