@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Mockery\MockInterface;
 use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\User\Models\Admin;
 
@@ -59,4 +60,21 @@ it('exposes cached tokens in the agent usage analytics', function () {
     expect($response->json('today.cached_tokens'))->toBe(600)
         ->and($response->json('week.cached_tokens'))->toBe(600)
         ->and((int) $response->json('daily_breakdown.0.cached_tokens'))->toBe(600);
+});
+
+it('reports zero cached tokens in analytics when the cached_tokens column is absent', function () {
+    $this->actingAs(Admin::factory()->create(), 'admin');
+
+    DB::table('ai_agent_token_usage')->where('usage_date', '>=', now()->subDays(7)->toDateString())->delete();
+
+    app(TokenUsageRecorder::class)->record($this->admin->id, 900, 600);
+
+    $this->mock(TokenUsageRecorder::class, fn (MockInterface $mock) => $mock->shouldReceive('tracksCachedTokens')->andReturnFalse());
+
+    $response = $this->getJson(route('ai-agent.dashboard.analytics'))->assertOk();
+
+    expect($response->json('today.tokens'))->toBe(900)
+        ->and($response->json('today.cached_tokens'))->toBe(0)
+        ->and($response->json('week.cached_tokens'))->toBe(0)
+        ->and((int) $response->json('daily_breakdown.0.cached_tokens'))->toBe(0);
 });

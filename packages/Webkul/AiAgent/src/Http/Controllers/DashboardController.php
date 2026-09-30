@@ -5,6 +5,7 @@ namespace Webkul\AiAgent\Http\Controllers;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
+use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\Product\Repositories\ProductRepository;
 
 /**
@@ -28,23 +29,24 @@ class DashboardController extends Controller
     {
         $today = now()->toDateString();
         $weekAgo = now()->subDays(7)->toDateString();
+        $cachedSum = resolve(TokenUsageRecorder::class)->tracksCachedTokens() ? 'SUM(cached_tokens)' : '0';
 
         // Token usage today
         $todayUsage = DB::table('ai_agent_token_usage')
             ->where('usage_date', $today)
-            ->selectRaw('SUM(tokens_used) as tokens, SUM(cached_tokens) as cached_tokens, SUM(request_count) as requests')
+            ->selectRaw("SUM(tokens_used) as tokens, {$cachedSum} as cached_tokens, SUM(request_count) as requests")
             ->first();
 
         // Token usage this week
         $weekUsage = DB::table('ai_agent_token_usage')
             ->where('usage_date', '>=', $weekAgo)
-            ->selectRaw('SUM(tokens_used) as tokens, SUM(cached_tokens) as cached_tokens, SUM(request_count) as requests')
+            ->selectRaw("SUM(tokens_used) as tokens, {$cachedSum} as cached_tokens, SUM(request_count) as requests")
             ->first();
 
         // Daily breakdown (last 7 days)
         $dailyBreakdown = DB::table('ai_agent_token_usage')
             ->where('usage_date', '>=', $weekAgo)
-            ->selectRaw('usage_date, SUM(tokens_used) as tokens, SUM(cached_tokens) as cached_tokens, SUM(request_count) as requests')
+            ->selectRaw("usage_date, SUM(tokens_used) as tokens, {$cachedSum} as cached_tokens, SUM(request_count) as requests")
             ->groupBy('usage_date')
             ->oldest('usage_date')
             ->get();
