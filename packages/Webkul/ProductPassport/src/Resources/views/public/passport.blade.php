@@ -9,7 +9,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ trans('passport::app.public.title') }}</title>
-    @if (! ($preview ?? false) && ! $withdrawn && (! empty($payload['identifier']['gtin']) || ! empty($payload['sections'])))
+    @if ($release ?? false)
+        {{-- A release page is a reference to one moment, never the page search engines should surface. --}}
+        <link rel="canonical" href="{{ $release['current_url'] }}">
+        <meta name="robots" content="noindex, noarchive">
+    @endif
+    @if (! ($preview ?? false) && ! ($release ?? false) && ! $withdrawn && (! empty($payload['identifier']['gtin']) || ! empty($payload['sections'])))
         {{-- Emitted only for a live (Published) passport: a withdrawn/redacted
              page renders a tombstone, so its frozen payload must never surface
              as machine-readable JSON-LD — matching the controller's Published
@@ -114,6 +119,10 @@
             header.hero { background: var(--accent); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             .card { break-inside: avoid; border-color: #ccc; }
         }
+        .release-banner { background: var(--accent-soft); border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem; margin-bottom: 1rem; }
+        .release-banner .t { font-weight: 600; }
+        .release-banner .d { color: var(--muted); font-size: .9rem; }
+        .release-banner a { color: var(--accent-strong); }
     </style>
 </head>
 <body>
@@ -129,12 +138,22 @@
                 @foreach ($locales as $availableLocale)
                     <a @class(['active' => $availableLocale->code === $locale])
                        data-code="{{ strtolower($availableLocale->code) }}"
-                       href="{{ route('publication.public.dpp.show.locale', ['uuid' => $uuid, 'locale' => $availableLocale->code]) }}">{{ $availableLocale->code }}</a>
+                       href="{{ ($release ?? false)
+                            ? route('publication.public.dpp.show.release', ['uuid' => $uuid, 'sequence' => $release['sequence'], 'locale' => $availableLocale->code])
+                            : route('publication.public.dpp.show.locale', ['uuid' => $uuid, 'locale' => $availableLocale->code]) }}">{{ $availableLocale->code }}</a>
                 @endforeach
             </div>
         </div>
     </details>
     @endunless
+
+    @if ($release ?? false)
+        <div class="release-banner" role="status">
+            <div class="t">{{ trans('publication::app.public.release.banner', ['sequence' => $release['sequence']]) }}</div>
+            <div class="d">{{ $release['is_current'] ? trans('publication::app.public.release.current') : trans('publication::app.public.release.superseded') }}
+                <a href="{{ $release['current_url'] }}">{{ trans('publication::app.public.release.view-current') }}</a></div>
+        </div>
+    @endif
 
     @if ($preview ?? false)
         <div class="preview-banner" role="status">

@@ -3,6 +3,7 @@
 namespace Webkul\Publication\Listeners;
 
 use Webkul\Publication\Events\PublicationPublished;
+use Webkul\Publication\Models\PublicationGtinProxy;
 use Webkul\Publication\Models\PublicationProxy;
 use Webkul\Publication\Services\Gs1DigitalLink;
 
@@ -44,6 +45,15 @@ class SyncPublicationGtin
         $model = PublicationProxy::modelClass();
 
         $model::query()->whereKey($publication->id)->update(['gtin' => $gtin]);
+
+        // Append-only history: a `/01/{gtin}` link printed under an earlier GTIN must keep resolving after a correction.
+        PublicationGtinProxy::modelClass()::query()->insertOrIgnore([
+            'publication_id' => $publication->id,
+            'gtin'           => $gtin,
+            'recorded_at'    => now(),
+            'created_at'     => now(),
+            'updated_at'     => now(),
+        ]);
 
         $canonical = $model::query()
             ->where('gtin', $gtin)

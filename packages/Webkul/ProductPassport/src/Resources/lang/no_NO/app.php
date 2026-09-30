@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Versjonen ble publisert på nytt.',
         'republish-invalid'           => 'Denne versjonen kan ikke publiseres på nytt.',
         'republish-noop'              => 'Denne versjonen er allerede den gjeldende.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'Versjonshistorikk for passet',
             'subtitle'      => 'SKU :sku · kanal :channel',
