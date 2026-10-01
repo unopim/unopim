@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'ファイルが空か、解析できませんでした。',
         'import-missing-sku-column'     => 'ファイルには "sku" 列が必要です。検出された列: :columns。',
         'import-family-not-found'       => '属性ファミリー ":family" が見つかりませんでした。',
+        'category-tree-no-family'       => '属性ファミリー ":family" が見つかりませんでした。',
         'import-invalid-sku-row'        => '行 :row: SKU が無効または空です。',
         'import-acl-skip-update'        => 'SKU ":sku" はスキップされました: 既存の製品を更新するには \'catalog.products.edit\' 権限が必要です。',
         'import-acl-skip-create'        => 'SKU ":sku" はスキップされました: 新しい製品を作成するには \'catalog.products.create\' 権限が必要です。',

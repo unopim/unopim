@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'File kosong atau tidak dapat diuraikan.',
         'import-missing-sku-column'     => 'File harus memiliki kolom "sku". Kolom yang ditemukan: :columns.',
         'import-family-not-found'       => 'Keluarga atribut ":family" tidak ditemukan.',
+        'category-tree-no-family'       => 'Keluarga atribut ":family" tidak ditemukan.',
         'import-invalid-sku-row'        => 'Baris :row: SKU tidak valid atau kosong.',
         'import-acl-skip-update'        => 'SKU ":sku" dilewati: memperbarui produk yang ada memerlukan izin \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" dilewati: membuat produk baru memerlukan izin \'catalog.products.create\'.',

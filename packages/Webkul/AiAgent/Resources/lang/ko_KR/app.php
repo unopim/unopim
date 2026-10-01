@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => '파일이 비어 있거나 구문 분석할 수 없습니다.',
         'import-missing-sku-column'     => '파일에는 "sku" 열이 있어야 합니다. 발견된 열: :columns.',
         'import-family-not-found'       => '속성 패밀리 ":family"을(를) 찾을 수 없습니다.',
+        'category-tree-no-family'       => '속성 패밀리 ":family"을(를) 찾을 수 없습니다.',
         'import-invalid-sku-row'        => ':row 행: 유효하지 않거나 비어 있는 SKU입니다.',
         'import-acl-skip-update'        => 'SKU ":sku" 건너뜀: 기존 제품을 업데이트하려면 \'catalog.products.edit\' 권한이 필요합니다.',
         'import-acl-skip-create'        => 'SKU ":sku" 건너뜀: 새 제품을 생성하려면 \'catalog.products.create\' 권한이 필요합니다.',

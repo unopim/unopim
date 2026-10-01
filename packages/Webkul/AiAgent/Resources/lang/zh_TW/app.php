@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => '檔案為空或無法解析。',
         'import-missing-sku-column'     => '檔案必須包含 "sku" 欄。找到的欄：:columns。',
         'import-family-not-found'       => '找不到屬性族 ":family"。',
+        'category-tree-no-family'       => '找不到屬性族 ":family"。',
         'import-invalid-sku-row'        => '第 :row 列：SKU 無效或為空。',
         'import-acl-skip-update'        => '已略過 SKU ":sku"：更新現有產品需要 \'catalog.products.edit\' 權限。',
         'import-acl-skip-create'        => '已略過 SKU ":sku"：建立新產品需要 \'catalog.products.create\' 權限。',

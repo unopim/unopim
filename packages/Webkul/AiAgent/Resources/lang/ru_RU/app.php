@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Файл пуст или не удалось его обработать.',
         'import-missing-sku-column'     => 'В файле должна быть колонка "sku". Найденные колонки: :columns.',
         'import-family-not-found'       => 'Семейство атрибутов ":family" не найдено.',
+        'category-tree-no-family'       => 'Семейство атрибутов ":family" не найдено.',
         'import-invalid-sku-row'        => 'Строка :row: недействительный или пустой SKU.',
         'import-acl-skip-update'        => 'SKU ":sku" пропущен: для обновления существующего товара требуется разрешение \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" пропущен: для создания нового товара требуется разрешение \'catalog.products.create\'.',
