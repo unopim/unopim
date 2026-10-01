@@ -678,10 +678,18 @@
                                             v-show="locale === '{{ $locale->code }}'"
                                         >
                                             <x-admin::form.control-group.control
+                                                v-if="optionIsNew"
                                                 type="text"
                                                 name="locales.{{ $locale->code }}"
                                                 :label="$locale->name"
                                                 :v-code-generator="$locale->code === core()->getRequestedLocaleCode() ? '\'code\'' : null"
+                                            />
+
+                                            <x-admin::form.control-group.control
+                                                v-if="! optionIsNew"
+                                                type="text"
+                                                name="locales.{{ $locale->code }}"
+                                                :label="$locale->name"
                                             />
 
                                             <x-admin::form.control-group.error control-name="locales.{{ $locale->code }}" />
