@@ -180,6 +180,7 @@ it('ranks products through the vector store when enabled', function () {
 
     $index = Mockery::mock(ProductEmbeddingIndex::class);
     $index->shouldReceive('isEnabled')->andReturn(true);
+    $index->shouldReceive('dimensions')->andReturn(8);
     $index->shouldReceive('searchSimilar')
         ->once()
         ->withArgs(fn ($vector, $limit) => count($vector) === 8 && $limit === 4)
@@ -188,6 +189,8 @@ it('ranks products through the vector store when enabled', function () {
     $results = (new EmbeddingSimilarityService($index))->rankProducts('red shoes', 4);
 
     expect($results)->toBe([['product_id' => 9, 'score' => 0.88]]);
+
+    Embeddings::assertGenerated(fn ($prompt): bool => $prompt->dimensions === 8);
 });
 
 it('returns empty from rankProducts when the vector search fails', function () {
@@ -197,6 +200,7 @@ it('returns empty from rankProducts when the vector search fails', function () {
 
     $index = Mockery::mock(ProductEmbeddingIndex::class);
     $index->shouldReceive('isEnabled')->andReturn(true);
+    $index->shouldReceive('dimensions')->andReturn(8);
     $index->shouldReceive('searchSimilar')->andThrow(new RuntimeException('es down'));
 
     expect((new EmbeddingSimilarityService($index))->rankProducts('red shoes', 4))->toBe([]);

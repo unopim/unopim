@@ -133,7 +133,7 @@ class AiErrorResolver
     {
         $message = trim($e->getMessage());
 
-        if ($message === '' || str_contains($message, 'Unknown error')) {
+        if ($message === '' || str_contains($message, 'Unknown error') || str_starts_with($message, 'HTTP request returned status code')) {
             $upstream = self::extractUpstreamBody($e);
             if ($upstream !== '') {
                 $message = $upstream;

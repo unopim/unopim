@@ -6,7 +6,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Laravel\Ai\Embeddings;
+use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingDocumentBuilder;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 
@@ -56,14 +56,16 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             return;
         }
 
+        $similarityService = resolve(EmbeddingSimilarityService::class);
+
         try {
             $index->ensureIndex();
 
-            $response = Embeddings::for(array_column($documents, 'text'))
-                ->cache()
-                ->generate();
-
-            $vectors = $response->embeddings;
+            $vectors = $similarityService->generateEmbeddings(
+                array_column($documents, 'text'),
+                $similarityService->resolvePlatform(),
+                $index->dimensions(),
+            );
         } catch (\Throwable $e) {
             Log::channel('elasticsearch')->error('Failed to generate product embeddings for vector store.', [
                 'product_ids' => array_column($documents, 'product_id'),
