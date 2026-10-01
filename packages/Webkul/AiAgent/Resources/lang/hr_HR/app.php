@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Datoteka je prazna ili se nije mogla obraditi.',
         'import-missing-sku-column'     => 'Datoteka mora imati stupac "sku". Pronađeni stupci: :columns.',
         'import-family-not-found'       => 'Obitelj atributa ":family" nije pronađena.',
+        'category-tree-no-family'       => 'Obitelj atributa ":family" nije pronađena.',
         'import-invalid-sku-row'        => 'Redak :row: nevažeći ili prazan SKU.',
         'import-acl-skip-update'        => 'SKU ":sku" preskočen: ažuriranje postojećeg proizvoda zahtijeva dopuštenje \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" preskočen: stvaranje novog proizvoda zahtijeva dopuštenje \'catalog.products.create\'.',

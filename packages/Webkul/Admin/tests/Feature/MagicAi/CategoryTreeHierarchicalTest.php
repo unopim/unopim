@@ -171,7 +171,7 @@ it('returns an error for an unknown family_code', function () {
     $result = invokeCategoryTreeTool($admin, ['family_code' => $familyCode]);
 
     expect($result)->toHaveKey('error');
-    expect($result['error'])->toBe(trans('ai-agent::app.common.import-family-not-found', ['family' => $familyCode]));
+    expect($result['error'])->toBe(trans('ai-agent::app.common.category-tree-no-family', ['family' => $familyCode]));
 });
 
 it('ranks every sibling so a relevant category beyond the first 100 is reached', function () {

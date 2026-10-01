@@ -125,7 +125,7 @@ class CategoryTree implements PimTool
 
                     if ($familyId === null) {
                         return json_encode([
-                            'error' => trans('ai-agent::app.common.import-family-not-found', ['family' => $familyCode]),
+                            'error' => trans('ai-agent::app.common.category-tree-no-family', ['family' => $familyCode]),
                         ]);
                     }
 

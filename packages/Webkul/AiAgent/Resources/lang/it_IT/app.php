@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Il file è vuoto o non è stato possibile analizzarlo.',
         'import-missing-sku-column'     => 'Il file deve avere una colonna "sku". Colonne trovate: :columns.',
         'import-family-not-found'       => 'Famiglia di attributi ":family" non trovata.',
+        'category-tree-no-family'       => 'Famiglia di attributi ":family" non trovata.',
         'import-invalid-sku-row'        => 'Riga :row: SKU non valido o vuoto.',
         'import-acl-skip-update'        => 'SKU ":sku" saltato: l\'aggiornamento di un prodotto esistente richiede l\'autorizzazione \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" saltato: la creazione di un nuovo prodotto richiede l\'autorizzazione \'catalog.products.create\'.',

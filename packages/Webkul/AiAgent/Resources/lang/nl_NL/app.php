@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Het bestand is leeg of kon niet worden verwerkt.',
         'import-missing-sku-column'     => 'Het bestand moet een "sku"-kolom bevatten. Gevonden kolommen: :columns.',
         'import-family-not-found'       => 'Attribuutset ":family" is niet gevonden.',
+        'category-tree-no-family'       => 'Attribuutset ":family" is niet gevonden.',
         'import-invalid-sku-row'        => 'Rij :row: ongeldige of lege SKU.',
         'import-acl-skip-update'        => 'SKU ":sku" overgeslagen: het bijwerken van een bestaand product vereist de \'catalog.products.edit\'-machtiging.',
         'import-acl-skip-create'        => 'SKU ":sku" overgeslagen: het aanmaken van een nieuw product vereist de \'catalog.products.create\'-machtiging.',
