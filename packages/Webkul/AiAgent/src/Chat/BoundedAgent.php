@@ -3,6 +3,7 @@
 namespace Webkul\AiAgent\Chat;
 
 use Laravel\Ai\AnonymousAgent;
+use Laravel\Ai\Attributes\RepairToolCalls;
 
 /**
  * An AnonymousAgent that advertises a hard tool-loop step cap.
@@ -13,7 +14,12 @@ use Laravel\Ai\AnonymousAgent;
  * for the current tool set — and each iteration resends the full system
  * prompt, tool schemas, and history, so a single chat turn could burn
  * hundreds of thousands of tokens.
+ *
+ * RepairToolCalls returns an unknown tool name to the model as a tool result
+ * listing the valid names, instead of aborting the turn — some models and
+ * gateways leak template tokens into the name (gpt-oss: `x<|channel|>commentary`).
  */
+#[RepairToolCalls]
 class BoundedAgent extends AnonymousAgent
 {
     /**
