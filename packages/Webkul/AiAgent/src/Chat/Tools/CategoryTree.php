@@ -232,17 +232,18 @@ class CategoryTree implements PimTool
             }
 
             /**
-             * Fetch the next level ranked by relevance: every parent contributes an equal
-             * share of the candidate budget, the whole level is scored at once, and each
+             * Fetch the next level ranked by relevance: candidates are taken round-robin
+             * across parents up to the budget, the whole level is scored at once, and each
              * parent keeps its $perLevel best children in relevance order.
+             *
+             * No per-parent cap applies, so budget a narrow parent leaves unused flows to
+             * its wider siblings while the round-robin order keeps the split fair.
              *
              * @param  array<int, int>  $parentIds
              */
             private function fetchRelevantChildren(array $parentIds, int $perLevel, int $candidateLimit, string $relevanceQuery, ?int $familyId): Collection
             {
-                $perParent = max($perLevel, intdiv($candidateLimit, count($parentIds)));
-
-                $candidates = $this->fetchRankedChildren($parentIds, $perParent, $candidateLimit, $familyId, fairShare: true);
+                $candidates = $this->fetchRankedChildren($parentIds, $candidateLimit, $candidateLimit, $familyId, fairShare: true);
 
                 $kept = [];
 

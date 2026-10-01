@@ -240,6 +240,41 @@ it('batches relevance embeddings and honours the configured candidate cap', func
     expect(array_column($result['categories'], 'code'))->toBe([$fixture['children'][4]->code]);
 });
 
+it('lets a wide branch use the candidate budget a narrow sibling leaves unused', function () {
+    $admin = $this->loginAsAdmin();
+
+    config(['ai-agent.category_tree.relevance_candidate_limit' => 6]);
+
+    $suffix = 'ct'.random_int(100000, 999999);
+
+    $parent = Category::factory()->create(['code' => "uneven_parent_{$suffix}", 'parent_id' => null]);
+    $narrow = Category::factory()->create(['code' => "uneven_narrow_{$suffix}", 'parent_id' => $parent->id]);
+    $wide = Category::factory()->create(['code' => "uneven_wide_{$suffix}", 'parent_id' => $parent->id]);
+
+    Category::factory()->create(['code' => "uneven_narrow_child_{$suffix}", 'parent_id' => $narrow->id]);
+
+    for ($index = 0; $index < 5; $index++) {
+        Category::factory()->create([
+            'code'      => "uneven_wide_child_{$index}_{$suffix}",
+            'parent_id' => $wide->id,
+        ]);
+    }
+
+    $fake = fakeCategoryRelevance(["uneven_wide_child_4_{$suffix}" => 0.9]);
+
+    $result = invokeCategoryTreeTool($admin, [
+        'parent_code'        => $parent->code,
+        'depth'              => 2,
+        'children_per_level' => 2,
+        'relevance_query'    => 'needle',
+    ]);
+
+    $wideNode = collect($result['categories'])->firstWhere('code', $wide->code);
+
+    expect($fake->batchSizes)->toBe([2, 6]);
+    expect($wideNode['children'][0]['code'])->toBe("uneven_wide_child_4_{$suffix}");
+});
+
 it('orders deeper levels by relevance when a relevance_query is given', function () {
     $admin = $this->loginAsAdmin();
 
