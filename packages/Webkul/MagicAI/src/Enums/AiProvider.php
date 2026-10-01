@@ -68,6 +68,18 @@ enum AiProvider: string
         ]);
     }
 
+    /**
+     * The vector size of a provider whose embeddings API ignores the requested
+     * size (laravel/ai's Mistral gateway never sends it), or null when honoured.
+     */
+    public function fixedEmbeddingDimensions(): ?int
+    {
+        return match ($this) {
+            self::Mistral => 1024,
+            default       => null,
+        };
+    }
+
     public function defaultUrl(): string
     {
         return match ($this) {

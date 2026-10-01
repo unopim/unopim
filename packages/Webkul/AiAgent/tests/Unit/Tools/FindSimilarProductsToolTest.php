@@ -85,6 +85,43 @@ it('resolves no platform when none can produce embeddings', function () {
     expect(resolve(EmbeddingSimilarityService::class)->resolvePlatform($chat))->toBeNull();
 });
 
+it('only reports a fixed vector size for providers that ignore the requested one', function () {
+    expect(AiProvider::Mistral->fixedEmbeddingDimensions())->toBe(1024)
+        ->and(AiProvider::OpenAI->fixedEmbeddingDimensions())->toBeNull()
+        ->and(AiProvider::Gemini->fixedEmbeddingDimensions())->toBeNull()
+        ->and(AiProvider::Ollama->fixedEmbeddingDimensions())->toBeNull();
+});
+
+it('skips a fixed size provider whose vectors do not fit the index', function () {
+    $chat = similarPlatform('mistral', ['is_default' => 1]);
+    $openAi = similarPlatform('openai');
+
+    $service = resolve(EmbeddingSimilarityService::class);
+
+    expect($service->resolvePlatform($chat, 1536)->id)->toBe($openAi->id)
+        ->and($service->resolvePlatform($chat, 1024)->id)->toBe($chat->id)
+        ->and($service->resolvePlatform($chat)->id)->toBe($chat->id);
+});
+
+it('resolves no platform when the only embedding provider cannot match the index size', function () {
+    $chat = similarPlatform('mistral');
+
+    expect(resolve(EmbeddingSimilarityService::class)->resolvePlatform($chat, 1536))->toBeNull();
+});
+
+it('only embeds through azure when an embedding deployment is configured', function () {
+    $withoutDeployment = similarPlatform('azure', ['extras' => ['deployment' => 'gpt-4o']]);
+    $withDeployment = similarPlatform('azure', ['extras' => ['deployment' => 'gpt-4o', 'embedding_deployment' => 'embed-large']]);
+
+    $service = resolve(EmbeddingSimilarityService::class);
+
+    expect($service->resolvePlatform($withoutDeployment)->id)->toBe($withDeployment->id);
+
+    $withDeployment->update(['status' => 0]);
+
+    expect($service->resolvePlatform($withoutDeployment))->toBeNull();
+});
+
 it('generates embeddings through the resolved platform provider', function () {
     Embeddings::fake();
 
@@ -101,13 +138,13 @@ it('generates embeddings through the resolved platform provider', function () {
 });
 
 it('suggests close skus when the requested sku does not exist', function () {
-    Product::factory()->simple()->create(['sku' => 'halden-lumen-pendant']);
-    Product::factory()->simple()->create(['sku' => 'halden-cable-tray']);
+    Product::factory()->simple()->create(['sku' => 'qorvel-lumen-pendant']);
+    Product::factory()->simple()->create(['sku' => 'qorvel-cable-tray']);
 
-    $result = runFindSimilar(similarPlatform('anthropic'), ['sku' => 'halden-lumen-pendt']);
+    $result = runFindSimilar(similarPlatform('anthropic'), ['sku' => 'qorvel-lumen-pendt']);
 
-    expect($result['error'])->toContain('halden-lumen-pendt')
-        ->and($result['did_you_mean'][0])->toBe('halden-lumen-pendant');
+    expect($result['error'])->toContain('qorvel-lumen-pendt')
+        ->and($result['did_you_mean'][0])->toBe('qorvel-lumen-pendant');
 });
 
 it('ranks by keyword overlap and explains why when no platform can produce embeddings', function () {

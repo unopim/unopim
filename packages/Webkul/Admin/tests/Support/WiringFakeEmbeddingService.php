@@ -21,7 +21,7 @@ class WiringFakeEmbeddingService extends EmbeddingSimilarityService
         return array_slice($this->knnHits, 0, $limit ?? 10);
     }
 
-    public function resolvePlatform(?MagicAIPlatform $preferred = null): ?MagicAIPlatform
+    public function resolvePlatform(?MagicAIPlatform $preferred = null, ?int $dimensions = null): ?MagicAIPlatform
     {
         return $preferred;
     }

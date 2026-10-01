@@ -11,7 +11,7 @@ use Webkul\MagicAI\Models\MagicAIPlatform;
  */
 class FakeEmbeddingSimilarityService extends EmbeddingSimilarityService
 {
-    public function resolvePlatform(?MagicAIPlatform $preferred = null): ?MagicAIPlatform
+    public function resolvePlatform(?MagicAIPlatform $preferred = null, ?int $dimensions = null): ?MagicAIPlatform
     {
         return $preferred;
     }

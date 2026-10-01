@@ -8,6 +8,7 @@ use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ProviderOverrides;
 use Webkul\MagicAI\Services\ScopedProviderConfig;
 
 /**
@@ -113,25 +114,43 @@ class EmbeddingSimilarityService
     /**
      * Resolve the platform to embed with: the preferred one when its provider
      * has an embeddings API, else the default or first active platform that does.
+     *
+     * Pass $dimensions when the vectors must fit a fixed-size index, so a
+     * provider that cannot return that size is skipped.
      */
-    public function resolvePlatform(?MagicAIPlatform $preferred = null): ?MagicAIPlatform
+    public function resolvePlatform(?MagicAIPlatform $preferred = null, ?int $dimensions = null): ?MagicAIPlatform
     {
-        if ($preferred instanceof MagicAIPlatform && $this->canEmbed($preferred)) {
+        if ($preferred instanceof MagicAIPlatform && $this->canEmbed($preferred, $dimensions)) {
             return $preferred;
         }
 
         return resolve(MagicAIPlatformRepository::class)
             ->getActiveList()
-            ->filter(fn (MagicAIPlatform $platform): bool => $this->canEmbed($platform))
+            ->filter(fn (MagicAIPlatform $platform): bool => $this->canEmbed($platform, $dimensions))
             ->sortBy([['is_default', 'desc'], ['id', 'asc']])
             ->first();
     }
 
-    protected function canEmbed(MagicAIPlatform $platform): bool
+    /**
+     * Azure addresses embeddings by deployment name, and laravel/ai reads it
+     * from `embedding_deployment`, not the chat `deployment`.
+     */
+    protected function canEmbed(MagicAIPlatform $platform, ?int $dimensions = null): bool
     {
-        return (bool) $platform->status
-            && AiProvider::tryFrom((string) $platform->provider)?->supportsEmbeddings()
-            && $platform->apiKeyError() === null;
+        $provider = AiProvider::tryFrom((string) $platform->provider);
+
+        if (! $platform->status || ! $provider?->supportsEmbeddings() || $platform->apiKeyError() !== null) {
+            return false;
+        }
+
+        $fixedDimensions = $provider->fixedEmbeddingDimensions();
+
+        if (! is_null($dimensions) && ! is_null($fixedDimensions) && $fixedDimensions !== $dimensions) {
+            return false;
+        }
+
+        return $provider !== AiProvider::Azure
+            || filled(ProviderOverrides::decode($platform->extras)['embedding_deployment'] ?? null);
     }
 
     /**
@@ -152,7 +171,7 @@ class EmbeddingSimilarityService
         }
 
         try {
-            $queryVector = $this->generateEmbeddings([$query], $this->resolvePlatform(), $index->dimensions())[0] ?? null;
+            $queryVector = $this->generateEmbeddings([$query], $this->resolvePlatform(dimensions: $index->dimensions()), $index->dimensions())[0] ?? null;
 
             if (! is_array($queryVector) || $queryVector === []) {
                 return [];

@@ -63,7 +63,7 @@ class IndexProductEmbeddingsJob implements ShouldQueue
 
             $vectors = $similarityService->generateEmbeddings(
                 array_column($documents, 'text'),
-                $similarityService->resolvePlatform(),
+                $similarityService->resolvePlatform(dimensions: $index->dimensions()),
                 $index->dimensions(),
             );
         } catch (\Throwable $e) {
