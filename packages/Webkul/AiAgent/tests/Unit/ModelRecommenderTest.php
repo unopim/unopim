@@ -413,3 +413,13 @@ it('does not read parameter counts as versions', function () {
     expect(ModelRecommender::recommend(['gpt-oss-120b', 'gpt-oss-20b']))->toBe(['gpt-oss-120b', 'gpt-oss-20b'])
         ->and(ModelRecommender::recommend(['llama-3.1-8b', 'llama-3.3-70b'], 1))->toBe(['llama-3.3-70b']);
 });
+
+it('tries chat-capable models before OCR or embedding models when testing text', function () {
+    expect(ModelRecommender::textModels(['mistral-ocr-4-1', 'mistral-ocr-4', 'mistral-embed', 'mistral-medium-3-5']))
+        ->toBe(['mistral-medium-3-5', 'mistral-ocr-4-1', 'mistral-ocr-4', 'mistral-embed']);
+});
+
+it('keeps OCR models out of the recommendation', function () {
+    expect(ModelRecommender::recommend(['mistral-ocr-latest', 'mistral-large-latest']))
+        ->toBe(['mistral-large-latest']);
+});
