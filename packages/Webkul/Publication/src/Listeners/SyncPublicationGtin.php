@@ -29,6 +29,9 @@ class SyncPublicationGtin
      * never aliased: the link it would produce cannot resolve, and a carrier must
      * not encode a dead URL.
      *
+     * Every GTIN a publication publishes under is also appended to its history, so a `/01/{gtin}` link
+     * printed under an earlier GTIN keeps resolving after a correction.
+     *
      * Query-builder writes (not Eloquent saves) keep this event-free: it must
      * neither re-fire PublicationPublished nor touch any immutable version row.
      */
@@ -46,7 +49,6 @@ class SyncPublicationGtin
 
         $model::query()->whereKey($publication->id)->update(['gtin' => $gtin]);
 
-        // Append-only history: a `/01/{gtin}` link printed under an earlier GTIN must keep resolving after a correction.
         PublicationGtinProxy::modelClass()::query()->insertOrIgnore([
             'publication_id' => $publication->id,
             'gtin'           => $gtin,

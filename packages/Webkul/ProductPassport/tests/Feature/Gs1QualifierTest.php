@@ -34,8 +34,20 @@ it('routes a scanned lot to the release the bound resolver names', function (): 
     $this->get('/01/4006381333931/10/L1')
         ->assertRedirect('/p/'.$publication->uuid.'/r/1/'.$versions[0]->locale->code)
         ->assertHeader('Vary', 'Accept-Language');
+});
 
-    // Unknown lot: the resolver answers null, so the scan lands on the live passport rather than a dead end.
+it('lands a lot the bound resolver does not know on the live passport rather than a dead end', function (): void {
+    [, , $versions] = $this->publishGtinPassport('4006381333931');
+    $publication = $versions[0]->publication->fresh();
+
+    app()->bind(LotReleaseResolver::class, fn () => new class implements LotReleaseResolver
+    {
+        public function resolve(Publication $publication, ?string $lot, ?string $serial): ?PublicationRelease
+        {
+            return null;
+        }
+    });
+
     $this->get('/01/4006381333931/10/UNKNOWN')
         ->assertRedirect('/p/'.$publication->uuid.'/'.$versions[0]->locale->code);
 });

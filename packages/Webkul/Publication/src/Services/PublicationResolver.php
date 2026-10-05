@@ -43,6 +43,9 @@ class PublicationResolver
     /**
      * Resolves a GTIN (non-unique across channels) to one publication via the designated passport channel,
      * falling back to the lowest channel_id with a logged warning when unset.
+     *
+     * When no publication carries the GTIN today, the history of GTINs publications carried earlier is
+     * consulted, so carriers printed under a since-corrected GTIN keep resolving.
      */
     public function findByGtin(string $gtin, string $type): ?Publication
     {
@@ -52,7 +55,6 @@ class PublicationResolver
             return $publication;
         }
 
-        // A GTIN the publication carried earlier: carriers printed under it must keep resolving after a correction.
         $previouslyOwned = PublicationGtinProxy::modelClass()::query()->where('gtin', $gtin)->pluck('publication_id');
 
         if ($previouslyOwned->isEmpty()) {
