@@ -5,6 +5,7 @@ namespace Webkul\Publication\Http\Controllers;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\Publication\Contracts\LotReleaseResolver;
 use Webkul\Publication\DataTransferObjects\PublicationType;
@@ -74,6 +75,11 @@ class PublicationController extends Controller
      * ties a scanned unit to the release it was placed on the market under. Which release that is lives outside the
      * PIM, so it is asked from the bound LotReleaseResolver; when it does not know, the scan lands on the live
      * passport exactly as an unqualified link does. A malformed qualifier is a bad link, not a live fallback: 404.
+     * A release that belongs to another publication is a resolver bug: it is logged as a warning and the scan
+     * falls back to live.
+     *
+     * A lot or serial containing `/` is in the GS1 82-character set, but the router matches the decoded path,
+     * so a `%2F` splits the segment and the link 404s. That is a known limitation of the route grammar.
      */
     public function resolveByGtinQualified(Request $request, string $gtin, ?string $lot = null, ?string $serial = null): Response
     {
@@ -98,6 +104,16 @@ class PublicationController extends Controller
         }
 
         $release = ($lot === null && $serial === null) ? null : $this->lots->resolve($publication, $lot, $serial);
+
+        if ($release !== null && (int) $release->publication_id !== (int) $publication->id) {
+            Log::warning('Lot release resolver returned a release of another publication; falling back to live', [
+                'resolver'               => $this->lots::class,
+                'gtin'                   => $gtin,
+                'publication_id'         => $publication->id,
+                'release_id'             => $release->id,
+                'release_publication_id' => $release->publication_id,
+            ]);
+        }
 
         if ($release !== null && (int) $release->publication_id === (int) $publication->id) {
             $version = $this->resolver->pickVersion($publication, $release->versionsAsOf(), null, $request->header('Accept-Language'));
