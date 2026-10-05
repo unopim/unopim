@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Webkul\Publication\Contracts\LotReleaseResolver;
+use Webkul\Publication\Exceptions\ImmutableVersionException;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Services\NullLotReleaseResolver;
@@ -110,3 +111,66 @@ it('resolves a retired gtin to the publication that carried it most recently', f
     'later on the lower channel'     => [0, -3600, 0],
     'same instant, highest id wins'  => [0, 0, 1],
 ]);
+
+it('stops resolving a revoked gtin from the history', function (): void {
+    [$product, $channels, $versions] = $this->publishGtinPassport('4006381333931');
+    $publication = $versions[0]->publication->fresh();
+
+    $gtinCode = array_key_first(array_filter($product->values['common'], fn ($value): bool => $value === '4006381333931'));
+
+    $product->values = array_replace_recursive($product->values, ['common' => [$gtinCode => '10614141000415']]);
+    $product->save();
+
+    resolve(Publisher::class)->publish($product, $channels[0], $versions[0]->locale, 'dpp');
+
+    $publication->gtins()->where('gtin', '4006381333931')->first()->revoke();
+
+    $this->get('/01/4006381333931')->assertNotFound();
+    $this->get('/01/10614141000415')->assertRedirect('/p/'.$publication->uuid.'/'.$versions[0]->locale->code);
+});
+
+it('keeps a revoked history row append-only apart from the revocation itself', function (): void {
+    [, , $versions] = $this->publishGtinPassport('4006381333931');
+
+    $row = $versions[0]->publication->fresh()->gtins()->first();
+
+    expect(fn () => $row->update(['gtin' => '10614141000415']))->toThrow(ImmutableVersionException::class)
+        ->and(fn () => $row->delete())->toThrow(ImmutableVersionException::class);
+
+    $row = $row->fresh();
+    $row->revoke();
+
+    expect($row->fresh()->revoked_at)->not->toBeNull()
+        ->and(fn () => $row->fresh()->forceFill(['revoked_at' => null])->save())->toThrow(ImmutableVersionException::class);
+});
+
+it('revokes a retired gtin through the artisan command', function (): void {
+    [$product, $channels, $versions] = $this->publishGtinPassport('4006381333931');
+    $publication = $versions[0]->publication->fresh();
+
+    $gtinCode = array_key_first(array_filter($product->values['common'], fn ($value): bool => $value === '4006381333931'));
+
+    $product->values = array_replace_recursive($product->values, ['common' => [$gtinCode => '10614141000415']]);
+    $product->save();
+
+    resolve(Publisher::class)->publish($product, $channels[0], $versions[0]->locale, 'dpp');
+
+    $this->artisan('unopim:publication:revoke-gtin', ['gtin' => '4006381333931'])->assertSuccessful();
+
+    expect($publication->gtins()->where('gtin', '4006381333931')->first()->revoked_at)->not->toBeNull()
+        ->and($publication->gtins()->where('gtin', '10614141000415')->first()->revoked_at)->toBeNull();
+
+    $this->get('/01/4006381333931')->assertNotFound();
+});
+
+it('refuses to revoke a gtin a publication still carries', function (): void {
+    [, , $versions] = $this->publishGtinPassport('4006381333931');
+
+    $this->artisan('unopim:publication:revoke-gtin', ['gtin' => '4006381333931'])->assertFailed();
+
+    expect($versions[0]->publication->fresh()->gtins()->first()->revoked_at)->toBeNull();
+});
+
+it('rejects a malformed gtin in the revoke command', function (): void {
+    $this->artisan('unopim:publication:revoke-gtin', ['gtin' => 'not-a-gtin'])->assertFailed();
+});

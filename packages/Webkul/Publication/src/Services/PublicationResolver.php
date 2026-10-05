@@ -45,7 +45,8 @@ class PublicationResolver
      * falling back to the lowest channel_id with a logged warning when unset.
      *
      * When no publication carries the GTIN today, the history of GTINs publications carried earlier is
-     * consulted, so carriers printed under a since-corrected GTIN keep resolving.
+     * consulted, so carriers printed under a since-corrected GTIN keep resolving. History rows that were revoked
+     * are skipped.
      */
     public function findByGtin(string $gtin, string $type): ?Publication
     {
@@ -57,6 +58,7 @@ class PublicationResolver
 
         $carriers = PublicationGtinProxy::modelClass()::query()
             ->where('gtin', $gtin)
+            ->whereNull('revoked_at')
             ->orderByDesc('recorded_at')
             ->orderByDesc('id')
             ->pluck('publication_id')

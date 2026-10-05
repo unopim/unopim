@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Webkul\Publication\Console\RevokePublicationGtinCommand;
 use Webkul\Publication\Contracts\LotReleaseResolver;
 use Webkul\Publication\DataTransferObjects\PublicationType;
 use Webkul\Publication\Events\PublicationPublished;
@@ -75,6 +76,10 @@ class PublicationServiceProvider extends ServiceProvider
         Event::listen('core.channel.delete.before', GuardChannelDeletionAgainstPublications::class);
 
         $this->registerPublicRoutes();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([RevokePublicationGtinCommand::class]);
+        }
     }
 
     /**

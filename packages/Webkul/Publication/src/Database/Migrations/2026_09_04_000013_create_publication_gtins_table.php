@@ -13,6 +13,9 @@ return new class extends Migration
      * Index names are explicit because the auto-generated ones include the table prefix and overrun
      * MySQL's 64-character identifier limit on prefixed installs.
      *
+     * `revoked_at` retires a GTIN that was published by mistake: the history fallback skips the row while the
+     * row itself stays.
+     *
      * Every GTIN a publication currently carries becomes the first entry of its history. The backfill
      * streams the publications by primary key and inserts one batch per chunk, so memory stays flat on
      * catalogs of any size.
@@ -28,6 +31,8 @@ return new class extends Migration
             $table->string('gtin', 14);
 
             $table->dateTime('recorded_at');
+
+            $table->dateTime('revoked_at')->nullable();
 
             $table->timestamps();
 
