@@ -10,8 +10,8 @@ use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\CategoryFieldDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CategoryFieldForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Repositories\LocaleRepository;
@@ -151,9 +151,9 @@ class CategoryFieldController extends Controller
     /**
      * Remove the specified resources from database.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        $indices = $massDestroyRequest->input('indices');
+        $indices = $massDestroyRequest->selectedIds(CategoryFieldDataGrid::class);
         $delete = false;
 
         foreach ($indices as $index) {
@@ -185,9 +185,9 @@ class CategoryFieldController extends Controller
     /**
      * Updates the status of category fields
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $categoryFieldIds = $massUpdateRequest->input('indices');
+        $categoryFieldIds = $massUpdateRequest->selectedIds(CategoryFieldDataGrid::class);
 
         $value = $massUpdateRequest->input('value');
 

@@ -9,6 +9,7 @@ use Webkul\DataTransfer\Jobs\Export\File\LocalTemporaryFile;
 use Webkul\DataTransfer\Jobs\Export\File\RemoteTemporaryFile;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Jobs\Export\File\TemporaryFileFactory;
+use Webkul\DataTransfer\Support\FormulaGuard;
 
 class FileBuffer
 {
@@ -52,7 +53,7 @@ class FileBuffer
 
     public function writeHeader(array $headers): void
     {
-        $this->writer->addRow(Row::fromValues($headers));
+        $this->writer->addRow($this->escapeFormulaCells(Row::fromValues($headers)));
     }
 
     /**
@@ -101,16 +102,6 @@ class FileBuffer
      */
     protected function isFormulaValue(string $value): bool
     {
-        if ($value === '' || is_numeric($value)) {
-            return false;
-        }
-
-        if (in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true)) {
-            return true;
-        }
-
-        $trimmed = ltrim($value, " \t\r\n");
-
-        return $trimmed !== '' && in_array($trimmed[0], ['=', '+', '-', '@'], true);
+        return FormulaGuard::isFormula($value);
     }
 }

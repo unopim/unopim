@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_TW',
   '\n' +
   '<p>從 UI 區段移回上一個，請按 <strong>Shift+Tab</strong>。</p>\n' +
   '\n' +
-  '<p>這些 UI 區段的 <strong>Tab</strong> 順序如下：\n' +
+  '<p>這些 UI 區段的 <strong>Tab</strong> 順序如下：</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>功能表列</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_TW',
   '<p>如果 UI 區段未顯示，表示已略過該區段。</p>\n' +
   '\n' +
   '<p>如果鍵盤瀏覽跳至頁尾，但沒有顯示側邊欄，則按下 <strong>Shift+Tab</strong>\n' +
-  '  會跳至第一個工具列群組，而不是最後一個。\n' +
+  '  會跳至第一個工具列群組，而不是最後一個。</p>\n' +
   '\n' +
   '<h1>在 UI 區段之內瀏覽</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_TW',
   '  <li>在頁尾的元素路徑中項目之間移動。</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p><strong>向下</strong>和<strong>向上</strong>方向鍵\n' +
+  '<p><strong>向下</strong>和<strong>向上</strong>方向鍵</p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>在功能表中的功能表項目之間移動。</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_TW',
   '\n' +
   '<p><strong>方向</strong>鍵會在所跳至 UI 區段之內循環。</p>\n' +
   '\n' +
-  '<p>若要關閉已開啟的功能表、已開啟的子功能表，或已開啟的快顯功能表，請按 <strong>Esc</strong> 鍵。\n' +
+  '<p>若要關閉已開啟的功能表、已開啟的子功能表，或已開啟的快顯功能表，請按 <strong>Esc</strong> 鍵。</p>\n' +
   '\n' +
   '<p>如果目前已跳至特定 UI 區段的「頂端」，則按 <strong>Esc</strong> 鍵也會結束\n' +
   '  整個鍵盤瀏覽。</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_TW',
   '<h1>執行功能表列項目或工具列按鈕</h1>\n' +
   '\n' +
   '<p>當想要的功能表項目或工具列按鈕已反白顯示時，按 <strong>Return</strong>、<strong>Enter</strong>、\n' +
-  '  或<strong>空白鍵</strong>即可執行該項目。\n' +
+  '  或<strong>空白鍵</strong>即可執行該項目。</p>\n' +
   '\n' +
   '<h1>瀏覽非索引標籤式對話方塊</h1>\n' +
   '\n' +

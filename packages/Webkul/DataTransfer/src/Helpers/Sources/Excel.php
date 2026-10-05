@@ -2,7 +2,6 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
-use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -23,8 +22,10 @@ class Excel extends AbstractSource
      */
     public function __construct(string $filePath)
     {
+        $path = self::resolveReadablePath($filePath);
+
         try {
-            $factory = IOFactory::load(Storage::disk('private')->path($filePath));
+            $factory = IOFactory::load($path);
 
             $this->reader = $factory->getActiveSheet();
 

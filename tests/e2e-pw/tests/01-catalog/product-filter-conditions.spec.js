@@ -1,11 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { navigateTo, openFilterDrawer: clickFilterToggle } = require('../../utils/helpers');
 
 async function openFilterDrawer(adminPage) {
   await navigateTo(adminPage, 'products');
   await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
   await adminPage.reload({ waitUntil: 'networkidle' });
-  await adminPage.getByText('Filter', { exact: true }).click();
+  await clickFilterToggle(adminPage);
 }
 
 async function addAttributeFilter(adminPage, index, label) {
@@ -153,7 +153,7 @@ test.describe('Product DataGrid attribute filters', () => {
     const applied = await resultCount(adminPage);
 
     await adminPage.reload({ waitUntil: 'networkidle' });
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
 
     const reopened = adminPage.locator('[data-attribute-filter="price"]');
 
@@ -180,7 +180,7 @@ test.describe('Product DataGrid attribute filters', () => {
 
     expect(await resultCount(adminPage)).toBeLessThan(before);
 
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
     await adminPage.locator('[data-attribute-filter="price"] .icon-cancel').click();
     await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');

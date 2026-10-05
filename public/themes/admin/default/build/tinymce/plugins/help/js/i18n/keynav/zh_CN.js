@@ -23,7 +23,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_CN',
   '\n' +
   '<p>要从一个 UI 部分移至上一个，请按 <strong>Shift+Tab</strong>。</p>\n' +
   '\n' +
-  '<p>这些 UI 部分的 <strong>Tab</strong> 顺序为：\n' +
+  '<p>这些 UI 部分的 <strong>Tab</strong> 顺序为：</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>菜单栏</li>\n' +
@@ -37,7 +37,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_CN',
   '\n' +
   '<p>如果不存在某个 UI 部分，则跳过它。</p>\n' +
   '\n' +
-  '<p>如果键盘导航焦点在页脚，并且没有可见的边栏，则按 <strong>Shift+Tab</strong> 将焦点移至第一个工具栏组而非最后一个。\n' +
+  '<p>如果键盘导航焦点在页脚，并且没有可见的边栏，则按 <strong>Shift+Tab</strong> 将焦点移至第一个工具栏组而非最后一个。</p>\n' +
   '\n' +
   '<h1>在 UI 部分内导航</h1>\n' +
   '\n' +
@@ -52,7 +52,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_CN',
   '  <li>在页脚的元素路径中的各项之间移动。</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p><strong>下</strong>和<strong>上</strong>箭头键\n' +
+  '<p><strong>下</strong>和<strong>上</strong>箭头键</p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>在菜单中的菜单项之间移动。</li>\n' +
@@ -61,13 +61,13 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.zh_CN',
   '\n' +
   '<p><strong>箭头</strong>键在具有焦点的 UI 部分内循环。</p>\n' +
   '\n' +
-  '<p>要关闭打开的菜单、打开的子菜单或打开的弹出菜单，请按 <strong>Esc</strong> 键。\n' +
+  '<p>要关闭打开的菜单、打开的子菜单或打开的弹出菜单，请按 <strong>Esc</strong> 键。</p>\n' +
   '\n' +
   '<p>如果当前的焦点在特定 UI 部分的“顶部”，则按 <strong>Esc</strong> 键还将完全退出键盘导航。</p>\n' +
   '\n' +
   '<h1>执行菜单项或工具栏按钮</h1>\n' +
   '\n' +
-  '<p>当突出显示所需的菜单项或工具栏按钮时，按 <strong>Return</strong>、<strong>Enter</strong> 或<strong>空格</strong>以执行该项。\n' +
+  '<p>当突出显示所需的菜单项或工具栏按钮时，按 <strong>Return</strong>、<strong>Enter</strong> 或<strong>空格</strong>以执行该项。</p>\n' +
   '\n' +
   '<h1>在非标签页式对话框中导航</h1>\n' +
   '\n' +

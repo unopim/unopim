@@ -12,6 +12,18 @@ it('should run job successfully with valid jobId and user email Id', function ()
         ->assertSuccessful();
 });
 
+it('clears the worker timeout alarm once the queue is drained', function () {
+    $user = $this->loginAsAdmin();
+
+    $exportJob = JobInstances::factory()->exportJob()->entityProduct()->create();
+
+    $this->artisan(sprintf('unopim:queue:work %s %s', $exportJob->id, $user->email))
+        ->assertSuccessful()
+        ->run();
+
+    expect(pcntl_alarm(0))->toBe(0);
+})->skip(fn () => ! function_exists('pcntl_alarm'), 'ext-pcntl is not installed');
+
 it('should fail when given queue invalid jobId', function () {
     $user = $this->loginAsAdmin();
 

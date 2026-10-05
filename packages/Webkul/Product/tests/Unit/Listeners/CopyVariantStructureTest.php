@@ -2,6 +2,7 @@
 
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\VariantStructure;
 
 it('clones the variant structure of the source family', function () {
@@ -19,7 +20,7 @@ it('clones the variant structure of the source family', function () {
 
     $structure->axes()->create(['attribute_id' => $colour->id, 'position' => 1]);
     $structure->axes()->create(['attribute_id' => $size->id, 'position' => 2]);
-    $structure->placements()->create(['attribute_id' => $size->id, 'level' => 'sub_parent']);
+    $structure->placements()->create(['attribute_id' => $size->id, 'level' => VariantLevel::SubParent->value]);
 
     $clone = app(AttributeFamilyRepository::class)->createScaffolded('vs_clone', $source->id);
 
@@ -30,7 +31,7 @@ it('clones the variant structure of the source family', function () {
     expect($cloned->id)->not->toBe($structure->id);
     expect($cloned->axes()->pluck('attribute_id')->all())->toBe([$colour->id, $size->id]);
     expect($cloned->axes()->pluck('position')->all())->toBe([1, 2]);
-    expect($cloned->placements()->pluck('level')->all())->toBe(['sub_parent']);
+    expect($cloned->placements()->pluck('level')->all())->toBe([VariantLevel::SubParent->value]);
 });
 
 it('does nothing when the source family has no variant structure', function () {

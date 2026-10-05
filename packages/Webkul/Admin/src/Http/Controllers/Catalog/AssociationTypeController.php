@@ -9,8 +9,8 @@ use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AssociationTypeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\AssociationTypeRequest;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Admin\Http\Resources\Catalog\AssociationTypeLinkResource;
 use Webkul\Core\Repositories\LocaleRepository;
 use Webkul\Product\Repositories\AssociationTypeRepository;
@@ -185,9 +185,9 @@ class AssociationTypeController extends Controller
     /**
      * Remove the specified resources from database.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        $indices = $massDestroyRequest->input('indices');
+        $indices = $massDestroyRequest->selectedIds(AssociationTypeDataGrid::class);
 
         $delete = false;
 
@@ -221,9 +221,9 @@ class AssociationTypeController extends Controller
     /**
      * Updates the status of association types.
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $associationTypeIds = $massUpdateRequest->input('indices');
+        $associationTypeIds = $massUpdateRequest->selectedIds(AssociationTypeDataGrid::class);
 
         $value = $massUpdateRequest->input('value');
 

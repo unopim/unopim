@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Chat\ChatUploadStore;
+use Webkul\AiAgent\Http\Requests\ChatRequest;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ManagedPlatform;
 use Webkul\MagicAI\Support\ModelRecommender;
 
 /**
@@ -28,12 +30,13 @@ class ChatController extends Controller
     public function __construct(
         protected AgentRunner $agentRunner,
         protected MagicAIPlatformRepository $platformRepository,
+        protected ChatUploadStore $uploadStore,
     ) {}
 
     /**
      * Handle a chat message (text and/or images/files) — blocking JSON response.
      */
-    public function send(Request $request): JsonResponse
+    public function send(ChatRequest $request): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
 
@@ -58,6 +61,11 @@ class ChatController extends Controller
             return new JsonResponse($result);
         } catch (\Throwable $e) {
             $resolved = AiErrorResolver::resolve($e);
+            $rejectsImages = AiErrorResolver::rejectsImageInput($e);
+
+            if ($rejectsImages) {
+                $this->uploadStore->forgetImages($chatContext->uploadedImagePaths);
+            }
 
             if ($resolved['is_known']) {
                 Log::warning('AI Agent chat provider error', [
@@ -69,8 +77,9 @@ class ChatController extends Controller
             }
 
             return new JsonResponse([
-                'reply'  => $resolved['message'],
-                'action' => 'error',
+                'reply'          => $resolved['message'],
+                'action'         => 'error',
+                'discard_images' => $rejectsImages,
             ], $resolved['is_known'] ? $resolved['status'] : 422);
         }
     }
@@ -80,7 +89,7 @@ class ChatController extends Controller
      *
      * Returns real-time progress: tool-call indicators, text chunks, and final result.
      */
-    public function stream(Request $request): StreamedResponse|JsonResponse
+    public function stream(ChatRequest $request): StreamedResponse|JsonResponse
     {
         abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
 
@@ -96,31 +105,8 @@ class ChatController extends Controller
     /**
      * Build ChatContext from request, or return error JsonResponse.
      */
-    protected function buildChatContext(Request $request): ChatContext|JsonResponse
+    protected function buildChatContext(ChatRequest $request): ChatContext|JsonResponse
     {
-        // Decode history from JSON string when sent via FormData
-        if (is_string($request->input('history'))) {
-            $request->merge(['history' => json_decode($request->input('history'), true) ?: []]);
-        }
-
-        $request->validate([
-            'message'     => ['required_without_all:images,files', 'nullable', 'string', 'max:50000'],
-            'images'      => ['nullable', 'array', 'max:5'],
-            'images.*'    => ['image', 'mimes:jpeg,png,webp,gif', 'max:10240'],
-            'files'       => ['nullable', 'array', 'max:3'],
-            'files.*'     => ['file', 'max:102400', function (string $attribute, $value, $fail): void {
-                $allowed = ['csv', 'xlsx', 'xls'];
-                $ext = strtolower((string) $value->getClientOriginalExtension());
-                if (! in_array($ext, $allowed, true)) {
-                    $fail(trans('ai-agent::app.common.invalid-file-type', ['types' => implode(', ', $allowed)]));
-                }
-            }],
-            'platform_id' => ['nullable', 'integer'],
-            'model'       => ['nullable', 'string', 'max:200'],
-            'context'     => ['nullable', 'array'],
-            'history'     => ['nullable', 'array'],
-        ]);
-
         // Check if Agentic PIM is enabled
         $agenticEnabled = core()->getConfigData('general.magic_ai.agentic_pim.enabled');
 
@@ -167,61 +153,13 @@ class ChatController extends Controller
         // would select whichever model sorted first, so providers like OpenAI
         // that expose image-only entries (e.g. chatgpt-image-latest, dall-e-*)
         // could land on a model the text agent cannot call.
-        $model = (string) $request->input('model', '')
-            ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o');
+        $model = (string) resolve(ManagedPlatform::class)->resolveModel(
+            $platform,
+            (string) $request->input('model', '') ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o'),
+        );
 
-        // Store uploaded images — persist across conversation turns via session.
-        // The image is uploaded in the first message, but the user may confirm
-        // in a follow-up message ("Yes, proceed") which has no image attached.
-        $imagePaths = [];
-        foreach ($request->file('images', []) as $image) {
-            $stored = $image->store('ai-agent/images', 'public');
-            $imagePaths[] = storage_path('app/public/'.$stored);
-        }
-
-        if ($imagePaths !== []) {
-            // New images uploaded — save to session
-            session(['ai_agent_image_paths' => $imagePaths]);
-            session(['ai_agent_image_uploaded_at' => now()->timestamp]);
-        } else {
-            // No new images — restore from session if still fresh (< 10 minutes)
-            $uploadedAt = session('ai_agent_image_uploaded_at', 0);
-            $isFresh = (now()->timestamp - $uploadedAt) < 600;
-
-            if ($isFresh) {
-                $sessionImages = session('ai_agent_image_paths', []);
-                $imagePaths = array_filter($sessionImages, file_exists(...));
-            }
-        }
-
-        // Store uploaded files — same session persistence pattern.
-        //
-        // We deliberately use storeAs() with the original filename's
-        // extension instead of Laravel's default store() / hashName(), which
-        // guesses the extension from the MIME type. PHP often reports CSV
-        // uploads as "text/plain", so hashName() would save "products.csv"
-        // as "<hash>.txt" — and the ImportProducts tool would then reject
-        // it as an unsupported format because the extension check uses
-        // pathinfo() on the stored path.
-        $filePaths = [];
-        foreach ($request->file('files', []) as $file) {
-            $ext = strtolower($file->getClientOriginalExtension());
-            $filename = Str::random(40).($ext !== '' ? '.'.$ext : '');
-            $stored = $file->storeAs('ai-agent/files', $filename, 'public');
-            $filePaths[] = storage_path('app/public/'.$stored);
-        }
-
-        if ($filePaths !== []) {
-            session(['ai_agent_file_paths' => $filePaths]);
-            session(['ai_agent_file_uploaded_at' => now()->timestamp]);
-        } else {
-            $uploadedAt = session('ai_agent_file_uploaded_at', 0);
-
-            if ((now()->timestamp - $uploadedAt) < 600) {
-                $sessionFiles = session('ai_agent_file_paths', []);
-                $filePaths = array_filter($sessionFiles, file_exists(...));
-            }
-        }
+        $imagePaths = $this->uploadStore->images($request->file('images', []), $request->conversationId());
+        $filePaths = $this->uploadStore->files($request->file('files', []), $request->conversationId());
 
         // Build context
         $context = $request->input('context', []);
