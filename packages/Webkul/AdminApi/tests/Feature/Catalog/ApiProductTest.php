@@ -17,7 +17,8 @@ beforeEach(function () {
 
 it('should return the list of all simple products', function () {
     $product = Product::factory()->simple()->create();
-    $response = $this->withHeaders($this->headers)->json('GET', route('admin.api.products.index'))
+
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.products.index'))
         ->assertOk()
         ->assertJsonStructure([
             'data' => [
@@ -43,10 +44,16 @@ it('should return the list of all simple products', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Product::where('type', ProductType::Simple->value)->count()])
+        ->assertJsonFragment(['total' => Product::where('type', ProductType::Simple->value)->count()]);
+
+    $response = $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.products.index', [
+            'filters' => json_encode(['sku' => [['operator' => '=', 'value' => $product->sku]]]),
+        ]))
+        ->assertOk()
         ->json('data');
 
-    $product = Product::where('type', ProductType::Simple->value)->orderBy('id')->first();
+    $product->refresh();
 
     $responseProduct = collect($response)->firstWhere('sku', $product->sku);
 
