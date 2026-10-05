@@ -28,6 +28,13 @@ use Webkul\Product\Repositories\ProductRepository;
 
 class MagicAIController extends Controller
 {
+    /**
+     * Rich-text (WYSIWYG textarea) flag per attribute code, resolved once per request.
+     *
+     * @var array<string, bool>
+     */
+    protected array $richTextFields = [];
+
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeRepository $attributeRepository,
@@ -405,7 +412,7 @@ class MagicAIController extends Controller
         $magicAi = $this->resolveTranslationPlatform();
 
         foreach ($targetLocales as $locale) {
-            $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
+            $p = $this->translationInstruction($field, $locale);
             $prompt = $this->promptService->getPrompt(
                 $p,
                 request()->input('resource_id'),
@@ -414,12 +421,12 @@ class MagicAIController extends Controller
 
             $response = $magicAi
                 ->setModel(request()->input('model'))
-                ->setPrompt($prompt)
+                ->setPrompt($prompt, $this->isRichTextField($field) ? 'tinymce' : 'text')
                 ->translate();
 
             $translatedData[] = [
                 'locale'  => $locale,
-                'content' => trim($response),
+                'content' => $this->cleanTranslation($field, $response),
             ];
         }
 
@@ -509,7 +516,7 @@ class MagicAIController extends Controller
             foreach ($attributes as $key => $attribute) {
                 $field = $attribute['fieldName'];
 
-                $p = "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text.";
+                $p = $this->translationInstruction($field, $locale);
 
                 $prompt = $this->promptService->getPrompt(
                     $p,
@@ -519,12 +526,12 @@ class MagicAIController extends Controller
 
                 $response = $magicAi
                     ->setModel(request()->input('model'))
-                    ->setPrompt($prompt)
+                    ->setPrompt($prompt, $this->isRichTextField($field) ? 'tinymce' : 'text')
                     ->translate();
 
                 $translatedDataForLocale[$field] = [
                     'field'   => $field,
-                    'content' => trim($response),
+                    'content' => $this->cleanTranslation($field, $response),
                 ];
             }
 
@@ -547,6 +554,49 @@ class MagicAIController extends Controller
         SaveTranslatedAllAttributesJob::dispatch($productId, $translatedValues, $channel);
 
         return response()->json(['message' => trans('admin::app.catalog.products.edit.translate.tranlated-job-processed')]);
+    }
+
+    /**
+     * Whether the attribute is edited in the rich-text editor and so holds HTML.
+     */
+    protected function isRichTextField(string $field): bool
+    {
+        if (! array_key_exists($field, $this->richTextFields)) {
+            $attribute = $this->attributeRepository->findOneByField('code', $field);
+
+            $this->richTextFields[$field] = $attribute?->type === 'textarea' && (bool) $attribute->enable_wysiwyg;
+        }
+
+        return $this->richTextFields[$field];
+    }
+
+    /**
+     * Translation instruction: keep the markup of rich-text fields, plain text otherwise.
+     */
+    protected function translationInstruction(string $field, string $locale): string
+    {
+        return $this->isRichTextField($field)
+            ? "Translate @$field into $locale. Preserve the original HTML structure (every <p>, <br>, list and inline tag). Return only the translated HTML, with no commentary, no wrapper, and no extra text."
+            : "Translate @$field into $locale. It is plain text: keep its punctuation, separators and line breaks exactly, and do not add HTML tags, Markdown or quotes. Return only the translated text, with no commentary.";
+    }
+
+    /**
+     * Trim the response and, for plain fields, drop any markup the model still added.
+     *
+     * Only known formatting tags are removed, not everything strip_tags() would take,
+     * so a literal "<" in plain text survives.
+     */
+    protected function cleanTranslation(string $field, string $response): string
+    {
+        if ($this->isRichTextField($field)) {
+            return trim($response);
+        }
+
+        $text = preg_replace('#</(p|div|li|h[1-6])>\s*|<br\s*/?>#i', "\n", $response);
+
+        $text = preg_replace('#</?(p|div|span|ul|ol|li|h[1-6]|strong|em|b|i|u)\b[^>]*>#i', '', $text);
+
+        return trim(html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
     }
 
     /**

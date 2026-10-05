@@ -7,7 +7,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Webhook\DataGrids\WebhookDataGrid;
 use Webkul\Webhook\Http\Requests\WebhookForm;
 use Webkul\Webhook\Registry\EventRegistry;
@@ -119,11 +119,11 @@ class WebhookController
     /**
      * Mass delete webhooks.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
         abort_unless(bouncer()->hasPermission('configuration.webhook.delete'), 403);
 
-        foreach ($massDestroyRequest->input('indices', []) as $id) {
+        foreach ($massDestroyRequest->selectedIds(WebhookDataGrid::class) as $id) {
             if ($this->webhookRepository->find($id)) {
                 $this->webhookRepository->delete($id);
             }

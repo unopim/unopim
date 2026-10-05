@@ -2,6 +2,7 @@
 
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\DB;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -19,7 +20,7 @@ beforeEach(function () {
 });
 
 it('dual-writes associations to the link table when a product is copied', function () {
-    $source = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+    $source = Product::factory()->withInitialValues()->create(['type' => ProductType::Simple->value]);
 
     $related = Product::factory()->create();
     $upSell = Product::factory()->create();
@@ -30,14 +31,14 @@ it('dual-writes associations to the link table when a product is copied', functi
         'up_sells'         => [$upSell->sku],
     ], $source->id);
 
-    $this->assertDatabaseCount('product_associations', 2);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(2);
 
     $copiedProduct = $this->productRepository->copy($source->id);
 
     expect($copiedProduct->values['associations']['related_products'] ?? null)->toBe([$related->sku])
         ->and($copiedProduct->values['associations']['up_sells'] ?? null)->toBe([$upSell->sku]);
 
-    $this->assertDatabaseCount('product_associations', 4);
+    expect(DB::table('product_associations')->where('product_id', $copiedProduct->id)->count())->toBe(2);
 
     expect(
         DB::table('product_associations')
@@ -62,11 +63,12 @@ it('dual-writes associations to the link table when a product is copied', functi
 });
 
 it('does not create link-table rows when copying a product without associations', function () {
-    $source = Product::factory()->withInitialValues()->create(['type' => 'simple']);
+    $source = Product::factory()->withInitialValues()->create(['type' => ProductType::Simple->value]);
 
     $copiedProduct = $this->productRepository->copy($source->id);
 
-    $this->assertDatabaseCount('product_associations', 0);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $source->id]);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $copiedProduct->id]);
 
     expect($copiedProduct->id)->not->toBe($source->id);
 });

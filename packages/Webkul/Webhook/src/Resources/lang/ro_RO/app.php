@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Jurnalele Webhook au fost șterse cu succes',
                     'delete-failed'  => 'Ștergerea jurnalelor Webhook a eșuat în mod neașteptat',
                     'unauthorized'   => 'Această acțiune nu este autorizată',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Ștergerea a fost pusă în coadă pentru toate jurnalele corespunzătoare. Veți fi notificat când se termină.',
+                            'title'     => 'Ștergerea jurnalelor webhook',
+                            'completed' => ':count jurnale webhook șterse.',
+                            'failed'    => 'Ștergerea a :count jurnale webhook s-a încheiat cu erori. Unele jurnale nu au fost șterse.',
+                        ],
+                    ],
                 ],
             ],
         ],

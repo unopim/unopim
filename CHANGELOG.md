@@ -1,3 +1,23 @@
+# 3.1.3 — September 29th, 2026
+
+## Improvements
+
+- "Select all matching" now covers every matching record instead of stopping at the first 10,000. The grid sends its filters rather than an id list, and the server resolves the matching ids, paging past the first Elasticsearch batch when Elasticsearch is enabled.
+- Product status update and delete on a select-all selection now run on the queue in chunks of 100, so the request returns at once at any selection size, and the admin who started the action gets a notification with the product count when it finishes. Each chunk runs in its own transaction, so a failed chunk rolls back cleanly and keeps its product media.
+- Select all matching now also works for the mass actions on attributes, association types, category fields, currencies, locales, completeness settings, measurement families, product passports and webhooks, with their existing guards still applied. Webhook log deletion runs on the queue and notifies when done.
+- Added `ProductType` and `VariantLevel` enums for product types and variant levels. The existing string constants keep their values, so code comparing against them keeps working.
+- The AI chat import confirmation now links to the job tracker instead of the import profile.
+
+## Bug fixes
+
+- Fixed the datagrid toolbar unmounting while a mass action was pending, which left an empty error flash and a stuck loading shimmer after the grid reloaded.
+- Fixed every Agentic PIM chat product update that ran a translation failing with "Unknown column 'name'"; target locale names are now derived from their codes.
+- Fixed Magic AI translation wrapping plain text attributes and non-WYSIWYG textareas such as the name or meta title in HTML paragraph tags; only WYSIWYG fields keep HTML now.
+- Fixed the AI chat reloading the product or category edit page after a reply from a read-only tool; the page reloads only when a write tool changed data.
+- Fixed AI chat images from an earlier conversation, or another admin's upload, being attached to a new message. Uploads are now kept per admin and per conversation, expire after ten minutes, and expired uploads are removed by the temporary file cleanup.
+- Fixed a model that cannot read images blocking every following chat message; the chat now explains the model does not accept images and drops the image from the conversation.
+- Fixed an oversized chat image failing without explanation; the chat now states the server upload limit.
+
 # 3.1.2 — September 24th, 2026
 
 ## Improvements

@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Odabrani proizvodi su uspješno obrisani',
                     'mass-update-queued'      => 'Odabrani proizvodi ažuriraju se u pozadini',
                     'mass-update-success'     => 'Odabrani proizvodi su uspješno ažurirani',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Ažuriranje statusa stavljeno je u red čekanja za sve odgovarajuće proizvode. Obavijestit ćemo vas kada završi.',
+                            'title'     => 'Ažuriranje statusa proizvoda',
+                            'completed' => 'Status je ažuriran za :count proizvoda.',
+                            'failed'    => 'Ažuriranje statusa za :count proizvoda završilo je s pogreškama. Neki proizvodi nisu ažurirani.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Brisanje je stavljeno u red čekanja za sve odgovarajuće proizvode. Obavijestit ćemo vas kada završi.',
+                            'title'     => 'Brisanje proizvoda',
+                            'completed' => 'Izbrisano je :count proizvoda.',
+                            'failed'    => 'Brisanje :count proizvoda završilo je s pogreškama. Neki proizvodi nisu izbrisani.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Izvoz svih odgovarajućih proizvoda stavljen je u red čekanja. Dobit ćete obavijest s poveznicom za preuzimanje kada bude spreman.',
+                            'title'         => 'Izvoz proizvoda',
+                            'completed'     => 'Izvoz :count proizvoda je spreman. Kliknite za preuzimanje.',
+                            'failed'        => 'Izvoz proizvoda nije moguće dovršiti.',
+                            'too-many-rows' => 'Izvoz ima više redaka nego što ovaj format dopušta (:limit). Umjesto toga izvezite u CSV.',
+                        ],
+                    ],
                     'name'                    => 'Ime',
                     'out-of-stock'            => 'Rasprodano',
                     'price'                   => 'Cijena',
@@ -2639,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Nijedna stavka nije odabrana.',
+                'selection-truncated'              => 'Ova radnja može obraditi samo prvih :limit od :total odgovarajućih zapisa.',
                 'must-select-a-mass-action-option' => 'Morate odabrati opciju masovne akcije.',
                 'must-select-a-mass-action'        => 'Morate odabrati masovnu akciju.',
                 'link-copied'                      => 'Veza je kopirana u međuspremnik.',

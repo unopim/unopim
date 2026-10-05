@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook-logger slettet',
                     'delete-failed'  => 'Sletting av Webhook-logger mislyktes uventet',
                     'unauthorized'   => 'Denne handlingen er ikke autorisert',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Sletting er lagt i kø for alle samsvarende logger. Du får beskjed når den er ferdig.',
+                            'title'     => 'Sletting av webhook-logger',
+                            'completed' => ':count webhook-logger slettet.',
+                            'failed'    => 'Slettingen av :count webhook-logger ble fullført med feil. Noen logger ble ikke slettet.',
+                        ],
+                    ],
                 ],
             ],
         ],

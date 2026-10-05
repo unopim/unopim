@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
 use Illuminate\View\View;
+use Webkul\Admin\DataGrids\Catalog\ProductDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\BulkEditRequest;
 use Webkul\Attribute\Contracts\Attribute;
@@ -36,6 +37,11 @@ class ProductBulkEditController extends Controller
     const DEFAULT_PER_PAGE = 20;
 
     /**
+     * Most products a single bulk edit session may hold.
+     */
+    const MAX_PRODUCTS = 100;
+
+    /**
      * Create a new controller instance.
      *
      * @return void
@@ -56,10 +62,15 @@ class ProductBulkEditController extends Controller
      */
     public function filters(BulkEditRequest $bulkEditRequest): JsonResponse
     {
-        $productIds = $bulkEditRequest->input('indices', []);
+        $productIds = $bulkEditRequest->selectedIds(ProductDataGrid::class)
+            ->take(self::MAX_PRODUCTS + 1)
+            ->map(fn ($id): int => (int) $id)
+            ->values()
+            ->all();
+
         $filters = $bulkEditRequest->input('filter', []);
 
-        if (count($productIds) > 100) {
+        if (count($productIds) > self::MAX_PRODUCTS) {
             return response()->json([
                 'message' => trans('admin::app.catalog.products.bulk-edit.filter.many-product'),
             ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);

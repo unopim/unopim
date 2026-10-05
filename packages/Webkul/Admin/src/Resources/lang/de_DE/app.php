@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Ausgewählte Produkte erfolgreich gelöscht',
                     'mass-update-queued'      => 'Ausgewählte Produkte werden im Hintergrund aktualisiert',
                     'mass-update-success'     => 'Ausgewählte Produkte erfolgreich aktualisiert',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Die Statusänderung wurde für alle passenden Produkte eingeplant. Sie werden benachrichtigt, sobald sie abgeschlossen ist.',
+                            'title'     => 'Produktstatus aktualisieren',
+                            'completed' => 'Status für :count Produkte aktualisiert.',
+                            'failed'    => 'Die Statusänderung von :count Produkten wurde mit Fehlern abgeschlossen. Einige Produkte wurden nicht aktualisiert.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Das Löschen wurde für alle passenden Produkte eingeplant. Sie werden benachrichtigt, sobald es abgeschlossen ist.',
+                            'title'     => 'Produkte löschen',
+                            'completed' => ':count Produkte gelöscht.',
+                            'failed'    => 'Das Löschen von :count Produkten wurde mit Fehlern abgeschlossen. Einige Produkte wurden nicht gelöscht.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Der Export aller passenden Produkte wurde eingeplant. Sie erhalten eine Benachrichtigung mit Download-Link, sobald er fertig ist.',
+                            'title'         => 'Produktexport',
+                            'completed'     => 'Der Export von :count Produkten ist fertig. Zum Herunterladen klicken.',
+                            'failed'        => 'Der Produktexport konnte nicht abgeschlossen werden.',
+                            'too-many-rows' => 'Der Export enthält mehr Zeilen, als dieses Format erlaubt (:limit). Exportieren Sie stattdessen als CSV.',
+                        ],
+                    ],
                     'name'                    => 'Name',
                     'out-of-stock'            => 'Nicht auf Lager',
                     'price'                   => 'Preis',
@@ -2639,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Es wurden keine Datensätze ausgewählt.',
+                'selection-truncated'              => 'Diese Aktion kann nur die ersten :limit von :total passenden Datensätzen verarbeiten.',
                 'must-select-a-mass-action-option' => 'Sie müssen eine Option für eine Massenaktion auswählen.',
                 'must-select-a-mass-action'        => 'Sie müssen eine Massenaktion auswählen.',
                 'link-copied'                      => 'Link in die Zwischenablage kopiert.',

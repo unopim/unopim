@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Matagumpay na nabura ang mga log ng Webhook',
                     'delete-failed'  => 'Hindi inaasahang nabigo ang pagbura ng mga log ng Webhook',
                     'unauthorized'   => 'Ang pagkilos na ito ay hindi awtorisado',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Naka-queue na ang pagbura sa lahat ng tumutugmang log. Aabisuhan ka kapag tapos na.',
+                            'title'     => 'Pagbura ng webhook log',
+                            'completed' => ':count webhook log ang nabura.',
+                            'failed'    => 'Natapos na may mga error ang pagbura ng :count webhook log. Ang ilang log ay hindi nabura.',
+                        ],
+                    ],
                 ],
             ],
         ],
