@@ -3,12 +3,13 @@
 namespace Webkul\ElasticSearch\Observers;
 
 use Elastic\Elasticsearch\Exception\ElasticsearchException;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\Product\Models\Product as Products;
 
-class Product
+class Product implements ShouldHandleEventsAfterCommit
 {
     /**
      * bool flag to manage observer functionality

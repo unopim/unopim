@@ -4,9 +4,17 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Core\Rules\Code;
+use Webkul\Core\Traits\MergesUploadedFiles;
 
 class CategoryRequest extends FormRequest
 {
+    use MergesUploadedFiles;
+
+    public function prepareForValidation()
+    {
+        $this->mergeUploadedFilesIntoInput();
+    }
+
     public function authorize()
     {
         return true;

@@ -4,10 +4,13 @@ namespace Webkul\Admin\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Webkul\Core\Rules\Sku;
+use Webkul\Core\Traits\MergesUploadedFiles;
 use Webkul\Product\Repositories\ProductRepository;
 
 class ProductForm extends FormRequest
 {
+    use MergesUploadedFiles;
+
     /**
      * Rules.
      *
@@ -75,6 +78,8 @@ class ProductForm extends FormRequest
 
     public function prepareForValidation()
     {
+        $this->mergeUploadedFilesIntoInput();
+
         if (isset($this->uniqueFields['values.common.sku']) || isset($this->values['common']['sku'])) {
             $this->merge([
                 'sku' => $this->values['common']['sku'],

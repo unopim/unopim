@@ -99,7 +99,7 @@
         app.component('v-datagrid-export', {
             template: '#v-datagrid-export-template',
 
-            props: ['src'],
+            props: ['src', 'queueSrc'],
 
             data() {
                 return {
@@ -108,6 +108,8 @@
                     available: null,
 
                     applied: null,
+
+                    resolveSelection: null,
 
                     supportedTypes: @json($supportedType),
 
@@ -138,13 +140,49 @@
                     this.$emitter.on('change-datagrid', this.updateProperties);
                 },
 
-                updateProperties({available, applied }) {
+                updateProperties({ available, applied, resolveSelection }) {
                     this.available = available;
 
                     this.applied = applied;
+
+                    this.resolveSelection = resolveSelection ?? null;
                 },
 
+                /**
+                 * Built-in formats export "all matching" on the queue from the grid's filters; any other
+                 * format receives the resolved id list.
+                 */
                 download() {
+                    if (this.resolveSelection && this.available?.records?.length) {
+                        const queueable = !! this.queueSrc && ['csv', 'xls', 'xlsx'].includes(this.format);
+
+                        this.resolveSelection({ supportsSelectAll: queueable, warnTruncation: true })
+                            .then(selection => selection.select_all ? this.queue(selection) : this.export(selection.indices));
+
+                        return;
+                    }
+
+                    this.export(this?.applied?.massActions?.indices);
+                },
+
+                queue(selection) {
+                    this.$axios
+                        .post(this.queueSrc, { ...selection, format: this.format })
+                        .then(response => {
+                            this.$emitter.emit('add-flash', { type: 'success', message: response.data.message });
+                        })
+                        .catch(error => {
+                            this.$emitter.emit('add-flash', {
+                                type: 'error',
+                                message: error?.response?.data?.message || '@lang('admin::app.export.error')',
+                            });
+                        })
+                        .finally(() => {
+                            this.$refs.exportModal.toggle();
+                        });
+                },
+
+                export(productIds) {
                     if (! this.available?.records?.length) {
                         this.$emitter.emit('add-flash', { type: 'warning', message: '@lang('admin::app.export.no-records')' });
 
@@ -161,7 +199,7 @@
 
                             with_media: withMedia,
 
-                            productIds: this?.applied?.massActions?.indices,
+                            productIds: productIds,
 
                             filters: {},
 
@@ -186,10 +224,7 @@
 
                         if (types.includes(this.format)) {
                             this.$axios
-                                .get(this.src, {
-                                    params,
-                                    responseType: 'blob',
-                                })
+                                .post(this.src, this.requestBody(params), { responseType: 'blob' })
                                 .then((response) => {
                                     const url = window.URL.createObjectURL(new Blob([response.data]));
 
@@ -250,6 +285,25 @@
                                 });
                         }
                     }
+                },
+
+                /**
+                 * The id list goes in a POST body, as a long selection does not fit in a URL. In a JSON
+                 * body the grid rejects an empty sort and treats an empty filter as matching nothing,
+                 * so both are dropped the way a query string would drop them.
+                 */
+                requestBody(params) {
+                    const { sort, filters, ...body } = params;
+
+                    const appliedFilters = Object.fromEntries(
+                        Object.entries(filters).filter(([, value]) => ! Array.isArray(value) || value.length)
+                    );
+
+                    return {
+                        ...body,
+                        ...(Object.keys(sort).length ? { sort } : {}),
+                        ...(Object.keys(appliedFilters).length ? { filters: appliedFilters } : {}),
+                    };
                 },
 
                 parseValue(value) {

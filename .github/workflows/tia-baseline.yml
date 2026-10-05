@@ -1,0 +1,154 @@
+name: TIA Baseline
+
+on:
+  push:
+    branches: [master, 3.x]
+  schedule:
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  baseline:
+    runs-on: ubuntu-24.04
+    name: Record the test impact baseline
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: unopim
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=5s
+          --health-timeout=3s
+          --health-retries=3
+          --tmpfs /var/lib/mysql:rw,noexec,nosuid,size=600m
+          --tmpfs /tmp:rw,noexec,nosuid,size=100m
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: '8.4'
+          extensions: curl, fileinfo, gd, intl, mbstring, openssl, pdo, pdo_mysql, tokenizer, zip
+          ini-values: error_reporting=E_ALL, memory_limit=-1, pcov.directory=${{ github.workspace }}, pcov.exclude="~(vendor|node_modules|storage)~"
+          tools: composer:v2
+          coverage: pcov
+
+      - name: Install Composer dependencies
+        uses: ramsey/composer-install@v4
+        with:
+          composer-options: "--optimize-autoloader"
+
+      - name: Setup Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Cache Node dependencies
+        uses: actions/cache@v5
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package.json') }}
+          restore-keys: ${{ runner.os }}-npm-
+
+      - name: Install Node dependencies
+        run: npm install --omit=dev --no-audit --no-fund --no-progress --prefer-offline
+
+      - name: Set up environment
+        run: |
+          cp .env.example .env
+          sed -i "s|^\(APP_ENV=\s*\).*$|\1testing|" .env
+          sed -i "s|^\(DB_HOST=\s*\).*$|\1127.0.0.1|" .env
+          sed -i "s|^\(DB_PORT=\s*\).*$|\13306|" .env
+          sed -i "s|^\(DB_DATABASE=\s*\).*$|\1unopim|" .env
+          sed -i "s|^\(DB_USERNAME=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PASSWORD=\s*\).*$|\1root|" .env
+          sed -i "s|^\(DB_PREFIX=\s*\).*$|\1wk_|" .env
+
+      - name: Install UnoPim
+        run: php artisan unopim:install --skip-env-check --skip-admin-creation
+
+      - name: Add swap headroom for coverage recording
+        run: |
+          sudo rm -f /mnt/swapfile
+          sudo fallocate -l 24G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          swapon --show
+          free -h
+          df -h /mnt /
+
+      - name: Record the baseline
+        env:
+          PEST_MEMORY_LIMIT: '-1'
+        run: |
+          ( while true; do
+              printf '%s rss=%sk avail=%s swapfree=%s\n' \
+                "$(date -u +%H:%M:%S)" \
+                "$(ps -eo rss,comm --sort=-rss | awk '$2 ~ /php/ {s+=$1} END {print s+0}')" \
+                "$(awk '/MemAvailable/ {print $2}' /proc/meminfo)" \
+                "$(awk '/SwapFree/ {print $2}' /proc/meminfo)"
+              sleep 1
+            done ) > "$RUNNER_TEMP/memory.log" 2>&1 &
+          sampler=$!
+
+          set +e
+          php vendor/bin/pest --tia --fresh --colors=always
+          status=$?
+          set -e
+
+          kill "$sampler" 2>/dev/null || true
+
+          echo '--- peak memory during recording ---'
+          sort -t= -k2 -n "$RUNNER_TEMP/memory.log" | tail -5
+
+          if [ "$status" -ne 0 ]; then
+            if [ "$status" -gt 128 ] && [ "$status" -lt 192 ]; then
+              echo "::error::the recording process was killed by signal $((status - 128)), not by a failing test"
+            else
+              echo "::error::the recording run exited with $status"
+            fi
+
+            free -h || true
+            swapon --show || true
+            df -h /mnt / || true
+            sudo dmesg | tail -50 || true
+
+            exit "$status"
+          fi
+
+          graph="$(vendor/bin/pest --baseline)/graph.json"
+
+          if [ ! -f "$graph" ]; then
+            echo "::error::the run recorded no graph at $graph"
+            exit 1
+          fi
+
+      - name: Resolve the baseline path
+        id: baseline
+        run: echo "path=$(vendor/bin/pest --baseline)" >> "$GITHUB_OUTPUT"
+
+      - name: Upload the baseline
+        uses: actions/upload-artifact@v7
+        with:
+          name: pest-tia-baseline
+          path: ${{ steps.baseline.outputs.path }}
+          include-hidden-files: true
+          retention-days: 90

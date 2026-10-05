@@ -362,7 +362,8 @@ test('5.4 - Message counter badge appears after sending', async ({ adminPageWith
 
   await expect(adminPageWithWidget.getByText(/channel/i).last()).toBeVisible({ timeout: 45000 });
 
-  await expect(adminPageWithWidget.getByText(/message\(s\)/)).toBeVisible();
+  // Scope to the header badge: session cards carry their own message count.
+  await expect(adminPageWithWidget.locator('.ap-chat-meta').filter({ hasText: /message\(s\)/ })).toBeVisible();
 });
 
 // Tests 5.5 and 5.6 removed — they depend on real-time OpenAI API responses

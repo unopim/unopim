@@ -148,21 +148,23 @@ class AssociationTypeDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('catalog.association_types.mass_delete')) {
             $this->addMassAction([
-                'icon'    => 'icon-delete',
-                'title'   => trans('admin::app.catalog.association_types.index.datagrid.delete'),
-                'method'  => 'POST',
-                'url'     => route('admin.catalog.association_types.mass_delete'),
-                'options' => ['actionType' => 'delete'],
+                'icon'                => 'icon-delete',
+                'title'               => trans('admin::app.catalog.association_types.index.datagrid.delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'url'                 => route('admin.catalog.association_types.mass_delete'),
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
 
         if (bouncer()->hasPermission('catalog.association_types.mass_update')) {
             $this->addMassAction([
-                'icon'    => 'icon-edit',
-                'title'   => trans('admin::app.catalog.association_types.index.datagrid.update-status'),
-                'url'     => route('admin.catalog.association_types.mass_update'),
-                'method'  => 'POST',
-                'options' => [
+                'icon'                => 'icon-edit',
+                'title'               => trans('admin::app.catalog.association_types.index.datagrid.update-status'),
+                'url'                 => route('admin.catalog.association_types.mass_update'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => [
                     [
                         'label' => trans('admin::app.catalog.association_types.index.datagrid.active'),
                         'value' => 1,
@@ -173,5 +175,13 @@ class AssociationTypeDataGrid extends DataGrid
                 ],
             ]);
         }
+    }
+
+    /**
+     * The grid has no id column and its translation join carries one, so the bare key would be ambiguous.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'association_types.id';
     }
 }

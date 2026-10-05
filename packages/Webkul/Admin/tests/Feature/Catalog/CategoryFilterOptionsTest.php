@@ -40,10 +40,15 @@ it('returns only the requested codes when hydrating selected values', function (
     expect(array_column($options, 'code'))->toEqualCanonicalizing($selected->pluck('code')->all());
 });
 
+/**
+ * The search matches a name as well as a code, and the factory's code is random
+ * and can be two characters long, so an explicit code is what keeps the query
+ * from also matching a generated name or a demo category.
+ */
 it('searches categories by code', function () {
     $this->loginAsAdmin();
 
-    $category = Category::factory()->create();
+    $category = Category::factory()->create(['code' => 'qzx_filter_target']);
 
     Category::factory()->count(2)->create();
 

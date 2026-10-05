@@ -15,6 +15,7 @@ use Webkul\DataTransfer\Models\JobTrackBatch;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
 use Webkul\Measurement\Tests\Support\ChannelScopeMeasurementSpyExporter;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -117,7 +118,7 @@ function channelScopeProduct(AttributeFamily $family, string $prefix, array $val
 
     $product = Product::create([
         'sku'                 => $sku,
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'status'              => 1,
         'attribute_family_id' => $family->id,
     ]);

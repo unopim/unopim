@@ -39,9 +39,9 @@ const settleDockTransition = async (page) => {
 
 // The datagrid toolbar renders its filter trigger as a clickable div, not a button.
 const openFilterDrawer = async (page) => {
-  await page.getByText('Filter', { exact: true }).first().click();
+  await page.locator('.icon-filter').first().click();
 
-  await expect(page.locator('.fixed.z-\\[10001\\].inset-y-0:visible').first()).toBeVisible();
+  await expect(page.locator('[data-drawer-panel]:visible').first()).toBeVisible();
 };
 
 // Every overlay the admin renders inside #app: these are the layers that used to

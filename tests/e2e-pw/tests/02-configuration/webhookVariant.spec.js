@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
 
 /**
  * Select a value from a Vue-multiselect dropdown by field name.
@@ -9,7 +9,7 @@ async function selectMultiselectByField(page, fieldName, optionLabel) {
   await wrapper.locator('.multiselect__tags').click();
   await page.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   await page.getByRole('option', { name: optionLabel }).first().click();
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 }
 
 /**

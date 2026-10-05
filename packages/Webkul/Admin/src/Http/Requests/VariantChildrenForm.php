@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Repositories\ProductRepository;
 
 class VariantChildrenForm extends FormRequest
@@ -46,7 +47,7 @@ class VariantChildrenForm extends FormRequest
     {
         $configurable = $this->productRepository->find($this->route('configurableId'));
 
-        abort_if(! $configurable || $configurable->type !== 'configurable' || ! $configurable->variantStructure, 404);
+        abort_if(! $configurable || $configurable->type !== ProductType::Configurable->value || ! $configurable->variantStructure, 404);
 
         $axisCodes = $this->variantStructurePlanner->allAxisCodes($configurable->variantStructure);
 

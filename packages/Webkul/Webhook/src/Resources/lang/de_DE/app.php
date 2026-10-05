@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook-Protokolle erfolgreich gelöscht',
                     'delete-failed'  => 'Löschen der Webhook-Protokolle unerwartet fehlgeschlagen',
                     'unauthorized'   => 'Diese Aktion ist nicht autorisiert',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Löschung für alle passenden Protokolle in die Warteschlange gestellt. Sie werden benachrichtigt, sobald sie abgeschlossen ist.',
+                            'title'     => 'Löschen von Webhook-Protokollen',
+                            'completed' => ':count Webhook-Protokolle gelöscht.',
+                            'failed'    => 'Das Löschen von :count Webhook-Protokollen wurde mit Fehlern beendet. Einige Protokolle wurden nicht gelöscht.',
+                        ],
+                    ],
                 ],
             ],
         ],

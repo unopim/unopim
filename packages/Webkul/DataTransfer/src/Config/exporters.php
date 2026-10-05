@@ -100,8 +100,8 @@ return [
                     ],
                 ], [
                     'name'        => 'file_path',
-                    'title'       => 'data_transfer::app.exporters.fields.file-path',
-                    'info'        => 'data_transfer::app.exporters.fields.file-path-info',
+                    'title'       => 'data_transfer::app.exporters.fields.file-name',
+                    'info'        => 'data_transfer::app.exporters.fields.file-name-info',
                     'required'    => false,
                     'type'        => 'text',
                     'placeholder' => '[code]_[date]',

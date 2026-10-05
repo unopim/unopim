@@ -19,7 +19,8 @@
         $locale->code => $values[$locale->code] ?? '',
     ]);
 
-    $valuesExpression = $attributes->get(':values') ?: $localeValues->toJson();
+    $valuesExpression = $attributes->get(':values')
+        ?: $localeValues->toJson(JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
 
     $attributes = $attributes->except([':values']);
 @endphp

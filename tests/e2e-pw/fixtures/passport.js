@@ -5,7 +5,7 @@
 //   docker exec unopim-unopim-fpm-1 php artisan unopim:passport:install-preset
 //   docker exec unopim-unopim-fpm-1 php artisan tinker tests/e2e-pw/scripts/seed-dpp-e2e.php
 const base = require('@playwright/test');
-const { generateUid } = require('../utils/helpers');
+const { generateUid, closeDropdown } = require('../utils/helpers');
 const { ensureFamilyState, STATE_PATH, FAMILY_BASE_URL } = require('../utils/ensure-family-state');
 const { withFamilyPage, selectMultiselect } = require('../utils/family-helpers');
 
@@ -357,7 +357,7 @@ async function passportRowLinks(page, localeCode) {
     };
   });
 
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 
   return links;
 }
