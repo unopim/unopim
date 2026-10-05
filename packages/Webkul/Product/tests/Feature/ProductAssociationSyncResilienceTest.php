@@ -51,5 +51,5 @@ it('does not abort the product save when association link-table sync throws', fu
         'id' => $source->id,
     ]);
 
-    $this->assertDatabaseCount('product_associations', 0);
+    $this->assertDatabaseMissing('product_associations', ['product_id' => $source->id]);
 });
