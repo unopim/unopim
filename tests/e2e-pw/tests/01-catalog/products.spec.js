@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, searchInDataGrid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, openFilterDrawer, closeDropdown } = require('../../utils/helpers');
 
 /** Fill a TinyMCE editor by textarea ID, then sync content to the textarea for VeeValidate. */
 async function fillTinyMCE(page, editorId, text) {
@@ -35,7 +35,7 @@ async function selectMultiselect(page, fieldName, optionLabel) {
       .first()
       .click();
   }
-  await page.keyboard.press('Escape');
+  await closeDropdown(page);
 }
 
 /** Create a simple product; returns the SKU used. */
@@ -464,7 +464,7 @@ test.describe('Product Listing Features', () => {
 
   test('30 - should open the filter menu when clicked', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 

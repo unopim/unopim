@@ -6,6 +6,7 @@ use Illuminate\Console\Attributes\Description;
 use Illuminate\Console\Attributes\Signature;
 use Illuminate\Console\Command;
 use Webkul\Product\Contracts\VariantValueResolver;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\ProductProxy;
 use Webkul\Product\Type\AbstractType;
 
@@ -23,7 +24,7 @@ class StripRedundantVariantValuesCommand extends Command
         $common = AbstractType::COMMON_VALUES_KEY;
 
         $query = ProductProxy::modelClass()::query()
-            ->where('type', 'configurable')
+            ->where('type', ProductType::Configurable->value)
             ->with('super_attributes');
 
         if ($id = $this->option('product')) {

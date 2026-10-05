@@ -2,13 +2,14 @@
 
 namespace Webkul\Product\Jobs;
 
+use Illuminate\Bus\Batchable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Webkul\Product\Repositories\ProductRepository;
 
 class MassDeleteProducts implements ShouldQueue
 {
-    use Queueable;
+    use Batchable, Queueable;
 
     /**
      * @param  array<int>  $productIds

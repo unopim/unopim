@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Attributes\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\MagicAI\Contracts\MagicAIPlatform as MagicAIPlatformContract;
+use Webkul\MagicAI\Database\Factories\MagicAIPlatformFactory;
 
 #[Fillable([
     'label',
@@ -27,6 +31,13 @@ use Webkul\MagicAI\Contracts\MagicAIPlatform as MagicAIPlatformContract;
 #[Table(name: 'magic_ai_platforms')]
 class MagicAIPlatform extends Model implements MagicAIPlatformContract
 {
+    use HasFactory;
+
+    protected static function newFactory(): Factory
+    {
+        return MagicAIPlatformFactory::new();
+    }
+
     protected static function booted()
     {
         static::saving(function ($model): void {
@@ -36,12 +47,18 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
         });
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function active($query)
     {
         return $query->where('status', true);
     }
 
+    /**
+     * @param  Builder<static>  $query
+     */
     #[Scope]
     protected function default($query)
     {
@@ -89,6 +106,7 @@ class MagicAIPlatform extends Model implements MagicAIPlatformContract
         return [
             'extras'     => 'array',
             'is_default' => 'boolean',
+            'is_managed' => 'boolean',
             'status'     => 'boolean',
             'api_key'    => 'encrypted',
         ];

@@ -192,6 +192,10 @@
                     type: [Number, String],
                     default: 0
                 },
+                expandRoots: {
+                    type: Boolean,
+                    default: false
+                },
                 showToolbar: {
                     type: Boolean,
                     default: false
@@ -223,6 +227,29 @@
                 fillHeight: {
                     type: Boolean,
                     default: false
+                },
+
+                /**
+                 * The real submitted field name a folder-click cascade should
+                 * mark touched for the unsaved-changes tracker — its own
+                 * value-diff check works via the hidden inputs' `form`
+                 * attribute regardless of DOM placement, but the touched-field
+                 * tracking needs an explicit event since a cascade selects
+                 * after an async fetch, past the tracker's snapshot window.
+                 */
+                unsavedFieldName: {
+                    type: String,
+                    default: null
+                },
+
+                /**
+                 * Locale the descendants request resolves node names in,
+                 * matching whatever the tree's own items were fetched with —
+                 * left unset falls back to the globally requested locale.
+                 */
+                locale: {
+                    type: String,
+                    default: null
                 }
             },
 
@@ -233,6 +260,7 @@
                     formattedValues: [],
                     formattedExpandedBranch: [],
                     fetchChildrenUrl: "{{ route('admin.catalog.categories.children.tree')}}",
+                    descendantsUrl: "{{ route('admin.catalog.categories.descendants')}}",
                     createUrl: "{{ route('admin.catalog.categories.index') }}",
                     searchUrl: "{{ route('admin.catalog.categories.search') }}",
                     deleteUrl: "{{ route('admin.catalog.categories.delete', 'nodeId') }}",
@@ -245,6 +273,16 @@
                     searchLoading: false,
                     searchTimer: null,
                     savedValues: [],
+
+                    /**
+                     * A folder click on one node fetches, selects and renders
+                     * a whole subtree asynchronously; a second cascade
+                     * starting before the first resolves would each compute
+                     * its own selection snapshot and apply it on arrival,
+                     * making the final state depend on response order. This
+                     * flag serializes cascades tree-wide instead of per-node.
+                     */
+                    cascadeInFlight: false,
 
                     labels: {}
                 };
@@ -269,6 +307,10 @@
             mounted() {
                 this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
                 this.$emitter.on('form-saved', this.commitValues);
+
+                if (this.expandRoots) {
+                    this.nodes.filter(node => node.level === 1).forEach(node => node.expandBranch());
+                }
             },
 
             beforeUnmount() {

@@ -10,6 +10,7 @@ use Webkul\AdminApi\ApiDataSource\Catalog\SimpleProductDataSource;
 use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateSimpleProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\StoreSimpleProductRequest;
 use Webkul\AdminApi\Http\Requests\Catalog\UpdateSimpleProductRequest;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Type\AbstractType;
 
 class SimpleProductController extends ProductController
@@ -84,7 +85,7 @@ class SimpleProductController extends ProductController
             $data['attribute_family_id'] = $family->id;
             unset($data['family']);
 
-            $data['type'] = config('product_types.simple.key');
+            $data['type'] = ProductType::Simple->value;
             $data['sku'] = $this->getSkuFromValues($data);
 
             try {
@@ -93,10 +94,6 @@ class SimpleProductController extends ProductController
                 return $this->validateErrorResponse($e->validator->errors()->messages());
             }
 
-            // Validated BEFORE any product row is written below (plain
-            // create or the `parent`-variant create), so an invalid link's
-            // `additional_data` aborts here with nothing persisted -- see
-            // `validateRichAssociationsBeforeCreate()`.
             $this->validateRichAssociationsBeforeCreate($data);
 
             if ($data['parent']) {

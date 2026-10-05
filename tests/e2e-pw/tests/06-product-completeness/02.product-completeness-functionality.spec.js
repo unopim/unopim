@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave } = require('../../utils/helpers');
+const { clickSave, closeDropdown } = require('../../utils/helpers');
 
 /**
  * Click the first selectable option in an already-open vue-multiselect
@@ -178,7 +178,7 @@ test.describe('Verify the behaviour of Product Completeness feature', () => {
     } else {
       // Every channel already assigned — close the dropdown and verify the
       // multiselect carries a tag for it.
-      await adminPage.keyboard.press('Escape');
+      await closeDropdown(adminPage);
       await expect(adminPage.locator('.multiselect__tag').first()).toBeVisible();
     }
   });

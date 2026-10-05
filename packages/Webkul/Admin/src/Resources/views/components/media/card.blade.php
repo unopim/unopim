@@ -79,7 +79,17 @@
                     v-if="isVideo || isAudio"
                     class="pointer-events-none absolute inset-0 flex items-center justify-center"
                 >
+                    <button
+                        v-if="isVideo && allowPreview"
+                        type="button"
+                        class="pointer-events-auto text-2xl text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.9)] transition-transform hover:scale-110"
+                        aria-label="@lang('admin::app.components.media.images.preview-image')"
+                        @click.stop="$emit('preview', media)"
+                    >
+                        <span class="icon-play"></span>
+                    </button>
                     <span
+                        v-else
                         class="flex h-10 w-10 items-center justify-center rounded-full bg-black/55 text-xl text-white shadow-lg"
                         :class="isVideo ? 'icon-play' : 'icon-audio'"
                     ></span>

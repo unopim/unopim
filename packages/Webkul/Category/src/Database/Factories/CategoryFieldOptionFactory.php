@@ -23,7 +23,7 @@ class CategoryFieldOptionFactory extends Factory
     public function definition(): array
     {
         return [
-            'code'         => fake()->regexify('/^[a-zA-Z]+\w+$/'),
+            'code'         => fake()->unique()->regexify('/^[a-z][a-z0-9_]{9,19}$/'),
             'sort_order'   => fake()->randomDigit(),
         ];
     }

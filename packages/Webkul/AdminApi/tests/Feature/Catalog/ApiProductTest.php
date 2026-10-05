@@ -8,6 +8,7 @@ use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -42,10 +43,10 @@ it('should return the list of all simple products', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Product::where('type', 'simple')->count()])
+        ->assertJsonFragment(['total' => Product::where('type', ProductType::Simple->value)->count()])
         ->json('data');
 
-    $product = Product::where('type', 'simple')->orderBy('id')->first();
+    $product = Product::where('type', ProductType::Simple->value)->orderBy('id')->first();
 
     $responseProduct = collect($response)->firstWhere('sku', $product->sku);
 
@@ -61,7 +62,7 @@ it('should return the list of all simple products', function () {
 
 it('should return the simple product using the code', function () {
     $product = Product::factory()->simple()->create();
-    $simpleProduct = Product::where('type', 'simple')->first();
+    $simpleProduct = Product::where('type', ProductType::Simple->value)->first();
 
     $this->withHeaders($this->headers)->json('GET', route('admin.api.products.get', ['code' => $simpleProduct->sku]))
         ->assertOK()
@@ -366,7 +367,6 @@ it('should partially update the locale specific attribute in product', function 
     $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
     $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
-    // Use only locales assigned to the default channel to avoid validation errors
     $channelLocales = core()->getDefaultChannel()->locales->pluck('code')->toArray();
     $locales = array_slice($channelLocales, 0, 2);
 
@@ -452,7 +452,6 @@ it('should update the locale specific attribute in product', function () {
     $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
     $family->first()->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
-    // Use only locales assigned to the default channel to avoid validation errors
     $channelLocales = core()->getDefaultChannel()->locales->pluck('code')->toArray();
     $locales = array_slice($channelLocales, 0, 2);
 

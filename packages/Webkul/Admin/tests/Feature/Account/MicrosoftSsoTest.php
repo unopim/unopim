@@ -7,7 +7,11 @@ use Webkul\User\Models\Admin;
 
 use function Pest\Laravel\get;
 
-function microsoftSsoConfig(string $tenant = 'tenant-id'): void
+beforeEach(function (): void {
+    Http::preventStrayRequests();
+});
+
+function microsoftSsoConfig(string $tenant = '11111111-2222-4333-8444-555555555555'): void
 {
     config()->set('services.microsoft_sso.enabled', true);
     config()->set('services.microsoft_sso.tenant', $tenant);
@@ -36,7 +40,7 @@ function fakeMicrosoftEndpoints(array $profile, array $tokenClaims = []): void
     Http::fake([
         'https://login.microsoftonline.com/*/oauth2/v2.0/token' => Http::response([
             'access_token' => 'access-token',
-            'id_token'     => ssoJwt(array_merge(['nonce' => 'valid-nonce', 'tid' => 'tenant-id'], $tokenClaims)),
+            'id_token'     => ssoJwt(array_merge(['nonce' => 'valid-nonce', 'tid' => '11111111-2222-4333-8444-555555555555'], $tokenClaims)),
         ], 200),
         'https://graph.microsoft.com/v1.0/me*' => Http::response($profile, 200),
     ]);
@@ -70,6 +74,8 @@ it('logs in an existing admin via microsoft sso using email match', function () 
     callbackWith(ssoHandshake())->assertRedirect(route('admin.dashboard.index'));
 
     $this->assertAuthenticatedAs($admin, 'admin');
+
+    Http::assertSentCount(2);
 });
 
 it('links the provider subject id to the admin on first sign in', function () {
@@ -255,6 +261,8 @@ it('accepts a tenant configured as a verified domain', function () {
     callbackWith(ssoHandshake());
 
     $this->assertAuthenticatedAs($admin, 'admin');
+
+    Http::assertSentCount(3);
 });
 
 it('refuses a foreign tenant when configured with a verified domain', function () {

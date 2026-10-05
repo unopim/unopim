@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hu_HU',
   '\n' +
   '<p>A felhasználói felület előző szakaszára váltáshoz nyomja meg a <strong>Shift+Tab</strong> billentyűt.</p>\n' +
   '\n' +
-  '<p>A <strong>Tab</strong> billentyűvel a felhasználói felület szakaszai között a következő sorrendben vált:\n' +
+  '<p>A <strong>Tab</strong> billentyűvel a felhasználói felület szakaszai között a következő sorrendben vált:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Menüsáv</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hu_HU',
   '<p>Ha a felhasználói felület valamelyik eleme nincs jelen, a rendszer kihagyja.</p>\n' +
   '\n' +
   '<p>Ha a billentyűzetes navigáció fókusza a láblécen van, és nincs látható oldalsáv, a <strong>Shift+Tab</strong>\n' +
-  '  billentyűkombináció lenyomásakor az első eszköztárcsoportra ugrik a fókusz, nem az utolsóra.\n' +
+  '  billentyűkombináció lenyomásakor az első eszköztárcsoportra ugrik a fókusz, nem az utolsóra.</p>\n' +
   '\n' +
   '<h1>Navigálás a felhasználói felület szakaszain belül</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hu_HU',
   '  <li>a lábléc elemútvonalán az elemek között vált.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>A <strong>le</strong> és a <strong>fel</strong> nyílgomb\n' +
+  '<p>A <strong>le</strong> és a <strong>fel</strong> nyílgomb</p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>a menükben a menüpontok között vált.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hu_HU',
   '\n' +
   '<p>A <strong>nyílbillentyűk</strong> lenyomásával körkörösen lépkedhet a fókuszban lévő felhasználói felületi szakasz elemei között.</p>\n' +
   '\n' +
-  '<p>A megnyitott menüket, almenüket és előugró menüket az <strong>Esc</strong> billentyűvel zárhatja be.\n' +
+  '<p>A megnyitott menüket, almenüket és előugró menüket az <strong>Esc</strong> billentyűvel zárhatja be.</p>\n' +
   '\n' +
   '<p>Ha a fókusz az aktuális felületi elem „felső” részén van, az <strong>Esc</strong> billentyűvel az egész\n' +
   '  billentyűzetes navigációból kilép.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.hu_HU',
   '<h1>Menüpont vagy eszköztárgomb aktiválása</h1>\n' +
   '\n' +
   '<p>Amikor a kívánt menüelem vagy eszköztárgomb van kijelölve, nyomja meg a <strong>Return</strong>, az <strong>Enter</strong>\n' +
-  '  vagy a <strong>Szóköz</strong> billentyűt az adott elem vagy gomb aktiválásához.\n' +
+  '  vagy a <strong>Szóköz</strong> billentyűt az adott elem vagy gomb aktiválásához.</p>\n' +
   '\n' +
   '<h1>Navigálás a lapokkal nem rendelkező párbeszédablakokban</h1>\n' +
   '\n' +

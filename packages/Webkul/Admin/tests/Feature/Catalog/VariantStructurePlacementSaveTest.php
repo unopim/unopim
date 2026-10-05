@@ -5,6 +5,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\VariantStructure;
 
 uses(DatabaseTransactions::class);
@@ -54,9 +55,9 @@ it('keeps an attribute assigned to a variant level when the structure is saved',
             'levels'     => 1,
             'axes'       => ['level_1' => [$axisCode], 'level_2' => []],
             'placements' => [
-                'common'     => [],
-                'sub_parent' => [],
-                'variant'    => [$plainCode],
+                VariantLevel::Common->value     => [],
+                VariantLevel::SubParent->value  => [],
+                VariantLevel::Variant->value    => [$plainCode],
             ],
         ],
     ])->assertOk();
@@ -69,7 +70,7 @@ it('keeps an attribute assigned to a variant level when the structure is saved',
 
     $saved = collect($reloaded)->firstWhere('id', $structure->id);
 
-    expect($saved['placements']['variant'])->toContain($plainCode);
+    expect($saved['placements'][VariantLevel::Variant->value])->toContain($plainCode);
 });
 
 it('forces a unique attribute such as sku onto the variant level instead of common', function () {
@@ -103,9 +104,9 @@ it('forces a unique attribute such as sku onto the variant level instead of comm
             'levels'     => 1,
             'axes'       => ['level_1' => [$axisCode], 'level_2' => []],
             'placements' => [
-                'common'     => [$unique->code],
-                'sub_parent' => [],
-                'variant'    => [$plainCode],
+                VariantLevel::Common->value     => [$unique->code],
+                VariantLevel::SubParent->value  => [],
+                VariantLevel::Variant->value    => [$plainCode],
             ],
         ],
     ])->assertOk();

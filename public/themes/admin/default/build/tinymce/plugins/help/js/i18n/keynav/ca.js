@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ca',
   '\n' +
   "<p>Per desplaçar-vos des d'una secció de la interfície d'usuari a l'anterior, premeu les tecles <strong>Maj+Tab</strong>.</p>\n" +
   '\n' +
-  "<p>L'ordre en prémer la tecla <strong>Tab</strong> d'aquestes secciones de la interfície d'usuari és:\n" +
+  "<p>L'ordre en prémer la tecla <strong>Tab</strong> d'aquestes secciones de la interfície d'usuari és:</p>\n" +
   '\n' +
   '<ol>\n' +
   '  <li>Barra de menús</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ca',
   "<p>Si no hi ha una secció de la interfície d'usuari, s'ometrà.</p>\n" +
   '\n' +
   '<p>Si el peu de pàgina té el focus de navegació del teclat i no hi ha cap barra lateral visible, en prémer <strong>Maj+Tab</strong>\n' +
-  "  el focus es mou al primer grup de la barra d'eines, no l'últim.\n" +
+  "  el focus es mou al primer grup de la barra d'eines, no l'últim.</p>\n" +
   '\n' +
   "<h1>Navegació dins de les seccions de la interfície d'usuari</h1>\n" +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ca',
   "  <li>us permeten desplaçar-vos entre elements de la ruta d'elements del peu de pàgina.</li>\n" +
   '</ul>\n' +
   '\n' +
-  '<p>Les tecles de fletxa <strong>Avall</strong> i <strong>Amunt</strong>\n' +
+  '<p>Les tecles de fletxa <strong>Avall</strong> i <strong>Amunt</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   "  <li>us permeten desplaçar-vos entre elements de menú d'un menú.</li>\n" +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ca',
   '\n' +
   "<p>Les tecles de <strong>Fletxa</strong> us permeten desplaçar-vos dins de la secció de la interfície d'usuari que té el focus.</p>\n" +
   '\n' +
-  '<p>Per tancar un menú, un submenú o un menú emergent oberts, premeu la tecla <strong>Esc</strong>.\n' +
+  '<p>Per tancar un menú, un submenú o un menú emergent oberts, premeu la tecla <strong>Esc</strong>.</p>\n' +
   '\n' +
   "<p>Si el focus actual es troba a la ‘part superior’ d'una secció específica de la interfície d'usuari, en prémer la tecla <strong>Esc</strong> també es tanca\n" +
   '  completament la navegació amb el teclat.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ca',
   "<h1>Execució d'un element de menú o d'un botó de la barra d'eines</h1>\n" +
   '\n' +
   "<p>Quan l'element del menú o el botó de la barra d'eines que desitgeu estigui ressaltat, premeu <strong>Retorn</strong>, <strong>Intro</strong>\n" +
-  "  o la <strong>barra d'espai</strong> per executar l'element.\n" +
+  "  o la <strong>barra d'espai</strong> per executar l'element.</p>\n" +
   '\n' +
   '<h1>Navegació per quadres de diàleg sense pestanyes</h1>\n' +
   '\n' +

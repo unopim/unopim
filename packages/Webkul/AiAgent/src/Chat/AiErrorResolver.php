@@ -3,10 +3,12 @@
 namespace Webkul\AiAgent\Chat;
 
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Client\RequestException;
 use Laravel\Ai\Exceptions\InsufficientCreditsException;
 use Laravel\Ai\Exceptions\ProviderOverloadedException;
 use Laravel\Ai\Exceptions\RateLimitedException;
+use PDOException;
 use Throwable;
 
 /**
@@ -14,6 +16,8 @@ use Throwable;
  */
 class AiErrorResolver
 {
+    protected const IMAGE_INPUT_REJECTION_PATTERN = '/input\.image|image_url is only supported|(?:does not|doesn\'t|do not) support (?:image|vision)|(?:image|vision) inputs? (?:is|are) not supported/i';
+
     /**
      * Resolve a thrown exception to a translated message and HTTP status code.
      *
@@ -73,11 +77,56 @@ class AiErrorResolver
             ];
         }
 
+        if (self::rejectsImageInput($e)) {
+            return [
+                'message'  => trans('ai-agent::app.common.error-image-input-unsupported'),
+                'status'   => 422,
+                'is_known' => true,
+            ];
+        }
+
+        $message = self::isInfrastructureException($e)
+            ? ''
+            : self::sanitizeRawMessage($e);
+
         return [
-            'message'  => self::sanitizeRawMessage($e) ?: trans('ai-agent::app.common.error-generic'),
+            'message'  => $message ?: trans('ai-agent::app.common.error-generic'),
             'status'   => 500,
             'is_known' => false,
         ];
+    }
+
+    /**
+     * Whether the provider refused the request because the chosen model cannot read images.
+     *
+     * Providers word this differently (OpenAI, OpenRouter-style gateways, Groq,
+     * Ollama), so the upstream body is matched as well as the exception message.
+     */
+    public static function rejectsImageInput(Throwable $e): bool
+    {
+        $haystack = $e->getMessage().' '.self::extractUpstreamBody($e);
+
+        return (bool) preg_match(self::IMAGE_INPUT_REJECTION_PATTERN, $haystack);
+    }
+
+    /**
+     * Whether the failure came from the database rather than the AI provider.
+     * Such a message carries the connection host, schema and full SQL, so it
+     * is replaced with the generic message instead of being surfaced.
+     */
+    protected static function isInfrastructureException(Throwable $e): bool
+    {
+        $current = $e;
+
+        while ($current instanceof Throwable) {
+            if ($current instanceof QueryException || $current instanceof PDOException) {
+                return true;
+            }
+
+            $current = $current->getPrevious();
+        }
+
+        return false;
     }
 
     protected static function sanitizeRawMessage(Throwable $e): string

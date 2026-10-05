@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Els registres del Webhook s\'han eliminat correctament',
                     'delete-failed'  => 'L\'eliminació dels registres del Webhook ha fallat inesperadament',
                     'unauthorized'   => 'Aquesta acció no està autoritzada',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Eliminació en cua per a tots els registres coincidents. Rebreu una notificació quan acabi.',
+                            'title'     => 'Eliminació de registres de webhook',
+                            'completed' => ':count registres de webhook eliminats.',
+                            'failed'    => 'L\'eliminació de :count registres de webhook ha acabat amb errors. Alguns registres no s\'han eliminat.',
+                        ],
+                    ],
                 ],
             ],
         ],

@@ -9,6 +9,8 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Concerns\ValidatesAttributes;
 use Symfony\Component\Mime\MimeTypes;
+use Webkul\Core\Helpers\MediaContent;
+use Webkul\Core\Helpers\MediaMimeTypes;
 
 class FileOrImageValidValue implements ValidationRule
 {
@@ -190,7 +192,7 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
-        $expectedMimeTypes = MimeTypes::getDefault()->getMimeTypes($extension);
+        $expectedMimeTypes = MimeTypes::getDefault()->getMimeTypes(MediaMimeTypes::normalizeExtension($extension));
 
         return is_string($mimeType)
             && $expectedMimeTypes !== []
@@ -207,8 +209,18 @@ class FileOrImageValidValue implements ValidationRule
             return false;
         }
 
-        if ($this->allowedMimes && ! $this->validateMimes($attribute, $value, $this->allowedMimes)) {
+        if ($this->allowedMimes && ! $this->validateMimes($attribute, $value, array_map(MediaMimeTypes::normalizeExtension(...), $this->allowedMimes))) {
             $fail('validation.mimes')->translate(['values' => implode(', ', $this->allowedMimes)]);
+
+            return false;
+        }
+
+        $reason = MediaContent::activeContentReason($extension, $value->getRealPath());
+
+        if ($reason !== null) {
+            $fail('core::validation.active-content-detected')->translate([
+                'reason' => trans('core::validation.active-content-reasons.'.$reason),
+            ]);
 
             return false;
         }

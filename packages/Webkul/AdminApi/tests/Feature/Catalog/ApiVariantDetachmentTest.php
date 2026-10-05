@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -55,7 +56,7 @@ it('creates the variants supplied in the POST payload to /configrable-products',
     $parent = Product::where('sku', $parentSku)->first();
 
     expect($parent)->not->toBeNull()
-        ->and($parent->type)->toBe('configurable');
+        ->and($parent->type)->toBe(ProductType::Configurable->value);
 
     $variant = Product::where('sku', $variantSku)->first();
 
