@@ -1,8 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Webkul\Publication\Contracts\LotReleaseResolver;
+use Webkul\Publication\Events\PublicationPublished;
 use Webkul\Publication\Exceptions\ImmutableVersionException;
+use Webkul\Publication\Listeners\SyncPublicationGtin;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Services\NullLotReleaseResolver;
@@ -173,4 +176,51 @@ it('refuses to revoke a gtin a publication still carries', function (): void {
 
 it('rejects a malformed gtin in the revoke command', function (): void {
     $this->artisan('unopim:publication:revoke-gtin', ['gtin' => 'not-a-gtin'])->assertFailed();
+});
+
+it('does not resolve a serial containing an encoded slash, a known limitation of the route grammar', function (): void {
+    $this->publishGtinPassport('4006381333931');
+
+    $this->get('/01/4006381333931/21/A%2F1')->assertNotFound();
+});
+
+it('skips the gtin writes when a publish carries the gtin the publication already has', function (): void {
+    [, , $versions] = $this->publishGtinPassport('4006381333931');
+    $publication = $versions[0]->publication->fresh();
+
+    DB::enableQueryLog();
+
+    resolve(SyncPublicationGtin::class)->handle(new PublicationPublished($publication, $versions[0]));
+
+    $writes = collect(DB::getQueryLog())
+        ->pluck('query')
+        ->filter(fn (string $sql): bool => (str_contains($sql, 'publication_gtins') && ! str_starts_with($sql, 'select')) || preg_match('/^update .publications. set .gtin. =/i', $sql) === 1);
+
+    expect($writes)->toBeEmpty()
+        ->and($publication->gtins()->count())->toBe(1);
+});
+
+it('warns and falls back to live when the lot resolver returns a release of another publication', function (): void {
+    [, , $versions] = $this->publishGtinPassport('4006381333931', 2);
+    $publication = $versions[0]->publication->fresh();
+    $foreign = $versions[1]->publication->fresh()->releases()->where('sequence', 1)->first();
+
+    app()->bind(LotReleaseResolver::class, fn () => new class($foreign) implements LotReleaseResolver
+    {
+        public function __construct(private readonly PublicationRelease $release) {}
+
+        public function resolve(Publication $publication, ?string $lot, ?string $serial): ?PublicationRelease
+        {
+            return $this->release;
+        }
+    });
+
+    Log::spy();
+
+    $this->get('/01/4006381333931/10/L1')
+        ->assertRedirect('/p/'.$publication->uuid.'/'.$versions[0]->locale->code);
+
+    Log::shouldHaveReceived('warning')
+        ->withArgs(fn (string $message, array $context): bool => str_contains($message, 'another publication') && $context['release_id'] === $foreign->id)
+        ->once();
 });
