@@ -55,19 +55,31 @@ class PublicationResolver
             return $publication;
         }
 
-        $previouslyOwned = PublicationGtinProxy::modelClass()::query()->where('gtin', $gtin)->pluck('publication_id');
+        $carriers = PublicationGtinProxy::modelClass()::query()
+            ->where('gtin', $gtin)
+            ->orderByDesc('recorded_at')
+            ->orderByDesc('id')
+            ->pluck('publication_id')
+            ->unique()
+            ->values()
+            ->all();
 
-        if ($previouslyOwned->isEmpty()) {
+        if ($carriers === []) {
             return null;
         }
 
-        return $this->findByGtinWhere($gtin, $type, fn ($query) => $query->whereIn('id', $previouslyOwned));
+        return $this->findByGtinWhere($gtin, $type, fn ($query) => $query->whereIn('id', $carriers), $carriers);
     }
 
     /**
      * Shared GS1 lookup: designated passport channel first, else lowest channel_id with a logged warning.
+     *
+     * `$recency` lists publication ids most recent carrier first. It picks among the candidates in PHP so the
+     * outcome does not depend on how MySQL and PostgreSQL order ties.
+     *
+     * @param  list<int>|null  $recency
      */
-    private function findByGtinWhere(string $gtin, string $type, callable $scope): ?Publication
+    private function findByGtinWhere(string $gtin, string $type, callable $scope, ?array $recency = null): ?Publication
     {
         $passportChannel = core()->getConfigData('general.publication.settings.gs1_passport_channel');
 
@@ -81,12 +93,16 @@ class PublicationResolver
         $scope($query);
 
         if (! empty($passportChannel)) {
-            return $query->whereHas('channel', fn ($channel) => $channel->where('code', $passportChannel))->first();
+            $query->whereHas('channel', fn ($channel) => $channel->where('code', $passportChannel));
+        } else {
+            $query->orderBy('channel_id');
         }
 
-        $publication = $query->orderBy('channel_id')->first();
+        $publication = $recency === null
+            ? $query->first()
+            : $query->get()->sortBy(fn (Publication $candidate): int => (int) array_search($candidate->id, $recency, false))->first();
 
-        if ($publication !== null) {
+        if (empty($passportChannel) && $publication !== null) {
             Log::warning('GS1 resolve without designated passport channel', [
                 'gtin'       => $gtin,
                 'channel_id' => $publication->channel_id,

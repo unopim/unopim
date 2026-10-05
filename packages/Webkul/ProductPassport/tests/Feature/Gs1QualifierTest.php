@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Webkul\Publication\Contracts\LotReleaseResolver;
 use Webkul\Publication\Models\Publication;
 use Webkul\Publication\Models\PublicationRelease;
@@ -79,3 +80,33 @@ it('keeps resolving a gtin the publication carried before a correction', functio
     $this->get('/01/10614141000415')->assertRedirect($live);
     $this->get('/01/4006381333931')->assertRedirect($live);
 });
+
+it('resolves a retired gtin to the publication that carried it most recently', function (int $firstOffset, int $secondOffset, int $expected): void {
+    [$product, $channels, $versions] = $this->publishGtinPassport('4006381333931', 2);
+    $publications = [$versions[0]->publication->fresh(), $versions[1]->publication->fresh()];
+
+    $gtinCode = array_key_first(array_filter($product->values['common'], fn ($value): bool => $value === '4006381333931'));
+
+    $product->values = array_replace_recursive($product->values, ['common' => [$gtinCode => '10614141000415']]);
+    $product->save();
+
+    foreach ([0, 1] as $index) {
+        resolve(Publisher::class)->publish($product, $channels[$index], $versions[$index]->locale, 'dpp');
+    }
+
+    $base = now()->startOfSecond();
+
+    foreach ([0 => $firstOffset, 1 => $secondOffset] as $index => $offset) {
+        DB::table('publication_gtins')
+            ->where('publication_id', $publications[$index]->id)
+            ->where('gtin', '4006381333931')
+            ->update(['recorded_at' => $base->copy()->addSeconds($offset)]);
+    }
+
+    $this->get('/01/4006381333931')
+        ->assertRedirect('/p/'.$publications[$expected]->uuid.'/'.$versions[$expected]->locale->code);
+})->with([
+    'later on the higher channel'    => [-3600, 0, 1],
+    'later on the lower channel'     => [0, -3600, 0],
+    'same instant, highest id wins'  => [0, 0, 1],
+]);
