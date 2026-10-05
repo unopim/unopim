@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    private const BACKFILL_CHUNK = 1000;
+
+    /**
+     * Index names are explicit because the auto-generated ones include the table prefix and overrun
+     * MySQL's 64-character identifier limit on prefixed installs.
+     *
+     * Every GTIN a publication currently carries becomes the first entry of its history. The backfill
+     * streams the publications by primary key and inserts one batch per chunk, so memory stays flat on
+     * catalogs of any size.
+     */
     public function up(): void
     {
         Schema::create('publication_gtins', function (Blueprint $table): void {
@@ -21,26 +31,25 @@ return new class extends Migration
 
             $table->timestamps();
 
-            // Explicit names: auto names include the prefix and overrun MySQL's 64-char identifier limit on prefixed installs.
             $table->unique(['publication_id', 'gtin'], 'pubgtin_pub_gtin_uq');
             $table->index('gtin', 'pubgtin_gtin_idx');
         });
 
-        // Backfill: every GTIN a publication currently carries is the first entry of its history.
-        $rows = DB::table('publications')
+        $now = now();
+
+        DB::table('publications')
             ->whereNotNull('gtin')
             ->where('gtin', '!=', '')
-            ->get(['id', 'gtin', 'last_published_at', 'created_at']);
-
-        foreach ($rows as $row) {
-            DB::table('publication_gtins')->insert([
-                'publication_id' => $row->id,
-                'gtin'           => $row->gtin,
-                'recorded_at'    => $row->last_published_at ?? $row->created_at ?? now(),
-                'created_at'     => now(),
-                'updated_at'     => now(),
-            ]);
-        }
+            ->select(['id', 'gtin', 'last_published_at', 'created_at'])
+            ->chunkById(self::BACKFILL_CHUNK, function ($publications) use ($now): void {
+                DB::table('publication_gtins')->insert($publications->map(fn ($publication): array => [
+                    'publication_id' => $publication->id,
+                    'gtin'           => $publication->gtin,
+                    'recorded_at'    => $publication->last_published_at ?? $publication->created_at ?? $now,
+                    'created_at'     => $now,
+                    'updated_at'     => $now,
+                ])->all());
+            });
     }
 
     public function down(): void
