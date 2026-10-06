@@ -1040,7 +1040,7 @@ class Installer extends Command
 
             $value = trim($value);
 
-            if (preg_match('/^(["\'])(.*)\1/', $value, $matches)) {
+            if (preg_match('/^(["\'])(.*?)\1\s*(?:#.*)?$/', $value, $matches)) {
                 return $matches[2];
             }
 
