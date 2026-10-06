@@ -13,6 +13,7 @@ use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\ChatUploadStore;
 use Webkul\AiAgent\Http\Requests\ChatRequest;
+use Webkul\AiAgent\Services\TokenUsageRecorder;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Services\ManagedPlatform;
@@ -55,8 +56,11 @@ class ChatController extends Controller
         try {
             $result = $this->agentRunner->run($chatContext);
 
-            // Track token usage for budget enforcement
-            $this->recordTokenUsage($chatContext, $result['data']['tokens_used'] ?? 0);
+            $this->recordTokenUsage(
+                $chatContext,
+                $result['data']['tokens_used'] ?? 0,
+                $result['data']['cached_tokens'] ?? 0,
+            );
 
             return new JsonResponse($result);
         } catch (\Throwable $e) {
@@ -250,36 +254,9 @@ class ChatController extends Controller
     /**
      * Record token usage for budget tracking.
      */
-    protected function recordTokenUsage(ChatContext $context, int $tokensUsed): void
+    protected function recordTokenUsage(ChatContext $context, int $tokensUsed, int $cachedTokens = 0): void
     {
-        if ($tokensUsed <= 0) {
-            return;
-        }
-
-        DB::transaction(function () use ($context, $tokensUsed): void {
-            $row = DB::table('ai_agent_token_usage')
-                ->where('user_id', $context->user?->id)
-                ->where('usage_date', now()->toDateString())
-                ->lockForUpdate()
-                ->first();
-
-            if ($row) {
-                DB::table('ai_agent_token_usage')->where('id', $row->id)->update([
-                    'tokens_used'   => $row->tokens_used + $tokensUsed,
-                    'request_count' => $row->request_count + 1,
-                    'updated_at'    => now(),
-                ]);
-            } else {
-                DB::table('ai_agent_token_usage')->insert([
-                    'user_id'       => $context->user?->id,
-                    'usage_date'    => now()->toDateString(),
-                    'tokens_used'   => $tokensUsed,
-                    'request_count' => 1,
-                    'created_at'    => now(),
-                    'updated_at'    => now(),
-                ]);
-            }
-        });
+        resolve(TokenUsageRecorder::class)->record($context->user?->id, $tokensUsed, $cachedTokens);
     }
 
     /**
