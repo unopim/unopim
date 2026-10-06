@@ -853,7 +853,7 @@ class Installer extends Command
         /**
          * Setting elasticsearch configurations.
          */
-        $elasticsearchPrefix = static::getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') != '' ? static::getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') : static::getEnvAtRuntime('APP_NAME');
+        $elasticsearchPrefix = preg_replace('/\s+/', '', (string) (static::getEnvAtRuntime('ELASTICSEARCH_INDEX_PREFIX') ?: static::getEnvAtRuntime('APP_NAME')));
 
         config([
             'elasticsearch.connection'                => static::getEnvAtRuntime('ELASTICSEARCH_CONNECTION'),
@@ -1012,15 +1012,39 @@ class Installer extends Command
     protected static function getEnvAtRuntime(string $key): string|bool
     {
         if ($data = file(base_path('.env'))) {
-            foreach ($data as $line) {
-                $line = preg_replace('/\s+/', '', $line);
+            return static::parseEnvValue($data, $key);
+        }
 
-                $rowValues = explode('=', (string) $line);
+        return false;
+    }
 
-                if (strlen((string) $line) !== 0 && str_contains($key, $rowValues[0])) {
-                    return $rowValues[1];
-                }
+    /**
+     * Resolve a key from raw `.env` lines, unquoting values and keeping inner spaces.
+     *
+     * @param  array<int, string>  $lines
+     */
+    protected static function parseEnvValue(array $lines, string $key): string|bool
+    {
+        foreach ($lines as $line) {
+            $line = trim($line);
+
+            if ($line === '' || str_starts_with($line, '#') || ! str_contains($line, '=')) {
+                continue;
             }
+
+            [$name, $value] = explode('=', $line, 2);
+
+            if (trim($name) !== $key) {
+                continue;
+            }
+
+            $value = trim($value);
+
+            if (preg_match('/^(["\'])(.*?)\1\s*(?:#.*)?$/', $value, $matches)) {
+                return $matches[2];
+            }
+
+            return trim((string) preg_replace('/\s+#.*$/', '', $value));
         }
 
         return false;
