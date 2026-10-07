@@ -1536,6 +1536,13 @@
                             this.params.identifiers = {};
 
                             this.isLoading = false;
+
+                            this.$nextTick(() => {
+                                this.$el?.dispatchEvent(new CustomEvent('unsaved-changes:rebase', {
+                                    detail: { name: this.name },
+                                    bubbles: true,
+                                }));
+                            });
                         })
                         .catch(() => {
                             this.isRehydrating = false;

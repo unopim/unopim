@@ -180,6 +180,22 @@
                     this.debounced();
                 };
 
+                this.onCustomRebase = (event) => {
+                    const base = event.detail && event.detail.name;
+
+                    if (! base || this.touched[base]) {
+                        return;
+                    }
+
+                    const current = this.serializeForm();
+
+                    if (base in current) {
+                        this.initial[base] = current[base];
+                    }
+
+                    this.debounced();
+                };
+
                 this.$nextTick(() => {
                     this.snapshot();
 
@@ -189,6 +205,7 @@
 
                     this.$refs.root.addEventListener('unsaved-changes:touch', this.onCustomTouch, true);
                     this.$refs.root.addEventListener('unsaved-changes:sync', this.onCustomSync, true);
+                    this.$refs.root.addEventListener('unsaved-changes:rebase', this.onCustomRebase, true);
 
                     setTimeout(() => {
                         if (! this.hasTrusted) {
@@ -220,6 +237,7 @@
 
                     this.$refs.root.removeEventListener('unsaved-changes:touch', this.onCustomTouch, true);
                     this.$refs.root.removeEventListener('unsaved-changes:sync', this.onCustomSync, true);
+                    this.$refs.root.removeEventListener('unsaved-changes:rebase', this.onCustomRebase, true);
                 }
 
                 this.$emitter.off('form-saved', this.onFormSaved);
