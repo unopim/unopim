@@ -4,7 +4,9 @@ namespace Webkul\Publication\Services;
 
 use Illuminate\Support\Facades\Log;
 use Webkul\Publication\Models\Publication;
+use Webkul\Publication\Models\PublicationGtinProxy;
 use Webkul\Publication\Models\PublicationProxy;
+use Webkul\Publication\Models\PublicationRelease;
 use Webkul\Publication\Models\PublicationVersion;
 
 class PublicationResolver
@@ -41,26 +43,68 @@ class PublicationResolver
     /**
      * Resolves a GTIN (non-unique across channels) to one publication via the designated passport channel,
      * falling back to the lowest channel_id with a logged warning when unset.
+     *
+     * When no publication carries the GTIN today, the history of GTINs publications carried earlier is
+     * consulted, so carriers printed under a since-corrected GTIN keep resolving. History rows that were revoked
+     * are skipped.
      */
     public function findByGtin(string $gtin, string $type): ?Publication
+    {
+        $publication = $this->findByGtinWhere($gtin, $type, fn ($query) => $query->where('gtin', $gtin));
+
+        if ($publication !== null) {
+            return $publication;
+        }
+
+        $carriers = PublicationGtinProxy::modelClass()::query()
+            ->where('gtin', $gtin)
+            ->whereNull('revoked_at')
+            ->orderByDesc('recorded_at')
+            ->orderByDesc('id')
+            ->pluck('publication_id')
+            ->unique()
+            ->values()
+            ->all();
+
+        if ($carriers === []) {
+            return null;
+        }
+
+        return $this->findByGtinWhere($gtin, $type, fn ($query) => $query->whereIn('id', $carriers), $carriers);
+    }
+
+    /**
+     * Shared GS1 lookup: designated passport channel first, else lowest channel_id with a logged warning.
+     *
+     * `$recency` lists publication ids most recent carrier first. It picks among the candidates in PHP so the
+     * outcome does not depend on how MySQL and PostgreSQL order ties.
+     *
+     * @param  list<int>|null  $recency
+     */
+    private function findByGtinWhere(string $gtin, string $type, callable $scope, ?array $recency = null): ?Publication
     {
         $passportChannel = core()->getConfigData('general.publication.settings.gs1_passport_channel');
 
         $query = PublicationProxy::modelClass()::query()
-            ->where('gtin', $gtin)
             ->where('type', $type)
             ->with([
                 'channel.locales',
                 'versions' => fn ($query) => $query->where('is_current', true)->with('locale'),
             ]);
 
+        $scope($query);
+
         if (! empty($passportChannel)) {
-            return $query->whereHas('channel', fn ($channel) => $channel->where('code', $passportChannel))->first();
+            $query->whereHas('channel', fn ($channel) => $channel->where('code', $passportChannel));
+        } else {
+            $query->orderBy('channel_id');
         }
 
-        $publication = $query->orderBy('channel_id')->first();
+        $publication = $recency === null
+            ? $query->first()
+            : $query->get()->sortBy(fn (Publication $candidate): int => (int) array_search($candidate->id, $recency, false))->first();
 
-        if ($publication !== null) {
+        if (empty($passportChannel) && $publication !== null) {
             Log::warning('GS1 resolve without designated passport channel', [
                 'gtin'       => $gtin,
                 'channel_id' => $publication->channel_id,
@@ -71,15 +115,33 @@ class PublicationResolver
     }
 
     /**
+     * Finds one release of the publication by its per-publication sequence.
+     */
+    public function findRelease(Publication $publication, int $sequence): ?PublicationRelease
+    {
+        return $publication->releases()->where('sequence', $sequence)->first();
+    }
+
+    /**
      * Resolves the best-match current version by explicit locale, falling back to Accept-Language preference.
      */
     public function resolveVersion(Publication $publication, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
     {
-        $currentByLocale = $publication->versions->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
+        return $this->pickVersion($publication, $publication->versions, $localeCode, $acceptLanguage);
+    }
+
+    /**
+     * The same locale negotiation over any set of versions, one per locale (e.g. a release's `versionsAsOf()`).
+     *
+     * @param  iterable<PublicationVersion>  $versions
+     */
+    public function pickVersion(Publication $publication, iterable $versions, ?string $localeCode, ?string $acceptLanguage): ?PublicationVersion
+    {
+        $byLocale = collect($versions)->keyBy(fn (PublicationVersion $version): string => $version->locale->code);
 
         foreach ($this->localePreference($publication, $localeCode, $acceptLanguage) as $code) {
-            if ($currentByLocale->has($code)) {
-                return $currentByLocale->get($code);
+            if ($byLocale->has($code)) {
+                return $byLocale->get($code);
             }
         }
 

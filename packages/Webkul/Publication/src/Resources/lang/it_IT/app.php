@@ -51,5 +51,11 @@ return [
             'heading' => 'Questo passaporto non è più disponibile.',
             'notice'  => 'Questo record viene conservato per motivi di trasparenza, ma non è più attivamente mantenuto.',
         ],
+        'release' => [
+            'banner'       => 'Release :sequence of this passport',
+            'superseded'   => 'This is an earlier state of the passport, kept exactly as it was published. A newer state exists.',
+            'current'      => 'This is the current state of the passport.',
+            'view-current' => 'View the current passport',
+        ],
     ],
 ];
