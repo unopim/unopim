@@ -99,6 +99,23 @@ return [
         'republished'                 => 'Version republiée avec succès.',
         'republish-invalid'           => 'Cette version ne peut pas être republiée.',
         'republish-noop'              => 'Cette version est déjà la version actuelle.',
+        'releases'                    => [
+            'title'        => 'Releases',
+            'release'      => 'Release',
+            'published-at' => 'Published at',
+            'published-by' => 'Published by',
+            'locales'      => 'Locales',
+            'none'         => 'No releases yet.',
+        ],
+        'carrier' => [
+            'issue'        => 'Issue QR code',
+            'not-issuable' => 'A QR code can only be issued for a published passport.',
+            'title'        => 'Issued QR codes',
+            'issued-at'    => 'Issued at',
+            'issued-by'    => 'Issued by',
+            'target'       => 'Encoded link',
+            'none'         => 'No QR codes have been issued yet.',
+        ],
         'versions'                    => [
             'title'         => 'Historique des versions du passeport',
             'subtitle'      => 'SKU :sku · canal :channel',
