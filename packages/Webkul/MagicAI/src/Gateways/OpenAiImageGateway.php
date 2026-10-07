@@ -14,6 +14,9 @@ class OpenAiImageGateway extends OpenAiGateway
         return (bool) preg_match(self::RETURNS_BASE64_BY_DEFAULT, $model);
     }
 
+    /**
+     * @param  array<string, mixed>  $providerOptions
+     */
     protected function sendImageGenerationRequest(
         ImageProvider $provider,
         string $model,
@@ -21,8 +24,10 @@ class OpenAiImageGateway extends OpenAiGateway
         ?string $size,
         ?string $quality,
         ?int $timeout,
+        array $providerOptions = [],
     ) {
         return $this->client($provider, $timeout ?? 120)->post('images/generations', [
+            ...$providerOptions,
             'model'  => $model,
             'prompt' => $prompt,
             ...$provider->defaultImageOptions($size, $quality),
