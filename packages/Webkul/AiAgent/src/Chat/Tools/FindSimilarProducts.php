@@ -12,24 +12,28 @@ use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Enums\EmbeddingRejection;
 use Webkul\MagicAI\Models\MagicAIPlatform;
+use Webkul\Product\Repositories\ProductRepository;
 
 class FindSimilarProducts implements PimTool
 {
     public function __construct(
         protected EmbeddingSimilarityService $embeddingSimilarityService,
+        protected ProductRepository $productRepository,
     ) {}
 
     public function register(ChatContext $context): Tool
     {
-        $embeddingSimilarityService = $this->embeddingSimilarityService;
-
-        return new class($context, $embeddingSimilarityService) extends ContextualTool
+        return new class($context, $this->embeddingSimilarityService, $this->productRepository) extends ContextualTool
         {
             use ChecksPermission;
 
-            public function __construct(ChatContext $context, protected EmbeddingSimilarityService $embeddingSimilarityService)
-            {
+            public function __construct(
+                ChatContext $context,
+                protected EmbeddingSimilarityService $embeddingSimilarityService,
+                protected ProductRepository $productRepository,
+            ) {
                 parent::__construct($context);
             }
 
@@ -188,12 +192,12 @@ class FindSimilarProducts implements PimTool
                         : [];
                 } catch (\Throwable $e) {
                     $ranked = [];
-                    $note = $this->embeddingFailureNote($embeddingPlatform?->label, AiErrorResolver::resolve($e)['message']);
+                    $note = $this->embeddingFailureNote($embeddingPlatform, AiErrorResolver::resolve($e)['message']);
                 }
 
                 if ($ranked === []) {
                     $ranking = 'keyword';
-                    $note ??= $this->embeddingFailureNote($embeddingPlatform?->label, 'the provider returned no vectors');
+                    $note ??= $this->embeddingFailureNote($embeddingPlatform, 'the provider returned no vectors');
                     $ranked = $this->rankByKeywords($queryText, $documents, $limit);
                 }
 
@@ -226,22 +230,35 @@ class FindSimilarProducts implements PimTool
              * Explain to the model why semantic ranking was not used, naming the
              * platforms involved so the reply reflects the real backend state.
              */
-            private function embeddingFailureNote(?string $embeddingPlatformLabel, string $reason): string
+            private function embeddingFailureNote(?MagicAIPlatform $embeddingPlatform, string $reason): string
             {
+                $fallback = 'Results are ranked by keyword overlap of SKU, name, type and family instead. Tell the user this plainly.';
+
+                if ($embeddingPlatform instanceof MagicAIPlatform) {
+                    return sprintf('AI semantic similarity was not used because the embeddings request to platform "%s" failed: %s. %s', $embeddingPlatform->label, $reason, $fallback);
+                }
+
+                $chatPlatform = $this->context->platform;
+                $rejection = $this->embeddingSimilarityService->embeddingRejection($chatPlatform) ?? EmbeddingRejection::NoEmbeddingsApi;
+
+                $note = sprintf(
+                    'AI semantic similarity was not used because the chat platform "%s" (%s) cannot create embeddings: %s, and no other active AI platform can. %s',
+                    $chatPlatform->label,
+                    AiProvider::tryFrom((string) $chatPlatform->provider)?->label() ?? $chatPlatform->provider,
+                    $rejection->describe(),
+                    $fallback,
+                );
+
+                if ($rejection !== EmbeddingRejection::NoEmbeddingsApi) {
+                    return $note;
+                }
+
                 $capable = collect(AiProvider::cases())
                     ->filter(fn (AiProvider $provider): bool => $provider->supportsEmbeddings())
                     ->map(fn (AiProvider $provider): string => $provider->label())
                     ->implode(', ');
 
-                $cause = is_null($embeddingPlatformLabel)
-                    ? sprintf(
-                        'the chat platform "%s" (%s) has no embeddings API and no other active AI platform supports embeddings',
-                        $this->context->platform->label,
-                        AiProvider::tryFrom((string) $this->context->platform->provider)?->label() ?? $this->context->platform->provider,
-                    )
-                    : sprintf('the embeddings request to platform "%s" failed: %s', $embeddingPlatformLabel, $reason);
-
-                return "AI semantic similarity was not used because {$cause}. Results are ranked by keyword overlap of SKU, name, type and family instead. Tell the user this plainly. To enable semantic similarity, activate a platform from one of these providers under Magic AI platforms: {$capable}.";
+                return "{$note} To enable semantic similarity, activate a platform from one of these providers under Magic AI platforms: {$capable}.";
             }
 
             /**
@@ -275,9 +292,17 @@ class FindSimilarProducts implements PimTool
              */
             private function tokens(string $text): array
             {
-                $parts = preg_split('/[^\p{L}\p{N}]+/u', mb_strtolower($text), -1, PREG_SPLIT_NO_EMPTY) ?: [];
+                return array_values(array_unique(array_filter($this->words($text), fn (string $part): bool => mb_strlen($part) > 1)));
+            }
 
-                return array_values(array_unique(array_filter($parts, fn (string $part): bool => mb_strlen($part) > 1)));
+            /**
+             * Split text into lowercase letter/number runs.
+             *
+             * @return array<int, string>
+             */
+            private function words(string $text, int $limit = -1): array
+            {
+                return preg_split('/[^\p{L}\p{N}]+/u', mb_strtolower($text), $limit, PREG_SPLIT_NO_EMPTY) ?: [];
             }
 
             /**
@@ -288,7 +313,7 @@ class FindSimilarProducts implements PimTool
             private function closestSkus(string $sku): array
             {
                 $needle = mb_strtolower($sku);
-                $prefix = preg_split('/[^\p{L}\p{N}]+/u', $needle, 2, PREG_SPLIT_NO_EMPTY)[0] ?? '';
+                $prefix = $this->words($needle, 2)[0] ?? '';
 
                 if ($prefix === '') {
                     return [];
@@ -296,11 +321,7 @@ class FindSimilarProducts implements PimTool
 
                 $maxDistance = max(3, intdiv(strlen($needle), 3));
 
-                return DB::table('products')
-                    ->whereLike('sku', addcslashes($prefix, '%_\\').'%')
-                    ->orderBy('id')
-                    ->limit(500)
-                    ->pluck('sku')
+                return $this->productRepository->skusStartingWith($prefix, 500)
                     ->map(fn (string $candidate): array => [$candidate, levenshtein($needle, mb_strtolower($candidate))])
                     ->filter(fn (array $pair): bool => $pair[1] <= $maxDistance)
                     ->sortBy(fn (array $pair): int => $pair[1])

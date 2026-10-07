@@ -130,6 +130,7 @@ it('does nothing in the indexing job when the vector store is disabled', functio
     (new IndexProductEmbeddingsJob([1, 2, 3]))->handle(
         new ProductEmbeddingIndex,
         new ProductEmbeddingDocumentBuilder,
+        resolve(EmbeddingSimilarityService::class),
     );
 
     Embeddings::assertNothingGenerated();
@@ -183,7 +184,7 @@ it('ranks products through the vector store when enabled', function () {
     $index->shouldReceive('dimensions')->andReturn(8);
     $index->shouldReceive('searchSimilar')
         ->once()
-        ->withArgs(fn ($vector, $limit) => count($vector) === 8 && $limit === 4)
+        ->withArgs(fn ($vector, $limit, $familyId, $fingerprint) => count($vector) === 8 && $limit === 4 && str_ends_with((string) $fingerprint, '/8'))
         ->andReturn([['product_id' => 9, 'score' => 0.88]]);
 
     $results = (new EmbeddingSimilarityService($index))->rankProducts('red shoes', 4);
@@ -228,4 +229,18 @@ it('rejects an unparseable since option', function () {
         ->assertExitCode(1);
 
     Queue::assertNothingPushed();
+});
+
+it('restricts knn hits to vectors from the same embedding model', function () {
+    config(['elasticsearch.prefix' => 'testing']);
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(fn ($args): bool => $args['body']['knn']['filter'] === ['bool' => ['filter' => [
+            ['term' => ['attribute_family_id' => 4]],
+            ['term' => ['embedding_fingerprint' => 'gemini/gemini-embedding-2/768']],
+        ]]])
+        ->andReturn(['hits' => ['hits' => []]]);
+
+    expect((new ProductEmbeddingIndex)->searchSimilar([0.1, 0.2], 5, 4, 'gemini/gemini-embedding-2/768'))->toBe([]);
 });

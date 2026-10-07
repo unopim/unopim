@@ -3,9 +3,13 @@
 namespace Webkul\AiAgent\Services;
 
 use Illuminate\Support\Facades\Log;
+use Laravel\Ai\Ai;
 use Laravel\Ai\Embeddings;
+use Laravel\Ai\Enums\Lab;
+use Laravel\Ai\Providers\Provider;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Enums\EmbeddingRejection;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
 use Webkul\MagicAI\Services\ProviderOverrides;
@@ -16,7 +20,10 @@ use Webkul\MagicAI\Services\ScopedProviderConfig;
  */
 class EmbeddingSimilarityService
 {
-    public function __construct(protected ?ProductEmbeddingIndex $productEmbeddingIndex = null) {}
+    public function __construct(
+        protected ?ProductEmbeddingIndex $productEmbeddingIndex = null,
+        protected ?MagicAIPlatformRepository $magicAIPlatformRepository = null,
+    ) {}
 
     /**
      * Rank documents by similarity to a query text, or [] when embeddings fail.
@@ -120,40 +127,65 @@ class EmbeddingSimilarityService
      */
     public function resolvePlatform(?MagicAIPlatform $preferred = null, ?int $dimensions = null): ?MagicAIPlatform
     {
-        if ($preferred instanceof MagicAIPlatform && $this->canEmbed($preferred, $dimensions)) {
+        if ($preferred instanceof MagicAIPlatform && is_null($this->embeddingRejection($preferred, $dimensions))) {
             return $preferred;
         }
 
-        return resolve(MagicAIPlatformRepository::class)
+        return ($this->magicAIPlatformRepository ?? resolve(MagicAIPlatformRepository::class))
             ->getActiveList()
-            ->filter(fn (MagicAIPlatform $platform): bool => $this->canEmbed($platform, $dimensions))
+            ->filter(fn (MagicAIPlatform $platform): bool => is_null($this->embeddingRejection($platform, $dimensions)))
             ->sortBy([['is_default', 'desc'], ['id', 'asc']])
             ->first();
     }
 
     /**
-     * Whether the platform is active, has a usable key and can return vectors
-     * of the requested size.
+     * Why the platform cannot generate embeddings of the requested size, or
+     * null when it can.
      *
      * Azure addresses embeddings by deployment name, and laravel/ai reads it
      * from `embedding_deployment`, not the chat `deployment`.
      */
-    protected function canEmbed(MagicAIPlatform $platform, ?int $dimensions = null): bool
+    public function embeddingRejection(MagicAIPlatform $platform, ?int $dimensions = null): ?EmbeddingRejection
     {
         $provider = AiProvider::tryFrom((string) $platform->provider);
+        $fixedDimensions = $provider?->fixedEmbeddingDimensions();
 
-        if (! $platform->status || ! $provider?->supportsEmbeddings() || $platform->apiKeyError() !== null) {
-            return false;
+        return match (true) {
+            ! $platform->status                                                                                                    => EmbeddingRejection::Inactive,
+            ! $provider?->supportsEmbeddings()                                                                                     => EmbeddingRejection::NoEmbeddingsApi,
+            $platform->apiKeyError() !== null                                                                                      => EmbeddingRejection::UnreadableApiKey,
+            ! is_null($dimensions) && ! is_null($fixedDimensions) && $fixedDimensions !== $dimensions                              => EmbeddingRejection::DimensionsMismatch,
+            $provider === AiProvider::Azure && blank(ProviderOverrides::decode($platform->extras)['embedding_deployment'] ?? null) => EmbeddingRejection::MissingEmbeddingDeployment,
+            default                                                                                                                => null,
+        };
+    }
+
+    /**
+     * Identify the provider, model and vector size that embeddings generated
+     * through the platform come from, so vectors from different embedding
+     * models are never compared with each other.
+     */
+    public function embeddingFingerprint(?MagicAIPlatform $platform, int $dimensions): string
+    {
+        $describe = function (Lab|array|string $provider) use ($dimensions): string {
+            $providers = Provider::formatProviderAndModelList($provider);
+            $name = (string) array_key_first($providers);
+            $model = $providers[$name] ?? Ai::embeddingProvider($name)->defaultEmbeddingsModel();
+
+            return "{$name}/{$model}/{$dimensions}";
+        };
+
+        if (! $platform instanceof MagicAIPlatform) {
+            return $describe(config('ai.default_for_embeddings'));
         }
 
-        $fixedDimensions = $provider->fixedEmbeddingDimensions();
+        $aiProvider = AiProvider::from($platform->provider);
 
-        if (! is_null($dimensions) && ! is_null($fixedDimensions) && $fixedDimensions !== $dimensions) {
-            return false;
-        }
-
-        return $provider !== AiProvider::Azure
-            || filled(ProviderOverrides::decode($platform->extras)['embedding_deployment'] ?? null);
+        return ScopedProviderConfig::run(
+            $aiProvider->configKey(),
+            $platform->providerOverrides(),
+            fn (): string => $describe($aiProvider->toLab()),
+        );
     }
 
     /**
@@ -174,13 +206,19 @@ class EmbeddingSimilarityService
         }
 
         try {
-            $queryVector = $this->generateEmbeddings([$query], $this->resolvePlatform(dimensions: $index->dimensions()), $index->dimensions())[0] ?? null;
+            $platform = $this->resolvePlatform(dimensions: $index->dimensions());
+            $queryVector = $this->generateEmbeddings([$query], $platform, $index->dimensions())[0] ?? null;
 
             if (! is_array($queryVector) || $queryVector === []) {
                 return [];
             }
 
-            return $index->searchSimilar($queryVector, $limit ?? 10, $attributeFamilyId);
+            return $index->searchSimilar(
+                $queryVector,
+                $limit ?? 10,
+                $attributeFamilyId,
+                $this->embeddingFingerprint($platform, $index->dimensions()),
+            );
         } catch (\Throwable) {
             return [];
         }

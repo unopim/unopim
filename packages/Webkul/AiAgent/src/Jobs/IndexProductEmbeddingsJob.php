@@ -14,8 +14,10 @@ use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
  * Embeds a batch of products' textual values and upserts them into the
  * persistent Elasticsearch vector store.
  *
- * Skips products whose embedded text is unchanged (content hash match), so
- * re-runs are cheap and the indexer is resumable.
+ * Skips products whose embedded text and embedding model are unchanged
+ * (content hash match), so re-runs are cheap and the indexer is resumable.
+ * Switching the embedding provider or model changes every hash, so the next
+ * run re-embeds the catalog instead of mixing vectors from two models.
  */
 class IndexProductEmbeddingsJob implements ShouldQueue
 {
@@ -39,6 +41,7 @@ class IndexProductEmbeddingsJob implements ShouldQueue
     public function handle(
         ProductEmbeddingIndex $index,
         ProductEmbeddingDocumentBuilder $documentBuilder,
+        EmbeddingSimilarityService $similarityService,
     ): void {
         if (! $index->isEnabled() || $this->productIds === []) {
             return;
@@ -50,20 +53,21 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             return;
         }
 
-        $documents = $this->rejectUnchanged($index, $documents);
+        $platform = $similarityService->resolvePlatform(dimensions: $index->dimensions());
+        $fingerprint = $similarityService->embeddingFingerprint($platform, $index->dimensions());
+
+        $documents = $this->rejectUnchanged($index, $this->stampFingerprint($documents, $fingerprint));
 
         if ($documents === []) {
             return;
         }
-
-        $similarityService = resolve(EmbeddingSimilarityService::class);
 
         try {
             $index->ensureIndex();
 
             $vectors = $similarityService->generateEmbeddings(
                 array_column($documents, 'text'),
-                $similarityService->resolvePlatform(dimensions: $index->dimensions()),
+                $platform,
                 $index->dimensions(),
             );
         } catch (\Throwable $e) {
@@ -87,10 +91,11 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             }
 
             $upserts[] = [
-                'product_id'   => $document['product_id'],
-                'sku'          => $document['sku'],
-                'content_hash' => $document['content_hash'],
-                'embedding'    => $vector,
+                'product_id'            => $document['product_id'],
+                'sku'                   => $document['sku'],
+                'content_hash'          => $document['content_hash'],
+                'embedding_fingerprint' => $fingerprint,
+                'embedding'             => $vector,
             ];
         }
 
@@ -124,6 +129,20 @@ class IndexProductEmbeddingsJob implements ShouldQueue
         }
 
         return $documents;
+    }
+
+    /**
+     * Fold the embedding model fingerprint into each content hash.
+     *
+     * @param  array<int, array{product_id: int, sku: ?string, text: string, content_hash: string}>  $documents
+     * @return array<int, array{product_id: int, sku: ?string, text: string, content_hash: string}>
+     */
+    protected function stampFingerprint(array $documents, string $fingerprint): array
+    {
+        return array_map(
+            fn (array $document): array => [...$document, 'content_hash' => hash('sha256', $document['content_hash'].'|'.$fingerprint)],
+            $documents,
+        );
     }
 
     /**

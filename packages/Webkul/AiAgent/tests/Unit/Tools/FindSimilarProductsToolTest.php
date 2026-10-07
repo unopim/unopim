@@ -10,6 +10,7 @@ use Webkul\AiAgent\Services\EmbeddingSimilarityService;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingDocumentBuilder;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Enums\EmbeddingRejection;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\Product\Models\Product;
 use Webkul\User\Models\Admin;
@@ -227,10 +228,11 @@ it('indexes product embeddings through the resolved platform at the index dimens
     $index->shouldReceive('dimensions')->andReturn(768);
     $index->shouldReceive('bulkUpsert')
         ->once()
-        ->withArgs(fn (array $documents): bool => $documents[0]['product_id'] === $product->id)
+        ->withArgs(fn (array $documents): bool => $documents[0]['product_id'] === $product->id
+            && $documents[0]['embedding_fingerprint'] === 'gemini/gemini-embedding-2/768')
         ->andReturn([]);
 
-    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
 
     Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() === 'gemini' && $prompt->dimensions === 768);
 });
@@ -249,7 +251,83 @@ it('indexes through the default embeddings provider at the index dimensions when
     $index->shouldReceive('dimensions')->andReturn(768);
     $index->shouldReceive('bulkUpsert')->once()->andReturn([]);
 
-    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
 
     Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() !== 'anthropic' && $prompt->dimensions === 768);
 });
+
+function stampedContentHash(Product $product, string $fingerprint): string
+{
+    $document = (new ProductEmbeddingDocumentBuilder)->build($product->id, $product->sku, $product->values);
+
+    return hash('sha256', $document['content_hash'].'|'.$fingerprint);
+}
+
+it('skips products already embedded by the same embedding model', function () {
+    Embeddings::fake();
+
+    similarPlatform('gemini');
+
+    $product = Product::factory()->simple()->create(['sku' => 'lumen-pendant-same-model']);
+
+    $index = Mockery::mock(ProductEmbeddingIndex::class);
+    $index->shouldReceive('isEnabled')->andReturn(true);
+    $index->shouldReceive('dimensions')->andReturn(768);
+    $index->shouldReceive('existingContentHashes')->andReturn([
+        $product->id => stampedContentHash($product->fresh(), 'gemini/gemini-embedding-2/768'),
+    ]);
+    $index->shouldNotReceive('bulkUpsert');
+
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
+
+    Embeddings::assertNothingGenerated();
+});
+
+it('re-embeds unchanged products when the embedding model changes', function () {
+    Embeddings::fake();
+
+    similarPlatform('gemini');
+
+    $product = Product::factory()->simple()->create(['sku' => 'lumen-pendant-new-model']);
+
+    $index = Mockery::mock(ProductEmbeddingIndex::class);
+    $index->shouldReceive('isEnabled')->andReturn(true);
+    $index->shouldReceive('dimensions')->andReturn(768);
+    $index->shouldReceive('ensureIndex')->once();
+    $index->shouldReceive('existingContentHashes')->andReturn([
+        $product->id => stampedContentHash($product->fresh(), 'openai/text-embedding-3-small/768'),
+    ]);
+    $index->shouldReceive('bulkUpsert')->once()->andReturn([]);
+
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
+
+    Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() === 'gemini');
+});
+
+it('names the missing setting instead of the provider when an embeddings provider is misconfigured', function () {
+    Embeddings::fake();
+
+    $source = Product::factory()->simple()->create(['sku' => 'lumen-pendant-azure']);
+
+    Product::factory()->simple()->create(['sku' => 'lumen-pendant-azure-black', 'attribute_family_id' => $source->attribute_family_id]);
+
+    $result = runFindSimilar(similarPlatform('azure', ['label' => 'Team Azure']), ['sku' => 'lumen-pendant-azure']);
+
+    expect($result['ranking'])->toBe('keyword')
+        ->and($result['note'])->toContain('Team Azure')
+        ->and($result['note'])->toContain('embedding_deployment')
+        ->and($result['note'])->not->toContain('no embeddings API')
+        ->and($result['note'])->not->toContain('activate a platform from one of these providers');
+});
+
+it('reports why a platform cannot embed', function (string $provider, array $attributes, ?int $dimensions, ?EmbeddingRejection $expected) {
+    $platform = similarPlatform($provider, $attributes);
+
+    expect(resolve(EmbeddingSimilarityService::class)->embeddingRejection($platform, $dimensions))->toBe($expected);
+})->with([
+    'inactive'                => ['openai', ['status' => 0], null, EmbeddingRejection::Inactive],
+    'no embeddings api'       => ['anthropic', [], null, EmbeddingRejection::NoEmbeddingsApi],
+    'fixed vector size'       => ['mistral', [], 1536, EmbeddingRejection::DimensionsMismatch],
+    'azure without embedding' => ['azure', [], null, EmbeddingRejection::MissingEmbeddingDeployment],
+    'capable'                 => ['openai', [], 1536, null],
+]);
