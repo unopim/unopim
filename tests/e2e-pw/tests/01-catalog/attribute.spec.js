@@ -570,6 +570,30 @@ test.describe('Select Type Attribute', () => {
     await deleteAttribute(adminPage, code);
   });
 
+  test('Label edits generate a code for new options but never change an existing option code', { timeout: 90000 }, async ({ adminPage }) => {
+    const uid = generateUid();
+    const code = `sel_${uid}`;
+    const optCode = `cotton_${uid}`;
+    await createAttribute(adminPage, code, 'Material', 'Select');
+
+    await adminPage.getByText('Add Row').click();
+    const optionForm = adminPage.locator('form').filter({ hasText: 'Add Option' });
+    const codeInput = optionForm.getByPlaceholder('Code');
+    await adminPage.locator('input[name="locales.en_US"]').fill(`Cotton ${uid}`);
+    await expect(codeInput).toHaveValue(optCode);
+    await clickSave(adminPage, 'Save Option');
+    await expect(adminPage.locator('#app').getByText('Attribute Option Created Successfully').last()).toBeVisible();
+
+    const itemRow = adminPage.locator('div', { hasText: optCode }).filter({ hasText: `Cotton ${uid}` });
+    await itemRow.locator('span[title="Edit"]').first().click();
+    await expect(codeInput).toBeDisabled();
+    await expect(codeInput).toHaveValue(optCode);
+    await adminPage.locator('input[name="locales.en_US"]').fill(`Organic Cotton ${uid}`);
+    await expect(codeInput).toHaveValue(optCode);
+    await adminPage.locator('span.icon-cancel.cursor-pointer').click();
+    await deleteAttribute(adminPage, code);
+  });
+
   test('Pagination buttons should be visible, enabled, and clickable', { timeout: 90000 }, async ({ adminPage }) => {
     const uid = generateUid();
     const code = `sel_${uid}`;
