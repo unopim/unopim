@@ -205,13 +205,14 @@ class PassportPayloadBuilder implements PayloadBuilder
             ];
         }
 
-        $copiedPath = $this->copyToAssetDisk($context->uuid, $localeCode, $field->code, $raw);
+        $copied = $this->copyToAssetDisk($context->uuid, $localeCode, $field->code, $raw);
 
         return array_filter([
-            'code'  => $field->code,
-            'label' => $label,
-            'path'  => $copiedPath,
-            'kind'  => $kind,
+            'code'   => $field->code,
+            'label'  => $label,
+            'path'   => $copied['path'] ?? null,
+            'sha256' => $copied['sha256'] ?? null,
+            'kind'   => $kind,
         ], fn ($value): bool => $value !== null);
     }
 
@@ -280,11 +281,19 @@ class PassportPayloadBuilder implements PayloadBuilder
     }
 
     /**
-     * Copies the file from the catalog default disk to the asset disk, stamping the final path into the payload.
+     * Copies the file from the catalog default disk to a content-addressed location on the asset disk,
+     * stamping the final path and the file's digest into the payload.
+     *
+     * The digest is part of the path on purpose. A re-issued file lands beside the previous one instead
+     * of being skipped as "already there", so the payload changes, the checksum changes and Publisher
+     * mints a new version, while every sealed version keeps pointing at the exact bytes it attested.
+     * The basename stays the field code, so the download filename is unchanged.
      *
      * Must run at build time: PublicationVersion::payload is immutable once the version row exists, so no path can be rewritten later.
+     *
+     * @return array{path: string, sha256: string}|null
      */
-    private function copyToAssetDisk(string $uuid, string $localeCode, string $fieldCode, string $sourcePath): ?string
+    private function copyToAssetDisk(string $uuid, string $localeCode, string $fieldCode, string $sourcePath): ?array
     {
         $source = Storage::disk(config('filesystems.default'));
 
@@ -292,15 +301,19 @@ class PassportPayloadBuilder implements PayloadBuilder
             return null;
         }
 
+        $contents = (string) $source->get($sourcePath);
+        $digest = hash('sha256', $contents);
         $extension = pathinfo($sourcePath, PATHINFO_EXTENSION);
-        $targetPath = "publication/{$uuid}/{$localeCode}/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
+
+        $targetPath = "publication/{$uuid}/{$localeCode}/".substr($digest, 0, 16)."/{$fieldCode}".($extension !== '' ? ".{$extension}" : '');
 
         $target = Storage::disk(config('publication.asset_disk'));
 
+        // Content-addressed: an object already at this path holds these exact bytes.
         if (! $target->exists($targetPath)) {
-            $target->put($targetPath, $source->get($sourcePath));
+            $target->put($targetPath, $contents);
         }
 
-        return $targetPath;
+        return ['path' => $targetPath, 'sha256' => $digest];
     }
 }
