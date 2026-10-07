@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Str;
 use Webkul\Publication\Enums\PublicationStatus;
+use Webkul\Publication\Services\Publisher;
 
 it('redirects the bare uuid to the canonical per-locale url without caching the redirect', function (): void {
     $version = $this->publishedPassportFixture();
@@ -94,4 +95,33 @@ it('404s everything when the global kill switch is off, regardless of channel se
     config(['publication.enabled' => false]);
 
     $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)->assertNotFound();
+});
+
+it('answers 410 Gone, uncacheable and unindexable, for a redacted passport', function (): void {
+    $version = $this->publishedPassportFixture();
+
+    resolve(Publisher::class)->redactAll($version->publication->fresh(), $this->loginAsAdmin()->id, 'gdpr request');
+
+    $response = $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)
+        ->assertStatus(410)
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow')
+        ->assertSee(trans('publication::app.public.withdrawn.heading'));
+
+    expect($response->headers->getCacheControlDirective('no-store'))->toBeTrue()
+        ->and($response->headers->getCacheControlDirective('private'))->toBeTrue()
+        ->and($response->headers->hasCacheControlDirective('s-maxage'))->toBeFalse();
+});
+
+it('keeps a withdrawn tombstone out of shared caches while still answering 200', function (): void {
+    $version = $this->publishedPassportFixture();
+
+    $version->publication->update(['status' => PublicationStatus::Withdrawn]);
+
+    $response = $this->get('/p/'.$version->publication->uuid.'/'.$version->locale->code)
+        ->assertOk()
+        ->assertHeader('X-Robots-Tag', 'noindex, nofollow');
+
+    expect($response->headers->getCacheControlDirective('no-store'))->toBeTrue()
+        ->and($response->headers->getCacheControlDirective('private'))->toBeTrue()
+        ->and($response->headers->hasCacheControlDirective('s-maxage'))->toBeFalse();
 });

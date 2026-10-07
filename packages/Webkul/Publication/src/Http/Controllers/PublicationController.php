@@ -169,11 +169,16 @@ class PublicationController extends Controller
                 ->values(),
         ]);
 
+        $tombstone = $publication->status !== PublicationStatus::Published;
+
+        // Redacted is irreversible, so it is 410 Gone; Withdrawn can be reinstated, so it stays 200.
+        // Neither may sit in a shared cache: a reinstated or (worse) freshly redacted passport must not
+        // keep serving whatever state a proxy happened to capture, and there is no purge hook to rely on.
         return $this->tierCache(
-            response($view->render())
+            response($view->render(), $publication->status === PublicationStatus::Redacted ? 410 : 200)
                 ->header('ETag', $etag)
-                ->header('Cache-Control', $this->cacheControl($publication->channel?->code))
-                ->header('X-Robots-Tag', ((bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
+                ->header('Cache-Control', $tombstone ? 'private, no-store' : $this->cacheControl($publication->channel?->code))
+                ->header('X-Robots-Tag', (! $tombstone && (bool) (core()->getConfigData('general.publication.settings.indexable', $publication->channel->code) ?? false)) ? 'index, nofollow' : 'noindex, nofollow'),
             $grantedIndex,
         );
     }
