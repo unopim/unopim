@@ -8,7 +8,7 @@ use Webkul\AiAgent\Chat\ToolRegistry;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\User\Models\Admin;
 
-beforeEach(function () {
+beforeEach(function (): void {
     MagicAIPlatform::query()->delete();
 
     $this->platform = MagicAIPlatform::create([
@@ -73,15 +73,15 @@ function tokenUsageContext(MagicAIPlatform $platform, Admin $admin): ChatContext
     );
 }
 
-it('reports input plus output tokens, cached input included, for a blocking turn', function () {
+it('reports input plus output tokens, cached input included, for a blocking turn', function (): void {
     Http::fake(['*' => Http::response(openAiCompletedResponse())]);
 
-    $result = app(AgentRunner::class)->run(tokenUsageContext($this->platform, $this->admin));
+    $result = resolve(AgentRunner::class)->run(tokenUsageContext($this->platform, $this->admin));
 
     expect($result['data']['tokens_used'])->toBe(1545);
 });
 
-it('reports and records input plus output tokens for a streamed turn', function () {
+it('reports and records input plus output tokens for a streamed turn', function (): void {
     $events = [
         ['type' => 'response.created', 'response' => ['id' => 'resp_1', 'model' => 'gpt-4o-mini']],
         ['type' => 'response.output_text.delta', 'item_id' => 'msg_1', 'delta' => 'Done.'],
@@ -92,7 +92,7 @@ it('reports and records input plus output tokens for a streamed turn', function 
 
     Http::fake(['*' => Http::response($body, 200, ['Content-Type' => 'text/event-stream'])]);
 
-    $runner = new class(app(ToolRegistry::class)) extends AgentRunner
+    $runner = new class(resolve(ToolRegistry::class)) extends AgentRunner
     {
         protected function disableOutputBuffering(): void {}
     };
