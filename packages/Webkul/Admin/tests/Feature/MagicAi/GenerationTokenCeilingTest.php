@@ -5,15 +5,15 @@ use Laravel\Ai\Responses\AgentResponse;
 use Laravel\Ai\Responses\Data\FinishReason;
 use Laravel\Ai\Responses\Data\Meta;
 use Laravel\Ai\Responses\Data\Step;
-use Laravel\Ai\Responses\Data\Usage;
+use Laravel\Ai\Responses\Data\TextUsage;
 use Webkul\MagicAI\MagicAI;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
 
 function agentResponseFinishing(FinishReason $reason, string $text = 'content'): AgentResponse
 {
-    return (new AgentResponse('invocation', $text, new Usage, new Meta))
+    return (new AgentResponse('invocation', $text, new TextUsage, new Meta))
         ->withSteps(new Collection([
-            new Step($text, [], [], $reason, new Usage, new Meta),
+            new Step($text, [], [], $reason, new TextUsage, new Meta, '', []),
         ]));
 }
 
@@ -26,7 +26,7 @@ it('does not report a naturally finished generation as truncated', function () {
 });
 
 it('treats a response without steps as finished', function () {
-    $response = new AgentResponse('invocation', 'content', new Usage, new Meta);
+    $response = new AgentResponse('invocation', 'content', new TextUsage, new Meta);
 
     expect(LaravelAiAdapter::hitTokenCeiling($response))->toBeFalse();
 });

@@ -69,7 +69,7 @@ class AgentRunner
         );
 
         $usage = $response->usage;
-        $tokensUsed = ($usage->promptTokens ?? 0) + ($usage->completionTokens ?? 0);
+        $tokensUsed = $usage->inputTokens + $usage->outputTokens;
 
         $result = [
             'reply'  => $response->text ?: trans('ai-agent::app.common.operation-completed'),
@@ -156,7 +156,7 @@ class AgentRunner
                         // final usage + text. Fall back to buffer if usage is null.
                         $finalText = $stream->text ?: $textBuffer ?: trans('ai-agent::app.common.operation-completed');
                         $usage = $stream->usage;
-                        $tokensUsed = ($usage?->promptTokens ?? 0) + ($usage?->completionTokens ?? 0);
+                        $tokensUsed = ($usage?->inputTokens ?? 0) + ($usage?->outputTokens ?? 0);
 
                         $this->recordStreamingTokens($context, $tokensUsed);
 
