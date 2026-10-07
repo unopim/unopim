@@ -7,12 +7,16 @@ use Illuminate\Http\File;
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Image;
+use Laravel\Ai\Responses\ImageResponse;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Models\MagicAIPlatform;
+use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ScopedProviderConfig;
 use Webkul\Product\Repositories\ProductRepository;
 
 class GenerateImage implements PimTool
@@ -59,7 +63,9 @@ class GenerateImage implements PimTool
                 $sku = $request->string('sku')->toString() ?: null;
                 $size = $request->string('size')->toString() ?: '1024x1024';
 
-                $aiProvider = AiProvider::from($this->context->platform->provider);
+                $platform = $this->outer->resolveImagePlatform($this->context);
+
+                $aiProvider = AiProvider::from($platform->provider);
 
                 if (! $aiProvider->supportsImages()) {
                     return json_encode([
@@ -67,19 +73,14 @@ class GenerateImage implements PimTool
                     ]);
                 }
 
+                $overrides = ['key' => $platform->api_key];
+
+                if ($platform->api_url) {
+                    $overrides['url'] = $platform->api_url;
+                }
+
                 try {
-                    // Configure the AI provider
-                    $configKey = $aiProvider->configKey();
-                    config([
-                        "ai.providers.{$configKey}.key" => $this->context->platform->api_key,
-                    ]);
-
-                    if ($this->context->platform->api_url) {
-                        config(["ai.providers.{$configKey}.url" => $this->context->platform->api_url]);
-                    }
-
-                    // Find an image-generation capable model
-                    $imageModel = $this->outer->resolveImageModel($this->context);
+                    $imageModel = $this->outer->resolveImageModel($this->context, $platform);
 
                     $sizeMap = [
                         '1024x1024' => '1:1',
@@ -87,13 +88,17 @@ class GenerateImage implements PimTool
                         '1792x1024' => '3:2',
                     ];
 
-                    $response = Image::of($prompt)
-                        ->size($sizeMap[$size] ?? '1:1')
-                        ->quality('high')
-                        ->generate(
-                            provider: $aiProvider->toLab(),
-                            model: $imageModel,
-                        );
+                    $response = ScopedProviderConfig::run(
+                        $aiProvider->configKey(),
+                        $overrides,
+                        fn (): ImageResponse => Image::of($prompt)
+                            ->size($sizeMap[$size] ?? '1:1')
+                            ->quality('high')
+                            ->generate(
+                                provider: $aiProvider->toLab(),
+                                model: $imageModel,
+                            ),
+                    );
 
                     if (empty($response->images)) {
                         return json_encode(['error' => 'Image generation returned no images.']);
@@ -168,14 +173,50 @@ class GenerateImage implements PimTool
     }
 
     /**
+     * Resolve the platform that should serve image generation.
+     *
+     * The admin can point image generation at a dedicated platform, which is
+     * often not the text platform the conversation runs on. That setting wins
+     * whenever it names an enabled, image-capable platform.
+     */
+    public function resolveImagePlatform(ChatContext $context): MagicAIPlatform
+    {
+        $platformId = (int) core()->getConfigData('general.magic_ai.image_generation.ai_platform');
+
+        if ($platformId === 0) {
+            return $context->platform;
+        }
+
+        $platform = resolve(MagicAIPlatformRepository::class)->find($platformId);
+
+        if (! $platform instanceof MagicAIPlatform || ! $platform->status) {
+            return $context->platform;
+        }
+
+        if (! AiProvider::tryFrom($platform->provider)?->supportsImages()) {
+            return $context->platform;
+        }
+
+        return $platform->apiKeyError() ? $context->platform : $platform;
+    }
+
+    /**
      * Resolve an image-generation capable model for the provider.
      *
      * Priority: user-selected model (if image-capable) → known valid models
      * from the platform list → fallback defaults.
      */
-    public function resolveImageModel(ChatContext $context): string
+    public function resolveImageModel(ChatContext $context, ?MagicAIPlatform $platform = null): string
     {
-        $provider = $context->platform->provider;
+        $platform ??= $context->platform;
+
+        $provider = $platform->provider;
+
+        $configuredModel = (string) core()->getConfigData('general.magic_ai.image_generation.ai_model');
+
+        if ($configuredModel !== '' && in_array($configuredModel, $platform->model_list ?? [], true)) {
+            return $configuredModel;
+        }
 
         $imageModelPatterns = match ($provider) {
             'openai'  => ['dall-e', 'gpt-image'],
@@ -201,7 +242,7 @@ class GenerateImage implements PimTool
             default   => [],
         };
 
-        $models = $context->platform->model_list ?? [];
+        $models = $platform->model_list ?? [];
 
         // First pass: prefer known valid models
         foreach ($knownImageModels as $known) {

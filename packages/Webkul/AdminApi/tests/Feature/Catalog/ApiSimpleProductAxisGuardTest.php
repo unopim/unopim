@@ -3,6 +3,7 @@
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -31,12 +32,12 @@ it('rejects a REST PUT that changes an ancestor-owned attribute value', function
 
     $configurable = app(ProductRepository::class)->create([
         'sku'                  => 'rest-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
-    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'simple', 'sku' => 'rest-simple']);
+    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::Simple->value, 'sku' => 'rest-simple']);
     $simple->values = ['common' => ['sku' => 'rest-simple', $color->code => 'red']];
     $simple->save();
 
@@ -62,12 +63,12 @@ it('allows and persists an own-axis rename through the REST PUT path', function 
 
     $configurable = app(ProductRepository::class)->create([
         'sku'                  => 'rest2-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
-    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'simple', 'sku' => 'rest2-simple']);
+    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::Simple->value, 'sku' => 'rest2-simple']);
     $simple->values = ['common' => ['sku' => 'rest2-simple', $color->code => 'red']];
     $simple->save();
 
@@ -96,12 +97,12 @@ it('rejects a REST PATCH that changes an ancestor-owned attribute value', functi
 
     $configurable = app(ProductRepository::class)->create([
         'sku'                  => 'rest3-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
-    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'simple', 'sku' => 'rest3-simple']);
+    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::Simple->value, 'sku' => 'rest3-simple']);
     $simple->values = ['common' => ['sku' => 'rest3-simple', $color->code => 'red']];
     $simple->save();
 
@@ -127,12 +128,12 @@ it('allows and persists an own-axis rename through the REST PATCH path', functio
 
     $configurable = app(ProductRepository::class)->create([
         'sku'                  => 'rest4-config-'.uniqid(),
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'variant_structure_id' => $structure->id,
     ]);
 
-    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => 'simple', 'sku' => 'rest4-simple']);
+    $simple = Product::factory()->create(['parent_id' => $configurable->id, 'type' => ProductType::Simple->value, 'sku' => 'rest4-simple']);
     $simple->values = ['common' => ['sku' => 'rest4-simple', $color->code => 'red']];
     $simple->save();
 

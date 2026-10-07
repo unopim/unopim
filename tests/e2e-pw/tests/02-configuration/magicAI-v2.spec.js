@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, generateUid } = require('../../utils/helpers');
+const { clickSave, generateUid, closeDropdown, visiblePaginationSymbols } = require('../../utils/helpers');
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const MAGIC_AI_CONFIG_URL = '/admin/magic-ai/settings';
@@ -114,7 +114,7 @@ test('3.2 - Text Generation has Default Platform dropdown with "Use Default Plat
   await expect(adminPage.getByText('Use Default Platform').first()).toBeVisible({ timeout: 20000 });
   await adminPage.getByText('Use Default Platform').first().click();
   await expect(adminPage.getByRole('option', { name: /Use Default Platform/i }).first()).toBeVisible();
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 });
 
 test('3.3 - Text Generation Default Platform lists configured platforms with provider names', async ({ adminPage }) => {
@@ -269,16 +269,15 @@ test('6.5 - AI Platforms datagrid has Filter button', async ({ adminPage }) => {
 
 test('6.6 - AI Platforms datagrid has Per Page selector and pagination', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage.locator('#app').getByText('Per Page')).toBeVisible();
+  await expect(adminPage.getByRole('button', { name: 'Per Page' })).toBeVisible();
   await expect(adminPage.locator('#app').getByText(/of \d+/)).toBeVisible();
 });
 
 test('6.7 - AI Platforms datagrid has pagination arrows', async ({ adminPage }) => {
   await adminPage.goto(MAGIC_AI_PLATFORM_URL, { waitUntil: 'networkidle' });
-  await expect(adminPage.locator('text="«"')).toBeVisible();
-  await expect(adminPage.locator('text="‹"')).toBeVisible();
-  await expect(adminPage.locator('text="›"')).toBeVisible();
-  await expect(adminPage.locator('text="»"')).toBeVisible();
+  for (const symbol of await visiblePaginationSymbols(adminPage)) {
+    await expect(adminPage.locator(`text="${symbol}"`)).toBeVisible();
+  }
 });
 
 test('6.8 - AI Platforms datagrid shows all column headers', async ({ adminPage }) => {
@@ -353,7 +352,7 @@ test('7.2 - Add Platform modal has Provider dropdown with all provider options',
   for (let i = 0; i < count; i++) {
     optionTexts.push(await options.nth(i).textContent());
   }
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
   expect(optionTexts.some(t => t.includes('OpenAI'))).toBe(true);
   expect(optionTexts.some(t => t.includes('Anthropic'))).toBe(true);
   expect(optionTexts.some(t => t.includes('Google Gemini'))).toBe(true);

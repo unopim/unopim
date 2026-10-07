@@ -480,6 +480,26 @@ it('should update the ai_translate property in Attribute', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
 });
 
+it('should render the ai_translate fallback before the checkbox so the checkbox value wins on submit', function (int $stored) {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'             => 'text',
+        'value_per_locale' => 1,
+        'ai_translate'     => $stored,
+    ]);
+
+    get(route('admin.catalog.attributes.edit', $attribute->id))
+        ->assertOk()
+        ->assertSeeInOrder([
+            'type="hidden" name="ai_translate" value="0"',
+            'id="ai_translate"',
+        ], false);
+})->with([
+    'stored disabled' => [0],
+    'stored enabled'  => [1],
+]);
+
 it('should create attribute option with color swatch_value for select type', function () {
     $this->loginAsAdmin();
 
@@ -667,4 +687,40 @@ it('should render add-option modal with a unified layout for image swatch attrib
         $content,
         'The add-option modal must not split swatch input and form fields into two disconnected grid divs'
     );
+});
+
+it('mass deletes only the attributes matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => Attribute::factory()->create(['code' => 'seldel_match_'.$i])->id)->all();
+    $other = Attribute::factory()->create(['code' => 'seldel_other'])->id;
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['seldel_match_']],
+    ])->assertOk();
+
+    expect(Attribute::whereIn('id', $matching)->count())->toBe(0)
+        ->and(Attribute::whereKey($other)->exists())->toBeTrue();
+});
+
+it('keeps the sku attribute when all attributes are selected for mass delete', function () {
+    $this->loginAsAdmin();
+
+    $skuId = Attribute::where('code', 'sku')->value('id');
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['sku']],
+    ])->assertStatus(400);
+
+    expect(Attribute::whereKey($skuId)->exists())->toBeTrue();
+});
+
+it('still requires an id list on attribute mass delete when all matching are not selected', function () {
+    $this->loginAsAdmin();
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('indices');
 });

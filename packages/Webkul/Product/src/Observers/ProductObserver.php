@@ -2,10 +2,11 @@
 
 namespace Webkul\Product\Observers;
 
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Product\Contracts\Product;
 
-class ProductObserver
+class ProductObserver implements ShouldHandleEventsAfterCommit
 {
     /**
      * Handle the Product "deleted" event.

@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, searchInDataGrid, clickSaveAndExpect, closeDropdown } = require('../../utils/helpers');
 
 /**
  * Helper: Fill channel creation form and submit.
@@ -30,7 +30,7 @@ async function fillChannelForm(adminPage, opts = {}) {
     }).first();
     await option.waitFor({ state: 'visible', timeout: 10000 });
     await option.click();
-    await adminPage.keyboard.press('Escape');
+    await closeDropdown(adminPage);
   };
 
   // fill('') marks the field touched-but-empty, suppressing the required message the empty-code test asserts.

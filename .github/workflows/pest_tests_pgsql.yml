@@ -52,7 +52,7 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
         with:
           composer-options: "--optimize-autoloader"
 
@@ -92,7 +92,7 @@ jobs:
         # OOM-killed (exit 137), which aborts paratest mid-run.
         run: |
           vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
-          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
 
   pest-pgsql-elasticsearch:
     runs-on: ubuntu-24.04
@@ -143,7 +143,7 @@ jobs:
           coverage: none
 
       - name: Install Composer dependencies
-        uses: ramsey/composer-install@v3
+        uses: ramsey/composer-install@v4
         with:
           composer-options: "--optimize-autoloader"
 
@@ -193,4 +193,4 @@ jobs:
         # OOM-killed (exit 137), which aborts paratest mid-run.
         run: |
           vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Api Feature Test,Core Unit Test,DataTransfer Unit Test,User Feature Test,Admin Feature Test"
-          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"
+          vendor/bin/pest --parallel --processes=3 --colors=always --testsuite "Installer Feature Test,ElasticSearch Feature Test,Completeness Feature Test,Product Unit Test,Product Feature Test,Attribute Unit Test,Category Unit Test,Measurement Feature Test,AiAgent Unit Test,AppUrlGuard Unit Test,Webhook Unit Test,Webhook Feature Test,AppUrlGuard Feature Test,Resource Unit Test,Resource Feature Test,Publication Feature Test,ProductPassport Feature Test"

@@ -203,11 +203,20 @@ class MeasurementFamilyDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('catalog.measurements.families.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('measurement::app.datagrid.delete'),
-                'method'  => 'POST',
-                'url'     => route('admin.measurement.families.mass_delete'),
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('measurement::app.datagrid.delete'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'url'                 => route('admin.measurement.families.mass_delete'),
+                'options'             => ['actionType' => 'delete'],
             ]);
         }
+    }
+
+    /**
+     * The grid has no id column and its joined tables carry one, so the bare key would be ambiguous.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'measurement_families.id';
     }
 }

@@ -48,6 +48,46 @@ it('configures gallery validation by mime types and extensions', function () use
         ->and($source)->toContain(':accept="acceptAttribute"');
 });
 
+it('provides independent MIME metadata for each gallery configuration', function () {
+    $html = Blade::render(<<<'BLADE'
+        <x-admin::media.gallery :accepted-extensions="['avif']" />
+        <x-admin::media.gallery :accepted-extensions="['.JIF', 'psd']" />
+        BLADE);
+
+    preg_match_all("/:mime-types='([^']*)'/", $html, $matches);
+
+    $maps = array_map(fn (string $json): array => json_decode($json, true, flags: JSON_THROW_ON_ERROR), $matches[1]);
+
+    expect($maps)->toHaveCount(2)
+        ->and($maps[0])->toHaveKeys(['avif'])
+        ->and($maps[0]['avif'])->toContain('image/avif')
+        ->and($maps[0])->not->toHaveKey('psd')
+        ->and($maps[1]['jif'])->toContain('image/jpeg')
+        ->and($maps[1]['psd'])->toContain('application/photoshop')
+        ->and($maps[1])->not->toHaveKey('avif');
+});
+
+it('allows a gallery caller to supply MIME metadata for a custom format', function () {
+    $html = Blade::render(<<<'BLADE'
+        <x-admin::media.gallery
+            :accepted-extensions="['custom_image']"
+            :mime-types="['custom_image' => ['image/x-custom']]"
+        />
+        BLADE);
+
+    preg_match("/:mime-types='([^']*)'/", $html, $matches);
+
+    expect($matches)->toHaveCount(2)
+        ->and(json_decode($matches[1], true, flags: JSON_THROW_ON_ERROR))->toBe(['custom_image' => ['image/x-custom']]);
+});
+
+it('keeps wildcard-only galleries free from a default extension allowlist', function () {
+    $html = Blade::render('<x-admin::media.gallery />');
+
+    expect($html)->toContain(":mime-types='{}'")
+        ->and($html)->toContain(":accepted-extensions='[]'");
+});
+
 it('renders AI suggestion labels as text instead of untrusted HTML', function () {
     $views = [
         __DIR__.'/../../../src/Resources/views/components/media/image.blade.php',

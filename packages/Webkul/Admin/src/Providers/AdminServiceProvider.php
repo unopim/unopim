@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Webkul\Admin\Console\Commands\RefreshDashboardCacheCommand;
 use Webkul\Admin\Fields\FieldConfig;
 use Webkul\Admin\Observers\CategoryObserver;
@@ -20,6 +21,7 @@ use Webkul\Attribute\Models\AttributeFamilyProxy;
 use Webkul\Attribute\Models\AttributeGroupProxy;
 use Webkul\Attribute\Models\AttributeProxy;
 use Webkul\Category\Models\CategoryProxy;
+use Webkul\Core\Helpers\MediaMimeTypes;
 use Webkul\Core\Models\ChannelProxy;
 use Webkul\Core\Models\CurrencyProxy;
 use Webkul\Core\Models\LocaleProxy;
@@ -148,6 +150,17 @@ class AdminServiceProvider extends ServiceProvider
      */
     protected function composeView(): void
     {
+        view()->composer('admin::components.media.gallery', function (View $view): void {
+            $data = $view->getData();
+            $extensions = $data['acceptedExtensions'] ?? $data['accepted-extensions'] ?? [];
+            $mimeTypes = $data['mimeTypes'] ?? $data['mime-types'] ?? [];
+
+            $view->with('resolvedMimeTypes', (object) array_replace(
+                app(MediaMimeTypes::class)->forExtensions($extensions),
+                $mimeTypes,
+            ));
+        });
+
         view()->composer([
             'admin::components.layouts.header.index',
             'admin::components.layouts.sidebar.index',

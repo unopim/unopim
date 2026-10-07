@@ -9,12 +9,14 @@ use Illuminate\Foundation\AliasLoader;
 use Illuminate\Mail\MailManager;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Intervention\Image\Drivers\Gd\Driver as GdDriver;
 use Intervention\Image\Drivers\Imagick\Driver as ImagickDriver;
 use Intervention\Image\ImageManager;
+use RuntimeException;
 use Webkul\Core\CatalogScope;
 use Webkul\Core\Console\Commands\TranslationsChecker;
 use Webkul\Core\Console\Commands\UnoPimPublish;
@@ -55,15 +57,15 @@ class CoreServiceProvider extends ServiceProvider
 
         include __DIR__.'/../Http/helpers.php';
 
-        $purifierCachePath = storage_path('app/purifier');
-
-        if (! is_dir($purifierCachePath)) {
-            mkdir($purifierCachePath, 0755, true);
-        }
+        $this->ensurePurifierCacheDirectory(storage_path('app/purifier'));
 
         $this->loadMigrationsFrom(__DIR__.'/../Database/Migrations');
 
         $this->app->beforeResolving(MailManager::class, function (): void {
+            if ($this->mailTransportIsPinnedByEnvironment()) {
+                return;
+            }
+
             $this->overrideMailConfiguration();
         });
 
@@ -128,6 +130,17 @@ class CoreServiceProvider extends ServiceProvider
     }
 
     /**
+     * Whether the environment pinned a transport the stored settings must not replace.
+     *
+     * The array transport is the one the test environment forces, so overriding it
+     * would dial the admin's SMTP host and send real mail from the suite.
+     */
+    private function mailTransportIsPinnedByEnvironment(): bool
+    {
+        return config('mail.default') === 'array';
+    }
+
+    /**
      * Override the mail transport with admin Configuration (Email settings) values
      * when present. Deferred until a mailer is resolved: reading the settings costs
      * a schema check and several config queries, and almost no request sends mail.
@@ -181,6 +194,46 @@ class CoreServiceProvider extends ServiceProvider
         if ($fromName = core()->getConfigData($prefix.'sender_name')) {
             config(['mail.from.name' => $fromName]);
         }
+    }
+
+    /**
+     * Create the HTMLPurifier serializer cache directory.
+     *
+     * Concurrent boots race here, so the directory is re-checked after the attempt rather than
+     * before it, which rules out `File::ensureDirectoryExists()`. The local error handler is
+     * needed because Laravel's handler swallows the warning, leaving error_get_last() empty.
+     *
+     * @throws RuntimeException
+     */
+    protected function ensurePurifierCacheDirectory(string $path): void
+    {
+        if (File::isDirectory($path)) {
+            return;
+        }
+
+        $failure = null;
+
+        set_error_handler(function (int $level, string $message) use (&$failure): bool {
+            $failure = $message;
+
+            return true;
+        });
+
+        try {
+            $created = mkdir($path, 0755, true);
+        } finally {
+            restore_error_handler();
+        }
+
+        if ($created || File::isDirectory($path)) {
+            return;
+        }
+
+        throw new RuntimeException(sprintf(
+            'Unable to create purifier cache directory [%s]: %s',
+            $path,
+            $failure ?? 'unknown error',
+        ));
     }
 
     public function register(): void

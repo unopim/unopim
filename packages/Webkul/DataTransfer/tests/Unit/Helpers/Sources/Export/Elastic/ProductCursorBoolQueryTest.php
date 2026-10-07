@@ -2,6 +2,7 @@
 
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductCursor;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 function buildBoolQuery(array $filters): array
@@ -23,14 +24,14 @@ it('restricts to the ids matching the sku filter', function () {
 
     $matched = Product::create([
         'sku'                 => 'ES-SKU-1',
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'status'              => 1,
         'attribute_family_id' => $family->id,
     ]);
 
     Product::create([
         'sku'                 => 'ES-SKU-2',
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'status'              => 1,
         'attribute_family_id' => $family->id,
     ]);
@@ -46,6 +47,14 @@ it('builds a status term clause', function () {
     expect(buildBoolQuery(['status' => 'enable']))->toBe([
         'filter' => [
             ['term' => ['status' => true]],
+        ],
+    ]);
+});
+
+it('matches category codes against the exact-value keyword subfield', function () {
+    expect(buildBoolQuery(['categories' => ['Footwear', 'Outerwear']]))->toBe([
+        'filter' => [
+            ['terms' => ['values.categories.keyword' => ['Footwear', 'Outerwear']]],
         ],
     ]);
 });

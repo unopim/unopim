@@ -1,11 +1,12 @@
 <?php
 
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 it('labels the association link remove action as remove product', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value]);
 
     $content = $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()
@@ -22,7 +23,7 @@ it('labels the association link remove action as remove product', function () {
 it('stacks each association link field label above its control', function () {
     $this->loginAsAdmin();
 
-    $product = Product::factory()->create(['type' => 'simple']);
+    $product = Product::factory()->create(['type' => ProductType::Simple->value]);
 
     $content = $this->get(route('admin.catalog.products.edit', $product->id))
         ->assertOk()

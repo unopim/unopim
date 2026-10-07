@@ -14,7 +14,15 @@ it('lists categories for the product category filter', function () {
 
     $category = Category::factory()->create();
 
-    $codes = array_column(categoryOptions(['page' => 1]), 'code');
+    $codes = [];
+    $page = 1;
+
+    do {
+        $response = $this->getJson(route('admin.catalog.options.fetch-all', ['entityName' => 'category', 'page' => $page]))
+            ->assertOk();
+
+        $codes = [...$codes, ...array_column($response->json('options'), 'code')];
+    } while ($page++ < $response->json('lastPage'));
 
     expect($codes)->toContain($category->code);
 });
@@ -40,10 +48,15 @@ it('returns only the requested codes when hydrating selected values', function (
     expect(array_column($options, 'code'))->toEqualCanonicalizing($selected->pluck('code')->all());
 });
 
+/**
+ * The search matches a name as well as a code, and the factory's code is random
+ * and can be two characters long, so an explicit code is what keeps the query
+ * from also matching a generated name or a demo category.
+ */
 it('searches categories by code', function () {
     $this->loginAsAdmin();
 
-    $category = Category::factory()->create();
+    $category = Category::factory()->create(['code' => 'qzx_filter_target']);
 
     Category::factory()->count(2)->create();
 

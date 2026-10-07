@@ -1,3 +1,88 @@
+# 3.1.3 — September 29th, 2026
+
+## Improvements
+
+- "Select all matching" now covers every matching record instead of stopping at the first 10,000. The grid sends its filters rather than an id list, and the server resolves the matching ids, paging past the first Elasticsearch batch when Elasticsearch is enabled.
+- Product status update and delete on a select-all selection now run on the queue in chunks of 100, so the request returns at once at any selection size, and the admin who started the action gets a notification with the product count when it finishes. Each chunk runs in its own transaction, so a failed chunk rolls back cleanly and keeps its product media.
+- Select all matching now also works for the mass actions on attributes, association types, category fields, currencies, locales, completeness settings, measurement families, product passports and webhooks, with their existing guards still applied. Webhook log deletion runs on the queue and notifies when done.
+- Added `ProductType` and `VariantLevel` enums for product types and variant levels. The existing string constants keep their values, so code comparing against them keeps working.
+- The AI chat import confirmation now links to the job tracker instead of the import profile.
+
+## Bug fixes
+
+- Fixed the datagrid toolbar unmounting while a mass action was pending, which left an empty error flash and a stuck loading shimmer after the grid reloaded.
+- Fixed every Agentic PIM chat product update that ran a translation failing with "Unknown column 'name'"; target locale names are now derived from their codes.
+- Fixed Magic AI translation wrapping plain text attributes and non-WYSIWYG textareas such as the name or meta title in HTML paragraph tags; only WYSIWYG fields keep HTML now.
+- Fixed the AI chat reloading the product or category edit page after a reply from a read-only tool; the page reloads only when a write tool changed data.
+- Fixed AI chat images from an earlier conversation, or another admin's upload, being attached to a new message. Uploads are now kept per admin and per conversation, expire after ten minutes, and expired uploads are removed by the temporary file cleanup.
+- Fixed a model that cannot read images blocking every following chat message; the chat now explains the model does not accept images and drops the image from the conversation.
+- Fixed an oversized chat image failing without explanation; the chat now states the server upload limit.
+
+# 3.1.2 — September 24th, 2026
+
+## Improvements
+
+- Added a "Maximum Output Tokens" setting to the Magic AI text generation configuration, so an installation can raise the default generation ceiling without editing a prompt one at a time.
+- Added Concentrate AI to the supported Magic AI providers.
+- Added `unopim:magic-ai:platform:list`, `:add`, `:edit`, `:delete` and `:default` commands to manage Magic AI platforms from the server. Add and edit run an interactive wizard with the same fields and validation as the admin form, fetch the provider's models to pick from, and store the API key encrypted in the database (never in `.env`); every command also runs unattended from options, reading a key from standard input with `--key-stdin`. A platform saved as managed carries an `is_managed` flag that only these commands can set: its stored key stays locked to its own provider, endpoint and model list, and in the admin panel it is read-only apart from its status and default setting and cannot be deleted. Every other platform stays unrestricted.
+- Raised the default generation ceiling from 1024 to 4096 tokens, and raised the seeded system prompts still holding the old value; a ceiling an administrator tuned themselves is left alone. HTML output spends tokens on markup, so the old ceiling truncated a table-heavy description mid-tag.
+- A generation that stops because it ran out of tokens is now reported as such instead of silently returning a half sentence, and a fragment cut mid-tag is dropped rather than rendered as stray text.
+- Magic AI model discovery now runs against the platform's own base URL, so a proxy or a regional endpoint lists the models it will actually serve; a custom endpoint typed without a version segment is retried with one.
+- Model recommendations are now ranked by the release date each provider reports, falling back to the version in the model name, so the models pre-selected after a fetch are the newest text model per family plus the newest image model rather than legacy variants that sorted first alphabetically. Gemini lists only models that support `generateContent` or `predict`; legacy fine-tunes, completion-only, search, speech and safeguard models are excluded; and the connection test tries up to three selected text models before failing.
+- An Azure platform now addresses a model by its configured deployment name, which is what the Azure endpoint expects.
+- A failed model fetch now reports the host and status instead of rendering the upstream error page verbatim.
+- Reworked the product translation dialog: source channel and locale are now named separately from the targets, the attribute picker shows the value each attribute currently holds, and the dialog warns before replacing existing content in the target locales.
+- Added view events to the export profile create and edit pages, so a package can render additional filters in the output section.
+
+## Bug fixes
+
+- Fixed Magic AI model discovery for OpenAI, Anthropic, and Google Gemini following redirects and re-resolving DNS when the platform supplies its own base URL; the fetch is now pinned to the validated address and does not follow redirects, matching every other provider.
+- Fixed an AI chat failure that originated in the database surfacing the connection host, schema, and full SQL in the chat window; an infrastructure failure now returns the generic message.
+- Fixed a product attribute whose code is not identifier-shaped — one starting with a digit, or containing a hyphen or a space — breaking every MySQL JSON path query it appeared in with error 3143.
+- Fixed AI translation writing every translated value into the channel-and-locale bucket regardless of the attribute's own scope, so a locale-only attribute was saved where nothing would read it; each value now lands in the bucket its scope dictates, and an attribute that no longer exists is skipped instead of failing the job.
+- Fixed the translate action offering attributes it cannot translate: a field is now offered only when it is locale-scoped and holds a value in the source scope.
+- Fixed the AI translate button appearing on a field the current user cannot edit.
+- Fixed AI image generation ignoring the platform and model configured for image generation and running on the conversation's text platform instead, and leaving the provider credentials it set behind in the process configuration.
+- Fixed a confirmation dialog rendering behind the element that opened it.
+- Fixed clearing a file picker being treated as a new file to scan.
+- Fixed the product attribute and content generation endpoints accepting an unvalidated channel, locale, and resource reference.
+- Fixed Magic AI content generation failing with a 400 on Claude Opus and Sonnet 4.7 and later, including the Claude 5 family, which reject `temperature`; those models now omit it, while Claude 3.x, Haiku 4.x and Opus/Sonnet up to 4.6 keep the configured value.
+- Fixed unticking AI translate on an attribute not saving, because the form's fallback value overrode the checkbox on submit.
+- Fixed clearing a channel's name failing on PostgreSQL with a not-null violation; `channel_translations.name` is now nullable, and the channel grid falls back to the default locale's name for a cleared one.
+- Fixed removing a gallery image not showing the "Unsaved" badge on the product edit page.
+- Fixed import filter selections being discarded on every re-render, which left a filter that depends on another field with an empty dropdown.
+- Fixed a price attribute's currency inputs stretching to the height of a neighbouring currency's validation message.
+- Fixed the data transfer queue worker leaving its timeout alarm armed after the queue drained, so a process that ran `unopim:queue:work` in-process was killed `--timeout` seconds later; the worker's timeout handler also now matches the Laravel 13.32 signature.
+
+# 3.1.1 — September 17th, 2026
+
+## Bug fixes
+
+- Fixed a role holding `settings.roles.edit` being able to grant itself permissions its own role does not carry, a vertical privilege escalation; role create and update now reject any permission the acting administrator does not already hold.
+- Fixed MagicAI model discovery validating the provider URL and then fetching it with a client that follows redirects and re-resolves DNS, so a validated public URL could pivot to an internal host; the fetch is now pinned to the validated address and does not follow redirects.
+- Fixed the MagicAI connection test merging the unvalidated `extras` payload over the provider overrides, so `extras.url` replaced the validated endpoint and reached internal hosts with the response returned verbatim; extras can no longer override the keys the platform record owns, which also neutralises rows saved before the guard existed.
+- Fixed the SKU field rejecting valid values containing characters other than letters, numbers, hyphens, and underscores (such as `%`); a SKU is now only rejected for being blank, over 255 characters, padded with leading/trailing spaces, or containing a comma or semicolon (which break CSV import/export), both on the server and in the create-product form.
+- Extended the upload active-content scan from PDF to Office documents: `.docx`/`.pptx` packages shipping a VBA project, legacy `.doc`/`.ppt` files carrying a VBA stream, and RTF documents with auto-updating embedded objects are now rejected at save time, with the reason reported in the validation message.
+- Added a pick-time scan to the media widgets (files, gallery, image) so a rejected upload is reported as soon as it is chosen, before the form is submitted.
+- Fixed the product-edit category tree and the datagrid category filter requiring every subcategory to be ticked individually: clicking a category's folder icon now selects (or deselects) it together with every descendant in one action, resolved through a single nested-set query regardless of branch depth.
+- Fixed a product export writing a column for every attribute in the installation instead of only the ones the profile selected, contradicting the "Only the selected attributes are exported" promise in the filter's own help text.
+- Fixed a product export filtered on a category code containing an uppercase letter matching nothing and completing with an empty file and a "0 records" summary, because the exact-value keyword subfield was not being queried.
+- Fixed replacing a media value on a product or category discarding the newly uploaded file.
+- Fixed the AI Agent being unable to run on Gemini models, which have their own chat completions endpoint.
+- Fixed channel deletion failing to complete.
+- Fixed concurrent boots on a cold `storage/` aborting when two processes created the HTMLPurifier cache directory at once — CI static analysis workers, Octane workers and parallel test runs all raced the same `is_dir()`/`mkdir()` check, and the loser's warning was promoted to an exception that killed the process before the application finished booting.
+- Fixed the unsaved-changes bar closing when an edit landed before the form re-baselined, which happened with rich-text fields because their edits reach the tracker from inside an iframe.
+- Fixed the datagrid toolbar and the media upload layouts misaligning, and dropdowns staying open behind a confirmation dialog.
+- Fixed gallery MIME metadata being resolved inconsistently, and file previews not covering every supported type.
+- Fixed the tags field diverging from the shared multiselect: chip styling and metrics did not match, and the typing area could be pushed out of view.
+- Fixed the product export file name label, and restored the legacy file path labels alongside it.
+## Improvements
+
+- Made the Elasticsearch mapped field limit configurable, so installations with very wide attribute sets can raise it without patching the index definition.
+- Added support for environment defaults in the Docker configuration.
+- Completed the media translations and made the upload limits explicit in the interface.
+- Bundled the flatpickr and multiselect styles with the admin assets instead of loading them separately.
+
 # 3.1.0 — August 27th, 2026
 
 ## Bug fixes

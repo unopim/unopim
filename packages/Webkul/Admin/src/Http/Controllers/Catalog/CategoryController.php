@@ -12,10 +12,11 @@ use Webkul\Admin\DataGrids\Catalog\CategoryDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\CategoryBrowseRequest;
 use Webkul\Admin\Http\Requests\CategoryChildrenForm;
+use Webkul\Admin\Http\Requests\CategoryDescendantsForm;
 use Webkul\Admin\Http\Requests\CategoryRequest;
 use Webkul\Admin\Http\Requests\CategorySearchForm;
 use Webkul\Admin\Http\Requests\CategoryTreeForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Admin\Http\Resources\Catalog\CategoryTreeResource;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
@@ -410,11 +411,11 @@ class CategoryController extends Controller
     /**
      * Remove the specified resources from database.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $suppressFlash = true;
 
-        $categoryIds = $massDestroyRequest->input('indices');
+        $categoryIds = $massDestroyRequest->selectedIds(CategoryDataGrid::class);
 
         foreach ($categoryIds as $categoryId) {
             $category = $this->categoryRepository->find($categoryId);
@@ -447,8 +448,8 @@ class CategoryController extends Controller
         }
 
         if (
-            count($categoryIds) != 1
-            || $suppressFlash == true
+            $suppressFlash == true
+            || $categoryIds->count() != 1
         ) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.categories.delete-success'),
@@ -515,6 +516,26 @@ class CategoryController extends Controller
         $childCategories = $this->categoryRepository->getChildCategories($parentId, $categoryId);
 
         return new JsonResponse(CategoryTreeResource::collection($childCategories)->toArray($request));
+    }
+
+    /**
+     * The full descendant subtree of a category in one query, so a
+     * cascading select on the client can select and render every level
+     * at once instead of fetching and revealing it level by level.
+     */
+    public function descendants(CategoryDescendantsForm $request): JsonResponse
+    {
+        $id = (int) $request->validated('id');
+
+        if ($this->categoryRepository->countDescendants($id) > CategoryRepository::MAX_DESCENDANTS) {
+            return new JsonResponse([
+                'message' => trans('admin::app.catalog.categories.browse.descendants-too-large'),
+            ], 422);
+        }
+
+        $tree = $this->categoryRepository->getDescendantTree($id);
+
+        return new JsonResponse(['data' => CategoryTreeResource::collection($tree)->toArray($request)]);
     }
 
     /**
