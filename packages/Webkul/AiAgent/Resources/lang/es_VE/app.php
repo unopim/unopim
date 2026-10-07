@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'El archivo está vacío o no se pudo procesar.',
         'import-missing-sku-column'     => 'El archivo debe tener una columna "sku". Columnas encontradas: :columns.',
         'import-family-not-found'       => 'No se encontró la familia de atributos ":family".',
+        'category-tree-no-family'       => 'No se encontró la familia de atributos ":family".',
         'import-invalid-sku-row'        => 'Fila :row: SKU inválido o vacío.',
         'import-acl-skip-update'        => 'SKU ":sku" omitido: actualizar un producto existente requiere el permiso \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" omitido: crear un producto nuevo requiere el permiso \'catalog.products.create\'.',

@@ -124,4 +124,9 @@ return [
          */
         'min_input_window' => (int) env('AI_AGENT_MIN_INPUT_WINDOW', 1024),
     ],
+
+    'category_tree' => [
+        'relevance_candidate_limit' => (int) env('AI_AGENT_CATEGORY_TREE_RELEVANCE_CANDIDATE_LIMIT', 1000),
+        'relevance_batch_size'      => (int) env('AI_AGENT_CATEGORY_TREE_RELEVANCE_BATCH_SIZE', 100),
+    ],
 ];

@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Dosya boş veya ayrıştırılamadı.',
         'import-missing-sku-column'     => 'Dosyada bir "sku" sütunu bulunmalıdır. Bulunan sütunlar: :columns.',
         'import-family-not-found'       => 'Öznitelik ailesi ":family" bulunamadı.',
+        'category-tree-no-family'       => 'Öznitelik ailesi ":family" bulunamadı.',
         'import-invalid-sku-row'        => ':row satırı: geçersiz veya boş SKU.',
         'import-acl-skip-update'        => '":sku" SKU\'su atlandı: mevcut bir ürünü güncellemek \'catalog.products.edit\' iznini gerektirir.',
         'import-acl-skip-create'        => '":sku" SKU\'su atlandı: yeni bir ürün oluşturmak \'catalog.products.create\' iznini gerektirir.',
