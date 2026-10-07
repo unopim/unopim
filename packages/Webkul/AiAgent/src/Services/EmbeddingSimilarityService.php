@@ -132,6 +132,9 @@ class EmbeddingSimilarityService
     }
 
     /**
+     * Whether the platform is active, has a usable key and can return vectors
+     * of the requested size.
+     *
      * Azure addresses embeddings by deployment name, and laravel/ai reads it
      * from `embedding_deployment`, not the chat `deployment`.
      */

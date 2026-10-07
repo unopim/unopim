@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use Laravel\Ai\Embeddings;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
@@ -53,15 +54,11 @@ beforeEach(function () {
     MagicAIPlatform::query()->delete();
 });
 
-it('flags only providers with an embeddings api as embedding capable', function () {
-    expect(AiProvider::OpenAI->supportsEmbeddings())->toBeTrue()
-        ->and(AiProvider::Gemini->supportsEmbeddings())->toBeTrue()
-        ->and(AiProvider::Mistral->supportsEmbeddings())->toBeTrue()
-        ->and(AiProvider::Ollama->supportsEmbeddings())->toBeTrue()
-        ->and(AiProvider::Anthropic->supportsEmbeddings())->toBeFalse()
-        ->and(AiProvider::Groq->supportsEmbeddings())->toBeFalse()
-        ->and(AiProvider::DeepSeek->supportsEmbeddings())->toBeFalse();
-});
+it('flags only providers with an embeddings api as embedding capable', function (AiProvider $provider) {
+    $embeddingProviders = [AiProvider::OpenAI, AiProvider::Gemini, AiProvider::Mistral, AiProvider::Ollama, AiProvider::Azure, AiProvider::OpenRouter];
+
+    expect($provider->supportsEmbeddings())->toBe(in_array($provider, $embeddingProviders, true));
+})->with(AiProvider::cases());
 
 it('prefers the chat platform for embeddings when it supports them', function () {
     similarPlatform('openai', ['is_default' => 1]);
@@ -137,6 +134,17 @@ it('generates embeddings through the resolved platform provider', function () {
     Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() === 'gemini');
 });
 
+it('keeps rank() returning no scores and logging when the provider rejects the call', function () {
+    Embeddings::fake(fn () => throw new RuntimeException('Incorrect API key provided.'));
+    Log::spy();
+
+    similarPlatform('openai');
+
+    expect(resolve(EmbeddingSimilarityService::class)->rank('lumen pendant', ['lumen pendant black']))->toBe([]);
+
+    Log::shouldHaveReceived('warning')->once()->withArgs(fn (string $message, array $context): bool => $context['error'] === 'Incorrect API key provided.');
+});
+
 it('suggests close skus when the requested sku does not exist', function () {
     Product::factory()->simple()->create(['sku' => 'qorvel-lumen-pendant']);
     Product::factory()->simple()->create(['sku' => 'qorvel-cable-tray']);
@@ -145,6 +153,14 @@ it('suggests close skus when the requested sku does not exist', function () {
 
     expect($result['error'])->toContain('qorvel-lumen-pendt')
         ->and($result['did_you_mean'][0])->toBe('qorvel-lumen-pendant');
+});
+
+it('suggests close skus regardless of letter case', function () {
+    Product::factory()->simple()->create(['sku' => 'qorvel-lumen-pendant']);
+
+    $result = runFindSimilar(similarPlatform('anthropic'), ['sku' => 'QORVEL-LUMEN-PENDT']);
+
+    expect($result['did_you_mean'])->toBe(['qorvel-lumen-pendant']);
 });
 
 it('ranks by keyword overlap and explains why when no platform can produce embeddings', function () {
@@ -217,4 +233,23 @@ it('indexes product embeddings through the resolved platform at the index dimens
     (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
 
     Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() === 'gemini' && $prompt->dimensions === 768);
+});
+
+it('indexes through the default embeddings provider at the index dimensions when no platform can embed', function () {
+    Embeddings::fake();
+
+    similarPlatform('anthropic', ['is_default' => 1]);
+
+    $product = Product::factory()->simple()->create(['sku' => 'lumen-pendant-default']);
+
+    $index = Mockery::mock(ProductEmbeddingIndex::class);
+    $index->shouldReceive('isEnabled')->andReturn(true);
+    $index->shouldReceive('existingContentHashes')->andReturn([]);
+    $index->shouldReceive('ensureIndex')->once();
+    $index->shouldReceive('dimensions')->andReturn(768);
+    $index->shouldReceive('bulkUpsert')->once()->andReturn([]);
+
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
+
+    Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() !== 'anthropic' && $prompt->dimensions === 768);
 });
