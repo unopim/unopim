@@ -456,7 +456,7 @@
                     />
                 </x-admin::flat-picker.date>
 
-                <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
+                <div v-if="hasAnyAppliedColumnValues(column.index)" class="col-span-2 mt-1.5 flex flex-wrap gap-2">
                     <p
                         class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
@@ -578,7 +578,7 @@
                     />
                 </x-admin::flat-picker.datetime>
 
-                <div v-if="hasAnyAppliedColumnValues(column.index)" class="mt-1.5 flex gap-2 flex-wrap">
+                <div v-if="hasAnyAppliedColumnValues(column.index)" class="col-span-2 mt-1.5 flex flex-wrap gap-2">
                     <p
                         class="flex items-center rounded bg-primary-100 px-2 py-0.5 text-sm font-semibold text-primary-700 dark:bg-cherry-800 dark:text-primary-400"
                         v-for="appliedColumnValue in getAppliedColumnValues(column.index)"
