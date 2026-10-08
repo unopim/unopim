@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\DB;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Services\VariantValueResolver;
 
 it('merges common values root-to-leaf with child overriding by key presence', function () {
@@ -189,4 +190,23 @@ it('resolveBatch fetches a shared ancestor only once for many rows on the same p
     }
 
     expect($ancestorLookups->count())->toBe(1);
+});
+
+it('lets a variant\'s saved zero override its parent\'s value', function () {
+    $parent = Product::factory()->configurable()->create([
+        'values' => ['common' => ['stock_level' => '5']],
+    ]);
+
+    $variant = Product::factory()->create([
+        'parent_id' => $parent->id,
+        'values'    => ['common' => ['sku' => $parent->sku.'-S']],
+    ]);
+
+    app(ProductRepository::class)->update([
+        'values' => ['common' => ['stock_level' => '0']],
+    ], $variant->id);
+
+    $resolved = app(Webkul\Product\Contracts\VariantValueResolver::class)->resolve($variant->refresh());
+
+    expect($resolved['common']['stock_level'] ?? null)->toBe('0');
 });

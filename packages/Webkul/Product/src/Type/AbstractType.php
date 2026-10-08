@@ -485,7 +485,8 @@ abstract class AbstractType
         $values = array_filter(
             $productValues === []
                 ? $values
-                : array_merge($productValues, $values)
+                : array_merge($productValues, $values),
+            is_filled_value(...)
         );
 
         $attributes = $this->attributeRepository->findWhereIn('code', array_keys($values))->keyBy('code');
@@ -554,7 +555,7 @@ abstract class AbstractType
             }
 
             if (is_array($fieldValue)) {
-                $fieldValue = array_filter($fieldValue);
+                $fieldValue = array_filter($fieldValue, is_filled_value(...));
 
                 if ($fieldValue === []) {
                     unset($values[$field]);
