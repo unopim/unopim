@@ -53,6 +53,33 @@ enum AiProvider: string
         ]);
     }
 
+    /**
+     * Whether laravel/ai exposes an embeddings API for this provider's driver.
+     */
+    public function supportsEmbeddings(): bool
+    {
+        return in_array($this, [
+            self::OpenAI,
+            self::Gemini,
+            self::Mistral,
+            self::Ollama,
+            self::Azure,
+            self::OpenRouter,
+        ]);
+    }
+
+    /**
+     * The vector size of a provider whose embeddings API ignores the requested
+     * size (laravel/ai's Mistral gateway never sends it), or null when honoured.
+     */
+    public function fixedEmbeddingDimensions(): ?int
+    {
+        return match ($this) {
+            self::Mistral => 1024,
+            default       => null,
+        };
+    }
+
     public function defaultUrl(): string
     {
         return match ($this) {
@@ -275,16 +302,34 @@ enum AiProvider: string
             return trans('admin::app.configuration.platform.message.fetch-models-unreachable', ['host' => $host]);
         }
 
-        $decoded = json_decode((string) $response->getBody(), true);
-
-        $detail = is_array($decoded)
-            ? (string) ($decoded['error']['message'] ?? $decoded['message'] ?? '')
-            : '';
-
         return trans('admin::app.configuration.platform.message.fetch-models-http-error', [
             'status' => $response->getStatusCode(),
             'host'   => $host,
-        ]).($detail === '' ? '' : ' '.Str::limit($detail, 160));
+        ]).(($detail = $this->upstreamErrorDetail((string) $response->getBody())) === '' ? '' : ' '.Str::limit($detail, 160));
+    }
+
+    /**
+     * Providers disagree on the error envelope: OpenAI nests it under
+     * error.message, xAI returns error as a plain string, others use message.
+     */
+    private function upstreamErrorDetail(string $body): string
+    {
+        $decoded = json_decode($body, true);
+
+        if (! is_array($decoded)) {
+            return '';
+        }
+
+        $error = $decoded['error'] ?? null;
+
+        $detail = match (true) {
+            is_array($error) && is_string($error['message'] ?? null) => $error['message'],
+            is_string($error)                                        => $error,
+            is_string($decoded['message'] ?? null)                   => $decoded['message'],
+            default                                                  => '',
+        };
+
+        return trim($detail);
     }
 
     private function fetchOpenAiModels(Client $client, ?string $apiKey, ?string $apiUrl = null): array

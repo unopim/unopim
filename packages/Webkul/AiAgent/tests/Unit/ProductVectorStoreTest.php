@@ -180,14 +180,17 @@ it('ranks products through the vector store when enabled', function () {
 
     $index = Mockery::mock(ProductEmbeddingIndex::class);
     $index->shouldReceive('isEnabled')->andReturn(true);
+    $index->shouldReceive('dimensions')->andReturn(8);
     $index->shouldReceive('searchSimilar')
         ->once()
-        ->withArgs(fn ($vector, $limit) => count($vector) === 8 && $limit === 4)
+        ->withArgs(fn ($vector, $limit, $familyId, $fingerprint) => count($vector) === 8 && $limit === 4 && str_ends_with((string) $fingerprint, '/8'))
         ->andReturn([['product_id' => 9, 'score' => 0.88]]);
 
     $results = (new EmbeddingSimilarityService($index))->rankProducts('red shoes', 4);
 
     expect($results)->toBe([['product_id' => 9, 'score' => 0.88]]);
+
+    Embeddings::assertGenerated(fn ($prompt): bool => $prompt->dimensions === 8);
 });
 
 it('returns empty from rankProducts when the vector search fails', function () {
@@ -197,6 +200,7 @@ it('returns empty from rankProducts when the vector search fails', function () {
 
     $index = Mockery::mock(ProductEmbeddingIndex::class);
     $index->shouldReceive('isEnabled')->andReturn(true);
+    $index->shouldReceive('dimensions')->andReturn(8);
     $index->shouldReceive('searchSimilar')->andThrow(new RuntimeException('es down'));
 
     expect((new EmbeddingSimilarityService($index))->rankProducts('red shoes', 4))->toBe([]);
@@ -224,4 +228,18 @@ it('rejects an unparseable since option', function () {
         ->assertExitCode(1);
 
     Queue::assertNothingPushed();
+});
+
+it('restricts knn hits to vectors from the same embedding model', function () {
+    config(['elasticsearch.prefix' => 'testing']);
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(fn ($args): bool => $args['body']['knn']['filter'] === ['bool' => ['filter' => [
+            ['term' => ['attribute_family_id' => 4]],
+            ['term' => ['embedding_fingerprint' => 'gemini/gemini-embedding-2/768']],
+        ]]])
+        ->andReturn(['hits' => ['hits' => []]]);
+
+    expect((new ProductEmbeddingIndex)->searchSimilar([0.1, 0.2], 5, 4, 'gemini/gemini-embedding-2/768'))->toBe([]);
 });
