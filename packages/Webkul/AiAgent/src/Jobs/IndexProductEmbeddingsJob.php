@@ -41,7 +41,6 @@ class IndexProductEmbeddingsJob implements ShouldQueue
     public function handle(
         ProductEmbeddingIndex $index,
         ProductEmbeddingDocumentBuilder $documentBuilder,
-        EmbeddingSimilarityService $similarityService,
     ): void {
         if (! $index->isEnabled() || $this->productIds === []) {
             return;
@@ -53,6 +52,7 @@ class IndexProductEmbeddingsJob implements ShouldQueue
             return;
         }
 
+        $similarityService = resolve(EmbeddingSimilarityService::class);
         $platform = $similarityService->resolvePlatform(dimensions: $index->dimensions());
         $fingerprint = $similarityService->embeddingFingerprint($platform, $index->dimensions());
 

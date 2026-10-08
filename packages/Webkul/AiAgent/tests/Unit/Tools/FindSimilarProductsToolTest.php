@@ -232,7 +232,7 @@ it('indexes product embeddings through the resolved platform at the index dimens
             && $documents[0]['embedding_fingerprint'] === 'gemini/gemini-embedding-2/768')
         ->andReturn([]);
 
-    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
 
     Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() === 'gemini' && $prompt->dimensions === 768);
 });
@@ -251,7 +251,7 @@ it('indexes through the default embeddings provider at the index dimensions when
     $index->shouldReceive('dimensions')->andReturn(768);
     $index->shouldReceive('bulkUpsert')->once()->andReturn([]);
 
-    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
 
     Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() !== 'anthropic' && $prompt->dimensions === 768);
 });
@@ -278,7 +278,7 @@ it('skips products already embedded by the same embedding model', function () {
     ]);
     $index->shouldNotReceive('bulkUpsert');
 
-    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
 
     Embeddings::assertNothingGenerated();
 });
@@ -299,7 +299,7 @@ it('re-embeds unchanged products when the embedding model changes', function () 
     ]);
     $index->shouldReceive('bulkUpsert')->once()->andReturn([]);
 
-    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder, resolve(EmbeddingSimilarityService::class));
+    (new IndexProductEmbeddingsJob([$product->id]))->handle($index, new ProductEmbeddingDocumentBuilder);
 
     Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() === 'gemini');
 });
@@ -331,3 +331,17 @@ it('reports why a platform cannot embed', function (string $provider, array $att
     'azure without embedding' => ['azure', [], null, EmbeddingRejection::MissingEmbeddingDeployment],
     'capable'                 => ['openai', [], 1536, null],
 ]);
+
+it('pins default embeddings to the first failover provider its fingerprint names', function () {
+    Embeddings::fake();
+
+    config(['ai.default_for_embeddings' => ['gemini', 'openai']]);
+
+    $service = resolve(EmbeddingSimilarityService::class);
+
+    $service->generateEmbeddings(['lumen pendant'], null, 768);
+
+    expect($service->embeddingFingerprint(null, 768))->toBe('gemini/gemini-embedding-2/768');
+
+    Embeddings::assertGenerated(fn ($prompt): bool => $prompt->provider->name() === 'gemini');
+});

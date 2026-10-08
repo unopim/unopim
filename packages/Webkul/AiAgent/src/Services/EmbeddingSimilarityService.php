@@ -5,7 +5,6 @@ namespace Webkul\AiAgent\Services;
 use Illuminate\Support\Facades\Log;
 use Laravel\Ai\Ai;
 use Laravel\Ai\Embeddings;
-use Laravel\Ai\Enums\Lab;
 use Laravel\Ai\Providers\Provider;
 use Webkul\AiAgent\Services\VectorStore\ProductEmbeddingIndex;
 use Webkul\MagicAI\Enums\AiProvider;
@@ -106,7 +105,9 @@ class EmbeddingSimilarityService
         }
 
         if (! $platform instanceof MagicAIPlatform) {
-            return $pending->generate()->embeddings;
+            [$provider, $model] = $this->defaultEmbeddingsProvider();
+
+            return $pending->generate($provider, $model)->embeddings;
         }
 
         $aiProvider = AiProvider::from($platform->provider);
@@ -167,16 +168,15 @@ class EmbeddingSimilarityService
      */
     public function embeddingFingerprint(?MagicAIPlatform $platform, int $dimensions): string
     {
-        $describe = function (Lab|array|string $provider) use ($dimensions): string {
-            $providers = Provider::formatProviderAndModelList($provider);
-            $name = (string) array_key_first($providers);
-            $model = $providers[$name] ?? Ai::embeddingProvider($name)->defaultEmbeddingsModel();
-
-            return "{$name}/{$model}/{$dimensions}";
-        };
+        $describe = fn (string $provider, ?string $model): string => sprintf(
+            '%s/%s/%d',
+            $provider,
+            $model ?? Ai::embeddingProvider($provider)->defaultEmbeddingsModel(),
+            $dimensions,
+        );
 
         if (! $platform instanceof MagicAIPlatform) {
-            return $describe(config('ai.default_for_embeddings'));
+            return $describe(...$this->defaultEmbeddingsProvider());
         }
 
         $aiProvider = AiProvider::from($platform->provider);
@@ -184,8 +184,24 @@ class EmbeddingSimilarityService
         return ScopedProviderConfig::run(
             $aiProvider->configKey(),
             $platform->providerOverrides(),
-            fn (): string => $describe($aiProvider->toLab()),
+            fn (): string => $describe($aiProvider->toLab()->value, null),
         );
+    }
+
+    /**
+     * The first provider and model configured in `ai.default_for_embeddings`.
+     *
+     * Generation is pinned to it rather than to the whole failover list, so
+     * every vector is produced by the model its fingerprint names.
+     *
+     * @return array{0: string, 1: ?string}
+     */
+    protected function defaultEmbeddingsProvider(): array
+    {
+        $providers = Provider::formatProviderAndModelList(config('ai.default_for_embeddings'));
+        $provider = (string) array_key_first($providers);
+
+        return [$provider, $providers[$provider]];
     }
 
     /**

@@ -130,7 +130,6 @@ it('does nothing in the indexing job when the vector store is disabled', functio
     (new IndexProductEmbeddingsJob([1, 2, 3]))->handle(
         new ProductEmbeddingIndex,
         new ProductEmbeddingDocumentBuilder,
-        resolve(EmbeddingSimilarityService::class),
     );
 
     Embeddings::assertNothingGenerated();
