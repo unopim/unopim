@@ -396,9 +396,17 @@ describe('channel and locale scopes', function () {
     it('replaces a channel specific image without touching the other channel', function () {
         $this->loginAsAdmin();
 
+        $otherLocales = Locale::whereIn('code', ['fr_FR', 'de_DE']);
+
+        $otherLocales->update(['status' => 1]);
+
         $newChannel = Channel::factory()->create();
 
+        $newChannel->locales()->sync($otherLocales->pluck('id'));
+
         $newChannelCode = $newChannel->code;
+
+        $newChannelLocale = $newChannel->locales()->first()->code;
 
         $defaultChannelCode = core()->getDefaultChannel()->code;
 
@@ -408,7 +416,11 @@ describe('channel and locale scopes', function () {
 
         $defaultUri = route('admin.catalog.products.update', ['id' => $product->id, 'channel' => $defaultChannelCode]);
 
-        $otherUri = route('admin.catalog.products.update', ['id' => $product->id, 'channel' => $newChannelCode]);
+        $otherUri = route('admin.catalog.products.update', [
+            'id'      => $product->id,
+            'channel' => $newChannelCode,
+            'locale'  => $newChannelLocale,
+        ]);
 
         submitProductForm($defaultUri, ['sku' => $product->sku], [
             'values' => ['channel_specific' => [$defaultChannelCode => [$code => [UploadedFile::fake()->image('default-first.jpg')]]]],
