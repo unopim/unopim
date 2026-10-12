@@ -8,8 +8,8 @@ use Webkul\Admin\DataGrids\Settings\LocalesDataGrid;
 use Webkul\Admin\Helpers\MassActionCounter;
 use Webkul\Admin\Http\Controllers\Controller;
 use Webkul\Admin\Http\Requests\LocaleForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
-use Webkul\Admin\Http\Requests\MassUpdateRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassUpdateRequest;
 use Webkul\Core\Repositories\LocaleRepository;
 
 class LocaleController extends Controller
@@ -127,9 +127,9 @@ class LocaleController extends Controller
     /**
      * Mass delete locales from the locale datagrid
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        $localeIds = $massDestroyRequest->input('indices');
+        $localeIds = $massDestroyRequest->selectedIds(LocalesDataGrid::class);
 
         $counter = new MassActionCounter;
 
@@ -177,9 +177,9 @@ class LocaleController extends Controller
     /**
      * Mass update locales status from the locale datagrid
      */
-    public function massUpdate(MassUpdateRequest $massUpdateRequest): JsonResponse
+    public function massUpdate(SelectableMassUpdateRequest $massUpdateRequest): JsonResponse
     {
-        $localeIds = $massUpdateRequest->input('indices');
+        $localeIds = $massUpdateRequest->selectedIds(LocalesDataGrid::class);
 
         $value = (int) $massUpdateRequest->input('value');
 

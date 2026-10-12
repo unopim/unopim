@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Mittausperheellä ei voi olla enempää kuin :max yksikköä.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'Yksikkö ":unit" ei ole kelvollinen yksikkö mittausmääritteelle ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Mittausperhe luotiin onnistuneesti.',

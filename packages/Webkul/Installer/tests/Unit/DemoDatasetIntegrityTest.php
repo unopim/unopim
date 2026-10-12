@@ -1,6 +1,8 @@
 <?php
 
+use Webkul\Core\Rules\Code;
 use Webkul\Installer\Database\Seeders\Demo\DemoProductSeeder;
+use Webkul\Product\Enums\ProductType;
 
 /**
  * Guards the demo datasets against drift: every code a product references has
@@ -86,7 +88,7 @@ describe('demo dataset integrity', function () {
 
     it('gives every configurable an axis set its variants agree with', function () {
         foreach (demoCatalog() as $product) {
-            if ($product['type'] !== 'configurable') {
+            if ($product['type'] !== ProductType::Configurable->value) {
                 continue;
             }
 
@@ -138,7 +140,6 @@ describe('demo dataset integrity', function () {
     it('covers every attribute type UnoPim ships', function () {
         $types = array_unique(array_column(demoDataset('attributes')['attributes'], 'type'));
 
-        // text, textarea, price, boolean, image and select come from the base installer.
         $expected = ['multiselect', 'datetime', 'date', 'gallery', 'file', 'checkbox', 'measurement', 'select', 'text', 'textarea', 'boolean'];
 
         foreach ($expected as $type) {
@@ -175,5 +176,27 @@ describe('demo dataset integrity', function () {
 
     it('loads the whole catalog through the product seeder', function () {
         expect(resolve(DemoProductSeeder::class)->catalog())->toHaveCount(count(demoCatalog()));
+    });
+
+    it('derives variant structure codes the family form accepts', function () {
+        $seeder = resolve(DemoProductSeeder::class);
+        $rule = new Code;
+        $codes = [];
+
+        foreach (demoCatalog() as $product) {
+            if (($product['axes'] ?? []) === []) {
+                continue;
+            }
+
+            $code = $seeder->structureCode($product['sku']);
+            $codes[] = $code;
+
+            $rule->validate('structure.code', $code, function (string $message) use ($product): void {
+                throw new Exception("{$product['sku']} yields an invalid structure code: $message");
+            });
+        }
+
+        expect($codes)->not->toBeEmpty()
+            ->and(array_unique($codes))->toHaveCount(count($codes));
     });
 });

@@ -192,21 +192,17 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
 
         if (bouncer()->hasPermission('catalog.passport.withdraw')) {
             $this->addMassAction([
-                'title'   => trans('passport::app.publications.datagrid.mass-transition'),
-                'url'     => route('admin.catalog.passports.mass_transition'),
-                'method'  => 'POST',
-                'options' => [
-                    'type'   => 'basic',
-                    'params' => [
-                        'options' => [
-                            [
-                                'label' => trans('passport::app.publications.datagrid.withdraw'),
-                                'value' => PublicationStatus::Withdrawn->value,
-                            ], [
-                                'label' => trans('passport::app.publications.datagrid.reinstate'),
-                                'value' => PublicationStatus::Published->value,
-                            ],
-                        ],
+                'title'               => trans('passport::app.publications.datagrid.mass-transition'),
+                'url'                 => route('admin.catalog.passports.mass_transition'),
+                'method'              => 'POST',
+                'supports_select_all' => true,
+                'options'             => [
+                    [
+                        'label' => trans('passport::app.publications.datagrid.withdraw'),
+                        'value' => PublicationStatus::Withdrawn->value,
+                    ], [
+                        'label' => trans('passport::app.publications.datagrid.reinstate'),
+                        'value' => PublicationStatus::Published->value,
                     ],
                 ],
             ]);
@@ -268,5 +264,13 @@ class PublicationDataGrid extends DataGrid implements ExportableInterface
             ?: config('app.url');
 
         return rtrim((string) $base, '/').route('publication.public.dpp.show', ['uuid' => $row->uuid], false);
+    }
+
+    /**
+     * The grid has no id column and its joined tables carry one, so the bare key would be ambiguous.
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'publications.id';
     }
 }

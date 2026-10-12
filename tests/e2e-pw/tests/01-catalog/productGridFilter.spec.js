@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { clickSave, navigateTo, generateUid } = require('../../utils/helpers');
+const { clickSave, navigateTo, generateUid, closeDropdown } = require('../../utils/helpers');
 
 /**
  * Create a simple product and return to the product listing.
@@ -14,7 +14,7 @@ async function createSimpleProduct(adminPage, sku) {
   await typeWrapper.locator('.multiselect__tags').click();
   await typeWrapper.locator('.multiselect__content-wrapper').first().waitFor({ state: 'visible', timeout: 5000 });
   await adminPage.getByRole('option', { name: 'Simple' }).first().click();
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 
   // Select attribute family (pick first available)
   const familyWrapper = adminPage.locator('input[name="attribute_family_id"]').locator('..');
@@ -24,7 +24,7 @@ async function createSimpleProduct(adminPage, sku) {
     .locator('.multiselect__element:not(.multiselect__element--disabled) .multiselect__option:not(.multiselect__option--disabled)')
     .first()
     .click();
-  await adminPage.keyboard.press('Escape');
+  await closeDropdown(adminPage);
 
   await adminPage.locator('input[name="sku"]').fill(sku);
   await clickSave(adminPage, 'Save Product');

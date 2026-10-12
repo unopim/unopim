@@ -54,12 +54,13 @@
             @endphp
             <x-admin::datagrid :src="route('admin.settings.locales.index')" ref="datagrid">
                 <!-- DataGrid Body -->
-                <template #body="{ columns, records, performAction, applied, setCurrentSelectionMode }">
+                <template #body="{ columns, records, performAction, handleRowClick, applied, setCurrentSelectionMode }">
                     <div
                         v-for="record in records"
-                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                        class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all"
+                        :class="{'cursor-pointer hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800': record.actions.some(action => action.index === 'edit')}"
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
-                        @click="selectedLocales=1; editModal(record.actions.find(action => action.index === 'edit')?.url)"
+                        @click="handleRowClick($event, record)"
                     >
                         <!-- Mass actions -->
                         @if ($hasMassActionPermission)

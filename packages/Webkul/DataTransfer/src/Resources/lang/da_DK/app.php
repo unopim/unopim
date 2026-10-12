@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produkter',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Enheden ":unit" er ikke en gyldig enhed for måleattributten ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL nøgle: \'%s\' blev allerede genereret for en vare med SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Ugyldig værdi for attributfamilie kolonne (attributfamilien eksisterer ikke?)',
                     'invalid-type'                             => 'Produkttypen er ugyldig eller ikke understøttet',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'Filnavn',
+            'file-name-info' => 'Mønster for filnavn. Pladsholdere: [code], [date], [time], [entity_type]',
             'file-path'      => 'Filsti',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'Mønster for filnavn. Pladsholdere: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Aktiveret',
             'all'            => 'Alle',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolonnenummer "%s" har tomme overskrifter.',
-            'column-name-invalid'  => 'Ugyldige kolonnenavne: "%s".',
-            'column-not-found'     => 'Krævede kolonner findes ikke: %s.',
-            'column-numbers'       => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
-            'invalid-attribute'    => 'Overskriften indeholder ugyldige attributter: "%s".',
-            'system'               => 'En uventet systemfejl opstod.',
-            'wrong-quotes'         => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
-            'file-empty'           => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
+            'column-empty-headers'   => 'Kolonnenummer "%s" har tomme overskrifter.',
+            'column-name-invalid'    => 'Ugyldige kolonnenavne: "%s".',
+            'column-not-found'       => 'Krævede kolonner findes ikke: %s.',
+            'column-numbers'         => 'Antallet af kolonner svarer ikke til antallet af rækker i overskriften.',
+            'invalid-attribute'      => 'Overskriften indeholder ugyldige attributter: "%s".',
+            'system'                 => 'En uventet systemfejl opstod.',
+            'wrong-quotes'           => 'Korte citationstegn blev brugt i stedet for lige citationstegn.',
+            'file-empty'             => 'Filen er tom eller indeholder ingen headerrække. Upload venligst en gyldig fil med data.',
+            'file-missing'           => 'Kildefilen til dette job blev ikke fundet. Kontrollér filstien i profilen, og upload filen igen.',
         ],
     ],
     'job' => [

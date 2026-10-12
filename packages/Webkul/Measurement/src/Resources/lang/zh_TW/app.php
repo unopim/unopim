@@ -135,14 +135,6 @@ return [
         'max_units'        => '一個計量單位群組不能擁有超過 :max 個單位。',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => '單位「:unit」不是測量屬性「:attribute」的有效單位。',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => '測量系列已成功建立。',

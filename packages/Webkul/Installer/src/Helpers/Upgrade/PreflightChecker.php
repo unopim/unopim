@@ -224,7 +224,7 @@ class PreflightChecker
 
         try {
             return match ($connection->getDriverName()) {
-                'mysql' => (int) ($connection->selectOne(
+                'mysql', 'mariadb' => (int) ($connection->selectOne(
                     'select sum(data_length + index_length) as size from information_schema.tables where table_schema = ?',
                     [$database]
                 )?->size ?? 0),

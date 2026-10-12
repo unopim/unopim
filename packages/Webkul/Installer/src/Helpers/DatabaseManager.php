@@ -162,7 +162,7 @@ class DatabaseManager
         $driver = config("database.connections.{$connection}.driver", $connection);
 
         // Only server-based drivers need an explicit CREATE DATABASE; skip others (e.g. sqlite).
-        if (! in_array($driver, ['mysql', 'pgsql'], true)) {
+        if (! in_array($driver, ['mysql', 'mariadb', 'pgsql'], true)) {
             return;
         }
 

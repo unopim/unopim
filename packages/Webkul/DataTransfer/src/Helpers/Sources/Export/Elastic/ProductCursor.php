@@ -3,12 +3,20 @@
 namespace Webkul\DataTransfer\Helpers\Sources\Export\Elastic;
 
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataTransfer\Helpers\Sources\Export\Filters\ProductExportFilter;
 use Webkul\ElasticSearch\Cursor\AbstractElasticCursor;
 
 class ProductCursor extends AbstractElasticCursor
 {
+    /**
+     * `values.categories` is indexed as analyzed text, so its tokens are lowercased and a
+     * term-level `terms` lookup for a code such as "Footwear" never matches. The exact-value
+     * keyword subfield is what a category code has to be compared against.
+     */
+    private const string CATEGORY_FIELD = 'values.categories.keyword';
+
     /**
      * Memoized bool query. The filter clauses (family/category/value-filtered ids) are identical
      * for every page of a single export run, so they are resolved once instead of re-running the
@@ -76,7 +84,7 @@ class ProductCursor extends AbstractElasticCursor
                 return array_map(fn (array $hit): array => ['id' => $hit['_id']], $hits);
             }
         } catch (\Throwable $e) {
-            \Log::error('Elasticsearch search error: '.$e->getMessage());
+            Log::error('Elasticsearch search error: '.$e->getMessage());
             throw $e;
         }
 
@@ -104,7 +112,7 @@ class ProductCursor extends AbstractElasticCursor
         $categoryCodes = $filter->categoryCodes($filters);
 
         if (! empty($categoryCodes)) {
-            $clauses[] = ['terms' => ['values.categories' => $categoryCodes]];
+            $clauses[] = ['terms' => [self::CATEGORY_FIELD => $categoryCodes]];
         }
 
         $range = array_filter([

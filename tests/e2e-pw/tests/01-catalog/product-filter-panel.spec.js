@@ -1,11 +1,11 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo } = require('../../utils/helpers');
+const { navigateTo, openFilterDrawer: clickFilterToggle } = require('../../utils/helpers');
 
 async function openFilterDrawer(adminPage) {
   await navigateTo(adminPage, 'products');
   await adminPage.evaluate(() => localStorage.removeItem('datagrids'));
   await adminPage.reload({ waitUntil: 'networkidle' });
-  await adminPage.getByText('Filter', { exact: true }).click();
+  await clickFilterToggle(adminPage);
 }
 
 async function addFilter(adminPage, label) {
@@ -128,7 +128,7 @@ test.describe('Product DataGrid filter panel', () => {
     await nextPage.click();
     await adminPage.waitForLoadState('networkidle');
 
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
     await addFilter(adminPage, 'Status');
 
     // Picking a filter from "Add Filter" expands its editor immediately.
@@ -180,7 +180,7 @@ test.describe('Product DataGrid filter panel', () => {
 
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).not.toHaveText(totalBefore);
 
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
     await adminPage.locator('[data-datagrid-filter="categories"] [data-filter-toggle]').click();
 
     await expect(adminPage.locator('[data-datagrid-filter="categories"] [data-open-tree-panel]'))
@@ -212,7 +212,7 @@ test.describe('Product DataGrid saved filters', () => {
   }
 
   async function applyStatusFilter(adminPage) {
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
 
     if (await adminPage.locator('[data-datagrid-filter="status"]').count() === 0) {
       // Picking a filter from "Add Filter" expands its editor immediately.
@@ -265,7 +265,7 @@ test.describe('Product DataGrid saved filters', () => {
 
     await expect(adminPage.locator('#app').getByText(/\d+ Results?/).first()).toHaveText(total);
 
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
 
     await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-summary]')).toHaveText('All');
   });
@@ -294,7 +294,7 @@ test.describe('Product DataGrid saved filters', () => {
     await expect(adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME })).toHaveCount(1);
   });
 
-  test('Drops the selection once the filters are edited by hand', async ({ adminPage }) => {
+  test('Absorbs a hand-edited filter into the applied saved filter', async ({ adminPage }) => {
     await navigateTo(adminPage, 'products');
     await deleteSavedFilter(adminPage);
 
@@ -307,19 +307,29 @@ test.describe('Product DataGrid saved filters', () => {
 
     await expect(adminPage.locator('[data-grid-views]')).toContainText(FILTER_NAME);
 
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
     await adminPage.locator('[data-datagrid-filter="type"] [data-filter-toggle]').click();
     await adminPage.locator('[data-datagrid-filter="type"] .icon-chevron-down').last().click();
     await adminPage.getByRole('listitem').filter({ hasText: /^Simple$/ }).first().click();
     await adminPage.locator('.primary-button').filter({ hasText: 'Apply' }).click();
     await adminPage.waitForLoadState('networkidle');
 
-    await expect(adminPage.locator('[data-grid-views]')).not.toContainText(FILTER_NAME);
+    await expect(adminPage.locator('[data-grid-views]')).toContainText(FILTER_NAME);
+
+    await expect.poll(async () => {
+      const views = await adminPage.request.get('/admin/catalog/products/grid-views', {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      }).then((res) => res.json());
+
+      return views.views
+        .find((view) => view.name === FILTER_NAME)
+        ?.payload?.filters?.some((filter) => filter.index === 'type');
+    }).toBe(true);
 
     await openSavedFilters(adminPage);
 
-    await expect(adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME })).not.toHaveClass(/font-medium/);
-    await expect(adminPage.locator('[data-save-filter-form]')).toBeVisible();
+    await expect(adminPage.locator('[data-grid-view]').filter({ hasText: FILTER_NAME })).toHaveClass(/font-medium/);
+    await expect(adminPage.locator('[data-save-filter-form]')).toHaveCount(0);
   });
 
   test('Marks the applied filter and keeps it selected across a reload', async ({ adminPage }) => {
@@ -390,7 +400,7 @@ test.describe('Product DataGrid saved filters', () => {
 
     const restoredCount = await adminPage.locator('#app').getByText(/\d+ Results?/).first().innerText();
 
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await clickFilterToggle(adminPage);
 
     await expect(adminPage.locator('[data-datagrid-filter="status"] [data-filter-summary]')).toHaveText('True');
 

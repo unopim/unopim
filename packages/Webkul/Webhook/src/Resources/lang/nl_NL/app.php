@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook-logboeken succesvol verwijderd.',
                     'delete-failed'  => 'Het verwijderen van webhook-logboeken is onverwacht mislukt.',
                     'unauthorized'   => 'Deze actie is niet toegestaan',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Verwijdering in de wachtrij geplaatst voor alle overeenkomende logs. U ontvangt een melding zodra dit klaar is.',
+                            'title'     => 'Webhook-logs verwijderen',
+                            'completed' => ':count webhook-logs verwijderd.',
+                            'failed'    => 'Het verwijderen van :count webhook-logs is met fouten voltooid. Sommige logs zijn niet verwijderd.',
+                        ],
+                    ],
                 ],
             ],
         ],

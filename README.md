@@ -12,8 +12,8 @@
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/v/stable.svg" alt="Latest Stable Version"></a>
   <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
-  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=master&label=tests" alt="Tests"></a>
-  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=lint" alt="Lint"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=3.x&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=3.x&label=lint" alt="Lint"></a>
 </p>
 
 <p align="center">
@@ -32,9 +32,9 @@
   &nbsp;·&nbsp;
   <a href="https://devdocs.unopim.com/">📘&nbsp;Documentation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html">🚀&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/3.1/introduction/installation.html">🚀&nbsp;Installation</a>
   &nbsp;·&nbsp;
-  <a href="https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
+  <a href="https://devdocs.unopim.com/3.1/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
   &nbsp;·&nbsp;
   <a href="https://demo.unopim.com/">🎯&nbsp;Live&nbsp;Demo</a>
 </p>
@@ -45,7 +45,7 @@
   🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇵🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳 🇹🇼
 </p>
 
-UnoPim is an open-source Product Information Management (PIM) system built on Laravel 13. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
+UnoPim is an open-source Product Information Management (PIM) and Digital Asset Management (DAM) platform built on Laravel 13. It helps businesses organize, manage, and enrich their product data and digital assets in one central repository — now with built-in AI agent capabilities for conversational product management.
 
 ---
 
@@ -78,7 +78,7 @@ UnoPim is an open-source Product Information Management (PIM) system built on La
 
 ## ⚙️ Scalability
 
-UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to handle over 10 million products](https://unopim.com/scaling-unopim-for-10-million-products/).
+UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to handle over 10 million products](https://unopim.com/scaling-unopim-for-10-million-products/), or download the [UnoPim at Scale whitepaper (PDF)](https://unopim.com/wp-content/uploads/2026/08/unopim-at-scale-10m-whitepaper.pdf) for the full benchmarks.
 
 <p align="center">
   <a href="https://unopim.com/scaling-unopim-for-10-million-products/">
@@ -173,15 +173,31 @@ UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to hand
 - **Webhooks**
   Notify external systems on product events over an asynchronous `webhooks` queue, so subscriber HTTP calls never block a save.
 
+## 🧩 Extensions
+
+Free, officially maintained extensions:
+
+- [**UnoPim DAM**](https://github.com/unopim/unopim-digital-asset-management) — Digital Asset Management: file and directory management, asset upload and preview, metadata tagging, and CSV/XLSX asset assignment.
+- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store.
+- [**Bagisto Connector**](https://github.com/unopim/bagisto-connector) — sync products, attributes, and media into a [Bagisto](https://bagisto.com/) storefront, with customizable mappings.
+
+More connectors and modules are listed on the [UnoPim extensions marketplace](https://unopim.com/extensions/). Extensions are ordinary Concord packages — see the [developer documentation](https://devdocs.unopim.com/) to build your own.
+
 ## 🚀 Installation
 
-> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Node 20 LTS+, Composer 2.5+, and MySQL 8.0.32+ or PostgreSQL 16+.
+UnoPim supports MariaDB as a primary application datastore, alongside MySQL and PostgreSQL. [UnoPim 3.1.0](https://github.com/unopim/unopim/releases/tag/v3.1.0) added first-class MariaDB support for installation, upgrades, migrations, audit logs, and REST APIs. Composer installations default to MySQL; the supplied Docker stack defaults to PostgreSQL.
+
+> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Composer 2.6+, and MariaDB 10.11 LTS or 11.8 LTS, MySQL 8.0.32+, or PostgreSQL 16. Node 22 LTS is recommended for asset builds.
+>
+> **Elasticsearch is optional.** It is off by default (`ELASTICSEARCH_ENABLED=false`) and search and filtering fall back to the database, so a working install needs no Elasticsearch node. Set `ELASTICSEARCH_ENABLED=true` to index large catalogues; both Docker stacks already ship an Elasticsearch 8 service.
 >
 > **PHP extensions:** `calendar`, `curl`, `intl`, `mbstring`, `openssl`, `pdo`, `pdo_mysql`, `tokenizer` — these are hard `composer.json` requirements and `composer install` fails without them. The upgrade preflight additionally checks `json`, `xml`, `gd`, `zip` and `fileinfo`.
 >
 > **On PostgreSQL:** `ext-pdo_mysql` is currently required by `composer.json` regardless of the database you run, so it must be installed even on a PostgreSQL-only host. Install `ext-pdo_pgsql` as well and set `DB_CONNECTION=pgsql`.
 
-Full [Installation Guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html) on devdocs — or pick a quick path below.
+> **On MariaDB:** Use the latest patch of 10.11 LTS or 11.8 LTS, enable `pdo_mysql`, and set `DB_CONNECTION=mariadb`. Install `mariadb-dump` on the application host for upgrade backups. Community 10.6 and 10.10 are end of life; consult the [MariaDB maintenance policy](https://mariadb.org/about/#maintenance-policy).
+
+See the [3.1 requirements](https://devdocs.unopim.com/3.1/introduction/requirements.html), [MariaDB installation guide](https://devdocs.unopim.com/3.1/introduction/installation-with-mariadb.html), or [Installation Guide](https://devdocs.unopim.com/3.1/introduction/installation.html) — or pick a quick path below.
 
 ### Composer
 
@@ -195,7 +211,7 @@ php artisan serve
 Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, webhook deliveries, and Digital Product Passport publishing, start the queue worker:
 
 ```bash
-php artisan queue:work --queue=webhooks,system,default,completeness,publication
+php artisan queue:work --queue=webhooks,system,completeness,default,publication
 ```
 
 > **Note:** The `webhooks` queue is required for outgoing webhook delivery. The `Webkul\Webhook\Listeners\Product` listener is dispatched asynchronously to this queue so product save/update requests are not blocked by HTTP calls to subscribers. If you omit `webhooks` from the `--queue` list, webhook events will queue up but never be processed.
@@ -204,12 +220,12 @@ php artisan queue:work --queue=webhooks,system,default,completeness,publication
 
 ### Docker
 
-Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/2.1.x/introduction/installation.html#install-using-docker) for advanced configuration.
+Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/3.1/introduction/installation-docker.html) for advanced configuration.
 
 **Run UnoPim** — pre-built images, no checkout, no configuration:
 
 ```bash
-curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.yaml
+curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.yaml
 docker compose up -d
 ```
 
@@ -231,7 +247,7 @@ Change it after the first login. Every other setting has a working default; over
 **MySQL instead of PostgreSQL:**
 
 ```bash
-curl -O https://raw.githubusercontent.com/unopim/unopim/master/compose.mysql.yaml
+curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.mysql.yaml
 docker compose -f compose.yaml -f compose.mysql.yaml up -d
 ```
 
@@ -261,10 +277,15 @@ First boot installs Composer dependencies into `./vendor`. The stack defaults to
 
 ### ☁️ AWS Marketplace
 <p>
-  <a href="https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw">
+  <a href="https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i">
     <img src="https://raw.githubusercontent.com/unopim/temp-media/main/aws-marketplace-banner.png" alt="Launch UnoPim on AWS Marketplace" width="720">
   </a>
 </p>
+
+Pre-configured AMIs — Ubuntu LEMP with Redis, Elasticsearch and phpMyAdmin:
+
+- [**UnoPim on AWS (x86_64)**](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i)
+- [**UnoPim on AWS (ARM64 / Graviton)**](https://aws.amazon.com/marketplace/pp/prodview-flks5cupod5mi)
 
 ## 🤝 Contributing
 

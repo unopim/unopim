@@ -7,12 +7,19 @@
     'height'           => '120px',
     'acceptedTypes'    => ['image/*', 'video/*'],
     'acceptedExtensions' => [],
+    'mimeTypes'          => [],
     'instructions'       => '',
+    'readOnly'           => false,
+    'allowDownload'      => false,
 ])
 
 @php
     $dynamicUploadedImages = $attributes->get('::uploaded-images') ?? $attributes->get(':uploaded-images');
     $rootAttributes = $attributes->except(['::uploaded-images', ':uploaded-images', 'uploaded-images']);
+    $resolvedMimeTypes = array_replace(
+        app(\Webkul\Core\Helpers\MediaMimeTypes::class)->forExtensions($acceptedExtensions),
+        $mimeTypes,
+    );
 @endphp
 
 <x-admin::media.field type="gallery" :name="$name" :instructions="$instructions">
@@ -22,6 +29,8 @@
     name="{{ $name }}"
     v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
+    v-bind:read-only="{{ $readOnly ? 'true' : 'false' }}"
+    v-bind:allow-download="{{ $allowDownload ? 'true' : 'false' }}"
     @if ($dynamicUploadedImages)
         :uploaded-images="{{ $dynamicUploadedImages }}"
     @else
@@ -31,6 +40,7 @@
     height="{{ $height }}"
     :accepted-types='@json($acceptedTypes)'
     :accepted-extensions='@json($acceptedExtensions)'
+    :mime-types='@json((object) $resolvedMimeTypes)'
     :errors="errors"
 >
     <x-admin::shimmer.media />
@@ -42,7 +52,10 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-gallery-template">
         <div class="grid">
-            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            <div
+                class="grid gap-3"
+                :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${width}, 1fr))` }"
+            >
                 {{-- Add Media tile (shared dropzone; ordered last via CSS order) --}}
                 <v-media-add-tile
                     v-if="ai.enabled"
@@ -51,7 +64,8 @@
                     :style="{ order: 9999 }"
                     title="@lang('admin::app.components.media.images.add-media-btn')"
                     hint="@lang('admin::app.components.media.images.drag-drop-hint')"
-                    allowed-types="@lang('admin::app.components.media.images.allowed-types'), @lang('admin::app.components.media.videos.allowed-types')"
+                    :allowed-types="allowedTypesLabel"
+                    :read-only="readOnly"
                     @trigger="resetAIModal(); $refs.choiceImageModal.open()"
                     @drop="onDrop"
                 ></v-media-add-tile>
@@ -63,9 +77,10 @@
                     :style="{ order: 9999 }"
                     title="@lang('admin::app.components.media.images.add-media-btn')"
                     hint="@lang('admin::app.components.media.images.drag-drop-hint')"
-                    allowed-types="@lang('admin::app.components.media.images.allowed-types'), @lang('admin::app.components.media.videos.allowed-types')"
+                    :allowed-types="allowedTypesLabel"
                     :accept="acceptAttribute"
                     :input-id="$.uid + '_imageInput'"
+                    :read-only="readOnly"
                     @change="add"
                     @drop="onDrop"
                 ></v-media-add-tile>
@@ -78,6 +93,8 @@
                     :list="images"
                     item-key="id"
                     handle=".icon-drag"
+                    :disabled="readOnly"
+                    @change="signalChange"
                 >
                     <template #item="{ element, index }">
                         <v-media-gallery-item
@@ -89,6 +106,9 @@
                             :height="height"
                             :accepted-types="acceptedTypes"
                             :accepted-extensions="acceptedExtensions"
+                            :mime-types="mimeTypes"
+                            :read-only="readOnly"
+                            :allow-download="allowDownload"
                             @onRemove="remove($event)"
                         >
                         </v-media-gallery-item>
@@ -439,10 +459,11 @@
                 height="176px"
                 object-fit="cover"
                 :allow-preview="true"
-                :allow-replace="true"
-                :allow-remove="true"
+                :allow-replace="! readOnly"
+                :allow-remove="! readOnly"
+                :allow-download="allowDownload"
                 :allow-drag="true"
-                :show-drag-handle="true"
+                :show-drag-handle="! readOnly"
                 :show-extension="false"
                 :invalid="isInvalid"
                 @preview="previewMedia"
@@ -450,9 +471,10 @@
                 @remove="remove"
             ></v-media-card>
 
-            <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-            <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name + '[' + index + ']'" v-if="! readOnly && allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name" v-if="! readOnly && ! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
             <input
+                v-if="! readOnly"
                 type="file"
                 :name="name + '[]'"
                 class="hidden"
@@ -462,13 +484,13 @@
                 @change="edit"
             />
 
-            <x-admin::modal ref="mediaPreviewModal" type="large">
-                <x-slot:header>
+            <x-admin::modal ref="mediaPreviewModal" no-class="true">
+                <x-slot:header class="bg-white dark:bg-gray-900">
                     <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
                 </x-slot>
-                <x-slot:content>
-                    <div>
-                        <video v-if="image.type?.startsWith('video/')" class="w-full h-full" controls autoplay>
+                <x-slot:content class="h-[calc(100vh-60px)] bg-gray-900 p-0">
+                    <div class="h-full w-full">
+                        <video v-if="image.type?.startsWith('video/')" class="h-full min-h-[600px] w-full object-contain" controls autoplay>
                             <source :src="image.url" type="video/mp4">
                         </video>
                     </div>
@@ -489,8 +511,74 @@
     </script>
 
     <script type="module">
+        const galleryFileValidation = {
+            computed: {
+                normalizedExtensions() {
+                    return [...new Set(this.acceptedExtensions.map(extension => extension.replace(/^\./, '').toLowerCase()))];
+                },
+
+                acceptAttribute() {
+                    return this.normalizedExtensions.length
+                        ? this.normalizedExtensions.map(extension => `.${extension}`).join(',')
+                        : this.acceptedTypes.join(',');
+                },
+
+                allowedTypesLabel() {
+                    return this.normalizedExtensions.length
+                        ? this.normalizedExtensions.join(', ')
+                        : this.acceptedTypes.join(', ');
+                },
+            },
+
+            methods: {
+                isTypeAccepted(mimeType) {
+                    return this.acceptedTypes.length === 0 || this.acceptedTypes.some(type => type.endsWith('/*')
+                        ? mimeType.startsWith(type.slice(0, -1))
+                        : mimeType === type);
+                },
+
+                isFileAccepted(file) {
+                    const extension = file.name.split('.').pop()?.toLowerCase();
+
+                    if (this.normalizedExtensions.length && ! this.normalizedExtensions.includes(extension)) {
+                        return false;
+                    }
+
+                    if (this.isTypeAccepted(file.type)) {
+                        return true;
+                    }
+
+                    const mimeTypes = this.mimeTypesFor(extension);
+
+                    if (! file.type || file.type === 'application/octet-stream') {
+                        return this.normalizedExtensions.length > 0 && mimeTypes.some(type => this.isTypeAccepted(type));
+                    }
+
+                    return mimeTypes.includes(file.type) && mimeTypes.some(type => this.isTypeAccepted(type));
+                },
+
+                mimeTypesFor(extension) {
+                    const mimeTypes = this.mimeTypes ?? {};
+
+                    return Object.hasOwn(mimeTypes, extension) ? mimeTypes[extension] : [];
+                },
+
+                mediaType(file) {
+                    if (file.type?.startsWith('image/') || file.type?.startsWith('video/')) {
+                        return file.type;
+                    }
+
+                    const extension = file.name.split('.').pop()?.toLowerCase();
+
+                    return this.mimeTypesFor(extension).find(type => type.startsWith('image/') || type.startsWith('video/')) || file.type;
+                },
+            },
+        };
+
         app.component('v-media-gallery', {
             template: '#v-media-gallery-template',
+
+            mixins: [galleryFileValidation],
 
             props: {
                 name: {
@@ -533,10 +621,25 @@
                     default: () => [],
                 },
 
+                mimeTypes: {
+                    type: Object,
+                    default: () => ({}),
+                },
+
                 errors: {
                     type: Object,
                     default: () => {}
-                }
+                },
+
+                readOnly: {
+                    type: Boolean,
+                    default: false,
+                },
+
+                allowDownload: {
+                    type: Boolean,
+                    default: false,
+                },
             },
 
             data() {
@@ -579,10 +682,6 @@
             },
 
             computed: {
-                acceptAttribute() {
-                    return [...this.acceptedTypes, ...this.acceptedExtensions.map(extension => `.${extension.replace(/^\./, '')}`)].join(',');
-                },
-
                 isCompactTile() {
                     return this.parseDimension(this.width) <= 220
                         && this.parseDimension(this.height) <= 160;
@@ -641,17 +740,6 @@
 
                     this.signalChange();
                 },
-                isFileAccepted(file) {
-                    const typeAccepted = this.acceptedTypes.length === 0 || this.acceptedTypes.some(type => type.endsWith('/*')
-                        ? file.type.startsWith(type.slice(0, -1))
-                        : file.type === type);
-                    const extension = file.name.split('.').pop()?.toLowerCase();
-                    const extensionAccepted = this.acceptedExtensions.length === 0
-                        || this.acceptedExtensions.map(value => value.replace(/^\./, '').toLowerCase()).includes(extension);
-
-                    return typeAccepted && extensionAccepted;
-                },
-
                 onDrop(files) {
                     this.addFiles(files);
                 },
@@ -669,7 +757,16 @@
                     this.addFiles(files);
                 },
 
-                addFiles(files) {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.gallery.not-allowed-error')),
+                    });
+                },
+
+                async addFiles(files) {
                     if (! files || ! files.length) {
                         return;
                     }
@@ -687,15 +784,19 @@
                         return;
                     }
 
-                    selectedFiles.forEach((file) => {
+                    for (const file of selectedFiles) {
+                        if (! await this.scanFile(file)) {
+                            continue;
+                        }
+
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
                             file: file,
-                            type: file.type,
+                            type: this.mediaType(file),
                             name: file.name
                         });
-                    });
+                    }
 
                     this.signalChange();
 
@@ -950,13 +1051,11 @@
         app.component('v-media-gallery-item', {
             template: '#v-media-gallery-item-template',
 
-            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'acceptedTypes', 'acceptedExtensions'],
+            mixins: [galleryFileValidation],
+
+            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'acceptedTypes', 'acceptedExtensions', 'mimeTypes', 'readOnly', 'allowDownload'],
 
             computed: {
-                acceptAttribute() {
-                    return [...this.acceptedTypes, ...this.acceptedExtensions.map(extension => `.${extension.replace(/^\./, '')}`)].join(',');
-                },
-
                 isInvalid() {
                     if (! this.acceptedExtensions || ! this.acceptedExtensions.length) {
                         return false;
@@ -991,25 +1090,23 @@
             },
 
             methods: {
-                isFileAccepted(file) {
-                    const typeAccepted = this.acceptedTypes.length === 0 || this.acceptedTypes.some(type => type.endsWith('/*')
-                        ? file.type.startsWith(type.slice(0, -1))
-                        : file.type === type);
-                    const extension = file.name.split('.').pop()?.toLowerCase();
-                    const extensionAccepted = this.acceptedExtensions.length === 0
-                        || this.acceptedExtensions.map(value => value.replace(/^\./, '').toLowerCase()).includes(extension);
-
-                    return typeAccepted && extensionAccepted;
-                },
-
                 replace() {
                     this.$refs[this.$.uid + '_imageInput_' + this.index].click();
                 },
 
-                edit() {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.images.not-allowed-error')),
+                    });
+                },
+
+                async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
-                    if (imageInput.files == undefined) {
+                    if (! imageInput.files || ! imageInput.files.length) {
                         return;
                     }
 
@@ -1018,9 +1115,13 @@
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: @json(trans('admin::app.components.media.images.not-allowed-error'))
+                            message: @json(trans('admin::app.components.media.gallery.not-allowed-error'))
                         });
 
+                        return;
+                    }
+
+                    if (! await this.scanFile(imageInput.files[0])) {
                         return;
                     }
 
@@ -1068,6 +1169,8 @@
                         this.image.url = e.target.result;
 
                         this.image.name = file.name;
+
+                        this.image.type = this.mediaType(file);
                     }
 
                     reader.readAsDataURL(file);

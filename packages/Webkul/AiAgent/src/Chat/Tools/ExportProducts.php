@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Tools\Request;
+use PhpOffice\PhpSpreadsheet\Cell\DataType;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Webkul\AiAgent\Chat\ChatContext;
@@ -19,6 +20,7 @@ use Webkul\DataTransfer\Repositories\JobInstancesRepository;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\DataTransfer\Repositories\JobTrackRepository;
 use Webkul\DataTransfer\Services\JobLogger;
+use Webkul\DataTransfer\Support\FormulaGuard;
 
 class ExportProducts implements PimTool
 {
@@ -273,7 +275,7 @@ class ExportProducts implements PimTool
         $stream = fopen('php://temp', 'w+');
 
         foreach ($rows as $row) {
-            fputcsv($stream, $row, escape: '\\');
+            fputcsv($stream, array_map(FormulaGuard::escape(...), $row), escape: '\\');
         }
 
         rewind($stream);
@@ -285,6 +287,9 @@ class ExportProducts implements PimTool
 
     /**
      * Write the generated XLSX to the public storage disk.
+     *
+     * Only formula-shaped values are pinned to text; everything else keeps the binder's
+     * type detection so numbers stay numbers.
      */
     public function writeXlsx(string $relativePath, array $rows): void
     {
@@ -293,7 +298,15 @@ class ExportProducts implements PimTool
 
         foreach ($rows as $rowIndex => $row) {
             foreach ($row as $colIndex => $value) {
-                $sheet->setCellValue([$colIndex + 1, $rowIndex + 1], $value);
+                $coordinate = [$colIndex + 1, $rowIndex + 1];
+
+                if (is_string($value) && FormulaGuard::isFormula($value)) {
+                    $sheet->setCellValueExplicit($coordinate, $value, DataType::TYPE_STRING);
+
+                    continue;
+                }
+
+                $sheet->setCellValue($coordinate, $value);
             }
         }
 

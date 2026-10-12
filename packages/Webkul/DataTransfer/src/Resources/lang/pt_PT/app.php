@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produtos',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'A unidade ":unit" não é uma unidade válida para o atributo de medição ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Chave URL: \'%s\' já foi gerada para um item com SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Valor inválido para a coluna da família de atributos (a família de atributos não existe?)',
                     'invalid-type'                             => 'Tipo de produto inválido ou não suportado',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'Nome do ficheiro',
+            'file-name-info' => 'Padrão do nome do ficheiro. Variáveis: [code], [date], [time], [entity_type]',
             'file-path'      => 'Caminho do Arquivo',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'Padrão do nome do ficheiro. Variáveis: [code], [date], [time], [entity_type]',
             'status'         => 'Estado',
             'enable'         => 'Ativado',
             'all'            => 'Todos',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'As colunas número "%s" têm cabeçalhos vazios.',
-            'column-name-invalid'  => 'Cabeçalhos de coluna inválidos: "%s".',
-            'column-not-found'     => 'Colunas necessárias não encontradas: %s.',
-            'column-numbers'       => 'O número de colunas não corresponde ao número de linhas no cabeçalho.',
-            'invalid-attribute'    => 'O cabeçalho contém atributos inválidos: "%s".',
-            'system'               => 'Ocorreu um erro do sistema inesperado.',
-            'wrong-quotes'         => 'Aspas inclinadas usadas em vez de aspas diretas.',
-            'file-empty'           => 'O ficheiro está vazio ou não contém uma linha de cabeçalho. Por favor, carregue um ficheiro válido com dados.',
+            'column-empty-headers'   => 'As colunas número "%s" têm cabeçalhos vazios.',
+            'column-name-invalid'    => 'Cabeçalhos de coluna inválidos: "%s".',
+            'column-not-found'       => 'Colunas necessárias não encontradas: %s.',
+            'column-numbers'         => 'O número de colunas não corresponde ao número de linhas no cabeçalho.',
+            'invalid-attribute'      => 'O cabeçalho contém atributos inválidos: "%s".',
+            'system'                 => 'Ocorreu um erro do sistema inesperado.',
+            'wrong-quotes'           => 'Aspas inclinadas usadas em vez de aspas diretas.',
+            'file-empty'             => 'O ficheiro está vazio ou não contém uma linha de cabeçalho. Por favor, carregue um ficheiro válido com dados.',
+            'file-missing'           => 'O ficheiro de origem desta tarefa não foi encontrado. Verifique o caminho do ficheiro no perfil e carregue o ficheiro novamente.',
         ],
     ],
     'job' => [

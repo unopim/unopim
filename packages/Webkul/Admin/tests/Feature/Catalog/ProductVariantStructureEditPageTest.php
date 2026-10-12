@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAttribute;
@@ -44,11 +46,11 @@ function makeTwoLevelConfigurableWithGroup(): array
     ]);
 
     VariantStructureAttribute::insert([
-        ['variant_structure_id' => $structure->id, 'attribute_id' => $meta->id, 'level' => 'sub_parent'],
+        ['variant_structure_id' => $structure->id, 'attribute_id' => $meta->id, 'level' => VariantLevel::SubParent->value],
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -93,7 +95,7 @@ function makeOneLevelConfigurable(): Product
     ]);
 
     return app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'TEE-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -117,7 +119,6 @@ it('exposes the variant tree on the edit page for a 2-level variant structure', 
         ->toContain('"configurableId":'.$configurable->id)
         ->toContain('"totalVariants":1');
 
-    // Ancestry-only: descendants are fetched on demand, never inlined.
     expect($content)->not->toContain('"'.$group->id.'":{');
 });
 

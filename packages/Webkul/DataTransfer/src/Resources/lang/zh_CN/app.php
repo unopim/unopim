@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => '产品',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => '单位 ":unit" 不是测量属性 ":attribute" 的有效单位。',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL 密钥：已为 SKU 为“%s”的商品生成了“%s”。',
                     'invalid-attribute-family'                 => '属性系列列的值无效（属性系列不存在？）',
                     'invalid-type'                             => '产品类型无效或不受支持',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => '文件名',
+            'file-name-info' => '文件名模板。可用变量：[code], [date], [time], [entity_type]',
             'file-path'      => '文件路径',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => '文件名模板。可用变量：[code], [date], [time], [entity_type]',
             'status'         => '状态',
             'enable'         => '启用',
             'all'            => '全部',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => '列号“%s”的标题为空。',
-            'column-name-invalid'  => '无效的列名：“%s”。',
-            'column-not-found'     => '未找到所需的列：%s。',
-            'column-numbers'       => '列数与标题中的行数不对应。',
-            'invalid-attribute'    => '标头包含无效属性：“%s”。',
-            'system'               => '发生意外的系统错误。',
-            'wrong-quotes'         => '使用弯引号代替直引号。',
-            'file-empty'           => '文件为空或不包含标题行。请上传包含数据的有效文件。',
+            'column-empty-headers'   => '列号“%s”的标题为空。',
+            'column-name-invalid'    => '无效的列名：“%s”。',
+            'column-not-found'       => '未找到所需的列：%s。',
+            'column-numbers'         => '列数与标题中的行数不对应。',
+            'invalid-attribute'      => '标头包含无效属性：“%s”。',
+            'system'                 => '发生意外的系统错误。',
+            'wrong-quotes'           => '使用弯引号代替直引号。',
+            'file-empty'             => '文件为空或不包含标题行。请上传包含数据的有效文件。',
+            'file-missing'           => '找不到此作业的源文件。请检查配置中的文件路径，然后重新上传文件。',
         ],
     ],
     'job' => [

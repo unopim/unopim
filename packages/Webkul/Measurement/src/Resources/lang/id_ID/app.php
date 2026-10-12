@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Sebuah keluarga pengukuran tidak dapat memiliki lebih dari :max unit.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'Satuan ":unit" bukan satuan yang valid untuk atribut pengukuran ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Keluarga pengukuran berhasil dibuat.',
