@@ -4,13 +4,6 @@ use Illuminate\Support\Facades\Validator;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Rules\Code;
 
-afterEach(function () {
-    /**
-     * Clean channels, excluding ID 1 (i.e., the default channel). A fresh instance will always have ID 1.
-     */
-    Channel::query()->whereNot('id', 1)->delete();
-});
-
 it('returns all channels', function () {
     $countOld = $channels = core()->getAllChannels()->count();
     $expectedChannel = Channel::factory()->create();

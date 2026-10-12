@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\View\View;
 use Webkul\Admin\DataGrids\Catalog\AttributeDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Attribute\Rules\NotSupportedAttributes;
@@ -201,49 +201,51 @@ class AttributeController extends Controller
     /**
      * Remove the specified resources from database.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        $indices = $massDestroyRequest->input('indices');
-
-        $attributes = $this->attributeRepository->findWhereIn('id', $indices)->keyBy('id');
-
-        $superAttributeIds = DB::table('product_super_attributes')
-            ->whereIn('attribute_id', $indices)
-            ->distinct()
-            ->pluck('attribute_id')
-            ->flip();
-
         $deleted = 0;
         $inUse = 0;
 
-        foreach ($indices as $index) {
-            $attribute = $attributes->get($index);
+        foreach ($massDestroyRequest->selectedIds(AttributeDataGrid::class)->chunk(500) as $chunk) {
+            $indices = $chunk->values()->all();
 
-            if (
-                ! $attribute
-                || ! $attribute->canBeDeleted()
-            ) {
-                continue;
-            }
+            $attributes = $this->attributeRepository->findWhereIn('id', $indices)->keyBy('id');
 
-            if ($superAttributeIds->has($index)) {
-                $inUse++;
+            $superAttributeIds = DB::table('product_super_attributes')
+                ->whereIn('attribute_id', $indices)
+                ->distinct()
+                ->pluck('attribute_id')
+                ->flip();
 
-                continue;
-            }
+            foreach ($indices as $index) {
+                $attribute = $attributes->get($index);
 
-            try {
-                Event::dispatch('catalog.attribute.delete.before', $index);
+                if (
+                    ! $attribute
+                    || ! $attribute->canBeDeleted()
+                ) {
+                    continue;
+                }
 
-                $this->attributeRepository->delete($index);
+                if ($superAttributeIds->has($index)) {
+                    $inUse++;
 
-                Event::dispatch('catalog.attribute.delete.after', $index);
+                    continue;
+                }
 
-                $deleted++;
-            } catch (QueryException $exception) {
-                report($exception);
+                try {
+                    Event::dispatch('catalog.attribute.delete.before', $index);
 
-                $inUse++;
+                    $this->attributeRepository->delete($index);
+
+                    Event::dispatch('catalog.attribute.delete.after', $index);
+
+                    $deleted++;
+                } catch (QueryException $exception) {
+                    report($exception);
+
+                    $inUse++;
+                }
             }
         }
 

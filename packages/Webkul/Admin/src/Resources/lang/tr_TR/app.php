@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Seçilen ürünler başarıyla silindi',
                     'mass-update-queued'      => 'Seçili ürünler arka planda güncelleniyor',
                     'mass-update-success'     => 'Seçilen ürünler başarıyla güncellendi',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Eşleşen tüm ürünler için durum güncellemesi kuyruğa alındı. Tamamlandığında bildirim alacaksınız.',
+                            'title'     => 'Ürün durumu güncelleme',
+                            'completed' => ':count ürünün durumu güncellendi.',
+                            'failed'    => ':count ürünün durum güncellemesi hatalarla tamamlandı. Bazı ürünler güncellenmedi.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Eşleşen tüm ürünler için silme işlemi kuyruğa alındı. Tamamlandığında bildirim alacaksınız.',
+                            'title'     => 'Ürün silme',
+                            'completed' => ':count ürün silindi.',
+                            'failed'    => ':count ürünün silinmesi hatalarla tamamlandı. Bazı ürünler silinmedi.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Eşleşen tüm ürünlerin dışa aktarımı kuyruğa alındı. Hazır olduğunda indirme bağlantısıyla bildirim alacaksınız.',
+                            'title'         => 'Ürün dışa aktarımı',
+                            'completed'     => ':count ürünün dışa aktarımı hazır. İndirmek için tıklayın.',
+                            'failed'        => 'Ürün dışa aktarımı tamamlanamadı.',
+                            'too-many-rows' => 'Dışa aktarım bu biçimin izin verdiğinden (:limit) fazla satır içeriyor. Bunun yerine CSV olarak dışa aktarın.',
+                        ],
+                    ],
                     'name'                    => 'Ad',
                     'out-of-stock'            => 'Stokta yok',
                     'price'                   => 'Fiyat',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Seçili kayıt yok.',
+                'selection-truncated'              => 'Bu işlem, eşleşen :total kaydın yalnızca ilk :limit kaydını işleyebilir.',
                 'must-select-a-mass-action-option' => 'Bir toplu eylem seçmelisiniz.',
                 'must-select-a-mass-action'        => 'Bir toplu eylem seçmelisiniz.',
                 'link-copied'                      => 'Bağlantı panoya kopyalandı.',

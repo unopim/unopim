@@ -233,7 +233,7 @@ class ImportProducts implements PimTool
                         'skipped'     => count($skippedInvalidSku) + $aclSkipped,
                         'errors'      => $aclErrors === [] ? null : array_slice($aclErrors, 0, 5),
                         'tracker_id'  => $jobTrack->id,
-                        'tracker_url' => route('admin.settings.data_transfer.imports.import-view', $jobInstance->id),
+                        'tracker_url' => route('admin.settings.data_transfer.tracker.view', $jobTrack->id),
                         'message'     => trans('ai-agent::app.common.import-queued', ['count' => count($filteredRows)]),
                     ],
                 ]);

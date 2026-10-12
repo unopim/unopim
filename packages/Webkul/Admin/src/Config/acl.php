@@ -96,6 +96,16 @@ return [
         'route' => 'admin.catalog.products.quick-export',
         'sort'  => 8,
     ], [
+        'key'   => 'catalog.products.quick_export',
+        'name'  => 'admin::app.acl.quick-export',
+        'route' => 'admin.catalog.products.quick-export.queue',
+        'sort'  => 8,
+    ], [
+        'key'   => 'catalog.products.quick_export',
+        'name'  => 'admin::app.acl.quick-export',
+        'route' => 'admin.catalog.products.quick-export.download',
+        'sort'  => 8,
+    ], [
         'key'   => 'catalog.products.bulk_edit',
         'name'  => 'admin::app.acl.bulk-edit',
         'route' => 'admin.catalog.products.bulk-edit.save',

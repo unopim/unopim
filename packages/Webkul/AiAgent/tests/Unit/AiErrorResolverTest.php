@@ -225,3 +225,22 @@ it('never leaks details from a bare PDO exception', function () {
     expect($resolved['message'])->toBe(trans('ai-agent::app.common.error-generic'));
     expect($resolved['message'])->not->toContain('root');
 });
+
+it('resolves a provider refusal of image input to a friendly message', function (int $status, string $message) {
+    $resolved = AiErrorResolver::resolve(makeRequestException($status, json_encode(['error' => ['message' => $message]])));
+
+    expect($resolved['status'])->toBe(422)
+        ->and($resolved['is_known'])->toBeTrue()
+        ->and($resolved['message'])->toBe(trans('ai-agent::app.common.error-image-input-unsupported'));
+})->with([
+    'gateway feature list' => [400, 'gpt-oss-20b does not support the following requested features: input.image.'],
+    'openai image_url'     => [400, 'Invalid content type. image_url is only supported by certain models.'],
+    'vision not supported' => [400, 'This model does not support vision.'],
+    'image input phrasing' => [422, 'Image input is not supported for this model.'],
+]);
+
+it('does not treat unrelated provider errors as an image refusal', function () {
+    $exception = makeRequestException(400, json_encode(['error' => ['message' => 'Invalid API key provided.']]));
+
+    expect(AiErrorResolver::rejectsImageInput($exception))->toBeFalse();
+});

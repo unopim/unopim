@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Valitut tuotteet poistettiin onnistuneesti',
                     'mass-update-queued'      => 'Valittuja tuotteita päivitetään taustalla',
                     'mass-update-success'     => 'Valitut tuotteet päivitettiin onnistuneesti',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Tilan päivitys on lisätty jonoon kaikille vastaaville tuotteille. Saat ilmoituksen, kun se on valmis.',
+                            'title'     => 'Tuotteiden tilan päivitys',
+                            'completed' => 'Tila päivitetty :count tuotteelle.',
+                            'failed'    => ':count tuotteen tilan päivitys päättyi virheisiin. Joitakin tuotteita ei päivitetty.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Poisto on lisätty jonoon kaikille vastaaville tuotteille. Saat ilmoituksen, kun se on valmis.',
+                            'title'     => 'Tuotteiden poisto',
+                            'completed' => ':count tuotetta poistettu.',
+                            'failed'    => ':count tuotteen poisto päättyi virheisiin. Joitakin tuotteita ei poistettu.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Kaikkien hakua vastaavien tuotteiden vienti on jonossa. Saat ilmoituksen latauslinkillä, kun se on valmis.',
+                            'title'         => 'Tuotevienti',
+                            'completed'     => ':count tuotteen vienti on valmis. Lataa napsauttamalla.',
+                            'failed'        => 'Tuotevientiä ei voitu suorittaa loppuun.',
+                            'too-many-rows' => 'Viennissä on enemmän rivejä kuin tämä muoto sallii (:limit). Vie sen sijaan CSV-muodossa.',
+                        ],
+                    ],
                     'name'                    => 'Nimi',
                     'out-of-stock'            => 'Loppunut varastosta',
                     'price'                   => 'Hinta',
@@ -2639,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Mikään tallenne ei ole valittuna.',
+                'selection-truncated'              => 'Tämä toiminto voi käsitellä vain ensimmäiset :limit hakua vastaavaa tietuetta :total tietueesta.',
                 'must-select-a-mass-action-option' => 'Sinun täytyy valita massatoiminto.',
                 'must-select-a-mass-action'        => 'Sinun täytyy valita massatoiminto.',
                 'link-copied'                      => 'Linkki kopioitu leikepöydälle.',

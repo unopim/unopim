@@ -114,6 +114,27 @@ updates:
       prefix: "chore(deps-e2e-major)"
       include: "scope"
 
+  # npm — admin assets: security updates only, TinyMCE held on MIT-licensed 6.x
+  - package-ecosystem: "npm"
+    directory: "/packages/Webkul/Admin"
+    target-branch: "3.x"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Asia/Kolkata"
+    open-pull-requests-limit: 0
+    ignore:
+      - dependency-name: "tinymce"
+        update-types:
+          - "version-update:semver-major"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "chore(deps-admin)"
+      include: "scope"
+
   # GitHub Actions — current release line
   - package-ecosystem: "github-actions"
     directory: "/"

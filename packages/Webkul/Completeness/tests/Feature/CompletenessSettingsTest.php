@@ -1,8 +1,10 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
+use Webkul\Attribute\Models\AttributeGroup;
 use Webkul\Completeness\Jobs\BulkProductCompletenessJob;
 use Webkul\Completeness\Repositories\CompletenessSettingsRepository;
 use Webkul\Core\Models\Channel;
@@ -219,4 +221,63 @@ it('should dispatch job when completeness settings are deleted via mass update',
     Queue::assertPushed(BulkProductCompletenessJob::class, function ($job) use ($family) {
         return $job->uniqueId() === 'completeness-job-'.$family->id;
     });
+});
+
+function familyWithAttributes(string $prefix, int $count): array
+{
+    $family = AttributeFamily::factory()->create();
+
+    $mappingId = DB::table('attribute_family_group_mappings')->insertGetId([
+        'attribute_family_id' => $family->id,
+        'attribute_group_id'  => AttributeGroup::factory()->create()->id,
+        'position'            => 1,
+    ]);
+
+    $attributeIds = collect(range(1, $count))->map(function (int $index) use ($prefix, $mappingId): int {
+        $id = Attribute::factory()->create(['code' => $prefix.$index])->id;
+
+        DB::table('attribute_group_mappings')->insert([
+            'attribute_id'              => $id,
+            'attribute_family_group_id' => $mappingId,
+            'position'                  => $index,
+        ]);
+
+        return $id;
+    })->all();
+
+    return [$family, $attributeIds];
+}
+
+it('applies channel requirements to every attribute matching the filters when all matching are selected', function () {
+    Queue::fake();
+
+    [$family, $matching] = familyWithAttributes('selall_match_', 4);
+    $unrelated = Attribute::factory()->create(['code' => 'selall_other_1'])->id;
+
+    DB::table('attribute_group_mappings')->insert([
+        'attribute_id'              => $unrelated,
+        'attribute_family_group_id' => DB::table('attribute_family_group_mappings')->where('attribute_family_id', $family->id)->value('id'),
+        'position'                  => 99,
+    ]);
+
+    $channel = Channel::factory()->create(['code' => 'selall_ch']);
+
+    $this->postJson(route('admin.catalog.families.completeness.mass_update'), [
+        'familyId'             => $family->id,
+        'select_all'           => 1,
+        'filters'              => ['code' => ['selall_match_']],
+        'channel_requirements' => 'selall_ch',
+    ])->assertOk()->assertJsonFragment(['success' => true]);
+
+    expect(DB::table('completeness_settings')->where('family_id', $family->id)->where('channel_id', $channel->id)->whereIn('attribute_id', $matching)->count())->toBe(4)
+        ->and(DB::table('completeness_settings')->where('family_id', $family->id)->where('attribute_id', $unrelated)->count())->toBe(0);
+});
+
+it('still requires an id list on completeness mass update when all matching are not selected', function () {
+    $family = AttributeFamily::factory()->create();
+
+    $this->postJson(route('admin.catalog.families.completeness.mass_update'), [
+        'familyId'             => $family->id,
+        'channel_requirements' => 'x',
+    ])->assertUnprocessable()->assertJsonValidationErrors('indices');
 });

@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Các sản phẩm được chọn đã được xóa thành công',
                     'mass-update-queued'      => 'Các sản phẩm đã chọn đang được cập nhật ở chế độ nền',
                     'mass-update-success'     => 'Các sản phẩm được chọn đã được cập nhật thành công',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Đã đưa việc cập nhật trạng thái của tất cả sản phẩm phù hợp vào hàng đợi. Bạn sẽ được thông báo khi hoàn tất.',
+                            'title'     => 'Cập nhật trạng thái sản phẩm',
+                            'completed' => 'Đã cập nhật trạng thái cho :count sản phẩm.',
+                            'failed'    => 'Cập nhật trạng thái cho :count sản phẩm đã kết thúc nhưng có lỗi. Một số sản phẩm chưa được cập nhật.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Đã đưa việc xóa tất cả sản phẩm phù hợp vào hàng đợi. Bạn sẽ được thông báo khi hoàn tất.',
+                            'title'     => 'Xóa sản phẩm',
+                            'completed' => 'Đã xóa :count sản phẩm.',
+                            'failed'    => 'Việc xóa :count sản phẩm đã kết thúc nhưng có lỗi. Một số sản phẩm chưa được xóa.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Đã đưa việc xuất tất cả sản phẩm phù hợp vào hàng đợi. Bạn sẽ nhận thông báo kèm liên kết tải xuống khi hoàn tất.',
+                            'title'         => 'Xuất sản phẩm',
+                            'completed'     => 'Bản xuất :count sản phẩm đã sẵn sàng. Nhấp để tải xuống.',
+                            'failed'        => 'Không thể hoàn tất việc xuất sản phẩm.',
+                            'too-many-rows' => 'Bản xuất có nhiều dòng hơn mức định dạng này cho phép (:limit). Hãy xuất dưới dạng CSV.',
+                        ],
+                    ],
                     'name'                    => 'Tên',
                     'out-of-stock'            => 'Hết hàng',
                     'price'                   => 'Giá',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Không có bản ghi nào được chọn.',
+                'selection-truncated'              => 'Thao tác này chỉ xử lý được :limit bản ghi đầu tiên trong số :total bản ghi phù hợp.',
                 'must-select-a-mass-action-option' => 'Bạn phải chọn một tùy chọn cho hành động hàng loạt.',
                 'must-select-a-mass-action'        => 'Bạn phải chọn một hành động hàng loạt.',
                 'link-copied'                      => 'Đã sao chép liên kết vào bộ nhớ tạm.',

@@ -92,10 +92,7 @@ class TranslateProductValuesJob implements ShouldQueue
             return;
         }
 
-        $localeNames = DB::table('locales')
-            ->whereIn('code', $targetLocales)
-            ->pluck('name', 'code')
-            ->toArray();
+        $localeNames = $this->resolveLocaleNames($targetLocales);
 
         $familyAttributes = $this->loadFamilyAttributes($product->attribute_family_id);
 
@@ -190,6 +187,22 @@ class TranslateProductValuesJob implements ShouldQueue
         }
 
         return $targetLocales;
+    }
+
+    /**
+     * Map each locale code to its English display name for the prompt.
+     *
+     * The locales table has no name column; Locale::name is an intl accessor,
+     * so derive it the same way without a query, in English to match the prompt.
+     *
+     * @param  array<int, string>  $localeCodes
+     * @return array<string, string>
+     */
+    protected function resolveLocaleNames(array $localeCodes): array
+    {
+        return collect($localeCodes)
+            ->mapWithKeys(fn (string $code): array => [$code => \Locale::getDisplayName($code, 'en')])
+            ->all();
     }
 
     /**

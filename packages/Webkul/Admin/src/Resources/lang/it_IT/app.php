@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'I prodotti selezionati sono stati eliminati con successo',
                     'mass-update-queued'      => 'I prodotti selezionati vengono aggiornati in background',
                     'mass-update-success'     => 'I prodotti selezionati sono stati aggiornati con successo',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'L\'aggiornamento dello stato è stato messo in coda per tutti i prodotti corrispondenti. Riceverai una notifica al termine.',
+                            'title'     => 'Aggiornamento dello stato dei prodotti',
+                            'completed' => 'Stato aggiornato per :count prodotti.',
+                            'failed'    => 'L\'aggiornamento dello stato di :count prodotti è terminato con errori. Alcuni prodotti non sono stati aggiornati.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'L\'eliminazione è stata messa in coda per tutti i prodotti corrispondenti. Riceverai una notifica al termine.',
+                            'title'     => 'Eliminazione dei prodotti',
+                            'completed' => ':count prodotti eliminati.',
+                            'failed'    => 'L\'eliminazione di :count prodotti è terminata con errori. Alcuni prodotti non sono stati eliminati.',
+                        ],
+                        'export' => [
+                            'queued'        => 'L\'esportazione di tutti i prodotti corrispondenti è stata messa in coda. Riceverai una notifica con il link per il download quando sarà pronta.',
+                            'title'         => 'Esportazione prodotti',
+                            'completed'     => 'L\'esportazione di :count prodotti è pronta. Fai clic per scaricarla.',
+                            'failed'        => 'Impossibile completare l\'esportazione dei prodotti.',
+                            'too-many-rows' => 'L\'esportazione contiene più righe di quante ne consenta questo formato (:limit). Esporta in CSV.',
+                        ],
+                    ],
                     'name'                    => 'Nome',
                     'out-of-stock'            => 'Esaurito',
                     'price'                   => 'Prezzo',
@@ -2639,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Nessuna voce selezionata.',
+                'selection-truncated'              => 'Questa azione può elaborare solo i primi :limit dei :total record corrispondenti.',
                 'must-select-a-mass-action-option' => 'È necessario selezionare un\'opzione per l\'azione in massa.',
                 'must-select-a-mass-action'        => 'È necessario selezionare un\'azione in massa.',
                 'link-copied'                      => 'Link copiato negli appunti.',

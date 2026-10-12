@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => '成功删除的选定产品成功',
                     'mass-update-queued'      => '所选产品正在后台更新',
                     'mass-update-success'     => '选定的产品成功更新了',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => '已将所有匹配产品的状态更新加入队列，完成后将通知您。',
+                            'title'     => '产品状态更新',
+                            'completed' => '已更新 :count 个产品的状态。',
+                            'failed'    => ':count 个产品的状态更新已完成，但出现错误。部分产品未更新。',
+                        ],
+                        'delete' => [
+                            'queued'    => '已将所有匹配产品的删除任务加入队列，完成后将通知您。',
+                            'title'     => '产品删除',
+                            'completed' => '已删除 :count 个产品。',
+                            'failed'    => ':count 个产品的删除已完成，但出现错误。部分产品未删除。',
+                        ],
+                        'export' => [
+                            'queued'        => '已将所有匹配商品的导出加入队列。准备就绪后，您将收到附带下载链接的通知。',
+                            'title'         => '商品导出',
+                            'completed'     => ':count 个商品的导出已就绪。点击下载。',
+                            'failed'        => '无法完成商品导出。',
+                            'too-many-rows' => '导出的行数超出此格式的上限（:limit）。请改用 CSV 导出。',
+                        ],
+                    ],
                     'name'                    => '姓名',
                     'out-of-stock'            => '缺货',
                     'price'                   => '价格',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => '没有选择记录。',
+                'selection-truncated'              => '此操作只能处理 :total 条匹配记录中的前 :limit 条。',
                 'must-select-a-mass-action-option' => '您必须选择质量行动\'s option.',
                 'must-select-a-mass-action'        => '您必须选择质量行动。',
                 'link-copied'                      => '链接已复制到剪贴板。',

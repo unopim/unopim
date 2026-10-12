@@ -487,3 +487,45 @@ it('should remove a category field option successfully', function () {
         'category_field_id' => $categoryFieldId,
     ]);
 });
+
+it('mass updates only the category fields matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => CategoryField::factory()->create(['code' => 'selall_match_'.$i, 'status' => 0])->id)->all();
+    $other = CategoryField::factory()->create(['code' => 'selall_other', 'status' => 0])->id;
+
+    $this->postJson(route('admin.catalog.category_fields.mass_update'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['selall_match_']],
+        'value'      => 1,
+    ])->assertOk();
+
+    expect(CategoryField::whereIn('id', $matching)->where('status', 1)->count())->toBe(3)
+        ->and((int) CategoryField::find($other)->status)->toBe(0);
+});
+
+it('mass deletes only the category fields matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => CategoryField::factory()->create(['code' => 'seldel_match_'.$i])->id)->all();
+    $other = CategoryField::factory()->create(['code' => 'seldel_other'])->id;
+
+    $this->postJson(route('admin.catalog.category_fields.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['seldel_match_']],
+    ])->assertOk();
+
+    expect(CategoryField::whereIn('id', $matching)->count())->toBe(0)
+        ->and(CategoryField::whereKey($other)->exists())->toBeTrue();
+});
+
+it('keeps the name category field when all category fields are selected for mass delete', function () {
+    $this->loginAsAdmin();
+
+    $nameFieldId = CategoryField::where('code', 'name')->first()->id;
+
+    $this->postJson(route('admin.catalog.category_fields.mass_delete'), ['select_all' => 1])
+        ->assertOk();
+
+    expect(CategoryField::whereKey($nameFieldId)->exists())->toBeTrue();
+});

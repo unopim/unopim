@@ -237,6 +237,27 @@ return [
                     'mass-delete-success'     => 'Wybrane produkty zostały pomyślnie usunięte',
                     'mass-update-queued'      => 'Wybrane produkty są aktualizowane w tle',
                     'mass-update-success'     => 'Wybrane produkty zostały pomyślnie zaktualizowane',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Aktualizacja statusu wszystkich pasujących produktów została dodana do kolejki. Otrzymasz powiadomienie po jej zakończeniu.',
+                            'title'     => 'Aktualizacja statusu produktów',
+                            'completed' => 'Zaktualizowano status :count produktów.',
+                            'failed'    => 'Aktualizacja statusu :count produktów zakończyła się błędami. Niektóre produkty nie zostały zaktualizowane.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Usuwanie wszystkich pasujących produktów zostało dodane do kolejki. Otrzymasz powiadomienie po jego zakończeniu.',
+                            'title'     => 'Usuwanie produktów',
+                            'completed' => 'Usunięto :count produktów.',
+                            'failed'    => 'Usuwanie :count produktów zakończyło się błędami. Niektóre produkty nie zostały usunięte.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Eksport wszystkich pasujących produktów został dodany do kolejki. Gdy będzie gotowy, otrzymasz powiadomienie z linkiem do pobrania.',
+                            'title'         => 'Eksport produktów',
+                            'completed'     => 'Eksport :count produktów jest gotowy. Kliknij, aby pobrać.',
+                            'failed'        => 'Nie udało się ukończyć eksportu produktów.',
+                            'too-many-rows' => 'Eksport zawiera więcej wierszy, niż pozwala ten format (:limit). Wyeksportuj jako CSV.',
+                        ],
+                    ],
                     'name'                    => 'Nazwa',
                     'out-of-stock'            => 'Brak w magazynie',
                     'price'                   => 'Cena',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Nie wybrano żadnych rekordów.',
+                'selection-truncated'              => 'Ta akcja może przetworzyć tylko pierwsze :limit z :total pasujących rekordów.',
                 'must-select-a-mass-action-option' => 'Musisz wybrać opcję masowej akcji.',
                 'must-select-a-mass-action'        => 'Musisz wybrać akcję masową.',
                 'link-copied'                      => 'Link skopiowany do schowka.',

@@ -94,7 +94,7 @@
 
                 <div class="ltr:pl-2.5 rtl:pr-2.5 flex items-center gap-2.5">
                     <p class="text-sm font-light text-gray-800 dark:text-white">
-                        @{{ @json(trans('admin::app.components.datagrid.toolbar.length-of')).replace(':length', applied.massActions.indices.length) }}
+                        @{{ @json(trans('admin::app.components.datagrid.toolbar.length-of')).replace(':length', selectedCount) }}
 
                         @{{ @json(trans('admin::app.components.datagrid.toolbar.selected')).replace(':total', available.meta.total) }}
                     </p>

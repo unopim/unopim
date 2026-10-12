@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Matagumpay na tinanggal ang mga napiling produkto',
                     'mass-update-queued'      => 'Ang mga napiling produkto ay ina-update sa background',
                     'mass-update-success'     => 'Matagumpay na na-update ang mga napiling produkto',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Naka-queue na ang pag-update ng status para sa lahat ng tumutugmang produkto. Aabisuhan ka kapag natapos na.',
+                            'title'     => 'Pag-update ng status ng produkto',
+                            'completed' => 'Na-update ang status ng :count produkto.',
+                            'failed'    => 'Natapos ang pag-update ng status ng :count produkto nang may mga error. Hindi na-update ang ilang produkto.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Naka-queue na ang pagbura para sa lahat ng tumutugmang produkto. Aabisuhan ka kapag natapos na.',
+                            'title'     => 'Pagbura ng produkto',
+                            'completed' => 'Nabura ang :count produkto.',
+                            'failed'    => 'Natapos ang pagbura ng :count produkto nang may mga error. Hindi nabura ang ilang produkto.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Nakapila na ang pag-export ng lahat ng tumutugmang produkto. Aabisuhan ka kasama ang link sa pag-download kapag handa na ito.',
+                            'title'         => 'Pag-export ng produkto',
+                            'completed'     => 'Handa na ang export ng :count produkto. I-click para i-download.',
+                            'failed'        => 'Hindi natapos ang pag-export ng produkto.',
+                            'too-many-rows' => 'Mas marami ang hilera ng export kaysa pinapayagan ng format na ito (:limit). Mag-export na lang bilang CSV.',
+                        ],
+                    ],
                     'name'                    => 'Pangalan',
                     'out-of-stock'            => 'Wala sa stock',
                     'price'                   => 'Presyo',
@@ -2642,6 +2663,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'Walang napiling tala.',
+                'selection-truncated'              => 'Ang unang :limit lamang sa :total tumutugmang record ang kayang iproseso ng aksyong ito.',
                 'must-select-a-mass-action-option' => 'Dapat kang pumili ng opsyon para sa mass action.',
                 'must-select-a-mass-action'        => 'Dapat kang pumili ng mass action.',
                 'link-copied'                      => 'Nakopya na ang link sa clipboard.',

@@ -277,10 +277,15 @@ First boot installs Composer dependencies into `./vendor`. The stack defaults to
 
 ### ☁️ AWS Marketplace
 <p>
-  <a href="https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw">
+  <a href="https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i">
     <img src="https://raw.githubusercontent.com/unopim/temp-media/main/aws-marketplace-banner.png" alt="Launch UnoPim on AWS Marketplace" width="720">
   </a>
 </p>
+
+Pre-configured AMIs — Ubuntu LEMP with Redis, Elasticsearch and phpMyAdmin:
+
+- [**UnoPim on AWS (x86_64)**](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i)
+- [**UnoPim on AWS (ARM64 / Graviton)**](https://aws.amazon.com/marketplace/pp/prodview-flks5cupod5mi)
 
 ## 🤝 Contributing
 

@@ -236,6 +236,27 @@ return [
                     'mass-delete-success'     => 'Selected Products Deleted Successfully',
                     'mass-update-queued'      => 'Selected Products Are Being Updated In The Background',
                     'mass-update-success'     => 'Selected Products Updated Successfully',
+                    'select-all'              => [
+                        'update-status' => [
+                            'queued'    => 'Status update queued for every matching product. You will be notified when it finishes.',
+                            'title'     => 'Product status update',
+                            'completed' => 'Status updated for :count products.',
+                            'failed'    => 'Status update of :count products finished with errors. Some products were not updated.',
+                        ],
+                        'delete' => [
+                            'queued'    => 'Deletion queued for every matching product. You will be notified when it finishes.',
+                            'title'     => 'Product deletion',
+                            'completed' => ':count products deleted.',
+                            'failed'    => 'Deletion of :count products finished with errors. Some products were not deleted.',
+                        ],
+                        'export' => [
+                            'queued'        => 'Export queued for every matching product. You will be notified with a download link when it is ready.',
+                            'title'         => 'Product export',
+                            'completed'     => 'Export of :count products is ready. Click to download.',
+                            'failed'        => 'The product export could not be completed.',
+                            'too-many-rows' => 'The export has more rows than this format allows (:limit). Export as CSV instead.',
+                        ],
+                    ],
                     'name'                    => 'Name',
                     'out-of-stock'            => 'Out of Stock',
                     'price'                   => 'Price',
@@ -2639,6 +2660,7 @@ return [
         'datagrid' => [
             'index' => [
                 'no-records-selected'              => 'No records have been selected.',
+                'selection-truncated'              => 'This action can process only the first :limit of the :total matching records.',
                 'must-select-a-mass-action-option' => 'You must select a mass action\'s option.',
                 'must-select-a-mass-action'        => 'You must select a mass action.',
                 'link-copied'                      => 'Link copied to clipboard.',

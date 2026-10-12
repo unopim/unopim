@@ -16,7 +16,7 @@ use Webkul\Admin\Http\Requests\CategoryDescendantsForm;
 use Webkul\Admin\Http\Requests\CategoryRequest;
 use Webkul\Admin\Http\Requests\CategorySearchForm;
 use Webkul\Admin\Http\Requests\CategoryTreeForm;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Http\Requests\SelectableMassDestroyRequest;
 use Webkul\Admin\Http\Resources\Catalog\CategoryTreeResource;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
@@ -411,11 +411,11 @@ class CategoryController extends Controller
     /**
      * Remove the specified resources from database.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(SelectableMassDestroyRequest $massDestroyRequest): JsonResponse
     {
         $suppressFlash = true;
 
-        $categoryIds = $massDestroyRequest->input('indices');
+        $categoryIds = $massDestroyRequest->selectedIds(CategoryDataGrid::class);
 
         foreach ($categoryIds as $categoryId) {
             $category = $this->categoryRepository->find($categoryId);
@@ -448,8 +448,8 @@ class CategoryController extends Controller
         }
 
         if (
-            count($categoryIds) != 1
-            || $suppressFlash == true
+            $suppressFlash == true
+            || $categoryIds->count() != 1
         ) {
             return new JsonResponse([
                 'message' => trans('admin::app.catalog.categories.delete-success'),
