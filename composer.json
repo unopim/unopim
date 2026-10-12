@@ -28,7 +28,7 @@
         "kalnoy/nestedset": "^7.0",
         "khaled.alshamaa/ar-php": "^6.0.0",
         "konekt/concord": "^1.16",
-        "laravel/ai": "^0.11.0",
+        "laravel/ai": "^1.1.0",
         "laravel/framework": "^13.0",
         "laravel/octane": "^2.3",
         "laravel/passport": "^13.7",
@@ -43,6 +43,7 @@
         "prettus/l5-repository": "^4.0",
         "pusher/pusher-php-server": "^7.0",
         "shetabit/visitor": "^4.1",
+        "symfony/filesystem": "^8.0",
         "symfony/intl": "^7.0"
     },
     "require-dev": {
@@ -50,7 +51,7 @@
         "driftingly/rector-laravel": "^2.5",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.10",
-        "laravel/boost": "^2.1",
+        "laravel/boost": "^2.10",
         "laravel/pint": "^1.29.1",
         "mockery/mockery": "^1.6",
         "nunomaduro/collision": "^8.0",

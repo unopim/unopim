@@ -3,8 +3,8 @@
 use Illuminate\Support\Facades\Event;
 use Laravel\Ai\Responses\AgentResponse;
 use Laravel\Ai\Responses\Data\Meta;
+use Laravel\Ai\Responses\Data\TextUsage;
 use Laravel\Ai\Responses\Data\ToolResult;
-use Laravel\Ai\Responses\Data\Usage;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\ToolRegistry;
 use Webkul\AiAgent\Chat\Tools\VerifyProduct;
@@ -30,7 +30,7 @@ function mutationToolResult(string $name, array $payload, bool $failed = false):
  */
 function blockingActionResult(array $toolResults): array
 {
-    $response = (new AgentResponse('invocation', 'reply', new Usage, new Meta))
+    $response = (new AgentResponse('invocation', 'reply', new TextUsage, new Meta))
         ->withToolCallsAndResults(collect(), collect($toolResults));
 
     $runner = new AgentRunner(app(ToolRegistry::class));
