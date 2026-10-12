@@ -7,6 +7,7 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Symfony\Component\Mime\MimeTypes;
+use Webkul\Core\Helpers\MediaMimeTypes;
 
 class FileMimeExtensionMatch implements ValidationRule
 {
@@ -25,7 +26,9 @@ class FileMimeExtensionMatch implements ValidationRule
 
         $mimeType = $value->getMimeType();
 
-        $mimeTypes = MimeTypes::getDefault()->getMimeTypes($extension);
+        $normalizedExtension = self::normalizeExtension($extension);
+
+        $mimeTypes = MimeTypes::getDefault()->getMimeTypes($normalizedExtension);
 
         if ($mimeTypes === []) {
             $fail(trans('core::validation.file-mime-extension-mismatch', ['extension' => $extension, 'mimeType' => $mimeType]));
@@ -33,15 +36,16 @@ class FileMimeExtensionMatch implements ValidationRule
             return;
         }
 
-        if (strtolower((string) $extension) === 'jpeg') {
-            $extension = 'jpg';
-        }
-
-        if (! in_array($mimeType, $mimeTypes) || $value->guessExtension() !== strtolower((string) $extension)) {
+        if (! in_array($mimeType, $mimeTypes, true) || self::normalizeExtension($value->guessExtension() ?? '') !== $normalizedExtension) {
             $fail(trans('core::validation.file-mime-extension-mismatch', ['extension' => $extension, 'mimeType' => $mimeType]));
 
             return;
         }
+    }
+
+    public static function normalizeExtension(string $extension): string
+    {
+        return MediaMimeTypes::normalizeExtension($extension);
     }
 
     /**

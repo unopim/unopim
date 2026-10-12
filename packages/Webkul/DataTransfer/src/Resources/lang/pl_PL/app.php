@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Produkty',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Jednostka ":unit" nie jest prawidłową jednostką dla atrybutu pomiaru ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Klucz URL: \'%s\' został już wygenerowany dla przedmiotu o SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Nieprawidłowa wartość dla kolumny rodziny atrybutów (rodzina atrybutów nie istnieje?)',
                     'invalid-type'                             => 'Typ produktu jest nieprawidłowy lub nieobsługiwany',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'Nazwa pliku',
+            'file-name-info' => 'Wzorzec nazwy pliku. Znaczniki: [code], [date], [time], [entity_type]',
             'file-path'      => 'Ścieżka pliku',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'Wzorzec nazwy pliku. Znaczniki: [code], [date], [time], [entity_type]',
             'status'         => 'Status',
             'enable'         => 'Włączony',
             'all'            => 'Wszystkie',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolumny numer "%s" mają puste nagłówki.',
-            'column-name-invalid'  => 'Nieprawidłowe nazwy kolumn: "%s".',
-            'column-not-found'     => 'Brak wymaganych kolumn: %s.',
-            'column-numbers'       => 'Liczba kolumn nie odpowiada liczbie wierszy w nagłówku.',
-            'invalid-attribute'    => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
-            'system'               => 'Wystąpił nieoczekiwany błąd systemowy.',
-            'wrong-quotes'         => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
-            'file-empty'           => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
+            'column-empty-headers'   => 'Kolumny numer "%s" mają puste nagłówki.',
+            'column-name-invalid'    => 'Nieprawidłowe nazwy kolumn: "%s".',
+            'column-not-found'       => 'Brak wymaganych kolumn: %s.',
+            'column-numbers'         => 'Liczba kolumn nie odpowiada liczbie wierszy w nagłówku.',
+            'invalid-attribute'      => 'Nagłówek zawiera nieprawidłowe atrybuty: "%s".',
+            'system'                 => 'Wystąpił nieoczekiwany błąd systemowy.',
+            'wrong-quotes'           => 'Zastosowano krzywe cudzysłowy zamiast prostych cudzysłowów.',
+            'file-empty'             => 'Plik jest pusty lub nie zawiera wiersza nagłówkowego. Proszę przesłać prawidłowy plik z danymi.',
+            'file-missing'           => 'Nie znaleziono pliku źródłowego dla tego zadania. Sprawdź ścieżkę pliku w profilu, a następnie prześlij plik ponownie.',
         ],
     ],
     'job' => [

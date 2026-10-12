@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\DB;
 use Webkul\Installer\Database\Seeders\User\AdminsTableSeeder;
 
 beforeEach(function () {
-    DB::table('admins')->where('email', 'admin@example.com')->delete();
+    DB::table('admins')->delete();
 });
 
 describe('AdminsTableSeeder honours APP_TIMEZONE (issue #846)', function () {

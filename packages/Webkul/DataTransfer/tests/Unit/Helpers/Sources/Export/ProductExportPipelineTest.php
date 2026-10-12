@@ -7,6 +7,7 @@ use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
 use Webkul\DataTransfer\Helpers\Sources\Export\ProductSource;
 use Webkul\DataTransfer\Models\JobInstances;
 use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Repositories\ProductRepository;
 
@@ -14,7 +15,7 @@ function pipelineProduct(string $sku, int $familyId, int $status = 1): Product
 {
     $product = Product::create([
         'sku'                 => $sku,
-        'type'                => 'simple',
+        'type'                => ProductType::Simple->value,
         'status'              => $status,
         'attribute_family_id' => $familyId,
     ]);

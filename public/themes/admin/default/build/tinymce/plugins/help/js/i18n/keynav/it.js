@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.it',
   '\n' +
   "<p>Per passare da una sezione dell'interfaccia utente alla precedente, premere <strong>MAIUSC+TAB</strong>.</p>\n" +
   '\n' +
-  "<p>L'ordine di <strong>tabulazione</strong> di queste sezioni dell'interfaccia utente è:\n" +
+  "<p>L'ordine di <strong>tabulazione</strong> di queste sezioni dell'interfaccia utente è:</p>\n" +
   '\n' +
   '<ol>\n' +
   '  <li>Barra dei menu</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.it',
   "<p>Se una sezione dell'interfaccia utente non è presente, viene saltata.</p>\n" +
   '\n' +
   '<p>Se il piè di pagina ha lo stato attivo per la navigazione tramite tastiera e non è presente alcuna barra laterale visibile, premendo <strong>MAIUSC+TAB</strong>\n' +
-  "  si sposta lo stato attivo sul primo gruppo di barre degli strumenti, non sull'ultimo.\n" +
+  "  si sposta lo stato attivo sul primo gruppo di barre degli strumenti, non sull'ultimo.</p>\n" +
   '\n' +
   "<h1>Navigare all'interno delle sezioni dell'interfaccia utente</h1>\n" +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.it',
   "  <li>consentono di spostarsi tra le voci nel percorso dell'elemento del piè di pagina.</li>\n" +
   '</ul>\n' +
   '\n' +
-  '<p>I tasti freccia <strong>Giù</strong> e <strong>Su</strong>\n' +
+  '<p>I tasti freccia <strong>Giù</strong> e <strong>Su</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>consentono di spostarsi tra le voci di un menu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.it',
   '\n' +
   "<p>I tasti <strong>freccia</strong> consentono di spostarsi all'interno della sezione dell'interfaccia utente con stato attivo.</p>\n" +
   '\n' +
-  '<p>Per chiudere un menu aperto, un sottomenu aperto o un menu a comparsa aperto, premere il tasto <strong>ESC</strong>.\n' +
+  '<p>Per chiudere un menu aperto, un sottomenu aperto o un menu a comparsa aperto, premere il tasto <strong>ESC</strong>.</p>\n' +
   '\n' +
   "<p>Se lo stato attivo corrente si trova nella parte superiore di una particolare sezione dell'interfaccia utente, premendo il tasto <strong>ESC</strong> si esce\n" +
   '  completamente dalla navigazione tramite tastiera.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.it',
   '<h1>Eseguire una voce di menu o un pulsante della barra degli strumenti</h1>\n' +
   '\n' +
   '<p>Quando la voce di menu o il pulsante della barra degli strumenti desiderati sono evidenziati, premere il tasto di<strong>ritorno a capo</strong>, il tasto <strong>Invio</strong>\n' +
-  '  o la <strong>barra spaziatrice</strong> per eseguirli.\n' +
+  '  o la <strong>barra spaziatrice</strong> per eseguirli.</p>\n' +
   '\n' +
   '<h1>Navigare nelle finestre di dialogo non a schede</h1>\n' +
   '\n' +

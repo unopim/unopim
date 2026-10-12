@@ -58,7 +58,7 @@ class AttributeOptionDataGrid extends DataGrid
         foreach ($locales as $locale) {
             $labelColumn = $tablePrefix.'attribute_option_label.label';
             $localeColumn = $tablePrefix.'attribute_option_label.locale';
-            $labelAliasColumn = 'name_'.$locale;
+            $labelAliasColumn = DB::getQueryGrammar()->wrap('name_'.$locale);
 
             $queryBuilder->addSelect(DB::raw(
                 "MAX(CASE WHEN {$localeColumn} = '{$locale}' THEN $labelColumn END) as {$labelAliasColumn}"

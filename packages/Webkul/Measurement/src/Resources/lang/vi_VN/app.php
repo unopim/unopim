@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Một nhóm đo lường không thể có nhiều hơn :max đơn vị.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'Đơn vị ":unit" không phải là đơn vị hợp lệ cho thuộc tính đo lường ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'Nhóm đo lường đã được tạo thành công.',

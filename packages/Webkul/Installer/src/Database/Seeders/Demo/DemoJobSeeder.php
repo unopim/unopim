@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Webkul\DataTransfer\Services\SampleFiles;
 
 /**
  * Creates a ready-to-run import and export profile for every entity type the
@@ -18,8 +19,6 @@ use Illuminate\Support\Str;
  */
 class DemoJobSeeder extends Seeder
 {
-    protected const SAMPLE_SOURCE = 'data-transfer/samples';
-
     protected const IMPORT_TARGET = 'demo/imports';
 
     public function run(): void
@@ -80,24 +79,21 @@ class DemoJobSeeder extends Seeder
     }
 
     /**
-     * Copy the entity's shipped sample onto the private disk and return the
-     * path, or null when the package ships no sample for it — an import
-     * profile without a file is still valid, the operator uploads one.
+     * Copy the entity's shipped sample onto the private disk, or null when the
+     * package ships none. SampleFiles resolves the configured `sample_path`,
+     * preferring a copy published to the `public` disk over the packaged file.
      */
     protected function sampleFor(string $entityType): ?string
     {
-        $public = Storage::disk('public');
-        $private = Storage::disk('private');
+        $source = app(SampleFiles::class)->path('importers', $entityType);
 
-        $source = self::SAMPLE_SOURCE.'/'.$entityType.'.csv';
-
-        if (! $public->exists($source)) {
+        if (! $source) {
             return null;
         }
 
-        $target = self::IMPORT_TARGET.'/'.$entityType.'.csv';
+        $target = self::IMPORT_TARGET.'/'.basename($source);
 
-        $private->put($target, $public->get($source));
+        Storage::disk('private')->put($target, file_get_contents($source));
 
         return $target;
     }

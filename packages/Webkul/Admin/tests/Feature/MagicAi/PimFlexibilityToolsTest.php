@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Queue;
 use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\AgentRunner;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Chat\ChatUploadStore;
 use Webkul\AiAgent\Chat\Tools\CreateProduct;
 use Webkul\AiAgent\Chat\Tools\RecallMemory;
 use Webkul\AiAgent\Chat\Tools\RememberFact;
@@ -307,7 +308,7 @@ function insertPimFlexTokenUsage(int $userId, int $tokens): void
 
 function exposedPimFlexBudgetCheck(): ?JsonResponse
 {
-    $controller = new class(app(AgentRunner::class), app(MagicAIPlatformRepository::class)) extends ChatController
+    $controller = new class(app(AgentRunner::class), app(MagicAIPlatformRepository::class), app(ChatUploadStore::class)) extends ChatController
     {
         public function exposedCheckTokenBudget(): ?JsonResponse
         {

@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Tuotteet',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Yksikkö ":unit" ei ole kelvollinen yksikkö mittausmääritteelle ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL-avain: \'%s\' on jo luotu tuotteelle, jonka SKU on: \'%s\'.',
                     'invalid-attribute-family'                 => 'Virheellinen arvo attribuuttiperheen sarakkeelle (attribuuttiperhe ei ehkä ole olemassa?)',
                     'invalid-type'                             => 'Tuotetyyppi on virheellinen tai ei tuettu',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'Tiedostonimi',
+            'file-name-info' => 'Tiedostonimen malli. Paikkamerkit: [code], [date], [time], [entity_type]',
             'file-path'      => 'Tiedostopolku',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'Tiedostonimen malli. Paikkamerkit: [code], [date], [time], [entity_type]',
             'status'         => 'Tila',
             'enable'         => 'Käytössä',
             'all'            => 'Kaikki',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Sarakkeiden numero "%s" otsikot ovat tyhjät.',
-            'column-name-invalid'  => 'Virheelliset sarakkeen nimet: "%s".',
-            'column-not-found'     => 'Vaadittuja sarakkeita ei löytynyt: %s.',
-            'column-numbers'       => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
-            'invalid-attribute'    => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
-            'system'               => 'Odottamaton järjestelmävirhe tapahtui.',
-            'wrong-quotes'         => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
-            'file-empty'           => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
+            'column-empty-headers'   => 'Sarakkeiden numero "%s" otsikot ovat tyhjät.',
+            'column-name-invalid'    => 'Virheelliset sarakkeen nimet: "%s".',
+            'column-not-found'       => 'Vaadittuja sarakkeita ei löytynyt: %s.',
+            'column-numbers'         => 'Sarakkeiden määrä ei vastaa otsikoiden rivien määrää.',
+            'invalid-attribute'      => 'Otsikko sisältää virheellisiä attribuutteja: "%s".',
+            'system'                 => 'Odottamaton järjestelmävirhe tapahtui.',
+            'wrong-quotes'           => 'Käyrät lainausmerkit käytetty suoran lainausmerkin sijaan.',
+            'file-empty'             => 'Tiedosto on tyhjä tai siinä ei ole otsikkoriviä. Lataa kelvollinen tiedosto, jossa on tietoja.',
+            'file-missing'           => 'Tämän työn lähdetiedostoa ei löytynyt. Tarkista profiilin tiedostopolku ja lataa tiedosto uudelleen.',
         ],
     ],
     'job' => [

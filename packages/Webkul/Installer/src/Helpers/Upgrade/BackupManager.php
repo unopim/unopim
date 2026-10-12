@@ -4,6 +4,7 @@ namespace Webkul\Installer\Helpers\Upgrade;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Process\ExecutableFinder;
 use Symfony\Component\Process\Process;
 
 /**
@@ -69,10 +70,22 @@ class BackupManager
         /**
          * `--no-tablespaces` keeps mysqldump 8 from reading INFORMATION_SCHEMA
          * tablespace data, which needs the PROCESS privilege that a
-         * least-privileged application user is not granted.
+         * least-privileged application user is not granted. MariaDB has no
+         * tablespace metadata and rejects the option outright, so it is sent
+         * only to MySQL.
          */
         $command = match ($driver) {
-            'mysql' => ['mysqldump', '--host='.$host, '--port='.$port, '--user='.$username, '--single-transaction', '--no-tablespaces', '--routines', '--result-file='.$path, $database],
+            'mysql', 'mariadb' => [
+                $this->mysqlDumpBinary($driver),
+                '--host='.$host,
+                '--port='.$port,
+                '--user='.$username,
+                '--single-transaction',
+                ...($driver === 'mysql' ? ['--no-tablespaces'] : []),
+                '--routines',
+                '--result-file='.$path,
+                $database,
+            ],
             'pgsql' => ['pg_dump', '--host='.$host, '--port='.$port, '--username='.$username, '--file='.$path, $database],
             default => throw new \RuntimeException(trans('installer::app.upgrade.backup.unsupported-driver', ['driver' => $driver])),
         };
@@ -82,11 +95,25 @@ class BackupManager
          * password never appears in the host's process table.
          */
         $env = match ($driver) {
-            'mysql' => ['MYSQL_PWD' => $password],
-            'pgsql' => ['PGPASSWORD' => $password],
+            'mysql', 'mariadb' => ['MYSQL_PWD' => $password],
+            'pgsql'            => ['PGPASSWORD' => $password],
         };
 
         return new Process($command, base_path(), $env + ['PATH' => getenv('PATH') ?: '/usr/bin:/bin']);
+    }
+
+    /**
+     * MariaDB 11 renamed its client binaries and ships the `mysqldump` alias
+     * only as a deprecated shim, so the modern name is preferred where the
+     * server is MariaDB and the alias kept as the fallback.
+     */
+    protected function mysqlDumpBinary(string $driver): string
+    {
+        if ($driver !== 'mariadb') {
+            return 'mysqldump';
+        }
+
+        return (new ExecutableFinder)->find('mariadb-dump') ? 'mariadb-dump' : 'mysqldump';
     }
 
     /**

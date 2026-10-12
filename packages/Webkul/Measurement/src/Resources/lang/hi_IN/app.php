@@ -135,14 +135,6 @@ return [
         'max_units'        => 'एक मापन परिवार में :max से अधिक इकाइयाँ नहीं हो सकतीं।',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'इकाई ":unit", ":attribute" माप विशेषता के लिए मान्य इकाई नहीं है।',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'मापन परिवार सफलतापूर्वक बनाया गया।',

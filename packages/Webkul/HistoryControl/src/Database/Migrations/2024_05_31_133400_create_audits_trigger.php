@@ -15,6 +15,7 @@ return new class extends Migration
 
         switch ($driver) {
             case 'mysql':
+            case 'mariadb':
                 // MySQL trigger
                 if (! DB::select("SELECT * FROM information_schema.TRIGGERS WHERE TRIGGER_NAME = 'audit_before_insert' AND EVENT_OBJECT_SCHEMA = '".DB::getDatabaseName()."'")) {
                     DB::unprepared('
@@ -103,6 +104,7 @@ return new class extends Migration
 
         switch ($driver) {
             case 'mysql':
+            case 'mariadb':
                 DB::unprepared('DROP TRIGGER IF EXISTS `audit_before_insert`');
                 break;
 

@@ -1,6 +1,7 @@
 <?php
 
 use Webkul\Core\Rules\IpPatternRule;
+use Webkul\MagicAI\MagicAI;
 
 return [
     /**
@@ -37,6 +38,13 @@ return [
                 'title' => 'admin::app.configuration.index.general.magic-ai.settings.ai-model',
                 'type'  => 'blade',
                 'path'  => 'admin::configuration.magic-ai.field.text-generation-model',
+            ], [
+                'name'          => 'max_tokens',
+                'title'         => 'admin::app.configuration.index.general.magic-ai.settings.max-tokens',
+                'type'          => 'number',
+                'info'          => 'admin::app.configuration.index.general.magic-ai.settings.max-tokens-info',
+                'default_value' => (string) MagicAI::DEFAULT_MAX_TOKENS,
+                'validation'    => ['nullable', 'integer', 'min:1', 'max:'.MagicAI::MAX_TOKENS_CEILING],
             ],
         ],
     ], [

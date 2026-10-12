@@ -135,14 +135,6 @@ return [
         'max_units'        => 'Une famille de mesures ne peut pas avoir plus de :max unités.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'L\'unité ":unit" n\'est pas une unité valide pour l\'attribut de mesure ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'La famille de mesures a été créée avec succès.',

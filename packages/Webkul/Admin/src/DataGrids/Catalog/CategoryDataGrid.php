@@ -6,9 +6,11 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\LazyCollection;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\DataGrid\DataGrid;
+use Webkul\ElasticSearch\Cursor\MatchingIdCursor;
 
 class CategoryDataGrid extends DataGrid
 {
@@ -146,12 +148,39 @@ class CategoryDataGrid extends DataGrid
     {
         if (bouncer()->hasPermission('catalog.categories.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('admin::app.catalog.categories.index.datagrid.delete'),
-                'method'  => 'POST',
-                'url'     => route('admin.catalog.categories.mass_delete'),
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('admin::app.catalog.categories.index.datagrid.delete'),
+                'method'              => 'POST',
+                'url'                 => route('admin.catalog.categories.mass_delete'),
+                'options'             => ['actionType' => 'delete'],
+                'supports_select_all' => true,
             ]);
         }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMatchingIds(): LazyCollection
+    {
+        if (! config('elasticsearch.enabled')) {
+            return parent::getMatchingIds();
+        }
+
+        $this->prepareColumns();
+
+        return MatchingIdCursor::lazy(
+            strtolower(config('elasticsearch.prefix').'_categories'),
+            ['bool' => $this->getElasticFilters($this->validatedRequest()['filters'] ?? []) ?: new \stdClass],
+            static::MATCHING_IDS_BATCH_SIZE,
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPrimaryDatabaseColumn(): string
+    {
+        return 'cat.id';
     }
 
     /**

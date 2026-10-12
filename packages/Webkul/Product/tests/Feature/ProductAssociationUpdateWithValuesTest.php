@@ -43,7 +43,7 @@ it('dual-writes associations to the link table when updated via updateWithValues
         ->and($updated->values['associations']['up_sells'] ?? null)->toBe([$upSell->sku]);
 
     // The link table now mirrors it.
-    $this->assertDatabaseCount('product_associations', 2);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(2);
 
     expect(
         DB::table('product_associations')
@@ -77,7 +77,7 @@ it('removes stale link-table rows when associations shrink via updateWithValues'
         ],
     ], $source->id);
 
-    $this->assertDatabaseCount('product_associations', 2);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(2);
 
     $this->productRepository->updateWithValues([
         'sku'    => $source->sku,
@@ -87,5 +87,5 @@ it('removes stale link-table rows when associations shrink via updateWithValues'
         ],
     ], $source->id);
 
-    $this->assertDatabaseCount('product_associations', 1);
+    expect(DB::table('product_associations')->where('product_id', $source->id)->count())->toBe(1);
 });

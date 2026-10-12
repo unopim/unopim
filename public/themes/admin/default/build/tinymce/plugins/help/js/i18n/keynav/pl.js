@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pl',
   '\n' +
   '<p>Aby przenieść się z danej sekcji interfejsu użytkownika do poprzedniej, naciśnij <strong>Shift+Tab</strong>.</p>\n' +
   '\n' +
-  '<p>Kolejność klawisza <strong>Tab</strong> w takich sekcjach interfejsu użytkownika jest następująca:\n' +
+  '<p>Kolejność klawisza <strong>Tab</strong> w takich sekcjach interfejsu użytkownika jest następująca:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Pasek menu</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pl',
   '<p>Jeżeli nie ma sekcji interfejsu użytkownika, jest to pomijane.</p>\n' +
   '\n' +
   '<p>Jeżeli na sekcji Footer jest ustawiony fokus nawigacji przy użyciu klawiatury i nie ma widocznego paska bocznego, naciśnięcie <strong>Shift+Tab</strong>\n' +
-  '  przenosi fokus na pierwszą grupę paska narzędzi, a nie na ostatnią.\n' +
+  '  przenosi fokus na pierwszą grupę paska narzędzi, a nie na ostatnią.</p>\n' +
   '\n' +
   '<h1>Nawigacja wewnątrz sekcji interfejsu użytkownika</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pl',
   '  <li>przenoszenia się pomiędzy elementami w ścieżce elementów w sekcji Footer.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Klawisze strzałek <strong>w dół</strong> i <strong>w górę</strong> służą do\n' +
+  '<p>Klawisze strzałek <strong>w dół</strong> i <strong>w górę</strong> służą do</p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>przenoszenia się pomiędzy elementami menu w menu,</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pl',
   '\n' +
   '<p>Klawisze <strong>strzałek</strong> służą do przemieszczania się w sekcji interfejsu użytkownika z ustawionym fokusem.</p>\n' +
   '\n' +
-  '<p>Aby zamknąć otwarte menu, otwarte podmenu lub otwarte menu wyskakujące, naciśnij klawisz <strong>Esc</strong>.\n' +
+  '<p>Aby zamknąć otwarte menu, otwarte podmenu lub otwarte menu wyskakujące, naciśnij klawisz <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Jeżeli fokus jest ustawiony na górze konkretnej sekcji interfejsu użytkownika, naciśnięcie klawisza <strong>Esc</strong> powoduje wyjście\n' +
   '  z nawigacji przy użyciu klawiatury.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.pl',
   '<h1>Wykonanie elementu menu lub przycisku paska narzędzi</h1>\n' +
   '\n' +
   '<p>Gdy podświetlony jest żądany element menu lub przycisk paska narzędzi, naciśnij klawisz <strong>Return</strong>, <strong>Enter</strong>\n' +
-  '  lub <strong>Spacja</strong>, aby go wykonać.\n' +
+  '  lub <strong>Spacja</strong>, aby go wykonać.</p>\n' +
   '\n' +
   '<h1>Nawigacja po oknie dialogowym bez kart</h1>\n' +
   '\n' +

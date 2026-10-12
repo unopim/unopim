@@ -96,7 +96,8 @@
         <template v-if="! isLoading">
             <div
                 v-for="record in records"
-                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 cursor-pointer transition-all hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all"
+                :class="{'cursor-pointer hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800': record.actions.some(action => action.index === 'edit')}"
                 :style="'grid-template-columns: 2fr repeat(' + (actions.length ? columns.length : (columns.length -1 )) + ', 1fr)'"
                 @click="handleRowClick($event, record)"
             >

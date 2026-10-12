@@ -76,3 +76,6 @@ tests/e2e-pw/.secrets.local
 # staging area for the separate unopim/agent-skills project — never commit here
 /agent-skills/
 .agents
+
+# local verification stamp written by unopim-verify; never committed
+/.verify-stamp

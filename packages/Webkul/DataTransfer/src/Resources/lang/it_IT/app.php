@@ -14,7 +14,8 @@ return [
         'products' => [
             'title'      => 'Prodotti',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'L\'unità ":unit" non è un\'unità valida per l\'attributo di misura ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'Chiave URL: \'%s\' è già stata generata per un articolo con l\'SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Valore non valido per la colonna della famiglia di attributi (la famiglia di attributi non esiste?)',
                     'invalid-type'                             => 'Tipo di prodotto non valido o non supportato',
@@ -189,8 +190,10 @@ return [
                 'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
                 'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
             ],
+            'file-name'      => 'Nome del file',
+            'file-name-info' => 'Schema del nome del file. Segnaposto: [code], [date], [time], [entity_type]',
             'file-path'      => 'Percorso File',
-            'file-path-info' => 'File name pattern. Tokens: [code], [date], [time], [entity_type]',
+            'file-path-info' => 'Schema del nome del file. Segnaposto: [code], [date], [time], [entity_type]',
             'status'         => 'Stato',
             'enable'         => 'Abilitato',
             'all'            => 'Tutti',
@@ -291,14 +294,15 @@ return [
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Le colonne numero "%s" hanno intestazioni vuote.',
-            'column-name-invalid'  => 'Intestazioni di colonna non valide: "%s".',
-            'column-not-found'     => 'Le colonne richieste non sono trovate: %s.',
-            'column-numbers'       => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
-            'invalid-attribute'    => 'L\'intestazione contiene attributi non validi: "%s".',
-            'system'               => 'Si è verificato un errore di sistema imprevisto.',
-            'wrong-quotes'         => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
-            'file-empty'           => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
+            'column-empty-headers'   => 'Le colonne numero "%s" hanno intestazioni vuote.',
+            'column-name-invalid'    => 'Intestazioni di colonna non valide: "%s".',
+            'column-not-found'       => 'Le colonne richieste non sono trovate: %s.',
+            'column-numbers'         => 'Il numero di colonne non corrisponde al numero di righe nell\'intestazione.',
+            'invalid-attribute'      => 'L\'intestazione contiene attributi non validi: "%s".',
+            'system'                 => 'Si è verificato un errore di sistema imprevisto.',
+            'wrong-quotes'           => 'Virgolette a parentesi usate al posto delle virgolette diritte.',
+            'file-empty'             => 'Il file è vuoto o non contiene una riga di intestazione. Si prega di caricare un file valido con dati.',
+            'file-missing'           => 'Impossibile trovare il file di origine per questo processo. Controlla il percorso del file nel profilo, quindi caricalo di nuovo.',
         ],
     ],
     'job' => [

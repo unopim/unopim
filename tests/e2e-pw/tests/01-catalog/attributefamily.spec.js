@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/family-fixtures');
-const { generateUid, fillLocalizedField } = require('../../utils/helpers');
+const { generateUid, fillLocalizedField, openFilterDrawer } = require('../../utils/helpers');
 const { gotoIndex, createFamily, deleteFamilyByCode, saveFamilyEdit } = require('../../utils/family-helpers');
 
 /**
@@ -46,7 +46,7 @@ test.describe('UnoPim Attribute Family Tests', () => {
 
   test('should open the filter menu when clicked', async ({ adminPage }) => {
     await gotoIndex(adminPage);
-    await adminPage.getByText('Filter', { exact: true }).click();
+    await openFilterDrawer(adminPage);
     await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
   });
 

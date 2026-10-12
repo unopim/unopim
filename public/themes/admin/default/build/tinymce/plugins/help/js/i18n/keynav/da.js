@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.da',
   '\n' +
   '<p>Gå fra én UI-sektion til den forrige ved at trykke på <strong>Shift+Tab</strong>.</p>\n' +
   '\n' +
-  '<p><strong>Tab</strong>-rækkefølgen af disse UI-sektioner er:\n' +
+  '<p><strong>Tab</strong>-rækkefølgen af disse UI-sektioner er:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Menulinje</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.da',
   '<p>Hvis en UI-sektion ikke er til stede, springes den over.</p>\n' +
   '\n' +
   '<p>Hvis sidefoden har fokus til tastaturnavigation, og der ikke er noget synligt sidepanel, kan der trykkes på <strong>Shift+Tab</strong>\n' +
-  '  for at flytte fokus til den første værktøjsgruppe, ikke den sidste.\n' +
+  '  for at flytte fokus til den første værktøjsgruppe, ikke den sidste.</p>\n' +
   '\n' +
   '<h1>Naviger inden for UI-sektioner</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.da',
   '  <li>flytter mellem elementer i sidefodens sti til elementet.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Pil <strong>ned</strong> og <strong>op</strong>\n' +
+  '<p>Pil <strong>ned</strong> og <strong>op</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>flytter mellem menupunkterne i en menu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.da',
   '\n' +
   '<p><strong>Piletasterne</strong> kører rundt inden for UI-sektionen, der fokuseres på.</p>\n' +
   '\n' +
-  '<p>For at lukke en åben menu, en åben undermenu eller en åben genvejsmenu trykkes der på <strong>Esc</strong>-tasten.\n' +
+  '<p>For at lukke en åben menu, en åben undermenu eller en åben genvejsmenu trykkes der på <strong>Esc</strong>-tasten.</p>\n' +
   '\n' +
   "<p>Hvis det aktuelle fokus er i 'toppen' af en bestemt UI-sektion, vil tryk på <strong>Esc</strong>-tasten også afslutte\n" +
   '  tastaturnavigationen helt.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.da',
   '<h1>Udfør et menupunkt eller en værktøjslinjeknap</h1>\n' +
   '\n' +
   '<p>Når det ønskede menupunkt eller den ønskede værktøjslinjeknap er fremhævet, trykkes der på <strong>Retur</strong>, <strong>Enter</strong>\n' +
-  '  eller <strong>mellemrumstasten</strong> for at udføre elementet.\n' +
+  '  eller <strong>mellemrumstasten</strong> for at udføre elementet.</p>\n' +
   '\n' +
   '<h1>Naviger i ikke-faneopdelte dialogbokse</h1>\n' +
   '\n' +

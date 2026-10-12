@@ -121,7 +121,7 @@
                             ];
                     @endphp
 
-                    <div class="js-sticky-header sticky -top-3 z-20 -mx-4 -mt-3 border-b border-gray-200 bg-unopim-primary-page px-4 pt-3 transition-shadow dark:border-gray-800 dark:bg-cherry-800">
+                    <div class="js-sticky-header sticky -top-3 z-[9999] -mx-4 -mt-3 border-b border-gray-200 bg-unopim-primary-page px-4 pt-3 transition-shadow dark:border-gray-800 dark:bg-cherry-800">
                         @isset($pageHeader)
                             {{ $pageHeader }}
                         @else
@@ -137,6 +137,8 @@
                             {{ $tabs ?? '' }}
                         </x-admin::layouts.edit-tabs>
                     </div>
+
+                    <x-admin::layouts.sticky-header-dropdown-guard />
 
                     <div class="pt-4">
                         @if ($activeTab === 'general')

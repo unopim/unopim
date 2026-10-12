@@ -232,3 +232,34 @@ it('should mass delete measurement families successfully', function () {
         $this->assertDatabaseMissing('measurement_families', ['id' => $id]);
     }
 });
+
+it('should mass delete only the measurement families matching the filters when all matching are selected', function () {
+
+    $matching = collect(range(1, 3))
+        ->map(fn (int $i) => MeasurementFamily::factory()->create(['code' => 'seldel_match_'.$i])->id)
+        ->all();
+
+    $other = MeasurementFamily::factory()->create(['code' => 'seldel_other'])->id;
+
+    $this->postJson(route('admin.measurement.families.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['seldel_match_']],
+    ])
+        ->assertOk()
+        ->assertJsonFragment(['success' => true]);
+
+    expect(MeasurementFamily::whereIn('id', $matching)->count())->toBe(0)
+        ->and(MeasurementFamily::whereKey($other)->exists())->toBeTrue();
+});
+
+it('should answer a mass delete with no families selected with a bad request', function () {
+
+    $this->postJson(route('admin.measurement.families.mass_delete'), [])
+        ->assertStatus(400)
+        ->assertJsonFragment(['success' => false]);
+
+    $this->postJson(route('admin.measurement.families.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['no_such_family_code']],
+    ])->assertStatus(400);
+});

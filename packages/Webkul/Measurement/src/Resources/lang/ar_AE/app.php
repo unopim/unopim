@@ -136,14 +136,6 @@ return [
         'max_units'        => 'لا يمكن أن تحتوي عائلة القياس على أكثر من :max وحدة.',
     ],
 
-    'importers' => [
-        'products' => [
-            'validation' => [
-                'invalid-unit' => 'الوحدة ":unit" ليست وحدة صالحة لسمة القياس ":attribute".',
-            ],
-        ],
-    ],
-
     'messages' => [
         'family' => [
             'created'                => 'تم إنشاء عائلة القياس بنجاح.',

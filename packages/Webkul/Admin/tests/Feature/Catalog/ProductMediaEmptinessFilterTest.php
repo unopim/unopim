@@ -158,12 +158,13 @@ describe('database', function () {
         $withoutValue->values = ['common' => []];
         $withoutValue->save();
 
-        $skusFor = function (string $operator) use ($attribute) {
+        $skusFor = function (string $operator) use ($attribute, $withValue, $withoutValue) {
             $response = $this->withHeaders(['X-Requested-With' => 'XMLHttpRequest'])
                 ->json('GET', route('admin.catalog.products.index'), [
                     'pagination'     => ['page' => 1, 'per_page' => 50],
                     'managedColumns' => ['sku', $attribute->code],
                     'filters'        => [
+                        'indices'        => [$withValue->id, $withoutValue->id],
                         $attribute->code => [['operator' => $operator, 'value' => '']],
                     ],
                 ])->assertOk();
