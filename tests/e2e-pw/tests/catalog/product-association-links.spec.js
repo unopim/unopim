@@ -1,5 +1,5 @@
 const { test, expect } = require('../../utils/fixtures');
-const { navigateTo, searchInDataGrid } = require('../../utils/helpers');
+const { navigateTo, searchInDataGrid, closeDropdown } = require('../../utils/helpers');
 
 /**
  * Product edit "Links" panel — Plan 3 slice (rich association links).
@@ -202,7 +202,7 @@ async function selectMultiselect(page, fieldName, optionLabel) {
 			.click();
 	}
 
-	await page.keyboard.press('Escape');
+	await closeDropdown(page);
 }
 
 /**

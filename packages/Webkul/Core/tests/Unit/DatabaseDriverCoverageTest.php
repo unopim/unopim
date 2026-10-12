@@ -1,8 +1,7 @@
 <?php
 
 /**
- * MariaDB has no CI matrix, so a driver branch that forgets it fails silently
- * in production rather than here. Laravel reports `mariadb` as a driver of its
+ * Laravel reports `mariadb` as a driver of its
  * own, so a file that decides anything on `mysql` and never mentions it is
  * taking the wrong branch on every MariaDB install.
  *

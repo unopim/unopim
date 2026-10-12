@@ -24,7 +24,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ro',
   '\n' +
   '<p>Pentru a trece de la o secțiune a interfeței cu utilizatorul la cea anterioară, apăsați <strong>Shift+Tab</strong>.</p>\n' +
   '\n' +
-  '<p>Ordinea cu <strong>Tab</strong> a acestor secțiuni ale interfeței cu utilizatorul este următoarea:\n' +
+  '<p>Ordinea cu <strong>Tab</strong> a acestor secțiuni ale interfeței cu utilizatorul este următoarea:</p>\n' +
   '\n' +
   '<ol>\n' +
   '  <li>Bara de meniu</li>\n' +
@@ -39,7 +39,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ro',
   '<p>În cazul în care o secțiune a interfeței cu utilizatorul nu este prezentă, aceasta este omisă.</p>\n' +
   '\n' +
   '<p>În cazul în care subsolul are focalizarea navigației asupra tastaturii și nu există o bară laterală vizibilă, apăsarea butonului <strong>Shift+Tab</strong>\n' +
-  '  mută focalizarea pe primul grup de bare de instrumente, nu pe ultimul.\n' +
+  '  mută focalizarea pe primul grup de bare de instrumente, nu pe ultimul.</p>\n' +
   '\n' +
   '<h1>Navigați în secțiunile interfeței cu utilizatorul</h1>\n' +
   '\n' +
@@ -54,7 +54,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ro',
   '  <li>navighează între elementele din calea elementelor subsolului.</li>\n' +
   '</ul>\n' +
   '\n' +
-  '<p>Tastele cu săgeți în <strong>sus</strong> și în <strong>jos</strong>\n' +
+  '<p>Tastele cu săgeți în <strong>sus</strong> și în <strong>jos</strong></p>\n' +
   '\n' +
   '<ul>\n' +
   '  <li>navighează între elementele de meniu dintr-un meniu.</li>\n' +
@@ -63,7 +63,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ro',
   '\n' +
   '<p>Tastele cu <strong>săgeți</strong> navighează în cadrul secțiunii interfeței cu utilizatorul asupra căreia se focalizează.</p>\n' +
   '\n' +
-  '<p>Pentru a închide un meniu deschis, un sub-meniu deschis sau un meniu pop-up deschis, apăsați tasta <strong>Esc</strong>.\n' +
+  '<p>Pentru a închide un meniu deschis, un sub-meniu deschis sau un meniu pop-up deschis, apăsați tasta <strong>Esc</strong>.</p>\n' +
   '\n' +
   '<p>Dacă focalizarea curentă este asupra „părții superioare” a unei anumite secțiuni a interfeței cu utilizatorul, prin apăsarea tastei <strong>Esc</strong> se iese, de asemenea,\n' +
   '  în întregime din navigarea de la tastatură.</p>\n' +
@@ -71,7 +71,7 @@ tinymce.Resource.add('tinymce.html-i18n.help-keynav.ro',
   '<h1>Executarea unui element de meniu sau a unui buton din bara de instrumente</h1>\n' +
   '\n' +
   '<p>Atunci când elementul de meniu dorit sau butonul dorit din bara de instrumente este evidențiat, apăsați <strong>Return</strong>, <strong>Enter</strong>,\n' +
-  '  sau <strong>bara de spațiu</strong> pentru a executa elementul.\n' +
+  '  sau <strong>bara de spațiu</strong> pentru a executa elementul.</p>\n' +
   '\n' +
   '<h1>Navigarea de dialoguri fără file</h1>\n' +
   '\n' +

@@ -5,6 +5,12 @@
 
     @php
         $canCreatePlatform = bouncer()->hasPermission('ai-agent.platform.create');
+
+        $providerLabels = collect(\Webkul\MagicAI\Enums\AiProvider::cases())
+            ->mapWithKeys(fn ($provider) => [$provider->value => $provider->label()]);
+
+        $providerDefaultUrls = collect(\Webkul\MagicAI\Enums\AiProvider::cases())
+            ->mapWithKeys(fn ($provider) => [$provider->value => $provider->defaultUrl()]);
     @endphp
 
     <v-magic-ai-platform>
@@ -95,7 +101,13 @@
                         :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                         @click="editRow(record)"
                     >
-                        <p v-text="record.label" class="truncate" :title="record.label"></p>
+                        <div class="flex items-center gap-2 min-w-0">
+                            <p v-text="record.label" class="truncate" :title="record.label"></p>
+
+                            <x-admin::badge variant="info" v-if="record.is_managed">
+                                @lang('admin::app.configuration.platform.managed-badge')
+                            </x-admin::badge>
+                        </div>
                         <p v-html="record.provider"></p>
                         <p v-text="record.models" class="truncate" :title="record.models"></p>
                         <p v-html="record.is_default"></p>
@@ -121,12 +133,22 @@
                 <form @submit="handleSubmit($event, saveWithTest)" ref="platformForm">
                     <x-admin::modal ref="platformModal">
                         <x-slot:header>
-                            <span class="dark:text-slate-50 text-lg font-semibold">
-                                @{{ isEditing ? '@lang('admin::app.configuration.platform.edit-title')' : '@lang('admin::app.configuration.platform.create-title')' }}
-                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="dark:text-slate-50 text-lg font-semibold">
+                                    @{{ isEditing ? '@lang('admin::app.configuration.platform.edit-title')' : '@lang('admin::app.configuration.platform.create-title')' }}
+                                </span>
+
+                                <x-admin::badge variant="info" v-if="form.is_managed">
+                                    @lang('admin::app.configuration.platform.managed-badge')
+                                </x-admin::badge>
+                            </div>
                         </x-slot>
 
                         <x-slot:content>
+                            <p v-if="form.is_managed" class="mb-4 text-sm text-gray-600 dark:text-gray-300">
+                                @lang('admin::app.configuration.platform.managed-note')
+                            </p>
+
                             <x-admin::form.control-group.control type="hidden" name="id" v-model="form.id" />
 
                             <!-- Provider -->
@@ -153,6 +175,7 @@
                                     :options="json_encode($providerOptions)"
                                     track-by="id"
                                     label-by="label"
+                                    ::disabled="form.is_managed"
                                     @input="onProviderChange($event)"
                                 >
                                 </x-admin::form.control-group.control>
@@ -165,32 +188,17 @@
                                     <x-admin::form.control-group.label class="required">
                                         @lang('admin::app.configuration.platform.fields.label')
                                     </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="text"
-                                        name="label"
-                                        v-model="form.label"
-                                        rules="required"
-                                        :label="trans('admin::app.configuration.platform.fields.label')"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="label"
+                                            v-model="form.label"
+                                            rules="required"
+                                            :label="trans('admin::app.configuration.platform.fields.label')"
+                                            ::readonly="form.is_managed"
+                                        />
+                                    </div>
                                     <x-admin::form.control-group.error control-name="label" />
-                                </x-admin::form.control-group>
-
-                                <!-- API Key (not for Ollama) -->
-                                <x-admin::form.control-group v-if="form.provider !== 'ollama'">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.configuration.platform.fields.api-key')
-                                    </x-admin::form.control-group.label>
-                                    <x-admin::form.control-group.control
-                                        type="password"
-                                        name="api_key"
-                                        v-model="form.api_key"
-                                        rules="required"
-                                        :label="trans('admin::app.configuration.platform.fields.api-key')"
-                                        @change="onApiKeyEntered()"
-                                        @input="onApiKeyInput($event)"
-                                    />
-                                    <p v-if="fetchingModels" class="mt-1 text-xs text-primary-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
-                                    <x-admin::form.control-group.error control-name="api_key" />
                                 </x-admin::form.control-group>
 
                                 <!-- API URL -->
@@ -198,14 +206,39 @@
                                     <x-admin::form.control-group.label>
                                         @lang('admin::app.configuration.platform.fields.api-url')
                                     </x-admin::form.control-group.label>
-                                    <input
-                                        type="text"
-                                        name="api_url"
-                                        v-model="form.api_url"
-                                        class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400 dark:bg-cherry-800 dark:border-cherry-800"
-                                    />
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="text"
+                                            name="api_url"
+                                            v-model="form.api_url"
+                                            :label="trans('admin::app.configuration.platform.fields.api-url')"
+                                            ::readonly="form.is_managed"
+                                            @input="onApiUrlInput($event)"
+                                        />
+                                    </div>
                                     <p class="mt-1 text-xs text-gray-500">@lang('admin::app.configuration.platform.fields.api-url-hint')</p>
                                     <x-admin::form.control-group.error control-name="api_url" />
+                                </x-admin::form.control-group>
+
+                                <!-- API Key (not for Ollama) -->
+                                <x-admin::form.control-group v-if="form.provider !== 'ollama'">
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.configuration.platform.fields.api-key')
+                                    </x-admin::form.control-group.label>
+                                    <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                        <x-admin::form.control-group.control
+                                            type="password"
+                                            name="api_key"
+                                            v-model="form.api_key"
+                                            rules="required"
+                                            :label="trans('admin::app.configuration.platform.fields.api-key')"
+                                            ::readonly="form.is_managed"
+                                            @change="onApiKeyEntered()"
+                                            @input="onApiKeyInput($event)"
+                                        />
+                                    </div>
+                                    <p v-if="fetchingModels" class="mt-1 text-xs text-primary-600">@lang('admin::app.configuration.platform.fetching-models')...</p>
+                                    <x-admin::form.control-group.error control-name="api_key" />
                                 </x-admin::form.control-group>
 
                                 <!-- Azure-specific fields -->
@@ -214,13 +247,17 @@
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.configuration.platform.fields.azure-deployment')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" />
+                                        <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                            <x-admin::form.control-group.control type="text" name="azure_deployment" v-model="form.azure_deployment" placeholder="gpt-4o" ::readonly="form.is_managed" />
+                                        </div>
                                     </x-admin::form.control-group>
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label>
                                             @lang('admin::app.configuration.platform.fields.azure-api-version')
                                         </x-admin::form.control-group.label>
-                                        <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" />
+                                        <div :class="{ 'pointer-events-none select-none opacity-70': form.is_managed }">
+                                            <x-admin::form.control-group.control type="text" name="azure_api_version" v-model="form.azure_api_version" placeholder="2024-10-21" ::readonly="form.is_managed" />
+                                        </div>
                                     </x-admin::form.control-group>
                                 </template>
 
@@ -237,11 +274,11 @@
                                             class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-200"
                                         >
                                             @{{ model }}
-                                            <button type="button" @click="removeModel(index)" class="hover:text-red-600" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
+                                            <button v-if="! form.is_managed" type="button" @click="removeModel(index)" class="hover:text-danger" :aria-label="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)" :title="'@lang('admin::app.configuration.platform.fields.remove-model')'.replace(':model', model)">&times;</button>
                                         </span>
                                     </div>
 
-                                    <div v-if="fetchedModels.length">
+                                    <div v-if="fetchedModels.length && ! form.is_managed">
                                         <input
                                             type="text"
                                             v-model="modelSearch"
@@ -271,7 +308,7 @@
                                         @lang('admin::app.configuration.platform.fields.enter-key-to-fetch')
                                     </p>
 
-                                    <div class="flex gap-2">
+                                    <div class="flex gap-2" v-if="! form.is_managed">
                                         <input
                                             type="text"
                                             v-model="customModel"
@@ -346,16 +383,13 @@
                             azure_deployment: 'gpt-4o',
                             azure_api_version: '2024-10-21',
                             is_default: false,
+                            is_managed: false,
                             status: true,
                         },
 
-                        providerLabels: {
-                            openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Google Gemini',
-                            groq: 'Groq', ollama: 'Ollama', xai: 'xAI (Grok)',
-                            mistral: 'Mistral', deepseek: 'DeepSeek',
-                            azure: 'Azure OpenAI', openrouter: 'OpenRouter',
-                            custom: 'Custom (OpenAI-compatible)',
-                        },
+                        providerLabels: @json($providerLabels),
+
+                        providerDefaultUrls: @json($providerDefaultUrls),
                     };
                 },
 
@@ -374,17 +408,6 @@
                         return this.fetchedModels.filter(m => m.toLowerCase().includes(search));
                     },
 
-                    providerDefaultUrls() {
-                        return {
-                            openai: 'https://api.openai.com/v1', anthropic: 'https://api.anthropic.com/v1',
-                            gemini: 'https://generativelanguage.googleapis.com/v1beta',
-                            groq: 'https://api.groq.com/openai/v1', ollama: 'http://localhost:11434',
-                            xai: 'https://api.x.ai/v1', mistral: 'https://api.mistral.ai/v1',
-                            deepseek: 'https://api.deepseek.com', azure: '',
-                            openrouter: 'https://openrouter.ai/api/v1',
-                            custom: '',
-                        };
-                    },
                 },
 
                 methods: {
@@ -401,7 +424,7 @@
                         this.form = {
                             id: null, label: '', provider: '', api_url: '', api_key: '',
                             azure_deployment: 'gpt-4o', azure_api_version: '2024-10-21',
-                            is_default: false, status: true,
+                            is_default: false, is_managed: false, status: true,
                         };
                         this.selectedModels = [];
                         this.fetchedModels = [];
@@ -447,14 +470,43 @@
                         }, 500);
                     },
 
+                    onApiUrlEntered() {
+                        let url = (this.form.api_url || '').trim();
+
+                        if (! /^https?:\/\/[^\s\/]+/i.test(url)) {
+                            return;
+                        }
+
+                        let hasSavedKey = !! this.form.id;
+                        let hasTypedKey = this.form.api_key && this.form.api_key.length >= 10 && ! this.form.api_key.match(/^\*+$/);
+
+                        if (! hasSavedKey && ! hasTypedKey) {
+                            return;
+                        }
+
+                        this.fetchModels();
+                    },
+
+                    onApiUrlInput(event) {
+                        if (this._apiUrlInputTimer) {
+                            clearTimeout(this._apiUrlInputTimer);
+                        }
+
+                        this._apiUrlInputTimer = setTimeout(() => {
+                            this.onApiUrlEntered();
+                        }, 500);
+                    },
+
                     fetchModels() {
                         this.fetchingModels = true;
                         this.fetchError = '';
 
+                        let requestedUrl = this.form.api_url || '';
+
                         this.$axios.post("{{ route('admin.magic_ai.platform.fetch_models') }}", {
                             provider: this.form.provider,
                             api_key: this.form.api_key,
-                            api_url: this.form.api_url || undefined,
+                            api_url: requestedUrl || undefined,
                             id: this.form.id || undefined,
                         }).then((response) => {
                             this.fetchingModels = false;
@@ -462,13 +514,14 @@
                             let recommended = response.data.recommended || [];
                             this.fetchedModels = models;
 
+                            let urlUnchangedSinceRequest = this.form.api_url === requestedUrl;
+
+                            if (models.length && response.data.api_url && urlUnchangedSinceRequest) {
+                                this.form.api_url = response.data.api_url;
+                            }
+
                             if (models.length && this.selectedModels.length === 0) {
-                                if (recommended.length) {
-                                    this.selectedModels = recommended.filter(m => models.includes(m));
-                                }
-                                if (!this.selectedModels.length) {
-                                    this.selectedModels = models.slice(0, 3);
-                                }
+                                this.selectedModels = recommended.filter(m => models.includes(m));
                             }
 
                             if (!models.length) {
@@ -628,7 +681,7 @@
                                 api_url: data.api_url || '', api_key: data.api_key || '',
                                 azure_deployment: extras.deployment || 'gpt-4o',
                                 azure_api_version: extras.api_version || '2024-10-21',
-                                is_default: data.is_default, status: data.status,
+                                is_default: data.is_default, is_managed: data.is_managed, status: data.status,
                             };
                             this.selectedModels = data.models ? data.models.split(',').map(m => m.trim()).filter(m => m) : [];
                             this.fetchedModels = [];

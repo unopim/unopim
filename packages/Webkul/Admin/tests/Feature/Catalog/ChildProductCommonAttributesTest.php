@@ -10,6 +10,7 @@ use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Core\Models\Locale;
 use Webkul\Measurement\Models\AttributeMeasurement;
 use Webkul\Measurement\Models\MeasurementFamily;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 use Webkul\Product\Models\VariantStructure;
 use Webkul\Product\Models\VariantStructureAxis;
@@ -82,7 +83,7 @@ function issue1202Fixture(): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'CFG-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -265,7 +266,7 @@ function twoLevelVariantGroupFixture(): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'CFG2-'.Str::random(8),
         'variant_structure_id' => $structure->id,
@@ -332,7 +333,7 @@ function measurementVariantGroupFixture(): array
     ]);
 
     $configurable = app(ProductRepository::class)->create([
-        'type'                 => 'configurable',
+        'type'                 => ProductType::Configurable->value,
         'attribute_family_id'  => $family->id,
         'sku'                  => 'CFG3-'.Str::random(8),
         'variant_structure_id' => $structure->id,

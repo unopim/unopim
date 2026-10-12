@@ -137,6 +137,14 @@ return [
                     'delete-success' => 'Webhook-loggar raderades framgångsrikt',
                     'delete-failed'  => 'Radering av Webhook-loggar misslyckades oväntat',
                     'unauthorized'   => 'Denna åtgärd är inte tillåten',
+                    'select-all'     => [
+                        'delete' => [
+                            'queued'    => 'Borttagning har köats för alla matchande loggar. Du får ett meddelande när den är klar.',
+                            'title'     => 'Borttagning av webhook-loggar',
+                            'completed' => ':count webhook-loggar borttagna.',
+                            'failed'    => 'Borttagningen av :count webhook-loggar slutfördes med fel. Vissa loggar togs inte bort.',
+                        ],
+                    ],
                 ],
             ],
         ],
