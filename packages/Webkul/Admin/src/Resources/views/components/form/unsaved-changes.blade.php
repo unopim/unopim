@@ -183,7 +183,7 @@
                 this.onCustomRebase = (event) => {
                     const base = event.detail && event.detail.name;
 
-                    if (! base || this.touched[base]) {
+                    if (! base || this.touched[base] || this.touchedGroups[base]) {
                         return;
                     }
 
