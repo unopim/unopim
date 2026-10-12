@@ -1,0 +1,222 @@
+/**
+ * First-run bootstrap of UnoPim API integration credentials.
+ *
+ * Server-to-server admin login (the Vue "Sign In" button is unreliable in headless chromium),
+ * then chromium with that storage state drives the Vue integration form (no plain-HTML endpoint).
+ * If the admin already owns an integration (UnoPim enforces one-per-admin), reuse it and
+ * re-generate its secret. Session-cookie expiry is pinned so chromium keeps the cookies.
+ */
+'use strict';
+
+const fs = require('fs');
+const path = require('path');
+const { chromium, request } = require('@playwright/test');
+
+const CONFIG_PATH = path.resolve(__dirname, '..', process.env.PW_API_CONFIG || '.api-config.json');
+
+function writeConfig(config) {
+  fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), 'utf8');
+}
+
+// Login server-to-server and return a Playwright storage-state object for the caller to reuse.
+async function adminLoginStorageState({ baseUrl, adminEmail, adminPassword }) {
+  const ctx = await request.newContext({ baseURL: baseUrl });
+  try {
+    const loginPage = await ctx.get('/admin/login');
+    if (!loginPage.ok()) {
+      throw new Error(`GET /admin/login → ${loginPage.status()}`);
+    }
+    const m = (await loginPage.text()).match(/name="_token"\s+value="([^"]+)"/);
+    if (!m) throw new Error('Could not find CSRF _token on /admin/login');
+
+    const resp = await ctx.post('/admin/login', {
+      form: { _token: m[1], email: adminEmail, password: adminPassword },
+    });
+    if (resp.url().includes('/login')) {
+      throw new Error(`Login POST landed back on /login (status ${resp.status()}) — bad credentials?`);
+    }
+    const dashboard = await ctx.get('/admin/dashboard');
+    if (!dashboard.ok() || dashboard.url().includes('/login')) {
+      throw new Error(`Dashboard probe after login → ${dashboard.status()} ${dashboard.url()}`);
+    }
+    const state = await ctx.storageState();
+
+    // Pin session-cookie expiry — chromium drops -1 cookies as expired on reload.
+    const oneDay = Math.floor(Date.now() / 1000) + 24 * 60 * 60;
+    state.cookies = (state.cookies || []).map((c) =>
+      (c.expires === -1 || c.expires === undefined) ? { ...c, expires: oneDay } : c,
+    );
+    return state;
+  } finally {
+    await ctx.dispose();
+  }
+}
+
+// Read the credentials on an integration's edit page, generating/rotating the secret if needed.
+// ClientRepository::find() only accepts its own provisioned robot admin, so username/password below must come from this page, not the logged-in admin.
+async function readCredentialsOnEditPage(page) {
+  // Fresh integration: "Generate" mints client_id + secret_key. Existing: "Re-Generate" rotates the secret.
+  const generate = page.getByRole('button', { name: 'Generate', exact: true });
+  const regen = page.getByTitle('Re-Generate Secret Key');
+
+  if (await generate.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
+    await generate.click();
+    await resp;
+  } else if (await regen.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
+    await regen.click();
+    await resp;
+  }
+
+  // Credentials render as read-only rows; the full value lives in the <p>'s title attr.
+  const valueFor = async (label) => {
+    const row = page.locator('div.flex.items-center.gap-2')
+      .filter({ hasText: label })
+      .first();
+    return (await row.locator('p[title]').first().getAttribute('title').catch(() => '')) || '';
+  };
+
+  const cid = await valueFor('Client ID');
+  const sec = await valueFor('Secret Key');
+  const username = await valueFor('API Username');
+
+  // Masked placeholder (no p[title]) unless just created/regenerated — force a regenerate to recover it.
+  let password = await valueFor('API Password');
+
+  if (!password) {
+    const regenPassword = page.getByTitle('Regenerate password');
+
+    if (await regenPassword.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await regenPassword.click();
+
+      const agree = page.getByRole('button', { name: 'Agree', exact: true });
+      await agree.waitFor({ state: 'visible', timeout: 5000 });
+
+      const resp = page.waitForResponse((r) => r.request().method() === 'POST', { timeout: 15000 }).catch(() => null);
+      await agree.click();
+      await resp;
+
+      password = await valueFor('API Password');
+    }
+  }
+
+  if (cid && sec) return { client_id: cid, client_secret: sec, username, password };
+  return null;
+}
+
+// Open the first existing integration and return its credentials, regenerating the secret if needed.
+async function reuseExistingIntegration(page, baseUrl) {
+  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+  const editIcon = page.locator('[title="Edit"], .icon-edit').first();
+  if (!await editIcon.isVisible({ timeout: 5000 }).catch(() => false)) return null;
+  await editIcon.click();
+  await page.waitForURL(/\/admin\/configuration\/integrations\/edit\//, { timeout: 15000 });
+  await page.waitForLoadState('domcontentloaded', { timeout: 10000 }).catch(() => {});
+  return readCredentialsOnEditPage(page);
+}
+
+// Create a new integration; returns credentials, or null if it failed (admin already owns one — unique admin_id).
+async function tryCreateNewIntegration(page, baseUrl, integrationName) {
+  await page.goto(`${baseUrl}/admin/configuration/integrations`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+
+  const createBtn = page.getByRole('button', { name: 'Create', exact: true });
+  await createBtn.waitFor({ state: 'visible', timeout: 15000 });
+  await createBtn.click();
+
+  await page.locator('input[name="name"]').waitFor({ state: 'visible', timeout: 10000 });
+  await page.locator('input[name="name"]').fill(integrationName);
+
+  // Permission type is a required vue-multiselect (Custom / All).
+  const perm = page.locator('input[name="permission_type"]')
+    .locator('xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " multiselect ")][1]');
+  await perm.locator('.multiselect__tags').click();
+  await perm.locator('.multiselect__option', { hasText: 'All' }).first().click();
+
+  const postPromise = page.waitForResponse(
+    (r) => r.request().method() === 'POST' && r.url().includes('configuration/integrations'),
+    { timeout: 15000 },
+  ).catch(() => null);
+  await page.locator('button[type="submit"]').filter({ hasText: 'Save' }).first().click();
+  await page.waitForURL(/\/integrations\/edit\//, { timeout: 15000 }).catch(() => {});
+  const post = await postPromise;
+
+  if (!post || !/\/edit\//.test(page.url())) return null;
+  return readCredentialsOnEditPage(page);
+}
+
+async function createApiIntegration({ baseUrl, adminEmail, adminPassword, integrationName }) {
+  // 1) Server-to-server login → storage state
+  const state = await adminLoginStorageState({ baseUrl, adminEmail, adminPassword });
+  const stateFile = path.resolve(__dirname, '../.state/bootstrap-auth.json');
+  fs.mkdirSync(path.dirname(stateFile), { recursive: true });
+  fs.writeFileSync(stateFile, JSON.stringify(state, null, 2));
+
+  // 2) chromium with the storage state — only used for the Vue integration form
+  const browser = await chromium.launch({
+    headless: true,
+    args: ['--disable-gpu', '--disable-dev-shm-usage', '--no-sandbox'],
+  });
+  try {
+    const context = await browser.newContext({ storageState: stateFile });
+    const page = await context.newPage();
+
+    let creds = await tryCreateNewIntegration(page, baseUrl, integrationName);
+    if (!creds) {
+      creds = await reuseExistingIntegration(page, baseUrl);
+    }
+
+    if (!creds) {
+      throw new Error(
+        'Could not obtain API credentials. Try creating an integration manually at ' +
+        `${baseUrl}/admin/configuration/integrations then paste client_id + client_secret into .api-config.json.`,
+      );
+    }
+
+    if (!creds.username || !creds.password) {
+      throw new Error(
+        'Integration edit page never exposed the robot admin\'s API Username/Password (neither on ' +
+        'creation nor after "Regenerate password"). The OAuth client only authenticates that robot, ' +
+        `not the logged-in admin, so there is no valid username/password to save. Inspect ${baseUrl}` +
+        '/admin/configuration/integrations/edit/<id> manually.',
+      );
+    }
+
+    return {
+      client_id: creds.client_id,
+      client_secret: creds.client_secret,
+      username: creds.username,
+      password: creds.password,
+      savedAt: new Date().toISOString(),
+      integrationName,
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
+async function ensureApiCredentials({ baseUrl, adminEmail, adminPassword, integrationName }) {
+  const existing = require('./api-config').getCredentials();
+  if (existing.client_id && existing.client_secret) return existing;
+
+  const missing = [];
+  if (!adminEmail && !existing.username) missing.push('admin email');
+  if (!adminPassword && !existing.password) missing.push('admin password');
+  if (missing.length > 0) {
+    throw new Error(
+      `Unable to generate API credentials automatically. Missing: ${missing.join(', ')}. ` +
+      'Set ADMIN_EMAIL / ADMIN_PASSWORD env vars or seed .api-config.json.',
+    );
+  }
+
+  const credentials = await createApiIntegration({
+    baseUrl,
+    adminEmail,
+    adminPassword,
+    integrationName: integrationName || 'UnoPim API Test Integration',
+  });
+  writeConfig(credentials);
+  return credentials;
+}
+
+module.exports = { ensureApiCredentials, adminLoginStorageState };

@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Attribute",
+  "type": "object",
+  "required": ["code", "type"],
+  "properties": {
+    "code": { "type": "string" },
+    "type": { "type": "string" },
+    "validation": { "type": ["string", "null"] },
+    "regex_pattern": { "type": ["string", "null"] },
+    "position": { "type": ["integer", "string"] },
+    "is_required": { "type": ["boolean", "integer"] },
+    "is_unique": { "type": ["boolean", "integer"] },
+    "value_per_locale": { "type": ["boolean", "integer"] },
+    "value_per_channel": { "type": ["boolean", "integer"] },
+    "enable_wysiwyg": { "type": ["boolean", "integer"] },
+    "labels": { "type": ["object", "null"] }
+  }
+}

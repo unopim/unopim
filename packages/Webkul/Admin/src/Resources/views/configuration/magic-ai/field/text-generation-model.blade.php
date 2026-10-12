@@ -13,7 +13,7 @@
     }
 
     if (!$platform) {
-        $platform = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class)->getDefault();
+        $platform = app(\Webkul\MagicAI\Repository\MagicAIPlatformRepository::class)->getActiveDefault();
     }
 
     $modelOptions = [];

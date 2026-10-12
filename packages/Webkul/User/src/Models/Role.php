@@ -2,6 +2,7 @@
 
 namespace Webkul\User\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,12 @@ use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\User\Contracts\Role as RoleContract;
 use Webkul\User\Database\Factories\RoleFactory;
 
+#[Fillable([
+    'name',
+    'description',
+    'permission_type',
+    'permissions',
+])]
 class Role extends Model implements HistoryContract, RoleContract
 {
     use HasFactory;
@@ -29,27 +36,6 @@ class Role extends Model implements HistoryContract, RoleContract
     protected $historyProxyFields = [];
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'name',
-        'description',
-        'permission_type',
-        'permissions',
-    ];
-
-    /**
-     * The attributes that are castable.
-     *
-     * @var array
-     */
-    protected $casts = [
-        'permissions' => 'array',
-    ];
-
-    /**
      * Get the admins.
      *
      * @return HasMany
@@ -65,5 +51,15 @@ class Role extends Model implements HistoryContract, RoleContract
     protected static function newFactory(): Factory
     {
         return RoleFactory::new();
+    }
+
+    /**
+     * The attributes that are castable.
+     */
+    protected function casts(): array
+    {
+        return [
+            'permissions' => 'array',
+        ];
     }
 }

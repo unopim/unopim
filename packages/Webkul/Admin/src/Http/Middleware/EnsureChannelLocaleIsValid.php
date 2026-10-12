@@ -5,10 +5,6 @@ namespace Webkul\Admin\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 
-/**
- * Middleware to validate that the requested locale is available for the current requested channel.
- * If the locale is not available, it redirects to the first available locale for that channel.
- */
 class EnsureChannelLocaleIsValid
 {
     /**
@@ -26,7 +22,8 @@ class EnsureChannelLocaleIsValid
             $requestedChannel ??= core()->getDefaultChannel();
 
             $parameters['channel'] = $requestedChannel->code;
-            $parameters['locale'] = $requestedChannel->locales()->first()->code;
+            $parameters['locale'] = core()->getLocaleCodeInChannel($requestedChannel)
+                ?? core()->getDefaultLocaleCodeFromDefaultChannel();
 
             $routeName = $route->getName();
 

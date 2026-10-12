@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Primjer datoteke',
+        'variants'      => 'Primjer varijanti',
+        'multi-locale'  => 'Višejezični primjer',
+        'delete'        => 'Primjer brisanja',
+        'custom-fields' => 'Primjer prilagođenih polja',
+        'with-images'   => 'Primjer sa slikama (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Proizvodi',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Jedinica ":unit" nije valjana jedinica za mjerni atribut ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL ključ: \'%s\' već je generiran za stavku sa SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Neispravna vrijednost za kolonu obitelji atributa (obitelj atributa ne postoji?)',
                     'invalid-type'                             => 'Vrsta proizvoda je neispravna ili nije podržana',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'Vrijednost :code mora biti jedinstvena.',
                     'incorrect-family-for-variant'             => 'Obitelj mora biti ista kao obitelj roditelja',
                     'parent-not-exist'                         => 'Roditelj ne postoji.',
+                    'variant-structure-not-found'              => 'Struktura varijanti :code ne postoji za ovu obitelj atributa.',
                 ],
             ],
         ],
@@ -32,10 +43,203 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Polja kategorije',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod polja kategorije :code već je u upotrebi.',
+                    'code_not_found_to_delete' => 'Kod polja kategorije nije pronađen za brisanje.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Značajke',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod značajke :code već se koristi.',
+                    'code_not_found_to_delete'             => 'Kod značajke nije pronađen za brisanje.',
+                    'code_is_system_and_cannot_be_deleted' => 'Značajka sustava ne može se izbrisati.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Povezanosti proizvoda',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Polje \'%s\' je obavezno.',
+                    'self-link-not-allowed'       => 'Proizvod \'%s\' ne može biti povezan sam sa sobom.',
+                    'sku-not-found'               => 'Proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'related-sku-not-found'       => 'Povezani proizvod sa SKU-om \'%s\' nije pronađen.',
+                    'association-type-not-found'  => 'Vrsta povezanosti \'%s\' ne postoji ili nije aktivna.',
+                    'invalid-field-value'         => 'Navedena je nevažeća vrijednost za polje povezanosti.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Grupe značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Kod grupe značajki :code već se koristi.',
+                    'code_not_found_to_delete'             => 'Kod grupe značajki nije pronađen za brisanje.',
+                    'code_is_system_and_cannot_be_deleted' => 'Grupa značajki sustava ne može se izbrisati.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Obitelji značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod obitelji značajki :code već se koristi.',
+                    'code_not_found_to_delete' => 'Kod obitelji značajki nije pronađen za brisanje.',
+                    'invalid-attribute-group'  => 'Grupa značajki ":code" ne postoji.',
+                    'invalid-attribute'        => 'Značajka ":code" ne postoji.',
+                    'invalid-channel'          => 'Kanal ":code" ne postoji.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Opcije značajki',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Kod opcije značajki :code već se koristi.',
+                    'code_not_found_to_delete' => 'Kod opcije značajki nije pronađen za brisanje.',
+                    'locale-not-exist'         => 'Lokalizacija ":code" ne postoji.',
+                    'invalid-attribute'        => 'Značajka ":code" ne postoji.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Jezici',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Kod jezika \'%s\' već je uvezen u ovom paketu.',
+                    'code-not-found-to-delete'    => 'Jezik s kodom \'%s\' nije pronađen u sustavu.',
+                    'invalid-status'              => 'Status mora biti 0 ili 1 (ili prazno za zadano omogućeno).',
+                    'channel-related-locale-root' => 'Ne možete izbrisati jezik s kodom :code jer je povezan s kanalom.',
+                ],
+            ],
+        ],
+        'channels' => [
+            'title'      => 'Kanali',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Kanal s kodom :code nije pronađen za brisanje.',
+                    'locale-not-found'         => 'Jedan ili više jezika ne postoje.',
+                    'root-category-not-found'  => 'Glavna kategorija ne postoji.',
+                    'currency-not-found'       => 'Jedna ili više valuta ne postoje.',
+                    'invalid-locale'           => 'Jezik ne postoji.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'   => 'Valute',
+            'filters' => [
+                'status' => 'Status',
+                'enable' => 'Omogući',
+                'all'    => 'Sve',
+            ],
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Status mora biti 0 ili 1 (ili prazno za zadano omogućeno).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Uloge',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'   => 'Korisnici',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktivno',
+                'all'    => 'Sve',
+            ],
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
+        'export-too-large' => 'Ovaj izvoz je prevelik za pokretanje: procijenjeno :rows redaka × :columns stupaca (~:estimated) premašuje dostupan prostor (~:available). Suzite izvoz odabirom manje kanala/jezika (i atributa) i pokušajte ponovno.',
+        'fields'           => [
+            'file-format'            => 'Format datoteke',
+            'with-media'             => 'S medijima',
+            'with-associations'      => 'S povezivanjima',
+            'with-associations-info' => 'Uključi zastarjele SKU-popis stupce (up_sells, cross_sells i related_products) u izvoz',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-name'      => 'Naziv datoteke',
+            'file-name-info' => 'Predložak naziva datoteke. Oznake: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Putanja Datoteke',
+            'file-path-info' => 'Predložak naziva datoteke. Oznake: [code], [date], [time], [entity_type]',
+            'status'         => 'Status',
+            'enable'         => 'Omogućeno',
+            'all'            => 'Sve',
+        ],
         'products' => [
-            'title'      => 'Proizvodi',
+            'title'              => 'Proizvodi',
+            'invalid-locales'    => 'Nisu sve odabrane lokalizacije dostupne za odabrane kanale.',
+            'invalid-currencies' => 'Nisu sve odabrane valute dostupne za odabrane kanale.',
+            'filters'            => [
+                'channels'             => 'Kanali',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Valute',
+                'currencies-info'      => 'Atributi cijena izvoze se po odabranoj valuti. Ostavite prazno za izvoz svih valuta kanala.',
+                'locales'              => 'Lokalizacije',
+                'locales-info'         => 'Lokalizirani atributi izvoze se jednom po odabranoj lokalizaciji. Ostavite prazno za izvoz svih lokalizacija kanala.',
+                'attributes'           => 'Atributi',
+                'attributes-info'      => 'Izvoze se samo odabrani atributi. Ostavite prazno za izvoz svih atributa obitelji.',
+                'attribute-families'   => 'Obitelji atributa',
+                'categories'           => 'Kategorije',
+                'completeness'         => 'Potpunost',
+                'completeness-options' => [
+                    'none'         => 'Bez uvjeta potpunosti',
+                    'at-least-one' => 'Potpun u barem jednoj odabranoj lokalizaciji',
+                    'all'          => 'Potpun u svim odabranim lokalizacijama',
+                ],
+                'time-condition' => 'Vremenski uvjet',
+                'time-options'   => [
+                    'none'              => 'Bez uvjeta datuma',
+                    'last-n-days'       => 'Proizvodi ažurirani u posljednjih N dana',
+                    'between-dates'     => 'Proizvodi ažurirani između dva datuma',
+                    'since-last-export' => 'Proizvodi ažurirani od posljednjeg izvoza',
+                ],
+                'time-value'     => 'Broj dana',
+                'time-date'      => 'Datum početka',
+                'time-date-end'  => 'Datum završetka',
+                'status'         => 'Status',
+                'status-options' => [
+                    'enable'  => 'Omogućeno',
+                    'disable' => 'Onemogućeno',
+                    'all'     => 'Sve',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Identifikatori',
+                'identifiers-info' => 'Zalijepite jedan SKU / identifikator po retku za izvoz samo tih proizvoda. Ostavite prazno za izvoz svih proizvoda.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL ključ: \'%s\' već je generiran za stavku sa SKU: \'%s\'.',
@@ -47,22 +251,68 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategorije',
+            'title'   => 'Kategorije',
+            'filters' => [
+                'locales'      => 'Jezici',
+                'locales-info' => 'Kategorije se izvoze jednom za svaki odabrani jezik. Ostavite prazno za izvoz svih aktivnih jezika.',
+            ],
+        ],
+        'category-fields' => [
+            'title' => 'Polja kategorije',
+        ],
+        'attributes' => [
+            'title' => 'Značajke',
+        ],
+        'product-associations' => [
+            'title' => 'Povezanosti proizvoda',
+        ],
+        'attribute-groups' => [
+            'title' => 'Grupe značajki',
+        ],
+        'attribute-families' => [
+            'title' => 'Obitelji značajki',
+        ],
+        'attribute-options' => [
+            'title' => 'Opcije značajki',
+        ],
+        'locales' => [
+            'title' => 'Jezici',
+        ],
+        'channels' => [
+            'title' => 'Kanali',
+        ],
+        'currencies' => [
+            'title' => 'Valute',
+        ],
+        'roles' => [
+            'title' => 'Uloge',
+        ],
+        'users' => [
+            'title'   => 'Korisnici',
+            'filters' => [
+                'status' => 'Status',
+                'active' => 'Aktivno',
+                'all'    => 'Sve',
+            ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Kolone broj "%s" imaju prazne zaglavlja.',
-            'column-name-invalid'  => 'Neispravna imena kolona: "%s".',
-            'column-not-found'     => 'Potrebne kolone nisu pronađene: %s.',
-            'column-numbers'       => 'Broj kolona ne odgovara broju redaka u zaglavlju.',
-            'invalid-attribute'    => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
-            'system'               => 'Došlo je do neočekivane sistemske greške.',
-            'wrong-quotes'         => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
+            'column-empty-headers'   => 'Kolone broj "%s" imaju prazne zaglavlja.',
+            'column-name-invalid'    => 'Neispravna imena kolona: "%s".',
+            'column-not-found'       => 'Potrebne kolone nisu pronađene: %s.',
+            'column-numbers'         => 'Broj kolona ne odgovara broju redaka u zaglavlju.',
+            'invalid-attribute'      => 'Zaglavlje sadrži neispravne atribut(e): "%s".',
+            'system'                 => 'Došlo je do neočekivane sistemske greške.',
+            'wrong-quotes'           => 'Kovrčave navodnike koristite umjesto ravnih navodnika.',
+            'file-empty'             => 'Datoteka je prazna ili ne sadrži redak zaglavlja. Molimo učitajte valjanu datoteku s podacima.',
+            'file-missing'           => 'Izvorna datoteka za ovaj posao nije pronađena. Provjerite putanju datoteke u profilu, a zatim je ponovno učitajte.',
         ],
     ],
     'job' => [
         'started'   => 'Izvršenje posla je započelo',
         'completed' => 'Izvršenje posla je završeno',
+        'stalled'   => 'Zadatak nije odgovarao više od :minutes minuta i označen je kao neuspješan. Proces koji ga je izvršavao vjerojatno je prekinut.',
+        'reaped'    => 'Označeno je :count zaustavljenih zadataka kao neuspješnih.',
     ],
 ];

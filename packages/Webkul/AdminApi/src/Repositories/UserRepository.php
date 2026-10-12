@@ -9,44 +9,31 @@ use League\OAuth2\Server\Entities\UserEntityInterface;
 use Webkul\User\Models\Admin;
 
 /**
- * Custom UserRepository for Unopim that uses the Admin model
- * instead of the default App\Models\User.
- *
- * This repository is bound in the service container to ensure
- * that Passport's OAuth2 password grant uses the correct user model
- * when authenticating admin users.
+ * UserRepository backing Passport's OAuth2 password grant with the Admin model instead of App\Models\User.
  */
 class UserRepository extends BaseUserRepository
 {
     /**
      * Get a user entity by user credentials.
-     *
-     * @param  string  $username
-     * @param  string  $password
-     * @param  string  $grantType
-     * @param  ClientEntityInterface  $clientEntity
-     * @return UserEntityInterface|null
      */
     public function getUserEntityByUserCredentials(
         $username,
         $password,
         $grantType,
-        $clientEntity
-    ) {
-        // Find the admin user by email
+        ClientEntityInterface $clientEntity
+    ): ?UserEntityInterface {
         $user = Admin::where('email', $username)->first();
 
         if (! $user) {
             return null;
         }
 
-        // Verify the password is correct
         if (! $this->hasher->check($password, $user->password)) {
             return null;
         }
 
-        // Check if user account is active
-        if ($user->status === 0) {
+        // Truthy check (not === 0) so a status string "0" from emulated prepared statements still reads as inactive.
+        if (! $user->status) {
             return null;
         }
 

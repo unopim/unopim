@@ -2,11 +2,13 @@
 
 namespace Webkul\AdminApi\Traits;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Validation\Validator;
+use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
 use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 
 trait ApiResponse
@@ -63,15 +65,44 @@ trait ApiResponse
      * Handles and logs exceptions that occur during the execution of the application
      *
      * @param  \Exception|ModelNotFoundException  $e  The exception to be handled.
-     * @return \Illuminate\Http\JsonResponse*
+     * @return JsonResponse
      */
     protected function storeExceptionLog($e)
     {
-        if ($e instanceof ModelNotFoundException || $e instanceof UnprocessableEntityHttpException) {
+        if ($e instanceof ValidationException) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+                'errors'  => $e->errors(),
+            ], 422);
+        }
+
+        if ($e instanceof UnprocessableEntityHttpException) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
+
+        if ($e instanceof ModelNotFoundException) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
             ], 404);
+        }
+
+        if ($e instanceof AuthorizationException) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 403);
+        }
+
+        if ($e instanceof HttpExceptionInterface) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], $e->getStatusCode());
         }
 
         Log::error(

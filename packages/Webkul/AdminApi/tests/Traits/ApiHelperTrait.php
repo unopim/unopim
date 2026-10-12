@@ -20,9 +20,19 @@ trait ApiHelperTrait
 
         $clientRepo = new ClientRepository;
 
+        // Passport 13: createPasswordGrantClient(name, provider, confidential)
+        // — userId + redirect args dropped. Attach owner morph + legacy user_id
+        // afterwards so both Passport 13's owner() relation and UnoPim's legacy
+        // user_id lookups keep working.
         $client = $clientRepo->createPasswordGrantClient(
-            $admin->id, 'Client for Testing the api', env('APP_URL'), 'admins'
+            'Client for Testing the api', 'admins', confidential: true
         );
+
+        $client->forceFill([
+            'user_id'    => $admin->id,
+            'owner_type' => Admin::class,
+            'owner_id'   => $admin->id,
+        ])->save();
 
         Apikey::factory()->create([
             'permission_type' => $permissionType,

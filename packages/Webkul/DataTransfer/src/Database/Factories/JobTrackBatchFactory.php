@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\DataTransfer\Models\JobTrack;
 use Webkul\DataTransfer\Models\JobTrackBatch;
 
+/**
+ * @extends Factory<JobTrackBatch>
+ */
 class JobTrackBatchFactory extends Factory
 {
     /**
@@ -33,7 +36,7 @@ class JobTrackBatchFactory extends Factory
      */
     public function processed(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'state'   => 'processed',
             'summary' => ['created' => 10, 'updated' => 5],
         ]);
@@ -44,7 +47,7 @@ class JobTrackBatchFactory extends Factory
      */
     public function failed(): static
     {
-        return $this->state(fn () => [
+        return $this->state(fn (): array => [
             'state' => 'failed',
         ]);
     }

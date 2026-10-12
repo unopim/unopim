@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('magic_ai_system_prompts', function (Blueprint $table) {
+        Schema::create('magic_ai_system_prompts', function (Blueprint $table): void {
             $table->id();
             $table->string('title');
             $table->text('tone');

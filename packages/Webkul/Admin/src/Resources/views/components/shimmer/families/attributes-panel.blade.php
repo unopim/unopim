@@ -31,7 +31,7 @@
                 </div>
 
                 <!-- Draggable Attribute Groups -->
-                <div class="h-[calc(100vh-285px)] pb-4 overflow-auto ltr:border-r rtl:border-l border-gray-200">
+                <div class="h-[calc(100vh-285px)] pb-4 overflow-auto ltr:border-r rtl:border-l border-gray-200 dark:border-cherry-800">
                     @for ($j = 0; $j < 3; $j++)
                         <div>
                             <!-- Group Container -->

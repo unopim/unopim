@@ -18,7 +18,11 @@ interface Grammar
 
     public function length(string $column): string;
 
+    public function castToText(string $column): string;
+
     public function jsonExtract(string $column, string ...$pathSegments): string;
+
+    public function jsonContains(string $column, array $pathSegments, string $value): string;
 
     public function orderByField(string $column, array $ids, string $type = ''): string;
 

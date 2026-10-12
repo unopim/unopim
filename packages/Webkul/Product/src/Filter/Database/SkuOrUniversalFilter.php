@@ -3,6 +3,7 @@
 namespace Webkul\Product\Filter\Database;
 
 use Illuminate\Support\Facades\DB;
+use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Services\AttributeService;
 use Webkul\ElasticSearch\QueryString;
 
@@ -23,31 +24,33 @@ class SkuOrUniversalFilter extends AbstractDatabaseAttributeFilter
         $operator,
         $value,
         $options = []
-    ) {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+    ): static {
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
-        foreach ($fields as $attribute) {
-            $attribute = $this->attributeService->findAttributeByCode($attribute);
-            if (! $attribute) {
-                continue;
+        $escapedValue = QueryString::escapeValue(current((array) $value));
+
+        $likeSafeValue = addcslashes($escapedValue, '%_');
+
+        $this->queryBuilder->where(function ($query) use ($fields, $options, $likeSafeValue): void {
+            foreach ($fields as $attribute) {
+                $attribute = $this->attributeService->findAttributeByCode($attribute);
+                if (! $attribute instanceof Attribute) {
+                    continue;
+                }
+
+                $locale = $attribute->value_per_locale ? $options['locale'] : null;
+                $channel = $attribute->value_per_channel ? $options['channel'] : null;
+
+                $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
+
+                $searchPath = DB::rawQueryGrammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
+
+                $query->orWhereRaw(
+                    "LOWER($searchPath) LIKE ?",
+                    '%'.strtolower($likeSafeValue).'%'
+                );
             }
-
-            $locale = $attribute->value_per_locale ? $options['locale'] : null;
-            $channel = $attribute->value_per_channel ? $options['channel'] : null;
-
-            $attributePath = $this->getScopedAttributePath($attribute, $locale, $channel);
-
-            $escapedValue = QueryString::escapeValue(current((array) $value));
-
-            $searchPath = DB::rawQueryGrammar()->jsonExtract($this->getSearchTablePath($options), ...$attributePath);
-
-            $this->queryBuilder->orWhereRaw(
-                sprintf("LOWER($searchPath) LIKE ?"),
-                "%$escapedValue%"
-            );
-        }
+        });
 
         return $this;
     }

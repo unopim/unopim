@@ -2,7 +2,6 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
-use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Rules\SeparatorTypes;
 
 class CSV extends AbstractSource
@@ -19,20 +18,23 @@ class CSV extends AbstractSource
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         string $filePath,
         protected string $delimiter = ','
     ) {
+        $path = self::resolveReadablePath($filePath);
 
-        if (self::checkSeparator(Storage::disk('private')->path($filePath)) != $delimiter) {
-            throw new \LogicException("Separator '{$delimiter}' is not supported in the provided file.");
+        $detectedSeparator = self::checkSeparator($path);
+
+        if ($detectedSeparator === null) {
+            throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
         }
 
+        throw_if($detectedSeparator !== $delimiter, \LogicException::class, "Separator '{$delimiter}' is not supported in the provided file.");
+
         try {
-            $this->reader = fopen(Storage::disk('private')->path($filePath), 'r');
+            $this->reader = fopen($path, 'r');
 
             /**
              * Set a larger read buffer for better I/O performance on large files.
@@ -42,10 +44,21 @@ class CSV extends AbstractSource
                 stream_set_read_buffer($this->reader, 65536);
             }
 
-            $this->columnNames = fgetcsv($this->reader, $this->maxLineLength, $delimiter);
+            $headerRow = fgetcsv($this->reader, $this->maxLineLength, $delimiter, escape: '\\');
+
+            if (
+                in_array($headerRow, [false, null, [null]], true)
+                || count(array_filter($headerRow, fn ($v): bool => $v !== null && $v !== '')) === 0
+            ) {
+                throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+            }
+
+            $this->columnNames = $headerRow;
 
             $this->totalColumns = count($this->columnNames);
-        } catch (\Exception $e) {
+        } catch (\LogicException $e) {
+            throw $e;
+        } catch (\Exception) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
     }
@@ -55,6 +68,10 @@ class CSV extends AbstractSource
      */
     public static function checkSeparator(string $filePath): ?string
     {
+        if (! is_file($filePath) || ! is_readable($filePath)) {
+            return null;
+        }
+
         $handle = fopen($filePath, 'r');
         if ($handle === false) {
             return null;
@@ -79,8 +96,6 @@ class CSV extends AbstractSource
 
     /**
      * Close file handle
-     *
-     * @return void
      */
     public function __destruct()
     {
@@ -96,11 +111,11 @@ class CSV extends AbstractSource
      */
     protected function getNextRow(): array
     {
-        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter);
+        $parsed = fgetcsv($this->reader, $this->maxLineLength, $this->delimiter, escape: '\\');
 
-        if (is_array($parsed) && count($parsed) != $this->totalColumns) {
+        if (is_array($parsed) && count($parsed) !== $this->totalColumns) {
             foreach ($parsed as $element) {
-                if ($element && strpos($element, "'") !== false) {
+                if ($element && str_contains($element, "'")) {
                     $this->foundWrongQuoteFlag = true;
 
                     break;

@@ -1,0 +1,37 @@
+<?php
+
+namespace Webkul\AdminApi\Http\Requests\Catalog;
+
+use Webkul\AdminApi\Http\Requests\ApiFormRequest;
+use Webkul\Category\Rules\CategoryFieldValidationRules;
+use Webkul\Category\Rules\FieldTypes;
+use Webkul\Category\Rules\NotSupportedFields;
+use Webkul\Core\Rules\Code;
+
+class StoreCategoryFieldRequest extends ApiFormRequest
+{
+    protected function prepareForValidation(): void
+    {
+        if ($this->has('validation')) {
+            $this->merge(['validation' => CategoryFieldValidationRules::normalize($this->input('validation'))]);
+        }
+    }
+
+    public function rules(): array
+    {
+        $rules = [
+            'code' => [
+                'required',
+                sprintf('unique:%s,code', 'category_fields'),
+                new Code,
+                new NotSupportedFields,
+            ],
+            'type' => [
+                'required',
+                new FieldTypes,
+            ],
+        ];
+
+        return $rules + CategoryFieldValidationRules::for($this->input('type'), $this->input('validation'));
+    }
+}

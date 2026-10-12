@@ -2,11 +2,8 @@
 
 namespace Webkul\AiAgent\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
 use Webkul\AiAgent\DTOs\AgentPayload;
 use Webkul\AiAgent\Services\AgentService;
@@ -17,7 +14,7 @@ use Webkul\AiAgent\Services\AgentService;
  */
 class BatchAgentJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     public int $tries = 2;
 

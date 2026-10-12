@@ -32,8 +32,6 @@ class DashboardController extends Controller
 
     /**
      * Dashboard page.
-     *
-     * @return View|JsonResponse
      */
     public function index(): View
     {

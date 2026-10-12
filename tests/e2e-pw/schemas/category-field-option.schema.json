@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Category Field Option",
+  "type": "object",
+  "required": ["code"],
+  "properties": {
+    "code": { "type": "string" },
+    "sort_order": { "type": ["integer", "string"] },
+    "labels": { "type": ["object", "null"] }
+  }
+}

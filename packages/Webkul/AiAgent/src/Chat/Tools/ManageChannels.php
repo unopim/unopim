@@ -3,22 +3,33 @@
 namespace Webkul\AiAgent\Chat\Tools;
 
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class ManageChannels implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('manage_channels')
-            ->for('List channels with their locales and currencies.')
-            ->using(function () use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'settings.channels')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'manage_channels';
+            }
+
+            public function description(): string
+            {
+                return 'List channels with their locales and currencies.';
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'settings.channels')) {
                     return $denied;
                 }
 
@@ -26,7 +37,7 @@ class ManageChannels implements PimTool
                     ->select('c.id', 'c.code', 'c.root_category_id')
                     ->get();
 
-                $result = $channels->map(function ($ch) {
+                $result = $channels->map(function ($ch): array {
                     $locales = DB::table('channel_locales')
                         ->join('locales', 'locales.id', '=', 'channel_locales.locale_id')
                         ->where('channel_locales.channel_id', $ch->id)
@@ -53,6 +64,7 @@ class ManageChannels implements PimTool
                 });
 
                 return json_encode(['channels' => $result->toArray()]);
-            });
+            }
+        };
     }
 }

@@ -4,92 +4,97 @@
     'showPlaceholders' => false,
     'uploadedImages'   => [],
     'width'            => '120px',
-    'height'           => '120px'
+    'height'           => '120px',
+    'acceptedTypes'    => ['image/*', 'video/*'],
+    'acceptedExtensions' => [],
+    'mimeTypes'          => [],
+    'instructions'       => '',
+    'readOnly'           => false,
+    'allowDownload'      => false,
 ])
 
+@php
+    $dynamicUploadedImages = $attributes->get('::uploaded-images') ?? $attributes->get(':uploaded-images');
+    $rootAttributes = $attributes->except(['::uploaded-images', ':uploaded-images', 'uploaded-images']);
+    $resolvedMimeTypes = array_replace(
+        app(\Webkul\Core\Helpers\MediaMimeTypes::class)->forExtensions($acceptedExtensions),
+        $mimeTypes,
+    );
+@endphp
+
+<x-admin::media.field type="gallery" :name="$name" :instructions="$instructions">
+
 <v-media-gallery
+    {{ $rootAttributes }}
     name="{{ $name }}"
     v-bind:allow-multiple="{{ $allowMultiple ? true : false }}"
     v-bind:show-placeholders="{{ $showPlaceholders ? 'true' : 'false' }}"
-    :uploaded-images='{{ json_encode($uploadedImages) }}'
+    v-bind:read-only="{{ $readOnly ? 'true' : 'false' }}"
+    v-bind:allow-download="{{ $allowDownload ? 'true' : 'false' }}"
+    @if ($dynamicUploadedImages)
+        :uploaded-images="{{ $dynamicUploadedImages }}"
+    @else
+        :uploaded-images='{{ json_encode($uploadedImages) }}'
+    @endif
     width="{{ $width }}"
     height="{{ $height }}"
+    :accepted-types='@json($acceptedTypes)'
+    :accepted-extensions='@json($acceptedExtensions)'
+    :mime-types='@json((object) $resolvedMimeTypes)'
     :errors="errors"
 >
-    <x-admin::shimmer.image class="w-[110px] h-[110px] rounded" />
+    <x-admin::shimmer.media />
 </v-media-gallery>
+
+    <x-admin::media.image-viewer v-if="false" />
+</x-admin::media.field>
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-media-gallery-template">
-        <!-- Panel Content -->
         <div class="grid">
-            <div class="flex flex-wrap gap-1">
-                <div class="flex flex-col w-full max-w-[210px]">
-                    <!-- AI Image Generation -->
-                    <label
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-gray-300 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
-                        :for="$.uid + '_imageInput'"
-                        v-if="ai.enabled"
-                        @click="resetAIModal(); $refs.choiceImageModal.open()"
-                    >
-                        <div class="flex flex-col items-center">
-                            <span class="icon-image text-2xl"></span>
+            <div
+                class="grid gap-3"
+                :style="{ gridTemplateColumns: `repeat(auto-fill, minmax(${width}, 1fr))` }"
+            >
+                {{-- Add Media tile (shared dropzone; ordered last via CSS order) --}}
+                <v-media-add-tile
+                    v-if="ai.enabled"
+                    :trigger-modal="true"
+                    :compact="isCompactTile"
+                    :style="{ order: 9999 }"
+                    title="@lang('admin::app.components.media.images.add-media-btn')"
+                    hint="@lang('admin::app.components.media.images.drag-drop-hint')"
+                    :allowed-types="allowedTypesLabel"
+                    :read-only="readOnly"
+                    @trigger="resetAIModal(); $refs.choiceImageModal.open()"
+                    @drop="onDrop"
+                ></v-media-add-tile>
 
-                            <p class="grid text-sm text-gray-600 dark:text-gray-300 font-semibold text-center">
-                                @lang('admin::app.components.media.images.upload-media-btn')
+                <v-media-add-tile
+                    v-else
+                    :compact="isCompactTile"
+                    :multiple="allowMultiple"
+                    :style="{ order: 9999 }"
+                    title="@lang('admin::app.components.media.images.add-media-btn')"
+                    hint="@lang('admin::app.components.media.images.drag-drop-hint')"
+                    :allowed-types="allowedTypesLabel"
+                    :accept="acceptAttribute"
+                    :input-id="$.uid + '_imageInput'"
+                    :read-only="readOnly"
+                    @change="add"
+                    @drop="onDrop"
+                ></v-media-add-tile>
 
-                                <span class="text-xs mt-1 text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.images.allowed-types')
-                                </span>
-                                <span class="text-xs text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.videos.allowed-types')
-                                </span>
-                            </p>
-                        </div>
-                    </label>
-
-                    <label
-                        v-else
-                        class="grid justify-items-center items-center w-full h-[120px] max-w-[210px] max-h-[120px] border border-dashed dark:border-cherry-800 rounded cursor-pointer transition-all hover:border-gray-400 border-gray-300"
-                        :style="{'max-width': this.width, 'max-height': this.height}"
-                        :for="$.uid + '_imageInput'"
-                    >
-                        <div class="flex flex-col items-center justify-center">
-                            <span class="icon-image text-2xl"></span>
-
-                            <p class="grid text-sm text-gray-700 dark:text-gray-300 font-semibold text-center">
-                                @lang('admin::app.components.media.images.upload-media-btn')
-                                <span class="text-xs mt-1 text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.images.allowed-types')
-                                </span>
-                                <span class="text-xs text-gray-600 dark:text-gray-300 font-medium text-center">
-                                    @lang('admin::app.components.media.videos.allowed-types')
-                                </span>
-
-                            </p>
-
-                            <input
-                                type="file"
-                                class="hidden"
-                                :id="$.uid + '_imageInput'"
-                                accept="image/*, video/*"
-                                :multiple="allowMultiple"
-                                :ref="$.uid + '_imageInput'"
-                                @change="add"
-                            />
-                        </div>
-                    </label>
-                </div>
-
-                <!-- Uploaded Images -->
+                {{-- Uploaded Images / Videos (rendered after the upload tile) --}}
                 <draggable
-                    class="flex flex-wrap gap-1"
+                    class="contents"
                     ghost-class="draggable-ghost"
                     v-bind="{animation: 200}"
                     :list="images"
                     item-key="id"
                     handle=".icon-drag"
+                    :disabled="readOnly"
+                    @change="signalChange"
                 >
                     <template #item="{ element, index }">
                         <v-media-gallery-item
@@ -99,27 +104,30 @@
                             :image="element"
                             :width="width"
                             :height="height"
+                            :accepted-types="acceptedTypes"
+                            :accepted-extensions="acceptedExtensions"
+                            :mime-types="mimeTypes"
+                            :read-only="readOnly"
+                            :allow-download="allowDownload"
                             @onRemove="remove($event)"
                         >
                         </v-media-gallery-item>
                     </template>
                 </draggable>
+            </div>
 
-                <x-admin::form
-                    v-slot="{ meta, errors, handleSubmit }"
-                    as="div"
-                >
-                    <form>
-                        <!-- AI Content Generation Modal -->
-                        <x-admin::modal ref="choiceImageModal">
-                            <!-- Modal Header -->
+            <x-admin::form
+                v-slot="{ meta, errors, handleSubmit }"
+                as="div"
+            >
+                <form>
+                    <x-admin::modal ref="choiceImageModal">
                             <x-slot:header>
                                 <p class="grid text-base text-gray-800 dark:text-gray-300 font-semibold text-center">
-                                    @lang('admin::app.components.media.images.add-image-btn')
+                                    @lang('admin::app.components.media.images.add-media-btn')
                                 </p>
                             </x-slot>
 
-                            <!-- Modal Content -->
                             <x-slot:content>
                                 <div class="mb-4">
                                     <label
@@ -165,16 +173,14 @@
                                             type="file"
                                             class="hidden"
                                             :id="$.uid + '_imageInput_ai'"
-                                            accept="image/*"
+                                            :accept="acceptAttribute"
                                             :multiple="allowMultiple"
-                                            :ref="$.uid + '_imageInput'"
-                                            @change="add"
+                                            @change="add($event.target.files)"
                                         />
                                     </label>
                                 </div>
                             </x-slot>
 
-                            <!-- Modal Footer -->
                             <x-slot:footer>
                                 <div class="flex gap-x-2.5 items-center">
                                     <a href="#" @click="$refs.choiceImageModal.close()" class="secondary-button">
@@ -191,13 +197,11 @@
                     as="div"
                 >
                     <form @submit="handleSubmit($event, generate)">
-                        <!-- AI Content Generation Modal -->
                         <x-admin::modal ref="magicAIImageModal">
-                            <!-- Modal Header -->
                             <x-slot:header>
                                 <template v-if="! ai.images.length">
                                     <p class="flex gap-2.5 items-center text-lg text-gray-800 dark:text-white font-bold">
-                                        <span class="icon-magic text-2xl text-gray-800"></span>
+                                        <span class="icon-magic text-2xl text-gray-800 dark:text-white"></span>
 
                                         @lang('admin::app.components.media.images.ai-generation.title')
                                     </p>
@@ -206,7 +210,7 @@
                                 <template v-else>
                                     <p class="text-lg text-gray-800 truncate dark:text-white font-bold">
                                         <span
-                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-violet-50 dark:hover:bg-cherry-800 hover:rounded-md"
+                                            class="align-middle mr-1 icon-arrow-right text-2xl cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800 hover:rounded-md"
                                             @click="ai.images = []"
                                         ></span>
 
@@ -217,31 +221,21 @@
                                 </template>
                             </x-slot>
 
-                            <!-- Modal Content -->
                             <x-slot:content>
                                 <div v-show="! ai.images.length">
-                                    <!-- Model -->
-                                    <x-admin::form.control-group>
-                                        <x-admin::form.control-group.label class="required">
-                                            @lang('admin::app.components.media.images.ai-generation.model')
+                                    <x-admin::form.control-group v-if="imagePrompts.length">
+                                        <x-admin::form.control-group.label>
+                                            @lang('admin::app.components.tinymce.ai-generation.default-prompt')
                                         </x-admin::form.control-group.label>
-
-                                        <x-admin::form.control-group.control
-                                            type="select"
-                                            name="model"
-                                            rules="required"
-                                            ::value="ai.model"
-                                            v-model="ai.model"
-                                            ::options="aiModels"
-                                            track-by="id"
-                                            label-by="label"
-                                            :label="trans('admin::app.components.media.images.ai-generation.model')"
+                                        <select
+                                            @change="onImagePromptChange($event)"
+                                            class="w-full py-2.5 px-3 border rounded-md text-sm text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800"
                                         >
-                                        </x-admin::form.control-group.control>
-
-                                        <x-admin::form.control-group.error control-name="model" />
+                                            <option value="">@lang('admin::app.components.tinymce.ai-generation.select-prompt-template')</option>
+                                            <option v-for="p in imagePrompts" :key="p.title" :value="p.prompt">@{{ p.title }}</option>
+                                        </select>
                                     </x-admin::form.control-group>
-                                    <!-- Prompt -->
+
                                     <x-admin::form.control-group>
                                         <x-admin::form.control-group.label class="required">
                                             @lang('admin::app.components.media.images.ai-generation.prompt')
@@ -258,7 +252,6 @@
                                                 :label="trans('admin::app.components.media.images.ai-generation.prompt')"
                                             />
 
-                                            <!-- Icon inside textarea -->
                                             <div
                                                 class="absolute bottom-2.5 left-1 text-gray-400 cursor-pointer text-2xl"
                                                 @click="openSuggestions"
@@ -357,11 +350,11 @@
                                     <div class="grid grid-cols-4 gap-5">
                                         <div
                                             class="grid justify-items-center min-w-[120px] max-h-[120px] relative border-[3px] border-transparent rounded overflow-hidden transition-all hover:opacity-80 cursor-pointer"
-                                            :class="{'!border-violet-700 ': image.selected}"
+                                            :class="{'!border-primary-700 ': image.selected}"
                                             v-for="image in ai.images"
+                                            :key="image.url"
                                             @click="selectImage(image, allowMultiple)"
                                         >
-                                            <!-- Image Preview -->
                                             <img
                                                 class="w-[120px] h-[120px]"
                                                 :src="image.url"
@@ -371,214 +364,221 @@
                                 </div>
                             </x-slot>
 
-                            <!-- Modal Footer -->
                             <x-slot:footer>
-                                <div class="flex gap-x-2.5 items-center">
-                                    <template v-if="! ai.images.length">
-                                        <button class="secondary-button">
-                                            <!-- Spinner -->
-                                            <template v-if="isLoading">
-                                                <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
-                                                    src="{{ unopim_asset('images/spinner.svg') }}"
-                                                />
+                                <div class="flex items-center justify-between w-full">
+                                    <p
+                                        v-if="! ai.images.length && platformsFetched && ! aiModels.length"
+                                        class="text-xs text-danger max-w-[320px]"
+                                    >
+                                        @lang('admin::app.configuration.platform.fields.no-image-platform')
+                                    </p>
 
-                                                @lang('admin::app.components.media.images.ai-generation.generating')
-                                            </template>
-
-                                            <template v-else>
-                                                <span class="icon-magic  text-violet-700"></span>
-
-                                                @lang('admin::app.components.media.images.ai-generation.generate')
-                                            </template>
-                                        </button>
-                                    </template>
-
-                                    <template v-else>
-                                        <button class="secondary-button">
-                                            <!-- Spinner -->
-                                            <template v-if="isLoading">
-                                                <img
-                                                    class="animate-spin h-5 w-5 text-violet-700"
-                                                    src="{{ unopim_asset('images/spinner.svg') }}"
-                                                />
-
-                                                @lang('admin::app.components.media.images.ai-generation.regenerating')
-                                            </template>
-
-                                            <template v-else>
-                                                <span class="icon-magic text-2xl text-violet-700"></span>
-
-                                                @lang('admin::app.components.media.images.ai-generation.regenerate')
-                                            </template>
-                                        </button>
-
-                                        <button
-                                            type="button"
-                                            class="primary-button"
-                                            :disabled="! selectedAIImages.length"
-                                            @click="apply"
+                                    <div class="flex items-center gap-2" v-if="!ai.images.length && aiModels.length">
+                                        <select
+                                            v-model="ai.platform_id"
+                                            @change="onPlatformChange()"
+                                            class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[140px]"
+                                            title="@lang('admin::app.components.tinymce.ai-generation.platform')"
                                         >
-                                            @lang('admin::app.components.media.images.ai-generation.apply')
-                                        </button>
-                                    </template>
+                                            <option v-for="p in platforms" :key="p.id" :value="p.id">@{{ p.label }}</option>
+                                        </select>
+                                        <select
+                                            v-model="ai.model"
+                                            class="py-1.5 px-2 border rounded-md text-xs text-gray-600 dark:text-gray-300 dark:bg-cherry-800 dark:border-cherry-800 max-w-[160px]"
+                                            title="@lang('admin::app.components.media.images.ai-generation.model')"
+                                        >
+                                            <option v-for="m in aiModels" :key="m.id" :value="m.id">@{{ m.label }}</option>
+                                        </select>
+                                    </div>
+                                    <div v-else></div>
+
+                                    <div class="flex gap-x-2.5 items-center">
+                                        <template v-if="! ai.images.length">
+                                            <button
+                                                class="secondary-button"
+                                                :disabled="isLoading || ! aiModels.length"
+                                                :class="{ 'opacity-50 cursor-not-allowed': isLoading || ! aiModels.length }">
+                                                <template v-if="isLoading">
+                                                    <img
+                                                        class="animate-spin h-5 w-5 text-primary-700"
+                                                        src="{{ unopim_asset('images/spinner.svg') }}"
+                                                    />
+                                                    @lang('admin::app.components.tinymce.ai-generation.generating')
+                                                </template>
+
+                                                <template v-else>
+                                                    <span class="icon-magic text-2xl text-primary-700"></span>
+                                                    @lang('admin::app.components.tinymce.ai-generation.generate')
+                                                </template>
+                                            </button>
+                                        </template>
+
+                                        <template v-else>
+                                            <button
+                                                class="secondary-button"
+                                                :disabled="isLoading"
+                                                :class="{ 'opacity-50 cursor-not-allowed': isLoading }">
+                                                <template v-if="isLoading">
+                                                    <img
+                                                        class="animate-spin h-5 w-5 text-primary-700"
+                                                        src="{{ unopim_asset('images/spinner.svg') }}"
+                                                    />
+                                                    @lang('admin::app.components.media.images.ai-generation.regenerating')
+                                                </template>
+
+                                                <template v-else>
+                                                    <span class="icon-magic text-2xl text-primary-700"></span>
+                                                    @lang('admin::app.components.media.images.ai-generation.regenerate')
+                                                </template>
+                                            </button>
+
+                                            <button
+                                                type="button"
+                                                class="primary-button"
+                                                :disabled="! selectedAIImages.length"
+                                                @click="apply"
+                                            >
+                                                @lang('admin::app.components.media.images.ai-generation.apply')
+                                            </button>
+                                        </template>
+                                    </div>
                                 </div>
                             </x-slot>
                         </x-admin::modal>
                     </form>
                 </x-admin::form>
-            </div>
         </div>
     </script>
 
     <script type="text/x-template" id="v-media-gallery-item-template">
-        <div class="flex gap-1.6 max-w-max py-1.5 ltr:pr-1.5 rtl:pl-1.5 text-gray-600 dark:text-gray-300 group border border-dashed border-gray-300 rounded transition-all hover:border-gray-400 group-hover:visible">
+        <div>
+            <v-media-card
+                :media="image"
+                :mode="image.type?.startsWith('video/') ? 'video' : 'image'"
+                width="100%"
+                height="176px"
+                object-fit="cover"
+                :allow-preview="true"
+                :allow-replace="! readOnly"
+                :allow-remove="! readOnly"
+                :allow-download="allowDownload"
+                :allow-drag="true"
+                :show-drag-handle="! readOnly"
+                :show-extension="false"
+                :invalid="isInvalid"
+                @preview="previewMedia"
+                @replace="replace"
+                @remove="remove"
+            ></v-media-card>
 
-            <i class="icon-drag text-4xl transition-all group-hover:text-gray-700 cursor-pointer"></i>
+            <input type="hidden" :name="name + '[' + index + ']'" v-if="! readOnly && allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input type="hidden" :name="name" v-if="! readOnly && ! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
+            <input
+                v-if="! readOnly"
+                type="file"
+                :name="name + '[]'"
+                class="hidden"
+                :accept="acceptAttribute"
+                :id="$.uid + '_imageInput_' + index"
+                :ref="$.uid + '_imageInput_' + index"
+                @change="edit"
+            />
 
-            <div
-                v-if="image.type?.startsWith('image/')" 
-                class="grid justify-items-center max-w-[210px] min-w-[210px] relative"
-                :style="{ 'width': this.width }"
-            >
-                <!-- Image Preview -->
-                <img
-                    :src="image.url" :type="image.type"
-                    class="w-[210px] h-[120px] object-cover"
-                />
-                <x-admin::modal ref="mediaPreviewModal" type="large">
-                    <x-slot:header>
-                        <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
-                    </x-slot>
-                    <x-slot:content>
-                        <div>
-                            <img
-                                :src="image.url"
-                                class="w-full h-full object-cover object-top"
-                            />
-                        </div>
-                    </x-slot>
-                </x-admin::modal>
-
-                <div class="flex flex-col justify-between invisible w-full max-h-[120px] p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
-                    <!-- Image Name -->
-                    <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
-                    <!-- Actions -->
-                    <div class="flex justify-between">
-                        <span
-                            class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="remove"
-                        ></span>
-
-                        <span
-                            class="icon-view text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="previewMedia"
-                        ></span>
-
-                        <label
-                            class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            :for="$.uid + '_imageInput_' + index"
-                        ></label>
-
-                        <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input
-                            type="file"
-                            :name="name + '[]'"
-                            class="hidden"
-                            accept="image/*"
-                            :id="$.uid + '_imageInput_' + index"
-                            :ref="$.uid + '_imageInput_' + index"
-                            @change="edit"
-                        />
+            <x-admin::modal ref="mediaPreviewModal" no-class="true">
+                <x-slot:header class="bg-white dark:bg-gray-900">
+                    <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
+                </x-slot>
+                <x-slot:content class="h-[calc(100vh-60px)] bg-gray-900 p-0">
+                    <div class="h-full w-full">
+                        <video v-if="image.type?.startsWith('video/')" class="h-full min-h-[600px] w-full object-contain" controls autoplay>
+                            <source :src="image.url" type="video/mp4">
+                        </video>
                     </div>
-                </div>
+                </x-slot>
+            </x-admin::modal>
 
-                <!-- Image Name -->
-                <label class="mt-1 grid text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
-                        @{{ getDisplayFileName(image.name) }}
-                </label>
-            </div>
-
-            <div
-                v-else-if="image.type.startsWith('video/')" 
-                class="grid justify-items-center max-w-[210px] min-w-[210px] relative"
-            >
-                <!-- Video Preview -->
-                <video
-                    class="w-[210px] h-[120px] object-cover"
-                    ref="videoPreview"
-                    v-if="image.url.length > 0"
-                    :key="image.url"
-                >
-                    <source :src="image.url" :type="image.type">
-                </video>
-
-                <x-admin::modal ref="mediaPreviewModal">
-                    <x-slot:header>
-                            <p class="text-sm text-gray-800 dark:text-white font-bold"><span> @{{ getDisplayFileName(image.name) }} </span></p>
-                    </x-slot>
-                    <x-slot:content>
-                        <div >
-                            <video class="w-full h-full" controls autoplay>
-                                <source :src="image.url" type="video/mp4">
-                            </video>
-                        </div>
-                    </x-slot>
-                </x-admin::modal>
-
-                <div class="flex flex-col justify-between invisible w-full max-h-[120px] p-3 bg-white dark:bg-cherry-800 absolute top-0 bottom-0 opacity-80 transition-all group-hover:visible">
-                    <!-- Video Name -->
-                    <p class="text-xs text-gray-600 dark:text-gray-300 font-semibold break-all"></p>
-
-                    <!-- Actions -->
-                    <div class="flex justify-between">
-                        <!-- Remove Button -->
-                        <span
-                            class="icon-delete text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="remove"
-                        ></span>
-
-                        <!-- Full Screen Button -->
-                        <span
-                            class="icon-play text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            @click="previewMedia"
-                        ></span>
-
-                        <!-- Edit Button -->
-                        <label
-                            class="icon-edit text-2xl p-1.5 rounded-md cursor-pointer hover:bg-violet-100 dark:hover:bg-gray-800"
-                            :for="$.uid + '_imageInput_' + index"
-                        ></label>
-
-                        <input type="hidden" :name="name + '[' + image.id + ']'" v-if="allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input type="hidden" :name="name" v-if="! allowMultiple && ! image.is_new && image.value" :value="image.value"/>
-
-                        <input
-                            type="file"
-                            :name="name + '[]'"
-                            class="hidden"
-                            accept="video/*"
-                            :id="$.uid + '_imageInput_' + index"
-                            :ref="$.uid + '_imageInput_' + index"
-                            @change="edit"
-                        />
-                    </div>
-                </div>
-                <!-- Video Name -->
-                <label class="mt-1 text-xs text-gray-700 dark:text-gray-300 font-medium text-center break-all" :key="image.url">
-                        @{{ getDisplayFileName(image.name) }}
-                </label>
-            </div>
+            <x-admin::modal ref="mediaPreviewModalFull" no-class="true">
+                <x-slot:content>
+                    <v-image-viewer
+                        v-if="isImageMedia"
+                        :src="image.url"
+                        :file-name="getDisplayFileName(image.name)"
+                        @close="closeFullPreview"
+                    ></v-image-viewer>
+                </x-slot>
+            </x-admin::modal>
         </div>
     </script>
 
     <script type="module">
+        const galleryFileValidation = {
+            computed: {
+                normalizedExtensions() {
+                    return [...new Set(this.acceptedExtensions.map(extension => extension.replace(/^\./, '').toLowerCase()))];
+                },
+
+                acceptAttribute() {
+                    return this.normalizedExtensions.length
+                        ? this.normalizedExtensions.map(extension => `.${extension}`).join(',')
+                        : this.acceptedTypes.join(',');
+                },
+
+                allowedTypesLabel() {
+                    return this.normalizedExtensions.length
+                        ? this.normalizedExtensions.join(', ')
+                        : this.acceptedTypes.join(', ');
+                },
+            },
+
+            methods: {
+                isTypeAccepted(mimeType) {
+                    return this.acceptedTypes.length === 0 || this.acceptedTypes.some(type => type.endsWith('/*')
+                        ? mimeType.startsWith(type.slice(0, -1))
+                        : mimeType === type);
+                },
+
+                isFileAccepted(file) {
+                    const extension = file.name.split('.').pop()?.toLowerCase();
+
+                    if (this.normalizedExtensions.length && ! this.normalizedExtensions.includes(extension)) {
+                        return false;
+                    }
+
+                    if (this.isTypeAccepted(file.type)) {
+                        return true;
+                    }
+
+                    const mimeTypes = this.mimeTypesFor(extension);
+
+                    if (! file.type || file.type === 'application/octet-stream') {
+                        return this.normalizedExtensions.length > 0 && mimeTypes.some(type => this.isTypeAccepted(type));
+                    }
+
+                    return mimeTypes.includes(file.type) && mimeTypes.some(type => this.isTypeAccepted(type));
+                },
+
+                mimeTypesFor(extension) {
+                    const mimeTypes = this.mimeTypes ?? {};
+
+                    return Object.hasOwn(mimeTypes, extension) ? mimeTypes[extension] : [];
+                },
+
+                mediaType(file) {
+                    if (file.type?.startsWith('image/') || file.type?.startsWith('video/')) {
+                        return file.type;
+                    }
+
+                    const extension = file.name.split('.').pop()?.toLowerCase();
+
+                    return this.mimeTypesFor(extension).find(type => type.startsWith('image/') || type.startsWith('video/')) || file.type;
+                },
+            },
+        };
+
         app.component('v-media-gallery', {
             template: '#v-media-gallery-template',
+
+            mixins: [galleryFileValidation],
 
             props: {
                 name: {
@@ -611,15 +611,42 @@
                     default: '120px'
                 },
 
+                acceptedTypes: {
+                    type: Array,
+                    default: () => ['image/*', 'video/*'],
+                },
+
+                acceptedExtensions: {
+                    type: Array,
+                    default: () => [],
+                },
+
+                mimeTypes: {
+                    type: Object,
+                    default: () => ({}),
+                },
+
                 errors: {
                     type: Object,
                     default: () => {}
-                }
+                },
+
+                readOnly: {
+                    type: Boolean,
+                    default: false,
+                },
+
+                allowDownload: {
+                    type: Boolean,
+                    default: false,
+                },
             },
 
             data() {
                 return {
                     images: [],
+
+                    isDragging: false,
 
                     placeholders: [
                     ],
@@ -627,11 +654,13 @@
                     isLoading: false,
 
                     ai: {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: @json(!! core()->getConfigData('general.magic_ai.image_generation.enabled') && bouncer()->hasPermission('ai-agent')),
 
                         prompt: null,
 
-                        model: 'dall-e-2',
+                        platform_id: null,
+
+                        model: null,
 
                         n: 1,
 
@@ -642,15 +671,33 @@
                         images: [],
                     },
 
+                    platforms: [],
                     aiModels: [],
+                    platformsFetched: false,
+                    imagePrompts: [],
                     suggestionValues: [],
-                    selectedModel: null,
-                    resourceId: "{{ request()->id }}",
+                    resourceId: "{{ request()->id ?? auth()->id() }}",
                     entityName: "{{ $attributes->get('entity-name', 'attribute') }}",
                 }
             },
 
             computed: {
+                isCompactTile() {
+                    return this.parseDimension(this.width) <= 220
+                        && this.parseDimension(this.height) <= 160;
+                },
+
+                tileStyle() {
+                    return {
+                        width: '100%',
+                        height: '176px',
+                        minWidth: '120px',
+                        minHeight: '120px',
+                        padding: this.isCompactTile ? '10px' : '14px',
+                        order: 9999,
+                    };
+                },
+
                 selectedAIImages() {
                     return this.ai.images.filter(image => image.selected);
                 }
@@ -678,9 +725,25 @@
 
             mounted() {
                 this.images = this.uploadedImages;
+                this.initialImages = this.uploadedImages.map(image => ({ ...image }));
+
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
             },
 
             methods: {
+                resetToInitial() {
+                    this.images = this.initialImages.map(image => ({ ...image }));
+
+                    this.signalChange();
+                },
+                onDrop(files) {
+                    this.addFiles(files);
+                },
+
                 selectImage(image, allowMultiple) {
                     if (allowMultiple) {
                         image.selected =!image.selected;
@@ -690,60 +753,108 @@
                     }
                 },
 
-                add() {
-                    let imageInput = this.$refs[this.$.uid + '_imageInput'];
+                add(files) {
+                    this.addFiles(files);
+                },
 
-                    if (imageInput.files == undefined) {
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.gallery.not-allowed-error')),
+                    });
+                },
+
+                async addFiles(files) {
+                    if (! files || ! files.length) {
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/') || file.type.includes('video/'));
+                    let selectedFiles = Array.from(this.allowMultiple ? files : [files[0]]);
+
+                    const validFiles = selectedFiles.every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.gallery.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.gallery.not-allowed-error'))
                         });
 
                         return;
                     }
 
-                    Array.from(imageInput.files).forEach((file, index) => {
+                    for (const file of selectedFiles) {
+                        if (! await this.scanFile(file)) {
+                            continue;
+                        }
+
                         this.images.push({
                             id: 'image_' + this.images.length,
                             url: '',
                             file: file,
-                            type: file.type,
+                            type: this.mediaType(file),
                             name: file.name
                         });
-                    });
+                    }
+
+                    this.signalChange();
 
                     if (this.ai.enabled) {
-                        this.$refs.choiceImageModal.close()
+                        this.$refs.choiceImageModal.close();
                     }
+                },
+
+                parseDimension(value) {
+                    const parsed = Number.parseInt(String(value), 10);
+
+                    return Number.isNaN(parsed) ? 120 : parsed;
                 },
 
                 remove(image) {
                     let index = this.images.indexOf(image);
 
                     this.images.splice(index, 1);
+
+                    this.signalChange();
+                },
+
+                signalChange() {
+                    this.$nextTick(() => {
+                        if (this.$el && this.$el.dispatchEvent) {
+                            this.$el.dispatchEvent(new CustomEvent('unsaved-changes:touch', {
+                                bubbles: true,
+                                detail: { name: this.name },
+                            }));
+                        }
+                    });
                 },
 
                 toggleImageAIModal() {
                     this.$refs.magicAIImageModal.open();
                     this.$nextTick(() => {
                         if (this.$refs.imagePromptInput) {
-                            if (this.aiModels.length === 0) {
-                                this.fetchModels();
+                            if (this.platforms.length === 0) {
+                                this.fetchPlatforms();
+                            }
+
+                            if (this.imagePrompts.length === 0) {
+                                this.fetchImagePrompts();
                             }
 
                             const tribute = this.$tribute.init({
                                 values: this.fetchSuggestionValues,
                                 lookup: 'name',
                                 fillAttr: 'code',
-                                noMatchTemplate: "@lang('admin::app.common.no-match-found')",
+                                noMatchTemplate: @json(trans('admin::app.common.no-match-found')),
                                 selectTemplate: (item) => `@${item.original.code}`,
-                                menuItemTemplate: (item) => `<div class="p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center">${item.original.name || '[' + item.original.code + ']'}</div>`,
+                                menuItemTemplate: (item) => {
+                                    const element = document.createElement('div');
+                                    element.className = 'p-1.5 rounded-md text-base cursor-pointer transition-all max-sm:place-self-center';
+                                    element.textContent = item.original.name || '[' + item.original.code + ']';
+
+                                    return element.outerHTML;
+                                },
                             });
 
                             tribute.attach(this.$refs.imagePromptInput);
@@ -751,14 +862,55 @@
                     });
                 },
 
-                async fetchModels() {
+                async fetchPlatforms() {
                     try {
-                        const response = await axios.get("{{ route('admin.magic_ai.available_model') }}");
+                        const response = await axios.get("{{ route('admin.magic_ai.platforms') }}", {
+                            params: { purpose: 'image_generation' }
+                        });
+                        this.platforms = response.data.platforms || [];
 
-                        this.aiModels = response.data.models.filter(model => model.id === 'dall-e-2' || model.id === 'dall-e-3');
-                        this.ai.model = this.aiModels[0] ? this.aiModels[0].id : '';
+                        if (this.platforms.length) {
+                            let defaultPlatform = this.platforms.find(p => p.is_default);
+                            this.ai.platform_id = defaultPlatform ? defaultPlatform.id : this.platforms[0].id;
+                            this.loadModelsForPlatform();
+                        }
                     } catch (error) {
-                        console.error("Failed to fetch AI models:", error);
+                        console.error("Failed to fetch platforms:", error);
+                    } finally {
+                        this.platformsFetched = true;
+                    }
+                },
+
+                onPlatformChange() {
+                    this.loadModelsForPlatform();
+                },
+
+                loadModelsForPlatform() {
+                    let platform = this.platforms.find(p => p.id === this.ai.platform_id);
+
+                    if (platform && platform.models) {
+                        this.aiModels = platform.models.map(m => ({ id: m, label: m }));
+                        this.ai.model = this.aiModels[0]?.id || null;
+                    } else {
+                        this.aiModels = [];
+                        this.ai.model = null;
+                    }
+                },
+
+                async fetchImagePrompts() {
+                    try {
+                        const response = await axios.get("{{ route('admin.magic_ai.default_prompt') }}", {
+                            params: { purpose: 'image_generation' }
+                        });
+                        this.imagePrompts = response.data.prompts || [];
+                    } catch (error) {
+                        console.error("Failed to fetch image prompts:", error);
+                    }
+                },
+
+                onImagePromptChange(event) {
+                    if (event.target.value) {
+                        this.ai.prompt = event.target.value;
                     }
                 },
 
@@ -806,6 +958,7 @@
                     params.resource_type = this.getResourceType();
                     params.field_type = 'image';
                     params.model = this.ai.model;
+                    params.platform_id = this.ai.platform_id;
                     params.channel = "{{ core()->getRequestedChannelCode() }}";
                     params.locale = "{{ core()->getRequestedLocaleCode() }}";
 
@@ -814,12 +967,22 @@
                             this.isLoading = false;
 
                             self.ai.images = response.data.images;
+
+                            self.ai.images.forEach(image => image.selected = true);
                         })
                         .catch(error => {
                             this.isLoading = false;
 
                             if (error.response.status == 422) {
-                                setErrors(error.response.data.errors);
+                                const errors = error.response.data.errors ?? {};
+
+                                setErrors(errors);
+
+                                const unboundError = errors.model?.[0] ?? errors.platform_id?.[0];
+
+                                if (unboundError) {
+                                    this.$emitter.emit('add-flash', { type: 'error', message: unboundError });
+                                }
                             } else {
                                 this.$emitter.emit('add-flash', { type: 'error', message: error.response.data.message });
                             }
@@ -827,15 +990,26 @@
                 },
 
                 apply() {
-                    this.selectedAIImages.forEach((image, index) => {
+                    this.selectedAIImages.forEach((image) => {
+                        const mime = image.url.match(/^data:(image\/[^;]+);base64,/)?.[1] ?? 'image/png';
+                        const extension = ({
+                            'image/jpeg': 'jpg',
+                            'image/png':  'png',
+                            'image/webp': 'webp',
+                        })[mime] || 'png';
+
+                        const file = this.getBase64ToFile(image.url, `temp.${extension}`);
+
                         this.images.push({
-                            id: 'image_' + this.images.length,
-                            url: '',
-                            file: this.getBase64ToFile(image.url, 'temp.png'),
+                            id:   'image_' + this.images.length,
+                            url:  '',
+                            file: file,
                             type: file.type,
-                            name: file.name
+                            name: file.name,
                         });
                     });
+
+                    this.signalChange();
 
                     this.$refs.magicAIImageModal.close();
                 },
@@ -856,7 +1030,7 @@
 
                 resetAIModal() {
                     this.ai = {
-                        enabled: Boolean("{{ core()->getConfigData('general.magic_ai.settings.enabled') && core()->getConfigData('general.magic_ai.image_generation.enabled') }}"),
+                        enabled: @json(!! core()->getConfigData('general.magic_ai.image_generation.enabled') && bouncer()->hasPermission('ai-agent')),
 
                         prompt: null,
 
@@ -877,7 +1051,35 @@
         app.component('v-media-gallery-item', {
             template: '#v-media-gallery-item-template',
 
-            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height'],
+            mixins: [galleryFileValidation],
+
+            props: ['allowMultiple', 'index', 'image', 'name', 'width', 'height', 'acceptedTypes', 'acceptedExtensions', 'mimeTypes', 'readOnly', 'allowDownload'],
+
+            computed: {
+                isInvalid() {
+                    if (! this.acceptedExtensions || ! this.acceptedExtensions.length) {
+                        return false;
+                    }
+
+                    const extension = (this.image?.name || '').split('.').pop()?.toLowerCase();
+
+                    if (! extension) {
+                        return false;
+                    }
+
+                    return ! this.acceptedExtensions
+                        .map(value => value.toLowerCase().replace(/^\./, ''))
+                        .includes(extension);
+                },
+
+                isImageMedia() {
+                    if (this.image?.type) {
+                        return this.image.type.startsWith('image/');
+                    }
+
+                    return /\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i.test(this.image?.name || '');
+                },
+            },
 
             mounted() {
                 if (this.image.file instanceof File) {
@@ -888,21 +1090,38 @@
             },
 
             methods: {
-                edit() {
+                replace() {
+                    this.$refs[this.$.uid + '_imageInput_' + this.index].click();
+                },
+
+                scanFile(file) {
+                    return this.$scanMedia(file, {
+                        url: "{{ route('admin.media.scan') }}",
+                        isImage: true,
+                        acceptedExtensions: this.acceptedExtensions,
+                        fallbackMessage: @json(trans('admin::app.components.media.images.not-allowed-error')),
+                    });
+                },
+
+                async edit() {
                     let imageInput = this.$refs[this.$.uid + '_imageInput_' + this.index];
 
-                    if (imageInput.files == undefined) {
+                    if (! imageInput.files || ! imageInput.files.length) {
                         return;
                     }
 
-                    const validFiles = Array.from(imageInput.files).every(file => file.type.includes('image/') || file.type.includes('video/'));
+                    const validFiles = Array.from(imageInput.files).every(file => this.isFileAccepted(file));
 
                     if (! validFiles) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.components.media.images.not-allowed-error')"
+                            message: @json(trans('admin::app.components.media.gallery.not-allowed-error'))
                         });
 
+                        return;
+                    }
+
+                    if (! await this.scanFile(imageInput.files[0])) {
                         return;
                     }
 
@@ -916,11 +1135,21 @@
                 },
 
                 previewMedia() {
+                    if (this.isImageMedia) {
+                        this.$refs.mediaPreviewModalFull.toggle();
+
+                        return;
+                    }
+
                     this.$refs.mediaPreviewModal.toggle();
                 },
 
                 closeImageModal() {
                     this.$refs.mediaPreviewModal.close();
+                },
+
+                closeFullPreview() {
+                    this.$refs.mediaPreviewModalFull.close();
                 },
 
                 setFile(file) {
@@ -940,6 +1169,8 @@
                         this.image.url = e.target.result;
 
                         this.image.name = file.name;
+
+                        this.image.type = this.mediaType(file);
                     }
 
                     reader.readAsDataURL(file);

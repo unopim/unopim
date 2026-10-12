@@ -25,6 +25,11 @@ return [
             'driver' => 'eloquent',
             'model'  => Admin::class,
         ],
+
+        'users' => [
+            'driver' => 'eloquent',
+            'model'  => Admin::class,
+        ],
     ],
 
     'passwords' => [

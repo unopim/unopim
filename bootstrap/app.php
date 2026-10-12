@@ -1,16 +1,17 @@
 <?php
 
-use Dotenv\Exception\InvalidFileException;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Exceptions\PostTooLargeException;
-use Illuminate\Routing\Middleware\SubstituteBindings;
-use Webkul\Core\Http\Middleware\CheckForMaintenanceMode;
+use Illuminate\Http\Middleware\TrustProxies;
+use Webkul\Admin\Http\Middleware\ConvertAjaxFormRedirect;
 use Webkul\Core\Http\Middleware\NoCacheMiddleware;
 use Webkul\Core\Http\Middleware\SecureHeaders;
 use Webkul\Installer\Http\Middleware\CanInstall;
+
+$toList = static fn (?string $value): array => array_values(array_unique(array_filter(
+    array_map(trim(...), explode(',', (string) $value))
+)));
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -20,57 +21,37 @@ return Application::configure(basePath: dirname(__DIR__))
         channels: __DIR__.'/../routes/channels.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
-        $middleware->trustProxies(at: '*');
+    ->booting(function () use ($toList): void {
+        $proxies = $toList(config('app.trusted_proxies'));
+
+        TrustProxies::at(in_array('*', $proxies, true) ? '*' : $proxies);
+    })
+    ->withMiddleware(function (Middleware $middleware) use ($toList): void {
+        $middleware->trustHosts(at: fn (): array => $toList(config('app.trusted_hosts')));
+
         $middleware->encryptCookies(except: ['sidebar_collapsed', 'dark_mode']);
         $middleware->trimStrings(except: ['current_password', 'password', 'password_confirmation']);
         $middleware->append([
             SecureHeaders::class,
             NoCacheMiddleware::class,
-            CheckForMaintenanceMode::class,
             CanInstall::class,
         ]);
-        $middleware->api(remove: [
-            SubstituteBindings::class,
+
+        $middleware->web(append: [
+            ConvertAjaxFormRedirect::class,
         ]);
     })
-    ->withSchedule(function (Schedule $schedule) {
-        // Elasticsearch re-indexing (twice daily)
-        $schedule->command('unopim:product:index')->dailyAt('00:01');
-        $schedule->command('unopim:product:index')->dailyAt('12:01');
-        $schedule->command('unopim:category:index')->dailyAt('00:01');
-        $schedule->command('unopim:category:index')->dailyAt('12:01');
-
-        // Completeness recalculation (daily at 2 AM)
-        $schedule->command('unopim:completeness:recalculate --all')->dailyAt('02:00');
-
-        // Dashboard cache refresh (every 10 minutes)
-        $schedule->command('unopim:dashboard:refresh')->everyTenMinutes();
+    ->withSchedule(function (Schedule $schedule): void {
+        $schedule->onOneServer()
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->group(function () use ($schedule): void {
+                $schedule->command('unopim:product:index')->twiceDailyAt(0, 12, 1);
+                $schedule->command('unopim:category:index')->twiceDailyAt(0, 12, 1);
+                $schedule->command('unopim:completeness:recalculate', ['--all'])->dailyAt('02:00');
+                $schedule->command('unopim:dashboard:refresh')->everyTenMinutes();
+                $schedule->command('unopim:data-transfer:reap-stalled')->everyFiveMinutes();
+            });
     })
-    ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (PostTooLargeException $e, $request) {
-            $errorCode = $e->getStatusCode() ?? 413;
-
-            if ($request->wantsJson() || $request->ajax()) {
-                return response()->json([
-                    'message'   => trans('admin::app.errors.413.title'),
-                    'errorCode' => $errorCode,
-                ], $errorCode);
-            }
-
-            return response()->view('admin::errors.index', ['errorCode' => $errorCode]);
-        });
-
-        $exceptions->render(function (InvalidFileException $e, $request) {
-            if ($request->wantsJson() || $request->ajax()) {
-                return response()->json([
-                    'message' => $e->getMessage(),
-                ], 500);
-            }
-
-            exit($e->getMessage());
-        });
-
-        $exceptions->dontFlash(['current_password', 'password', 'password_confirmation']);
-    })
+    ->withExceptions()
     ->create();

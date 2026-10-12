@@ -11,9 +11,8 @@ class ProductVideo
      * Retrieve collection of videos
      *
      * @param  Product  $product
-     * @return array
      */
-    public function getVideos($product)
+    public function getVideos($product): array
     {
         if (! $product) {
             return [];

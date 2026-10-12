@@ -1,0 +1,11 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Category",
+  "type": "object",
+  "required": ["code"],
+  "properties": {
+    "code": { "type": "string", "minLength": 1 },
+    "parent": { "type": ["string", "null"] },
+    "additional_data": { "type": ["object", "null"] }
+  }
+}

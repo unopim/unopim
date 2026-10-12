@@ -5,15 +5,13 @@
         ref="nativeUndoInput"
         type="text"
         :name="`${entityId}_${column.code}`"
-        @input="update"
-        style="opacity: 0; height: 0; width: 0;"
-        class="bg-violet-700"
+        @input="update" class="opacity-0 h-0 w-0 bg-primary-700"
       />
       <button
         type="button"
         :class="[
           'relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-200',
-          isChecked ? 'bg-violet-700' : 'bg-gray-300 dark:bg-gray-600'
+          isChecked ? 'bg-primary-700' : 'bg-gray-300 dark:bg-gray-600'
         ]"
         @click="toggle"
       >

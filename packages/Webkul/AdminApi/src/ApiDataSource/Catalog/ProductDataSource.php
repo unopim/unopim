@@ -3,10 +3,14 @@
 namespace Webkul\AdminApi\ApiDataSource\Catalog;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Symfony\Component\HttpKernel\Exception\UnprocessableEntityHttpException;
 use Webkul\AdminApi\ApiDataSource;
 use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 use Webkul\Completeness\Repositories\ProductCompletenessScoreRepository;
+use Webkul\Product\Contracts\VariantValueResolver;
 use Webkul\Product\Database\Eloquent\Builder;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 
 class ProductDataSource extends ApiDataSource
@@ -18,6 +22,8 @@ class ProductDataSource extends ApiDataSource
      */
     protected $sortColumn = 'products.id';
 
+    protected ?VariantValueResolver $variantValueResolver = null;
+
     /**
      * Create a new DataSource instance.
      *
@@ -26,8 +32,14 @@ class ProductDataSource extends ApiDataSource
     public function __construct(
         protected ProductRepository $productRepository,
         protected AttributeFamilyRepository $attributeFamilyRepository,
-        protected ProductCompletenessScoreRepository $productCompletenessScoreRepository
+        protected ProductCompletenessScoreRepository $productCompletenessScoreRepository,
+        protected ProductAssociationRepository $productAssociationRepository
     ) {}
+
+    protected function variantValueResolver(): VariantValueResolver
+    {
+        return $this->variantValueResolver ??= app(VariantValueResolver::class);
+    }
 
     /**
      * Prepares the query builder for API requests.
@@ -38,7 +50,26 @@ class ProductDataSource extends ApiDataSource
     {
         [$queryBuilder] = $this->productRepository->queryBuilderFromDatabase([]);
 
+        $this->addFilter('sku', [
+            '=',
+            'IN',
+            'NOT IN',
+        ]);
+        $this->addFilter('status', ['=']);
+        $this->registerDateFilters();
+
         return $queryBuilder;
+    }
+
+    /**
+     * Registers the delta-sync filters shared by every product listing endpoint.
+     */
+    protected function registerDateFilters(): void
+    {
+        $operators = ['>', '>=', '<', '<=', 'BETWEEN'];
+
+        $this->addFilter('updated_at', $operators, null, 'datetime');
+        $this->addFilter('created_at', $operators, null, 'datetime');
     }
 
     /**
@@ -54,14 +85,25 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
+        $rows = $paginator['data'] ?? [];
+
+        $completenessByProduct = $withCompleteness
+            ? $this->completenessScoresByProduct(array_column($rows, 'id'))
+            : null;
+
+        $mergedValuesById = $this->variantValueResolver()->resolveBatch($rows);
+
         return array_map(
-            fn ($item) => $this->normalizeProduct($item, $withCompleteness),
-            $paginator['data'] ?? [],
+            fn ($item) => $this->normalizeProduct($item, $withCompleteness, $completenessByProduct, mergedValues: $mergedValuesById[$item['id']] ?? null),
+            $rows,
         );
     }
 
     /**
      * Get category field by its code.
+     *
+     * Always includes the `associations` block — one extra query per request, unlike
+     * the listing in `formatData()`, which omits it to avoid an N+1 query per row.
      *
      * @param  string  $code  The unique code of the category field.
      * @return array An associative array containing the category field's code, status, and label.
@@ -92,7 +134,9 @@ class ProductDataSource extends ApiDataSource
 
         $withCompleteness = filter_var(request()->input('with_completeness', false), FILTER_VALIDATE_BOOLEAN);
 
-        return $this->normalizeProduct($product, $withCompleteness);
+        $mergedValues = $this->variantValueResolver()->resolveBatch([$product])[$product['id']] ?? null;
+
+        return $this->normalizeProduct($product, $withCompleteness, withAssociations: true, mergedValues: $mergedValues);
     }
 
     public function getSuperAttributes($data)
@@ -168,6 +212,10 @@ class ProductDataSource extends ApiDataSource
             case 'categories':
                 $scopeQueryBuilder = $this->filterByCategories($scopeQueryBuilder, $value['operator'], $filterTable, $value['value']);
                 break;
+            case 'updated_at':
+            case 'created_at':
+                $scopeQueryBuilder = $this->applyComparisonFilter($scopeQueryBuilder, $filterTable.$requestedColumn, $value);
+                break;
             default:
                 $scopeQueryBuilder->where($filterTable.$requestedColumn, $value['value']);
                 break;
@@ -179,6 +227,8 @@ class ProductDataSource extends ApiDataSource
     /**
      * Retrieves the ID of a product based on its code.
      *
+     * The lookup must match a configurable product AND the given SKU: matching on type
+     * alone returns any configurable product and masks an invalid SKU.
      *
      * @return int|null
      *
@@ -187,13 +237,13 @@ class ProductDataSource extends ApiDataSource
     protected function getParentIdByCode(Builder $queryBuilder, string $sku)
     {
         $parentQuery = clone $queryBuilder;
-        $parentQuery->where('products.sku', $sku);
-        $parentQuery->orWhere('products.type', config('product_types.configurable.key'));
-        $parentId = $parentQuery->get()->first()?->id;
+        $parentQuery->where('products.sku', $sku)
+            ->where('products.type', ProductType::Configurable->value);
+        $parentId = $parentQuery->first()?->id;
 
         if (! $parentId) {
-            throw new ModelNotFoundException(
-                sprintf('Parent with sku %s could not be found.', (string) $sku)
+            throw new UnprocessableEntityHttpException(
+                sprintf('Parent filter value "%s" is not a valid configurable product SKU.', (string) $sku)
             );
         }
 
@@ -224,7 +274,6 @@ class ProductDataSource extends ApiDataSource
     /**
      * Filters the product query builder by the category code.
      *
-     * @param  array  $code
      * @return Builder
      */
     protected function filterByCategories(Builder $scopeQueryBuilder, string $operator, string $filterTable, array $value)
@@ -241,7 +290,14 @@ class ProductDataSource extends ApiDataSource
     /**
      * Normalize product data for API response
      */
-    protected function normalizeProduct(array $product, bool $withCompleteness = false): array
+    /**
+     * @param  array<string, list<array<string, mixed>>>|null  $completenessByProduct
+     * @param  array|null  $mergedValues  This row's `values`, already merged with its
+     *                                    ancestor chain by `VariantValueResolver::resolveBatch()`.
+     *                                    Falls back to the row's own `values` when absent
+     *                                    (e.g. a row with no parent).
+     */
+    protected function normalizeProduct(array $product, bool $withCompleteness = false, ?array $completenessByProduct = null, bool $withAssociations = false, ?array $mergedValues = null): array
     {
         $responseData = [
             'sku'        => $product['sku'],
@@ -252,10 +308,10 @@ class ProductDataSource extends ApiDataSource
             'additional' => $product['additional'],
             'created_at' => $product['created_at'],
             'updated_at' => $product['updated_at'],
-            'values'     => $product['values'],
+            'values'     => $mergedValues ?? $product['values'],
         ];
 
-        if (config('product_types.configurable.key') == $product['type']) {
+        if (in_array($product['type'], ProductType::VARIANT_PARENT_VALUES, true)) {
             $superAttributes = $this->getSuperAttributes($product);
 
             $responseData['super_attributes'] = $superAttributes;
@@ -263,26 +319,75 @@ class ProductDataSource extends ApiDataSource
         }
 
         if ($withCompleteness) {
-            $responseData['completeness'] = $this->getCompletenessScores($product['id']) ?? 'N/A';
+            $responseData['completeness'] = $completenessByProduct !== null
+                ? ($completenessByProduct[$product['id']] ?? [])
+                : $this->getCompletenessScores($product['id']);
+        }
+
+        if ($withAssociations) {
+            $responseData['associations'] = $this->getAssociationsForProduct($product['id']);
         }
 
         return $responseData;
     }
 
-    protected function getCompletenessScores(string $id): array
+    /**
+     * Builds the `associations` response block: every link across ALL association
+     * types (legacy sections and custom types alike), grouped by type `code`, each
+     * carrying the related product's `sku` and the link's `additional_data` — the
+     * per-link data the legacy flat SKU lists cannot carry. Purely additive.
+     *
+     * @return array<string, array<int, array{related_sku: ?string, additional_data: ?array}>>
+     */
+    protected function getAssociationsForProduct(int $productId): array
     {
-        $completenessScores = $this->productCompletenessScoreRepository->findByField('product_id', $id);
+        $links = $this->productAssociationRepository->getLinksForProduct($productId);
 
-        $completenessData = [];
+        $grouped = [];
 
-        foreach ($completenessScores as $completeness) {
-            $completenessData[] = [
-                'channel' => $completeness->channel->code,
-                'locale'  => $completeness->locale->code,
-                'score'   => $completeness->score,
+        foreach ($links as $link) {
+            $typeCode = $link->associationType?->code;
+
+            if (! $typeCode) {
+                continue;
+            }
+
+            $grouped[$typeCode][] = [
+                'related_sku'     => $link->relatedProduct?->sku,
+                'additional_data' => $link->additional_data,
             ];
         }
 
-        return $completenessData;
+        return $grouped;
+    }
+
+    protected function getCompletenessScores(string $id): array
+    {
+        return $this->completenessScoresByProduct([$id])[$id] ?? [];
+    }
+
+    /**
+     * Batch-load completeness scores for a set of products, grouped by product id,
+     * so a paginated list does not run one query per row.
+     *
+     * @param  array<int, int|string>  $ids
+     * @return array<string, list<array<string, mixed>>>
+     */
+    protected function completenessScoresByProduct(array $ids): array
+    {
+        if ($ids === []) {
+            return [];
+        }
+
+        return $this->productCompletenessScoreRepository
+            ->findWhereIn('product_id', $ids)
+            ->load(['channel:id,code', 'locale:id,code'])
+            ->groupBy('product_id')
+            ->map(fn ($scores): array => $scores->map(fn ($completeness): array => [
+                'channel' => $completeness->channel->code,
+                'locale'  => $completeness->locale->code,
+                'score'   => $completeness->score,
+            ])->values()->all())
+            ->all();
     }
 }

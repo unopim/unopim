@@ -41,11 +41,48 @@ class MySQLGrammar implements Grammar
         return "CHAR_LENGTH({$column})";
     }
 
+    public function castToText(string $column): string
+    {
+        return "CAST({$column} AS CHAR)";
+    }
+
     public function jsonExtract(string $column, string ...$pathSegments): string
     {
-        $jsonPath = '$.'.implode('.', $pathSegments);
+        $segments = array_map($this->escapeJsonPathSegment(...), $pathSegments);
 
-        return "JSON_UNQUOTE(JSON_EXTRACT({$column}, '{$jsonPath}'))";
+        $jsonPath = '$.'.implode('.', $segments);
+
+        // Escape column name — handles both 'values' and 'table.values'
+        $parts = explode('.', $column);
+        $escaped = implode('.', array_map(fn ($p): string => "`{$p}`", $parts));
+
+        return "JSON_UNQUOTE(JSON_EXTRACT({$escaped}, '{$jsonPath}'))";
+    }
+
+    public function jsonContains(string $column, array $pathSegments, string $value): string
+    {
+        $parts = explode('.', $column);
+        $escaped = implode('.', array_map(fn ($p): string => "`{$p}`", $parts));
+        $jsonPath = '$.'.implode('.', array_map($this->escapeJsonPathSegment(...), $pathSegments));
+
+        return "JSON_CONTAINS(JSON_EXTRACT({$escaped}, '{$jsonPath}'), {$value})";
+    }
+
+    /**
+     * Escape a JSON path segment so it cannot break out of the single-quoted
+     * SQL string literal the path is embedded in (SQL injection guard).
+     *
+     * MySQL only accepts a bare path member that looks like an identifier;
+     * anything else (a leading digit, a hyphen, a space) must be wrapped in
+     * double quotes or the server rejects the whole path with error 3143.
+     */
+    protected function escapeJsonPathSegment(string $segment): string
+    {
+        if (! preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $segment)) {
+            $segment = '"'.str_replace(['\\', '"'], ['\\\\', '\\"'], $segment).'"';
+        }
+
+        return str_replace(['\\', "'"], ['\\\\', "''"], $segment);
     }
 
     public function orderByField(string $column, array $ids, string $type = ''): string
@@ -60,7 +97,7 @@ class MySQLGrammar implements Grammar
         return 'REGEXP';
     }
 
-    public function getBooleanValue(mixed $value)
+    public function getBooleanValue(mixed $value): int
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN) ? 1 : 0;
     }

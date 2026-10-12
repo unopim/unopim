@@ -1,19 +1,20 @@
 @pushOnce('scripts')
     <script type="text/x-template" id="v-spreadsheet-row-template">
-        <tr v-if="row" class="border-b dark:border-cherry-700"  :style="{ height: rowHeight + 'px' }">
-            <td class="sticky left-0 z-10 bg-white dark:bg-cherry-800 border-r dark:border-cherry-700 p-2 text-sm text-gray-600 dark:text-gray-300"
-            >   @{{ row.id }} 
+        <tr v-if="row" class="border-b border-gray-200 dark:border-cherry-700" :class="{ 'bg-gray-50 dark:bg-cherry-800': rowId % 2 === 1 }" :style="{ height: rowHeight + 'px' }">
+            <td class="sticky left-0 z-10 bg-gray-100 dark:bg-cherry-800 border-r border-gray-200 dark:border-cherry-700 px-1 py-0 text-xs text-center text-gray-500 dark:text-gray-400 font-normal"
+            >   @{{ row.id }}
                 <div
                     class="absolute bottom-0 left-0 w-full h-1 cursor-row-resize z-20"
                     @mousedown="startRowResize"
                 ></div>
             </td>
 
-            <template v-for="(col, index) in fltColumns" >
+            <template v-for="(col, index) in fltColumns" :key="index">
                 <v-spreadsheet-cell
                     :colId="index"
                     :rowId="rowId"
-                    :value="getValue(row['values'], col)"
+                    :value="cellValue(col)"
+                    :locked="isLocked(col)"
                     :entityId="row.id"
                     :col="col"
                     :attribute="columns[col.id]"
@@ -52,11 +53,32 @@
             data() {
                 return {
                     isDragging: false,
-                    rowHeight: 36,
+                    rowHeight: 30,
                 };
             },
 
             methods: {
+
+                lockState(col) {
+                    return this.row.locks?.[col.code] ?? 'own';
+                },
+
+                isLocked(col) {
+                    return this.lockState(col) !== 'own';
+                },
+
+                cellValue(col) {
+                    const state = this.lockState(col);
+
+                    if (state === 'na') {
+                        return null;
+                    }
+
+                    const source = state === 'inherited' ? (this.row.inheritedValues || {}) : this.row.values;
+
+                    return this.getValue(source, col);
+                },
+
                 getValue(data, col) {
                     switch (col.key) {
                         case 'pcl':

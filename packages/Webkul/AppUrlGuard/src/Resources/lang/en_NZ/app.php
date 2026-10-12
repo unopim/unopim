@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'APP_URL Mismatch Detected',
+        'dismiss'         => 'Dismiss',
+        'lede-before'     => 'Your frontend assets (CSS, JS) are pinned to the configured',
+        'lede-after'      => 'Update it to match the host you are using, otherwise the styles and scripts will not load.',
+        'configured-env'  => 'Configured (.env)',
+        'mismatch-tag'    => 'MISMATCH',
+        'actual-browser'  => 'Actual (browser)',
+        'in-use-tag'      => 'IN USE',
+        'toggle-step'     => 'Toggle step :number',
+        'step-1-title'    => 'Update APP_URL in your .env file',
+        'step-1-hint'     => "Open the project's .env and replace the APP_URL line.",
+        'step-2-title'    => 'Clear the application cache',
+        'step-2-hint'     => 'Run this in your terminal from the project root.',
+        'copy'            => 'Copy',
+        'copied'          => 'Copied',
+        'note-bold'       => 'Then hard refresh the page',
+        'note-rest'       => 'so the browser reloads the updated assets.',
+        'progress'        => ':done of :total steps complete',
+        'all-done'        => 'All done',
+        'powered-by'      => 'Powered by',
+        'open-source-by'  => 'An open-source project by',
+        'copied-toast'    => 'Copied to clipboard',
+        'still-mismatch'  => 'APP_URL still does not match. Update .env and run "php artisan optimize:clear".',
+        'verify-failed'   => 'Could not verify APP_URL. Please refresh the page.',
+        'logged-out'      => 'Logged out: APP_URL does not match the current host. Update APP_URL in .env and run "php artisan optimize:clear".',
+    ],
+
+    'log' => [
+        'mismatch' => 'APP_URL mismatch detected',
+        'hint'     => 'Update APP_URL in .env to the request URL, then run: php artisan optimize:clear',
+    ],
+];

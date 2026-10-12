@@ -82,6 +82,28 @@ it('should create the import job', function () {
     $this->assertDatabaseHas($this->getFullTableName(JobInstances::class), ['code' => $importJob['code']]);
 });
 
+it('rejects an import job code containing path-traversal characters', function () {
+    $this->loginAsAdmin();
+    Storage::fake();
+
+    // The job code is later used to build a zip filename on disk; a code with
+    // "../" (or slashes/dots) must be rejected so it cannot escape the target dir.
+    $response = postJson(route('admin.settings.data_transfer.imports.store'), [
+        'code'                => '../../evil',
+        'entity_type'         => 'products',
+        'field_separator'     => ',',
+        'type'                => 'import',
+        'allowed_errors'      => 0,
+        'file'                => UploadedFile::fake()->create('product.csv'),
+        'action'              => 'append',
+        'validation_strategy' => 'skip-erros',
+    ]);
+
+    $response->assertStatus(422)->assertJsonValidationErrors(['code']);
+
+    $this->assertDatabaseMissing($this->getFullTableName(JobInstances::class), ['code' => '../../evil']);
+});
+
 it('should create the category import job', function () {
     $this->loginAsAdmin();
     Storage::fake();

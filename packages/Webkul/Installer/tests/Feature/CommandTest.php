@@ -1,6 +1,12 @@
 <?php
 
+use Illuminate\Console\Attributes\Signature;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
+use Webkul\Installer\Console\Commands\Installer;
 use Webkul\User\Models\Admin;
+
+uses(DatabaseTransactions::class);
 
 it('should ask for email if email option is not provided in the command', function () {
     $this->artisan('unopim:user:create', [
@@ -88,10 +94,10 @@ it('should ask for password if password option is not provided in the command', 
         ->assertExitCode(0);
 });
 
-it('should ask for password if password length is less than 6 in the command', function () {
+it('should ask for password if password length is less than the configured minimum', function () {
     $this->artisan('unopim:user:create', [
         '--name'      => 'New User',
-        '--password'  => 'pass',
+        '--password'  => str_repeat('a', config('admin.auth.password_min') - 1),
         '--email'     => 'new.user@example.com',
         '--ui_locale' => 'en_US',
         '--timezone'  => 'UTC',
@@ -118,6 +124,31 @@ it('should create an admin user with command', function () {
     ]);
 });
 
+it('should not expose the password after creating a user', function () {
+    $password = 'Adm#13$X';
+
+    $this->artisan('unopim:user:create', [
+        '--name'      => 'Secure User',
+        '--email'     => 'secure.user@example.com',
+        '--password'  => $password,
+        '--ui_locale' => 'en_US',
+        '--timezone'  => 'UTC',
+        '--admin'     => true,
+    ])
+        ->expectsOutput(trans('admin::app.settings.users.create-success'))
+        ->doesntExpectOutputToContain('use the following credentials')
+        ->doesntExpectOutputToContain('Email:')
+        ->doesntExpectOutputToContain('Password:')
+        ->doesntExpectOutputToContain($password)
+        ->assertSuccessful();
+
+    $user = Admin::query()
+        ->where('email', 'secure.user@example.com')
+        ->firstOrFail();
+
+    expect(Hash::check($password, $user->password))->toBeTrue();
+});
+
 it('should create a user with command', function () {
     $this->artisan('unopim:user:create', [
         '--name'      => 'New User',
@@ -141,6 +172,10 @@ it('should not create a user if one with same already exists for same email with
         'name'  => 'New User',
     ]);
 
+    if (! Admin::where('email', 'admin@example.com')->exists()) {
+        Admin::factory()->create(['email' => 'admin@example.com']);
+    }
+
     $this->artisan('unopim:user:create', [
         '--name'      => 'New User',
         '--email'     => 'new.user@example.com',
@@ -163,5 +198,63 @@ it('should ask for name if invalid user name given in the command', function () 
         '--admin'     => false,
     ])
         ->expectsQuestion('Set the Name for User', 'Admin')
+        ->assertExitCode(0);
+});
+
+it('should validate database prefix in unopim:install command', function () {
+    $this->app->extend(Installer::class, function ($service) {
+        // An anonymous subclass doesn't inherit the parent's #[Signature], so restate it to register a name.
+        return new #[Signature('unopim:install
+            { --skip-env-check : Skip env check. }
+            { --skip-admin-creation : Skip admin creation. }
+            { --with-demo-data : Seed sample products and demo data. }
+            { --with-packages= : Comma-separated optional packages to install (dam, shopify, bagisto). }')] class extends Installer
+        {
+            public function call($command, array $arguments = [], $output = null)
+            {
+                return 0;
+            }
+
+            protected function databaseConnectionSuccessful(array $config): bool
+            {
+                return true;
+            }
+
+            protected function envUpdate(string $key, string $value): void
+            { /* Mute */
+            }
+
+            public function handle(): void
+            {
+                // Ensure prompts occur even if .env exists
+                $this->askForDatabaseDetails();
+            }
+        };
+    });
+
+    $this->artisan('unopim:install', ['--skip-admin-creation' => true])
+        ->expectsQuestion('Please select the database connection', 'mysql')
+        ->expectsQuestion('Please enter the database host', '127.0.0.1')
+        ->expectsQuestion('Please enter the database port', '3306')
+        ->expectsQuestion('Please enter the database name', 'unopim')
+        ->expectsQuestion('Please enter the database prefix', 'too_long_prefix_')
+        ->assertExitCode(1);
+
+    $this->artisan('unopim:install', ['--skip-admin-creation' => true])
+        ->expectsQuestion('Please select the database connection', 'mysql')
+        ->expectsQuestion('Please enter the database host', '127.0.0.1')
+        ->expectsQuestion('Please enter the database port', '3306')
+        ->expectsQuestion('Please enter the database name', 'unopim')
+        ->expectsQuestion('Please enter the database prefix', 'invalid-char!')
+        ->assertExitCode(1);
+
+    $this->artisan('unopim:install', ['--skip-admin-creation' => true])
+        ->expectsQuestion('Please select the database connection', 'mysql')
+        ->expectsQuestion('Please enter the database host', '127.0.0.1')
+        ->expectsQuestion('Please enter the database port', '3306')
+        ->expectsQuestion('Please enter the database name', 'unopim')
+        ->expectsQuestion('Please enter the database prefix', 'uno_')
+        ->expectsQuestion('Please enter your database username', 'root')
+        ->expectsQuestion('Please enter your database password', 'root')
         ->assertExitCode(0);
 });

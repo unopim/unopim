@@ -2,9 +2,29 @@
     <x-slot:entityName>
         job_instance
     </x-slot>
-    
+
     <x-slot:title>
         @lang('admin::app.settings.data-transfer.exports.edit.title')
+    </x-slot>
+
+    <x-slot:pageHeader>
+        <x-admin::layouts.edit-page-header
+            :title="trans('admin::app.settings.data-transfer.exports.edit.title')"
+            :back-url="route('admin.settings.data_transfer.exports.index')"
+            :back-label="trans('admin::app.settings.data-transfer.exports.edit.back-btn')"
+            :save-label="trans('admin::app.settings.data-transfer.exports.edit.save-btn')"
+            form="export-profile-edit-form"
+            :sticky="false"
+        >
+            <x-slot:actions>
+                <a
+                    href="{{ route('admin.settings.data_transfer.exports.export-view', $export->id) }}"
+                    class="secondary-button"
+                >
+                    @lang('admin::app.settings.data-transfer.exports.index.datagrid.export')
+                </a>
+            </x-slot>
+        </x-admin::layouts.edit-page-header>
     </x-slot>
 
     {!! view_render_event('unopim.admin.settings.data_transfer.exports.create.before') !!}
@@ -12,206 +32,243 @@
     <v-export-profile-edit></v-export-profile-edit>
 
     @pushOnce('scripts')
-        <script type="text/x-template" id="v-export-profile-edit-template">
+        <script type="text/x-template" id="v-export-profile-edit-template-{{ $export->id }}">
             <x-admin::form
+                id="export-profile-edit-form"
+                ajax
                 :action="route('admin.settings.data_transfer.exports.update', $export->id)"
                 method="PUT"
                 enctype="multipart/form-data"
             >
                 {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.edit_form_controls.before') !!}
 
-                <div class="flex justify-between items-center">
-                    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                        @lang('admin::app.settings.data-transfer.exports.edit.title')
-                    </p>
+                @php
+                    $exportFilters = $export->filters ?? [];
 
-                    <div class="flex gap-x-2.5 items-center">
-                        <a href="{{ route('admin.settings.data_transfer.exports.index') }}" class="transparent-button">
-                            @lang('admin::app.settings.data-transfer.exports.edit.back-btn')
-                        </a>
+                    $fieldNames = collect($exporterConfig[$export->entity_type]['filters']['fields'] ?? [])->pluck('name');
+                    $scopeFields = $fieldNames->intersect(['channels', 'locales', 'currencies', 'attributes']);
+                    $productFilterFields = $fieldNames->intersect(['attribute_families', 'categories', 'completeness', 'time_condition', 'status', 'sku']);
+                    $outputFields = $fieldNames->intersect(['file_format', 'with_media', 'with_associations', 'header_row', 'use_labels', 'date_format', 'file_path']);
+                    $supportsConditions = $fieldNames->contains('custom_attributes');
+                    $supportsCategories = $fieldNames->contains('categories');
+                @endphp
 
-                        <button type="submit" class="primary-button">
-                            @lang('admin::app.settings.data-transfer.exports.edit.save-btn')
-                        </button>
-                    </div>
-                </div>
-
+                <!-- Body Content -->
                 <div class="flex gap-2.5 mt-3.5 max-xl:flex-wrap">
                     <div class="flex flex-col gap-2 flex-1 max-xl:flex-auto">
+                        {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.general.before') !!}
+
                         <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
                             <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
                                 @lang('admin::app.settings.data-transfer.exports.edit.general')
                             </p>
-                            
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.settings.data-transfer.exports.create.code')
-                                </x-admin::form.control-group.label>
 
-                                <x-admin::form.control-group.control
-                                    type="text"
-                                    name="code"
-                                    :disabled="true"
-                                    :value="old('code') ?? $export->code"
-                                    rules="required"
-                                />
-
-                                <x-admin::form.control-group.control
-                                    type="hidden"
-                                    name="code"
-                                    :value="old('code') ?? $export->code"
-                                />
-                            </x-admin::form.control-group>
-
-                            <x-admin::form.control-group>
-                                <x-admin::form.control-group.label class="required">
-                                    @lang('admin::app.settings.data-transfer.exports.edit.type')
-                                </x-admin::form.control-group.label>
-
-                                @php
-                                    $options = [];
-                                    foreach(config('exporters') as $index => $exporter) {
-                                        $options[] = ['id' => $index, 'label' => trans($exporter['title'])];
-                                    }
-                                    $optionsJson = json_encode($options);                            
-                                @endphp
-
-                                <x-admin::form.control-group.control
-                                    type="select"
-                                    name="entity_type_disabled"
-                                    :disabled="true"
-                                    :value="$export->entity_type"
-                                    :options="$optionsJson"
-                                    track-by="id"
-                                    label-by="label"
-                                />
-
-                                <input type="hidden" 
-                                       name="entity_type" 
-                                       v-model="entityType" 
-                                       value="{{ old('entity_type', $export->entity_type) }}"
-                                       >
-                            </x-admin::form.control-group>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
-                        <x-admin::accordion v-if="selectedFileFormat == 'Csv'">
-                            <x-slot:header>
-                                <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                    @lang('admin::app.settings.data-transfer.exports.edit.settings')
-                                </p>
-                            </x-slot>
-
-                            <x-slot:content>
+                            <div class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5">
                                 <x-admin::form.control-group>
                                     <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.settings.data-transfer.exports.edit.field-separator')
+                                        @lang('admin::app.settings.data-transfer.exports.create.code')
                                     </x-admin::form.control-group.label>
 
                                     <x-admin::form.control-group.control
                                         type="text"
-                                        name="field_separator"
+                                        name="code"
+                                        :disabled="(boolean) $export->code"
+                                        :value="old('code') ?? $export->code"
                                         rules="required"
-                                        :value="old('field_separator') ?? $export->field_separator"
+                                        :label="trans('admin::app.settings.data-transfer.exports.create.code')"
+                                        :placeholder="trans('admin::app.settings.data-transfer.exports.create.code')"
                                     />
+
+                                    <x-admin::form.control-group.control
+                                        type="hidden"
+                                        name="code"
+                                        :value="old('code') ?? $export->code"
+                                    />
+
+                                    <x-admin::form.control-group.error control-name="code" />
                                 </x-admin::form.control-group>
-                            </x-slot>
-                        </x-admin::accordion>
 
-                        {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.settings.after') !!}
+                                <x-admin::form.control-group>
+                                    <x-admin::form.control-group.label class="required">
+                                        @lang('admin::app.settings.data-transfer.exports.edit.type')
+                                    </x-admin::form.control-group.label>
 
-                        {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.befor') !!}
+                                    @php
+                                        $options = [];
+                                        foreach (config('exporters') as $index => $exporter) {
+                                            $options[] = ['id' => $index, 'label' => trans($exporter['title'])];
+                                        }
+                                        $optionsJson = json_encode($options);
+                                    @endphp
 
-                        <!-- Filters Panel -->
-                        <x-admin::accordion>
-                            <x-slot:header>
-                                <p class="p-2.5 text-base text-gray-800 dark:text-white font-semibold">
-                                    @lang('admin::app.settings.data-transfer.exports.create.filters')
+                                    <x-admin::form.control-group.control
+                                        type="select"
+                                        name="entity_type"
+                                        id="export-type"
+                                        :disabled="(boolean) $export->entity_type"
+                                        :value="old('entity_type') ?? $export->entity_type"
+                                        ref="exportType"
+                                        rules="required"
+                                        :label="trans('admin::app.settings.data-transfer.exports.edit.type')"
+                                        :options="$optionsJson"
+                                        track-by="id"
+                                        label-by="label"
+                                    >
+                                    </x-admin::form.control-group.control>
+
+                                    <x-admin::form.control-group.error control-name="type" />
+                                </x-admin::form.control-group>
+                            </div>
+                        </div>
+                        {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.general.after') !!}
+
+                        @if ($scopeFields->isNotEmpty())
+                            {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.scope.before') !!}
+
+                            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                    @lang('admin::app.settings.data-transfer.exports.create.scope-filters')
                                 </p>
-                            </x-slot>
-
-                            <x-slot:content>
-                                @php
-                                    $filters = $export->filters ?? [];
-                                @endphp
-
-                                <x-admin::form.control-group v-if="!isCategory()">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.settings.channels.create.channels')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="multiselect"
-                                        name="filters[channel][]"
-                                        v-model="filters.channel"
-                                        ::options="JSON.stringify(channels)"
-                                        track-by="id"
-                                        label-by="label"
-                                        rules="required"
-                                        label="Channel"
-                                    />
-                                    <x-admin::form.control-group.error control-name="filters[channel][]" />
-                                </x-admin::form.control-group>
-
-                                <x-admin::form.control-group class="mt-4">
-                                    <x-admin::form.control-group.label class="required">
-                                        @lang('admin::app.settings.channels.edit.locales')
-                                    </x-admin::form.control-group.label>
-
-                                    <x-admin::form.control-group.control
-                                        type="multiselect"
-                                        name="filters[locale][]"
-                                        v-model="filters.locale"
-                                        ::options="JSON.stringify(locales)"
-                                        track-by="id"
-                                        label-by="label"
-                                        rules="required"
-                                        label="Locale"
-                                    />
-                                    <x-admin::form.control-group.error control-name="filters[locale][]" />
-                                </x-admin::form.control-group>
 
                                 <x-admin::data-transfer.filter-fields
                                     :entity-type="$export->entity_type"
-                                    :values="$filters"
-                                    :exporter-config="json_encode($exporterConfig)"
-                                >
-                                </x-admin::data-transfer.filter-fields>
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="channels,locales,currencies,attributes"
+                                    grid-class="grid grid-cols-1"
+                                />
+                            </div>
 
-                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.filters.fields.after') !!}
-                            </x-slot>
-                        </x-admin::accordion>
+                            {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.scope.after') !!}
+                        @endif
+
+                        @if ($productFilterFields->isNotEmpty())
+                            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                    @lang('admin::app.settings.data-transfer.exports.create.product-filters')
+                                </p>
+
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="attribute_families,status"
+                                    grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+                                />
+
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="completeness,time_condition,time_value,time_date,time_date_end"
+                                    grid-class="grid grid-cols-2 max-sm:grid-cols-1 gap-x-5"
+                                />
+
+                                @if ($supportsCategories)
+                                    <x-admin::form.control-group>
+                                        <x-admin::form.control-group.label>
+                                            @lang('data_transfer::app.exporters.products.filters.categories')
+                                        </x-admin::form.control-group.label>
+
+                                        <x-admin::data-transfer.category-tree
+                                            :value="$exportFilters['categories'] ?? []"
+                                        />
+                                    </x-admin::form.control-group>
+                                @endif
+
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="sku"
+                                    grid-class="grid grid-cols-1"
+                                />
+
+                            </div>
+                        @endif
+
+                        @if ($supportsConditions)
+                            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                    @lang('admin::app.settings.data-transfer.exports.create.attribute-conditions')
+                                </p>
+
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="custom_attributes"
+                                    grid-class="grid grid-cols-1"
+                                />
+                            </div>
+                        @endif
+                    </div>
+
+                    <div class="flex flex-col gap-2 w-[360px] max-w-full max-sm:w-full">
+                        {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.befor') !!}
+
+                        @if ($outputFields->isNotEmpty())
+                            <div class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow">
+                                <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                    @lang('admin::app.settings.data-transfer.exports.create.output')
+                                </p>
+                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.output.before') !!}
+                                <x-admin::data-transfer.filter-fields
+                                    :entity-type="$export->entity_type"
+                                    :values="$exportFilters"
+                                    :exporter-config="$exporterConfig"
+                                    only="file_format,with_media,with_associations,header_row,use_labels,date_format,file_path"
+                                />
+                                {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.output.after') !!}
+                            </div>
+                        @endif
+
                         {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.filters.after') !!}
+
+                        {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.settings.before') !!}
+
+                        <div
+                            v-if="selectedFileFormat == 'Csv'"
+                            class="p-4 bg-white dark:bg-cherry-900 rounded box-shadow"
+                        >
+                            <p class="text-base text-gray-800 dark:text-white font-semibold mb-4">
+                                @lang('admin::app.settings.data-transfer.exports.create.format-settings')
+                            </p>
+
+                            <x-admin::form.control-group>
+                                <x-admin::form.control-group.label class="required">
+                                    @lang('admin::app.settings.data-transfer.exports.edit.field-separator')
+                                </x-admin::form.control-group.label>
+
+                                <x-admin::form.control-group.control
+                                    type="text"
+                                    name="field_separator"
+                                    rules="required"
+                                    :value="old('field_separator') ?? $export->field_separator"
+                                    :label="trans('admin::app.settings.data-transfer.exports.edit.field-separator')"
+                                    :placeholder="trans('admin::app.settings.data-transfer.exports.edit.field-separator')"
+                                />
+
+                                <x-admin::form.control-group.error control-name="field_separator" />
+                            </x-admin::form.control-group>
+                        </div>
+
+                        {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.card.accordion.settings.after') !!}
                     </div>
                 </div>
 
                 {!! view_render_event('unopim.admin.settings.data_transfer.exports.edit.create_form_controls.after') !!}
-             </x-admin::form>
+            </x-admin::form>
         </script>
 
         <script type="module">
             app.component('v-export-profile-edit', {
-                template: '#v-export-profile-edit-template',
+                template: '#v-export-profile-edit-template-{{ $export->id }}',
 
                 data() {
                     return {
-                        entityType: @json($export->entity_type),
-                        selectedFileFormat: @json($export->filters['file_format'] ?? 'Csv'),
-
-                        filters: {
-                            channel: @json($export->filters['channel'] ?? []),
-                            locale: @json($export->filters['locale'] ?? [])
-                        },
-
-                        channels: @json($channels).map(c => ({
-                            id: c.code,
-                            label: c.name
-                        })),
-                        locales: @json($locales).map(l => ({
-                            id: l.code,
-                            label: l.name
-                        })),
+                        fileFormat: @json($export->filters['file_format'] ?? null),
+                        selectedFileFormat: @json($export->filters['file_format'] ?? null),
                     };
                 },
 
@@ -220,16 +277,20 @@
                 },
 
                 methods: {
-                    isCategory() {
-                        return this.entityType === 'categories';
-                    },
-
                     handleFilterValues(changed) {
                         if ('file_format' == changed.filterName) {
                             this.selectedFileFormat = changed.value;
                         }
                     },
-                }
+
+                    onAjaxSubmit(...args) {
+                        return this.$root.onAjaxSubmit(...args);
+                    },
+
+                    onInvalidSubmit(...args) {
+                        return this.$root.onInvalidSubmit(...args);
+                    },
+                },
             })
         </script>
     @endPushOnce

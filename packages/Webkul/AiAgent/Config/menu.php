@@ -5,7 +5,7 @@ return [
         'key'    => 'ai-agent',
         'name'   => 'ai-agent::app.menu.ai-agent',
         'route'  => 'admin.magic_ai.platform.index',
-        'sort'   => 8,
+        'sort'   => 7,
         'icon'   => 'icon-magic-ai',
     ],
     [
@@ -18,8 +18,7 @@ return [
     [
         'key'    => 'ai-agent.general',
         'name'   => 'ai-agent::app.menu.settings',
-        'route'  => 'admin.configuration.edit',
-        'params' => ['general', 'magic_ai'],
+        'route'  => 'admin.magic_ai.settings.index',
         'sort'   => 2,
         'icon'   => '',
     ],

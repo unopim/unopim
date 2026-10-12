@@ -5,6 +5,9 @@ namespace Webkul\Core\Database\Factories;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Webkul\Core\Models\ChannelTranslation;
 
+/**
+ * @extends Factory<ChannelTranslation>
+ */
 class ChannelTranslationFactory extends Factory
 {
     /**
@@ -21,7 +24,7 @@ class ChannelTranslationFactory extends Factory
     {
         return [
             'locale'   => 'en_US',
-            'name'     => $this->faker->word,
+            'name'     => fake()->word,
         ];
     }
 }

@@ -24,11 +24,9 @@ class SkuFilter extends AbstractPropertyFilter
     /**
      * {@inheritdoc}
      */
-    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = [])
+    public function applyPropertyFilter($property, $operator, $value, $locale = null, $channel = null, $options = []): static
     {
-        if ($this->queryBuilder === null) {
-            throw new \LogicException('The search query builder is not initialized in the filter.');
-        }
+        throw_if($this->queryBuilder === null, \LogicException::class, 'The search query builder is not initialized in the filter.');
 
         if (! in_array($property, $this->supportedProperties)) {
             throw new \InvalidArgumentException(
@@ -48,7 +46,7 @@ class SkuFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
 
             case FilterOperators::CONTAINS:
@@ -65,8 +63,9 @@ class SkuFilter extends AbstractPropertyFilter
                     $clauses[] = [
                         'wildcard' => [
                             $property => [
-                                'value'   => '*'.$escapedValue.'*',
-                                'rewrite' => 'top_terms_1024',
+                                'value'            => '*'.strtolower($escapedValue).'*',
+                                'case_insensitive' => true,
+                                'rewrite'          => 'top_terms_1024',
                             ],
                         ],
                     ];
@@ -79,7 +78,7 @@ class SkuFilter extends AbstractPropertyFilter
                     ],
                 ];
 
-                $this->queryBuilder::where($clause);
+                $this->queryBuilder->where($clause);
                 break;
         }
 

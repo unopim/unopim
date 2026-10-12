@@ -1,0 +1,7 @@
+locale,code,parent,name,productCounts
+en_US,clothing,root,Clothing,0
+en_US,women,clothing,Women,0
+en_US,men,clothing,Men,0
+en_US,electronics,root,Electronics,0
+en_US,summer_wear_men,men,"Summer Wear Men",0
+en_US,summer_wear_women,women,"Summer Wear Women",0

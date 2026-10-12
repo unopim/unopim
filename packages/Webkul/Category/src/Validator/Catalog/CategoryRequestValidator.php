@@ -2,8 +2,8 @@
 
 namespace Webkul\Category\Validator\Catalog;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Support\Facades\Validator as ValidatorFacade;
-use Illuminate\Validation\Validator;
 use Webkul\Category\Contracts\CategoryField;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Rules\FieldOption;
@@ -12,10 +12,12 @@ use Webkul\Core\Rules\FileOrImageValidValue;
 
 class CategoryRequestValidator extends CategoryValidator
 {
+    protected ?int $categoryId = null;
+
     /**
      * Validates the category data based on the provided request data and optional category ID.
      */
-    public function validate(array $requestData, ?int $id = null): void
+    public function validate(array $requestData, ?int $id = null): array
     {
         $validator = parent::validate($requestData, $id);
 
@@ -34,6 +36,8 @@ class CategoryRequestValidator extends CategoryValidator
 
             throw $exception::withMessages($errorMessages);
         }
+
+        return [];
     }
 
     /**
@@ -46,12 +50,17 @@ class CategoryRequestValidator extends CategoryValidator
         }
 
         $existsFields = $this->getCategoryFields();
+        $this->categoryId = $id;
 
-        $rules = $this->inputFieldsRules($existsFields, $requestData, $id);
+        try {
+            $rules = $this->inputFieldsRules($existsFields, $requestData, $id);
+        } finally {
+            $this->categoryId = null;
+        }
 
         $fieldKeys = [];
 
-        foreach ($rules as $key => $validationRules) {
+        foreach (array_keys($rules) as $key) {
             if (! is_string($key)) {
                 continue;
             }
@@ -77,11 +86,19 @@ class CategoryRequestValidator extends CategoryValidator
         $rules = parent::fieldTypeRules($field);
 
         if ($field->type === self::FILE_FIELD_TYPE || $field->type === self::IMAGE_FIELD_TYPE) {
-            $rules = [new FileOrImageValidValue(isImage: $field->type === self::IMAGE_FIELD_TYPE)];
+            $maxKilobytes = $field->type === self::IMAGE_FIELD_TYPE
+                ? (int) (core()->getConfigData('catalog.categories.fields.image_attribute_upload_size') ?? 2048)
+                : (int) (core()->getConfigData('catalog.categories.fields.file_attribute_upload_size') ?? 2048);
+
+            $rules = [new FileOrImageValidValue(
+                isImage: $field->type === self::IMAGE_FIELD_TYPE,
+                maxKilobytes: $maxKilobytes,
+                allowedPathPrefixes: $this->categoryId ? ['category/'.$this->categoryId.'/'.$field->code] : [],
+            )];
         }
 
         if ($field->type === self::CHECKBOX_FIELD_TYPE) {
-            $rules = [new FieldOption($field)];
+            return [new FieldOption($field)];
         }
 
         return $rules;

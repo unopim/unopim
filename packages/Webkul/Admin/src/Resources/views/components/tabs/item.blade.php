@@ -1,10 +1,12 @@
 @props([
     'title'      => '',
+    'value'      => '',
     'isSelected' => false,
 ])
 
 <v-tab-item
     title="{{ $title }}"
+    value="{{ $value ?: $title }}"
     is-selected="{{ $isSelected }}"
     {{ $attributes->merge(['class' => 'p-5 max-1180:px-5']) }}
 >
@@ -14,8 +16,8 @@
 </v-tab-item>
 
 @pushOnce('scripts')
-    <script 
-        type="text/x-template" 
+    <script
+        type="text/x-template"
         id="v-tab-item-template"
     >
         <div
@@ -30,21 +32,32 @@
         app.component('v-tab-item', {
             template: '#v-tab-item-template',
 
-            props: ['title', 'isSelected'],
+            props: ['title', 'value', 'isSelected'],
 
             data() {
                 return {
-                    isActive: false
+                    isActive: false,
+
+                    badge: null,
                 }
             },
 
             mounted() {
                 this.isActive = this.isSelected;
 
-                /**
-                 * On mounted, pushing element to its parents component.
-                 */
                 this.$parent.$data.tabs.push(this);
+            },
+
+            beforeUnmount() {
+                const tabs = this.$parent?.$data?.tabs;
+
+                if (tabs) {
+                    const index = tabs.indexOf(this);
+
+                    if (index !== -1) {
+                        tabs.splice(index, 1);
+                    }
+                }
             }
         });
     </script>

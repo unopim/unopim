@@ -11,9 +11,16 @@ it('should return access token with valid credentials', function () {
     $admin = Admin::factory()->create(['password' => bcrypt('password')]);
 
     $clientRepo = new ClientRepository;
+    // Passport 13 dropped userId + redirect args from createPasswordGrantClient.
     $client = $clientRepo->createPasswordGrantClient(
-        $admin->id, 'Auth Test Client', env('APP_URL'), 'admins'
+        'Auth Test Client', 'admins', confidential: true
     );
+
+    $client->forceFill([
+        'user_id'    => $admin->id,
+        'owner_type' => Admin::class,
+        'owner_id'   => $admin->id,
+    ])->save();
 
     Apikey::factory()->create([
         'permission_type' => 'all',
@@ -44,9 +51,16 @@ it('should return error with invalid credentials', function () {
     $admin = Admin::factory()->create(['password' => bcrypt('password')]);
 
     $clientRepo = new ClientRepository;
+    // Passport 13 dropped userId + redirect args from createPasswordGrantClient.
     $client = $clientRepo->createPasswordGrantClient(
-        $admin->id, 'Auth Test Client', env('APP_URL'), 'admins'
+        'Auth Test Client', 'admins', confidential: true
     );
+
+    $client->forceFill([
+        'user_id'    => $admin->id,
+        'owner_type' => Admin::class,
+        'owner_id'   => $admin->id,
+    ])->save();
 
     Apikey::factory()->create([
         'permission_type' => 'all',
@@ -96,6 +110,22 @@ it('should return 401 with invalid bearer token', function () {
         ->assertUnauthorized();
 });
 
+it('should return 401 json when no token and no Accept header', function () {
+    $response = $this->call('GET', route('admin.api.locales.index'));
+
+    $response->assertStatus(401);
+    expect($response->json('error'))->not->toBeNull();
+});
+
+it('should return 401 json for invalid token without Accept header', function () {
+    $response = $this->call('GET', route('admin.api.locales.index'), [], [], [], [
+        'HTTP_AUTHORIZATION' => 'Bearer invalid-token-string',
+    ]);
+
+    $response->assertStatus(401);
+    expect($response->json('error'))->not->toBeNull();
+});
+
 it('should return 406 when Accept header is not application/json', function () {
     $headers = $this->getAuthenticationHeaders();
 
@@ -112,9 +142,16 @@ it('should return access token with refresh token', function () {
     $admin = Admin::factory()->create(['password' => bcrypt('password')]);
 
     $clientRepo = new ClientRepository;
+    // Passport 13 dropped userId + redirect args from createPasswordGrantClient.
     $client = $clientRepo->createPasswordGrantClient(
-        $admin->id, 'Auth Test Client', env('APP_URL'), 'admins'
+        'Auth Test Client', 'admins', confidential: true
     );
+
+    $client->forceFill([
+        'user_id'    => $admin->id,
+        'owner_type' => Admin::class,
+        'owner_id'   => $admin->id,
+    ])->save();
 
     Apikey::factory()->create([
         'permission_type' => 'all',

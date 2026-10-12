@@ -2,8 +2,8 @@
 
 namespace Webkul\Webhook\DataGrids;
 
-use Carbon\Carbon;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Webkul\DataGrid\DataGrid;
 
@@ -14,7 +14,27 @@ class LogsDataGrid extends DataGrid
      *
      * @var string
      */
-    protected $searchPlaceholder = 'admin::app.components.datagrid.toolbar.search_by.code';
+    protected $searchPlaceholder = 'admin::app.components.datagrid.toolbar.search_by.sku_or_user';
+
+    /**
+     * Memoized webhook id => name map so the webhook column avoids an N+1
+     * lookup across a page of log rows.
+     *
+     * @var array<int, string>|null
+     */
+    protected ?array $webhookNames = null;
+
+    protected ?int $webhookId = null;
+
+    /**
+     * Pin the grid to one webhook regardless of what the client sends.
+     */
+    public function forWebhook(int $webhookId): self
+    {
+        $this->webhookId = $webhookId;
+
+        return $this;
+    }
 
     /**
      * Prepare query builder.
@@ -26,20 +46,27 @@ class LogsDataGrid extends DataGrid
         $queryBuilder = DB::table('webhook_logs')->select(
             'id',
             'created_at',
+            'webhook_id',
             'sku',
+            'event',
             'user',
-            'status'
+            'status',
+            'http_code'
         );
+
+        $webhookId = $this->webhookId ?? request('webhook_id');
+
+        if (is_numeric($webhookId)) {
+            $queryBuilder->where('webhook_id', (int) $webhookId);
+        }
 
         return $queryBuilder;
     }
 
     /**
      * Add columns.
-     *
-     * @return void
      */
-    public function prepareColumns()
+    public function prepareColumns(): void
     {
         $this->addColumn([
             'index'      => 'id',
@@ -57,17 +84,27 @@ class LogsDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => false,
             'sortable'   => false,
-            'closure'    => function ($row) {
+            'closure'    => function ($row): string {
                 $timezone = auth('admin')->user()->timezone ?? config('app.timezone');
 
                 try {
-                    $display = Carbon::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
-                } catch (\Exception $e) {
+                    $display = Date::parse($row->created_at)->setTimezone($timezone)->toDateTimeString();
+                } catch (\Exception) {
                     $display = $row->created_at;
                 }
 
                 return '<span class="icon-calendar"></span> '.$display;
             },
+        ]);
+
+        $this->addColumn([
+            'index'      => 'webhook_id',
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.webhook'),
+            'type'       => 'string',
+            'searchable' => false,
+            'filterable' => false,
+            'sortable'   => false,
+            'closure'    => fn ($row): string => $this->webhookName($row->webhook_id),
         ]);
 
         $this->addColumn([
@@ -80,6 +117,15 @@ class LogsDataGrid extends DataGrid
         ]);
 
         $this->addColumn([
+            'index'      => 'event',
+            'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.event'),
+            'type'       => 'string',
+            'searchable' => false,
+            'filterable' => true,
+            'sortable'   => false,
+        ]);
+
+        $this->addColumn([
             'index'      => 'user',
             'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.user'),
             'type'       => 'string',
@@ -87,54 +133,194 @@ class LogsDataGrid extends DataGrid
             'filterable' => true,
             'sortable'   => true,
         ]);
+
         $this->addColumn([
             'index'      => 'status',
             'label'      => trans('webhook::app.configuration.webhook.logs.index.datagrid.status'),
-            'type'       => 'string',
-            'searchable' => true,
+            'type'       => 'dropdown',
+            'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => function ($row) {
-                return $row->status
-                    ? '<span class="break-words label-completed">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.success').'</span>'
-                    : '<span class="break-words label-canceled">'.trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').'</span>';
+            'options'    => [
+                'type'   => 'basic',
+                'params' => [
+                    'options' => $this->buildStatusFilterOptions(),
+                ],
+            ],
+            'closure' => function ($row): string {
+                $code = $row->http_code;
+
+                if ($row->status) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.success');
+
+                    if (is_numeric($code) && (int) $code > 0) {
+                        $label .= ' ('.(int) $code.')';
+                    }
+
+                    return '<span class="break-words label-completed">'.$label.'</span>';
+                }
+
+                if (! is_numeric($code) || (int) $code === 0) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.timeout_or_error');
+                } elseif ((int) $code >= 500) {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.server_error').' ('.(int) $code.')';
+                } else {
+                    $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').' ('.(int) $code.')';
+                }
+
+                return '<span class="break-words label-canceled">'.$label.'</span>';
             },
         ]);
     }
 
     /**
-     * Prepare actions.
-     *
-     * @return void
+     * Resolve a webhook name from the memoized map.
      */
-    public function prepareActions()
+    protected function webhookName(?int $webhookId): string
     {
+        if ($webhookId === null) {
+            return '—';
+        }
+
+        if ($this->webhookNames === null) {
+            $this->webhookNames = DB::table('webhooks')->pluck('name', 'id')->all();
+        }
+
+        return $this->webhookNames[$webhookId] ?? '—';
+    }
+
+    /**
+     * Build the status dropdown from the actual (status, http_code) pairs in
+     * webhook_logs. Both are indexed real columns, so this is a cheap grouped
+     * scan even at millions of rows — no JSON-path extraction.
+     */
+    protected function buildStatusFilterOptions(): array
+    {
+        $rows = DB::table('webhook_logs')
+            ->select('status', 'http_code')
+            ->distinct()
+            ->get();
+
+        $pairs = [];
+        $hasTimeout = false;
+
+        foreach ($rows as $row) {
+            if ($row->http_code === null || (int) $row->http_code === 0) {
+                $hasTimeout = true;
+
+                continue;
+            }
+
+            $pairs[] = [(int) $row->status, (int) $row->http_code];
+        }
+
+        usort($pairs, fn (array $a, array $b): int => $b[0] <=> $a[0] ?: $a[1] <=> $b[1]);
+
+        $options = [];
+
+        foreach ($pairs as [$status, $code]) {
+            if ($status === 1) {
+                $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.success').' ('.$code.')';
+            } elseif ($code >= 500) {
+                $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.server_error').' ('.$code.')';
+            } else {
+                $label = trans('webhook::app.configuration.webhook.logs.index.datagrid.failed').' ('.$code.')';
+            }
+
+            $options[] = [
+                'label' => $label,
+                'value' => $status.':'.$code,
+            ];
+        }
+
+        if ($hasTimeout) {
+            $options[] = [
+                'label' => trans('webhook::app.configuration.webhook.logs.index.datagrid.timeout_or_error'),
+                'value' => 'timeout_or_error',
+            ];
+        }
+
+        return $options;
+    }
+
+    /**
+     * Translate each selected dropdown value into the matching SQL predicate
+     * against the indexed status / http_code columns. Values are either
+     * "<status>:<code>" pairs or the "timeout_or_error" null/0 sentinel.
+     */
+    public function processRequestedFilters(array $requestedFilters)
+    {
+        if (isset($requestedFilters['status'])) {
+            $statusValues = (array) $requestedFilters['status'];
+            unset($requestedFilters['status']);
+
+            $this->queryBuilder->where(function ($outer) use ($statusValues): void {
+                foreach ($statusValues as $value) {
+                    $outer->orWhere(function ($q) use ($value): void {
+                        if ($value === 'timeout_or_error') {
+                            $q->where('status', 0)->where(function ($inner): void {
+                                $inner->whereNull('http_code')->orWhere('http_code', 0);
+                            });
+
+                            return;
+                        }
+
+                        if (! is_string($value) || ! preg_match('/^[01]:\d+$/', $value)) {
+                            $q->whereRaw('1 = 0');
+
+                            return;
+                        }
+
+                        [$status, $code] = explode(':', $value, 2);
+
+                        $q->where('status', (int) $status)->where('http_code', (int) $code);
+                    });
+                }
+            });
+        }
+
+        return parent::processRequestedFilters($requestedFilters);
+    }
+
+    /**
+     * Prepare actions.
+     */
+    public function prepareActions(): void
+    {
+        if (bouncer()->hasPermission('configuration.webhook.logs.view')) {
+            $this->addAction([
+                'index'         => 'view',
+                'icon'          => 'icon-view',
+                'title'         => trans('webhook::app.configuration.webhook.logs.index.datagrid.view'),
+                'method'        => 'GET',
+                'frontend_view' => 'view-modal',
+                'url'           => fn ($row): string => route('webhook.logs.show', $row->id),
+            ]);
+        }
+
         if (bouncer()->hasPermission('configuration.webhook.logs.delete')) {
             $this->addAction([
                 'index'  => 'delete',
                 'icon'   => 'icon-delete',
                 'title'  => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
                 'method' => 'DELETE',
-                'url'    => function ($row) {
-                    return route('webhook.logs.delete', $row->id);
-                },
+                'url'    => fn ($row): string => route('webhook.logs.delete', $row->id),
             ]);
         }
     }
 
     /**
      * Prepare the mass actions
-     *
-     * @return void
      */
-    public function prepareMassActions()
+    public function prepareMassActions(): void
     {
         if (bouncer()->hasPermission('configuration.webhook.logs.mass_delete')) {
             $this->addMassAction([
-                'title'   => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
-                'url'     => route('webhook.logs.mass_delete'),
-                'method'  => 'POST',
-                'options' => ['actionType' => 'delete'],
+                'title'               => trans('webhook::app.configuration.webhook.logs.index.datagrid.delete'),
+                'url'                 => route('webhook.logs.mass_delete', array_filter(['webhook_id' => $this->webhookId])),
+                'method'              => 'POST',
+                'options'             => ['actionType' => 'delete'],
+                'supports_select_all' => true,
             ]);
         }
     }

@@ -3,11 +3,8 @@
 namespace Webkul\DataTransfer\Jobs\Import;
 
 use Illuminate\Bus\Batchable;
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Webkul\DataTransfer\Helpers\Import as ImportHelper;
 use Webkul\DataTransfer\Services\JobLogger;
 use Webkul\User\Models\AdminProxy;
@@ -15,12 +12,7 @@ use Webkul\User\Models\AdminProxy;
 class ImportTrackBatch implements ShouldQueue
 {
     use Batchable;
-    use Dispatchable;
-    use InteractsWithQueue;
     use Queueable;
-    use SerializesModels;
-
-    protected $importBatch;
 
     public $tries = 3;
 
@@ -30,26 +22,34 @@ class ImportTrackBatch implements ShouldQueue
      * Create a new job instance.
      *
      * @param  mixed  $importBatch
-     * @return void
      */
-    public function __construct($importBatch)
-    {
-        $this->importBatch = $importBatch;
-    }
+    public function __construct(protected $importBatch) {}
 
     /**
      * Execute the job.
-     *
-     * @return void
      */
-    public function handle()
+    public function handle(): void
     {
-        if (! auth()->guard('admin')->check()) {
-            $user = AdminProxy::find($this->importBatch->user_id);
-            auth('admin')->login($user);
+        // Set owner every job — a persistent worker retains a stale guard between jobs; finally clears it to avoid leaks.
+        $user = AdminProxy::find($this->importBatch->user_id);
+
+        if ($user) {
+            auth()->guard('admin')->setUser($user);
         }
 
-        $importHelper = app(ImportHelper::class);
+        try {
+            $this->runImport();
+        } finally {
+            auth()->guard('admin')->forgetUser();
+        }
+    }
+
+    /**
+     * Run the import pipeline for the tracked batch.
+     */
+    protected function runImport(): void
+    {
+        $importHelper = resolve(ImportHelper::class);
 
         $importHelper->setImport($this->importBatch);
 
@@ -59,10 +59,9 @@ class ImportTrackBatch implements ShouldQueue
 
         $logger->info(trans('data_transfer::app.job.started'));
 
-        // Mark as validating and set started_at so the tracker timer begins from validation phase
+        // Set started_at now so the tracker timer begins from the validation phase.
         $importHelper->stateUpdate(ImportHelper::STATE_VALIDATING, ['started_at' => now()]);
 
-        // Validate the import
         $import = $importHelper->validate();
 
         $this->importBatch = $import->getImport();
@@ -72,11 +71,9 @@ class ImportTrackBatch implements ShouldQueue
             $importHelper->started(preserveStartedAt: true);
         }
 
-        // Check for pending batches
         $pendingBatch = $this->importBatch->batches->where('state', ImportHelper::STATE_PENDING)->first();
 
         if ($pendingBatch) {
-            // Start the import process
             try {
                 $importHelper->start(null, $this->queue);
             } catch (\Exception $e) {
@@ -90,27 +87,22 @@ class ImportTrackBatch implements ShouldQueue
 
                 return;
             }
+        } elseif ($importHelper->isLinkingRequired()) {
+            $importHelper->linking();
         } else {
-            // Handle linking or indexing if required
-            if ($importHelper->isLinkingRequired()) {
-                $importHelper->linking();
-            } else {
-                $importHelper->completed();
-            }
+            $importHelper->completed();
         }
 
-        // Determine final state based on current state
         $state = match ($this->importBatch->state) {
             ImportHelper::STATE_LINKING  => $importHelper->isIndexingRequired() ? ImportHelper::STATE_INDEXING : ImportHelper::STATE_COMPLETED,
             ImportHelper::STATE_INDEXING => ImportHelper::STATE_COMPLETED,
             default                      => ImportHelper::STATE_COMPLETED,
         };
 
-        // Gather stats
-        $stats = $importHelper->stats($state);
+        $importHelper->stats($state);
     }
 
-    public function failed(\Throwable $exception)
+    public function failed(\Throwable $exception): void
     {
         $logger = JobLogger::make($this->importBatch->id);
 

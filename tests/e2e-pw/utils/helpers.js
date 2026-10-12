@@ -1,0 +1,275 @@
+// utils/helpers.js — Shared Playwright test utilities for UnoPim E2E tests
+
+/**
+ * Admin route map — direct URLs for all admin sections.
+ * Use navigateTo() instead of clicking through the sidebar.
+ */
+const ROUTES = {
+  dashboard:         '/admin/dashboard',
+  products:          '/admin/catalog/products',
+  categories:        '/admin/catalog/categories',
+  categoriesList:    '/admin/catalog/categories?view=list',
+  categoryFields:    '/admin/catalog/category-fields',
+  attributes:        '/admin/catalog/attributes',
+  attributeGroups:   '/admin/catalog/attribute-groups',
+  attributeFamilies: '/admin/catalog/attribute-families',
+  associationTypes:  '/admin/catalog/association-types',
+  channels:          '/admin/settings/channels',
+  currencies:        '/admin/settings/currencies',
+  locales:           '/admin/settings/locales',
+  roles:             '/admin/settings/roles',
+  users:             '/admin/settings/users',
+  integrations:      '/admin/configuration/integrations',
+  webhook:           '/admin/configuration/webhook',
+  exports:           '/admin/data-transfer/exports',
+  imports:           '/admin/data-transfer/imports',
+  configuration:     '/admin/configuration',
+  notifications:     '/admin/notifications',
+};
+
+/**
+ * Navigate directly to an admin route (replaces 2-click sidebar navigation).
+ * @param {import('@playwright/test').Page} page
+ * @param {keyof ROUTES} route — key from ROUTES map
+ */
+async function navigateTo(page, route) {
+  const url = ROUTES[route];
+  if (!url) throw new Error(`Unknown route: "${route}". Available: ${Object.keys(ROUTES).join(', ')}`);
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 }).catch(async () => {
+    // networkidle may timeout due to debugbar — fallback to checking Vue rendered
+    await page.waitForLoadState('load', { timeout: 10000 }).catch(() => {});
+  });
+}
+
+/**
+ * Search in a DataGrid using the search input.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} text — search query
+ * @param {string} [placeholder='Search'] — placeholder text of search input
+ */
+async function searchInDataGrid(page, text, placeholder = 'Search') {
+  const searchInput = page.getByPlaceholder(placeholder).first();
+  await searchInput.waitFor({ state: 'visible', timeout: 30000 });
+  await searchInput.fill(text);
+  await page.keyboard.press('Enter');
+  // Wait for the DataGrid to refresh after search
+  await page.waitForLoadState('load');
+  await page.waitForTimeout(500);
+}
+
+/**
+ * Click the Edit action button on a DataGrid row matching the given text.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} rowText — text to identify the row
+ */
+async function clickEditOnRow(page, rowText) {
+  // Scope to an actual DataGrid record row (div.row.grid.cursor-pointer) so the
+  // Edit icon belongs to the matched row and not to some earlier row folded into
+  // a broader container match.
+  const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: rowText }).first();
+  await row.locator('span[title="Edit"]').first().click();
+  await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Click the Delete action button on a DataGrid row matching the given text.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} rowText — text to identify the row
+ */
+async function clickDeleteOnRow(page, rowText) {
+  const row = page.locator('div.row.grid.cursor-pointer').filter({ hasText: rowText }).first();
+  await row.locator('span[title="Delete"]').first().click();
+}
+
+/**
+ * Confirm the delete modal by clicking the Delete/Agree button.
+ * @param {import('@playwright/test').Page} page
+ */
+async function confirmDelete(page) {
+  // Scoped to the confirm modal: the AI agent shell's suggestion cards can also
+  // carry "Delete" in their accessible name (e.g. "Delete Products Remove"),
+  // which turns an unscoped match ambiguous.
+  await page.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
+  await page.waitForLoadState('networkidle');
+}
+
+/**
+ * Assert a success toast message is visible.
+ * @param {import('@playwright/test').Page} page
+ * @param {RegExp|string} pattern — message pattern to match
+ * @param {number} [timeout=20000]
+ */
+async function expectSuccessToast(page, pattern, timeout = 20000) {
+  const { expect } = require('@playwright/test');
+  const regex = pattern instanceof RegExp ? pattern : new RegExp(pattern, 'i');
+  await expect(page.locator('#app').getByText(regex).first()).toBeVisible({ timeout });
+}
+
+/**
+ * Click a form's save action, tolerant of the global unsaved-changes bar.
+ *
+ * Forms that track changes hide their in-form submit button once dirty and move
+ * saving to the sticky "Save changes" bar. Modal sub-forms and non-tracked forms
+ * (e.g. login) keep their own button. This clicks the named button when it is
+ * actually visible, otherwise falls back to the bar.
+ *
+ * @param {import('@playwright/test').Page} page
+ * @param {string} buttonName — the in-form save button label (e.g. 'Save Product')
+ */
+async function clickSave(page, buttonName) {
+  const named = page.getByRole('button', { name: buttonName });
+  const bar = page.getByRole('button', { name: 'Save changes' });
+
+  // Wait for whichever save affordance the form exposes: the in-form button
+  // (non-tracked / modal forms) or the unsaved-changes bar (tracked forms),
+  // which may take a moment to appear once the form is dirty.
+  await Promise.race([
+    named.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {}),
+    bar.waitFor({ state: 'visible', timeout: 8000 }).catch(() => {}),
+  ]);
+
+  if (await named.isVisible().catch(() => false)) {
+    await named.click();
+
+    return;
+  }
+
+  await bar.click();
+}
+
+/**
+ * Click Save and verify success — accepts either toast message OR URL redirect.
+ * Solves the CI issue where the page redirects before the toast is visible.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} buttonName — name of the save button (e.g. 'Save Attribute')
+ * @param {RegExp|string} toastPattern — success toast text pattern
+ * @param {RegExp} [urlPattern] — optional URL pattern to wait for on redirect
+ */
+async function clickSaveAndExpect(page, buttonName, toastPattern, urlPattern) {
+  const currentUrl = page.url();
+  const regex = toastPattern instanceof RegExp ? toastPattern : new RegExp(toastPattern, 'i');
+
+  // Register the URL watcher BEFORE clicking to avoid missing fast redirects.
+  const navPromise = urlPattern
+    ? page.waitForURL(urlPattern, { timeout: 20000 })
+    : page.waitForURL((url) => url.toString() !== currentUrl, { timeout: 20000 });
+
+  await clickSave(page, buttonName);
+
+  const toastPromise = page.locator('#app').getByText(regex).first().waitFor({ state: 'visible', timeout: 20000 });
+
+  // Either toast appears OR URL changes (redirect after save).
+  // Uses Promise.any — fails only if BOTH timeout (real failure).
+  await Promise.any([toastPromise, navPromise]);
+}
+
+/**
+ * Generate a unique identifier for test data isolation.
+ * @returns {string} unique ID like "m1abc2def"
+ */
+function generateUid() {
+  const { randomBytes } = require('crypto');
+  return Date.now().toString(36) + randomBytes(4).toString('hex');
+}
+
+/**
+ * Fill a localized name field regardless of how the page renders it: the
+ * quick-create modals expose a visible `<locale>[name]` input, while full
+ * pages use the translatable-field component whose named inputs are hidden
+ * behind an unnamed visible editor.
+ * @param {import('@playwright/test').Page} page
+ * @param {string} value
+ * @param {string} field
+ */
+async function fillLocalizedField(page, value, field = 'name') {
+  const named = page.locator(`input[name$="[${field}]"]`).first();
+  await named.waitFor({ state: 'attached', timeout: 20000 });
+
+  if (await named.isVisible().catch(() => false)) {
+    await named.fill(value);
+    return;
+  }
+
+  await named.locator('..').locator('input[type="text"]').first().fill(value);
+}
+
+/**
+ * Resolve a real, editable simple product id from the live catalog instead of
+ * hardcoding one: demo-data rebuilds renumber/replace products, so a fixed id
+ * can end up pointing at a deleted row or an edge-case fixture (no name,
+ * configurable parent, etc.) left behind by another test.
+ * @param {import('@playwright/test').Page} page — an already-authenticated admin page
+ * @returns {Promise<number>} a product id safe to open on the edit page
+ */
+async function resolveEditableProductId(page) {
+  await navigateTo(page, 'products');
+
+  const grid = await page.evaluate(async () => {
+    const response = await fetch(window.location.origin + '/admin/catalog/products?pagination[perPage]=50', {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' },
+      credentials: 'same-origin',
+    });
+
+    return response.json();
+  });
+
+  const record = (grid.records || []).find((row) => row.type === 'Simple' && row.name);
+
+  if (!record) {
+    throw new Error('resolveEditableProductId: no Simple product with a name found in the catalog');
+  }
+
+  return record.product_id;
+}
+
+/**
+ * The toolbar collapses the filter label to an icon once it measures narrow, so
+ * the drawer is opened through the toggle itself rather than its label text.
+ */
+async function openFilterDrawer(page) {
+  await page.locator('[data-grid-filter]').first().click();
+}
+
+/**
+ * Dismiss an open select dropdown. Escape closes the surrounding modal as well,
+ * so the dropdown is closed by blurring the field instead.
+ */
+async function closeDropdown(page) {
+  await page.evaluate(() => {
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
+  });
+}
+
+/**
+ * The first and last page controls collapse out of a narrow toolbar, so the
+ * symbols a grid renders depend on the toolbar's measured width.
+ */
+async function visiblePaginationSymbols(page) {
+  const toolbar = page.locator('.datagrid-toolbar').first();
+
+  await toolbar.waitFor({ state: 'visible' });
+
+  return await toolbar.evaluate((el) => el.classList.contains('is-tight'))
+    ? ['\u2039', '\u203a']
+    : ['\u00ab', '\u2039', '\u203a', '\u00bb'];
+}
+
+module.exports = {
+  ROUTES,
+  navigateTo,
+  openFilterDrawer,
+  closeDropdown,
+  visiblePaginationSymbols,
+  searchInDataGrid,
+  clickEditOnRow,
+  clickDeleteOnRow,
+  confirmDelete,
+  expectSuccessToast,
+  clickSave,
+  clickSaveAndExpect,
+  generateUid,
+  fillLocalizedField,
+  resolveEditableProductId,
+};

@@ -14,6 +14,7 @@ class NotSupportedAttributes implements ValidationRule
         'type',
         'parent',
         'attribute_family',
+        'attribute_family_id',
         'configurable_attributes',
         'categories',
         'up_sells',

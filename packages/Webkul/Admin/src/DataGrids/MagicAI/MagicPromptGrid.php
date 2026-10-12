@@ -75,6 +75,11 @@ class MagicPromptGrid extends DataGrid
                     ],
                 ],
             ],
+            'closure' => fn ($row) => match ($row->type) {
+                'product'  => trans('admin::app.configuration.prompt.datagrid.product'),
+                'category' => trans('admin::app.configuration.prompt.datagrid.category'),
+                default    => $row->type,
+            },
         ]);
 
         $this->addColumn([
@@ -126,22 +131,24 @@ class MagicPromptGrid extends DataGrid
      */
     public function prepareActions()
     {
-        $this->addAction([
-            'icon'   => 'icon-edit',
-            'title'  => trans('admin::app.configuration.prompt.datagrid.edit'),
-            'method' => 'GET',
-            'url'    => function ($row) {
-                return route('admin.magic_ai.prompt.edit', $row->id);
-            },
-        ]);
+        if (bouncer()->hasPermission('ai-agent.prompt.edit')) {
+            $this->addAction([
+                'index'  => 'edit',
+                'icon'   => 'icon-edit',
+                'title'  => trans('admin::app.configuration.prompt.datagrid.edit'),
+                'method' => 'GET',
+                'url'    => fn ($row) => route('admin.magic_ai.prompt.edit', $row->id),
+            ]);
+        }
 
-        $this->addAction([
-            'icon'   => 'icon-delete',
-            'title'  => trans('admin::app.configuration.prompt.datagrid.delete'),
-            'method' => 'DELETE',
-            'url'    => function ($row) {
-                return route('admin.magic_ai.prompt.delete', $row->id);
-            },
-        ]);
+        if (bouncer()->hasPermission('ai-agent.prompt.delete')) {
+            $this->addAction([
+                'index'  => 'delete',
+                'icon'   => 'icon-delete',
+                'title'  => trans('admin::app.configuration.prompt.datagrid.delete'),
+                'method' => 'DELETE',
+                'url'    => fn ($row) => route('admin.magic_ai.prompt.delete', $row->id),
+            ]);
+        }
     }
 }

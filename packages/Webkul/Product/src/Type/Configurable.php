@@ -3,9 +3,15 @@
 namespace Webkul\Product\Type;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Webkul\Admin\Validations\ConfigurableUniqueSku;
+use Webkul\Product\Contracts\VariantStructurePlanner;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
 use Webkul\Product\Models\Product;
+use Webkul\Product\Models\VariantStructure;
+use Webkul\Product\Repositories\ProductRepository;
 
 class Configurable extends AbstractType
 {
@@ -48,13 +54,16 @@ class Configurable extends AbstractType
     protected $attributesById = [];
 
     /**
-     * Get default variant.
+     * Get default variant, excluding `variant_group` nodes: those are internal
+     * grouping records, not a leaf variant a consumer can render.
      *
      * @return Product
      */
     public function getDefaultVariant()
     {
-        return $this->product->variants()->find($this->getDefaultVariantId());
+        return $this->product->variants()
+            ->where('type', '!=', ProductType::VariantGroup->value)
+            ->find($this->getDefaultVariantId());
     }
 
     /**
@@ -71,9 +80,8 @@ class Configurable extends AbstractType
      * Set default variant id.
      *
      * @param  int  $defaultVariantId
-     * @return void
      */
-    public function setDefaultVariantId($defaultVariantId)
+    public function setDefaultVariantId($defaultVariantId): void
     {
         $this->product->additional = array_merge($this->product->additional ?? [], [
             'default_variant_id' => $defaultVariantId,
@@ -82,10 +90,8 @@ class Configurable extends AbstractType
 
     /**
      * Update default variant id if present in request.
-     *
-     * @return void
      */
-    public function updateDefaultVariantId()
+    public function updateDefaultVariantId(): void
     {
         if (! $defaultVariantId = request()->input('default_variant_id')) {
             return;
@@ -106,6 +112,10 @@ class Configurable extends AbstractType
         $product = $this->productRepository->getModel()->create($data);
 
         $product->values = [self::COMMON_VALUES_KEY => ['sku' => $product->sku]];
+
+        if (! empty($data['variant_structure_id'])) {
+            $product->variant_structure_id = $data['variant_structure_id'];
+        }
 
         if (! isset($data['super_attributes'])) {
             return $product;
@@ -143,25 +153,35 @@ class Configurable extends AbstractType
             return $product;
         }
 
-        $previousVariantIds = $product->variants->pluck('id');
-
         $productSuperAttributes = $product->super_attributes;
 
         $uniqueAttributes = $this->getUniqueAttributes();
 
-        if (isset($data['variants'])) {
-            foreach ($data['variants'] as $variantId => $variantData) {
-                if (Str::contains($variantId, 'variant_')) {
-                    $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
-                } else {
-                    if (is_numeric($index = $previousVariantIds->search($variantId))) {
-                        $previousVariantIds->forget($index);
-                    }
+        if ($product->variantStructure?->levels === 2 && isset($data['variant_groups'])) {
+            return $this->updateVariantGroups($product, $data, $productSuperAttributes, $uniqueAttributes);
+        }
 
-                    $variantData['super_attributes'] = $productSuperAttributes;
+        if (! isset($data['variants'])) {
+            return $product;
+        }
 
-                    $this->updateVariant($variantData, $variantId);
+        $previousVariantIds = $product->variants->pluck('id');
+
+        $this->product->loadMissing('variantStructure.placements.attribute');
+
+        foreach ($data['variants'] as $variantId => $variantData) {
+            if (Str::contains($variantId, 'variant_')) {
+                $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
+
+                Event::dispatch('catalog.product.create.after', $variant);
+            } else {
+                if (is_numeric($index = $previousVariantIds->search($variantId))) {
+                    $previousVariantIds->forget($index);
                 }
+
+                $variantData['super_attributes'] = $productSuperAttributes;
+
+                $this->updateVariant($variantData, $variantId);
             }
         }
 
@@ -173,31 +193,200 @@ class Configurable extends AbstractType
     }
 
     /**
-     * Create variant.
+     * Save the 3-tier `variant_groups` payload: create/update each group node and
+     * its nested `simple` variants, then prune groups (and orphaned children) no
+     * longer in the payload — the flat `variants` pruning in `update()`, one level
+     * deeper.
      *
      * @param  \Webkul\Product\Contracts\Product  $product
-     * @param  array  $permutation
-     * @param  array  $data
+     * @param  Collection  $productSuperAttributes
      * @return \Webkul\Product\Contracts\Product
      */
-    public function createVariant($product, $productSuperAttributes, $data = [], Collection|array $uniqueAttributes = [])
+    protected function updateVariantGroups($product, array $data, $productSuperAttributes, Collection|array $uniqueAttributes = [])
+    {
+        $planner = resolve(VariantStructurePlanner::class);
+
+        $groupAxis = $planner->axisCodesByLevel($product->variantStructure)['level_1'][0] ?? null;
+
+        $existingGroups = $product->variants()
+            ->where('type', ProductType::VariantGroup->value)
+            ->with('variants')
+            ->get()
+            ->keyBy('id');
+
+        $this->product->loadMissing(['variantStructure.axes.attribute', 'variantStructure.placements.attribute']);
+
+        $loadedStructure = $this->product->variantStructure;
+
+        foreach ($data['variant_groups'] as $groupKey => $groupData) {
+            if (Str::contains($groupKey, 'group_')) {
+                $group = $this->createVariantGroup($product, array_merge($groupData, [
+                    'group_axis_code' => $groupAxis,
+                ]));
+
+                $planner->primeStructure($group->id, $loadedStructure);
+
+                Event::dispatch('catalog.product.create.after', $group);
+            } else {
+                if (! $group = $existingGroups->pull($groupKey)) {
+                    continue;
+                }
+
+                $planner->primeStructure($group->id, $loadedStructure);
+
+                $this->updateVariantGroupValues($group, $groupAxis, $groupData, $planner);
+            }
+
+            $previousGroupVariantIds = $group->variants->pluck('id');
+
+            foreach ($groupData['variants'] ?? [] as $variantId => $variantData) {
+                if (Str::contains($variantId, 'variant_')) {
+                    $variantData['parent_id'] = $group->id;
+
+                    $variant = $this->createVariant($product, $productSuperAttributes, $variantData, $uniqueAttributes);
+
+                    $planner->primeStructure($variant->id, $loadedStructure);
+
+                    Event::dispatch('catalog.product.create.after', $variant);
+                } else {
+                    if (is_numeric($index = $previousGroupVariantIds->search($variantId))) {
+                        $previousGroupVariantIds->forget($index);
+                    }
+
+                    $variantData['super_attributes'] = $productSuperAttributes;
+
+                    $planner->primeStructure((int) $variantId, $loadedStructure);
+
+                    $this->updateVariant($variantData, $variantId, $planner);
+                }
+            }
+
+            foreach ($previousGroupVariantIds as $variantId) {
+                $this->productRepository->delete($variantId);
+            }
+        }
+
+        foreach ($existingGroups as $orphan) {
+            $orphan->variants->each(fn ($child) => $this->productRepository->delete($child->id));
+
+            $this->productRepository->delete($orphan->id);
+        }
+
+        return $product;
+    }
+
+    /**
+     * Merge submitted sub_parent/common values into an existing variant_group
+     * node, including an own-axis rename via `group_axis_option`, guarded by
+     * `ProductRepository::guardVariantLevelWrite()` for a sibling-scoped
+     * duplicate-combination check.
+     */
+    public function updateVariantGroupValues(Product $group, ?string $groupAxis, array $groupData, ?VariantStructurePlanner $planner = null): void
+    {
+        $submitted = $groupData['group_values'] ?? [];
+
+        if ($groupAxis && array_key_exists('group_axis_option', $groupData)) {
+            $submitted[$groupAxis] = $groupData['group_axis_option'];
+        }
+
+        $persist = function () use ($group, $submitted): void {
+            $values = $group->values;
+
+            foreach ($submitted as $code => $value) {
+                $values[self::COMMON_VALUES_KEY][$code] = $value;
+            }
+
+            $group->values = $values;
+            $group->save();
+        };
+
+        if ($group->parent_id && $submitted !== []) {
+            $this->productRepository->guardVariantLevelWrite($group, $submitted, $persist, $planner);
+
+            return;
+        }
+
+        $persist();
+    }
+
+    /**
+     * Create a variant_group node under $product, holding the L1 axis option
+     * and any sub_parent values shared by its child variants.
+     */
+    public function createVariantGroup($product, array $groupData): Product
+    {
+        $group = $this->productRepository->getModel()->create([
+            'parent_id'           => $product->id,
+            'type'                => ProductType::VariantGroup->value,
+            'attribute_family_id' => $product->attribute_family_id,
+            'sku'                 => $groupData['sku'],
+        ]);
+
+        $values = [self::COMMON_VALUES_KEY => []];
+
+        if (! empty($groupData['group_axis_code'])) {
+            $values[self::COMMON_VALUES_KEY][$groupData['group_axis_code']] = $groupData['group_axis_option'];
+        }
+
+        foreach ($groupData['group_values'] ?? [] as $code => $value) {
+            $values[self::COMMON_VALUES_KEY][$code] = $value;
+        }
+
+        $values[self::COMMON_VALUES_KEY]['sku'] = $groupData['sku'];
+
+        $group->values = $values;
+        $group->save();
+
+        return $group;
+    }
+
+    /**
+     * Create variant. It stores only what it owns (axis options, sku); the rest
+     * resolves at read time from the ancestor chain, so an axis fixed at the group
+     * level is skipped, not failed — for 2-level callers only; a legacy 1-level
+     * payload missing an axis still fails below.
+     *
+     * @param  \Webkul\Product\Contracts\Product  $product
+     * @param  array  $productSuperAttributes
+     * @return \Webkul\Product\Contracts\Product
+     */
+    public function createVariant($product, $productSuperAttributes, array $data = [], Collection|array $uniqueAttributes = [])
     {
         $variant = $this->productRepository->getModel()->create([
-            'parent_id'           => $product->id,
-            'type'                => 'simple',
+            'parent_id'           => $data['parent_id'] ?? $product->id,
+            'type'                => ProductType::Simple->value,
             'attribute_family_id' => $product->attribute_family_id,
             'sku'                 => $data['sku'],
         ]);
 
-        $variantValues = $this->filterUniqueAttributeValues($product->values, $uniqueAttributes);
+        $variantValues = [];
 
         foreach ($productSuperAttributes as $attribute) {
             $attrCode = $attribute->code;
+
+            $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
+
+            if (
+                ! array_key_exists($attrCode, $suppliedCommonValues)
+                && ! empty($data['parent_id'])
+                && $product->variant_structure_id
+            ) {
+                continue;
+            }
 
             $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY][$attrCode];
         }
 
         $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
+
+        if ($structure = $product->variantStructure) {
+            $this->applyVariantLevelAttributes(
+                $variantValues,
+                $structure,
+                $data,
+                collect($productSuperAttributes)->pluck('code')->all()
+            );
+        }
 
         $variant->values = $variantValues;
 
@@ -212,25 +401,88 @@ class Configurable extends AbstractType
      * @param  int  $id
      * @return \Webkul\Product\Contracts\Product
      */
-    public function updateVariant(array $data, $id)
+    public function updateVariant(array $data, $id, ?VariantStructurePlanner $planner = null)
     {
         $variant = $this->productRepository->find($id);
 
-        $variantValues = $variant->values;
+        $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
 
-        foreach ($data['super_attributes'] ?? [] as $attribute) {
-            $attrCode = $attribute->code;
+        $persist = function () use ($variant, $data, $suppliedCommonValues): Product {
+            $variantValues = $variant->values;
 
-            $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY][$attrCode];
+            $isTwoLevelVariant = $variant->parent?->type === ProductType::VariantGroup->value
+                || ($this->product->variant_structure_id && $this->product->variantStructure?->levels === 2);
+
+            foreach ($data['super_attributes'] ?? [] as $attribute) {
+                $attrCode = $attribute->code;
+
+                if (
+                    ! array_key_exists($attrCode, $suppliedCommonValues)
+                    && $isTwoLevelVariant
+                ) {
+                    continue;
+                }
+
+                $variantValues[self::COMMON_VALUES_KEY][$attrCode] = $suppliedCommonValues[$attrCode];
+            }
+
+            $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
+
+            if ($structure = $this->product->variantStructure) {
+                $this->applyVariantLevelAttributes(
+                    $variantValues,
+                    $structure,
+                    $data,
+                    collect($data['super_attributes'] ?? [])->pluck('code')->all()
+                );
+            }
+
+            $variant->values = $variantValues;
+
+            $variant->update(['sku' => $data['sku']]);
+
+            return $variant;
+        };
+
+        if ($variant->parent_id && $suppliedCommonValues !== []) {
+            $result = $variant;
+
+            $this->productRepository->guardVariantLevelWrite($variant, $suppliedCommonValues, function () use (&$result, $persist): void {
+                $result = $persist();
+            }, $planner);
+
+            return $result;
         }
 
-        $variantValues[self::COMMON_VALUES_KEY]['sku'] = $data['sku'];
+        return $persist();
+    }
 
-        $variant->values = $variantValues;
+    /**
+     * Persist the structure's `variant`-level, common-scope, non-axis attributes.
+     * Axis codes are already written by the caller's loop and must not be
+     * duplicated here; a code absent from the payload is skipped rather than
+     * failed, since a leaf may legitimately omit variant-level attributes.
+     *
+     * @param  array<string, array<string, mixed>>  $variantValues
+     * @param  array<int, string>  $axisCodes
+     */
+    protected function applyVariantLevelAttributes(array &$variantValues, VariantStructure $structure, array $data, array $axisCodes): void
+    {
+        $planner = resolve(VariantStructurePlanner::class);
 
-        $variant->update(['sku' => $data['sku']]);
+        $suppliedCommonValues = $data[self::PRODUCT_VALUES_KEY][self::COMMON_VALUES_KEY] ?? [];
 
-        return $variant;
+        foreach ($planner->attributeCodesAtLevel($structure, VariantLevel::Variant->value) as $attributeCode) {
+            if (
+                $attributeCode === 'sku'
+                || in_array($attributeCode, $axisCodes, true)
+                || ! array_key_exists($attributeCode, $suppliedCommonValues)
+            ) {
+                continue;
+            }
+
+            $variantValues[self::COMMON_VALUES_KEY][$attributeCode] = $suppliedCommonValues[$attributeCode];
+        }
     }
 
     /**
@@ -243,7 +495,7 @@ class Configurable extends AbstractType
     {
         parent::copyRelationships($product);
 
-        $attributesToSkip = config('products.skipAttributesOnCopy') ?? [];
+        $attributesToSkip = config('products.skipAttributesOnCopy', []);
 
         if (
             in_array('super_attributes', $attributesToSkip)
@@ -277,10 +529,8 @@ class Configurable extends AbstractType
 
     /**
      * Return validation rules.
-     *
-     * @return array
      */
-    public function getTypeValidationRules()
+    public function getTypeValidationRules(): array
     {
         return [
             'variants.*.sku'    => [
@@ -295,9 +545,8 @@ class Configurable extends AbstractType
      *
      * @param  array  $options1
      * @param  array  $options2
-     * @return bool
      */
-    public function compareOptions($options1, $options2)
+    public function compareOptions($options1, $options2): ?bool
     {
         if ($this->product->id != $options2['product_id']) {
             return false;
@@ -317,6 +566,8 @@ class Configurable extends AbstractType
         if (! isset($options2['selected_configurable_option'])) {
             return false;
         }
+
+        return null;
     }
 
     /**
@@ -327,15 +578,15 @@ class Configurable extends AbstractType
      */
     public function getAdditionalOptions($data)
     {
-        $childProduct = app('Webkul\Product\Repositories\ProductRepository')->find($data['selected_configurable_option']);
+        $childProduct = resolve(ProductRepository::class)->find($data['selected_configurable_option']);
 
         foreach ($this->product->super_attributes as $attribute) {
             $option = $attribute->options()->where('id', $childProduct->{$attribute->code})->first();
 
             $data['attributes'][$attribute->code] = [
-                'attribute_name' => $attribute->name ? $attribute->name : $attribute->admin_name,
+                'attribute_name' => $attribute->name ?: $attribute->admin_name,
                 'option_id'      => $option->id,
-                'option_label'   => $option->label ? $option->label : $option->admin_name,
+                'option_label'   => $option->label ?: $option->admin_name,
             ];
         }
 

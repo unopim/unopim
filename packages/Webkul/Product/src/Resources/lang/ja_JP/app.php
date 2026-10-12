@@ -1,6 +1,9 @@
 <?php
 
 return [
+    'acl' => [
+        'variant-structures' => 'バリエーション構造',
+    ],
 
     'datagrid' => [
         'copy-of-slug'                  => 'コピー -:value',
@@ -13,7 +16,9 @@ return [
     ],
 
     'type'     => [
-        'configurable' => '設定可能',
-        'simple'       => 'シンプル',
+        'configurable'  => '設定可能',
+        'simple'        => 'シンプル',
+        'variant-group' => 'バリアントグループ',
+        'variant_group' => 'バリアントグループ',
     ],
 ];

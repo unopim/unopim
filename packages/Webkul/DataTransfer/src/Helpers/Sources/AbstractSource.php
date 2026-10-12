@@ -2,10 +2,31 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
+use Illuminate\Support\Facades\Storage;
 use Webkul\DataTransfer\Helpers\Importers\AbstractImporter;
 
 abstract class AbstractSource
 {
+    /**
+     * Resolve a source path on the private disk, refusing one that no longer exists.
+     *
+     * A profile stores a relative path, so the file it points at can disappear
+     * between runs. Opening it unchecked lets PHP raise a warning carrying the
+     * resolved absolute path, which then reaches whoever ran the job.
+     *
+     * @throws \LogicException when the file is missing or unreadable
+     */
+    protected static function resolveReadablePath(string $filePath): string
+    {
+        $path = Storage::disk('private')->path($filePath);
+
+        if (! is_file($path) || ! is_readable($path)) {
+            throw new \LogicException(trans('data_transfer::app.validation.errors.file-missing'));
+        }
+
+        return $path;
+    }
+
     /**
      * Column names
      */
@@ -59,12 +80,9 @@ abstract class AbstractSource
     {
         $row = $this->currentRowData;
 
-        if (count($row) != $this->totalColumns) {
-            if ($this->foundWrongQuoteFlag) {
-                throw new \InvalidArgumentException(AbstractImporter::ERROR_CODE_WRONG_QUOTES);
-            } else {
-                throw new \InvalidArgumentException(AbstractImporter::ERROR_CODE_COLUMNS_NUMBER);
-            }
+        if (count($row) !== $this->totalColumns) {
+            throw_if($this->foundWrongQuoteFlag, \InvalidArgumentException::class, AbstractImporter::ERROR_CODE_WRONG_QUOTES);
+            throw new \InvalidArgumentException(AbstractImporter::ERROR_CODE_COLUMNS_NUMBER);
         }
 
         return array_combine($this->columnNames, $row);
@@ -111,10 +129,10 @@ abstract class AbstractSource
     }
 
     /**
-     * Column names getter.
+     * Return total number of columns.
      */
     public function getTotalColumns(): int
     {
-        return $this->columnNames;
+        return $this->totalColumns;
     }
 }

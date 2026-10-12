@@ -2,12 +2,19 @@
 
 namespace Webkul\Admin\Http\Controllers\User;
 
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Sso\SsoManager;
+use Webkul\Admin\Traits\ResolvesLandingUrl;
 
 class SessionController extends Controller
 {
+    use ResolvesLandingUrl;
+
+    public function __construct(protected readonly SsoManager $ssoManager) {}
+
     /**
      * Show the form for creating a new resource.
      *
@@ -16,53 +23,93 @@ class SessionController extends Controller
     public function create(): View|RedirectResponse
     {
         if (auth()->guard('admin')->check()) {
-            return redirect()->route('admin.dashboard.index');
+            return redirect()->to($this->firstAllowedUrl());
         }
 
-        if (strpos(url()->previous(), 'admin') !== false) {
-            $intendedUrl = url()->previous();
+        $previous = url()->previous();
+        $appHost = parse_url(config('app.url'), PHP_URL_HOST);
+        $previousHost = parse_url($previous, PHP_URL_HOST);
+
+        if ($previousHost === $appHost && str_contains($previous, 'admin')) {
+            $intendedUrl = $previous;
         } else {
-            $intendedUrl = route('admin.dashboard.index');
+            $intendedUrl = null;
         }
 
-        session()->put('url.intended', $intendedUrl);
+        if ($intendedUrl) {
+            session()->put('url.intended', $intendedUrl);
+        }
 
-        return view('admin::users.sessions.create');
+        return view('admin::users.sessions.create', [
+            'ssoProviders' => $this->ssoManager->enabled(),
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): RedirectResponse
+    public function store(): RedirectResponse|JsonResponse
     {
         $this->validate(request(), [
             'email'    => 'required|email',
             'password' => 'required',
         ]);
 
+        $wantsJson = request()->wantsJson();
+
         $remember = request('remember');
 
         if (! auth()->guard('admin')->attempt(request(['email', 'password']), $remember)) {
-            session()->flash('error', trans('admin::app.settings.users.login-error'));
+            $message = trans('admin::app.settings.users.login-error');
 
-            return redirect()->back();
+            if ($wantsJson) {
+                return response()->json(['message' => $message], 401);
+            }
+
+            session()->flash('error', $message);
+
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
+        }
+
+        if (auth()->guard('admin')->user()->isApiUser()) {
+            auth()->guard('admin')->logout();
+
+            $message = trans('admin::app.settings.users.login-error');
+
+            if ($wantsJson) {
+                return response()->json(['message' => $message], 401);
+            }
+
+            session()->flash('error', $message);
+
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
         if (! auth()->guard('admin')->user()->status) {
-            session()->flash('warning', trans('admin::app.settings.users.activate-warning'));
-
             auth()->guard('admin')->logout();
 
-            return redirect()->route('admin.session.create');
+            $message = trans('admin::app.settings.users.activate-warning');
+
+            if ($wantsJson) {
+                return response()->json(['type' => 'warning', 'message' => $message], 403);
+            }
+
+            session()->flash('warning', $message);
+
+            return redirect()->route('admin.session.create')->withInput(request()->only('email'));
         }
 
-        return redirect()->intended(route('admin.dashboard.index'));
+        if ($wantsJson) {
+            return response()->json([
+                'redirect_url' => session()->pull('url.intended', $this->firstAllowedUrl()),
+            ]);
+        }
+
+        return redirect()->intended($this->firstAllowedUrl());
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  int  $id
      */
     public function destroy(): RedirectResponse
     {

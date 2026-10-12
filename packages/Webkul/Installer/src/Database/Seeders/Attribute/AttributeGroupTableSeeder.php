@@ -10,11 +10,8 @@ class AttributeGroupTableSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
      */
-    public function run($parameters = [])
+    public function run(array $parameters = []): void
     {
         DB::table('attribute_groups')->delete();
 

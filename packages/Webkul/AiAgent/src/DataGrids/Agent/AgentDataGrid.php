@@ -65,7 +65,7 @@ class AgentDataGrid extends DataGrid
             'searchable' => false,
             'filterable' => true,
             'sortable'   => true,
-            'closure'    => fn ($row) => $row->status
+            'closure'    => fn ($row): string => $row->status
                 ? '<span class="label-active">'.trans('ai-agent::app.common.yes').'</span>'
                 : '<span class="label-info text-gray-600 dark:text-gray-300">'.trans('ai-agent::app.common.no').'</span>',
         ]);
@@ -78,20 +78,17 @@ class AgentDataGrid extends DataGrid
     {
         $this->addAction([
             'icon'   => 'icon-edit',
+            'index'  => 'edit',
             'title'  => trans('ai-agent::app.agents.datagrid.edit'),
             'method' => 'GET',
-            'url'    => function ($row) {
-                return route('ai-agent.agents.edit', $row->id);
-            },
+            'url'    => fn ($row): string => route('ai-agent.agents.edit', $row->id),
         ]);
 
         $this->addAction([
             'icon'   => 'icon-delete',
             'title'  => trans('ai-agent::app.agents.datagrid.delete'),
             'method' => 'DELETE',
-            'url'    => function ($row) {
-                return route('ai-agent.agents.destroy', $row->id);
-            },
+            'url'    => fn ($row): string => route('ai-agent.agents.destroy', $row->id),
         ]);
     }
 }

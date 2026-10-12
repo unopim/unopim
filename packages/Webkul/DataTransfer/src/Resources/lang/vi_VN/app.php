@@ -1,11 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'Tệp mẫu',
+        'variants'      => 'Ví dụ biến thể',
+        'multi-locale'  => 'Ví dụ đa ngôn ngữ',
+        'delete'        => 'Ví dụ xóa',
+        'custom-fields' => 'Ví dụ trường tùy chỉnh',
+        'with-images'   => 'Mẫu kèm hình ảnh (ZIP)',
+    ],
+
     'importers' => [
         'products' => [
             'title'      => 'Các sản phẩm',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'Đơn vị ":unit" không phải là đơn vị hợp lệ cho thuộc tính đo lường ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'URL key: \'%s\' đã được tạo cho một mục có SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'Giá trị không hợp lệ cho cột gia đình thuộc tính (gia đình thuộc tính không tồn tại?)',
                     'invalid-type'                             => 'Loại sản phẩm không hợp lệ hoặc không được hỗ trợ',
@@ -21,6 +31,7 @@ return [
                     'not-unique-value'                         => 'Giá trị :code phải duy nhất.',
                     'incorrect-family-for-variant'             => 'Gia đình phải giống như gia đình chính',
                     'parent-not-exist'                         => 'Cha mẹ không tồn tại.',
+                    'variant-structure-not-found'              => 'Cấu trúc biến thể :code không tồn tại cho họ thuộc tính này.',
                 ],
             ],
         ],
@@ -32,10 +43,203 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'Trường danh mục',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã trường danh mục :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã trường danh mục để xóa.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'Thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Mã thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa thuộc tính hệ thống.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'Liên kết sản phẩm',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'Trường \'%s\' là bắt buộc.',
+                    'self-link-not-allowed'       => 'Sản phẩm \'%s\' không thể tự liên kết với chính nó.',
+                    'sku-not-found'               => 'Không tìm thấy sản phẩm có SKU \'%s\'.',
+                    'related-sku-not-found'       => 'Không tìm thấy sản phẩm liên kết có SKU \'%s\'.',
+                    'association-type-not-found'  => 'Loại liên kết \'%s\' không tồn tại hoặc không hoạt động.',
+                    'invalid-field-value'         => 'Giá trị không hợp lệ được cung cấp cho trường liên kết.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'Nhóm thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'Mã nhóm thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete'             => 'Không tìm thấy mã nhóm thuộc tính để xóa.',
+                    'code_is_system_and_cannot_be_deleted' => 'Không thể xóa nhóm thuộc tính hệ thống.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'Họ thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã họ thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã họ thuộc tính để xóa.',
+                    'invalid-attribute-group'  => 'Nhóm thuộc tính ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
+                    'invalid-channel'          => 'Kênh ":code" không tồn tại.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'Tùy chọn thuộc tính',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'Mã tùy chọn thuộc tính :code đã được sử dụng.',
+                    'code_not_found_to_delete' => 'Không tìm thấy mã tùy chọn thuộc tính để xóa.',
+                    'locale-not-exist'         => 'Vị trí ":code" không tồn tại.',
+                    'invalid-attribute'        => 'Thuộc tính ":code" không tồn tại.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'Ngôn ngữ',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Mã ngôn ngữ \'%s\' đã được nhập trong đợt này.',
+                    'code-not-found-to-delete'    => 'Không tìm thấy ngôn ngữ với mã \'%s\' trong hệ thống.',
+                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống cho mặc định bật).',
+                    'channel-related-locale-root' => 'Bạn không thể xóa ngôn ngữ với mã :code vì nó liên kết với một kênh.',
+                ],
+            ],
+        ],
+        'channels' => [
+            'title'      => 'Kênh',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'Không tìm thấy kênh với mã :code để xóa.',
+                    'locale-not-found'         => 'Một hoặc nhiều ngôn ngữ không tồn tại.',
+                    'root-category-not-found'  => 'Danh mục gốc không tồn tại.',
+                    'currency-not-found'       => 'Một hoặc nhiều loại tiền tệ không tồn tại.',
+                    'invalid-locale'           => 'Ngôn ngữ không tồn tại.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'   => 'Các Tiền Tệ',
+            'filters' => [
+                'status' => 'Trạng thái',
+                'enable' => 'Bật',
+                'all'    => 'Tất cả',
+            ],
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'Trạng thái phải là 0 hoặc 1 (hoặc để trống cho mặc định bật).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'Vai trò',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'   => 'Người dùng',
+            'filters' => [
+                'status' => 'Trạng thái',
+                'active' => 'Hoạt động',
+                'all'    => 'Tất cả',
+            ],
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
     'exporters' => [
+        'export-too-large' => 'Bản xuất này quá lớn để chạy: ước tính :rows hàng × :columns cột (~:estimated) vượt quá dung lượng khả dụng (~:available). Hãy thu hẹp bản xuất bằng cách chọn ít kênh/ngôn ngữ (và thuộc tính) hơn rồi thử lại.',
+        'fields'           => [
+            'file-format'            => 'Định dạng tệp',
+            'with-media'             => 'Kèm phương tiện',
+            'with-associations'      => 'Kèm liên kết',
+            'with-associations-info' => 'Bao gồm các cột danh sách SKU cũ (up_sells, cross_sells và related_products) trong tệp xuất',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-name'      => 'Tên tệp',
+            'file-name-info' => 'Mẫu tên tệp. Các biến: [code], [date], [time], [entity_type]',
+            'file-path'      => 'Đường dẫn tệp',
+            'file-path-info' => 'Mẫu tên tệp. Các biến: [code], [date], [time], [entity_type]',
+            'status'         => 'Trạng thái',
+            'enable'         => 'Bật',
+            'all'            => 'Tất cả',
+        ],
         'products' => [
-            'title'      => 'Các sản phẩm',
+            'title'              => 'Các sản phẩm',
+            'invalid-locales'    => 'Không phải tất cả ngôn ngữ đã chọn đều khả dụng cho các kênh đã chọn.',
+            'invalid-currencies' => 'Không phải tất cả tiền tệ đã chọn đều khả dụng cho các kênh đã chọn.',
+            'filters'            => [
+                'channels'             => 'Kênh',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'Tiền tệ',
+                'currencies-info'      => 'Thuộc tính giá được xuất theo từng loại tiền tệ đã chọn. Để trống để xuất tất cả tiền tệ của kênh.',
+                'locales'              => 'Ngôn ngữ',
+                'locales-info'         => 'Thuộc tính có thể bản địa hóa được xuất một lần cho mỗi ngôn ngữ đã chọn. Để trống để xuất tất cả ngôn ngữ của kênh.',
+                'attributes'           => 'Thuộc tính',
+                'attributes-info'      => 'Chỉ các thuộc tính đã chọn được xuất. Để trống để xuất tất cả thuộc tính trong nhóm.',
+                'attribute-families'   => 'Nhóm thuộc tính',
+                'categories'           => 'Danh mục',
+                'completeness'         => 'Mức độ hoàn chỉnh',
+                'completeness-options' => [
+                    'none'         => 'Không có điều kiện về mức độ hoàn chỉnh',
+                    'at-least-one' => 'Hoàn chỉnh trong ít nhất một ngôn ngữ đã chọn',
+                    'all'          => 'Hoàn chỉnh trong tất cả ngôn ngữ đã chọn',
+                ],
+                'time-condition' => 'Điều kiện thời gian',
+                'time-options'   => [
+                    'none'              => 'Không có điều kiện ngày',
+                    'last-n-days'       => 'Sản phẩm được cập nhật trong N ngày qua',
+                    'between-dates'     => 'Sản phẩm được cập nhật giữa hai ngày',
+                    'since-last-export' => 'Sản phẩm được cập nhật kể từ lần xuất gần nhất',
+                ],
+                'time-value'     => 'Số ngày',
+                'time-date'      => 'Ngày bắt đầu',
+                'time-date-end'  => 'Ngày kết thúc',
+                'status'         => 'Trạng thái',
+                'status-options' => [
+                    'enable'  => 'Bật',
+                    'disable' => 'Tắt',
+                    'all'     => 'Tất cả',
+                ],
+                'sku'              => 'SKU',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'Định danh',
+                'identifiers-info' => 'Dán mỗi dòng một SKU / mã định danh để chỉ xuất những sản phẩm đó. Để trống để xuất tất cả sản phẩm.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'URL key: \'%s\' đã được tạo cho một mục có SKU: \'%s\'.',
@@ -47,22 +251,68 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Các danh mục',
+            'title'   => 'Các danh mục',
+            'filters' => [
+                'locales'      => 'Ngôn ngữ',
+                'locales-info' => 'Danh mục được xuất một lần cho mỗi ngôn ngữ đã chọn. Để trống để xuất tất cả ngôn ngữ đang hoạt động.',
+            ],
+        ],
+        'category-fields' => [
+            'title' => 'Trường danh mục',
+        ],
+        'attributes' => [
+            'title' => 'Thuộc tính',
+        ],
+        'product-associations' => [
+            'title' => 'Liên kết sản phẩm',
+        ],
+        'attribute-groups' => [
+            'title' => 'Nhóm thuộc tính',
+        ],
+        'attribute-families' => [
+            'title' => 'Họ thuộc tính',
+        ],
+        'attribute-options' => [
+            'title' => 'Tùy chọn thuộc tính',
+        ],
+        'locales' => [
+            'title' => 'Ngôn ngữ',
+        ],
+        'channels' => [
+            'title' => 'Kênh',
+        ],
+        'currencies' => [
+            'title' => 'Các Tiền Tệ',
+        ],
+        'roles' => [
+            'title' => 'Vai trò',
+        ],
+        'users' => [
+            'title'   => 'Người dùng',
+            'filters' => [
+                'status' => 'Trạng thái',
+                'active' => 'Hoạt động',
+                'all'    => 'Tất cả',
+            ],
         ],
     ],
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'Các cột với số "%s" có các tiêu đề trống.',
-            'column-name-invalid'  => 'Tên cột không hợp lệ: "%s".',
-            'column-not-found'     => 'Các cột yêu cầu không được tìm thấy: %s.',
-            'column-numbers'       => 'Số cột không khớp với số hàng trong tiêu đề.',
-            'invalid-attribute'    => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
-            'system'               => 'Lỗi hệ thống không mong muốn xảy ra.',
-            'wrong-quotes'         => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
+            'column-empty-headers'   => 'Các cột với số "%s" có các tiêu đề trống.',
+            'column-name-invalid'    => 'Tên cột không hợp lệ: "%s".',
+            'column-not-found'       => 'Các cột yêu cầu không được tìm thấy: %s.',
+            'column-numbers'         => 'Số cột không khớp với số hàng trong tiêu đề.',
+            'invalid-attribute'      => 'Tiêu đề chứa thuộc tính không hợp lệ: "%s".',
+            'system'                 => 'Lỗi hệ thống không mong muốn xảy ra.',
+            'wrong-quotes'           => 'Dùng dấu ngoặc kép cong thay cho dấu ngoặc kép thẳng.',
+            'file-empty'             => 'Tệp trống hoặc không chứa dòng tiêu đề. Vui lòng tải lên tệp hợp lệ có dữ liệu.',
+            'file-missing'           => 'Không tìm thấy tệp nguồn cho tác vụ này. Hãy kiểm tra đường dẫn tệp trong hồ sơ, sau đó tải tệp lên lại.',
         ],
     ],
     'job' => [
         'started'   => 'Bắt đầu công việc',
         'completed' => 'Công việc đã hoàn thành',
+        'stalled'   => 'Tác vụ đã ngừng phản hồi hơn :minutes phút và được đánh dấu là thất bại. Tiến trình chạy nó nhiều khả năng đã bị dừng.',
+        'reaped'    => 'Đã đánh dấu :count tác vụ bị treo là thất bại.',
     ],
 ];

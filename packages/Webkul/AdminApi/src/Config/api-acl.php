@@ -8,14 +8,6 @@ return [
         'sort'  => 11,
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Settings
-    |--------------------------------------------------------------------------
-    |
-    | All ACLs related to settings will be placed here.
-    |
-    */
     [
         'key'   => 'api.settings',
         'name'  => 'admin::app.acl.settings',
@@ -27,25 +19,61 @@ return [
         'route' => 'admin.api.channels.index',
         'sort'  => 1,
     ], [
+        'key'   => 'api.settings.channels.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.channels.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.settings.channels.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.channels.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.channels.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.channels.delete',
+        'sort'  => 3,
+    ], [
         'key'   => 'api.settings.locales',
         'name'  => 'admin::app.acl.locales',
         'route' => 'admin.api.locales.index',
         'sort'  => 2,
     ], [
+        'key'   => 'api.settings.locales.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.locales.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.settings.locales.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.locales.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.locales.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.locales.delete',
+        'sort'  => 3,
+    ], [
         'key'   => 'api.settings.currencies',
         'name'  => 'admin::app.acl.currencies',
         'route' => 'admin.api.currencies.index',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.currencies.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.currencies.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.settings.currencies.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.currencies.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.settings.currencies.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.currencies.delete',
+        'sort'  => 3,
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Catalog
-    |--------------------------------------------------------------------------
-    |
-    | All ACLs related to catalog will be placed here.
-    |
-    */
 
     [
         'key'   => 'api.catalog',
@@ -89,6 +117,33 @@ return [
     [
         'key'   => 'api.catalog.products',
         'name'  => 'admin::app.acl.products',
+        'route' => 'admin.api.configurable_products.index',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.products.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.configurable_products.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.configurable_products.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.configurable_products.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.configurable_products.delete',
+        'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'api.catalog.products',
+        'name'  => 'admin::app.acl.products',
         'route' => 'admin.api.configrable_products.index',
         'sort'  => 1,
     ], [
@@ -106,6 +161,11 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.configrable_products.patch',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.configrable_products.delete',
+        'sort'  => 3,
     ],
 
     // Product media uploads — require edit permission
@@ -114,6 +174,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.media-files.product.store',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products',
+        'name'  => 'admin::app.acl.products',
+        'route' => 'admin.api.media-files.product.get',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.products.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.media-files.product.delete',
+        'sort'  => 3,
     ],
 
     // ── Categories ──────────────────────────────────────────
@@ -150,6 +220,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.media-files.category.store',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.categories',
+        'name'  => 'admin::app.acl.categories',
+        'route' => 'admin.api.media-files.category.get',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.categories.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.media-files.category.delete',
+        'sort'  => 3,
     ],
 
     // ── Category Fields ─────────────────────────────────────
@@ -168,6 +248,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.category-fields.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.category_fields.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.category-fields.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.category_fields.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.category-fields.delete',
+        'sort'  => 3,
     ],
 
     // Category field options — map to category_fields permissions
@@ -186,6 +276,60 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.category-fields-options.update_option',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.category_fields.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.category-fields-options.delete_option',
+        'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'api.catalog.association_types',
+        'name'  => 'admin::app.acl.association_types',
+        'route' => 'admin.api.association-types.index',
+        'sort'  => 3,
+    ], [
+        'key'   => 'api.catalog.association_types.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.association-types.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.association-types.delete',
+        'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'api.catalog.association_types.fields',
+        'name'  => 'admin::app.acl.association_type_fields',
+        'route' => 'admin.api.association-types-fields.get',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.association-types-fields.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.association-types-fields.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.association_types.fields.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.association-types-fields.delete',
+        'sort'  => 3,
     ],
 
     // ── Attributes ──────────────────────────────────────────
@@ -204,6 +348,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.attributes.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.attributes.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.attributes.delete',
+        'sort'  => 3,
     ],
 
     // Attribute options — map to attributes permissions
@@ -222,6 +376,11 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.attribute_options.update_option',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.attribute_options.delete_option',
+        'sort'  => 3,
     ],
 
     // Swatch media uploads — require attribute edit permission
@@ -230,6 +389,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.media-files.attribute.options.store',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attributes',
+        'name'  => 'admin::app.acl.attributes',
+        'route' => 'admin.api.media-files.attribute.options.get',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.attributes.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.media-files.attribute.options.delete',
+        'sort'  => 3,
     ],
 
     // ── Attribute Groups ────────────────────────────────────
@@ -248,6 +417,16 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.attribute_groups.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attribute_groups.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.attribute_groups.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.attribute_groups.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.attribute_groups.delete',
+        'sort'  => 3,
     ],
 
     // ── Families ────────────────────────────────────────────
@@ -266,5 +445,79 @@ return [
         'name'  => 'admin::app.acl.edit',
         'route' => 'admin.api.families.update',
         'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.families.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.families.delete',
+        'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'api.catalog.families.variant_structures',
+        'name'  => 'admin::app.acl.variant-structures',
+        'route' => 'admin.api.families-variant-structures.index',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures',
+        'name'  => 'admin::app.acl.variant-structures',
+        'route' => 'admin.api.families-variant-structures.get',
+        'sort'  => 4,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.create',
+        'name'  => 'admin::app.acl.create',
+        'route' => 'admin.api.families-variant-structures.store',
+        'sort'  => 1,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.families-variant-structures.update',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.edit',
+        'name'  => 'admin::app.acl.edit',
+        'route' => 'admin.api.families-variant-structures.patch',
+        'sort'  => 2,
+    ], [
+        'key'   => 'api.catalog.families.variant_structures.delete',
+        'name'  => 'admin::app.acl.delete',
+        'route' => 'admin.api.families-variant-structures.delete',
+        'sort'  => 3,
+    ],
+
+    [
+        'key'   => 'api.catalog.passports',
+        'name'  => 'admin::app.acl.passports',
+        'route' => 'admin.api.passports.index',
+        'sort'  => 7,
+    ], [
+        'key'   => 'api.catalog.passports',
+        'name'  => 'admin::app.acl.passports',
+        'route' => 'admin.api.passports.get',
+        'sort'  => 7,
+    ], [
+        'key'   => 'api.catalog.passports.publish',
+        'name'  => 'admin::app.acl.publish',
+        'route' => 'admin.api.passports.publish',
+        'sort'  => 8,
+    ], [
+        'key'   => 'api.catalog.passports.withdraw',
+        'name'  => 'admin::app.acl.withdraw',
+        'route' => 'admin.api.passports.withdraw',
+        'sort'  => 9,
+    ], [
+        'key'   => 'api.catalog.passports.publish',
+        'name'  => 'admin::app.acl.publish',
+        'route' => 'admin.api.passports.reinstate',
+        'sort'  => 8,
+    ], [
+        'key'   => 'api.catalog.passports.withdraw',
+        'name'  => 'admin::app.acl.withdraw',
+        'route' => 'admin.api.passports.redact',
+        'sort'  => 9,
     ],
 ];

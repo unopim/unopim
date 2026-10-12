@@ -3,35 +3,43 @@
 namespace Webkul\MagicAI;
 
 use Webkul\MagicAI\Contracts\LLMModelInterface;
+use Webkul\MagicAI\Contracts\ReportsTruncation;
+use Webkul\MagicAI\Contracts\SupportsStructuredTranslation;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Responses\GeneratedContent;
 use Webkul\MagicAI\Services\LaravelAiAdapter;
+use Webkul\MagicAI\Services\ManagedPlatform;
 
 class MagicAI
 {
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_OPEN_AI = 'openai';
 
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_GROQ_AI = 'groq';
 
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_OLLAMA_AI = 'ollama';
 
-    /**
-     * @deprecated Use AiProvider enum instead
-     */
+    #[\Deprecated(message: 'Use AiProvider enum instead')]
     const MAGIC_GEMINI_AI = 'gemini';
 
     const SUFFIX_HTML_PROMPT = 'Generate a response using HTML formatting only. Do not include Markdown or any non-HTML syntax.';
 
     const SUFFIX_TEXT_PROMPT = 'Generate a response in plain text only, avoiding Markdown or any other formatting.';
+
+    /**
+     * Fallback output ceiling when the install has not configured one. HTML
+     * output spends tokens on markup, so a table-heavy description needs far
+     * more headroom than the prose it renders.
+     */
+    const DEFAULT_MAX_TOKENS = 4096;
+
+    /**
+     * Upper bound accepted from configuration; mirrors the modal's input max.
+     */
+    const MAX_TOKENS_CEILING = 32768;
 
     /**
      * AI platform record from database.
@@ -50,7 +58,7 @@ class MagicAI
 
     protected float $temperature = 0.7;
 
-    protected int $maxTokens = 1054;
+    protected int $maxTokens = self::DEFAULT_MAX_TOKENS;
 
     /**
      * LLM prompt text.
@@ -67,7 +75,7 @@ class MagicAI
      */
     public function setPlatformId(int $id): self
     {
-        $this->platformRecord = app(MagicAIPlatformRepository::class)->findOrFail($id);
+        $this->platformRecord = resolve(MagicAIPlatformRepository::class)->findOrFail($id);
 
         return $this;
     }
@@ -87,19 +95,18 @@ class MagicAI
      */
     public function useDefault(): self
     {
-        $this->platformRecord = app(MagicAIPlatformRepository::class)->getDefault();
+        $this->platformRecord = resolve(MagicAIPlatformRepository::class)->getActiveDefault();
 
         return $this;
     }
 
     /**
      * Set LLM platform.
-     *
-     * @deprecated Use setPlatformId() or useDefault() instead
      */
+    #[\Deprecated(message: 'Use setPlatformId() or useDefault() instead')]
     public function setPlatForm(string $platform): self
     {
-        $repo = app(MagicAIPlatformRepository::class);
+        $repo = resolve(MagicAIPlatformRepository::class);
 
         $this->platformRecord = $repo->findOneWhere([
             'provider' => $platform,
@@ -109,9 +116,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set LLM model.
-     */
     public function setModel(string $model): self
     {
         $this->model = $model;
@@ -119,9 +123,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set stream response.
-     */
     public function setStream(bool $stream): self
     {
         $this->stream = $stream;
@@ -129,9 +130,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set temperature.
-     */
     public function setTemperature(float $temperature): self
     {
         $this->temperature = $temperature;
@@ -139,9 +137,6 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set the max tokens.
-     */
     public function setMaxTokens(int $maxTokens): self
     {
         $this->maxTokens = $maxTokens;
@@ -149,19 +144,13 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Set LLM prompt text.
-     */
     public function setPrompt(string $prompt, string $fieldType = 'tinymce'): self
     {
-        $this->prompt = $fieldType == 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
+        $this->prompt = $fieldType === 'tinymce' ? $prompt.' '.self::SUFFIX_HTML_PROMPT : $prompt.' '.self::SUFFIX_TEXT_PROMPT;
 
         return $this;
     }
 
-    /**
-     * Set LLM system prompt.
-     */
     public function setSystemPrompt(string $systemPrompt): self
     {
         $this->systemPrompt = $systemPrompt;
@@ -169,39 +158,71 @@ class MagicAI
         return $this;
     }
 
-    /**
-     * Generate text content.
-     */
     public function ask(): string
     {
-        return $this->getModelInstance()->ask();
+        return $this->askResult()->text;
     }
 
     /**
-     * Generate images.
+     * The install-wide output ceiling, falling back to the code default when
+     * configuration holds nothing usable.
      */
+    public static function defaultMaxTokens(): int
+    {
+        $configured = (int) core()->getConfigData('general.magic_ai.settings.max_tokens');
+
+        return $configured > 0 ? min($configured, self::MAX_TOKENS_CEILING) : self::DEFAULT_MAX_TOKENS;
+    }
+
+    /**
+     * Generate content along with whether the model ran into the token ceiling.
+     *
+     * Adapters that cannot report a finish reason are assumed to have finished.
+     */
+    public function askResult(): GeneratedContent
+    {
+        $instance = $this->getModelInstance();
+
+        return $instance instanceof ReportsTruncation
+            ? $instance->askResult()
+            : new GeneratedContent($instance->ask());
+    }
+
     public function images(array $options): array
     {
         return $this->getModelInstance()->images($options);
     }
 
     /**
-     * Get LLM model instance.
+     * Translate the configured prompt.
+     *
+     * Uses structured output when the underlying model adapter supports it,
+     * falling back to plain text generation otherwise.
      */
+    public function translate(): string
+    {
+        $instance = $this->getModelInstance();
+
+        return $instance instanceof SupportsStructuredTranslation
+            ? $instance->translate()
+            : $instance->ask();
+    }
+
     public function getModelInstance(): LLMModelInterface
     {
         $platform = $this->platformRecord
-            ?? app(MagicAIPlatformRepository::class)->getDefault();
+            ?? resolve(MagicAIPlatformRepository::class)->getActiveDefault();
 
         if (! $platform) {
             throw new \RuntimeException(
-                'No AI platform configured. Please add a platform in Configuration > Magic AI > Platforms.'
+                trans('admin::app.configuration.platform.message.no-platform-configured')
             );
         }
 
-        $model = $this->model ?? $platform->model_list[0] ?? throw new \RuntimeException(
-            'No model configured for the selected platform.'
-        );
+        $model = resolve(ManagedPlatform::class)->resolveModel($platform, $this->model ?? $platform->model_list[0] ?? null)
+            ?? throw new \RuntimeException(
+                trans('admin::app.configuration.platform.message.no-model-configured')
+            );
 
         return new LaravelAiAdapter(
             platform: $platform,
@@ -220,13 +241,13 @@ class MagicAI
     public function getModelList(): array
     {
         $platform = $this->platformRecord
-            ?? app(MagicAIPlatformRepository::class)->getDefault();
+            ?? resolve(MagicAIPlatformRepository::class)->getActiveDefault();
 
         if (! $platform) {
             return [];
         }
 
-        return array_map(fn ($model) => [
+        return array_map(fn ($model): array => [
             'id'    => $model,
             'label' => $model,
         ], $platform->model_list);

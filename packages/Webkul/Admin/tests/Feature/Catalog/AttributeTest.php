@@ -1,8 +1,12 @@
 <?php
 
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Webkul\Attribute\Enums\SwatchTypeEnum;
 use Webkul\Attribute\Models\Attribute;
+use Webkul\Attribute\Rules\NotSupportedAttributes;
 use Webkul\Core\Models\Locale;
+use Webkul\Product\Models\Product;
 
 use function Pest\Laravel\deleteJson;
 use function Pest\Laravel\get;
@@ -16,6 +20,69 @@ it('should return the Attribute index page', function () {
 
     $response->assertStatus(200)
         ->assertSeeText(trans('admin::app.catalog.attributes.index.title'));
+});
+
+it('should render the swatch type field in the attribute quick create modal', function () {
+    $this->loginAsAdmin();
+
+    $response = get(route('admin.catalog.attributes.index'));
+
+    $response->assertStatus(200)
+        ->assertSee('name="swatch_type"', false)
+        ->assertSeeText(trans('admin::app.catalog.attributes.create.swatch'));
+});
+
+it('should render the creation-only toggles in the attribute quick create modal', function () {
+    $this->loginAsAdmin();
+
+    $response = get(route('admin.catalog.attributes.index'));
+
+    $response->assertStatus(200)
+        ->assertSee('id="is_unique"', false)
+        ->assertSee('id="value_per_locale"', false)
+        ->assertSee('id="value_per_channel"', false);
+});
+
+it('should create a select attribute with swatch type and creation-only flags from the quick create payload', function () {
+    $this->loginAsAdmin();
+
+    $attribute = [
+        'code'              => 'quick_select_attribute',
+        'type'              => 'select',
+        'swatch_type'       => 'color',
+        'value_per_locale'  => 1,
+        'value_per_channel' => 1,
+    ];
+
+    $response = postJson(route('admin.catalog.attributes.store'), $attribute);
+
+    $response->assertStatus(302);
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), [
+        'code'              => 'quick_select_attribute',
+        'type'              => 'select',
+        'swatch_type'       => 'color',
+        'value_per_locale'  => 1,
+        'value_per_channel' => 1,
+    ]);
+});
+
+it('should return a clear reserved code message when the attribute code is reserved', function () {
+    $this->loginAsAdmin();
+
+    $response = postJson(route('admin.catalog.attributes.store'), [
+        'code'       => 'type',
+        'type'       => 'text',
+    ]);
+
+    $response->assertStatus(422)
+        ->assertJsonPath(
+            'errors.code.0',
+            trans('core::validation.not-supported', [
+                'attribute'   => 'code',
+                'unsupported' => implode(', ', NotSupportedAttributes::ATTRIBUTE_CODES),
+            ])
+        );
 });
 
 it('should create the Attribute', function () {
@@ -253,6 +320,35 @@ it('should not delete sku with mass delete attributes', function () {
     }
 });
 
+it('should skip attributes in use for configurable products during mass delete without leaking a database error', function () {
+    $this->loginAsAdmin();
+
+    $deletable = Attribute::factory()->count(2)->create();
+    $inUse = Attribute::factory()->create();
+
+    $product = Product::factory()->create();
+
+    DB::table('product_super_attributes')->insert([
+        'product_id'   => $product->id,
+        'attribute_id' => $inUse->id,
+    ]);
+
+    $attributeIds = $deletable->pluck('id')->push($inUse->id)->toArray();
+
+    $response = postJson(route('admin.catalog.attributes.mass_delete'), ['indices' => $attributeIds]);
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'message' => trans('admin::app.catalog.attributes.index.datagrid.mass-delete-partial', ['count' => 1]),
+        ]);
+
+    foreach ($deletable as $attribute) {
+        $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), ['id' => $attribute->id]);
+    }
+
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), ['id' => $inUse->id]);
+});
+
 it('should update attribute options', function () {
     $this->loginAsAdmin();
 
@@ -384,6 +480,26 @@ it('should update the ai_translate property in Attribute', function () {
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $updatedData);
 });
 
+it('should render the ai_translate fallback before the checkbox so the checkbox value wins on submit', function (int $stored) {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'             => 'text',
+        'value_per_locale' => 1,
+        'ai_translate'     => $stored,
+    ]);
+
+    get(route('admin.catalog.attributes.edit', $attribute->id))
+        ->assertOk()
+        ->assertSeeInOrder([
+            'type="hidden" name="ai_translate" value="0"',
+            'id="ai_translate"',
+        ], false);
+})->with([
+    'stored disabled' => [0],
+    'stored enabled'  => [1],
+]);
+
 it('should create attribute option with color swatch_value for select type', function () {
     $this->loginAsAdmin();
 
@@ -391,14 +507,16 @@ it('should create attribute option with color swatch_value for select type', fun
     $locale = Locale::where('status', 1)->first();
     $color = fake()->hexColor();
     $label = fake()->word();
+    $optionCode = 'opt_'.Str::random(10);
     $data = [
         'code'        => $attribute->code,
         'type'        => $attribute->type,
         'swatch_type' => 'color',
         'options'     => [
-            fake()->word() => [
+            'option_1' => [
                 'isNew'         => true,
                 'isDelete'      => false,
+                'code'          => $optionCode,
                 'swatch_value'  => $color,
                 $locale->code   => ['label' => $label],
             ],
@@ -481,6 +599,7 @@ it('should create attribute option with image swatch_value for select type', fun
 
     $imageUrl = fake()->imageUrl(100, 100);
     $label = fake()->word();
+    $optionCode = 'opt_'.Str::random(10);
 
     $data = [
         'code'        => $attribute->code,
@@ -490,6 +609,7 @@ it('should create attribute option with image swatch_value for select type', fun
             'option_1' => [
                 'isNew'        => true,
                 'isDelete'     => false,
+                'code'         => $optionCode,
                 'swatch_value' => $imageUrl,
                 $locale->code  => ['label' => $label],
             ],
@@ -543,4 +663,64 @@ it('should not allow swatch_value for non-select attributes', function () {
         'attribute_id' => $attribute->id,
         'swatch_value' => $color,
     ]);
+});
+
+it('should render add-option modal with a unified layout for image swatch attributes', function () {
+    $this->loginAsAdmin();
+
+    $attribute = Attribute::factory()->create([
+        'type'        => 'multiselect',
+        'swatch_type' => 'image',
+    ]);
+
+    $response = get(route('admin.catalog.attributes.edit', $attribute->id));
+
+    $response->assertOk();
+
+    $content = $response->getContent();
+
+    // The modal content should NOT have two separate disconnected grid containers
+    // (a bare `<div class="grid">` for swatch followed by `<div class="grid grid-cols-3`)
+    // They must be merged into a single unified wrapper so the layout is coherent.
+    $this->assertStringNotContainsString(
+        '</div>'.PHP_EOL.PHP_EOL.'                            <div class="grid grid-cols-3',
+        $content,
+        'The add-option modal must not split swatch input and form fields into two disconnected grid divs'
+    );
+});
+
+it('mass deletes only the attributes matching the filters when all matching are selected', function () {
+    $this->loginAsAdmin();
+
+    $matching = collect(range(1, 3))->map(fn (int $i) => Attribute::factory()->create(['code' => 'seldel_match_'.$i])->id)->all();
+    $other = Attribute::factory()->create(['code' => 'seldel_other'])->id;
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['seldel_match_']],
+    ])->assertOk();
+
+    expect(Attribute::whereIn('id', $matching)->count())->toBe(0)
+        ->and(Attribute::whereKey($other)->exists())->toBeTrue();
+});
+
+it('keeps the sku attribute when all attributes are selected for mass delete', function () {
+    $this->loginAsAdmin();
+
+    $skuId = Attribute::where('code', 'sku')->value('id');
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [
+        'select_all' => 1,
+        'filters'    => ['code' => ['sku']],
+    ])->assertStatus(400);
+
+    expect(Attribute::whereKey($skuId)->exists())->toBeTrue();
+});
+
+it('still requires an id list on attribute mass delete when all matching are not selected', function () {
+    $this->loginAsAdmin();
+
+    postJson(route('admin.catalog.attributes.mass_delete'), [])
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors('indices');
 });

@@ -25,6 +25,8 @@ class Column
 
     /**
      * Create a column instance.
+     *
+     * @param  array<int, mixed>|null  $operators
      */
     public function __construct(
         public string $index,
@@ -35,6 +37,12 @@ class Column
         public bool $filterable = false,
         public bool $sortable = false,
         public mixed $closure = null,
+        public bool $visible = true,
+        public ?string $attribute_type = null,
+        public ?array $operators = null,
+        public ?string $filter_label = null,
+        public bool $default_filter = true,
+        public bool $removable_filter = false,
     ) {
         $this->init();
     }
@@ -173,20 +181,20 @@ class Column
             [
                 'name'  => RangeOptionEnum::LAST_MONTH->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-month'),
-                'from'  => now()->subMonth(1)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonths(1)->startOfMonth()->format($format),
+                'to'    => now()->subMonths(1)->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::LAST_THREE_MONTHS->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-three-months'),
-                'from'  => now()->subMonth(3)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonths(3)->startOfMonth()->format($format),
+                'to'    => now()->subMonths(1)->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::LAST_SIX_MONTHS->value,
                 'label' => trans('admin::app.components.datagrid.filters.date-options.last-six-months'),
-                'from'  => now()->subMonth(6)->startOfMonth()->format($format),
-                'to'    => now()->subMonth(1)->endOfMonth()->format($format),
+                'from'  => now()->subMonths(6)->startOfMonth()->format($format),
+                'to'    => now()->subMonths(1)->endOfMonth()->format($format),
             ],
             [
                 'name'  => RangeOptionEnum::THIS_YEAR->value,

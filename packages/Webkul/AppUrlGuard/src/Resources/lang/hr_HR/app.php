@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'Otkriveno nepodudaranje APP_URL-a',
+        'dismiss'         => 'Odbaci',
+        'lede-before'     => 'Vaši frontend resursi (CSS, JS) vezani su uz konfiguriranu',
+        'lede-after'      => 'Ažurirajte je da odgovara domaćinu koji koristite, inače se stilovi i skripte neće učitati.',
+        'configured-env'  => 'Konfigurirano (.env)',
+        'mismatch-tag'    => 'NEPODUDARANJE',
+        'actual-browser'  => 'Stvarno (preglednik)',
+        'in-use-tag'      => 'U UPORABI',
+        'toggle-step'     => 'Prebaci korak :number',
+        'step-1-title'    => 'Ažurirajte APP_URL u svojoj .env datoteci',
+        'step-1-hint'     => 'Otvorite projektni .env i zamijenite redak APP_URL.',
+        'step-2-title'    => 'Očistite predmemoriju aplikacije',
+        'step-2-hint'     => 'Pokrenite ovo u svom terminalu iz korijena projekta.',
+        'copy'            => 'Kopiraj',
+        'copied'          => 'Kopirano',
+        'note-bold'       => 'Zatim potpuno osvježite stranicu',
+        'note-rest'       => 'kako bi preglednik ponovno učitao ažurirane resurse.',
+        'progress'        => ':done od :total koraka dovršeno',
+        'all-done'        => 'Sve gotovo',
+        'powered-by'      => 'Pokreće',
+        'open-source-by'  => 'Projekt otvorenog koda od',
+        'copied-toast'    => 'Kopirano u međuspremnik',
+        'still-mismatch'  => 'APP_URL se i dalje ne podudara. Ažurirajte .env i pokrenite "php artisan optimize:clear".',
+        'verify-failed'   => 'Nije moguće provjeriti APP_URL. Molimo osvježite stranicu.',
+        'logged-out'      => 'Odjavljeni ste: APP_URL se ne podudara s trenutnim domaćinom. Ažurirajte APP_URL u .env i pokrenite "php artisan optimize:clear".',
+    ],
+
+    'log' => [
+        'mismatch' => 'Otkriveno nepodudaranje APP_URL-a',
+        'hint'     => 'Ažurirajte APP_URL u .env na URL zahtjeva, zatim pokrenite: php artisan optimize:clear',
+    ],
+];

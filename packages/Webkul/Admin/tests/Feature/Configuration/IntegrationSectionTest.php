@@ -1,6 +1,18 @@
 <?php
 
+use Illuminate\Support\Facades\Hash;
 use Webkul\AdminApi\Models\Apikey;
+use Webkul\AdminApi\Services\ApiUserProvisioner;
+use Webkul\User\Models\Admin;
+
+/**
+ * Credential endpoints refuse to act on a key bound to a human admin, so the
+ * fixtures have to carry a real api robot.
+ */
+function provisionApiRobot(): Admin
+{
+    return app(ApiUserProvisioner::class)->provisionForIntegration('Fixture Robot')['admin'];
+}
 
 it('should return the intergration datagrid page', function () {
     $this->loginAsAdmin();
@@ -20,67 +32,81 @@ it('should return the integration create page', function () {
         ->assertSeeText(trans('admin::app.configuration.integrations.create.general'));
 });
 
-it('should return required validation errors for name, user and permission type when creating integration', function () {
+it('should return required validation errors for name and permission type when creating integration', function () {
     $this->loginAsAdmin();
 
     $response = $this->post(route('admin.configuration.integrations.store'), []);
 
     $response->assertInvalid([
         'name',
-        'admin_id',
         'permission_type',
     ]);
 });
 
 it('should create the integration with permission all sucessfully', function () {
-    $user = $this->loginAsAdmin();
+    $this->loginAsAdmin();
 
     $response = $this->post(route('admin.configuration.integrations.store'), [
         'name'            => 'Test Integration',
-        'admin_id'        => $user->id,
         'permission_type' => 'all',
     ]);
 
-    $apiKey = $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
+    $this->assertDatabaseHas($this->getFullTableName(Apikey::class), [
         'name'            => 'Test Integration',
-        'admin_id'        => $user->id,
         'permission_type' => 'all',
     ]);
 
     $response->assertSessionHas('success', trans('admin::app.configuration.integrations.create-success'));
 });
 
+it('should bind a newly created integration to its own api robot', function () {
+    $user = $this->loginAsAdmin();
+
+    $this->post(route('admin.configuration.integrations.store'), [
+        'name'            => 'Robot Bound Integration',
+        'permission_type' => 'all',
+    ]);
+
+    $apiKey = Apikey::where('name', 'Robot Bound Integration')->first();
+
+    expect($apiKey->admin_id)->not->toBe($user->id);
+    expect($apiKey->admins->isApiUser())->toBeTrue();
+});
+
 it('should create the integration with permission custom sucessfully', function () {
-    $userId = $this->loginAsAdmin()->id;
+    $this->loginAsAdmin();
 
     $permissions = ['api.catalog', 'api.catalog.products', 'api.catalog.products.create', 'api.catalog.products.edit'];
 
     $response = $this->post(route('admin.configuration.integrations.store'), [
         'name'            => 'Test Custom Integration',
-        'admin_id'        => $userId,
         'permission_type' => 'custom',
         'permissions'     => $permissions,
     ]);
 
     $response->assertSessionHas('success', trans('admin::app.configuration.integrations.create-success'));
 
-    $apiKey = Apikey::where('name', 'Test Custom Integration')->where('admin_id', $userId)->where('permission_type', 'custom')->first();
+    $apiKey = Apikey::where('name', 'Test Custom Integration')->where('permission_type', 'custom')->first();
 
     $this->assertTrue($apiKey instanceof Apikey, 'Api Key not Found');
 
     $this->assertEquals($permissions, $apiKey->permissions);
 });
 
-it('should return validation error when integration already exists for a user', function () {
-    $userId = $this->loginAsAdmin()->id;
+it('should allow a second integration for the same admin, each with its own robot', function () {
+    $this->loginAsAdmin();
 
-    $apiKey = Apikey::factory()->create(['permission_type' => 'all', 'admin_id' => $userId]);
+    foreach (['First Integration', 'Second Integration'] as $name) {
+        $this->post(route('admin.configuration.integrations.store'), [
+            'name'            => $name,
+            'permission_type' => 'all',
+        ])->assertSessionHas('success', trans('admin::app.configuration.integrations.create-success'));
+    }
 
-    $this->post(route('admin.configuration.integrations.store'), [
-        'name'            => 'Test Integration',
-        'admin_id'        => $userId,
-        'permission_type' => 'all',
-    ])->assertInvalid(['admin_id']);
+    $robotIds = Apikey::whereIn('name', ['First Integration', 'Second Integration'])->pluck('admin_id');
+
+    expect($robotIds)->toHaveCount(2);
+    expect($robotIds->unique())->toHaveCount(2);
 });
 
 it('should return the integration edit page', function () {
@@ -155,9 +181,9 @@ it('should update the integration with permission type custom sucessfully', func
 });
 
 it('should generate secret key and client id for a integration', function () {
-    $userId = $this->loginAsAdmin()->id;
+    $this->loginAsAdmin();
 
-    $apiKey = Apikey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => provisionApiRobot()->id]);
 
     $response = $this->post(route('admin.configuration.integrations.generate_key'), [
         'name'     => $apiKey->name,
@@ -171,16 +197,22 @@ it('should generate secret key and client id for a integration', function () {
 
     $data = $response->json();
 
+    // Passport 13 hashes the `secret` column at write-time via
+    // castAttributeAsHashedString. The plain-text secret is only exposed via
+    // $client->plainSecret for the duration of the request, so DB assertion
+    // matches by ID and verifies the hash separately.
     $this->assertDatabaseHas('oauth_clients', [
-        'id'     => $data['oauth_client_id'],
-        'secret' => $data['secret_key'],
+        'id' => $data['oauth_client_id'],
     ]);
+
+    $row = DB::table('oauth_clients')->where('id', $data['oauth_client_id'])->first();
+    expect(Hash::check($data['secret_key'], $row->secret))->toBeTrue();
 });
 
 it('should regenerate secret key for a integration', function () {
-    $userId = $this->loginAsAdmin()->id;
+    $this->loginAsAdmin();
 
-    $apiKey = Apikey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => $userId]);
+    $apiKey = Apikey::factory()->create(['name' => 'Test', 'permission_type' => 'all', 'admin_id' => provisionApiRobot()->id]);
 
     $response = $this->post(route('admin.configuration.integrations.generate_key'), [
         'name'     => $apiKey->name,
@@ -196,10 +228,14 @@ it('should regenerate secret key for a integration', function () {
 
     $data = $response->json();
 
+    // Passport 13 hashes `secret` — verify the hash matches the plaintext
+    // returned by the regenerate-secret endpoint rather than DB-comparing it.
     $this->assertDatabaseHas('oauth_clients', [
-        'id'     => $oauthClientId,
-        'secret' => $data['secret_key'],
+        'id' => $oauthClientId,
     ]);
+
+    $row = DB::table('oauth_clients')->where('id', $oauthClientId)->first();
+    expect(Hash::check($data['secret_key'], $row->secret))->toBeTrue();
 });
 
 it('should revoke the integration succesfully on delete', function () {

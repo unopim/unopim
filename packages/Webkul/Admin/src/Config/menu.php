@@ -57,6 +57,12 @@ return [
         'route'      => 'admin.catalog.families.index',
         'sort'       => 6,
         'icon'       => '',
+    ], [
+        'key'        => 'catalog.association_types',
+        'name'       => 'admin::app.components.layouts.sidebar.association_types',
+        'route'      => 'admin.catalog.association_types.index',
+        'sort'       => 7,
+        'icon'       => '',
     ],
 
     /**
@@ -101,31 +107,31 @@ return [
         'key'        => 'settings.locales',
         'name'       => 'admin::app.components.layouts.sidebar.locales',
         'route'      => 'admin.settings.locales.index',
-        'sort'       => 1,
+        'sort'       => 2,
         'icon'       => '',
     ], [
         'key'        => 'settings.currencies',
         'name'       => 'admin::app.components.layouts.sidebar.currencies',
         'route'      => 'admin.settings.currencies.index',
-        'sort'       => 2,
+        'sort'       => 3,
         'icon'       => '',
     ], [
         'key'        => 'settings.channels',
         'name'       => 'admin::app.components.layouts.sidebar.channels',
         'route'      => 'admin.settings.channels.index',
-        'sort'       => 5,
+        'sort'       => 6,
         'icon'       => '',
     ], [
         'key'        => 'settings.users',
         'name'       => 'admin::app.components.layouts.sidebar.users',
         'route'      => 'admin.settings.users.index',
-        'sort'       => 6,
+        'sort'       => 7,
         'icon'       => '',
     ], [
         'key'        => 'settings.roles',
         'name'       => 'admin::app.components.layouts.sidebar.roles',
         'route'      => 'admin.settings.roles.index',
-        'sort'       => 7,
+        'sort'       => 8,
         'icon'       => '',
     ],
     /**
@@ -135,7 +141,30 @@ return [
         'key'    => 'configuration',
         'name'   => 'admin::app.components.layouts.sidebar.configure',
         'route'  => 'admin.configuration.integrations.index',
-        'sort'   => 9,
+        'sort'   => 10,
         'icon'   => 'icon-configuration',
+    ], [
+        'key'        => 'configuration.system_information',
+        'name'       => 'admin::app.components.layouts.sidebar.system-information',
+        'route'      => 'admin.configuration.system.information',
+        'sort'       => 3,
+        'icon'       => '',
+    ], [
+        'key'        => 'configuration.system_settings',
+        'name'       => 'admin::app.components.layouts.sidebar.system-settings',
+        'route'      => 'admin.settings.system.index',
+        'sort'       => 4,
+        'icon'       => '',
+    ],
+
+    /**
+     * Help.
+     */
+    [
+        'key'   => 'help',
+        'name'  => 'admin::app.components.layouts.sidebar.help',
+        'route' => 'admin.help.index',
+        'sort'  => 99999,
+        'icon'  => 'icon-information',
     ],
 ];

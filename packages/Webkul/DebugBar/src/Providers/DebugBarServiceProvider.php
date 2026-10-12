@@ -10,13 +10,11 @@ class DebugBarServiceProvider extends ServiceProvider
 {
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         if (class_exists(Debugbar::class)) {
-            Debugbar::addCollector(app(ModuleCollector::class));
+            Debugbar::addCollector(resolve(ModuleCollector::class));
         }
     }
 }

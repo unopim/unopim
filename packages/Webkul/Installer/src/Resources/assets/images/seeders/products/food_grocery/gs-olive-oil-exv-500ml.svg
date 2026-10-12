@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 290" width="200" height="290">
+  <rect width="200" height="290" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="10" y="10" width="180" height="180" fill="#fefce8" rx="4"/>
+  <path d="M 80 40 L 120 40 L 120 70 L 130 80 L 130 180 L 70 180 L 70 80 L 80 70 Z" fill="#65a30d" stroke="#0f172a" stroke-width="1" opacity="0.9"/>
+  <rect x="70" y="95" width="60" height="6" fill="#ffffff" opacity="0.6"/>
+  <rect x="70" y="105" width="45" height="4" fill="#ffffff" opacity="0.5"/>
+    <text x="100" y="215" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1f2937">Mediterra Organic</text>
+    <text x="100" y="229" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1f2937">Extra Virgin Olive Oil</text>
+    <text x="100" y="243" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1f2937">500ml</text>
+    <text x="100" y="270" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" fill="#475569">500ml</text>
+  <text x="100" y="283" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#94a3b8">GS-OLIVE-OIL-EXV-500ML</text>
+</svg>

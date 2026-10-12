@@ -2,11 +2,14 @@
 
 namespace Webkul\DataTransfer\Buffer;
 
-use Maatwebsite\Excel\Files\TemporaryFile;
 use OpenSpout\Common\Entity\Cell;
 use OpenSpout\Common\Entity\Row;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Webkul\DataTransfer\Jobs\Export\File\LocalTemporaryFile;
+use Webkul\DataTransfer\Jobs\Export\File\RemoteTemporaryFile;
 use Webkul\DataTransfer\Jobs\Export\File\SpoutWriterFactory;
 use Webkul\DataTransfer\Jobs\Export\File\TemporaryFileFactory;
+use Webkul\DataTransfer\Support\FormulaGuard;
 
 class FileBuffer
 {
@@ -30,10 +33,7 @@ class FileBuffer
 
     protected $writer;
 
-    /**
-     * @return TemporaryFile
-     */
-    public function make($directory, ?string $fileExtension = null, ?string $fileName = null)
+    public function make($directory, ?string $fileExtension = null, ?string $fileName = null): RemoteTemporaryFile|LocalTemporaryFile
     {
         $temporaryFileFactory = new TemporaryFileFactory($directory);
 
@@ -42,9 +42,7 @@ class FileBuffer
 
     protected function getWriter($filePath, array $options = [])
     {
-        if (! isset($options['type'])) {
-            throw new \InvalidArgumentException('Option "type" have to be defined');
-        }
+        throw_unless(isset($options['type']), \InvalidArgumentException::class, 'Option "type" have to be defined');
 
         $writer = SpoutWriterFactory::createWriter($options['type'], $options);
 
@@ -55,7 +53,7 @@ class FileBuffer
 
     public function writeHeader(array $headers): void
     {
-        $this->writer->addRow(Row::fromValues($headers));
+        $this->writer->addRow($this->escapeFormulaCells(Row::fromValues($headers)));
     }
 
     /**
@@ -71,7 +69,7 @@ class FileBuffer
     /**
      * Add the specified keys to the list of headers
      */
-    public function addToHeaders(array $keys)
+    public function addToHeaders(array $keys): void
     {
         $headers = array_merge($this->headers, $keys);
         $headers = array_unique($headers);
@@ -81,14 +79,29 @@ class FileBuffer
 
     public function escapeFormulaCells(Row $row): Row
     {
-        $escapedCells = array_map(static function (Cell $cell): Cell {
+        $escapedCells = array_map(function (Cell $cell): Cell {
+            $value = $cell->getValue();
+
+            if (is_string($value) && $this->isFormulaValue($value)) {
+                return new Cell\StringCell("'".$value, null);
+            }
+
             if ($cell instanceof Cell\FormulaCell) {
-                return new Cell\StringCell($cell->getValue(), null);
+                return new Cell\StringCell($value, null);
             }
 
             return $cell;
         }, $row->getCells());
 
         return new Row($escapedCells);
+    }
+
+    /**
+     * Determine whether a cell value would be interpreted as a formula by a
+     * spreadsheet application (CSV/XLSX formula-injection guard).
+     */
+    protected function isFormulaValue(string $value): bool
+    {
+        return FormulaGuard::isFormula($value);
     }
 }

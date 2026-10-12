@@ -1,7 +1,26 @@
 <?php
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Validator;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeOption;
+
+it('honors configured gallery video extensions in both validation paths', function (string $method) {
+    $attribute = Attribute::factory()->make(['type' => 'gallery', 'allowed_extensions' => ['mp4']]);
+    $rules = $attribute->{$method}();
+
+    expect(Validator::make(['gallery' => [UploadedFile::fake()->create('clip.mp4', 1, 'video/mp4')]], ['gallery' => $rules])->passes())->toBeTrue()
+        ->and(Validator::make(['gallery' => [UploadedFile::fake()->image('photo.jpg')]], ['gallery' => $rules])->fails())->toBeTrue()
+        ->and(Validator::make(['gallery' => [UploadedFile::fake()->create('document.pdf', 1, 'application/pdf')]], ['gallery' => $rules])->fails())->toBeTrue();
+})->with(['getValidationRules', 'getValidationsOnlyMedia']);
+
+it('keeps default galleries limited to images and videos', function (string $method) {
+    $attribute = Attribute::factory()->make(['type' => 'gallery', 'allowed_extensions' => null]);
+    $rules = $attribute->{$method}();
+
+    expect(Validator::make(['gallery' => [UploadedFile::fake()->image('photo.jpg'), UploadedFile::fake()->create('clip.mp4', 1, 'video/mp4')]], ['gallery' => $rules])->passes())->toBeTrue()
+        ->and(Validator::make(['gallery' => [UploadedFile::fake()->create('document.pdf', 1, 'application/pdf')]], ['gallery' => $rules])->fails())->toBeTrue();
+})->with(['getValidationRules', 'getValidationsOnlyMedia']);
 
 describe('Attribute Model - Factory Creation', function () {
     it('creates a text attribute via factory', function () {

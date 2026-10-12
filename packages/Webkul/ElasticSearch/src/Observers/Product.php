@@ -3,13 +3,13 @@
 namespace Webkul\ElasticSearch\Observers;
 
 use Elastic\Elasticsearch\Exception\ElasticsearchException;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Contracts\Events\ShouldHandleEventsAfterCommit;
 use Illuminate\Support\Facades\Log;
 use Webkul\Core\Facades\ElasticSearch;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\Product\Models\Product as Products;
 
-class Product
+class Product implements ShouldHandleEventsAfterCommit
 {
     /**
      * bool flag to manage observer functionality
@@ -52,31 +52,17 @@ class Product
         $this->indexPrefix = config('elasticsearch.prefix');
     }
 
-    public function created(Products $product)
+    public function created(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             $productArray = $product->toArray();
 
-            $productArray['status'] = $productArray['status'] ?? 1;
+            $productArray = $this->sanitizeProductArray($productArray);
 
-            switch (DB::getDriverName()) {
-                case 'pgsql':
-                    $productArray['status'] = $productArray['status'] == 1 || $productArray['status'] === true;
-
-                    if (isset($productArray['attribute_family']['status'])) {
-                        $productArray['attribute_family']['status'] =
-                            $productArray['attribute_family']['status'] == 1 || $productArray['attribute_family']['status'] === true;
-                    }
-                    break;
-
-                case 'mysql':
-                default:
-                    $productArray['status'] = (int) $productArray['status'];
-
-                    if (isset($productArray['attribute_family']['status'])) {
-                        $productArray['attribute_family']['status'] = (int) $productArray['attribute_family']['status'];
-                    }
-                    break;
+            // Index the variant's resolved (inherited) values so search and
+            // filters see attributes owned by an ancestor. Read-time inheritance.
+            if (! empty($product->parent_id)) {
+                $productArray['values'] = $product->resolvedValues();
             }
 
             if (isset($productArray['values'])) {
@@ -98,11 +84,19 @@ class Product
         }
     }
 
-    public function updated(Products $product)
+    public function updated(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
                 $productArray = $product->toArray();
+
+                $productArray = $this->sanitizeProductArray($productArray);
+
+                // Index the variant's resolved (inherited) values so search and
+                // filters see attributes owned by an ancestor. Read-time inheritance.
+                if (! empty($product->parent_id)) {
+                    $productArray['values'] = $product->resolvedValues();
+                }
 
                 if (isset($productArray['values'])) {
                     $productArray['values'] = $this->productIndexingNormalizer->normalize($productArray['values']);
@@ -121,7 +115,7 @@ class Product
         }
     }
 
-    public function deleted(Products $product)
+    public function deleted(Products $product): void
     {
         if (config('elasticsearch.enabled') && self::$isEnabled) {
             try {
@@ -135,5 +129,19 @@ class Product
                 ]);
             }
         }
+    }
+
+    /**
+     * Sanitize product array to ensure boolean types for ES8 compatibility.
+     */
+    protected function sanitizeProductArray(array $productArray): array
+    {
+        $productArray['status'] = (bool) ($productArray['status'] ?? true);
+
+        if (isset($productArray['attribute_family']['status'])) {
+            $productArray['attribute_family']['status'] = (bool) $productArray['attribute_family']['status'];
+        }
+
+        return $productArray;
     }
 }

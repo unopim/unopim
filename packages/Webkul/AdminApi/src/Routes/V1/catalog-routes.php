@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Webkul\AdminApi\Http\Controllers\API\Catalog\AssociationTypeController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\AttributeController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\AttributeFamilyController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\AttributeGroupController;
@@ -9,6 +10,7 @@ use Webkul\AdminApi\Http\Controllers\API\Catalog\CategoryFieldController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\ConfigurableProductController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\MediaFileController;
 use Webkul\AdminApi\Http\Controllers\API\Catalog\SimpleProductController;
+use Webkul\AdminApi\Http\Controllers\API\Catalog\VariantStructureController;
 
 Route::group([
     'middleware' => [
@@ -21,6 +23,8 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.attribute_groups.get');
         Route::post('', 'store')->name('admin.api.attribute_groups.store');
         Route::put('{code}', 'update')->name('admin.api.attribute_groups.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.attribute_groups.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.attribute_groups.delete');
     });
 
     /** Attributes API Routes */
@@ -29,10 +33,13 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.attributes.get');
         Route::post('', 'store')->name('admin.api.attributes.store');
         Route::put('{code}', 'update')->name('admin.api.attributes.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.attributes.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.attributes.delete');
 
         Route::get('{code}/options', 'getOptions')->name('admin.api.attribute_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.attribute_options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.attribute_options.update_option');
+        Route::delete('{code}/options/{optionCode}', 'deleteOption')->name('admin.api.attribute_options.delete_option');
     });
 
     /** Attributes Family API Routes */
@@ -41,6 +48,18 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.families.get');
         Route::post('', 'store')->name('admin.api.families.store');
         Route::put('{code}', 'update')->name('admin.api.families.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.families.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.families.delete');
+    });
+
+    /** Attribute Family Variant Structures API Routes */
+    Route::controller(VariantStructureController::class)->prefix('families')->group(function () {
+        Route::get('{code}/variant-structures', 'index')->name('admin.api.families-variant-structures.index');
+        Route::get('{code}/variant-structures/{structureCode}', 'get')->name('admin.api.families-variant-structures.get');
+        Route::post('{code}/variant-structures', 'store')->name('admin.api.families-variant-structures.store');
+        Route::put('{code}/variant-structures/{structureCode}', 'update')->name('admin.api.families-variant-structures.update');
+        Route::patch('{code}/variant-structures/{structureCode}', 'partialUpdate')->name('admin.api.families-variant-structures.patch');
+        Route::delete('{code}/variant-structures/{structureCode}', 'delete')->name('admin.api.families-variant-structures.delete');
     });
 
     /** Category Fields API Routes */
@@ -49,10 +68,28 @@ Route::group([
         Route::get('{code}', 'get')->name('admin.api.category-fields.get');
         Route::post('', 'store')->name('admin.api.category-fields.store');
         Route::put('{code}', 'update')->name('admin.api.category-fields.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.category-fields.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.category-fields.delete');
 
         Route::get('{code}/options', 'getOptions')->name('admin.api.category-fields_options.get');
         Route::post('{code}/options', 'storeOption')->name('admin.api.category-fields-options.store_option');
         Route::put('{code}/options', 'updateOption')->name('admin.api.category-fields-options.update_option');
+        Route::delete('{code}/options/{optionCode}', 'deleteOption')->name('admin.api.category-fields-options.delete_option');
+    });
+
+    /** Association Types API Routes */
+    Route::controller(AssociationTypeController::class)->prefix('association-types')->group(function () {
+        Route::get('', 'index')->name('admin.api.association-types.index');
+        Route::get('{code}', 'get')->name('admin.api.association-types.get');
+        Route::post('', 'store')->name('admin.api.association-types.store');
+        Route::put('{code}', 'update')->name('admin.api.association-types.update');
+        Route::patch('{code}', 'partialUpdate')->name('admin.api.association-types.patch');
+        Route::delete('{code}', 'delete')->name('admin.api.association-types.delete');
+
+        Route::get('{code}/fields', 'getFields')->name('admin.api.association-types-fields.get');
+        Route::post('{code}/fields', 'storeField')->name('admin.api.association-types-fields.store');
+        Route::put('{code}/fields/{fieldCode}', 'updateField')->name('admin.api.association-types-fields.update');
+        Route::delete('{code}/fields/{fieldCode}', 'deleteField')->name('admin.api.association-types-fields.delete');
     });
 
     /** Categories API Routes */
@@ -69,14 +106,20 @@ Route::group([
     Route::controller(MediaFileController::class)->prefix('media-files')->group(function () {
         Route::prefix('category')->group(function () {
             Route::post('', 'storeCategoryMedia')->name('admin.api.media-files.category.store');
+            Route::get('', 'getCategoryMedia')->name('admin.api.media-files.category.get');
+            Route::delete('', 'deleteCategoryMedia')->name('admin.api.media-files.category.delete');
         });
 
         Route::prefix('product')->group(function () {
             Route::post('', 'storeProductMedia')->name('admin.api.media-files.product.store');
+            Route::get('', 'getProductMedia')->name('admin.api.media-files.product.get');
+            Route::delete('', 'deleteProductMedia')->name('admin.api.media-files.product.delete');
         });
 
         Route::prefix('swatch')->group(function () {
             Route::post('', 'storeSwatchMedia')->name('admin.api.media-files.attribute.options.store');
+            Route::get('', 'getSwatchMedia')->name('admin.api.media-files.attribute.options.get');
+            Route::delete('', 'deleteSwatchMedia')->name('admin.api.media-files.attribute.options.delete');
         });
     });
 
@@ -91,12 +134,24 @@ Route::group([
 
     });
 
-    /** Configurable Products API Routes */
-    Route::controller(ConfigurableProductController::class)->prefix('configrable-products')->group(function () {
-        Route::get('', 'index')->name('admin.api.configrable_products.index');
-        Route::get('{code}', 'get')->name('admin.api.configrable_products.get');
-        Route::post('', 'store')->name('admin.api.configrable_products.store');
-        Route::put('{code}', 'update')->name('admin.api.configrable_products.update');
-        Route::patch('{code}', 'partialUpdate')->name('admin.api.configrable_products.patch');
-    });
+    /** Configurable Products API Routes (supports both "configurable" and the legacy "configrable" typo) */
+    foreach (['configurable-products', 'configrable-products'] as $configurablePrefix) {
+        $isLegacy = $configurablePrefix === 'configrable-products';
+        $nameSuffix = $isLegacy ? 'configrable_products' : 'configurable_products';
+
+        $group = Route::controller(ConfigurableProductController::class)->prefix($configurablePrefix);
+
+        if ($isLegacy) {
+            $group->middleware('api.deprecated:/api/v1/rest/configurable-products');
+        }
+
+        $group->group(function () use ($nameSuffix) {
+            Route::get('', 'index')->name('admin.api.'.$nameSuffix.'.index');
+            Route::get('{code}', 'get')->name('admin.api.'.$nameSuffix.'.get');
+            Route::post('', 'store')->name('admin.api.'.$nameSuffix.'.store');
+            Route::put('{code}', 'update')->name('admin.api.'.$nameSuffix.'.update');
+            Route::delete('{code}', 'delete')->name('admin.api.'.$nameSuffix.'.delete');
+            Route::patch('{code}', 'partialUpdate')->name('admin.api.'.$nameSuffix.'.patch');
+        });
+    }
 });

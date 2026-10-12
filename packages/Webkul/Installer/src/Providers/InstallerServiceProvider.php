@@ -7,6 +7,8 @@ use Illuminate\Support\ServiceProvider;
 use Webkul\Installer\Console\Commands\DefaultUser as DefaultUserCommand;
 use Webkul\Installer\Console\Commands\Installer as InstallerCommand;
 use Webkul\Installer\Console\Commands\PurgeUnusedImages as PurgeUnusedImagesCommand;
+use Webkul\Installer\Console\Commands\SeedDemoData as SeedDemoDataCommand;
+use Webkul\Installer\Console\Commands\Upgrade as UpgradeCommand;
 use Webkul\Installer\Http\Middleware\CanInstall;
 use Webkul\Installer\Http\Middleware\Locale;
 use Webkul\Installer\Listeners\Installer;
@@ -33,11 +35,13 @@ class InstallerServiceProvider extends ServiceProvider
 
     /**
      * Register the service provider
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
+        $this->mergeConfigFrom(__DIR__.'/../Config/installer.php', 'installer');
+
+        $this->mergeConfigFrom(__DIR__.'/../Config/upgrade.php', 'upgrade');
+
         $this->registerCommands();
     }
 
@@ -51,6 +55,8 @@ class InstallerServiceProvider extends ServiceProvider
                 InstallerCommand::class,
                 DefaultUserCommand::class,
                 PurgeUnusedImagesCommand::class,
+                SeedDemoDataCommand::class,
+                UpgradeCommand::class,
             ]);
         }
     }

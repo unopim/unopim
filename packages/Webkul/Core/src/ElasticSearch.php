@@ -21,15 +21,10 @@ class ElasticSearch
 
     /**
      * Make a new connection.
-     *
-     *
-     * @return \Elasticsearch\Client
      */
     protected function makeConnection(?string $name = null): Client
     {
-        if (! config('elasticsearch.enabled')) {
-            throw new \Exception('ElasticSearch is disabled in the env file.');
-        }
+        throw_unless(config('elasticsearch.enabled'), \Exception::class, 'ElasticSearch is disabled in the env file.');
 
         $connection = $name ?: $this->getDefaultConnection();
 
@@ -37,19 +32,19 @@ class ElasticSearch
 
         $clientBuilder = ClientBuilder::create();
 
-        if ($connection == 'default') {
+        if ($connection === 'default') {
             /**
              * Build default connection
              */
             $clientBuilder->setHosts($config['hosts'])
                 ->setBasicAuthentication($config['user'] ?: '', $config['pass'] ?: '');
-        } elseif ($connection == 'api') {
+        } elseif ($connection === 'api') {
             /**
              * Build API key connection
              */
             $clientBuilder->setHosts($config['hosts'])
                 ->setApiKey($config['key']);
-        } elseif ($connection == 'cloud') {
+        } elseif ($connection === 'cloud') {
             /**
              * Build Elastic Cloud connection
              */
@@ -81,7 +76,7 @@ class ElasticSearch
         return $client;
     }
 
-    private function updateMaxResultWindow(Client $client)
+    private function updateMaxResultWindow(Client $client): void
     {
         // Setting the max_result_window to a large value
         $params = [
@@ -122,9 +117,7 @@ class ElasticSearch
     {
         $connections = config('elasticsearch.connections');
 
-        if (null === $config = Arr::get($connections, $name)) {
-            throw new \InvalidArgumentException("Elasticsearch connection [$name] not configured.");
-        }
+        throw_if(null === $config = Arr::get($connections, $name), \InvalidArgumentException::class, "Elasticsearch connection [$name] not configured.");
 
         return $config;
     }

@@ -2,11 +2,8 @@
 
 namespace Webkul\AiAgent\Jobs;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Webkul\AiAgent\Repositories\AgentExecutionRepository;
 
 /**
@@ -14,7 +11,7 @@ use Webkul\AiAgent\Repositories\AgentExecutionRepository;
  */
 class CleanupExecutionsJob implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     /**
      * @param  int  $retentionDays  Number of days to retain execution logs
@@ -30,7 +27,7 @@ class CleanupExecutionsJob implements ShouldQueue
     {
         $cutoff = now()->subDays($this->retentionDays);
 
-        $repository->model
+        $repository->getModel()
             ->where('created_at', '<', $cutoff)
             ->delete();
     }

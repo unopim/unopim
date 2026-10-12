@@ -6,10 +6,11 @@
     <div class="transparent-button">
         <div
             class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
+            title="@lang('admin::app.components.datagrid.toolbar.manage-columns.title')"
         >
             <span class="icon-manage-column text-2xl"></span>
 
-            <span>
+            <span class="group-[.is-condensed]/toolbar:sr-only">
                 @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
             </span>
         </div>
@@ -42,10 +43,11 @@
                             <div>
                                 <div
                                     class="relative inline-flex w-full max-w-max ltr:pl-3 rtl:pr-3 ltr:pr-5 rtl:pl-5 cursor-pointer select-none appearance-none items-center justify-between gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-1 py-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:ring-2"
+                                    title="@lang('admin::app.components.datagrid.toolbar.manage-columns.title')"
                                 >
                                     <span class="icon-manage-column text-2xl"></span>
 
-                                    <span>
+                                    <span class="group-[.is-condensed]/toolbar:sr-only">
                                         @lang('admin::app.components.datagrid.toolbar.manage-columns.title')
                                     </span>
                                 </div>
@@ -64,7 +66,7 @@
 
                         <!-- Modal Content -->
                         <x-slot:content>
-                            <div class="grid grid-cols-2 gap-4 p-2">
+                            <div class="grid grid-cols-2 max-sm:grid-cols-1 gap-4 p-2">
                                 <!-- Left Side -->
                                 <div class="flex flex-col gap-y-2">
                                     <div class="flex items-center justify-between">
@@ -75,8 +77,8 @@
                                     <template v-if="loading">
                                         <div class="shimmer h-10 rounded-md mb-1"></div>
 
-                                        <div class="grid gap-y-2.5 pt-3 !h-[calc(100vh-367px)] pb-1 pt-1 overflow-auto">
-                                            <div v-for="n in 20" :key="n" class="shimmer w-[302px] h-[38px] rounded-md"></div>
+                                        <div class="grid gap-y-2.5 pt-3 !h-[min(55vh,calc(100vh-367px))] pb-1 pt-1 overflow-auto">
+                                            <div v-for="n in 20" :key="n" class="shimmer w-full h-[38px] rounded-md"></div>
                                         </div>
                                         <div class="flex gap-x-2.5 pt-3">
                                             <div class="shimmer w-[38px] h-[38px] rounded-md"></div>
@@ -87,20 +89,15 @@
                                     </template>
 
                                     <template v-else>
-                                        <div class="relative w-full flex items-center justify-center mb-1 mt-2">
-                                            <input
-                                                type="text"
-                                                class="bg-white dark:bg-cherry-800 border dark:border-cherry-900 rounded-lg block w-full ltr:pl-3 rtl:pr-3 ltr:pr-10 rtl:pl-10 py-1.5 leading-6 text-gray-600 dark:text-gray-300 transition-all hover:border-gray-400"
-                                                placeholder="Search"
+                                        <div class="mb-1 mt-2 flex w-full items-center justify-center">
+                                            <x-admin::search.field
                                                 v-model.lazy="searchTerm"
                                                 v-debounce="500"
                                                 @keydown.enter.prevent="search($event.target.value)"
                                             />
-
-                                            <span class="icon-search text-2xl absolute ltr:right-5 rtl:left-3 top-1.5 flex items-center pointer-events-none"></span>
                                         </div>
                                         <draggable
-                                            class="!h-[calc(100vh-367px)] pb-[16px] pt-1 overflow-auto ltr:border-r rtl:border-l border-gray-200"
+                                            class="!h-[min(55vh,calc(100vh-367px))] pb-[16px] pt-1 overflow-auto ltr:border-r rtl:border-l border-gray-200"
                                             ghost-class="draggable-ghost"
                                             handle=".icon-drag"
                                             v-bind="{animation: 200}"
@@ -114,19 +111,20 @@
                                                     <!-- Group Container -->
                                                     <div class="flex items-center group">
                                                         <div
-                                                            class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800"
+                                                            class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 group-hover:text-gray-800 w-full"
                                                         >
                                                             <div
-                                                                class="flex gap-[6px] max-w-max py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
+                                                                class="flex items-center gap-[6px] w-full py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
                                                             >
-                                                                <i class="icon-drag text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
+                                                                <i class="icon-drag text-xl flex-shrink-0 transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
 
                                                                 <span
-                                                                    class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
+                                                                    class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs truncate"
                                                                     v-text="element.label"
                                                                 >
                                                                 </span>
 
+                                                                {{-- Attribute code is intentionally hidden to keep the list name-only (Issue #716). --}}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -135,33 +133,61 @@
                                         </draggable>
 
                                         <!-- Pagination -->
-                                        <div class="flex gap-1 items-left justify-right mt-2.5">
-                                            <a @click="changePage(currentPage - 1)">
-                                                <div class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
-                                                    <span class="icon-chevron-left text-2xl"></span>
-                                                </div>
-                                            </a>
+                                        <div class="flex items-center gap-x-2 mt-2.5">
+                                            <input
+                                                type="text"
+                                                class="inline-flex min-h-[38px] max-w-[60px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-3 py-1.5 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400"
+                                                :value="currentPage"
+                                                @change="changePage(parseInt($event.target.value))"
+                                                aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')"
+                                            >
 
-                                            <a @click="changePage(currentPage + 1)">
-                                                <div
-                                                    class="inline-flex gap-x-1 items-center justify-between w-full max-w-max ltr:ml-2 rtl:mr-2 p-1.5 bg-white dark:bg-cherry-800 border rounded-md dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center cursor-pointer transition-all hover:border hover:bg-violet-50 dark:hover:bg-cherry-800 marker:shadow appearance-none focus:ring-2 focus:outline-none focus:ring-black">
-                                                    <span class="icon-chevron-right text-2xl"></span>
-                                                </div>
-                                            </a>
+                                            <div class="whitespace-nowrap text-gray-600 dark:text-gray-300">
+                                                <span> @lang('admin::app.components.datagrid.toolbar.of') </span>
 
-                                            <div class="flex items-center justify-center gap-2.5">
-                                                <input
-                                                    type="text"
-                                                    class="inline-flex min-h-[38px] max-w-[60px] appearance-none items-center justify-center gap-x-1 rounded-md border dark:border-cherry-800 bg-white dark:bg-cherry-900 px-3 text-center leading-6 text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:border-gray-400 dark:hover:border-gray-400 focus:outline-none focus:border-gray-400 dark:focus:border-gray-400 max-sm:hidden"
-                                                    :value="currentPage"
-                                                    @keydown.enter.prevent="changePage($event.target.value)"
+                                                <span v-text="totalPages"></span>
+                                            </div>
+
+                                            <div class="flex items-center gap-1" role="navigation" aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.page-number')">
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    @click="changePage(1)"
+                                                    title="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
+                                                    aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.first-page')"
                                                 >
-                    
-                                                <div class="whitespace-nowrap text-gray-600 dark:text-gray-300">
-                                                    <span> @lang('admin::app.components.datagrid.toolbar.of') </span>
-                    
-                                                    <span v-text="totalPages"></span>
-                                                </div>
+                                                    <span class="text-2xl" aria-hidden="true">&#171;</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    @click="changePage(currentPage - 1)"
+                                                    title="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
+                                                    aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.previous-page')"
+                                                >
+                                                    <span class="text-2xl" aria-hidden="true">&#8249;</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent p-1.5 text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    @click="changePage(currentPage + 1)"
+                                                    title="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
+                                                    aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.next-page')"
+                                                >
+                                                    <span class="text-2xl" aria-hidden="true">&#8250;</span>
+                                                </button>
+
+                                                <button
+                                                    type="button"
+                                                    class="inline-flex w-full max-w-max cursor-pointer appearance-none items-center justify-between gap-x-1 rounded-md border border-transparent text-center text-gray-600 dark:text-gray-300 transition-all marker:shadow hover:bg-primary-100 dark:hover:bg-gray-800 active:border-gray-300"
+                                                    @click="changePage(totalPages)"
+                                                    title="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"
+                                                    aria-label="@lang('admin::app.components.datagrid.toolbar.pagination.last-page')"
+                                                >
+                                                    <span class="text-2xl" aria-hidden="true">&#187;</span>
+                                                </button>
                                             </div>
                                         </div>
                                     </template>
@@ -175,7 +201,7 @@
                                     </div>
 
                                     <draggable
-                                        class="h-[calc(100vh-285px)] pb-[16px] pt-3 overflow-auto border-gray-200"
+                                        class="h-[min(55vh,calc(100vh-367px))] pb-[16px] pt-3 overflow-auto border-gray-200"
                                         ghost-class="draggable-ghost"
                                         handle=".icon-drag"
                                         v-bind="{animation: 200}"
@@ -188,25 +214,26 @@
                                                 <!-- Group Container -->
                                                 <div class="flex items-center group">
                                                     <div
-                                                        class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800 group-hover:text-gray-800"
+                                                        class="text-[20px] rounded-[6px] cursor-pointer transition-all hover:bg-primary-50 dark:hover:bg-cherry-800 group-hover:text-gray-800 w-full"
                                                     >
                                                         <div
-                                                            class="flex gap-[6px] max-w-max py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
+                                                            class="flex items-center gap-[6px] w-full py-[6px] ltr:pr-[6px] rtl:pl-[6px] rounded transition-all text-gray-600 dark:text-gray-300 group cursor-pointer"
                                                         >
-                                                            <i class="icon-drag text-xl transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
+                                                            <i class="icon-drag text-xl flex-shrink-0 transition-all group-hover:text-gray-800 dark:group-hover:text-white cursor-grab"></i>
 
                                                             <span
-                                                                class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs"
+                                                                class="text-sm font-regular transition-all group-hover:text-gray-800 dark:group-hover:text-white max-xl:text-xs truncate"
                                                                 v-text="element.label"
                                                             >
                                                             </span>
+
+                                                            {{-- Attribute code is intentionally hidden to keep the list name-only (Issue #716). --}}
 
                                                             <input
                                                                 type="hidden"
                                                                 :name="'selected_columns[]'"
                                                                 :value="element.code"
                                                             />
-
                                                         </div>
                                                     </div>
                                                 </div>
@@ -276,12 +303,14 @@
                 },
 
                 normalizeSelectedColumns() {
-                    this.selectedColumns = this.$parent.available.columns.map((el) => {
-                        return {
-                            code: el.index,
-                            label: el.label,
-                        };
-                    });
+                    this.selectedColumns = this.$parent.available.columns
+                        .filter((el) => el.visible !== false)
+                        .map((el) => {
+                            return {
+                                code: el.index,
+                                label: el.label,
+                            };
+                        });
                 },
 
                 getColumnsList() {
@@ -320,10 +349,20 @@
                 },
 
                 changePage(page) {
-                    if (page > 0 && page <= this.totalPages) {
-                        this.currentPage = page;
-                        this.getColumnsList();
+                    page = parseInt(page);
+
+                    if (isNaN(page) || page < 1) {
+                        page = 1;
+                    } else if (page > this.totalPages) {
+                        page = this.totalPages;
                     }
+
+                    if (page === this.currentPage) {
+                        return;
+                    }
+
+                    this.currentPage = page;
+                    this.getColumnsList();
                 },
 
                 search(value) {

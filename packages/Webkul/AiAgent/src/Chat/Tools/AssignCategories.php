@@ -2,38 +2,60 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Product\Repositories\ProductRepository;
 
 class AssignCategories implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('assign_categories')
-            ->for('Assign categories to products by SKU.')
-            ->withStringParameter('skus', 'Comma-separated product SKUs')
-            ->withStringParameter('categories', 'Comma-separated category codes or paths')
-            ->using(function (string $skus, string $categories) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.edit')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'assign_categories';
+            }
+
+            public function description(): string
+            {
+                return 'Assign categories to products by SKU.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'skus'       => $schema->string()->description('Comma-separated product SKUs'),
+                    'categories' => $schema->string()->description('Comma-separated category codes or paths'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
                     return $denied;
                 }
 
-                $skuList = array_map('trim', explode(',', $skus));
-                $categoryInputs = array_map('trim', explode(',', $categories));
+                $skus = $request->string('skus')->toString();
+                $categories = $request->string('categories')->toString();
+
+                $skuList = array_map(trim(...), explode(',', $skus));
+                $categoryInputs = array_map(trim(...), explode(',', $categories));
 
                 // Build candidate codes to search for
                 $candidates = [];
 
                 foreach ($categoryInputs as $input) {
                     $candidates[] = $input;
-                    $segments = array_map('trim', explode('>', $input));
+                    $segments = array_map(trim(...), explode('>', $input));
                     $last = end($segments);
                     $candidates[] = $last;
                     $candidates[] = Str::slug($last);
@@ -52,7 +74,7 @@ class AssignCategories implements PimTool
 
                 $updated = 0;
                 $errors = [];
-                $repo = app('Webkul\Product\Repositories\ProductRepository');
+                $repo = resolve(ProductRepository::class);
 
                 foreach ($skuList as $sku) {
                     $product = $repo->findOneByField('sku', $sku);
@@ -81,9 +103,10 @@ class AssignCategories implements PimTool
                         'updated'    => $updated,
                         'skus'       => implode(', ', $skuList),
                         'categories' => implode(', ', $resolvedCodes),
-                        'errors'     => empty($errors) ? null : $errors,
+                        'errors'     => $errors === [] ? null : $errors,
                     ],
                 ]);
-            });
+            }
+        };
     }
 }

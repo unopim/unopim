@@ -2,12 +2,20 @@
 
 namespace Webkul\Webhook\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Table;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\HistoryControl\Contracts\HistoryAuditable;
 use Webkul\HistoryControl\Interfaces\PresentableHistoryInterface;
 use Webkul\HistoryControl\Traits\HistoryTrait;
 use Webkul\Webhook\Presenters\SettingsPresenter;
 
+#[Fillable([
+    'field',
+    'value',
+    'extra',
+])]
+#[Table(name: 'webhook_settings')]
 class WebhookSetting extends Model implements HistoryAuditable, PresentableHistoryInterface
 {
     use HistoryTrait;
@@ -16,19 +24,7 @@ class WebhookSetting extends Model implements HistoryAuditable, PresentableHisto
 
     protected $historyTags = ['webhook_settings'];
 
-    protected $table = 'webhook_settings';
-
     public $timestamps = true;
-
-    protected $fillable = [
-        'field',
-        'value',
-        'extra',
-    ];
-
-    protected $casts = [
-        'extra' => 'array',
-    ];
 
     public static function getPresenters(): array
     {
@@ -45,5 +41,12 @@ class WebhookSetting extends Model implements HistoryAuditable, PresentableHisto
     public function getPrimaryModelIdForHistory(): int
     {
         return 1;
+    }
+
+    protected function casts(): array
+    {
+        return [
+            'extra' => 'array',
+        ];
     }
 }

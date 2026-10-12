@@ -5,10 +5,12 @@ use Illuminate\Support\Facades\Route;
 Route::group([
     'prefix'     => 'v1/rest',
     'middleware' => [
-        'auth:api',
-        'api.scope',
         'accept.json',
+        'auth:api',
+        'throttle:rest-api',
+        'api.scope',
         'request.locale',
+        'cache.headers:private;etag',
     ],
 ], function () {
     /**
@@ -20,5 +22,10 @@ Route::group([
      * Catalog API
      */
     require 'V1/catalog-routes.php';
+
+    /**
+     * Product Passport API
+     */
+    require 'V1/passport-routes.php';
 
 });

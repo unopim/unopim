@@ -20,7 +20,7 @@ class PhoneNumber implements ValidationRule
          * This validation is sufficient for global-level phone number validation. If
          * someone wants to customize it, they can override this rule.
          */
-        if (! preg_match('/^\+?\d+$/', $value)) {
+        if (! preg_match('/^\+?\d+$/', (string) $value)) {
             $fail('core::validation.phone-number')->translate();
         }
     }

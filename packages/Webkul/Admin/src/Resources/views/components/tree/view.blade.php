@@ -92,6 +92,8 @@
                     formattedItems: null,
 
                     formattedValues: null,
+
+                    savedValues: [],
                 };
             },
 
@@ -99,9 +101,31 @@
                 this.formattedItems = this.getInitialFormattedItems();
 
                 this.formattedValues = this.getInitialFormattedValues();
+
+                this.savedValues = [...this.formattedValues];
+            },
+
+            mounted() {
+                this.$emitter.on('unsaved-changes:reset', this.resetToInitial);
+                this.$emitter.on('form-saved', this.commitValues);
+            },
+
+            beforeUnmount() {
+                this.$emitter.off('unsaved-changes:reset', this.resetToInitial);
+                this.$emitter.off('form-saved', this.commitValues);
             },
 
             methods: {
+                resetToInitial() {
+                    this.formattedValues = [...this.savedValues];
+
+                    this.$emit('change-input', this.formattedValues);
+                },
+
+                commitValues() {
+                    this.savedValues = [...this.formattedValues];
+                },
+
                 getInitialFormattedItems() {
                     return (typeof this.items == 'string')
                         ? JSON.parse(this.items)
@@ -138,8 +162,8 @@
 
                 getLabel(item) {
                     return item[this.labelField]
-                        ? item[this.labelField]
-                        : item.translations.filter((translation) => translation.locale === this.fallbackLocale)[0][this.labelField];
+                        || (item.translations?.find((translation) => translation.locale === this.fallbackLocale)?.[this.labelField]
+                        || `[${item[this.idField]}]`);
                 },
 
                 generateToggleIconComponent(props) {
@@ -147,7 +171,7 @@
                         ...props,
 
                         onClick: (selection) => {
-                            selection.srcElement.parentElement.classList.toggle('active');
+                            selection.srcElement.closest('.v-tree-item').classList.toggle('active');
 
                             selection.srcElement.classList.toggle('icon-chevron-down', !selection.srcElement.classList.contains('icon-chevron-down'));
                             selection.srcElement.classList.toggle('icon-chevron-right', !selection.srcElement.classList.contains('icon-chevron-right'));
@@ -212,34 +236,36 @@
                                 'div', {
                                     class: [
                                         'v-tree-item inline-block w-full [&>.v-tree-item]:ltr:pl-6 [&>.v-tree-item]:rtl:pr-6 [&>.v-tree-item]:hidden [&.active>.v-tree-item]:block',
-                                        level === 1 && ! hasChildren
-                                            ? 'ltr:!pl-5 rtl:!pr-5'
-                                            : level > 1 && ! hasChildren
-                                            ? 'ltr:!pl-14 rtl:!pr-14'
-                                            : '',
                                         hasChildren && hasSelectedValue ? 'active' : '',
                                     ],
                                 }, [
-                                    this.generateToggleIconComponent({
-                                        class: [
-                                            hasChildren ? (hasSelectedValue ? 'icon-chevron-down' :'icon-chevron-right') : '',
-                                            'text-xl rounded-md cursor-pointer transition-all hover:bg-violet-50 dark:hover:bg-cherry-800'
-                                        ],
-                                    }),
+                                    this.$h('div', {
+                                        class: ['flex items-center'],
+                                    }, [
+                                        this.generateToggleIconComponent({
+                                            class: [
+                                                hasChildren ? (hasSelectedValue ? 'icon-chevron-down' :'icon-chevron-right') : '',
+                                                'flex shrink-0 items-center justify-center w-6 text-xl rounded-md transition-all',
+                                                hasChildren
+                                                    ? 'cursor-pointer hover:bg-primary-50 dark:hover:bg-cherry-800'
+                                                    : 'pointer-events-none',
+                                            ],
+                                        }),
 
-                                    this.generateFolderIconComponent({
-                                        class: [
-                                            hasChildren ? 'icon-folder' : 'icon-attribute',
-                                            'text-2xl cursor-pointer'
-                                        ],
-                                    }),
+                                        this.generateFolderIconComponent({
+                                            class: [
+                                                hasChildren ? 'icon-folder' : 'icon-attribute',
+                                                'shrink-0 text-2xl cursor-pointer'
+                                            ],
+                                        }),
 
-                                    this.generateInputComponent({
-                                        id: this.getId(items[key]),
-                                        label: label,
-                                        name: this.nameField,
-                                        value: items[key][this.valueField],
-                                    }),
+                                        this.generateInputComponent({
+                                            id: this.getId(items[key]),
+                                            label: label,
+                                            name: this.nameField,
+                                            value: items[key][this.valueField],
+                                        }),
+                                    ]),
 
                                     this.generateTreeItemComponents(items[key][this.childrenField], level + 1),
                                 ]

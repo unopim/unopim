@@ -10,12 +10,12 @@ use Webkul\Category\Models\CategoryProxy;
  */
 trait HistoryTrait
 {
-    use Auditable;
+    use Auditable {
+        readyForAuditing as protected auditableReadyForAuditing;
+    }
 
     /**
      * Transform the audit data.
-     *
-     * @param  array  $audit
      */
     public function transformAudit(array $data): array
     {
@@ -62,5 +62,43 @@ trait HistoryTrait
     public function getPrimaryModelIdForHistory(): int
     {
         return $this->id;
+    }
+
+    /**
+     * Skip auditing when a model exposes only translatable history fields and
+     * all of them are empty (e.g. an AttributeTranslation row created for a
+     * locale the user left blank). Such rows carry no real history and would
+     * otherwise fire the audits trigger once per empty locale for nothing.
+     *
+     * {@inheritdoc}
+     */
+    public function readyForAuditing(): bool
+    {
+        if (! $this->auditableReadyForAuditing()) {
+            return false;
+        }
+
+        if ($this->isCustomEvent) {
+            return true;
+        }
+
+        if ($this->auditEvent === 'updated') {
+            $this->resolveAuditExclusions();
+
+            $auditable = array_filter(
+                array_keys($this->getDirty()),
+                fn (string $attribute): bool => $this->isAttributeAuditable($attribute)
+            );
+
+            if (! $auditable) {
+                return false;
+            }
+        }
+
+        if (isset($this->historyTranslatableFields)) {
+            return array_any(array_keys($this->historyTranslatableFields), fn (int|string $field): bool => filled($this->{$field}));
+        }
+
+        return true;
     }
 }

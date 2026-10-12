@@ -2,15 +2,18 @@
 
 namespace Webkul\DataTransfer\Helpers\Importers\Product;
 
+use Illuminate\Http\File;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Intervention\Image\Encoders\WebpEncoder;
 use Intervention\Image\ImageManager;
 use Webkul\Attribute\Contracts\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
@@ -20,9 +23,11 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Completeness\Observers\Product as CompletenessProductObserver;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Core\Filesystem\FileStorer;
 use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\Core\Repositories\ChannelRepository;
 use Webkul\Core\Rules\Sku;
+use Webkul\DataTransfer\Contracts\JobTrack as ImportJobTrackContract;
 use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
 use Webkul\DataTransfer\Helpers\Import;
@@ -31,7 +36,14 @@ use Webkul\DataTransfer\Helpers\Importers\FieldProcessor;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\ElasticSearch\Indexing\Normalizer\ProductNormalizer;
 use Webkul\ElasticSearch\Observers\Product as ElasticProductObserver;
+use Webkul\Measurement\Helpers\MeasurementHelper;
+use Webkul\Product\Contracts\VariantStructurePlanner as VariantStructurePlannerContract;
+use Webkul\Product\Enums\ProductType;
+use Webkul\Product\Enums\VariantLevel;
+use Webkul\Product\Models\Product;
 use Webkul\Product\Models\Product as ProductModel;
+use Webkul\Product\Models\VariantStructure;
+use Webkul\Product\Repositories\ProductAssociationRepository;
 use Webkul\Product\Repositories\ProductRepository;
 use Webkul\Product\Type\AbstractType;
 
@@ -40,7 +52,7 @@ class Importer extends AbstractImporter
     /**
      * Product type simple
      */
-    public const PRODUCT_TYPE_SIMPLE = 'simple';
+    public const PRODUCT_TYPE_SIMPLE = ProductType::Simple->value;
 
     /**
      * Product type virtual
@@ -55,7 +67,12 @@ class Importer extends AbstractImporter
     /**
      * Product type configurable
      */
-    public const PRODUCT_TYPE_CONFIGURABLE = 'configurable';
+    public const PRODUCT_TYPE_CONFIGURABLE = ProductType::Configurable->value;
+
+    /**
+     * Product type variant group
+     */
+    public const PRODUCT_TYPE_VARIANT_GROUP = ProductType::VariantGroup->value;
 
     /**
      * Product type grouped
@@ -105,6 +122,8 @@ class Importer extends AbstractImporter
 
     const ERROR_WRONG_FAMILY_FOR_VARIANT = 'incorrect_family_for_variant';
 
+    const ERROR_VARIANT_STRUCTURE_NOT_FOUND = 'variant_structure_not_found';
+
     const ATTRIBUTE_FAMILY_CODE = 'attribute_family';
 
     /**
@@ -125,12 +144,13 @@ class Importer extends AbstractImporter
         self::ERROR_NOT_UNIQUE_VALUE                         => 'data_transfer::app.importers.products.validation.errors.not-unique-value',
         self::ERROR_PARENT_DOES_NOT_EXIST                    => 'data_transfer::app.importers.products.validation.errors.parent-not-exist',
         self::ERROR_WRONG_FAMILY_FOR_VARIANT                 => 'data_transfer::app.importers.products.validation.errors.incorrect-family-for-variant',
+        self::ERROR_VARIANT_STRUCTURE_NOT_FOUND              => 'data_transfer::app.importers.products.validation.errors.variant-structure-not-found',
     ];
 
     /**
      * Permanent entity columns
      */
-    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', self::ATTRIBUTE_FAMILY_CODE];
+    protected array $permanentAttributes = ['sku', 'locale', 'channel', 'type', 'parent', 'variant_structure', self::ATTRIBUTE_FAMILY_CODE];
 
     /**
      * Permanent entity column
@@ -253,9 +273,43 @@ class Importer extends AbstractImporter
     protected static ?array $staticInitCache = null;
 
     /**
+     * Job track the static cache was built for.
+     */
+    protected static ?string $staticInitCacheJobId = null;
+
+    /**
+     * Parent-capable rows of the file being imported, keyed by sku.
+     *
+     * @var array<string, array{type: string, family: string}>
+     */
+    protected array $fileParentRows = [];
+
+    /**
+     * Row number and declared parent of every sku in the file, captured in the
+     * pass that already walks it so the numbering matches validation's.
+     *
+     * @var array<string, array{row: int, parent: string|null}>
+     */
+    protected array $fileRowsBySku = [];
+
+    /**
+     * Resolved variant structures, keyed by "familyId|code".
+     *
+     * @var array<string, VariantStructure|null>
+     */
+    protected array $variantStructures = [];
+
+    /**
+     * Attribute codes ancestors supply, keyed by parent sku.
+     *
+     * @var array<string, array<int, string>>
+     */
+    protected array $ancestorAttributeCodes = [];
+
+    /**
      * Valid csv columns
      */
-    protected array $validColumnNames = [
+    const BASE_COLUMN_NAMES = [
         'locale',
         'status',
         'channel',
@@ -267,13 +321,19 @@ class Importer extends AbstractImporter
         'cross_sells',
         'up_sells',
         'configurable_attributes',
+        'variant_structure',
         'associated_skus',
     ];
 
+    protected array $validColumnNames = self::BASE_COLUMN_NAMES;
+
+    /**
+     * Resolved once per importer instance rather than per row or per cell.
+     */
+    protected ?MeasurementHelper $measurementHelper = null;
+
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $importBatchRepository,
@@ -292,14 +352,34 @@ class Importer extends AbstractImporter
     }
 
     /**
+     * Reload the catalogue whenever a different job starts, so an import never runs
+     * against attributes cached by an earlier job in the same worker process.
+     */
+    public function setImport(ImportJobTrackContract $import): self
+    {
+        if (self::$staticInitCacheJobId !== (string) $import->id) {
+            self::$staticInitCache = null;
+            self::$staticInitCacheJobId = (string) $import->id;
+
+            $this->initAttributes();
+        }
+
+        return parent::setImport($import);
+    }
+
+    /**
      * Load all attributes and families to use later.
      * Pre-indexes families by code for O(1) lookups.
      */
     protected function initAttributes(): void
     {
+        $this->attributeFamiliesByCode = [];
+        $this->allAttributesByCode = [];
+        $this->validColumnNames = self::BASE_COLUMN_NAMES;
+
         /**
-         * Static cache: attributes, families, and channels are loaded once per worker process.
-         * Eliminates 3+ redundant DB queries on every ImportBatch job within the same worker.
+         * Cached for the current job only: every batch of one import reuses the same
+         * catalogue, while the next job reloads it and sees attributes added meanwhile.
          */
         if (self::$staticInitCache === null) {
             $channels = $this->channelRepository->all();
@@ -318,6 +398,7 @@ class Importer extends AbstractImporter
                 'channelsAndLocales' => $channelsAndLocales,
                 'currencies'         => $currencies,
             ];
+
         }
 
         $this->attributeFamilies = self::$staticInitCache['attributeFamilies'];
@@ -340,8 +421,34 @@ class Importer extends AbstractImporter
                 continue;
             }
 
+            if ($attribute->type === 'measurement') {
+                $this->addMeasurementAttributesColumns($attribute->code);
+
+                continue;
+            }
+
             $this->validColumnNames[] = $attribute->code;
         }
+    }
+
+    /**
+     * Resolve the measurement helper lazily, so an import with no measurement
+     * attribute never builds it.
+     */
+    protected function measurementHelper(): MeasurementHelper
+    {
+        return $this->measurementHelper ??= resolve(MeasurementHelper::class);
+    }
+
+    /**
+     * Add valid column names for the measurement attribute
+     */
+    public function addMeasurementAttributesColumns(string $attributeCode): void
+    {
+        $this->validColumnNames[] = $attributeCode;
+        $this->validColumnNames[] = $attributeCode.'(unit)';
+        $this->validColumnNames[] = $attributeCode.'_value';
+        $this->validColumnNames[] = $attributeCode.'_unit';
     }
 
     /**
@@ -416,7 +523,7 @@ class Importer extends AbstractImporter
         while ($source->valid()) {
             try {
                 $rowData = $source->current();
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
                 $source->next();
 
                 continue;
@@ -424,8 +531,28 @@ class Importer extends AbstractImporter
 
             $skuChunk[] = $rowData['sku'];
 
+            if (! empty($rowData['sku'])) {
+                $this->fileRowsBySku[$rowData['sku']] = [
+                    'row'    => $source->getCurrentRowNumber(),
+                    'parent' => $rowData['parent'] ?? null,
+                ];
+            }
+
             if (! empty($rowData['parent'])) {
                 $skuChunk[] = $rowData['parent'];
+            }
+
+            if (in_array($rowData['type'] ?? null, ProductType::VARIANT_PARENT_VALUES, true)) {
+                $this->fileParentRows[$rowData['sku']] = [
+                    'type'       => $rowData['type'],
+                    'family'     => $rowData[self::ATTRIBUTE_FAMILY_CODE] ?? null,
+                    'parent'     => $rowData['parent'] ?? null,
+                    'structure'  => $rowData['variant_structure'] ?? null,
+                    'attributes' => array_keys(array_filter(
+                        array_diff_key($rowData, array_flip($this->permanentAttributes)),
+                        fn ($value): bool => $value !== null && $value !== ''
+                    )),
+                ];
             }
 
             $totalSourceRows++;
@@ -443,7 +570,7 @@ class Importer extends AbstractImporter
         /**
          * Load any remaining SKUs from the last partial chunk.
          */
-        if (! empty($skuChunk)) {
+        if ($skuChunk !== []) {
             $uniqueChunk = array_unique($skuChunk);
             $this->skuStorage->load($uniqueChunk);
             $this->preloadExistingProducts($uniqueChunk);
@@ -482,11 +609,83 @@ class Importer extends AbstractImporter
         $this->existingProductsCache = [];
 
         /**
+         * A row whose parent's own row failed is unimportable too. Marking it
+         * here rather than at save time is what puts it in the error report:
+         * errors are only persisted once validation returns.
+         */
+        $this->invalidateOrphanRows();
+
+        /**
          * Create batch records for valid rows.
          */
         $this->createBatchesFromValidRows($source);
 
         return $this;
+    }
+
+    /**
+     * Skip every row left hanging by a parent row that failed validation.
+     */
+    protected function invalidateOrphanRows(): void
+    {
+        $rows = [];
+
+        foreach ($this->fileRowsBySku as $sku => $row) {
+            $rows[$row['row']] = ['sku' => $sku, 'parent' => $row['parent']];
+        }
+
+        $invalid = [];
+
+        foreach (array_keys($rows) as $rowNumber) {
+            if ($this->errorHelper->isRowInvalid($rowNumber)) {
+                $invalid[$rowNumber] = true;
+            }
+        }
+
+        foreach ($this->orphanRowNumbers($rows, $invalid) as $rowNumber) {
+            $this->skipRow($rowNumber, self::ERROR_PARENT_DOES_NOT_EXIST, 'parent');
+        }
+    }
+
+    /**
+     * Row numbers whose parent chain reaches a row that failed, walked until it
+     * settles so a grandchild goes with the branch its grandparent lost.
+     *
+     * @param  array<int, array{sku: string, parent: string|null}>  $rows
+     * @param  array<int, bool>  $invalid
+     * @return array<int, int>
+     */
+    public function orphanRowNumbers(array $rows, array $invalid): array
+    {
+        $rowBySku = [];
+
+        foreach ($rows as $rowNumber => $row) {
+            $rowBySku[$row['sku']] = $rowNumber;
+        }
+
+        $orphans = [];
+
+        do {
+            $found = false;
+
+            foreach ($rows as $rowNumber => $row) {
+                if (empty($row['parent']) || isset($invalid[$rowNumber])) {
+                    continue;
+                }
+
+                $parentRow = $rowBySku[$row['parent']] ?? null;
+
+                if ($parentRow === null || ! isset($invalid[$parentRow])) {
+                    continue;
+                }
+
+                $invalid[$rowNumber] = true;
+                $orphans[] = $rowNumber;
+                $found = true;
+            }
+        } while ($found);
+
+        return $orphans;
     }
 
     /**
@@ -499,7 +698,7 @@ class Importer extends AbstractImporter
         while ($source->valid()) {
             try {
                 $rowData = $source->current();
-            } catch (\InvalidArgumentException $e) {
+            } catch (\InvalidArgumentException) {
                 $source->next();
 
                 continue;
@@ -582,7 +781,7 @@ class Importer extends AbstractImporter
                                 }
 
                                 $processedCount++;
-                            } catch (\InvalidArgumentException $e) {
+                            } catch (\InvalidArgumentException) {
                                 $processedCount++;
                             }
                         }
@@ -655,8 +854,7 @@ class Importer extends AbstractImporter
                 } else {
                     $this->validatedRows[$rowNumber] = true;
                 }
-            } catch (\InvalidArgumentException $e) {
-                // Skip malformed rows
+            } catch (\InvalidArgumentException) {
             }
 
             $source->next();
@@ -682,25 +880,50 @@ class Importer extends AbstractImporter
 
         $batchRows = [];
         $this->processedRowsCount = 0;
-        $source->rewind();
 
-        while ($source->valid()) {
-            try {
-                $rowData = $source->current();
-                $rowNumber = $source->getCurrentRowNumber();
-            } catch (\InvalidArgumentException $e) {
+        /**
+         * Configurables first, then variant groups, then everything else: a parent is
+         * always batched before its children, so children never reference a row that
+         * has not been inserted yet — whatever order the file itself uses.
+         */
+        foreach ([[ProductType::Configurable->value], [ProductType::VariantGroup->value], []] as $types) {
+            $source->rewind();
+
+            while ($source->valid()) {
+                try {
+                    $rowData = $source->current();
+                    $rowNumber = $source->getCurrentRowNumber();
+                } catch (\InvalidArgumentException) {
+                    $source->next();
+
+                    continue;
+                }
+
+                $rowType = $rowData['type'] ?? null;
+
+                $belongsToPass = $types === []
+                    ? ! in_array($rowType, ProductType::VARIANT_PARENT_VALUES, true)
+                    : in_array($rowType, $types, true);
+
+                if ($belongsToPass && isset($this->validatedRows[$rowNumber]) && ! $this->errorHelper->isRowInvalid($rowNumber)) {
+                    $batchRows[] = $this->prepareRowForDb($rowData);
+
+                    $this->processedRowsCount++;
+
+                    if (count($batchRows) >= $batchSize) {
+                        $this->importBatchRepository->create([
+                            'job_track_id' => $this->import->id,
+                            'data'         => $batchRows,
+                        ]);
+
+                        $batchRows = [];
+                    }
+                }
+
                 $source->next();
-
-                continue;
             }
 
-            if (isset($this->validatedRows[$rowNumber]) && ! $this->errorHelper->isRowInvalid($rowNumber)) {
-                $batchRows[] = $this->prepareRowForDb($rowData);
-            }
-
-            $this->processedRowsCount++;
-
-            if (count($batchRows) >= $batchSize) {
+            if ($batchRows !== []) {
                 $this->importBatchRepository->create([
                     'job_track_id' => $this->import->id,
                     'data'         => $batchRows,
@@ -708,15 +931,6 @@ class Importer extends AbstractImporter
 
                 $batchRows = [];
             }
-
-            $source->next();
-        }
-
-        if (! empty($batchRows)) {
-            $this->importBatchRepository->create([
-                'job_track_id' => $this->import->id,
-                'data'         => $batchRows,
-            ]);
         }
     }
 
@@ -774,9 +988,9 @@ class Importer extends AbstractImporter
          * Filter out already-cached SKUs to avoid redundant DB queries
          * when called incrementally (chunked loading during validation).
          */
-        $uniqueSkus = array_filter($uniqueSkus, fn (string $sku) => ! isset($this->existingProductsCache[$sku]));
+        $uniqueSkus = array_filter($uniqueSkus, fn (string $sku): bool => ! isset($this->existingProductsCache[$sku]));
 
-        if (empty($uniqueSkus)) {
+        if ($uniqueSkus === []) {
             return;
         }
 
@@ -815,7 +1029,6 @@ class Importer extends AbstractImporter
                 ->get();
 
             foreach ($products as $product) {
-                // Decode values JSON so downstream code can access it as array
                 if (is_string($product->values)) {
                     $product->values = json_decode($product->values, true) ?? [];
                 }
@@ -830,7 +1043,7 @@ class Importer extends AbstractImporter
      */
     protected function preloadCategoryCodes(): void
     {
-        if (empty($this->categoryCodes)) {
+        if ($this->categoryCodes === []) {
             $this->categoryCodes = $this->categoryRepository->pluck('code')->flip()->all();
         }
     }
@@ -849,10 +1062,6 @@ class Importer extends AbstractImporter
             if ($attribute->is_unique && $attribute->code !== 'sku') {
                 $uniqueAttributes[$attribute->code] = $attribute;
             }
-        }
-
-        if (empty($uniqueAttributes)) {
-            return;
         }
 
         foreach ($uniqueAttributes as $code => $attribute) {
@@ -887,7 +1096,6 @@ class Importer extends AbstractImporter
      */
     protected function loadUniqueValuesForPath(string $attributeCode, string $scopeKey, string $jsonPath): void
     {
-        // Convert "$.common.url_key" → ['common', 'url_key'] for cross-DB grammar
         $pathSegments = explode('.', ltrim($jsonPath, '$.'));
         $grammar = GrammarQueryManager::getGrammar();
         $jsonExpr = $grammar->jsonExtract('values', ...$pathSegments);
@@ -900,9 +1108,9 @@ class Importer extends AbstractImporter
             ->select('id', DB::raw("{$jsonExpr} as attr_value"))
             ->whereNotNull(DB::raw($jsonExpr))
             ->orderBy('id')
-            ->chunk(5000, function ($results) use ($attributeCode, $scopeKey) {
+            ->chunk(5000, function ($results) use ($attributeCode, $scopeKey): void {
                 foreach ($results as $row) {
-                    if ($row->attr_value !== null && $row->attr_value !== 'null' && $row->attr_value !== '') {
+                    if (! in_array($row->attr_value, [null, 'null', ''], true)) {
                         $this->existingUniqueDBValues[$attributeCode][$scopeKey][$row->attr_value] = $row->id;
                     }
                 }
@@ -978,38 +1186,54 @@ class Importer extends AbstractImporter
             return false;
         }
 
-        if (! empty($rowData['parent'])) {
-            $parentProduct = $this->getExistingProduct($rowData['parent']);
+        if (! empty($rowData['variant_structure'])) {
+            $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]->id;
 
-            if (! $parentProduct || $parentProduct?->type != self::PRODUCT_TYPE_CONFIGURABLE) {
+            if (! $this->getVariantStructure($rowData['variant_structure'], $familyId) instanceof VariantStructure) {
+                $this->skipRow($rowNumber, self::ERROR_VARIANT_STRUCTURE_NOT_FOUND, 'variant_structure');
+
+                return false;
+            }
+        }
+
+        if (! empty($rowData['parent'])) {
+            [$parentType, $parentFamily] = $this->resolveParentRow($rowData['parent']);
+
+            if (! $this->isAllowedParentType($rowData['type'], $parentType)) {
                 $this->skipRow($rowNumber, self::ERROR_PARENT_DOES_NOT_EXIST, 'parent');
 
                 return false;
             }
 
-            if ($rowData[self::ATTRIBUTE_FAMILY_CODE] != $parentProduct->attribute_family->code) {
+            if ($parentFamily && $rowData[self::ATTRIBUTE_FAMILY_CODE] != $parentFamily) {
                 $this->skipRow($rowNumber, self::ERROR_WRONG_FAMILY_FOR_VARIANT, self::ATTRIBUTE_FAMILY_CODE);
 
                 return false;
             }
         }
 
-        if (! isset($this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]])) {
-            $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]] = $this->getValidationRules($rowData);
+        $structureKey = $rowData[self::ATTRIBUTE_FAMILY_CODE].'|'.($this->getRowVariantStructure($rowData)?->id ?? 0);
+
+        if (! isset($this->typeFamilyValidationRules[$rowData['type']][$structureKey])) {
+            $this->typeFamilyValidationRules[$rowData['type']][$structureKey] = $this->getValidationRules($rowData);
         }
 
         $this->updateRowMediaPath($rowData);
 
-        $validationRules = $this->typeFamilyValidationRules[$rowData['type']][$rowData[self::ATTRIBUTE_FAMILY_CODE]];
+        $validationRules = $this->typeFamilyValidationRules[$rowData['type']][$structureKey];
 
         /**
          * Validate product attributes using cached Validator instance.
          * Reuses Validator via setData() instead of creating 10K+ instances.
          */
-        $cacheKey = $rowData['type'].'|'.$rowData[self::ATTRIBUTE_FAMILY_CODE];
+        $cacheKey = $rowData['type'].'|'.$structureKey;
 
         if (! isset($this->cachedValidators[$cacheKey])) {
-            $this->cachedValidators[$cacheKey] = Validator::make([], $validationRules);
+            $this->cachedValidators[$cacheKey] = Validator::make([], $validationRules)
+                ->setAttributeNames(array_combine(
+                    array_keys($validationRules),
+                    array_keys($validationRules)
+                ));
         }
 
         $validator = $this->cachedValidators[$cacheKey];
@@ -1027,14 +1251,7 @@ class Importer extends AbstractImporter
 
         $this->validatUniqueAttributeValues($rowData, $rowNumber);
 
-        /**
-         * Additional Validations for Configurable attributes
-         */
-        $optionsData = [];
-
-        $validationRules = [];
-
-        if ($rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE) {
+        if ($rowData['type'] == ProductType::Configurable->value && empty($rowData['variant_structure'])) {
             if (empty($rowData['configurable_attributes'])) {
                 $this->skipRow(
                     $rowNumber,
@@ -1088,15 +1305,204 @@ class Importer extends AbstractImporter
         return ! $this->errorHelper->isRowInvalid($rowNumber);
     }
 
+    /**
+     * Codes a variant structure does not keep at the row's own level: attributes of a
+     * higher level are inherited from the ancestor row, lower ones belong to variants.
+     *
+     * @return array<int, string>
+     */
+    protected function attributesOutsideRowLevel(array $rowData): array
+    {
+        $structure = $this->getRowVariantStructure($rowData);
+
+        if (! $structure instanceof VariantStructure) {
+            return $this->attributesOwnedByAncestors($rowData);
+        }
+
+        $rowLevel = ProductType::VARIANT_LEVEL_BY_TYPE[(string) $rowData['type']] ?? VariantLevel::Variant->value;
+
+        $levelByCode = [];
+
+        foreach ($structure->placements as $placement) {
+            if ($code = $placement->attribute?->code) {
+                $levelByCode[$code] = $placement->level;
+            }
+        }
+
+        $axisLevel = (int) $structure->levels === 2
+            ? ['level_1' => VariantLevel::SubParent->value, 'level_2' => VariantLevel::Variant->value]
+            : ['level_1' => VariantLevel::Variant->value, 'level_2' => VariantLevel::Variant->value];
+
+        foreach ($structure->axes as $axis) {
+            if ($code = $axis->attribute?->code) {
+                $levelByCode[$code] = $axisLevel[$axis->level] ?? VariantLevel::Variant->value;
+            }
+        }
+
+        $codes = [];
+
+        foreach ($this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]) as $attribute) {
+            if (($levelByCode[$attribute->code] ?? VariantLevel::Common->value) !== $rowLevel) {
+                $codes[] = $attribute->code;
+            }
+        }
+
+        return $codes;
+    }
+
+    /**
+     * Codes an ancestor already supplies, for products whose family has no variant
+     * structure: a child inherits them at read time, so its own row need not repeat
+     * them. Attributes the child alone owns keep their required rules.
+     *
+     * @return array<int, string>
+     */
+    protected function attributesOwnedByAncestors(array $rowData): array
+    {
+        $parentSku = $rowData['parent'] ?? null;
+
+        if (empty($parentSku)) {
+            return [];
+        }
+
+        if (isset($this->ancestorAttributeCodes[$parentSku])) {
+            return $this->ancestorAttributeCodes[$parentSku];
+        }
+
+        $codes = [];
+        $guard = 0;
+
+        while ($parentSku && $guard++ < 10) {
+            $codes = array_merge($codes, $this->fileParentRows[$parentSku]['attributes'] ?? []);
+
+            $parentProduct = $this->getExistingProduct($parentSku);
+
+            if ($parentProduct) {
+                $codes = array_merge($codes, $this->valueCodes($parentProduct->values ?? []));
+            }
+
+            $parentSku = $this->fileParentRows[$parentSku]['parent'] ?? $parentProduct?->parent?->sku;
+        }
+
+        foreach ($codes as $code) {
+            [$attributeCode] = $this->getAttributeCodeAndCurrency($code);
+
+            $codes[] = $attributeCode;
+        }
+
+        return $this->ancestorAttributeCodes[$rowData['parent']] = array_values(array_unique($codes));
+    }
+
+    /**
+     * Attribute codes a stored values array holds, across every scope.
+     *
+     * @return array<int, string>
+     */
+    protected function valueCodes(array $values): array
+    {
+        $codes = array_keys($values[AbstractType::COMMON_VALUES_KEY] ?? []);
+
+        foreach ([AbstractType::LOCALE_VALUES_KEY, AbstractType::CHANNEL_VALUES_KEY] as $scope) {
+            foreach ($values[$scope] ?? [] as $scopeValues) {
+                $codes = array_merge($codes, array_keys($scopeValues));
+            }
+        }
+
+        foreach ($values[AbstractType::CHANNEL_LOCALE_VALUES_KEY] ?? [] as $localeValues) {
+            foreach ($localeValues as $scopeValues) {
+                $codes = array_merge($codes, array_keys($scopeValues));
+            }
+        }
+
+        return $codes;
+    }
+
+    /**
+     * Variant structure governing a row: its own for a configurable, else the one of
+     * the configurable it hangs under — resolved through the file or the database.
+     */
+    protected function getRowVariantStructure(array $rowData): ?VariantStructure
+    {
+        $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]?->id;
+
+        if (! $familyId) {
+            return null;
+        }
+
+        if (! empty($rowData['variant_structure'])) {
+            return $this->getVariantStructure($rowData['variant_structure'], $familyId);
+        }
+
+        $parentSku = $rowData['parent'] ?? null;
+        $guard = 0;
+
+        while ($parentSku && $guard++ < 3) {
+            if ($code = $this->fileParentRows[$parentSku]['structure'] ?? null) {
+                return $this->getVariantStructure($code, $familyId);
+            }
+
+            $parentProduct = $this->getExistingProduct($parentSku);
+
+            if ($parentProduct?->variant_structure_id) {
+                return $parentProduct->variantStructure;
+            }
+
+            $parentSku = $this->fileParentRows[$parentSku]['parent'] ?? $parentProduct?->parent?->sku;
+        }
+
+        return null;
+    }
+
+    /**
+     * Variant structure of a family, resolved by code and cached for the run.
+     */
+    protected function getVariantStructure(string $code, int $familyId): ?VariantStructure
+    {
+        $key = $familyId.'|'.$code;
+
+        return $this->variantStructures[$key] ??= VariantStructure::query()
+            ->where('code', $code)
+            ->where('attribute_family_id', $familyId)
+            ->with(['axes.attribute:id,code', 'placements.attribute:id,code'])
+            ->first();
+    }
+
+    /**
+     * Type and family code of a parent sku, from the database or from the file being imported.
+     *
+     * @return array{0: string|null, 1: string|null}
+     */
+    protected function resolveParentRow(string $parentSku): array
+    {
+        $parentProduct = $this->getExistingProduct($parentSku);
+
+        if ($parentProduct) {
+            return [$parentProduct->type, $parentProduct->attribute_family?->code];
+        }
+
+        $fileRow = $this->fileParentRows[$parentSku] ?? null;
+
+        return [$fileRow['type'] ?? null, $fileRow['family'] ?? null];
+    }
+
+    /**
+     * Whether a row of the given type may hang under a parent of the given type.
+     */
+    protected function isAllowedParentType(string $type, ?string $parentType): bool
+    {
+        return match ($parentType) {
+            ProductType::Configurable->value      => in_array($type, ProductType::VARIANT_CHILD_VALUES, true),
+            ProductType::VariantGroup->value      => $type === ProductType::Simple->value,
+            default                               => false,
+        };
+    }
+
     protected function updateRowMediaPath(array &$rowData): void
     {
         /**
          * Cache media attributes once instead of filtering per row
          */
-        if ($this->mediaAttributes === null) {
-            $mediaTypes = ['image', 'file', 'gallery'];
-            $this->mediaAttributes = $this->attributes->whereIn('type', $mediaTypes)->all();
-        }
+        $this->loadMediaAttributes();
 
         $imageDirPath = $this->import->images_directory_path ?? '';
 
@@ -1107,10 +1513,18 @@ class Importer extends AbstractImporter
                 continue;
             }
 
+            if ($imageDirPath === '') {
+                unset($rowData[$code]);
+
+                continue;
+            }
+
             $value = $this->fieldProcessor->handleMediaField($rowData[$code], $imageDirPath);
 
             if ($value) {
                 $rowData[$code] = is_array($value) ? implode(',', $value) : $value;
+            } else {
+                unset($rowData[$code]);
             }
         }
     }
@@ -1126,11 +1540,13 @@ class Importer extends AbstractImporter
 
         $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
 
-        $skipAttributes = $rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE ? (explode(',', $rowData['configurable_attributes']) ?? []) : [];
+        $skipAttributes = $rowData['type'] == ProductType::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
 
-        $skipAttributes = array_map('trim', $skipAttributes);
+        $skipAttributes = array_map(trim(...), $skipAttributes);
 
         $skipAttributes[] = 'sku';
+
+        $skipAttributes = array_merge($skipAttributes, $this->attributesOutsideRowLevel($rowData));
 
         foreach ($attributes as $attribute) {
             $attributeCode = $attribute->code;
@@ -1142,7 +1558,10 @@ class Importer extends AbstractImporter
             $validations = [];
 
             if (! isset($rules[$attributeCode])) {
-                $validations += $attribute->getValidationRules(withUniqueValidation: false);
+                $validations += $attribute->getValidationRules(
+                    withUniqueValidation: false,
+                    allowedPathPrefixes: array_filter([trim((string) $this->import->images_directory_path, '/')]),
+                );
             } else {
                 $validations = $rules[$attributeCode];
             }
@@ -1158,7 +1577,89 @@ class Importer extends AbstractImporter
             $rules[$attributeCode] = $validations;
         }
 
+        $this->addMeasurementValidationRules($rules, $rowData);
+
         return $rules;
+    }
+
+    /**
+     * Layer the measurement column rules on top of the generic ones.
+     *
+     * A measurement attribute occupies four possible columns; the amount may
+     * arrive in "<code>" or "<code>_value" and the unit in "<code>(unit)" or
+     * "<code>_unit", so each pair is validated independently.
+     */
+    protected function addMeasurementValidationRules(array &$rules, array $rowData): void
+    {
+        $attributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE]);
+
+        $skipAttributes = $rowData['type'] == ProductType::Configurable->value ? (explode(',', $rowData['configurable_attributes'] ?? '') ?? []) : [];
+        $skipAttributes = array_map(trim(...), $skipAttributes);
+        $skipAttributes[] = 'sku';
+
+        foreach ($attributes as $attribute) {
+            $attributeCode = $attribute->code;
+
+            if ($attribute->type !== 'measurement') {
+                continue;
+            }
+
+            if (in_array($attributeCode, $skipAttributes)) {
+                continue;
+            }
+
+            $validations = $attribute->getValidationRules(withUniqueValidation: false);
+
+            $rules[$attributeCode] = $validations;
+
+            if (in_array('required', $validations, true)) {
+                $rules[$attributeCode][] = "required_without:{$attributeCode}_value";
+            }
+
+            $rules[$attributeCode.'_value'] = $this->getMeasurementValueValidationRules($validations);
+            $rules[$attributeCode.'(unit)'] = $this->getMeasurementUnitValidationRules($attributeCode, $attribute);
+            $rules[$attributeCode.'_unit'] = $this->getMeasurementUnitValidationRules($attributeCode, $attribute);
+        }
+    }
+
+    /**
+     * Returns validation rules for measurement value columns.
+     */
+    protected function getMeasurementValueValidationRules(array $validations): array
+    {
+        $rules = array_values(array_filter($validations, fn ($rule) => $rule !== 'required'));
+
+        if (! in_array('nullable', $rules, true)) {
+            array_unshift($rules, 'nullable');
+        }
+
+        return $rules;
+    }
+
+    /**
+     * Returns validation rules for measurement unit columns.
+     *
+     * The closure rejects any unit that does not belong to the attribute's
+     * measurement family, so an unknown/foreign unit fails the row with a message.
+     */
+    protected function getMeasurementUnitValidationRules(string $attributeCode, $attribute): array
+    {
+        return [
+            'nullable',
+            "required_with:{$attributeCode}_value",
+            function ($column, $value, $fail) use ($attribute): void {
+                if ($value === null || $value === '') {
+                    return;
+                }
+
+                if (! $this->measurementHelper()->isValidUnit($value, $attribute)) {
+                    $fail(trans('data_transfer::app.importers.products.validation.invalid-unit', [
+                        'unit'      => $value,
+                        'attribute' => $attribute->code,
+                    ]));
+                }
+            },
+        ];
     }
 
     /**
@@ -1168,14 +1669,26 @@ class Importer extends AbstractImporter
     {
         Event::dispatch('data_transfer.imports.batch.import.before', $batch);
 
+        /**
+         * Disabled only for the duration of the batch: these statics outlive the
+         * job in a long-running queue worker (or Octane), and leaving them off
+         * would silently stop indexing and completeness for every later save
+         * the same process handles.
+         */
         ElasticProductObserver::disable();
 
         CompletenessProductObserver::disable();
 
-        if ($batch->jobTrack->action == Import::ACTION_DELETE) {
-            $this->deleteProducts($batch);
-        } else {
-            $this->saveProductsData($batch);
+        try {
+            if ($batch->jobTrack->action == Import::ACTION_DELETE) {
+                $this->deleteProducts($batch);
+            } else {
+                $this->saveProductsData($batch);
+            }
+        } finally {
+            ElasticProductObserver::enable();
+
+            CompletenessProductObserver::enable();
         }
 
         /**
@@ -1252,8 +1765,7 @@ class Importer extends AbstractImporter
          * for 2-3x faster INSERT/UPSERT. Safe because data is pre-validated.
          */
         if ($useBulkMode) {
-            DB::statement('SET SESSION unique_checks=0');
-            DB::statement('SET SESSION foreign_key_checks=0');
+            $this->toggleMysqlBulkMode(false);
         }
 
         try {
@@ -1297,15 +1809,46 @@ class Importer extends AbstractImporter
             $this->saveProducts($products);
         } finally {
             if ($useBulkMode) {
-                DB::statement('SET SESSION unique_checks=1');
-                DB::statement('SET SESSION foreign_key_checks=1');
+                $this->toggleMysqlBulkMode(true);
             }
         }
 
         return true;
     }
 
-    /**\n     * Prepare products from current batch.\n     *\n     * Optimized: Uses indexed attribute family lookup (O(1)) instead of\n     * Collection->where()->first() (O(n)) per row.\n     */
+    /**
+     * Toggle the MySQL-family bulk-mode session vars. No-ops on drivers without
+     * them (e.g. pgsql, sqlite) since `unique_checks` and `foreign_key_checks`
+     * are specific to MySQL and MariaDB.
+     */
+    protected function toggleMysqlBulkMode(bool $enable): void
+    {
+        if (! $this->supportsBulkModeToggles()) {
+            return;
+        }
+
+        $value = $enable ? 1 : 0;
+
+        DB::statement("SET SESSION unique_checks={$value}");
+        DB::statement("SET SESSION foreign_key_checks={$value}");
+    }
+
+    /**
+     * MariaDB honours both session vars but reports its own driver name, so
+     * testing for the literal `mysql` string would drop the optimisation for
+     * every MariaDB install without any visible failure.
+     */
+    protected function supportsBulkModeToggles(): bool
+    {
+        return in_array(DB::connection()->getDriverName(), ['mysql', 'mariadb'], true);
+    }
+
+    /**
+     * Prepare products from current batch.
+     *
+     * Uses an indexed attribute-family lookup rather than scanning the
+     * collection for every row.
+     */
     public function prepareProducts(array $rowData, array &$products, ?bool $isExisting = null): void
     {
         /**
@@ -1324,12 +1867,17 @@ class Importer extends AbstractImporter
 
         $data = [
             'type'                => $rowData['type'],
+            'parent'              => $rowData['parent'] ?? null,
             'parent_id'           => $this->getParentId($rowData, $product?->parent_id),
             'sku'                 => $rowData['sku'],
             'attribute_family_id' => $attributeFamilyId,
             'values'              => $productValues,
             'status'              => $this->getProductStatus($rowData, $isExisting, $product),
         ];
+
+        if (! empty($rowData['variant_structure']) && $attributeFamilyId) {
+            $data['variant_structure_id'] = $this->getVariantStructure($rowData['variant_structure'], $attributeFamilyId)?->id;
+        }
 
         /**
          * prepare and add attribute values to product data
@@ -1382,15 +1930,482 @@ class Importer extends AbstractImporter
 
         $ids = [];
 
+        $updatedIds = [];
+
+        $createdIds = [];
+
         if (! empty($products['update'])) {
-            $this->bulkUpdateProducts($products['update'], $ids);
+            $this->bulkUpdateProducts($products['update'], $updatedIds);
         }
 
         if (! empty($products['insert'])) {
-            $this->bulkInsertProducts($products['insert'], $ids);
+            foreach ($this->groupInsertsByHierarchy($products['insert']) as $tier) {
+                $this->bulkInsertProducts($this->resolveParentIds($tier), $createdIds);
+            }
         }
 
-        Event::dispatch('data_transfer.imports.batch.product.save.after', ['product_id' => $ids]);
+        $ids = array_merge($updatedIds, $createdIds);
+
+        $this->stripUnownedValues($ids);
+
+        $this->relocateMediaValues($ids);
+
+        /**
+         * Mirror the legacy association sections (related_products/up_sells/cross_sells)
+         * written above into the `product_associations` link table.
+         *
+         * `bulkUpdateProducts()`/`bulkInsertProducts()` write `values['associations']`
+         * straight to the DB via `DB::table('products')`, bypassing Eloquent entirely,
+         * so this is the only place that can mirror bulk-imported products into the
+         * link table like admin/API/copy already do.
+         */
+        $this->syncProductAssociationLinks($products);
+
+        $this->syncSuperAttributes($products);
+
+        Event::dispatch('data_transfer.imports.batch.product.save.after', [
+            'product_id'  => $ids,
+            'created_ids' => $createdIds,
+            'updated_ids' => $updatedIds,
+        ]);
+
+        if ($createdIds !== []) {
+            Event::dispatch('data_transfer.imports.batch.product.created.after', [
+                'product_id' => $createdIds,
+            ]);
+        }
+
+        if ($updatedIds !== []) {
+            Event::dispatch('data_transfer.imports.batch.product.updated.after', [
+                'product_id' => $updatedIds,
+            ]);
+        }
+    }
+
+    /**
+     * Media attributes, cached once instead of filtered per row.
+     */
+    protected function loadMediaAttributes(): void
+    {
+        if ($this->mediaAttributes !== null) {
+            return;
+        }
+
+        $this->mediaAttributes = $this->attributes->whereIn('type', ['image', 'file', 'gallery'])->all();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function mediaAttributeCodes(): array
+    {
+        $this->loadMediaAttributes();
+
+        return array_values(array_map(
+            static fn ($attribute): string => $attribute->code,
+            $this->mediaAttributes ?? [],
+        ));
+    }
+
+    /**
+     * Drop the values an imported row is not allowed to own.
+     *
+     * A row carries every column of its line, but a variant structure decides
+     * which level maintains each attribute. Writing them all leaves a child
+     * shadowing what it should inherit, so editing the configurable appears to
+     * do nothing. The product form and the API already refuse such a value.
+     *
+     * @param  array<int, int>  $ids
+     */
+    public function stripUnownedValues(array $ids): void
+    {
+        if ($ids === []) {
+            return;
+        }
+
+        $planner = resolve(VariantStructurePlannerContract::class);
+
+        $products = Product::query()->whereIn('id', $ids)->get();
+
+        $planner->primeStructuresFor($products);
+
+        foreach ($products as $product) {
+            if (! $planner->structureFor($product) instanceof VariantStructure) {
+                continue;
+            }
+
+            $values = $product->values ?? [];
+
+            if (! $this->stripUnownedScopes($values, $product, $planner)) {
+                continue;
+            }
+
+            DB::table('products')
+                ->where('id', $product->id)
+                ->update(['values' => json_encode($values, JSON_UNESCAPED_UNICODE)]);
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     */
+    protected function stripUnownedScopes(array &$values, Product $product, $planner): bool
+    {
+        $changed = false;
+
+        foreach ($values as $scope => &$scoped) {
+            if (! is_array($scoped) || $scope === 'categories' || $scope === 'associations') {
+                continue;
+            }
+
+            if ($scope === 'common') {
+                $changed = $this->stripUnownedBag($scoped, $product, $planner) || $changed;
+
+                continue;
+            }
+
+            foreach ($scoped as &$inner) {
+                if (! is_array($inner)) {
+                    continue;
+                }
+
+                $changed = $this->stripUnownedBag($inner, $product, $planner) || $changed;
+
+                foreach ($inner as &$deeper) {
+                    if (is_array($deeper) && ! array_is_list($deeper)) {
+                        $changed = $this->stripUnownedBag($deeper, $product, $planner) || $changed;
+                    }
+                }
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
+     * @param  array<string, mixed>  $bag
+     */
+    protected function stripUnownedBag(array &$bag, Product $product, $planner): bool
+    {
+        $changed = false;
+
+        foreach (array_keys($bag) as $code) {
+            if ($code === 'sku' || ! is_string($code)) {
+                continue;
+            }
+
+            if ($planner->ownsAtOwnLevel($product, $code)) {
+                continue;
+            }
+
+            unset($bag[$code]);
+
+            $changed = true;
+        }
+
+        return $changed;
+    }
+
+    /**
+     * Move imported media under the product that owns it.
+     *
+     * A row's media value is resolved against the job's images directory, which
+     * leaves it pointing inside the extraction folder. The product form stores
+     * through FileStorer under `product/{id}/{code}`, so an imported product
+     * would otherwise carry a path no other part of the application produces.
+     *
+     * @param  array<int, int>  $ids
+     */
+    public function relocateMediaValues(array $ids): void
+    {
+        if ($ids === []) {
+            return;
+        }
+
+        $codes = $this->mediaAttributeCodes();
+
+        if ($codes === []) {
+            return;
+        }
+
+        $disk = Storage::disk('public');
+
+        foreach (Product::query()->whereIn('id', $ids)->get(['id', 'values']) as $product) {
+            $values = $product->values ?? [];
+
+            if (! $this->relocateMediaScopes($values, $codes, (int) $product->id, $disk)) {
+                continue;
+            }
+
+            DB::table('products')
+                ->where('id', $product->id)
+                ->update(['values' => json_encode($values, JSON_UNESCAPED_UNICODE)]);
+        }
+    }
+
+    /**
+     * Walk every scope of a product's values, relocating the media it holds.
+     * Returns whether anything moved.
+     *
+     * @param  array<string, mixed>  $values
+     * @param  array<int, string>  $codes
+     */
+    protected function relocateMediaScopes(array &$values, array $codes, int $productId, $disk): bool
+    {
+        $changed = false;
+
+        foreach ($values as $scope => &$scoped) {
+            if (! is_array($scoped)) {
+                continue;
+            }
+
+            if ($scope === 'common') {
+                $changed = $this->relocateMediaBag($scoped, $codes, $productId, $disk) || $changed;
+
+                continue;
+            }
+
+            foreach ($scoped as &$inner) {
+                if (! is_array($inner)) {
+                    continue;
+                }
+
+                $changed = $this->relocateMediaBag($inner, $codes, $productId, $disk) || $changed;
+
+                foreach ($inner as &$deeper) {
+                    if (is_array($deeper) && ! array_is_list($deeper)) {
+                        $changed = $this->relocateMediaBag($deeper, $codes, $productId, $disk) || $changed;
+                    }
+                }
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
+     * @param  array<string, mixed>  $bag
+     * @param  array<int, string>  $codes
+     */
+    protected function relocateMediaBag(array &$bag, array $codes, int $productId, $disk): bool
+    {
+        $changed = false;
+
+        foreach ($codes as $code) {
+            if (! isset($bag[$code])) {
+                continue;
+            }
+
+            $value = $bag[$code];
+
+            if (is_array($value)) {
+                $moved = array_map(
+                    fn ($path): string => $this->relocateMediaFile((string) $path, $productId, $code, $disk),
+                    $value,
+                );
+            } else {
+                $moved = $this->relocateMediaFile((string) $value, $productId, $code, $disk);
+            }
+
+            if ($moved !== $value) {
+                $bag[$code] = $moved;
+
+                $changed = true;
+            }
+        }
+
+        return $changed;
+    }
+
+    /**
+     * Copy one file under `product/{id}/{code}`, returning its new path. The
+     * value is handed back untouched when it already sits there, or when the
+     * file the row named never reached storage.
+     */
+    protected function relocateMediaFile(string $path, int $productId, string $code, $disk): string
+    {
+        $prefix = 'product/'.$productId.'/'.$code.'/';
+
+        if ($path === '' || str_starts_with($path, $prefix) || ! $disk->exists($path)) {
+            return $path;
+        }
+
+        return resolve(FileStorer::class)->store(
+            rtrim($prefix, '/'),
+            new File($disk->path($path)),
+            [FileStorer::HASHED_FOLDER_NAME_KEY => true],
+        );
+    }
+
+    /**
+     * Split new products into configurable -> variant group -> leaf tiers, so a
+     * parent created by this same file is already inserted when its children are.
+     *
+     * @return array<int, array<string, array>>
+     */
+    protected function groupInsertsByHierarchy(array $insertProducts): array
+    {
+        $tiers = [];
+
+        foreach ($insertProducts as $sku => $productData) {
+            $tier = match ($productData['type'] ?? null) {
+                ProductType::Configurable->value      => 0,
+                ProductType::VariantGroup->value      => 1,
+                default                               => 2,
+            };
+
+            $tiers[$tier][$sku] = $productData;
+        }
+
+        ksort($tiers);
+
+        return array_values($tiers);
+    }
+
+    /**
+     * Fill parent ids that could not be resolved while preparing the row because
+     * the parent is created by an earlier tier of this same import.
+     */
+    protected function resolveParentIds(array $insertProducts): array
+    {
+        foreach ($insertProducts as $sku => $productData) {
+            if (! empty($productData['parent_id']) || empty($productData['parent'])) {
+                continue;
+            }
+
+            /**
+             * The batch storage only holds the skus of this batch, so a parent
+             * imported earlier or already in the catalogue is looked up second.
+             */
+            $parentId = $this->skuStorage->get($productData['parent'])['id']
+                ?? $this->getExistingProduct($productData['parent'])?->id;
+
+            /**
+             * The row named a parent that never made it in — its own row was
+             * rejected, or it is absent from the file. Inserting the child would
+             * hang a variant group or simple outside any tree, so it is skipped
+             * the same way the validator skips a row naming an unknown parent.
+             */
+            if (! $parentId) {
+                unset($insertProducts[$sku]);
+
+                if (isset($this->errorHelper)) {
+                    $this->skipRow(
+                        $this->fileRowsBySku[$sku]['row'] ?? null,
+                        self::ERROR_PARENT_DOES_NOT_EXIST,
+                        'parent',
+                    );
+                }
+
+                continue;
+            }
+
+            $insertProducts[$sku]['parent_id'] = $parentId;
+        }
+
+        return $insertProducts;
+    }
+
+    /**
+     * Mirror the axis attributes of the just-saved configurables into
+     * `product_super_attributes`, which the bulk writes above bypass.
+     */
+    protected function syncSuperAttributes(array $products): void
+    {
+        $rows = [];
+        $productIds = [];
+
+        foreach (['insert', 'update'] as $section) {
+            foreach ($products[$section] ?? [] as $sku => $productData) {
+                if (empty($productData['super_attributes'])) {
+                    continue;
+                }
+
+                $productId = $this->skuStorage->get($sku)['id'] ?? null;
+
+                if (! $productId) {
+                    continue;
+                }
+
+                $productIds[] = $productId;
+
+                foreach ($productData['super_attributes'] as $code) {
+                    $attributeId = ($this->allAttributesByCode[$code] ?? null)?->id;
+
+                    if ($attributeId) {
+                        $rows[] = [
+                            'product_id'   => $productId,
+                            'attribute_id' => $attributeId,
+                        ];
+                    }
+                }
+            }
+        }
+
+        if ($rows === []) {
+            return;
+        }
+
+        DB::table('product_super_attributes')->whereIn('product_id', $productIds)->delete();
+
+        foreach (array_chunk($rows, (int) config('import.bulk_chunk_size', 500)) as $chunk) {
+            DB::table('product_super_attributes')->insert($chunk);
+        }
+    }
+
+    /**
+     * Sync the legacy association sections from the just-saved batch's
+     * `values['associations']` into the `product_associations` link table.
+     *
+     * Product ids are resolved from `skuStorage` (already populated by
+     * `bulkUpdateProducts()`/`bulkInsertProducts()` above), so no extra
+     * per-row DB query is needed to find the id. The actual SKU -> id
+     * resolution for the *related* products is delegated to
+     * `ProductAssociationRepository::syncFromSkuList()`, reusing the exact
+     * same sync core the admin/API save path already relies on instead of
+     * rebuilding it here.
+     *
+     * Resilient: a sync failure for one product/section is reported, not
+     * thrown, so it never aborts the batch — the product rows have already
+     * been saved by the bulk write above.
+     */
+    protected function syncProductAssociationLinks(array $products): void
+    {
+        $associationRepository = app(ProductAssociationRepository::class);
+
+        foreach (['update', 'insert'] as $mode) {
+            if (empty($products[$mode])) {
+                continue;
+            }
+
+            foreach ($products[$mode] as $sku => $productData) {
+                $associations = $productData['values'][AbstractType::ASSOCIATION_VALUES_KEY] ?? [];
+
+                if (empty($associations)) {
+                    continue;
+                }
+
+                $skuInfo = $this->skuStorage->get((string) $sku);
+
+                if (empty($skuInfo['id'])) {
+                    continue;
+                }
+
+                $productId = (int) $skuInfo['id'];
+
+                foreach (AbstractType::ASSOCIATION_SECTIONS as $section) {
+                    if (empty($associations[$section])) {
+                        continue;
+                    }
+
+                    try {
+                        $associationRepository->syncFromSkuList($productId, $section, $associations[$section]);
+                    } catch (\Throwable $exception) {
+                        report($exception);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1409,27 +2424,28 @@ class Importer extends AbstractImporter
             $ids[] = $id;
 
             $upsertData[] = [
-                'id'                  => $id,
-                'sku'                 => $productData['sku'],
-                'type'                => $productData['type'],
-                'parent_id'           => $productData['parent_id'] ?? null,
-                'attribute_family_id' => $productData['attribute_family_id'],
-                'values'              => is_array($productData['values']) ? json_encode($productData['values']) : $productData['values'],
-                'status'              => $productData['status'] ?? 0,
-                'updated_at'          => now(),
+                'id'                   => $id,
+                'sku'                  => $productData['sku'],
+                'type'                 => $productData['type'],
+                'parent_id'            => $productData['parent_id'] ?? null,
+                'variant_structure_id' => $productData['variant_structure_id'] ?? null,
+                'attribute_family_id'  => $productData['attribute_family_id'],
+                'values'               => is_array($productData['values']) ? json_encode($productData['values']) : $productData['values'],
+                'status'               => $productData['status'] ?? 0,
+                'updated_at'           => now(),
             ];
 
             $this->updatedItemsCount++;
         }
 
-        if (! empty($upsertData)) {
+        if ($upsertData !== []) {
             $chunkSize = (int) config('import.bulk_chunk_size', 500);
 
             foreach (array_chunk($upsertData, $chunkSize) as $chunk) {
                 DB::table('products')->upsert(
                     $chunk,
                     ['id'],
-                    ['type', 'parent_id', 'attribute_family_id', 'values', 'status', 'updated_at']
+                    ['type', 'parent_id', 'variant_structure_id', 'attribute_family_id', 'values', 'status', 'updated_at']
                 );
             }
         }
@@ -1450,20 +2466,21 @@ class Importer extends AbstractImporter
             $skusToInsert[] = $productData['sku'];
 
             $insertRow = [
-                'sku'                 => $productData['sku'],
-                'type'                => $productData['type'],
-                'parent_id'           => $productData['parent_id'] ?? null,
-                'attribute_family_id' => $productData['attribute_family_id'],
-                'values'              => is_array($productData['values']) ? json_encode($productData['values']) : $productData['values'],
-                'status'              => $productData['status'] ?? 0,
-                'created_at'          => $productData['created_at'] ?? now(),
-                'updated_at'          => $productData['updated_at'] ?? now(),
+                'sku'                  => $productData['sku'],
+                'type'                 => $productData['type'],
+                'parent_id'            => $productData['parent_id'] ?? null,
+                'variant_structure_id' => $productData['variant_structure_id'] ?? null,
+                'attribute_family_id'  => $productData['attribute_family_id'],
+                'values'               => is_array($productData['values']) ? json_encode($productData['values']) : $productData['values'],
+                'status'               => $productData['status'] ?? 0,
+                'created_at'           => $productData['created_at'] ?? now(),
+                'updated_at'           => $productData['updated_at'] ?? now(),
             ];
 
             $insertData[] = $insertRow;
         }
 
-        if (! empty($insertData)) {
+        if ($insertData !== []) {
             /**
              * Insert all products in chunks using a single combined INSERT query per chunk.
              * This is dramatically faster than individual INSERT statements.
@@ -1505,6 +2522,84 @@ class Importer extends AbstractImporter
      */
     public function prepareAttributeValues(array $rowData, array &$attributeValues): void
     {
+        $measurementAttributes = $this->getProductTypeFamilyAttributes(
+            $rowData['type'],
+            $rowData[self::ATTRIBUTE_FAMILY_CODE]
+        )->where('type', 'measurement')->keyBy('code');
+
+        $this->prepareNonMeasurementAttributeValues(
+            $this->withoutMeasurementColumns($rowData, $measurementAttributes),
+            $attributeValues
+        );
+
+        if ($measurementAttributes->isEmpty()) {
+            return;
+        }
+
+        $measurementHelper = $this->measurementHelper();
+
+        foreach ($measurementAttributes as $attributeCode => $attribute) {
+            $value = $rowData[$attributeCode] ?? $rowData[$attributeCode.'_value'] ?? null;
+
+            if ($value === null) {
+                continue;
+            }
+
+            if ($value === '') {
+                continue;
+            }
+
+            $unit = $rowData[$attributeCode.'(unit)'] ?? $rowData[$attributeCode.'_unit'] ?? null;
+
+            $structured = $this->fieldProcessor->handleField(
+                $attribute,
+                [
+                    'value' => $value,
+                    'unit'  => $measurementHelper->resolveUnitCode($unit, $attribute, $rowData['locale'] ?? null),
+                ],
+                $this->import->images_directory_path
+            );
+
+            if (! is_array($structured)) {
+                continue;
+            }
+
+            if (! array_key_exists('amount', $structured)) {
+                continue;
+            }
+
+            $attribute->setProductValue(
+                $structured,
+                $attributeValues,
+                $rowData['channel'] ?? null,
+                $rowData['locale'] ?? null
+            );
+        }
+    }
+
+    /**
+     * Strip the measurement value and unit columns so the generic pass does not
+     * mistake "<code>(unit)" for a currency-scoped column of "<code>".
+     */
+    protected function withoutMeasurementColumns(array $rowData, $measurementAttributes): array
+    {
+        foreach ($measurementAttributes as $attributeCode => $attribute) {
+            unset(
+                $rowData[$attributeCode],
+                $rowData[$attributeCode.'_value'],
+                $rowData[$attributeCode.'(unit)'],
+                $rowData[$attributeCode.'_unit']
+            );
+        }
+
+        return $rowData;
+    }
+
+    /**
+     * Save every non-measurement attribute value from the current row.
+     */
+    protected function prepareNonMeasurementAttributeValues(array $rowData, array &$attributeValues): void
+    {
         $type = $rowData['type'];
         $familyCode = $rowData[self::ATTRIBUTE_FAMILY_CODE];
         $channel = $rowData['channel'] ?? null;
@@ -1524,14 +2619,13 @@ class Importer extends AbstractImporter
         if (! isset($this->attributeScopeCache[$type.'|'.$familyCode])) {
             foreach ($attributesByCode as $code => $attr) {
                 $this->attributeScopeCache[$scopePrefix.$code] = match (true) {
-                    (bool) ($attr->value_per_locale && $attr->value_per_channel)  => 'channel_locale',
+                    $attr->value_per_locale && $attr->value_per_channel           => 'channel_locale',
                     (bool) $attr->value_per_channel                               => 'channel',
                     (bool) $attr->value_per_locale                                => 'locale',
                     default                                                       => 'common',
                 };
             }
 
-            // Mark this family as fully computed
             $this->attributeScopeCache[$type.'|'.$familyCode] = true;
         }
 
@@ -1553,6 +2647,13 @@ class Importer extends AbstractImporter
             }
 
             $value = $this->fieldProcessor->handleField($attribute, $value, $imageDirPath);
+
+            if (
+                in_array($attribute->type, ['image', 'file', 'gallery'], true)
+                && $value === null
+            ) {
+                continue;
+            }
 
             if ($attribute->type === 'price') {
                 $value = $this->formatPriceValueWithCurrency($currencyCode, $value, $attribute->getValueFromProductValues($attributeValues, $channel, $locale));
@@ -1605,16 +2706,16 @@ class Importer extends AbstractImporter
         if (! empty($rowData[AbstractType::CATEGORY_VALUES_KEY])) {
             $categories = explode(',', $rowData[AbstractType::CATEGORY_VALUES_KEY]);
 
-            $categories = array_map('trim', $categories);
+            $categories = array_map(trim(...), $categories);
 
             /**
              * Use pre-loaded category codes cache for O(1) lookups
              * instead of per-row DB queries. categoryCodes is flipped (code => index),
              * so we check isset() for each code.
              */
-            $categoryCodes = ! empty($this->categoryCodes)
-                ? array_values(array_filter($categories, fn ($code) => isset($this->categoryCodes[$code])))
-                : $this->categoryRepository->whereIn('code', $categories)?->pluck('code')?->toArray();
+            $categoryCodes = $this->categoryCodes === []
+                ? $this->categoryRepository->whereIn('code', $categories)?->pluck('code')?->toArray()
+                : array_values(array_filter($categories, fn ($code): bool => isset($this->categoryCodes[$code])));
 
             if (! empty($categoryCodes)) {
                 $product[AbstractType::PRODUCT_VALUES_KEY][AbstractType::CATEGORY_VALUES_KEY] = $categoryCodes;
@@ -1632,8 +2733,13 @@ class Importer extends AbstractImporter
 
             foreach ($associations as $value) {
                 $value = is_string($value) ? trim($value) : $value;
-
-                if (empty($value) || $value == $rowData['sku']) {
+                if ($value === '') {
+                    continue;
+                }
+                if ($value === '0') {
+                    continue;
+                }
+                if ($value == $rowData['sku']) {
                     continue;
                 }
 
@@ -1643,9 +2749,9 @@ class Importer extends AbstractImporter
             /**
              * Use SKUStorage for O(1) lookups instead of per-row DB query
              */
-            $associationProducts = array_filter($filteredAssociation, fn ($sku) => $this->skuStorage->has($sku));
+            $associationProducts = array_filter($filteredAssociation, $this->skuStorage->has(...));
 
-            if (empty($associationProducts)) {
+            if ($associationProducts === []) {
                 continue;
             }
 
@@ -1675,9 +2781,9 @@ class Importer extends AbstractImporter
          */
         $imagesData[$rowData['sku']] = [];
 
-        $imageNames = array_map('trim', explode(',', $rowData['images']));
+        $imageNames = array_map(trim(...), explode(',', $rowData['images']));
 
-        foreach ($imageNames as $key => $image) {
+        foreach ($imageNames as $image) {
             $path = 'import/'.$this->import->images_directory_path.'/'.$image;
 
             if (! Storage::disk('local')->has($path)) {
@@ -1696,7 +2802,7 @@ class Importer extends AbstractImporter
      */
     public function saveImages(array $imagesData): void
     {
-        if (empty($imagesData)) {
+        if ($imagesData === []) {
             return;
         }
 
@@ -1708,7 +2814,7 @@ class Importer extends AbstractImporter
             foreach ($images as $key => $image) {
                 $file = new UploadedFile($image['path'], $image['name']);
 
-                $image = (new ImageManager)->make($file)->encode('webp');
+                $image = resolve(ImageManager::class)->read($file)->encode(new WebpEncoder);
 
                 $imageDirectory = 'product/'.$product['id'];
 
@@ -1721,7 +2827,7 @@ class Importer extends AbstractImporter
                     'position'   => $key + 1,
                 ];
 
-                Storage::put($path, $image);
+                Storage::put($path, $image->toString());
             }
         }
     }
@@ -1731,33 +2837,54 @@ class Importer extends AbstractImporter
      */
     public function prepareConfigurableAttributes(array $rowData, array &$products, bool $isExisting): void
     {
-        if (
-            $rowData['type'] != self::PRODUCT_TYPE_CONFIGURABLE && empty($rowData['configurable_attributes'])
-            || $isExisting
-        ) {
+        if ($rowData['type'] !== ProductType::Configurable->value) {
             return;
         }
 
-        $superAttributes = explode(',', $rowData['configurable_attributes']);
+        $codes = $this->getConfigurableAttributeCodes($rowData);
 
-        foreach ($superAttributes as $attribute) {
-            $attribute = trim($attribute);
-
-            /**
-             * O(1) indexed lookup instead of Collection->where('code', ...)->first()
-             */
-            $attributeCode = ($this->allAttributesByCode[$attribute] ?? null)?->code;
-
-            if (! isset($products['insert'][$rowData['sku']]['super_attributes'])) {
-                $products['insert'][$rowData['sku']]['super_attributes'] = [];
-            }
-
-            if (! $attributeCode || in_array($attributeCode, $products['insert'][$rowData['sku']]['super_attributes'])) {
-                continue;
-            }
-
-            $products['insert'][$rowData['sku']]['super_attributes'][] = $attributeCode;
+        if ($codes === []) {
+            return;
         }
+
+        $products[$isExisting ? 'update' : 'insert'][$rowData['sku']]['super_attributes'] = $codes;
+    }
+
+    /**
+     * Axis attribute codes of a configurable row: from its variant structure when
+     * it has one, else from the flat `configurable_attributes` column.
+     *
+     * @return array<int, string>
+     */
+    protected function getConfigurableAttributeCodes(array $rowData): array
+    {
+        $familyId = $this->attributeFamiliesByCode[$rowData[self::ATTRIBUTE_FAMILY_CODE]]?->id;
+
+        if (! empty($rowData['variant_structure']) && $familyId) {
+            $structure = $this->getVariantStructure($rowData['variant_structure'], $familyId);
+
+            if ($structure instanceof VariantStructure) {
+                return $structure->axes
+                    ->sortBy([['level', 'asc'], ['position', 'asc']])
+                    ->map(fn ($axis) => $axis->attribute?->code)
+                    ->filter()
+                    ->unique()
+                    ->values()
+                    ->all();
+            }
+        }
+
+        $codes = [];
+
+        foreach (explode(',', $rowData['configurable_attributes'] ?? '') as $code) {
+            $code = trim($code);
+
+            if ($code !== '' && isset($this->allAttributesByCode[$code])) {
+                $codes[$code] = $code;
+            }
+        }
+
+        return array_values($codes);
     }
 
     /**
@@ -1788,7 +2915,7 @@ class Importer extends AbstractImporter
         /**
          * Load not loaded SKUs to the sku storage
          */
-        if (! empty($notLoadedSkus)) {
+        if ($notLoadedSkus !== []) {
             $this->skuStorage->load($notLoadedSkus);
         }
     }
@@ -1805,7 +2932,7 @@ class Importer extends AbstractImporter
         $attributeFamily = $this->attributeFamiliesByCode[$attributeFamilyCode]
             ?? $this->attributeFamilies->where('code', $attributeFamilyCode)->first();
 
-        $product = ProductModel::make([
+        $product = new ProductModel([
             'type'                => $type,
             'attribute_family_id' => $attributeFamily->id,
         ]);
@@ -1850,9 +2977,9 @@ class Importer extends AbstractImporter
     {
         $rowData = parent::prepareRowForDb($rowData);
 
-        $rowData['locale'] = $rowData['locale'] ?? app()->getLocale();
+        $rowData['locale'] ??= app()->getLocale();
 
-        $rowData['channel'] = $rowData['channel'] ?? core()->getDefaultChannelCode();
+        $rowData['channel'] ??= core()->getDefaultChannelCode();
 
         return $rowData;
     }
@@ -1922,7 +3049,7 @@ class Importer extends AbstractImporter
      */
     protected function mergeAttributeValues(array $newValues, array $oldValues): array
     {
-        if (empty($oldValues)) {
+        if ($oldValues === []) {
             return $newValues;
         }
 
@@ -1992,7 +3119,7 @@ class Importer extends AbstractImporter
             $variantConfigValues[$attributeCode] = $productData[$attributeCode];
         }
 
-        if (empty($variantConfigValues)) {
+        if ($variantConfigValues === []) {
             return false;
         }
 
@@ -2025,7 +3152,7 @@ class Importer extends AbstractImporter
      */
     protected function isUniqueVariation(array $productData, int $rowNumber): void
     {
-        if (empty($productData['parent']) || $productData['type'] !== self::PRODUCT_TYPE_SIMPLE) {
+        if (empty($productData['parent']) || $productData['type'] !== ProductType::Simple->value) {
             return;
         }
 
@@ -2069,10 +3196,10 @@ class Importer extends AbstractImporter
     {
         $configurableAttributes = [];
 
-        if ($rowData['type'] == self::PRODUCT_TYPE_CONFIGURABLE && ! empty($rowData['configurable_attributes'])) {
+        if ($rowData['type'] == ProductType::Configurable->value && ! empty($rowData['configurable_attributes'])) {
             $configurableAttributes = str_contains($rowData['configurable_attributes'], ',') ? explode(',', $rowData['configurable_attributes'] ?? '') : [$rowData['configurable_attributes']];
 
-            $configurableAttirbutes = array_filter($configurableAttributes, 'trim');
+            $configurableAttirbutes = array_filter($configurableAttributes, trim(...));
         }
 
         $familyAttributes = $this->getProductTypeFamilyAttributes($rowData['type'], $rowData[self::ATTRIBUTE_FAMILY_CODE])->where('is_unique', 1);
@@ -2084,7 +3211,7 @@ class Importer extends AbstractImporter
 
             $attributeCode = $attribute->code;
 
-            if (! empty($configurableAttributes) && in_array($attributeCode, $configurableAttributes)) {
+            if ($configurableAttributes !== [] && in_array($attributeCode, $configurableAttributes)) {
                 continue;
             }
 
@@ -2107,10 +3234,8 @@ class Importer extends AbstractImporter
                     }
                 }
 
-                if (! $hasError) {
-                    if (! empty($rowData[$attributeCode])) {
-                        $this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
-                    }
+                if (! $hasError && ! empty($rowData[$attributeCode])) {
+                    $this->channelLocaleCachedValues[$rowData['channel']][$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
                 }
 
                 continue;
@@ -2131,10 +3256,8 @@ class Importer extends AbstractImporter
                     }
                 }
 
-                if (! $hasError) {
-                    if (! empty($rowData[$attributeCode])) {
-                        $this->channelCachedValues[$rowData['channel']] = [$attributeCode => $rowData[$attributeCode]];
-                    }
+                if (! $hasError && ! empty($rowData[$attributeCode])) {
+                    $this->channelCachedValues[$rowData['channel']] = [$attributeCode => $rowData[$attributeCode]];
                 }
 
                 continue;
@@ -2155,10 +3278,8 @@ class Importer extends AbstractImporter
                     }
                 }
 
-                if (! $hasError) {
-                    if (! empty($rowData[$attributeCode])) {
-                        $this->localeCachedValues[$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
-                    }
+                if (! $hasError && ! empty($rowData[$attributeCode])) {
+                    $this->localeCachedValues[$rowData['locale']] = [$attributeCode => $rowData[$attributeCode]];
                 }
 
                 continue;
@@ -2178,10 +3299,8 @@ class Importer extends AbstractImporter
                 }
             }
 
-            if (! $hasError) {
-                if (! empty($rowData[$attributeCode])) {
-                    $this->cachedUniqueValues[$rowData['sku']] = [$attributeCode => $rowData[$attributeCode]];
-                }
+            if (! $hasError && ! empty($rowData[$attributeCode])) {
+                $this->cachedUniqueValues[$rowData['sku']] = [$attributeCode => $rowData[$attributeCode]];
             }
         }
 
@@ -2192,11 +3311,13 @@ class Importer extends AbstractImporter
         foreach ($familyAttributes as $attribute) {
             $attributeCode = $attribute->code;
 
-            if (! empty($configurableAttributes) && in_array($attributeCode, $configurableAttributes)) {
+            if ($configurableAttributes !== [] && in_array($attributeCode, $configurableAttributes)) {
                 continue;
             }
-
-            if (! isset($rowData[$attributeCode]) || empty($rowData[$attributeCode])) {
+            if (! isset($rowData[$attributeCode])) {
+                continue;
+            }
+            if (empty($rowData[$attributeCode])) {
                 continue;
             }
 
@@ -2238,13 +3359,13 @@ class Importer extends AbstractImporter
      * Optimized to select only required columns and process data with minimal
      * object hydration — raw arrays and substr() over DateTime parsing.
      */
-    public function indexBatch(JobTrackBatchContract $batch)
+    public function indexBatch(JobTrackBatchContract $batch): void
     {
         if (! config('elasticsearch.enabled')) {
             return;
         }
 
-        $productIndexingNormalizer = app(ProductNormalizer::class);
+        $productIndexingNormalizer = resolve(ProductNormalizer::class);
 
         $productIndex = strtolower(config('elasticsearch.prefix').'_products');
 
@@ -2276,6 +3397,7 @@ class Importer extends AbstractImporter
              */
             $productDB['created_at'] = $this->formatDateForIndex($productDB['created_at']);
             $productDB['updated_at'] = $this->formatDateForIndex($productDB['updated_at']);
+            $productDB['status'] = (bool) ($productDB['status'] ?? true);
 
             $productsToUpdate['body'][] = [
                 'index' => [
@@ -2287,14 +3409,14 @@ class Importer extends AbstractImporter
             $productsToUpdate['body'][] = $productDB;
         }
 
-        if (empty($productsToUpdate)) {
+        if ($productsToUpdate === []) {
             return;
         }
 
         $response = ElasticSearch::bulk($productsToUpdate);
 
         if (isset($response['errors']) && $response['errors']) {
-            foreach ($response['items'] as $index => $result) {
+            foreach ($response['items'] as $result) {
                 if (isset($result['index']['error'])) {
                     Log::channel('elasticsearch')->error('Error while indexing product id: '.$result['index']['_id'].' in '.$productIndex.' index: ', [
                         'error' => $result['index']['error'],
@@ -2312,7 +3434,7 @@ class Importer extends AbstractImporter
      */
     protected function formatDateForIndex(?string $date): ?string
     {
-        if (empty($date)) {
+        if (in_array($date, [null, '', '0'], true)) {
             return null;
         }
 
@@ -2324,6 +3446,6 @@ class Importer extends AbstractImporter
             return substr($date, 0, 10).'T'.substr($date, 11).'.000000Z';
         }
 
-        return Carbon::parse($date)->toJson();
+        return Date::parse($date)->toJson();
     }
 }

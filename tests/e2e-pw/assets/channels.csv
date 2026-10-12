@@ -1,0 +1,6 @@
+locale,code,name,root_category,locales,currencies
+de_DE,default,Standard,root,"de_DE,en_US,fr_FR","EUR,USD"
+en_US,default,Default,root,"de_DE,en_US,fr_FR","EUR,USD"
+fr_FR,default,Défaut,root,"de_DE,en_US,fr_FR","EUR,USD"
+en_US,ecommerce,Ecommerce,root,"de_DE,en_US","EUR,USD"
+en_US,Sales,Sales,root,en_US,"EUR,USD"

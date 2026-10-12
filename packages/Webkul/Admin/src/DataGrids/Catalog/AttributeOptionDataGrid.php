@@ -4,6 +4,7 @@ namespace Webkul\Admin\DataGrids\Catalog;
 
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Webkul\Core\Helpers\Database\GrammarQueryManager;
 use Webkul\DataGrid\DataGrid;
 
 class AttributeOptionDataGrid extends DataGrid
@@ -57,16 +58,19 @@ class AttributeOptionDataGrid extends DataGrid
         foreach ($locales as $locale) {
             $labelColumn = $tablePrefix.'attribute_option_label.label';
             $localeColumn = $tablePrefix.'attribute_option_label.locale';
-            $labelAliasColumn = 'name_'.$locale;
+            $labelAliasColumn = DB::getQueryGrammar()->wrap('name_'.$locale);
 
             $queryBuilder->addSelect(DB::raw(
                 "MAX(CASE WHEN {$localeColumn} = '{$locale}' THEN $labelColumn END) as {$labelAliasColumn}"
             ));
         }
 
+        $grammar = GrammarQueryManager::getGrammar();
+
         $this->addFilter('id', 'attribute_options.id');
 
-        $this->addFilter('code', DB::raw("(SELECT GROUP_CONCAT(CONCAT({$tablePrefix}attribute_options.code, ' ', label)  SEPARATOR ' ') FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
+        $concatExpr = $grammar->concat("{$tablePrefix}attribute_options.code", "' '", 'label');
+        $this->addFilter('code', DB::raw("(SELECT {$grammar->groupConcat($concatExpr, separator: ' ')} FROM {$tablePrefix}attribute_option_translations WHERE attribute_option_id = {$tablePrefix}attribute_options.id)"));
 
         return $queryBuilder;
     }

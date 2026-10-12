@@ -105,4 +105,22 @@ return [
 
     'prefix' => env('CACHE_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_cache_'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Cache Serializable Classes
+    |--------------------------------------------------------------------------
+    |
+    | This option hardens cache unserialization to help prevent PHP object
+    | injection / gadget-chain attacks if the application's APP_KEY leaks. A
+    | value of true permits any class (matching pre-Laravel 13 behavior),
+    | false disallows objects entirely, or an array provides an allow-list.
+    |
+    | UnoPim caches Eloquent collections (channels, locales, currencies) that
+    | the admin layout unserializes, so objects must be permitted. Tightening
+    | this to an explicit allow-list is a follow-up hardening opportunity.
+    |
+    */
+
+    'serializable_classes' => true,
+
 ];

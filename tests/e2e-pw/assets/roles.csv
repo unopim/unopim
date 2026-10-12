@@ -1,0 +1,4 @@
+name,description,permission_type,permissions
+"Manager","Manager role","custom","dashboard,catalog"
+"Editor","Editor role","custom","catalog"
+"Full Access","Full Access role","all",""

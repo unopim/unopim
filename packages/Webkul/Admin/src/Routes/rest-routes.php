@@ -3,12 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use Webkul\Admin\Http\Controllers\DashboardController;
 use Webkul\Admin\Http\Controllers\DataGridController;
+use Webkul\Admin\Http\Controllers\HelpController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAIController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAIPlatformController;
 use Webkul\Admin\Http\Controllers\MagicAI\MagicAISystemPromptController;
 use Webkul\Admin\Http\Controllers\ManageColumnController;
+use Webkul\Admin\Http\Controllers\MediaController;
 use Webkul\Admin\Http\Controllers\TinyMCEController;
 use Webkul\Admin\Http\Controllers\User\AccountController;
+use Webkul\Admin\Http\Controllers\User\AclVersionController;
 use Webkul\Admin\Http\Controllers\User\SessionController;
 use Webkul\Admin\Http\Controllers\VueJsSelect\SelectOptionsController;
 use Webkul\HistoryControl\Http\Controllers\HistoryController;
@@ -17,6 +20,13 @@ use Webkul\HistoryControl\Http\Controllers\HistoryController;
  * Extra routes.
  */
 Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], function () {
+    Route::get('acl-version', [AclVersionController::class, 'show'])->name('admin.acl.version');
+
+    Route::get('media/download', [MediaController::class, 'download'])->name('admin.media.download');
+    Route::get('media/preview', [MediaController::class, 'preview'])->name('admin.media.preview');
+
+    Route::post('media/scan', [MediaController::class, 'scan'])->name('admin.media.scan');
+
     /**
      * Dashboard routes.
      */
@@ -24,6 +34,15 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
         Route::get('', 'index')->name('admin.dashboard.index');
 
         Route::get('stats', 'stats')->name('admin.dashboard.stats');
+    });
+
+    /**
+     * Help routes.
+     */
+    Route::controller(HelpController::class)->prefix('help')->group(function () {
+        Route::get('', 'index')->name('admin.help.index');
+
+        Route::post('promo/dismiss', 'dismissPromo')->name('admin.help.promo.dismiss');
     });
 
     /**
@@ -39,7 +58,9 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     /**
      * Tinymce file upload handler.
      */
-    Route::post('tinymce/upload', [TinyMCEController::class, 'upload'])->name('admin.tinymce.upload');
+    Route::post('tinymce/upload', [TinyMCEController::class, 'upload'])
+        ->middleware('throttle:30,1')
+        ->name('admin.tinymce.upload');
 
     /**
      * AI Routes
@@ -55,11 +76,11 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::post('content', 'content')->name('admin.magic_ai.content');
 
-        Route::post('image', 'image')->name('admin.magic_ai.image');
+        Route::post('image', 'image')->middleware('throttle:10,1')->name('admin.magic_ai.image');
 
         Route::get('default-prompt', 'defaultPrompt')->name('admin.magic_ai.default_prompt');
 
-        Route::get('prompt', 'index')->name('admin.magic_ai.prompt.index');
+        Route::get('prompts', 'index')->name('admin.magic_ai.prompt.index');
 
         Route::post('create-prompt', 'store')->name('admin.magic_ai.prompt.store');
 
@@ -81,13 +102,13 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
 
         Route::post('save/translated-attributes', 'saveAllTranslatedAttributes')->name('admin.magic_ai.store.translated.all_attribute');
 
-        Route::get('platforms', 'platforms')->name('admin.magic_ai.platforms');
+        Route::get('platform-options', 'platforms')->name('admin.magic_ai.platforms');
     });
 
     /**
      * Platform Routes
      */
-    Route::controller(MagicAIPlatformController::class)->prefix('magic-ai/platform')->group(function () {
+    Route::controller(MagicAIPlatformController::class)->prefix('magic-ai/platforms')->group(function () {
         Route::get('', 'index')->name('admin.magic_ai.platform.index');
         Route::post('', 'store')->name('admin.magic_ai.platform.store');
         Route::post('test-connection', 'testConnection')->name('admin.magic_ai.platform.test');
@@ -101,7 +122,7 @@ Route::group(['middleware' => ['admin'], 'prefix' => config('app.admin_url')], f
     /**
      * System Prompt Routes
      */
-    Route::controller(MagicAISystemPromptController::class)->prefix('system-prompt')->group(function () {
+    Route::controller(MagicAISystemPromptController::class)->prefix('magic-ai/system-prompts')->group(function () {
 
         Route::get('', 'index')->name('admin.magic_ai.system_prompt.index');
 

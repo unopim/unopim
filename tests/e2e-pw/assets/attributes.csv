@@ -1,0 +1,22 @@
+code,type,locale,name,position,enable_wysiwyg,swatch_type,is_required,is_unique,validation,regex_pattern,value_per_locale,value_per_channel,is_filterable,ai_translate
+sku,text,en_US,SKU,1,0,,1,1,,,0,0,1,0
+name,text,en_US,Name,3,0,,1,0,,,1,1,1,0
+url_key,text,en_US,URL Key,4,0,,1,1,,,0,0,0,0
+tax_category_id,select,en_US,Tax Category,5,0,,0,0,,,0,1,0,0
+image,image,en_US,Image,10,0,,0,0,,,0,0,0,0
+short_description,textarea,en_US,Short Description,11,1,,1,0,,,1,1,0,0
+description,textarea,en_US,Description,12,1,,1,0,,,1,1,0,0
+price,price,en_US,Price,13,0,,1,0,decimal,,1,1,1,0
+cost,price,en_US,Cost,14,0,,0,0,decimal,,0,1,0,0
+meta_title,textarea,en_US,Meta Title,18,0,,0,0,,,1,1,0,0
+meta_keywords,textarea,en_US,Meta Keywords,20,0,,0,0,,,1,1,0,0
+meta_description,textarea,en_US,Meta Description,21,0,,0,0,,,1,1,0,0
+length,text,en_US,Length,22,0,,0,0,decimal,,0,0,0,0
+width,text,en_US,Width,23,0,,0,0,decimal,,0,0,0,0
+height,text,en_US,Height,24,0,,0,0,decimal,,0,0,0,0
+weight,text,en_US,Weight,25,0,,1,0,decimal,,0,0,0,0
+color,select,en_US,Color,26,0,,0,0,,,0,0,0,0
+size,select,en_US,Size,27,0,,0,0,,,0,0,0,0
+brand,select,en_US,Brand,28,0,,0,0,,,0,0,0,0
+product_number,text,en_US,Product Number,2,0,,0,1,,,0,0,0,0
+manage_stock,boolean,en_US,Manage Stock,1,0,,0,0,,,0,1,0,0

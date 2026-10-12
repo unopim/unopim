@@ -2,34 +2,70 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Http\File;
 use Illuminate\Support\Str;
+use Laravel\Ai\Contracts\Tool;
 use Laravel\Ai\Image;
-use Prism\Prism\Tool;
+use Laravel\Ai\Responses\ImageResponse;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 use Webkul\Core\Filesystem\FileStorer;
 use Webkul\MagicAI\Enums\AiProvider;
+use Webkul\MagicAI\Models\MagicAIPlatform;
+use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ScopedProviderConfig;
+use Webkul\Product\Repositories\ProductRepository;
 
 class GenerateImage implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('generate_image')
-            ->for('Generate an image from text and optionally attach to a product.')
-            ->withStringParameter('prompt', 'Detailed description of the image to generate (e.g. "Professional product photo of a red leather handbag on white background")')
-            ->withStringParameter('sku', 'Optional: Product SKU to attach the generated image to')
-            ->withEnumParameter('size', 'Image size/aspect ratio', ['1024x1024', '1024x1792', '1792x1024'])
-            ->using(function (string $prompt, ?string $sku = null, string $size = '1024x1024') use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products.edit')) {
+        $outer = $this;
+
+        return new class($context, $outer) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function __construct(ChatContext $context, protected GenerateImage $outer)
+            {
+                parent::__construct($context);
+            }
+
+            public function name(): string
+            {
+                return 'generate_image';
+            }
+
+            public function description(): string
+            {
+                return 'Generate an image from text and optionally attach to a product.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'prompt' => $schema->string()->description('Detailed description of the image to generate (e.g. "Professional product photo of a red leather handbag on white background")'),
+                    'sku'    => $schema->string()->description('Optional: Product SKU to attach the generated image to'),
+                    'size'   => $schema->string()->enum(['1024x1024', '1024x1792', '1792x1024'])->description('Image size/aspect ratio'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products.edit')) {
                     return $denied;
                 }
 
-                $aiProvider = AiProvider::from($context->platform->provider);
+                $prompt = $request->string('prompt')->toString();
+                $sku = $request->string('sku')->toString() ?: null;
+                $size = $request->string('size')->toString() ?: '1024x1024';
+
+                $platform = $this->outer->resolveImagePlatform($this->context);
+
+                $aiProvider = AiProvider::from($platform->provider);
 
                 if (! $aiProvider->supportsImages()) {
                     return json_encode([
@@ -37,19 +73,14 @@ class GenerateImage implements PimTool
                     ]);
                 }
 
+                $overrides = ['key' => $platform->api_key];
+
+                if ($platform->api_url) {
+                    $overrides['url'] = $platform->api_url;
+                }
+
                 try {
-                    // Configure the AI provider
-                    $configKey = $aiProvider->configKey();
-                    config([
-                        "ai.providers.{$configKey}.key" => $context->platform->api_key,
-                    ]);
-
-                    if ($context->platform->api_url) {
-                        config(["ai.providers.{$configKey}.url" => $context->platform->api_url]);
-                    }
-
-                    // Find an image-generation capable model
-                    $imageModel = $this->resolveImageModel($context);
+                    $imageModel = $this->outer->resolveImageModel($this->context, $platform);
 
                     $sizeMap = [
                         '1024x1024' => '1:1',
@@ -57,13 +88,17 @@ class GenerateImage implements PimTool
                         '1792x1024' => '3:2',
                     ];
 
-                    $response = Image::of($prompt)
-                        ->size($sizeMap[$size] ?? '1:1')
-                        ->quality('high')
-                        ->generate(
-                            provider: $aiProvider->toLab(),
-                            model: $imageModel,
-                        );
+                    $response = ScopedProviderConfig::run(
+                        $aiProvider->configKey(),
+                        $overrides,
+                        fn (): ImageResponse => Image::of($prompt)
+                            ->size($sizeMap[$size] ?? '1:1')
+                            ->quality('high')
+                            ->generate(
+                                provider: $aiProvider->toLab(),
+                                model: $imageModel,
+                            ),
+                    );
 
                     if (empty($response->images)) {
                         return json_encode(['error' => 'Image generation returned no images.']);
@@ -99,11 +134,11 @@ class GenerateImage implements PimTool
 
                     // Attach to product if SKU provided
                     if ($sku) {
-                        $repo = app('Webkul\Product\Repositories\ProductRepository');
+                        $repo = resolve(ProductRepository::class);
                         $product = $repo->findOneByField('sku', $sku);
 
                         if ($product) {
-                            $fileStorer = app(FileStorer::class);
+                            $fileStorer = resolve(FileStorer::class);
                             $targetPath = 'product'.DIRECTORY_SEPARATOR.$product->id.DIRECTORY_SEPARATOR.'image';
 
                             $storedImage = $fileStorer->store(
@@ -133,7 +168,36 @@ class GenerateImage implements PimTool
                 } catch (\Throwable $e) {
                     return json_encode(['error' => 'Image generation failed: '.$e->getMessage()]);
                 }
-            });
+            }
+        };
+    }
+
+    /**
+     * Resolve the platform that should serve image generation.
+     *
+     * The admin can point image generation at a dedicated platform, which is
+     * often not the text platform the conversation runs on. That setting wins
+     * whenever it names an enabled, image-capable platform.
+     */
+    public function resolveImagePlatform(ChatContext $context): MagicAIPlatform
+    {
+        $platformId = (int) core()->getConfigData('general.magic_ai.image_generation.ai_platform');
+
+        if ($platformId === 0) {
+            return $context->platform;
+        }
+
+        $platform = resolve(MagicAIPlatformRepository::class)->find($platformId);
+
+        if (! $platform instanceof MagicAIPlatform || ! $platform->status) {
+            return $context->platform;
+        }
+
+        if (! AiProvider::tryFrom($platform->provider)?->supportsImages()) {
+            return $context->platform;
+        }
+
+        return $platform->apiKeyError() ? $context->platform : $platform;
     }
 
     /**
@@ -142,9 +206,17 @@ class GenerateImage implements PimTool
      * Priority: user-selected model (if image-capable) → known valid models
      * from the platform list → fallback defaults.
      */
-    protected function resolveImageModel(ChatContext $context): string
+    public function resolveImageModel(ChatContext $context, ?MagicAIPlatform $platform = null): string
     {
-        $provider = $context->platform->provider;
+        $platform ??= $context->platform;
+
+        $provider = $platform->provider;
+
+        $configuredModel = (string) core()->getConfigData('general.magic_ai.image_generation.ai_model');
+
+        if ($configuredModel !== '' && in_array($configuredModel, $platform->model_list ?? [], true)) {
+            return $configuredModel;
+        }
 
         $imageModelPatterns = match ($provider) {
             'openai'  => ['dall-e', 'gpt-image'],
@@ -154,7 +226,7 @@ class GenerateImage implements PimTool
         };
 
         // 1. If the user explicitly selected an image-capable model, use it
-        if ($context->model) {
+        if ($context->model !== '' && $context->model !== '0') {
             foreach ($imageModelPatterns as $pattern) {
                 if (stripos($context->model, $pattern) !== false) {
                     return $context->model;
@@ -170,7 +242,7 @@ class GenerateImage implements PimTool
             default   => [],
         };
 
-        $models = $context->platform->model_list ?? [];
+        $models = $platform->model_list ?? [];
 
         // First pass: prefer known valid models
         foreach ($knownImageModels as $known) {
@@ -182,7 +254,7 @@ class GenerateImage implements PimTool
         // Second pass: any model matching image patterns
         foreach ($models as $model) {
             foreach ($imageModelPatterns as $pattern) {
-                if (stripos($model, $pattern) !== false) {
+                if (stripos((string) $model, $pattern) !== false) {
                     return $model;
                 }
             }

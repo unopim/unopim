@@ -4,8 +4,11 @@ namespace Webkul\Webhook\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\View\View;
-use Webkul\Admin\Http\Requests\MassDestroyRequest;
+use Webkul\Admin\Jobs\ProcessMassActionSelection;
 use Webkul\Webhook\DataGrids\LogsDataGrid;
+use Webkul\Webhook\Http\Requests\LogsMassDestroyRequest;
+use Webkul\Webhook\Jobs\MassDeleteWebhookLogs;
+use Webkul\Webhook\Models\Webhook;
 use Webkul\Webhook\Repositories\LogsRepository;
 
 class WebhookLogsController
@@ -21,11 +24,51 @@ class WebhookLogsController
      */
     public function index()
     {
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
+
         if (request()->ajax()) {
-            return app(LogsDataGrid::class)->toJson();
+            return resolve(LogsDataGrid::class)->toJson();
         }
 
         return view('webhook::logs.index');
+    }
+
+    /**
+     * Delivery log feed for a single webhook. The id travels in the path so the
+     * scope survives whatever query string the datagrid rebuilds.
+     */
+    public function forWebhook(int $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
+
+        return resolve(LogsDataGrid::class)->forWebhook($id)->toJson();
+    }
+
+    /**
+     * Return the specified log entry as JSON for the view modal.
+     */
+    public function show(int $id): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.view'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
+
+        $log = $this->logsRepository->findOrFail($id);
+
+        $webhookName = $log->webhook_id
+            ? Webhook::query()->whereKey($log->webhook_id)->value('name')
+            : null;
+
+        return new JsonResponse([
+            'id'         => $log->id,
+            'webhook'    => $webhookName,
+            'sku'        => $log->sku,
+            'event'      => $log->event,
+            'user'       => $log->user,
+            'status'     => (bool) $log->status,
+            'http_code'  => $log->http_code,
+            'created_at' => $log->created_at?->toDateTimeString(),
+            'payload'    => ($log->extra ?? [])['payload'] ?? null,
+            'response'   => ($log->extra ?? [])['response'] ?? null,
+        ]);
     }
 
     /**
@@ -33,6 +76,8 @@ class WebhookLogsController
      */
     public function destroy(int $id): JsonResponse
     {
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
+
         try {
             $this->logsRepository->delete($id);
 
@@ -49,28 +94,35 @@ class WebhookLogsController
     }
 
     /**
-     * Mass delete locales from the locale datagrid
+     * Mass delete webhook logs, either the listed ids or every log matching the grid filters.
      */
-    public function massDestroy(MassDestroyRequest $massDestroyRequest): JsonResponse
+    public function massDestroy(LogsMassDestroyRequest $massDestroyRequest): JsonResponse
     {
-        $logIds = $massDestroyRequest->input('indices');
+        abort_unless(bouncer()->hasPermission('configuration.webhook.logs.mass_delete'), 403, trans('webhook::app.configuration.webhook.logs.index.unauthorized'));
 
-        foreach ($logIds as $logId) {
-            $log = $this->logsRepository->find($logId);
+        if ($massDestroyRequest->selectsAllMatching()) {
+            ProcessMassActionSelection::queue(
+                LogsDataGrid::class,
+                $massDestroyRequest->selectionParams(),
+                MassDeleteWebhookLogs::class,
+                [],
+                auth()->guard('admin')->id(),
+                'webhook::app.configuration.webhook.logs.index.select-all.delete',
+            );
 
-            if (! $log) {
-                continue;
-            }
+            return new JsonResponse([
+                'message' => trans('webhook::app.configuration.webhook.logs.index.select-all.delete.queued'),
+            ]);
+        }
 
-            try {
-                $this->logsRepository->delete($logId);
-            } catch (\Exception $e) {
-                report($e);
+        try {
+            $this->logsRepository->massDelete(array_map('intval', $massDestroyRequest->input('indices')));
+        } catch (\Exception $e) {
+            report($e);
 
-                return new JsonResponse([
-                    'message' => $e->getMessage(),
-                ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
-            }
+            return new JsonResponse([
+                'message' => $e->getMessage(),
+            ], JsonResponse::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return new JsonResponse([

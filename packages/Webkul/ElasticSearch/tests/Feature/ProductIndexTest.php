@@ -39,6 +39,10 @@ it('should index product in elastic search', function () {
         ],
     ]);
 
+    ElasticSearch::shouldReceive('openPointInTime')->andReturn(['id' => 'pit-test-id']);
+
+    ElasticSearch::shouldReceive('closePointInTime')->andReturn(['succeeded' => true]);
+
     $indicesMock = Mockery::mock('Elastic\Elasticsearch\Endpoints\Indices');
 
     ElasticSearch::shouldReceive('indices')->andReturn($indicesMock);
@@ -91,7 +95,15 @@ it('should index the product to elastic when product is created', function () {
 
                 $this->assertEquals('testing_products', $args['index']);
                 $this->assertEquals($product->id, $args['id']);
-                $this->assertEquals($product->toArray(), $args['body']);
+
+                $expectedBody = $product->toArray();
+                // Observer sanitizes status to boolean for ES8 compatibility
+                $expectedBody['status'] = (bool) $expectedBody['status'];
+                if (isset($expectedBody['attribute_family']['status'])) {
+                    $expectedBody['attribute_family']['status'] = (bool) $expectedBody['attribute_family']['status'];
+                }
+
+                $this->assertEquals($expectedBody, $args['body']);
             } catch (ExpectationFailedException $e) {
                 throw $e;
             }
@@ -124,6 +136,12 @@ it('should index the product to elastic when product is updated', function () {
                 $this->assertEquals($product->id, $args['id']);
 
                 $productArray = $product->toArray();
+
+                // Observer sanitizes status to boolean for ES8 compatibility
+                $productArray['status'] = (bool) $productArray['status'];
+                if (isset($productArray['attribute_family']['status'])) {
+                    $productArray['attribute_family']['status'] = (bool) $productArray['attribute_family']['status'];
+                }
 
                 // According to indexing format we need to change the sku key to sku-text according to normalizer
                 $productArray['values']['common']['sku-text'] = $product->sku;

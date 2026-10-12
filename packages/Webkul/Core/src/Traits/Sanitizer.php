@@ -19,7 +19,7 @@ trait Sanitizer
     /**
      * Sanitize SVG file.
      */
-    public function sanitizeSVG(string $path, ?string $mimeType, ?string $disk): void
+    public function sanitizeSVG(string $path, ?string $mimeType, ?string $disk = null): void
     {
         if ($this->isFileSVG($mimeType)) {
             $sanitizer = new MainSanitizer;

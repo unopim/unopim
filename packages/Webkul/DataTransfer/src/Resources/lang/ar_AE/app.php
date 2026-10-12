@@ -1,13 +1,21 @@
 <?php
 
 return [
+    'samples' => [
+        'default'       => 'ملف نموذجي',
+        'variants'      => 'مثال المتغيرات',
+        'multi-locale'  => 'مثال متعدد اللغات',
+        'delete'        => 'مثال الحذف',
+        'custom-fields' => 'مثال الحقول المخصصة',
+        'with-images'   => 'نموذج مع صور (ZIP)',
+    ],
+
     'importers' => [
-
         'products' => [
-            'title' => 'منتجات',
-
+            'title'      => 'منتجات',
             'validation' => [
-                'errors' => [
+                'invalid-unit' => 'الوحدة ":unit" ليست وحدة صالحة لسمة القياس ":attribute".',
+                'errors'       => [
                     'duplicate-url-key'                        => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
                     'invalid-attribute-family'                 => 'قيمة غير صالحة لعمود عائلة السمات (عائلة السمات غير موجودة؟)',
                     'invalid-type'                             => 'نوع المنتج غير صالح أو غير مدعوم',
@@ -23,6 +31,7 @@ return [
                     'not-unique-value'                         => 'يجب أن تكون قيمة :code فريدة.',
                     'incorrect-family-for-variant'             => 'يجب أن تكون العائلة هي نفس عائلة الوالدين',
                     'parent-not-exist'                         => 'الوالد غير موجود.',
+                    'variant-structure-not-found'              => 'بنية المتغيرات :code غير موجودة لعائلة السمات هذه.',
                 ],
             ],
         ],
@@ -34,13 +43,203 @@ return [
                 ],
             ],
         ],
+        'category-fields' => [
+            'title'      => 'حقول الفئة',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'رمز حقل الفئة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على رمز حقل الفئة للحذف.',
+                ],
+            ],
+        ],
+        'attributes' => [
+            'title'      => 'السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'كود السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود السمة للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف سمة النظام.',
+                ],
+            ],
+        ],
+        'product-associations' => [
+            'title'      => 'ارتباطات المنتج',
+            'validation' => [
+                'errors' => [
+                    'required-field-missing'      => 'الحقل \'%s\' مطلوب.',
+                    'self-link-not-allowed'       => 'لا يمكن ربط المنتج \'%s\' بنفسه.',
+                    'sku-not-found'               => 'لم يتم العثور على منتج بوحدة SKU \'%s\'.',
+                    'related-sku-not-found'       => 'لم يتم العثور على المنتج المرتبط بوحدة SKU \'%s\'.',
+                    'association-type-not-found'  => 'نوع الارتباط \'%s\' غير موجود أو غير نشط.',
+                    'invalid-field-value'         => 'قيمة غير صالحة لحقل الارتباط.',
+                ],
+            ],
+        ],
+        'attribute-groups' => [
+            'title'      => 'مجموعات السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'                       => 'كود مجموعة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete'             => 'لم يتم العثور على كود مجموعة السمات للحذف.',
+                    'code_is_system_and_cannot_be_deleted' => 'لا يمكن حذف مجموعة سمات النظام.',
+                ],
+            ],
+        ],
+        'attribute-families' => [
+            'title'      => 'عائلات السمات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'كود عائلة السمات :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود عائلة السمات للحذف.',
+                    'invalid-attribute-group'  => 'مجموعة السمات ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
+                    'invalid-channel'          => 'القناة ":code" غير موجودة.',
+                ],
+            ],
+        ],
+        'attribute-options' => [
+            'title'      => 'خيارات السمة',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'           => 'كود خيار السمة :code مستخدم بالفعل.',
+                    'code_not_found_to_delete' => 'لم يتم العثور على كود خيار السمة للحذف.',
+                    'locale-not-exist'         => 'اللغة المحلية ":code" غير موجودة.',
+                    'invalid-attribute'        => 'السمة ":code" غير موجودة.',
+                ],
+            ],
+        ],
+        'locales' => [
+            'title'      => 'اللغات',
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'رمز اللغة \'%s\' تم استيراده بالفعل في هذه الدفعة.',
+                    'code-not-found-to-delete'    => 'لم يتم العثور على لغة بالرمز \'%s\' في النظام.',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتفعيل الافتراضي).',
+                    'channel-related-locale-root' => 'لا يمكنك حذف اللغة بالرمز :code لأنها مرتبطة بقناة.',
+                ],
+            ],
+        ],
+        'channels' => [
+            'title'      => 'القنوات',
+            'validation' => [
+                'errors' => [
+                    'code-not-found-to-delete' => 'القناة ذات الرمز :code غير موجودة للحذف.',
+                    'locale-not-found'         => 'واحد أو أكثر من اللغات غير موجود.',
+                    'root-category-not-found'  => 'الفئة الجذرية غير موجودة.',
+                    'currency-not-found'       => 'واحدة أو أكثر من العملات غير موجودة.',
+                    'invalid-locale'           => 'اللغة غير موجودة.',
+                ],
+            ],
+        ],
+        'currencies' => [
+            'title'   => 'العملات',
+            'filters' => [
+                'status' => 'الحالة',
+                'enable' => 'مفعل',
+                'all'    => 'الكل',
+            ],
+            'validation' => [
+                'errors' => [
+                    'duplicate-code'              => 'Currency code \'%s\' was already imported in this batch.',
+                    'code-not-found-to-delete'    => 'Currency with code \'%s\' not found in the system.',
+                    'invalid-status'              => 'يجب أن تكون الحالة 0 أو 1 (أو فارغة للتفعيل الافتراضي).',
+                    'channel-related-locale-root' => 'You cannot delete the locale with code :code because it is associated with a channel.',
+                ],
+            ],
+        ],
+        'roles' => [
+            'title'      => 'أدوار',
+            'validation' => [
+                'errors' => [
+                    'duplicate-name'           => 'Duplicate role name found.',
+                    'name-not-found-to-delete' => 'Role with the specified name not found to delete.',
+                ],
+            ],
+        ],
+        'users' => [
+            'title'   => 'المستخدمون',
+            'filters' => [
+                'status' => 'الحالة',
+                'active' => 'نشط',
+                'all'    => 'الكل',
+            ],
+            'validation' => [
+                'errors' => [
+                    'email-not-found-to-delete' => 'User with specified email not found to delete.',
+                    'invalid-role'              => 'Invalid role name found.',
+                    'invalid-locale'            => 'Invalid UI locale code found.',
+                ],
+            ],
+        ],
     ],
-
     'exporters' => [
-
+        'export-too-large' => 'هذا التصدير كبير جدًا بحيث لا يمكن تشغيله: العدد التقديري :rows صف × :columns عمود (~:estimated) يتجاوز المساحة المتاحة (~:available). قلّص نطاق التصدير باختيار عدد أقل من القنوات/اللغات (والسمات) ثم حاول مرة أخرى.',
+        'fields'           => [
+            'file-format'            => 'تنسيق الملف',
+            'with-media'             => 'مع الوسائط',
+            'with-associations'      => 'مع الارتباطات',
+            'with-associations-info' => 'تضمين أعمدة قوائم SKU القديمة (up_sells وcross_sells وrelated_products) في التصدير',
+            'header-row'             => 'Header Row',
+            'header-row-info'        => 'Write attribute codes as the first line',
+            'use-labels'             => 'Use Labels',
+            'use-labels-info'        => 'Export readable labels instead of codes',
+            'date-format'            => 'Date Format',
+            'date-format-options'    => [
+                'yyyy-mm-dd'       => 'YYYY-MM-DD',
+                'dd-mm-yyyy'       => 'DD-MM-YYYY',
+                'dd-mm-yyyy-slash' => 'DD/MM/YYYY',
+                'mm-dd-yyyy-slash' => 'MM/DD/YYYY',
+            ],
+            'file-name'      => 'اسم الملف',
+            'file-name-info' => 'نمط اسم الملف. الرموز: [code], [date], [time], [entity_type]',
+            'file-path'      => 'مسار الملف',
+            'file-path-info' => 'نمط اسم الملف. الرموز: [code], [date], [time], [entity_type]',
+            'status'         => 'الحالة',
+            'enable'         => 'مفعّل',
+            'all'            => 'الكل',
+        ],
         'products' => [
-            'title' => 'منتجات',
-
+            'title'              => 'منتجات',
+            'invalid-locales'    => 'ليست كل اللغات المحددة متاحة للقنوات المحددة.',
+            'invalid-currencies' => 'ليست كل العملات المحددة متاحة للقنوات المحددة.',
+            'filters'            => [
+                'channels'             => 'القنوات',
+                'channels-info'        => 'Values are exported for each selected channel\'s scope. Leave empty to export every channel.',
+                'currencies'           => 'العملات',
+                'currencies-info'      => 'يتم تصدير سمات السعر لكل عملة محددة. اتركه فارغًا لتصدير جميع عملات القناة.',
+                'locales'              => 'اللغات',
+                'locales-info'         => 'يتم تصدير السمات القابلة للترجمة مرة واحدة لكل لغة محددة. اتركه فارغًا لتصدير جميع لغات القناة.',
+                'attributes'           => 'السمات',
+                'attributes-info'      => 'يتم تصدير السمات المحددة فقط. اتركه فارغًا لتصدير جميع السمات في العائلة.',
+                'attribute-families'   => 'عائلات السمات',
+                'categories'           => 'الفئات',
+                'completeness'         => 'الاكتمال',
+                'completeness-options' => [
+                    'none'         => 'لا يوجد شرط على الاكتمال',
+                    'at-least-one' => 'مكتمل في لغة واحدة على الأقل من اللغات المحددة',
+                    'all'          => 'مكتمل في جميع اللغات المحددة',
+                ],
+                'time-condition' => 'شرط الوقت',
+                'time-options'   => [
+                    'none'              => 'لا يوجد شرط على التاريخ',
+                    'last-n-days'       => 'المنتجات المحدّثة خلال آخر N أيام',
+                    'between-dates'     => 'المنتجات المحدّثة بين تاريخين',
+                    'since-last-export' => 'المنتجات المحدّثة منذ آخر تصدير',
+                ],
+                'time-value'     => 'عدد الأيام',
+                'time-date'      => 'تاريخ البدء',
+                'time-date-end'  => 'تاريخ الانتهاء',
+                'status'         => 'الحالة',
+                'status-options' => [
+                    'enable'  => 'مفعّل',
+                    'disable' => 'معطّل',
+                    'all'     => 'الكل',
+                ],
+                'sku'              => 'رمز التخزين التعريفي',
+                'sku-info'         => 'Comma separated SKUs to export, e.g. SKU001, SKU002, SKU003. Leave empty to export every product.',
+                'identifiers'      => 'المعرّفات',
+                'identifiers-info' => 'الصق معرّف SKU / معرّفًا واحدًا في كل سطر لتصدير تلك المنتجات فقط. اتركه فارغًا لتصدير جميع المنتجات.',
+            ],
             'validation' => [
                 'errors' => [
                     'duplicate-url-key'         => 'مفتاح URL: تم إنشاء \'%s\' بالفعل لعنصر يحتوي على SKU: \'%s\'.',
@@ -52,24 +251,68 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'فئات',
+            'title'   => 'فئات',
+            'filters' => [
+                'locales'      => 'اللغات',
+                'locales-info' => 'تُصدَّر الفئات مرة واحدة لكل لغة محددة. اتركه فارغًا لتصدير جميع اللغات النشطة.',
+            ],
+        ],
+        'category-fields' => [
+            'title' => 'حقول الفئة',
+        ],
+        'attributes' => [
+            'title' => 'السمات',
+        ],
+        'product-associations' => [
+            'title' => 'ارتباطات المنتج',
+        ],
+        'attribute-groups' => [
+            'title' => 'مجموعات السمات',
+        ],
+        'attribute-families' => [
+            'title' => 'عائلات السمات',
+        ],
+        'attribute-options' => [
+            'title' => 'خيارات السمة',
+        ],
+        'locales' => [
+            'title' => 'اللغات',
+        ],
+        'channels' => [
+            'title' => 'القنوات',
+        ],
+        'currencies' => [
+            'title' => 'العملات',
+        ],
+        'roles' => [
+            'title' => 'أدوار',
+        ],
+        'users' => [
+            'title'   => 'المستخدمون',
+            'filters' => [
+                'status' => 'الحالة',
+                'active' => 'نشط',
+                'all'    => 'الكل',
+            ],
         ],
     ],
-
     'validation' => [
         'errors' => [
-            'column-empty-headers' => 'تحتوي الأعمدة رقم "%s" على رؤوس فارغة.',
-            'column-name-invalid'  => 'أسماء الأعمدة غير صالحة: "%s".',
-            'column-not-found'     => 'لم يتم العثور على الأعمدة المطلوبة: %s.',
-            'column-numbers'       => 'عدد الأعمدة لا يتوافق مع عدد الصفوف في الرأس.',
-            'invalid-attribute'    => 'يحتوي الرأس على سمة (سمات) غير صالحة: "%s".',
-            'system'               => 'حدث خطأ غير متوقع في النظام.',
-            'wrong-quotes'         => 'يتم استخدام علامات الاقتباس المتعرجة بدلاً من علامات الاقتباس المستقيمة.',
+            'column-empty-headers'   => 'تحتوي الأعمدة رقم "%s" على رؤوس فارغة.',
+            'column-name-invalid'    => 'أسماء الأعمدة غير صالحة: "%s".',
+            'column-not-found'       => 'لم يتم العثور على الأعمدة المطلوبة: %s.',
+            'column-numbers'         => 'عدد الأعمدة لا يتوافق مع عدد الصفوف في الرأس.',
+            'invalid-attribute'      => 'يحتوي الرأس على سمة (سمات) غير صالحة: "%s".',
+            'system'                 => 'حدث خطأ غير متوقع في النظام.',
+            'wrong-quotes'           => 'يتم استخدام علامات الاقتباس المتعرجة بدلاً من علامات الاقتباس المستقيمة.',
+            'file-empty'             => 'الملف فارغ أو لا يحتوي على صف رأس. يرجى تحميل ملف صالح يحتوي على بيانات.',
+            'file-missing'           => 'تعذر العثور على الملف المصدر لهذه المهمة. تحقق من مسار الملف في ملف التعريف، ثم ارفع الملف مرة أخرى.',
         ],
     ],
-
     'job' => [
         'started'   => 'بدأ تنفيذ المهمة',
         'completed' => 'الانتهاء من تنفيذ المهمة',
+        'stalled'   => 'توقف المهمة عن الاستجابة لأكثر من :minutes دقيقة وتم وضع علامة فشل عليها. من المرجح أن العامل المنفذ قد أُنهي.',
+        'reaped'    => 'تم وضع علامة فشل على :count مهمة متوقفة.',
     ],
 ];

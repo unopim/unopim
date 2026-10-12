@@ -9,6 +9,8 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 
 class AttributeDataSource extends ApiDataSource
 {
+    protected ?string $structureCacheGroup = 'attributes';
+
     /**
      * Create a new DataSource instance.
      *

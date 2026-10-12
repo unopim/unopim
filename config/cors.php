@@ -17,9 +17,15 @@ return [
 
     'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
-    'allowed_methods' => ['*'],
+    'allowed_methods' => array_values(array_filter(array_map(
+        trim(...),
+        explode(',', (string) env('CORS_ALLOWED_METHODS', '*'))
+    ), strlen(...))),
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => array_values(array_filter(array_map(
+        trim(...),
+        explode(',', (string) env('CORS_ALLOWED_ORIGINS', '*'))
+    ), strlen(...))),
 
     'allowed_origins_patterns' => [],
 

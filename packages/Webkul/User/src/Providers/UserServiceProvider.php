@@ -24,10 +24,8 @@ class UserServiceProvider extends ServiceProvider
 
     /**
      * Register services.
-     *
-     * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->registerBouncer();
     }
@@ -42,8 +40,6 @@ class UserServiceProvider extends ServiceProvider
         $loader = AliasLoader::getInstance();
         $loader->alias('Bouncer', BouncerFacade::class);
 
-        $this->app->singleton('bouncer', function () {
-            return new Bouncer;
-        });
+        $this->app->singleton('bouncer', fn (): Bouncer => new Bouncer);
     }
 }

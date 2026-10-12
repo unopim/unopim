@@ -405,32 +405,24 @@ it('should update an attribute successfully', function () {
     $localeCode = Locale::where('status', 1)->first()->code;
 
     $data = [
-        'code'              => $attribute->code,
-        'type'              => 'textarea',
-        'validation'        => $attribute->validation,
-        'regex_pattern'     => $attribute->regex_pattern,
-        'is_required'       => $attribute->is_required,
-        'is_unique'         => $attribute->is_unique,
-        'value_per_locale'  => $attribute->value_per_locale,
-        'value_per_channel' => $attribute->value_per_channel,
-        'enable_wysiwyg'    => 1,
-        'labels'            => [
+        'validation'     => $attribute->validation,
+        'regex_pattern'  => $attribute->regex_pattern,
+        'is_required'    => $attribute->is_required,
+        'enable_wysiwyg' => 1,
+        'labels'         => [
             $localeCode => 'Test Label',
         ],
     ];
 
-    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attributes.update', $data['code']), $data)
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attributes.update', $attribute->code), $data)
         ->assertOk()
         ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.update-success')]);
 
-    unset($data['labels']);
-
-    // Empty string validation is stored as null in DB
-    if ($data['validation'] === '') {
-        $data['validation'] = null;
-    }
-
-    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), $data);
+    $this->assertDatabaseHas($this->getFullTableName(Attribute::class), [
+        'code'           => $attribute->code,
+        'type'           => 'textarea',
+        'enable_wysiwyg' => 1,
+    ]);
 
     $this->assertDatabaseHas($this->getFullTableName(AttributeTranslation::class), [
         'attribute_id' => $attribute->id,
@@ -458,12 +450,11 @@ it('should not update code,type,value_per_locale,value_per_channel and is_unique
         'value_per_channel' => 0,
     ];
 
+    // Since Issue #730 / #734, sending any of the immutable fields in a PUT body returns 422.
     $this->withHeaders($this->headers)->json('PUT', route('admin.api.attributes.update', $attribute->code), $data)
-        ->assertOk()
-        ->assertJsonFragment(['message' => trans('admin::app.catalog.attributes.update-success')]);
+        ->assertStatus(422);
 
-    $this->assertDatabaseMissing($this->getFullTableName(Attribute::class), $data);
-
+    // The stored attribute is untouched.
     $this->assertDatabaseHas($this->getFullTableName(Attribute::class), [
         'code'              => $attribute->code,
         'type'              => 'textarea',
@@ -702,6 +693,68 @@ it('should update attribute options for an attribute successfully', function () 
     ]);
 });
 
+it('should store a single attribute option sent as one object instead of an array', function () {
+    $attribute = Attribute::factory()->create(['code' => 'single_object_store_attribute', 'type' => 'checkbox']);
+
+    $localeCode = Locale::where('status', 1)->first()->code;
+
+    $data = [
+        'code'       => 'single_option',
+        'sort_order' => 1,
+        'labels'     => [
+            $localeCode => 'Single Option',
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('POST', route('admin.api.attribute_options.store_option', $attribute->code), $data)
+        ->assertCreated()
+        ->assertJsonFragment([
+            'success' => true,
+            'message' => trans('admin::app.catalog.attribute-options.create-success'),
+        ]);
+
+    $this->assertModelWise([
+        AttributeOption::class => [
+            [
+                'attribute_id' => $attribute->id,
+                'code'         => 'single_option',
+                'sort_order'   => 1,
+            ],
+        ],
+    ]);
+});
+
+it('should update a single attribute option sent as one object instead of an array', function () {
+    $attribute = Attribute::factory()->create(['code' => 'single_object_update_attribute', 'type' => 'multiselect']);
+
+    $localeCode = Locale::where('status', 1)->first()->code;
+
+    $data = [
+        'code'       => 'single_option',
+        'sort_order' => 1,
+        'labels'     => [
+            $localeCode => 'Single Option',
+        ],
+    ];
+
+    $this->withHeaders($this->headers)->json('PUT', route('admin.api.attribute_options.update_option', $attribute->code), $data)
+        ->assertOk()
+        ->assertJsonFragment([
+            'success' => true,
+            'message' => trans('admin::app.catalog.attribute-options.update-success'),
+        ]);
+
+    $this->assertModelWise([
+        AttributeOption::class => [
+            [
+                'attribute_id' => $attribute->id,
+                'code'         => 'single_option',
+                'sort_order'   => 1,
+            ],
+        ],
+    ]);
+});
+
 it('should successfully upload an image swatch', function () {
     $attribute = Attribute::factory()->create([
         'code'        => 'color_attribute',
@@ -736,6 +789,30 @@ it('should successfully upload an image swatch', function () {
 
     expect($option->swatch_value)->not->toBeNull();
     expect($option->swatch_value_url)->toContain('storage');
+});
+
+it('should reject a swatch whose image content uses an active-content filename', function () {
+    $attribute = Attribute::factory()->create([
+        'code'        => 'secure_color_attribute',
+        'type'        => 'select',
+        'swatch_type' => 'image',
+    ]);
+
+    $option = AttributeOption::factory()->create([
+        'attribute_id' => $attribute->id,
+        'code'         => 'secure_red_option',
+    ]);
+
+    $this->withHeaders($this->headers)->postJson(
+        route('admin.api.media-files.attribute.options.store'),
+        [
+            'attribute_code' => $attribute->code,
+            'code'           => $option->code,
+            'file'           => UploadedFile::fake()->image('swatch.html'),
+        ]
+    )
+        ->assertUnprocessable()
+        ->assertJsonValidationErrors(['file']);
 });
 
 it('should return validation error for missing file', function () {

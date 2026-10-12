@@ -1,14 +1,14 @@
 # GitHub Copilot Workspace Instructions: Unopim Connector Development
 
 This workspace contains agent skills for building **Unopim third-party connector
-modules**. Unopim is a Webkul Laravel 11 PIM — it is NOT Bagisto.
+modules**. Unopim is a Webkul Laravel 12 PIM — it is NOT Bagisto.
 
 ---
 
 ## Framework
 
 - **Platform:** Unopim (not Bagisto, not Magento, not Akeneo)
-- **Language:** PHP 8.1+ / Laravel 11
+- **Language:** PHP 8.3+ / Laravel 12
 - **Module base:** `packages/Webkul/{ModuleName}/src/`
 - **Reference:** `packages/Webkul/WooCommerce/` is the ground-truth connector
 
@@ -16,19 +16,22 @@ modules**. Unopim is a Webkul Laravel 11 PIM — it is NOT Bagisto.
 
 ## Non-negotiable Conventions
 
-### 1. Table names always start with `wk_`
+### 1. Table names and DB connection prefix
+When a database connection `prefix` is configured (for example `wk_`), Query Builder/Eloquent applies it automatically; hardcoding `wk_` in table names can cause double-prefixing.
 ```php
 // Correct
-protected $table = 'wk_woocommerce_credentials';
-DB::table('wk_shopify_products')
+protected $table = 'woocommerce_credentials';
+DB::table('shopify_products')
 
 // Wrong
-protected $table = 'woocommerce_credentials';
+protected $table = 'wk_woocommerce_credentials';
 ```
+This matches the reference connectors (`packages/Webkul/Core/src/Models/Channel.php` uses `channels`, `CoreConfig.php` uses `core_config`) and is the convention enforced by `AGENTS.md`.
 
 ### 2. Migration folder: `Database/Migration/` (no 's')
 ```
-Database/Migration/2025_01_01_000000_wk_module_credentials.php
+Database/Migration/2025_01_01_000000_module_credentials.php
+```
 ```
 
 ### 3. ServiceProvider: routes via `Route::middleware('web')->group()`
@@ -116,7 +119,7 @@ class CredentialDataGrid extends DataGrid
      */
     public function prepareQueryBuilder()     // no PHP return type hint
     {
-        return DB::table('wk_module_credentials')->select(...);
+        return DB::table('module_credentials')->select(...);
     }
 
     public function prepareColumns()
@@ -144,18 +147,21 @@ class CredentialDataGrid extends DataGrid
 
 ## Skills Reference
 
-When working on a connector, load the appropriate skill file from
-`.kilocode/skills-code/` for complete implementation templates:
+UnoPim AI development skills live in a dedicated repository:
+[unopim/agent-skills](https://github.com/unopim/agent-skills).
 
-| Task | Skill file |
-|---|---|
-| Create connector from scratch | `unopim-connector-quickstart/SKILL.md` |
-| Module boilerplate | `unopim-package/SKILL.md` |
-| Credential management | `unopim-credential-management/SKILL.md` |
-| HTTP/API client | `unopim-http-client/SKILL.md` |
-| Export/import jobs | `unopim-export-workflow/SKILL.md` |
-| DataGrid listing | `unopim-datagrid/SKILL.md` |
-| module mapping | `unopim-connector-export-mapping/SKILL.md` |
+Install them locally for your coding agent (Claude Code, Cursor, Copilot, Codex, and more):
+
+```bash
+npx skills add unopim/agent-skills
+```
+
+Laravel Boost is already a dev dependency — set it up with:
+
+```bash
+php artisan boost:install   # one-time setup (MCP server + AI guidelines)
+php artisan boost:update    # refresh guidelines & skills to latest
+```
 
 ---
 

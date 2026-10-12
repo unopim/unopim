@@ -1,0 +1,3 @@
+locale,code,name,root_category,locales,currencies
+en_US,default,Default,root,en_US,USD
+en_US,ecommerce,Ecommerce,root,en_US,USD

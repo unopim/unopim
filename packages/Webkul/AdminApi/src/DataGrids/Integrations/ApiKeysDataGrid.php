@@ -119,6 +119,7 @@ class ApiKeysDataGrid extends DataGrid
         if (bouncer()->hasPermission('configuration.integrations.edit')) {
             $this->addAction([
                 'icon'   => 'icon-edit',
+                'index'  => 'edit',
                 'title'  => trans('admin::app.configuration.integrations.index.datagrid.edit'),
                 'method' => 'GET',
                 'url'    => function ($row) {

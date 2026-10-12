@@ -8,14 +8,11 @@ use Webkul\Attribute\Repositories\AttributeRepository;
 
 class ValidSwatchValue implements ValidationRule
 {
-    protected int $attributeId;
-
     protected AttributeRepository $attributeRepository;
 
-    public function __construct(int $attributeId)
+    public function __construct(protected int $attributeId)
     {
-        $this->attributeId = $attributeId;
-        $this->attributeRepository = app(AttributeRepository::class);
+        $this->attributeRepository = resolve(AttributeRepository::class);
     }
 
     /**

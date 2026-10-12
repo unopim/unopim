@@ -1,0 +1,36 @@
+<?php
+
+return [
+    'warning' => [
+        'title'           => 'APP_URL-avvik oppdaget',
+        'dismiss'         => 'Lukk',
+        'lede-before'     => 'Frontend-ressursene dine (CSS, JS) er låst til den konfigurerte',
+        'lede-after'      => 'Oppdater den slik at den samsvarer med verten du bruker, ellers vil ikke stilene og skriptene lastes inn.',
+        'configured-env'  => 'Konfigurert (.env)',
+        'mismatch-tag'    => 'AVVIK',
+        'actual-browser'  => 'Faktisk (nettleser)',
+        'in-use-tag'      => 'I BRUK',
+        'toggle-step'     => 'Veksle trinn :number',
+        'step-1-title'    => 'Oppdater APP_URL i .env-filen din',
+        'step-1-hint'     => 'Åpne prosjektets .env og erstatt APP_URL-linjen.',
+        'step-2-title'    => 'Tøm applikasjonsbufferen',
+        'step-2-hint'     => 'Kjør dette i terminalen fra prosjektroten.',
+        'copy'            => 'Kopier',
+        'copied'          => 'Kopiert',
+        'note-bold'       => 'Gjør deretter en full oppdatering av siden',
+        'note-rest'       => 'slik at nettleseren laster inn de oppdaterte ressursene på nytt.',
+        'progress'        => ':done av :total trinn fullført',
+        'all-done'        => 'Alt ferdig',
+        'powered-by'      => 'Drevet av',
+        'open-source-by'  => 'Et åpen kildekode-prosjekt av',
+        'copied-toast'    => 'Kopiert til utklippstavlen',
+        'still-mismatch'  => 'APP_URL samsvarer fortsatt ikke. Oppdater .env og kjør "php artisan optimize:clear".',
+        'verify-failed'   => 'Kunne ikke verifisere APP_URL. Vennligst oppdater siden.',
+        'logged-out'      => 'Logget ut: APP_URL samsvarer ikke med gjeldende vert. Oppdater APP_URL i .env og kjør "php artisan optimize:clear".',
+    ],
+
+    'log' => [
+        'mismatch' => 'APP_URL-avvik oppdaget',
+        'hint'     => 'Oppdater APP_URL i .env til forespørselens URL, og kjør deretter: php artisan optimize:clear',
+    ],
+];

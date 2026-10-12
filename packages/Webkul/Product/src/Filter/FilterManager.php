@@ -3,15 +3,16 @@
 namespace Webkul\Product\Filter;
 
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Collection;
 use Webkul\Product\Contracts\FilterManager as FilterManagerContract;
 use Webkul\Product\Filter\Database\SkuOrUniversalFilter as DatabaseSkuOrUniversalFilter;
 use Webkul\Product\Filter\ElasticSearch\SkuOrUniversalFilter;
 
 class FilterManager implements FilterManagerContract
 {
-    protected $attributeFilters;
+    protected Collection $attributeFilters;
 
-    protected $propertyFilters;
+    protected Collection $propertyFilters;
 
     public function __construct(Container $app)
     {
@@ -58,14 +59,14 @@ class FilterManager implements FilterManagerContract
     public function getSkuOrUnfilteredFilter()
     {
         return config('elasticsearch.enabled')
-           ? app(SkuOrUniversalFilter::class)
-           : app(DatabaseSkuOrUniversalFilter::class);
+           ? resolve(SkuOrUniversalFilter::class)
+           : resolve(DatabaseSkuOrUniversalFilter::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getPropertyFilters()
+    public function getPropertyFilters(): Collection
     {
         return $this->propertyFilters;
     }
@@ -73,7 +74,7 @@ class FilterManager implements FilterManagerContract
     /**
      * {@inheritdoc}
      */
-    public function getAttributeFilters()
+    public function getAttributeFilters(): Collection
     {
         return $this->attributeFilters;
     }

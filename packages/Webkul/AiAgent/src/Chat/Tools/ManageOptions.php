@@ -2,29 +2,53 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class ManageOptions implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('manage_attribute_options')
-            ->for('Add or list options for select/multiselect attributes.')
-            ->withStringParameter('attribute_code', 'Attribute code (e.g. "color", "size")')
-            ->withEnumParameter('action', 'Action to perform', ['list', 'add'])
-            ->withStringParameter('options', 'Comma-separated option labels to add (e.g. "Purple,Orange")')
-            ->using(function (string $attribute_code, string $action = 'list', ?string $options = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.attributes')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'manage_attribute_options';
+            }
+
+            public function description(): string
+            {
+                return 'Add or list options for select/multiselect attributes.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'attribute_code' => $schema->string()->description('Attribute code (e.g. "color", "size")'),
+                    'action'         => $schema->string()->enum(['list', 'add'])->description('Action to perform'),
+                    'options'        => $schema->string()->description('Comma-separated option labels to add (e.g. "Purple,Orange")'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.attributes')) {
                     return $denied;
                 }
+
+                $attribute_code = $request->string('attribute_code')->toString();
+                $action = $request->string('action')->toString() ?: 'list';
+                $options = $request->string('options')->toString() ?: null;
+
+                $context = $this->context;
 
                 $attribute = DB::table('attributes')->where('code', $attribute_code)->first();
                 if (! $attribute) {
@@ -33,7 +57,7 @@ class ManageOptions implements PimTool
 
                 if ($action === 'list') {
                     $opts = DB::table('attribute_options as ao')
-                        ->leftJoin('attribute_option_translations as aot', function ($join) use ($context) {
+                        ->leftJoin('attribute_option_translations as aot', function ($join) use ($context): void {
                             $join->on('aot.attribute_option_id', '=', 'ao.id')
                                 ->where('aot.locale', '=', $context->locale);
                         })
@@ -46,7 +70,7 @@ class ManageOptions implements PimTool
                 }
 
                 if ($action === 'add' && $options) {
-                    $items = array_map('trim', explode(',', $options));
+                    $items = array_map(trim(...), explode(',', $options));
                     $added = [];
                     $maxSort = (int) DB::table('attribute_options')
                         ->where('attribute_id', $attribute->id)
@@ -84,6 +108,7 @@ class ManageOptions implements PimTool
                 }
 
                 return json_encode(['error' => 'Invalid action or missing options']);
-            });
+            }
+        };
     }
 }

@@ -2,26 +2,46 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
 
 class VerifyProduct implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('verify_product')
-            ->for('Verify product data quality and completeness after making changes. Use this to self-check your work — call it after creating or updating a product.')
-            ->withStringParameter('sku', 'Product SKU to verify')
-            ->using(function (string $sku) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.products')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'verify_product';
+            }
+
+            public function description(): string
+            {
+                return 'Verify product data quality and completeness after making changes. Use this to self-check your work — call it after creating or updating a product.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'sku' => $schema->string()->description('Product SKU to verify'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.products')) {
                     return $denied;
                 }
+
+                $sku = $request->string('sku')->toString();
 
                 $product = DB::table('products')->where('sku', $sku)->first();
 
@@ -29,9 +49,9 @@ class VerifyProduct implements PimTool
                     return json_encode(['error' => "Product not found: {$sku}"]);
                 }
 
-                $values = json_decode($product->values, true) ?? [];
+                $values = json_decode((string) $product->values, true) ?? [];
                 $common = $values['common'] ?? [];
-                $channelLocale = $values['channel_locale_specific'][$context->channel][$context->locale] ?? [];
+                $channelLocale = $values['channel_locale_specific'][$this->context->channel][$this->context->locale] ?? [];
                 $categories = $values['categories'] ?? [];
 
                 $issues = [];
@@ -48,7 +68,7 @@ class VerifyProduct implements PimTool
                 if (empty($description)) {
                     $issues[] = 'Missing description';
                     $score -= 15;
-                } elseif (mb_strlen($description) < 50) {
+                } elseif (mb_strlen((string) $description) < 50) {
                     $issues[] = 'Description is very short (< 50 chars)';
                     $score -= 5;
                 }
@@ -106,13 +126,14 @@ class VerifyProduct implements PimTool
                         'sku'           => $sku,
                         'quality_score' => $score,
                         'quality_level' => $quality,
-                        'issues'        => empty($issues) ? null : $issues,
+                        'issues'        => $issues === [] ? null : $issues,
                         'filled_fields' => $filledFields,
                         'categories'    => $categories,
                         'has_image'     => ! empty($common['image']),
                         'status'        => $product->status ? 'active' : 'inactive',
                     ],
                 ]);
-            });
+            }
+        };
     }
 }

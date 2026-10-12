@@ -1,12 +1,21 @@
-<x-slot:title>
-    @lang('webhook::app.configuration.webhook.logs.index.title')
-</x-slot>
-
-<div class="flex  gap-4 justify-between items-center max-sm:flex-wrap pt-3">
-    <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
+<x-admin::layouts>
+    <x-slot:title>
         @lang('webhook::app.configuration.webhook.logs.index.title')
-    </p>
-</div>
+    </x-slot>
 
-<x-admin::datagrid :src="route('webhook.logs.index')">
-</x-admin::datagrid>
+    <x-admin::layouts.page-header
+        :title="trans('webhook::app.configuration.webhook.logs.index.title')"
+        class="mb-1"
+    >
+        <x-slot:actions>
+            <a
+                href="{{ route('webhook.index') }}"
+                class="transparent-button"
+            >
+                @lang('webhook::app.webhooks.index.back-btn')
+            </a>
+        </x-slot>
+    </x-admin::layouts.page-header>
+
+    @include('webhook::logs._grid')
+</x-admin::layouts>

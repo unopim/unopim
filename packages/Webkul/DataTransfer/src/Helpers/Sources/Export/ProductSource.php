@@ -6,7 +6,7 @@ use Webkul\DataTransfer\Helpers\Sources\Export\Elastic\ProductCursor as ElasticP
 
 class ProductSource
 {
-    public function getResults(array $requestParams, $source, int $size = 100, array $options = [])
+    public function getResults(array $requestParams, $source, int $size = 100, array $options = []): ElasticProductCursor|ProductCursor
     {
         if (config('elasticsearch.enabled')) {
             return new ElasticProductCursor($requestParams, $source, $size, $options);

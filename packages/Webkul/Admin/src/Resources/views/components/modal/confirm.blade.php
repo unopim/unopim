@@ -17,7 +17,7 @@
                 leave-to-class="opacity-0"
             >
                 <div
-                    class="fixed inset-0 bg-gray-500 bg-opacity-50 transition-opacity z-[10002]"
+                    class="fixed inset-0 bg-gray-500 bg-opacity-50 transition-opacity z-[10050]"
                     v-show="isOpen"
                 ></div>
             </transition>
@@ -33,12 +33,12 @@
                 leave-to-class="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
             >
                 <div
-                    class="fixed inset-0 z-[10002] transform transition overflow-y-auto"
+                    class="fixed inset-0 z-[10050] transform transition overflow-y-auto"
                     v-if="isOpen"
                 >
                     <div class="flex min-h-full items-end justify-center p-5 sm:items-center sm:p-0">
                         <div class="w-full max-w-[400px] z-[999] absolute left-1/2 top-1/2 rounded-lg bg-white dark:bg-cherry-800 box-shadow max-md:w-[90%] -translate-x-1/2 -translate-y-1/2">
-                            <div class="flex justify-between items-center gap-2.5 px-4 py-3 border-b dark:border-cherry-800 text-lg text-gray-800 dark:text-white font-bold">
+                            <div class="flex justify-between items-center gap-2.5 px-4 py-3 border-b dark:border-cherry-700 text-lg text-gray-800 dark:text-white font-bold">
                                 @{{ title }}
                             </div>
 
@@ -91,6 +91,12 @@
                 this.registerGlobalEvents();
             },
 
+            beforeUnmount() {
+                if (this.isOpen) {
+                    window.unlockBodyScroll();
+                }
+            },
+
             methods: {
                 open({
                     title = "@lang('admin::app.components.modal.confirm.title')",
@@ -104,9 +110,13 @@
                     agree = () => {},
                     disagree = () => {},
                 }) {
-                    this.isOpen = true;
+                    if (! this.isOpen) {
+                        window.lockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'hidden';
+                    window.dispatchEvent(new CustomEvent('overlay:opened'));
+
+                    this.isOpen = true;
 
                     this.title = title;
 
@@ -135,17 +145,21 @@
                 },
 
                 disagree() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.disagreeCallback();
                 },
 
                 agree() {
-                    this.isOpen = false;
+                    if (this.isOpen) {
+                        window.unlockBodyScroll();
+                    }
 
-                    document.body.style.overflow = 'auto';
+                    this.isOpen = false;
 
                     this.agreeCallback();
                 },

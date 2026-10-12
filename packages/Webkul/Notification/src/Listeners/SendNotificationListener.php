@@ -2,11 +2,8 @@
 
 namespace Webkul\Notification\Listeners;
 
-use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Webkul\Notification\Events\NotificationEvent;
@@ -14,18 +11,16 @@ use Webkul\User\Repositories\AdminRepository;
 
 class SendNotificationListener implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Queueable;
 
     public function __construct(public AdminRepository $adminRepository) {}
 
     /**
      * Handle the event.
-     *
-     * @return void
      */
-    public function sendNotification($event)
+    public function sendNotification($event): void
     {
-        if (! env('NOTIFICATIONS_ENABLED', true)) {
+        if (! config('notifications.enabled', true)) {
             Log::info('Notifications are disabled. No notification sent.', ['event' => $event]);
 
             return;
@@ -33,20 +28,20 @@ class SendNotificationListener implements ShouldQueue
 
         $mailConfigured = Config::get('mail.default') &&
             Config::get('mail.mailers.smtp.host') &&
-            Config::get('mail.mailers.smtp.port') &&
-            Config::get('mail.mailers.smtp.username') &&
-            Config::get('mail.mailers.smtp.password');
+            Config::get('mail.mailers.smtp.port');
 
-        $metaData = json_decode($event->meta);
-        // @TODO: manage user details with relation to the event
+        $metaData = (object) array_merge(
+            ['type' => '', 'code' => ''],
+            (array) ($event->meta ?? [])
+        );
         $admin = $this->adminRepository->find($event->user_id);
 
-        NotificationEvent::dispatch([
+        event(new NotificationEvent([
             'type'         => $metaData->type,
             'route'        => 'admin.settings.data_transfer.tracker.view',
             'route_params' => ['batch_id' => $event->id],
-            'title'        => sprintf('%s #%d', ucfirst($metaData->type), $event->id),
-            'description'  => sprintf('%s "%s" %s', ucfirst($metaData->type), $metaData->code, $event->state),
+            'title'        => sprintf('%s #%d', ucfirst((string) $metaData->type), $event->id),
+            'description'  => sprintf('%s "%s" %s', ucfirst((string) $metaData->type), $metaData->code, $event->state),
             'user_ids'     => [$event->user_id],
             'mailable'     => $mailConfigured,
             'user_emails'  => [$admin['email']],
@@ -54,6 +49,6 @@ class SendNotificationListener implements ShouldQueue
             'templateData' => [
                 'templateData' => $event,
             ],
-        ]);
+        ]));
     }
 }

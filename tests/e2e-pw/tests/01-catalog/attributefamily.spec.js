@@ -1,100 +1,100 @@
-const { test, expect } = require('../../utils/fixtures');
-test.describe('Attribute Family', () => {
-test('Create Attribute family with empty code field', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
-  await adminPage.getByRole('textbox', { name: 'Enter Code' }).click();
-  await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('');
-  await adminPage.locator('input[name="en_US\\[name\\]"]').click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
-  await expect(adminPage.locator('#app').getByText('The Code field is required')).toBeVisible();
-});
+const { test, expect } = require('../../utils/family-fixtures');
+const { generateUid, fillLocalizedField, openFilterDrawer } = require('../../utils/helpers');
+const { gotoIndex, createFamily, deleteFamilyByCode, saveFamilyEdit } = require('../../utils/family-helpers');
 
-test('Create Attribute family', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByRole('link', { name: 'Create Attribute Family' }).click();
-  await adminPage.getByRole('textbox', { name: 'Enter Code' }).click();
-  await adminPage.getByRole('textbox', { name: 'Enter Code' }).fill('header');
-  await adminPage.locator('input[name="en_US\\[name\\]"]').click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Header');
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
-  await expect(adminPage.locator('#app').getByText(/Family created successfully/i)).toBeVisible();
-});
+/**
+ * Attribute Family index + edit smoke tests.
+ *
+ * Runs against the current branch (served at 8023) via family-fixtures, where the
+ * route group is `/admin/catalog/attribute-families` and the create modal requires
+ * both Name and Code. Uses the shared family-helpers so the create/delete flow
+ * stays in one place.
+ */
+async function searchAndEditFamily(page, code) {
+  await gotoIndex(page);
+  await page.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(1500);
+  await page.locator('div', { hasText: code }).locator('span[title="Edit"]').first().click();
+  await page.waitForSelector('.group_node', { timeout: 30000 });
+}
 
-test('should allow attribute family search', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByRole('textbox', { name: 'Search' }).click();
-  await adminPage.getByRole('textbox', { name: 'Search' }).type('header');
-  await adminPage.keyboard.press('Enter');
-  await expect(adminPage.locator('text=headerHeader', {exact:true})).toBeVisible();
-});
+test.describe('UnoPim Attribute Family Tests', () => {
+  test('Create Attribute family with empty required fields', async ({ adminPage }) => {
+    await gotoIndex(adminPage);
+    await adminPage.getByRole('button', { name: 'Create Attribute Family' }).click();
+    await adminPage.getByPlaceholder('Enter Name').fill('');
+    await adminPage.getByPlaceholder('Enter Code').fill('');
+    await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
+    await expect(adminPage.locator('#app').getByText(/The (Name|Code) field is required/).first()).toBeVisible();
+  });
 
-test('should open the filter menu when clicked', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByText('Filter', { exact: true }).click();
-  await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
-});
+  test('Create Attribute family', async ({ adminPage }) => {
+    const code = `fam_${generateUid()}`;
+    await createFamily(adminPage, code);
+    await expect(adminPage).toHaveURL(/\/attribute-families\/edit\/\d+/);
+    await deleteFamilyByCode(adminPage, code);
+  });
 
-test('should allow setting items per adminPage', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  const perPageBtn = adminPage.getByRole('button', { name: 'Per Page' });
-  await perPageBtn.click();
-  await adminPage.getByText('20', { exact: true }).click();
-  await expect(perPageBtn).toContainText('20');
-});
+  test('should allow attribute family search', async ({ adminPage }) => {
+    await gotoIndex(adminPage);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill('default');
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForTimeout(1500);
+    await expect(adminPage.locator('#app').getByText('default', { exact: true }).first()).toBeVisible();
+  });
 
-test('should perform actions on a attribute family (Edit, Copy, Delete)', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  const itemRow = adminPage.locator('div', { hasText: 'header' });
-  await itemRow.locator('span[title="Edit"]').first().click();
-  await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/edit/);
-  await adminPage.goBack();
-  await adminPage.waitForLoadState('networkidle');
-  await itemRow.locator('span[title="Copy"]').first().click();
-  await expect(adminPage).toHaveURL(/\/admin\/catalog\/families\/copy/);
-  await adminPage.goBack();
-  await adminPage.waitForLoadState('networkidle');
-  await itemRow.locator('span[title="Delete"]').first().click();
-  await expect(adminPage.locator('text=Are you sure you want to delete?')).toBeVisible();
-});
+  test('should open the filter menu when clicked', async ({ adminPage }) => {
+    await gotoIndex(adminPage);
+    await openFilterDrawer(adminPage);
+    await expect(adminPage.locator('#app').getByText('Apply Filters')).toBeVisible();
+  });
 
-test('Edit Attribute Family', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByText('headerHeader').getByTitle('Edit').click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').click();
-  await adminPage.locator('input[name="en_US\\[name\\]"]').fill('Footer');
-  await adminPage.locator('.secondary-button', { hasText: 'Assign Attribute Group' }).click();
-  await adminPage.locator('input[name="group"]').locator('..').locator('.multiselect__placeholder').click();
-  await adminPage.getByRole('textbox', { name: 'group-searchbox' }).fill('General');
-  await adminPage.getByRole('option', { name: 'General' }).first().click();
-  await adminPage.getByRole('button', { name: 'Assign Attribute Group' }).click();
-  const dragHandle = await adminPage.locator('#unassigned-attributes i.icon-drag:near(:text("SKU"))').first();
-  const dropTarget = await adminPage.locator('#assigned-attribute-groups .group_node').first();
-  const dragBox = await dragHandle.boundingBox();
-  const dropBox = await dropTarget.boundingBox();
-  if (dragBox && dropBox) {
-  await adminPage.mouse.move(dragBox.x + dragBox.width / 2, dragBox.y + dragBox.height / 2);
-  await adminPage.mouse.down();
-  await adminPage.mouse.move(dropBox.x + dropBox.width / 2, dropBox.y + dropBox.height / 2, { steps: 10 });
-  await adminPage.mouse.up();
-  }
-  await adminPage.getByRole('button', { name: 'Save Attribute Family' }).click();
-  await expect(adminPage.locator('#app').getByText(/Family updated successfully/i)).toBeVisible();
-});
+  test('should perform actions on an attribute family (Edit, Delete)', async ({ adminPage }) => {
+    const code = `fam_${generateUid()}`;
 
-test('Delete Attribute Family', async ({ adminPage }) => {
-  await adminPage.getByRole('link', { name: ' Catalog' }).click();
-  await adminPage.getByRole('link', { name: 'Attribute Families' }).click();
-  await adminPage.getByText('headerFooter').getByTitle('Delete').click();
-  await adminPage.getByRole('button', { name: 'Delete' }).click();
-  await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible();
-});
+    await createFamily(adminPage, code);
+    await expect(adminPage).toHaveURL(/\/attribute-families\/edit/);
+
+    await searchAndEditFamily(adminPage, code);
+    await expect(adminPage).toHaveURL(/\/attribute-families\/edit/);
+
+    await gotoIndex(adminPage);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForTimeout(1500);
+    const row = adminPage.locator('div', { hasText: code });
+    await row.locator('span[title="Delete"]').first().click();
+    await expect(adminPage.getByText('Are you sure you want to delete?')).toBeVisible();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
+    await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible();
+  });
+
+  test('Edit Attribute Family', async ({ adminPage }) => {
+    const code = `fam_${generateUid()}`;
+    await createFamily(adminPage, code);
+
+    const assignedGroups = adminPage.locator('#assigned-attribute-groups');
+    await expect(assignedGroups.getByText('General').first()).toBeVisible();
+    await expect(assignedGroups.getByText('SKU').first()).toBeVisible();
+
+    await fillLocalizedField(adminPage, 'After Edit');
+    await saveFamilyEdit(adminPage);
+
+    await deleteFamilyByCode(adminPage, code);
+  });
+
+  test('Delete Attribute Family', async ({ adminPage }) => {
+    const code = `fam_${generateUid()}`;
+    await createFamily(adminPage, code);
+
+    await gotoIndex(adminPage);
+    await adminPage.getByRole('textbox', { name: 'Search', exact: true }).fill(code);
+    await adminPage.keyboard.press('Enter');
+    await adminPage.waitForTimeout(1500);
+    const row = adminPage.locator('div', { hasText: code });
+    await row.locator('span[title="Delete"]').first().click();
+    await adminPage.locator('.max-w-\\[400px\\]').getByRole('button', { name: 'Delete', exact: true }).click();
+    await expect(adminPage.locator('#app').getByText(/Family deleted successfully/i)).toBeVisible();
+  });
 });

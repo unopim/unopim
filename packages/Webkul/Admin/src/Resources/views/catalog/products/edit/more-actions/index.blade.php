@@ -1,31 +1,36 @@
+@php
+    $hasTranslateAction = core()->getConfigData('general.magic_ai.translation.enabled') && bouncer()->hasPermission('ai-agent');
+@endphp
+
 {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.before', ['product' => $product]) !!}
 
-<v-custom-dropdown></v-custom-dropdown>
+@if ($hasTranslateAction)
+    <v-custom-dropdown></v-custom-dropdown>
+@endif
 
 {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.after', ['product' => $product]) !!}
 
+@if ($hasTranslateAction)
 @pushOnce('scripts')
     <script type="text/x-template" id="v-custom-dropdown-template">
-        <div class="relative inline-block text-left">
+        <div class="relative inline-block text-left ltr:mr-11 rtl:ml-11">
             <span
                 class="text-gray-700 dark:text-slate-50 cursor-pointer flex p-2 w-full items-center"
                 @click="toggleDropdown"
                 title="@lang('admin::app.catalog.products.edit.more-actions')"
             >
-                More 
+                @lang('admin::app.catalog.products.edit.more')
                 <i class="text-2xl icon-chevron-down"></i>
             </span>
 
             <div
                 v-if="isOpen"
-                class="absolute right-0.5 top-0.8 w-36 max-sm:left-1/2 bg-white dark:bg-cherry-900 shadow-lg z-[10001] text-gray-700 border-2 border-violet-100 dark:border-cherry-800 min-h[110px] rounded-md"
+                class="absolute right-0.5 top-0.8 w-36 max-sm:left-1/2 bg-white dark:bg-cherry-900 shadow-lg z-[10001] text-gray-700 border-2 border-primary-100 dark:border-cherry-800 min-h[110px] rounded-md"
             >
                 <ul class="text-gray-700 rounded">
                     {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.list.before', ['product' => $product]) !!}
 
-                    @if (core()->getConfigData('general.magic_ai.translation.enabled'))
-                        @include('admin::catalog.products.edit.more-actions.translate-action')
-                    @endif
+                    @include('admin::catalog.products.edit.more-actions.translate-action')
 
                     {!! view_render_event('unopim.admin.catalog.product.edit.more-actions.list.after', ['product' => $product]) !!}
                 </ul>
@@ -64,3 +69,4 @@
         });
     </script>
 @endPushOnce
+@endif

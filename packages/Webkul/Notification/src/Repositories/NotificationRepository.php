@@ -3,6 +3,7 @@
 namespace Webkul\Notification\Repositories;
 
 use Webkul\Core\Eloquent\Repository;
+use Webkul\Notification\Contracts\Notification;
 
 class NotificationRepository extends Repository
 {
@@ -11,49 +12,43 @@ class NotificationRepository extends Repository
      */
     public function model(): string
     {
-        return 'Webkul\Notification\Contracts\Notification';
+        return Notification::class;
     }
 
     /**
      * Return Filtered Notification resources
-     *
-     * @param  array  $params
-     * @return array
      */
-    public function getParamsData($params)
+    public function getParamsData(array $params): array
     {
         $user = auth()->user();
 
         $query = $user->notifications()
             ->with('notification');
-        if (isset($params['read']) && isset($params['limit'])) {
-            $query->where('read', $params['read'])->limit($params['limit']);
-        } elseif (isset($params['limit'])) {
-            $query->limit($params['limit']);
+
+        if (isset($params['read'])) {
+            $query->where('read', $params['read']);
         }
 
         $notifications = $query->latest()->paginate($params['limit'] ?? 10);
 
-        $totalUnread = $query->where('read', '0')->count();
+        $totalUnread = $user->notifications()->where('read', 0)->count();
 
         return ['notifications' => $notifications, 'total_unread' => $totalUnread];
     }
 
     /**
      * Return Notification resources
-     *
-     * @return array
      */
-    public function getAll()
+    public function getAll(): array
     {
         $user = auth()->user();
 
         $query = $user->notifications()
             ->with('notification');
 
-        $notifications = $query->latest()->paginate($params['limit'] ?? 10);
+        $notifications = $query->latest()->paginate(10);
 
-        $totalUnread = $query->count();
+        $totalUnread = $user->notifications()->where('read', 0)->count();
 
         return ['notifications' => $notifications, 'total_unread' => $totalUnread];
     }

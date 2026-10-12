@@ -2,8 +2,8 @@
 
 namespace Webkul\Installer\Database\Seeders\Attribute;
 
-use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Webkul\Core\Helpers\Database\DatabaseSequenceHelper;
 
@@ -11,17 +11,14 @@ class AttributeTableSeeder extends Seeder
 {
     /**
      * Seed the application's database.
-     *
-     * @param  array  $parameters
-     * @return void
      */
-    public function run($parameters = [])
+    public function run(array $parameters = []): void
     {
         DB::table('attributes')->delete();
 
         DB::table('attribute_translations')->delete();
 
-        $now = Carbon::now();
+        $now = Date::now();
 
         $defaultLocale = $parameters['default_locale'] ?? config('app.locale');
 

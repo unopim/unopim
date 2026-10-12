@@ -5,6 +5,7 @@ namespace Webkul\Admin\Http\Controllers;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Webkul\Admin\Http\Controllers\VueJsSelect\SelectOptionsController;
+use Webkul\Admin\Http\Requests\SelectOptionsForm;
 
 class ManageColumnController extends SelectOptionsController
 {
@@ -61,14 +62,14 @@ class ManageColumnController extends SelectOptionsController
     /**
      * get available columns
      */
-    public function availableColumns(): JsonResponse
+    public function availableColumns(SelectOptionsForm $request): JsonResponse
     {
-        $entityName = request()->input('entityName');
-        $source = request()->input('source', 'product');
-        $page = request()->input('page');
-        $limit = request()->input('limit', self::DEFAULT_PER_PAGE);
-        $query = request()->input('query') ?? '';
-        $queryParams = request()->except(['page', 'query', 'entityName']);
+        $entityName = $request->validated('entityName');
+        $source = $request->validated('source') ?? 'product';
+        $page = $request->validated('page') ?? 1;
+        $limit = (int) ($request->validated('limit') ?? self::DEFAULT_PER_PAGE);
+        $query = (string) ($request->validated('query') ?? '');
+        $queryParams = $request->except(['page', 'query', 'entityName']);
 
         $options = $this->getOptionsByParams($entityName, $page, $query, $queryParams, $limit);
         $currentLocaleCode = core()->getRequestedLocaleCode();

@@ -2,33 +2,58 @@
 
 namespace Webkul\AiAgent\Chat\Tools;
 
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Prism\Prism\Tool;
+use Laravel\Ai\Contracts\Tool;
+use Laravel\Ai\Tools\Request;
 use Webkul\AiAgent\Chat\ChatContext;
 use Webkul\AiAgent\Chat\Concerns\ChecksPermission;
 use Webkul\AiAgent\Chat\Contracts\PimTool;
+use Webkul\Attribute\Repositories\AttributeFamilyRepository;
 
 class ManageFamilies implements PimTool
 {
-    use ChecksPermission;
-
     public function register(ChatContext $context): Tool
     {
-        return (new Tool)
-            ->as('manage_families')
-            ->for('List, create, or inspect attribute families and their groups.')
-            ->withEnumParameter('action', 'Action to perform', ['list', 'create', 'details'])
-            ->withStringParameter('code', 'Family code (for create/details)')
-            ->withStringParameter('name', 'Family name (for create)')
-            ->using(function (string $action = 'list', ?string $code = null, ?string $name = null) use ($context): string {
-                if ($denied = $this->denyUnlessAllowed($context, 'catalog.families')) {
+        return new class($context) extends ContextualTool
+        {
+            use ChecksPermission;
+
+            public function name(): string
+            {
+                return 'manage_families';
+            }
+
+            public function description(): string
+            {
+                return 'List, create, or inspect attribute families and their groups.';
+            }
+
+            public function schema(JsonSchema $schema): array
+            {
+                return [
+                    'action' => $schema->string()->enum(['list', 'create', 'details'])->description('Action to perform'),
+                    'code'   => $schema->string()->description('Family code (for create/details)'),
+                    'name'   => $schema->string()->description('Family name (for create)'),
+                ];
+            }
+
+            public function handle(Request $request): string
+            {
+                if ($denied = $this->denyUnlessAllowed($this->context, 'catalog.families')) {
                     return $denied;
                 }
 
+                $action = $request->string('action')->toString() ?: 'list';
+                $code = $request->string('code')->toString() ?: null;
+                $name = $request->string('name')->toString() ?: null;
+
+                $context = $this->context;
+
                 if ($action === 'list') {
                     $families = DB::table('attribute_families as af')
-                        ->leftJoin('attribute_family_translations as aft', function ($join) use ($context) {
+                        ->leftJoin('attribute_family_translations as aft', function ($join) use ($context): void {
                             $join->on('aft.attribute_family_id', '=', 'af.id')
                                 ->where('aft.locale', '=', $context->locale);
                         })
@@ -48,7 +73,7 @@ class ManageFamilies implements PimTool
                         return json_encode(['error' => "Family '{$code}' already exists"]);
                     }
 
-                    $repo = app('Webkul\Attribute\Repositories\AttributeFamilyRepository');
+                    $repo = resolve(AttributeFamilyRepository::class);
                     $family = $repo->create([
                         'code'           => $code,
                         'status'         => 1,
@@ -89,6 +114,7 @@ class ManageFamilies implements PimTool
                 }
 
                 return json_encode(['error' => 'Invalid action']);
-            });
+            }
+        };
     }
 }

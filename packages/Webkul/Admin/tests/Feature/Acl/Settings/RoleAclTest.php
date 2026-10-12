@@ -6,7 +6,7 @@ it('should not display the roles list if does not have permission', function () 
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.roles.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the roles list if has permission', function () {
@@ -21,7 +21,7 @@ it('should not display the create role form if does not have permission', functi
     $this->loginWithPermissions();
 
     $this->get(route('admin.settings.roles.create'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the create role form if has permission', function () {
@@ -37,7 +37,7 @@ it('should not display the role edit if does not have permission', function () {
     $role = Role::first();
 
     $this->get(route('admin.settings.roles.edit', ['id' => $role->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the role edit if has permission', function () {
@@ -54,7 +54,7 @@ it('should not be able to delete roles if does not have permission', function ()
     $role = Role::first();
 
     $this->delete(route('admin.settings.roles.delete', ['id' => $role->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Role::class),
         ['id' => $role->id]

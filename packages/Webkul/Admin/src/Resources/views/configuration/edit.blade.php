@@ -7,7 +7,6 @@
 @endphp
 
 <x-admin::layouts>
-    <!-- Title of the page -->
     <x-slot:title>
         @if ($items = Arr::get($config->items, request()->route('slug') . '.children'))
             @foreach ($items as $key => $item)
@@ -18,27 +17,21 @@
         @endif
     </x-slot>
 
-    <!-- Configuration form fields -->
-    <x-admin::form 
-        action="" 
+    <x-admin::form
+        id="configuration-edit-form"
+        ajax
+        :action="request()->routeIs('admin.magic_ai.settings.index')
+            ? route('admin.magic_ai.settings.store')
+            : route('admin.configuration.store', ['slug' => request()->route('slug'), 'slug2' => request()->route('slug2')])"
         enctype="multipart/form-data"
     >
-        <!-- Save Inventory -->
-        <div class="flex gap-4 justify-between items-center mt-3.5 max-sm:flex-wrap">
-            <p class="text-xl text-gray-800 dark:text-slate-50 font-bold">
-                {{ $title }}
-            </p>
+        <x-admin::layouts.edit-page-header
+            :title="$title"
+            form="configuration-edit-form"
+            :save-label="trans('admin::app.configuration.index.save-btn')"
+        />
 
-            <!-- Save Inventory -->
-            <div class="flex gap-x-2.5 items-center">
-                <button 
-                    type="submit"
-                    class="primary-button"
-                >
-                    @lang('admin::app.configuration.index.save-btn')
-                </button>
-            </div>
-        </div>
+
         @if ($groups)
             <div class="grid grid-cols-[1fr_2fr] gap-10 mt-6 max-xl:flex-wrap">
                 @foreach ($groups as $key => $item)
@@ -79,12 +72,9 @@
                                 @php ($hint = $field['title'] . '-hint')
 
                                 @if ($hint !== __($hint))
-                                    <label 
-                                        for="@lang($hint)"
-                                        class="block leading-5 text-xs text-gray-600 dark:text-gray-300 font-medium"
-                                    >
+                                    <p class="block leading-5 text-xs text-gray-600 dark:text-gray-300 font-medium">
                                         @lang($hint)
-                                    </label>
+                                    </p>
                                 @endIf
                             @endforeach
                         </div>

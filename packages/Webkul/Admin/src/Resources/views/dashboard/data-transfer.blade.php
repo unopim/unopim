@@ -29,27 +29,28 @@
 
                 <!-- Recent Jobs List -->
                 <div v-if="recentJobs.length > 0" class="divide-y divide-zinc-100 dark:divide-cherry-800">
-                    <div
+                    <a
                         v-for="job in recentJobs"
                         :key="job.id"
+                        :href="'{{ route('admin.settings.data_transfer.tracker.view', ':id') }}'.replace(':id', job.id)"
                         class="flex items-center gap-3 p-4 hover:bg-zinc-50 dark:hover:bg-cherry-800/50 transition-colors"
                     >
                         <!-- Type Icon -->
                         <div
                             class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
-                            :class="job.type === 'import' ? 'bg-sky-100 dark:bg-sky-900/30' : 'bg-violet-100 dark:bg-violet-900/30'"
+                            :class="job.type === 'import' ? 'bg-sky-100 dark:bg-sky-900/30' : 'bg-primary-100 dark:bg-primary-900/30'"
                         >
                             <span
                                 class="text-sm"
-                                :class="job.type === 'import' ? 'icon-import text-sky-600' : 'icon-export text-violet-600'"
+                                :class="job.type === 'import' ? 'icon-import text-sky-600' : 'icon-export text-primary-600'"
                             ></span>
                         </div>
 
                         <!-- Job Details -->
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center gap-2">
-                                <span class="text-sm font-semibold text-zinc-800 dark:text-slate-200 capitalize">
-                                    @{{ job.type }}
+                                <span class="text-sm font-semibold text-zinc-800 dark:text-slate-200">
+                                    @{{ job.job_code || job.type }}
                                 </span>
 
                                 <span
@@ -61,6 +62,10 @@
                             </div>
 
                             <div class="flex items-center gap-3 mt-1">
+                                <span class="text-xs text-zinc-500 dark:text-slate-400 capitalize">
+                                    @{{ job.entity_type }} &middot; @{{ job.type }}
+                                </span>
+
                                 <span class="text-xs text-zinc-500 dark:text-slate-400">
                                     @lang('admin::app.dashboard.index.rows-processed'):
                                     <span class="font-medium text-zinc-700 dark:text-slate-300">@{{ job.processed_rows_count || 0 }}</span>
@@ -83,7 +88,7 @@
                                 @{{ job.user_name }}
                             </p>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 <!-- Empty State -->
@@ -100,7 +105,7 @@
                     <div v-if="recentJobs.length > 0" class="p-3 border-t border-zinc-100 dark:border-cherry-800 text-center">
                         <a
                             href="{{ route('admin.settings.data_transfer.tracker.index') }}"
-                            class="text-xs font-medium text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300"
+                            class="text-xs font-medium text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
                         >
                             @lang('admin::app.dashboard.index.view-all-jobs') &rarr;
                         </a>
@@ -140,6 +145,8 @@
                         })
                         .catch(error => {
                             this.isLoading = false;
+
+                            console.error(error);
                         });
                 },
 

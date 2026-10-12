@@ -147,7 +147,7 @@ return [
 
         'repositories' => [
             'Webkul\Core\Repositories\CoreConfigRepository' => [
-                'enabled' => true,
+                'enabled' => false,
 
                 // 'minutes'    => 10080,
 

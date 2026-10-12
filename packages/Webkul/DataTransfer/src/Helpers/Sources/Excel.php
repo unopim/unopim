@@ -2,7 +2,6 @@
 
 namespace Webkul\DataTransfer\Helpers\Sources;
 
-use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
@@ -20,13 +19,13 @@ class Excel extends AbstractSource
 
     /**
      * Create a new helper instance.
-     *
-     * @return void
      */
     public function __construct(string $filePath)
     {
+        $path = self::resolveReadablePath($filePath);
+
         try {
-            $factory = IOFactory::load(Storage::disk('private')->path($filePath));
+            $factory = IOFactory::load($path);
 
             $this->reader = $factory->getActiveSheet();
 
@@ -34,8 +33,16 @@ class Excel extends AbstractSource
 
             $this->totalColumns = Coordinate::columnIndexFromString($highestColumn);
 
-            $this->columnNames = $this->getNextRow();
-        } catch (\Exception $e) {
+            $headerRow = $this->getNextRow();
+
+            if ($headerRow === false || $headerRow === []) {
+                throw new \LogicException(trans('data_transfer::app.validation.errors.file-empty'));
+            }
+
+            $this->columnNames = $headerRow;
+        } catch (\LogicException $e) {
+            throw $e;
+        } catch (\Exception) {
             throw new \LogicException("Unable to open file: '{$filePath}'");
         }
     }
@@ -45,13 +52,16 @@ class Excel extends AbstractSource
      */
     protected function getNextRow(): array|bool
     {
+        $rowData = [];
+
         for ($column = 1; $column <= $this->totalColumns; $column++) {
-            $rowData[] = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
+            $cellValue = $this->reader->getCellByColumnAndRow($column, $this->currentRowNumber)->getValue();
+            $rowData[] = $cellValue !== null ? (string) $cellValue : null;
         }
 
         $filteredRowData = array_filter($rowData);
 
-        if (empty($filteredRowData)) {
+        if ($filteredRowData === []) {
             return false;
         }
 

@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('attributes', function (Blueprint $table) {
+        Schema::table('attributes', function (Blueprint $table): void {
             $table->boolean('is_filterable')->default(false)->after('value_per_channel');
         });
 
@@ -23,7 +23,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('attributes', function (Blueprint $table) {
+        Schema::table('attributes', function (Blueprint $table): void {
             $table->dropColumn('is_filterable');
         });
     }

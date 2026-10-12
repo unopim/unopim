@@ -45,8 +45,6 @@ class CategoryServiceProvider extends ServiceProvider
         /**
          * Product value mapper
          */
-        $this->app->singleton('category_additional_data_mapper', function ($app) {
-            return new CategoryAdditionalDataMapper;
-        });
+        $this->app->singleton('category_additional_data_mapper', fn ($app): CategoryAdditionalDataMapper => new CategoryAdditionalDataMapper);
     }
 }

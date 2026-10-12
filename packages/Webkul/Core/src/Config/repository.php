@@ -1,6 +1,10 @@
 <?php
 
 use League\Fractal\Serializer\DataArraySerializer;
+use Webkul\Core\Repositories\ChannelRepository;
+use Webkul\Core\Repositories\CoreConfigRepository;
+use Webkul\Core\Repositories\CurrencyRepository;
+use Webkul\Core\Repositories\LocaleRepository;
 
 /*
 |--------------------------------------------------------------------------
@@ -146,7 +150,7 @@ return [
         ],
 
         'repositories' => [
-            'Webkul\Core\Repositories\CoreConfigRepository' => [
+            CoreConfigRepository::class => [
                 'enabled' => true,
 
                 // 'minutes'    => 10080,
@@ -168,15 +172,15 @@ return [
                 // ],
             ],
 
-            'Webkul\Core\Repositories\ChannelRepository' => [
+            ChannelRepository::class => [
                 'enabled' => true,
             ],
 
-            'Webkul\Core\Repositories\CurrencyRepository' => [
+            CurrencyRepository::class => [
                 'enabled' => true,
             ],
 
-            'Webkul\Core\Repositories\LocaleRepository' => [
+            LocaleRepository::class => [
                 'enabled' => true,
             ],
         ],

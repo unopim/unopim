@@ -1,0 +1,285 @@
+<?php
+
+use Illuminate\Support\Carbon;
+use Webkul\DataTransfer\Helpers\Export;
+use Webkul\DataTransfer\Helpers\Exporters\Product\Exporter;
+use Webkul\DataTransfer\Models\JobInstances;
+use Webkul\DataTransfer\Models\JobTrack;
+use Webkul\User\Models\Admin;
+
+function makeProductExporter(array $filters, ?int $userId = null): Exporter
+{
+    $jobInstance = JobInstances::create([
+        'code'                => 'demo_export',
+        'entity_type'         => 'products',
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'stop-on-errors',
+        'filters'             => $filters,
+    ]);
+
+    $jobTrack = JobTrack::create([
+        'state'               => Export::STATE_PROCESSING,
+        'type'                => 'export',
+        'action'              => 'export',
+        'validation_strategy' => 'stop-on-errors',
+        'job_instances_id'    => $jobInstance->id,
+        'meta'                => $jobInstance->toArray(),
+        'user_id'             => $userId,
+    ]);
+
+    $exporter = app(Exporter::class);
+    $exporter->setExport($jobTrack);
+    $exporter->getFilters();
+
+    return $exporter;
+}
+
+function exporterFileName(Exporter $exporter): string
+{
+    $method = new ReflectionMethod($exporter, 'getFileName');
+    $method->setAccessible(true);
+
+    return $method->invoke($exporter);
+}
+
+describe('file_path token expansion', function () {
+    it('falls back to the default {code}-{entity_type}.{ext} name when file_path is empty', function () {
+        $exporter = makeProductExporter(['file_format' => 'Csv']);
+
+        expect(exporterFileName($exporter))->toBe('demo_export-products.csv');
+    });
+
+    it('expands [code] and [entity_type] tokens', function () {
+        $exporter = makeProductExporter(['file_format' => 'Csv', 'file_path' => '[code]_[entity_type]']);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_products.csv');
+    });
+
+    it('also accepts curly-brace tokens', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 10:30:00'));
+
+        $exporter = makeProductExporter(['file_format' => 'Csv', 'file_path' => '{code}_{date}']);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_2026-06-16.csv');
+
+        Carbon::setTestNow();
+    });
+
+    it('formats the [date] token with the configured date format', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 10:30:00'));
+
+        $exporter = makeProductExporter([
+            'file_format' => 'Csv',
+            'file_path'   => '[code]_[date]',
+            'date_format' => 'd-m-Y',
+        ]);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_16-06-2026.csv');
+
+        Carbon::setTestNow();
+    });
+
+    it('keeps a slashed date format readable instead of stripping the separators', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 10:30:00'));
+
+        $exporter = makeProductExporter([
+            'file_format' => 'Csv',
+            'file_path'   => '[code]_[date]',
+            'date_format' => 'd/m/Y',
+        ]);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_16-06-2026.csv');
+
+        Carbon::setTestNow();
+    });
+
+    it('renders the [time] token in the timezone of the user who ran the export', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 18:30:00', 'UTC'));
+
+        $admin = Admin::first();
+        $admin->update(['timezone' => 'Asia/Kolkata']);
+
+        $exporter = makeProductExporter([
+            'file_format' => 'Csv',
+            'file_path'   => '[code]_[time]',
+        ], $admin->id);
+
+        expect(exporterFileName($exporter))->toBe('demo_export_000000.csv');
+
+        Carbon::setTestNow();
+    });
+
+    it('ignores a trailing export extension typed in the pattern instead of mangling it', function () {
+        $exporter = makeProductExporter(['file_format' => 'Csv', 'file_path' => '{code}.csv']);
+
+        expect(exporterFileName($exporter))->toBe('demo_export.csv');
+    });
+
+    it('expands the [date] token using the current date', function () {
+        Carbon::setTestNow(Carbon::parse('2026-06-16 10:30:00'));
+
+        $exporter = makeProductExporter(['file_format' => 'Xlsx', 'file_path' => 'export-[date]']);
+
+        expect(exporterFileName($exporter))->toBe('export-2026-06-16.xlsx');
+
+        Carbon::setTestNow();
+    });
+
+    it('sanitizes path separators and traversal sequences in file_path', function () {
+        $exporter = makeProductExporter(['file_format' => 'Csv', 'file_path' => '../../etc/passwd']);
+
+        // Path separators and dots are stripped so the name can never escape the export directory.
+        expect(exporterFileName($exporter))->toBe('etcpasswd.csv');
+    });
+
+    it('falls back to the default name when file_path has no usable characters', function () {
+        $exporter = makeProductExporter(['file_format' => 'Csv', 'file_path' => '/////']);
+
+        expect(exporterFileName($exporter))->toBe('demo_export-products.csv');
+    });
+});
+
+describe('header row export parameter', function () {
+    it('writes the header row by default when header_row is not set', function () {
+        expect(makeProductExporter(['file_format' => 'Csv'])->getExportParameter()['writeHeaders'])->toBeTrue();
+    });
+
+    it('disables the header row when the header_row filter is 0', function () {
+        expect(makeProductExporter(['file_format' => 'Csv', 'header_row' => '0'])->getExportParameter()['writeHeaders'])->toBeFalse();
+    });
+
+    it('produces no header labels when use_labels is off', function () {
+        expect(makeProductExporter(['file_format' => 'Csv'])->getExportParameter()['headerLabels'])->toBe([]);
+    });
+});
+
+describe('header locale selection', function () {
+    function headerLocaleFor(array $channelsAndLocales): ?string
+    {
+        $exporter = app(Exporter::class);
+
+        $property = new ReflectionProperty($exporter, 'channelsAndLocales');
+        $property->setAccessible(true);
+        $property->setValue($exporter, $channelsAndLocales);
+
+        $method = new ReflectionMethod($exporter, 'headerLocale');
+        $method->setAccessible(true);
+
+        return $method->invoke($exporter);
+    }
+
+    it('labels the header in the configured locale even when another locale is listed first', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['de_DE', 'en_US', 'fr_FR']]))->toBe('en_US');
+    });
+
+    it('does not use the configured locale when the export does not cover it', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['de_DE', 'fr_FR']]))->toBe('de_DE');
+    });
+
+    it('picks the same locale no matter what order the channel lists them in', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['default' => ['fr_FR', 'de_DE', 'en_US']]))
+            ->toBe(headerLocaleFor(['default' => ['de_DE', 'en_US', 'fr_FR']]));
+    });
+
+    it('considers the locales of every exported channel, not only the first', function () {
+        config(['app.locale' => 'en_US']);
+
+        expect(headerLocaleFor(['german' => ['de_DE'], 'american' => ['en_US']]))->toBe('en_US');
+    });
+
+    it('returns null when no exported channel carries a locale', function () {
+        expect(headerLocaleFor([]))->toBeNull()
+            ->and(headerLocaleFor(['default' => []]))->toBeNull();
+    });
+});
+
+describe('date value formatting', function () {
+    function formatDate(mixed $value, string $format): mixed
+    {
+        $exporter = app(Exporter::class);
+        $method = new ReflectionMethod($exporter, 'formatDateValue');
+        $method->setAccessible(true);
+
+        return $method->invoke($exporter, $value, $format);
+    }
+
+    it('formats a parseable date value using the configured format', function () {
+        expect(formatDate('2026-06-16', 'd/m/Y'))->toBe('16/06/2026');
+    });
+
+    it('formats a datetime value preserving the time portion', function () {
+        expect(formatDate('2026-06-16 14:05:09', 'Y-m-d H:i:s'))->toBe('2026-06-16 14:05:09');
+    });
+
+    it('returns the original value unchanged when it cannot be parsed as a date', function () {
+        expect(formatDate('not-a-date', 'Y-m-d'))->toBe('not-a-date');
+    });
+
+    it('returns empty and null values unchanged', function () {
+        expect(formatDate('', 'Y-m-d'))->toBe('')
+            ->and(formatDate(null, 'Y-m-d'))->toBeNull();
+    });
+});
+
+describe('use labels value resolution', function () {
+    function optionAttribute(string $type = 'select'): object
+    {
+        $option = fn (string $code, array $labels) => (object) [
+            'code'         => $code,
+            'translations' => collect($labels)->map(fn ($label, $locale) => (object) ['locale' => $locale, 'label' => $label])->values(),
+        ];
+
+        return (object) [
+            'type'    => $type,
+            'code'    => 'color',
+            'options' => collect([
+                $option('red', ['en_US' => 'Red', 'fr_FR' => 'Rouge']),
+                $option('blue', ['en_US' => 'Blue']),
+            ]),
+        ];
+    }
+
+    function resolveLabels(object $attribute, mixed $value, ?string $locale): mixed
+    {
+        $exporter = app(Exporter::class);
+        $method = new ReflectionMethod($exporter, 'resolveValueLabels');
+        $method->setAccessible(true);
+
+        return $method->invoke($exporter, $attribute, $value, $locale);
+    }
+
+    it('maps a select option code to its label in the row locale', function () {
+        expect(resolveLabels(optionAttribute('select'), 'red', 'fr_FR'))->toBe('Rouge');
+    });
+
+    it('maps each code of a multiselect value to its label', function () {
+        expect(resolveLabels(optionAttribute('multiselect'), ['red', 'blue'], 'en_US'))
+            ->toBe(['Red', 'Blue']);
+    });
+
+    it('falls back to the code when no label exists for that locale', function () {
+        expect(resolveLabels(optionAttribute('select'), 'blue', 'fr_FR'))->toBe('blue');
+    });
+
+    it('falls back to the code when the option code is unknown', function () {
+        expect(resolveLabels(optionAttribute('select'), 'green', 'en_US'))->toBe('green');
+    });
+
+    it('leaves non-option attribute types unchanged', function () {
+        $text = (object) ['type' => 'text', 'code' => 'name', 'options' => collect()];
+
+        expect(resolveLabels($text, 'some text', 'en_US'))->toBe('some text');
+    });
+
+    it('leaves empty values unchanged', function () {
+        expect(resolveLabels(optionAttribute('select'), '', 'en_US'))->toBe('')
+            ->and(resolveLabels(optionAttribute('select'), null, 'en_US'))->toBeNull();
+    });
+});

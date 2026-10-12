@@ -8,6 +8,9 @@ use Illuminate\Validation\Validator;
 use Symfony\Component\HttpFoundation\Response;
 use Webkul\AdminApi\ApiDataSource\Catalog\CategoryDataSource;
 use Webkul\AdminApi\Http\Controllers\API\ApiController;
+use Webkul\AdminApi\Http\Requests\Catalog\PartialUpdateCategoryRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\StoreCategoryRequest;
+use Webkul\AdminApi\Http\Requests\Catalog\UpdateCategoryRequest;
 use Webkul\Category\Repositories\CategoryFieldRepository;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Category\Validator\Catalog\CategoryValidator;
@@ -96,7 +99,7 @@ class CategoryController extends ApiController
     /**
      * Store a newly created resource in storage.
      */
-    public function store(): JsonResponse
+    public function store(StoreCategoryRequest $request): JsonResponse
     {
         $requestData = request()->only([
             'code',
@@ -104,7 +107,7 @@ class CategoryController extends ApiController
             'additional_data',
         ]);
 
-        $parentId = $this->getParentIdByCode($requestData['parent']);
+        $parentId = $this->getParentIdByCode($requestData['parent'] ?? null);
         unset($requestData['parent']);
         $requestData['parent_id'] = $parentId;
 
@@ -132,7 +135,7 @@ class CategoryController extends ApiController
     /**
      * Update the specified resource in storage.
      */
-    public function update(string $code): JsonResponse
+    public function update(UpdateCategoryRequest $request, string $code): JsonResponse
     {
         $category = $this->categoryRepository->findOneByField('code', $code);
         if (! $category) {
@@ -200,7 +203,7 @@ class CategoryController extends ApiController
     /**
      * Patch the resource.
      */
-    public function partialUpdate(string $code): JsonResponse
+    public function partialUpdate(PartialUpdateCategoryRequest $request, string $code): JsonResponse
     {
         $category = $this->categoryRepository->findOneByField('code', $code);
         if (! $category) {

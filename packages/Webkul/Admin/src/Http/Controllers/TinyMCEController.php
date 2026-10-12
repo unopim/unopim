@@ -3,7 +3,10 @@
 namespace Webkul\Admin\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Webkul\Admin\Http\Requests\TinyMCEUploadRequest;
 use Webkul\Core\Filesystem\FileStorer;
 
 class TinyMCEController extends Controller
@@ -23,9 +26,9 @@ class TinyMCEController extends Controller
     /**
      * Upload file from tinymce.
      */
-    public function upload(): JsonResponse
+    public function upload(TinyMCEUploadRequest $request): JsonResponse
     {
-        $media = $this->storeMedia();
+        $media = $this->storeMedia($request);
 
         if (! empty($media)) {
             return response()->json([
@@ -39,17 +42,23 @@ class TinyMCEController extends Controller
     /**
      * Store media.
      */
-    public function storeMedia(): array
+    public function storeMedia(?Request $request = null): array
     {
-        if (! request()->hasFile('file')) {
+        $request ??= request();
+
+        if (! $request->hasFile('file')) {
             return [];
         }
 
-        $path = $this->fileStorer->store(file: request()->file('file'), path: $this->storagePath);
+        $file = $request->file('file');
+
+        $name = Str::random(40).'.'.$file->getClientOriginalExtension();
+
+        $path = $this->fileStorer->storeAs(path: $this->storagePath, name: $name, file: $file);
 
         return [
             'file'      => $path,
-            'file_name' => request()->file('file')->getClientOriginalName(),
+            'file_name' => $name,
             'file_url'  => Storage::url($path),
         ];
     }

@@ -1,0 +1,28 @@
+includes:
+    - ./vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app
+        - packages/Webkul
+    level: 2
+    
+    treatPhpDocTypesAsCertain: false
+    
+    excludePaths:
+        - packages/*/vendor/*
+        - packages/*/tests/*
+        - packages/*/src/Database/Migration/*
+        - packages/*/src/Config/*
+        - packages/*/Config/*
+        - packages/*/src/Resources/*
+        - packages/Webkul/DebugBar/*
+
+    ignoreErrors:
+        # Eloquent magic (attributes, __call scopes) — removable once models carry @property docblocks
+        - "#Access to an undefined property#"
+        - "#Call to an undefined method#"
+        - "#has invalid type#"
+        # Concord proxy models and package facades resolved at runtime (larastan cannot see the magic)
+        - "#Call to an undefined static method Webkul\\\\.+::#"
+        - "#on an unknown class Webkul\\\\.+Proxy#"

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 290" width="200" height="290">
+  <rect width="200" height="290" fill="#ffffff" stroke="#e5e7eb" stroke-width="1"/>
+  <rect x="10" y="10" width="180" height="180" fill="#fff7ed" rx="4"/>
+  <path d="M 55 40 L 145 40 L 145 180 L 55 180 Z" fill="#ea580c" stroke="#0f172a" stroke-width="1" opacity="0.9"/>
+  <rect x="70" y="95" width="60" height="6" fill="#ffffff" opacity="0.6"/>
+  <rect x="70" y="105" width="45" height="4" fill="#ffffff" opacity="0.5"/>
+    <text x="100" y="215" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1f2937">Orchard Valley Orange</text>
+    <text x="100" y="229" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1f2937">Juice 1L — Family</text>
+    <text x="100" y="243" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" fill="#1f2937">Size</text>
+    <text x="100" y="270" text-anchor="middle" font-family="system-ui, sans-serif" font-size="10" font-weight="bold" fill="#475569">1.0L</text>
+  <text x="100" y="283" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#94a3b8">GS-JUICE-ORANGE-1L</text>
+</svg>

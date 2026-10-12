@@ -2,48 +2,52 @@
 
 namespace Webkul\Core\Models;
 
+use Illuminate\Database\Eloquent\Attributes\Appends;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use OwenIt\Auditing\Auditable;
-use OwenIt\Auditing\Contracts\Auditable as AuditableContract;
 use Symfony\Component\Intl\Currencies;
 use Webkul\Core\Contracts\Currency as CurrencyContract;
 use Webkul\Core\Database\Factories\CurrencyFactory;
+use Webkul\HistoryControl\Contracts\HistoryAuditable;
+use Webkul\HistoryControl\Traits\HistoryTrait;
 
-class Currency extends Model implements AuditableContract, CurrencyContract
+#[Appends([
+    'name',
+])]
+#[Fillable([
+    'code',
+    'symbol',
+    'decimal',
+    'status',
+])]
+class Currency extends Model implements CurrencyContract, HistoryAuditable
 {
-    use Auditable;
     use HasFactory;
+    use HistoryTrait;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
+     * @var array<int, string>
      */
-    protected $fillable = [
-        'code',
-        'symbol',
-        'decimal',
-        'status',
-    ];
+    protected array $historyTags = ['currency'];
 
-    /**
-     * Extra fields/properties that do not exist in the table and are added to the object
-     */
-    protected $appends = [
-        'name',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'status' => 'integer',
+        ];
+    }
 
     /**
      * Set currency code in capital
      */
-    public function setCodeAttribute($code): void
+    protected function code(): Attribute
     {
-        $this->attributes['code'] = strtoupper($code);
+        return Attribute::make(set: fn ($code): array => ['code' => strtoupper((string) $code)]);
     }
 
     /**
@@ -75,7 +79,7 @@ class Currency extends Model implements AuditableContract, CurrencyContract
      */
     public function isCurrencyBeingUsed(): bool
     {
-        return $this->channel()?->get()?->first()?->exists() ?? false;
+        return $this->channel()->exists();
     }
 
     /**
@@ -87,7 +91,7 @@ class Currency extends Model implements AuditableContract, CurrencyContract
             get: function (?string $value, array $attributes) {
                 try {
                     return Currencies::getName($attributes['code'], \Locale::getPrimaryLanguage(app()->getLocale()));
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     return $attributes['code'];
                 }
             }

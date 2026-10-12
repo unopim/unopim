@@ -9,14 +9,19 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Webkul\AiAgent\Chat\AgentRunner;
+use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\AiAgent\Chat\ChatContext;
+use Webkul\AiAgent\Chat\ChatUploadStore;
+use Webkul\AiAgent\Http\Requests\ChatRequest;
 use Webkul\MagicAI\Models\MagicAIPlatform;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ManagedPlatform;
+use Webkul\MagicAI\Support\ModelRecommender;
 
 /**
  * Handles AI chat messages from the global floating widget.
  *
- * Uses the AgentRunner (Prism-based tool calling) to let the AI
+ * Uses the AgentRunner (laravel/ai-based tool calling) to let the AI
  * autonomously decide which PIM operations to perform. The controller
  * is intentionally thin — all intelligence is in the tools.
  */
@@ -25,13 +30,16 @@ class ChatController extends Controller
     public function __construct(
         protected AgentRunner $agentRunner,
         protected MagicAIPlatformRepository $platformRepository,
+        protected ChatUploadStore $uploadStore,
     ) {}
 
     /**
      * Handle a chat message (text and/or images/files) — blocking JSON response.
      */
-    public function send(Request $request): JsonResponse
+    public function send(ChatRequest $request): JsonResponse
     {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
         $chatContext = $this->buildChatContext($request);
 
         if ($chatContext instanceof JsonResponse) {
@@ -52,12 +60,27 @@ class ChatController extends Controller
 
             return new JsonResponse($result);
         } catch (\Throwable $e) {
-            Log::error('AI Agent chat error', ['exception' => $e]);
+            $resolved = AiErrorResolver::resolve($e);
+            $rejectsImages = AiErrorResolver::rejectsImageInput($e);
+
+            if ($rejectsImages) {
+                $this->uploadStore->forgetImages($chatContext->uploadedImagePaths);
+            }
+
+            if ($resolved['is_known']) {
+                Log::warning('AI Agent chat provider error', [
+                    'type'    => $e::class,
+                    'message' => $e->getMessage(),
+                ]);
+            } else {
+                Log::error('AI Agent chat error', ['exception' => $e]);
+            }
 
             return new JsonResponse([
-                'reply'  => trans('ai-agent::app.common.error-generic'),
-                'action' => 'error',
-            ], 422);
+                'reply'          => $resolved['message'],
+                'action'         => 'error',
+                'discard_images' => $rejectsImages,
+            ], $resolved['is_known'] ? $resolved['status'] : 422);
         }
     }
 
@@ -66,8 +89,10 @@ class ChatController extends Controller
      *
      * Returns real-time progress: tool-call indicators, text chunks, and final result.
      */
-    public function stream(Request $request): StreamedResponse|JsonResponse
+    public function stream(ChatRequest $request): StreamedResponse|JsonResponse
     {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
         $chatContext = $this->buildChatContext($request);
 
         if ($chatContext instanceof JsonResponse) {
@@ -80,31 +105,8 @@ class ChatController extends Controller
     /**
      * Build ChatContext from request, or return error JsonResponse.
      */
-    protected function buildChatContext(Request $request): ChatContext|JsonResponse
+    protected function buildChatContext(ChatRequest $request): ChatContext|JsonResponse
     {
-        // Decode history from JSON string when sent via FormData
-        if (is_string($request->input('history'))) {
-            $request->merge(['history' => json_decode($request->input('history'), true) ?: []]);
-        }
-
-        $request->validate([
-            'message'     => 'required_without_all:images,files|nullable|string|max:50000',
-            'images'      => 'nullable|array|max:5',
-            'images.*'    => 'image|mimes:jpeg,png,webp,gif|max:10240',
-            'files'       => 'nullable|array|max:3',
-            'files.*'     => ['file', 'max:20480', function (string $attribute, $value, $fail) {
-                $allowed = ['csv', 'xlsx', 'xls'];
-                $ext = strtolower($value->getClientOriginalExtension());
-                if (! in_array($ext, $allowed, true)) {
-                    $fail(trans('ai-agent::app.common.invalid-file-type', ['types' => implode(', ', $allowed)]));
-                }
-            }],
-            'platform_id' => 'nullable|integer',
-            'model'       => 'nullable|string|max:200',
-            'context'     => 'nullable|array',
-            'history'     => 'nullable|array',
-        ]);
-
         // Check if Agentic PIM is enabled
         $agenticEnabled = core()->getConfigData('general.magic_ai.agentic_pim.enabled');
 
@@ -118,7 +120,7 @@ class ChatController extends Controller
         // Check daily token budget
         $budgetError = $this->checkTokenBudget();
 
-        if ($budgetError) {
+        if ($budgetError instanceof JsonResponse) {
             return $budgetError;
         }
 
@@ -127,76 +129,68 @@ class ChatController extends Controller
             (int) $request->input('platform_id', 0),
         );
 
-        if (! $platform) {
+        if (! $platform instanceof MagicAIPlatform) {
             return new JsonResponse([
                 'reply'  => trans('ai-agent::app.common.no-platform'),
                 'action' => 'error',
             ], 422);
         }
 
-        $model = (string) $request->input('model', '')
-            ?: ($platform->model_list[0] ?? 'gpt-4o');
+        // Verify the platform's API key is decryptable before proceeding.
+        // If the APP_KEY changed after the platform was saved, every access
+        // to api_key throws DecryptException — catch it early with a clear message.
+        $apiKeyError = $platform->apiKeyError();
 
-        // Store uploaded images — persist across conversation turns via session.
-        // The image is uploaded in the first message, but the user may confirm
-        // in a follow-up message ("Yes, proceed") which has no image attached.
-        $imagePaths = [];
-        foreach ($request->file('images', []) as $image) {
-            $stored = $image->store('ai-agent/images', 'public');
-            $imagePaths[] = storage_path('app/public/'.$stored);
+        if ($apiKeyError) {
+            return new JsonResponse([
+                'reply'  => trans('ai-agent::app.common.error-api-key-corrupted', ['error' => $apiKeyError]),
+                'action' => 'error',
+            ], 422);
         }
 
-        if (! empty($imagePaths)) {
-            // New images uploaded — save to session
-            session(['ai_agent_image_paths' => $imagePaths]);
-            session(['ai_agent_image_uploaded_at' => now()->timestamp]);
-        } else {
-            // No new images — restore from session if still fresh (< 10 minutes)
-            $uploadedAt = session('ai_agent_image_uploaded_at', 0);
-            $isFresh = (now()->timestamp - $uploadedAt) < 600;
+        // When the widget doesn't pass an explicit model, pick a text-capable
+        // one from the platform's list. The previous `model_list[0]` fallback
+        // would select whichever model sorted first, so providers like OpenAI
+        // that expose image-only entries (e.g. chatgpt-image-latest, dall-e-*)
+        // could land on a model the text agent cannot call.
+        $model = (string) resolve(ManagedPlatform::class)->resolveModel(
+            $platform,
+            (string) $request->input('model', '') ?: (ModelRecommender::pickTextModel($platform->model_list ?? []) ?? 'gpt-4o'),
+        );
 
-            if ($isFresh) {
-                $sessionImages = session('ai_agent_image_paths', []);
-                $imagePaths = array_filter($sessionImages, fn ($p) => file_exists($p));
-            }
-        }
-
-        // Store uploaded files — same session persistence pattern
-        $filePaths = [];
-        foreach ($request->file('files', []) as $file) {
-            $stored = $file->store('ai-agent/files', 'public');
-            $filePaths[] = storage_path('app/public/'.$stored);
-        }
-
-        if (! empty($filePaths)) {
-            session(['ai_agent_file_paths' => $filePaths]);
-            session(['ai_agent_file_uploaded_at' => now()->timestamp]);
-        } elseif (empty($filePaths)) {
-            $uploadedAt = session('ai_agent_file_uploaded_at', 0);
-
-            if ((now()->timestamp - $uploadedAt) < 600) {
-                $sessionFiles = session('ai_agent_file_paths', []);
-                $filePaths = array_filter($sessionFiles, fn ($p) => file_exists($p));
-            }
-        }
+        $imagePaths = $this->uploadStore->images($request->file('images', []), $request->conversationId());
+        $filePaths = $this->uploadStore->files($request->file('files', []), $request->conversationId());
 
         // Build context
         $context = $request->input('context', []);
         $message = $request->input('message', '');
 
+        // Catalog scope: widget-provided codes win, then the framework's
+        // resolution (request input > admin catalog scope > default channel).
+        $locale = $context['locale'] ?? null;
+        $channel = $context['channel'] ?? null;
+
+        if (! core()->isValidScopeCode($locale)) {
+            $locale = null;
+        }
+
+        if (! core()->isValidScopeCode($channel)) {
+            $channel = null;
+        }
+
         // If no message but files/images attached, provide a default instruction
-        if (empty($message) && (! empty($imagePaths) || ! empty($filePaths))) {
+        if (empty($message) && ($imagePaths !== [] || $filePaths !== [])) {
             $message = trans('ai-agent::app.common.process-attached-files');
         }
 
         return new ChatContext(
             message: $message,
             history: $request->input('history', []),
-            productId: ! empty($context['product_id']) ? (int) $context['product_id'] : null,
+            productId: empty($context['product_id']) ? null : (int) $context['product_id'],
             productSku: $context['product_sku'] ?? null,
             productName: $context['product_name'] ?? null,
-            locale: app()->getLocale() ?: 'en_US',
-            channel: 'default',
+            locale: $locale ?: core()->getRequestedLocaleCode(),
+            channel: $channel ?: core()->getRequestedChannelCode(),
             platform: $platform,
             model: $model,
             uploadedImagePaths: $imagePaths,
@@ -211,6 +205,24 @@ class ChatController extends Controller
      */
     protected function checkTokenBudget(): ?JsonResponse
     {
+        $perUserBudget = (int) (core()->getConfigData('general.magic_ai.agentic_pim.daily_token_budget_per_user') ?: 0);
+
+        if ($perUserBudget > 0) {
+            $todayUsage = (int) DB::table('ai_agent_token_usage')
+                ->where('user_id', auth()->guard('admin')->id())
+                ->where('usage_date', now()->toDateString())
+                ->sum('tokens_used');
+
+            if ($todayUsage >= $perUserBudget) {
+                return new JsonResponse([
+                    'reply'  => trans('ai-agent::app.common.token-budget-exhausted', ['used' => $todayUsage, 'budget' => $perUserBudget]),
+                    'action' => 'error',
+                ], 429);
+            }
+
+            return null;
+        }
+
         $configValue = core()->getConfigData('general.magic_ai.agentic_pim.daily_token_budget');
 
         // Default to 0 (unlimited) if not explicitly configured
@@ -244,7 +256,7 @@ class ChatController extends Controller
             return;
         }
 
-        DB::transaction(function () use ($context, $tokensUsed) {
+        DB::transaction(function () use ($context, $tokensUsed): void {
             $row = DB::table('ai_agent_token_usage')
                 ->where('user_id', $context->user?->id)
                 ->where('usage_date', now()->toDateString())
@@ -284,7 +296,7 @@ class ChatController extends Controller
         }
 
         // Try default platform
-        $platform = $this->platformRepository->getDefault();
+        $platform = $this->platformRepository->getActiveDefault();
 
         if ($platform) {
             return $platform;
@@ -297,6 +309,62 @@ class ChatController extends Controller
     }
 
     /**
+     * Store user feedback (like/dislike) for a chat message.
+     */
+    public function rate(Request $request): JsonResponse
+    {
+        abort_unless(bouncer()->hasPermission('ai-agent'), 403, trans('admin::app.common.unauthorized'));
+
+        $request->validate([
+            'rating'  => ['required', 'in:helpful,not_helpful'],
+            'message' => ['nullable', 'string', 'max:5000'],
+        ]);
+
+        $user = auth()->guard('admin')->user();
+        $rating = $request->input('rating');
+        $messageText = $request->input('message', '');
+        $ratingLabel = $rating === 'helpful' ? 'positive' : 'negative';
+
+        DB::table('ai_agent_memories')->insert([
+            'scope'      => 'catalog',
+            'key'        => "message_feedback:{$ratingLabel}",
+            'user_id'    => $user?->id,
+            'value'      => mb_substr((string) $messageText, 0, 500),
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        if ($rating === 'helpful' && ! empty($messageText)) {
+            $existing = DB::table('ai_agent_memories')
+                ->where('scope', 'catalog')
+                ->where('key', 'content_style_preference')
+                ->where('user_id', $user?->id)
+                ->first();
+
+            $hint = 'User found this response helpful: '.mb_substr((string) $messageText, 0, 200);
+
+            if ($existing) {
+                $styleHints = mb_substr($existing->value.'; '.$hint, -500);
+                DB::table('ai_agent_memories')->where('id', $existing->id)->update([
+                    'value'      => $styleHints,
+                    'updated_at' => now(),
+                ]);
+            } else {
+                DB::table('ai_agent_memories')->insert([
+                    'scope'      => 'catalog',
+                    'key'        => 'content_style_preference',
+                    'user_id'    => $user?->id,
+                    'value'      => $hint,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
+        }
+
+        return new JsonResponse(['success' => true]);
+    }
+
+    /**
      * Return the Magic AI configuration info for the chat widget header.
      */
     public function magicAiConfig(): JsonResponse
@@ -305,14 +373,16 @@ class ChatController extends Controller
         $models = (string) (core()->getConfigData('general.magic_ai.settings.api_model') ?? '');
         $enabled = (bool) core()->getConfigData('general.magic_ai.settings.enabled');
         $agenticEnabled = (bool) core()->getConfigData('general.magic_ai.agentic_pim.enabled');
-        $model = trim(explode(',', $models)[0]);
+
+        $modelList = array_values(array_filter(array_map(trim(...), explode(',', $models))));
+        $model = ModelRecommender::pickTextModel($modelList) ?? '';
 
         return new JsonResponse([
             'enabled'         => $enabled,
             'agentic_enabled' => $agenticEnabled,
             'platform'        => $platform,
             'model'           => $model ?: ucfirst($platform),
-            'label'           => $model ? $model.' ('.ucfirst($platform).')' : ucfirst($platform),
+            'label'           => $model !== '' && $model !== '0' ? $model.' ('.ucfirst($platform).')' : ucfirst($platform),
         ]);
     }
 }

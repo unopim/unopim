@@ -9,6 +9,7 @@ use Webkul\DataTransfer\Contracts\JobTrackBatch as JobTrackBatchContract;
 use Webkul\DataTransfer\Helpers\Export;
 use Webkul\DataTransfer\Helpers\Exporters\AbstractExporter;
 use Webkul\DataTransfer\Helpers\Formatters\EscapeFormulaOperators;
+use Webkul\DataTransfer\Helpers\Formatters\ScopeFilterValue;
 use Webkul\DataTransfer\Jobs\Export\File\FlatItemBuffer as FileExportFileBuffer;
 use Webkul\DataTransfer\Repositories\JobTrackBatchRepository;
 use Webkul\Product\Models\ProductProxy;
@@ -22,8 +23,6 @@ class Exporter extends AbstractExporter
 
     /**
      * Create a new instance.
-     *
-     * @return void
      */
     public function __construct(
         protected JobTrackBatchRepository $exportBatchRepository,
@@ -35,10 +34,8 @@ class Exporter extends AbstractExporter
 
     /**
      * Initializes the channels and locales for the export process.
-     *
-     * @return void
      */
-    public function initilize()
+    public function initilize(): void
     {
         $this->categoryFields = $this->categoryFieldRepository->getActiveCategoryFields();
         $this->initializeFileBuffer();
@@ -76,32 +73,20 @@ class Exporter extends AbstractExporter
 
     /**
      * Prepare categories from current batch
+     *
+     * @return array<int, non-empty-array>
      */
-
-    public function prepareCategories(JobTrackBatchContract $batch, mixed $filePath)
+    public function prepareCategories(JobTrackBatchContract $batch, mixed $filePath): array
     {
-        $locales = core()->getAllActiveLocales()->pluck('code');
-
+        $locales = $this->getExportLocales();
         $categories = [];
-
-        $filters = $this->getFilters();
-
-        $selectedLocales = (isset($filters['locale']) && is_array($filters['locale'])) 
-        ? $filters['locale'] 
-        : [];
-
         foreach ($batch->data as $rowData) {
             $productCounts = $this->productCountsByCategory($rowData['code']);
 
             foreach ($locales as $locale) {
-
-                if (! empty($selectedLocales) && ! in_array($locale, $selectedLocales)) {
-                    continue;
-                }
-
                 $commonFields = $this->getCommonFields($rowData);
                 $localeSpecificFields = $this->getLocaleSpecificFields($rowData, $locale);
-
+                // Merge common and locale-specific fields before array_merge
                 $mergedFields = array_merge($commonFields, $localeSpecificFields);
                 $additionalData = $this->setFieldsAdditionalData($mergedFields, $filePath);
 
@@ -123,23 +108,38 @@ class Exporter extends AbstractExporter
     }
 
     /**
-     * Sets category field values for a product. If an category field is not present in the given values array,
+     * Active locale codes narrowed to the profile's locale filter, if any.
      *
-     * @param  array  $values
-     * @return array
+     * @return array<int, string>
      */
-    protected function setFieldsAdditionalData(array $additionalData, $filePath, $options = [])
+    protected function getExportLocales(): array
+    {
+        $locales = core()->getAllActiveLocales()->pluck('code')->all();
+
+        $selectedLocales = ScopeFilterValue::toCodes($this->getFilters()['locales'] ?? null);
+
+        if ($selectedLocales === []) {
+            return $locales;
+        }
+
+        return array_values(array_intersect($locales, $selectedLocales));
+    }
+
+    /**
+     * Sets category field values for a product. If an category field is not present in the given values array,
+     */
+    protected function setFieldsAdditionalData(array $additionalData, $filePath, $options = []): array
     {
         $fieldValues = [];
         $filters = $this->getFilters();
-        $withMedia = (bool) $filters['with_media'];
+        $withMedia = (bool) ($filters['with_media'] ?? false);
 
-        foreach ($this->categoryFields as $key => $field) {
+        foreach ($this->categoryFields as $field) {
             $fieldValues[$field->code] = $additionalData[$field->code] ?? null;
 
             if ($withMedia && in_array($field->type, [FieldValidator::FILE_FIELD_TYPE, FieldValidator::IMAGE_FIELD_TYPE])) {
                 $exitingFilePath = $additionalData[$field->code] ?? null;
-                if ($exitingFilePath && ! empty($exitingFilePath)) {
+                if ($exitingFilePath) {
                     $newfilePath = $filePath->getTemporaryPath().'/'.$exitingFilePath;
                     $this->copyMedia($exitingFilePath, $newfilePath);
                 }
@@ -163,7 +163,7 @@ class Exporter extends AbstractExporter
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('common', $data['additional_data'])) {
+        if (! array_key_exists('common', $data['additional_data'])) {
             return [];
         }
 
@@ -182,7 +182,7 @@ class Exporter extends AbstractExporter
             return [];
         }
 
-        if (! array_key_exists('additional_data', $data) || ! array_key_exists('locale_specific', $data['additional_data'])) {
+        if (! array_key_exists('locale_specific', $data['additional_data'])) {
             return [];
         }
 

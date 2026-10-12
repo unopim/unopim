@@ -43,19 +43,23 @@ class EnrichmentService
      */
     public function enrich(ImageProductContext $ctx, int $credentialId = 0, ?AiApiClient $apiClient = null, array $options = []): ImageProductContext
     {
+        // Check completeness against locale-specific data only.  Merging with
+        // $ctx->enrichment (previously generated fields from this same run) is
+        // still correct; the caller must NOT merge $common into $ctx->attributes
+        // so that content from another locale does not suppress generation here.
         $existing = array_merge($ctx->enrichment, $ctx->attributes);
 
         $missing = array_filter(
             self::TARGETS,
-            fn (string $key) => empty($existing[$key]),
+            fn (string $key): bool => empty($existing[$key]),
         );
 
-        if (empty($missing)) {
+        if ($missing === []) {
             return $ctx;
         }
 
         // Use pre-configured client if provided
-        if ($apiClient) {
+        if ($apiClient instanceof AiApiClient) {
             $this->apiClient = $apiClient;
         } elseif ($credentialId > 0) {
             $credential = $this->credentialRepository->findOrFail($credentialId);
@@ -68,8 +72,12 @@ class EnrichmentService
 
         $locale = $options['locale'] ?? 'en';
         $instruction = $options['instruction'] ?? '';
+        // $common holds product-level fields (e.g. English content) passed as
+        // reference so the AI can translate/adapt, without polluting the
+        // completeness check above.
+        $common = $options['common'] ?? [];
 
-        $messages = $this->buildMessages($existing, array_values($missing), $locale, $instruction, $ctx);
+        $messages = $this->buildMessages($existing, array_values($missing), $locale, $instruction, $ctx, $common);
 
         $response = $this->apiClient->chat(messages: $messages, maxTokens: 2048, temperature: 0.6);
         $generated = $this->parseResponse($response['content'] ?? '');
@@ -105,12 +113,17 @@ class EnrichmentService
         string $locale,
         string $instruction,
         ImageProductContext $ctx,
+        array $common = [],
     ): array {
-        $existingJson = json_encode($existing, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        // Merge common (product-level) data with locale-specific data so the AI
+        // has full product context (e.g. English copy to translate from) while
+        // the completeness check that determined $missing used locale-only data.
+        $contextData = $common === [] ? $existing : array_merge($common, $existing);
+        $existingJson = json_encode($contextData, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         $targetKeys = json_encode($missing);
 
         $extra = '';
-        if (! empty($instruction)) {
+        if ($instruction !== '' && $instruction !== '0') {
             $extra = "\n\nAdditional instructions from the user:\n$instruction";
         }
 
@@ -176,7 +189,7 @@ class EnrichmentService
         $domain = (string) (core()->getConfigData('general.magic_ai.settings.api_domain') ?? '');
         $model = trim(explode(',', $models)[0]);
 
-        if (! $domain) {
+        if ($domain === '' || $domain === '0') {
             $domain = match ($platform) {
                 'openai' => 'https://api.openai.com/v1',
                 'gemini' => 'https://generativelanguage.googleapis.com',

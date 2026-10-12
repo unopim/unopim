@@ -1,0 +1,123 @@
+<?php
+
+use Webkul\AiAgent\Services\EnrichmentService;
+use Webkul\AiAgent\Services\ImageToProductService;
+use Webkul\AiAgent\Services\ProductWriterService;
+use Webkul\AiAgent\Services\VisionService;
+
+describe('Magic AI permission guard (Issue #647)', function () {
+
+    it('translation controller methods check ai-agent permission', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIController.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent')");
+    });
+
+    it('translate button is gated by ai-agent permission in the view', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/components/products/dynamic-attribute-fields.blade.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent')");
+    });
+
+    it('translate-action menu item is gated by ai-agent permission in the view', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/catalog/products/edit/more-actions/index.blade.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent')");
+    });
+
+    it('More button dropdown itself is hidden when no actions are available', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/catalog/products/edit/more-actions/index.blade.php')
+        );
+
+        expect($source)->toMatch('/@if\s*\(\s*\$hasTranslateAction\s*\)\s*\R\s*<v-custom-dropdown><\/v-custom-dropdown>\s*\R\s*@endif/');
+    });
+
+    it('image generation enabled flag checks ai-agent permission in the images component', function () {
+        $imagesSource = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/components/media/image.blade.php')
+        );
+
+        expect($imagesSource)->toContain("bouncer()->hasPermission('ai-agent')");
+    });
+
+    it('gallery component image generation enabled flag checks ai-agent permission', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/components/media/gallery.blade.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent')");
+    });
+
+    it('tinymce content generation enabled flag checks ai-agent permission', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/components/tinymce/index.blade.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent')");
+    });
+
+    it('gallery component does not use the Boolean-string JS pattern for ai enabled', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/components/media/gallery.blade.php')
+        );
+
+        expect($source)->not->toContain("Boolean(\"{{ core()->getConfigData('general.magic_ai.image_generation.enabled') }}\")");
+    });
+
+    it('tinymce component does not use the Boolean-string JS pattern for ai enabled', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Resources/views/components/tinymce/index.blade.php')
+        );
+
+        expect($source)->not->toContain("Boolean(\"{{ core()->getConfigData('general.magic_ai.settings.enabled') }}\")");
+    });
+
+    it('content generation controller methods are individually guarded', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIController.php')
+        );
+
+        $guardCount = substr_count($source, "bouncer()->hasPermission('ai-agent')");
+
+        // content, platforms, suggestionValues, defaultPrompt + the 6 translation methods = at least 10 guards
+        expect($guardCount)->toBeGreaterThanOrEqual(10);
+    });
+
+    it('guards platform administration in the controller', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAIPlatformController.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent.platform')");
+    });
+
+    it('guards system prompt administration in the controller', function () {
+        $source = file_get_contents(
+            base_path('packages/Webkul/Admin/src/Http/Controllers/MagicAI/MagicAISystemPromptController.php')
+        );
+
+        expect($source)->toContain("bouncer()->hasPermission('ai-agent.system-prompt')");
+    });
+
+    it('isolates mutable AI services between request scopes', function (string $service) {
+        $firstScopeInstance = app($service);
+
+        expect(app($service))->toBe($firstScopeInstance);
+
+        app()->forgetScopedInstances();
+
+        expect(app($service))->not->toBe($firstScopeInstance);
+    })->with([
+        VisionService::class,
+        EnrichmentService::class,
+        ProductWriterService::class,
+        ImageToProductService::class,
+    ]);
+});

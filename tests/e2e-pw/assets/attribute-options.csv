@@ -1,0 +1,10 @@
+attribute_code,code,locale,label,sort_order,swatch_value
+color,Red,en_US,Red,1,
+color,Green,en_US,Green,2,
+color,Yellow,en_US,Yellow,3,
+color,Black,en_US,Black,4,
+color,White,en_US,White,5,
+size,S,en_US,S,1,
+size,M,en_US,M,2,
+size,L,en_US,L,3,
+size,XL,en_US,XL,4,

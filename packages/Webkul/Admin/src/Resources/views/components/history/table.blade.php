@@ -1,13 +1,13 @@
 @props(['isMultiRow' => false])
 
-<v-datagrid-table>
+<v-history-table>
     {{ $slot }}
-</v-datagrid-table>
+</v-history-table>
 
 @pushOnce('scripts')
     <script
         type="text/x-template"
-        id="v-datagrid-table-template"
+        id="v-history-table-template"
     >
         <div class="w-full">
             <div class="table-responsive grid w-full box-shadow rounded bg-white dark:bg-cherry-900 overflow-hidden">
@@ -36,8 +36,8 @@
                                     <span
                                         class="icon-checkbox-normal cursor-pointer rounded-md text-2xl"
                                         :class="[
-                                            $parent.applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-violet-700 ' : (
-                                                $parent.applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-violet-700' : ''
+                                            $parent.applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-primary-700 ' : (
+                                                $parent.applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-primary-700' : ''
                                             ),
                                         ]"
                                     >
@@ -48,6 +48,7 @@
                             <!-- Columns -->
                             <p
                                 v-for="column in $parent.available.columns"
+                                :key="column.index"
                                 class="flex gap-1.5 items-center break-words"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
@@ -62,7 +63,7 @@
                             </p>
 
                             <!-- Actions -->
-                             
+
                             <div
                                 class="flex gap-2.5 items-center justify-end select-none"
                             >
@@ -85,8 +86,9 @@
                     <template v-else>
                         <template v-if="$parent.available.records.length">
                             <div
-                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 dark:hover:bg-cherry-800"
+                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-primary-50 dark:hover:bg-cherry-800"
                                 v-for="record in $parent.available.records"
+                                :key="record[$parent.available.meta.primary_column]"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(0, 1fr))`"
                             >
                                 <!-- Mass Actions -->
@@ -99,10 +101,9 @@
                                             :value="record[$parent.available.meta.primary_column]"
                                             :id="`mass_action_select_record_${record[$parent.available.meta.primary_column]}`"
                                             v-model="$parent.applied.massActions.indices"
-                                            @change="$parent.setCurrentSelectionMode"
                                         >
 
-                                        <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-violet-700 cursor-pointer rounded-md text-2xl">
+                                        <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-primary-700 cursor-pointer rounded-md text-2xl">
                                         </span>
                                     </label>
                                 </p>
@@ -111,21 +112,13 @@
                                 <p
                                     class="break-words"
                                     v-for="column in $parent.available.columns"
+                                    :key="column.index"
                                     v-html="record[column.index]"
-                                    v-if="record.is_closure"
-                                >
-                                </p>
-
-                                <p
-                                    class="break-words"
-                                    v-for="column in $parent.available.columns"
-                                    v-html="record[column.index]"
-                                    v-else
                                 >
                                 </p>
 
                                 <!-- Actions -->
-                             
+
                                 <div
                                     class="flex gap-2.5 items-center justify-end select-none"
                                 >
@@ -134,10 +127,12 @@
                                         v-if="$parent.available.actions.length"
                                     >
                                         <span
-                                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                             :class="action.icon"
                                             v-text="!action.icon ? action.title : ''"
                                             v-for="action in record.actions"
+                                            :key="action.index"
+                                            :title="action.title ?? ''"
                                             @click="$parent.performAction(action)"
                                         >
                                         </span>
@@ -160,8 +155,8 @@
     </script>
 
     <script type="module">
-        app.component('v-datagrid-table', {
-            template: '#v-datagrid-table-template',
+        app.component('v-history-table', {
+            template: '#v-history-table-template',
 
             computed: {
                 gridsCount() {

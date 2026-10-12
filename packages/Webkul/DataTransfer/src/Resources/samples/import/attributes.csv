@@ -1,0 +1,7 @@
+code,type,locale,name,position,enable_wysiwyg,swatch_type,is_required,is_unique,validation,regex_pattern,value_per_locale,value_per_channel,is_filterable,ai_translate
+material,select,en_US,Material,30,0,,0,0,,,0,0,1,0
+warranty_period,text,en_US,"Warranty Period",31,0,,0,0,numeric,,0,0,0,0
+care_instructions,textarea,en_US,"Care Instructions",32,1,,0,0,,,1,0,0,1
+is_bestseller,boolean,en_US,Bestseller,33,0,,0,0,,,0,1,1,0
+launch_date,date,en_US,"Launch Date",34,0,,0,0,,,0,1,0,0
+datasheet,file,en_US,Datasheet,35,0,,0,0,,,0,0,0,0

@@ -34,6 +34,6 @@
         :placeholder="trans('admin::app.configuration.platform.fields.use-default')"
         track-by="id"
         label-by="label"
-        @input="document.dispatchEvent(new CustomEvent('magic-ai-translation-platform-changed', { detail: $event }))"
+        @input="document.dispatchEvent(new CustomEvent('magic-ai-platform-changed:general_magic_ai_translation_ai_platform', { detail: $event }))"
     />
 </x-admin::form.control-group>

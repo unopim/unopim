@@ -1,0 +1,4 @@
+# Deprecated — kept so existing commands keep working. The pre-built image
+# stack is now compose.yaml, which `docker compose up` resolves on its own.
+include:
+  - compose.yaml

@@ -377,6 +377,73 @@ it('should return 404 for non-existent platform set default', function () {
         ->assertNotFound();
 });
 
+it('should return only image-capable models when purpose is image_generation', function () {
+    MagicAIPlatform::query()->delete();
+
+    MagicAIPlatform::create([
+        'label'      => 'OpenAI Platform',
+        'provider'   => 'openai',
+        'models'     => 'gpt-4o,dall-e-3,gpt-image-1,gpt-5.4',
+        'is_default' => true,
+        'status'     => true,
+    ]);
+
+    $response = $this->getJson(route('admin.magic_ai.platforms', ['purpose' => 'image_generation']))
+        ->assertOk();
+
+    $platforms = $response->json('platforms');
+
+    $this->assertNotEmpty($platforms);
+
+    $models = $platforms[0]['models'];
+
+    $this->assertContains('dall-e-3', $models);
+    $this->assertContains('gpt-image-1', $models);
+    $this->assertNotContains('gpt-4o', $models);
+    $this->assertNotContains('gpt-5.4', $models);
+});
+
+it('should exclude platforms without image models when purpose is image_generation', function () {
+    MagicAIPlatform::query()->delete();
+
+    MagicAIPlatform::create([
+        'label'      => 'Anthropic Platform',
+        'provider'   => 'anthropic',
+        'models'     => 'claude-sonnet-4-20250514,claude-haiku-4-20250414',
+        'is_default' => true,
+        'status'     => true,
+    ]);
+
+    $response = $this->getJson(route('admin.magic_ai.platforms', ['purpose' => 'image_generation']))
+        ->assertOk();
+
+    $platforms = $response->json('platforms');
+
+    $this->assertEmpty($platforms);
+});
+
+it('should return all models when no purpose param is provided', function () {
+    MagicAIPlatform::query()->delete();
+
+    MagicAIPlatform::create([
+        'label'      => 'OpenAI Platform',
+        'provider'   => 'openai',
+        'models'     => 'gpt-4o,dall-e-3,gpt-image-1',
+        'is_default' => true,
+        'status'     => true,
+    ]);
+
+    $response = $this->getJson(route('admin.magic_ai.platforms'))
+        ->assertOk();
+
+    $platforms = $response->json('platforms');
+    $models = $platforms[0]['models'];
+
+    $this->assertContains('gpt-4o', $models);
+    $this->assertContains('dall-e-3', $models);
+    $this->assertContains('gpt-image-1', $models);
+});
+
 it('should set status to false on update when status is not provided', function () {
     $platform = MagicAIPlatform::create([
         'label'    => 'Status Toggle Test',

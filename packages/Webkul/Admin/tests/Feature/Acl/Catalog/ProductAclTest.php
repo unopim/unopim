@@ -1,12 +1,13 @@
 <?php
 
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 it('should not display the product list if does not have permission', function () {
     $this->loginWithPermissions();
 
     $this->get(route('admin.catalog.products.index'))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should display the product list if have permission', function () {
@@ -21,7 +22,7 @@ it('should not be able to create a product if does not have permission', functio
     $this->loginWithPermissions(permissions: ['catalog', 'catalog.products']);
 
     $this->post(route('admin.catalog.products.store'), [])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should be able to create a product if has permission', function () {
@@ -29,7 +30,7 @@ it('should be able to create a product if has permission', function () {
 
     $data = Product::factory()->definition();
 
-    $data['type'] = 'simple';
+    $data['type'] = ProductType::Simple->value;
 
     $this->post(route('admin.catalog.products.store', $data))
         ->assertOk()
@@ -43,7 +44,7 @@ it('should not be able to copy a product if does not have permission', function 
     $product = Product::factory()->create();
 
     $this->post(route('admin.catalog.products.copy', ['id' => $product->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should be able to copy a product if has permission', function () {
@@ -64,7 +65,7 @@ it('should not be able to edit a product if does not have permission', function 
     $product = Product::factory()->create();
 
     $this->get(route('admin.catalog.products.edit', ['id' => $product->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should be able to edit a product if has permission', function () {
@@ -82,7 +83,7 @@ it('should not be able to delete a product if does not have permission', functio
     $product = Product::factory()->create();
 
     $this->delete(route('admin.catalog.products.delete', ['id' => $product->id]))
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     $this->assertDatabaseHas($this->getFullTableName(Product::class), ['id' => $product->id]);
 });
@@ -104,7 +105,7 @@ it('should not be able to mass update products if does not have permission', fun
     $products = Product::factory()->simple()->createMany(2);
 
     $this->post(route('admin.catalog.products.mass_update'), ['indices' => $products->pluck('id')->toArray(), 'value' => true])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 });
 
 it('should be able to mass update products if has permission', function () {
@@ -128,7 +129,7 @@ it('should not be able to mass delete products if does not have permission', fun
     $productIds = Product::factory()->simple()->createMany(2)->pluck('id')->toArray();
 
     $this->post(route('admin.catalog.products.mass_delete'), ['indices' => $productIds])
-        ->assertSeeText('Unauthorized');
+        ->assertStatus(403);
 
     foreach ($productIds as $id) {
         $this->assertDatabaseHas($this->getFullTableName(Product::class), ['id' => $id]);

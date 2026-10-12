@@ -18,11 +18,14 @@
 
                     <template v-else>
                         <div
-                            class="row grid gap-2.5 min-h-[47px] px-4 py-2.5 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 bg-violet-50 dark:bg-cherry-900 font-semibold items-center"
+                            class="row grid gap-2.5 min-h-[47px] px-4 py-2.5 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 bg-primary-50 dark:bg-cherry-800 font-semibold items-center"
                             :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
                         >
                             <!-- Mass Actions -->
-                            <p v-if="$parent.available.massActions.length">
+                            <p
+                                v-if="$parent.available.massActions.length"
+                                class="flex items-center gap-1"
+                            >
                                 <label for="mass_action_select_all_records">
                                     <input
                                         type="checkbox"
@@ -36,19 +39,68 @@
                                     <span
                                         class="icon-checkbox-normal cursor-pointer rounded-md text-2xl"
                                         :class="[
-                                            $parent.applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-violet-700 ' : (
-                                                $parent.applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-violet-700' : ''
+                                            $parent.applied.massActions.meta.mode === 'all' ? 'peer-checked:icon-checkbox-check peer-checked:text-primary-700 ' : (
+                                                $parent.applied.massActions.meta.mode === 'partial' ? 'peer-checked:icon-checkbox-partial peer-checked:text-primary-700' : ''
                                             ),
                                         ]"
                                     >
                                     </span>
                                 </label>
+
+                                {{--
+                                    Selecting the current page is the checkbox's own job. This dropdown only
+                                    adds the cross-page actions, so it appears solely when the result set spans
+                                    more than one page (and the grid allows selecting all).
+                                --}}
+                                <x-admin::dropdown
+                                    position="bottom-left"
+                                    v-if="$parent.available.meta.select_all_enabled !== false && $parent.available.meta.last_page > 1"
+                                >
+                                    <x-slot:toggle>
+                                        <button
+                                            type="button"
+                                            class="icon-chevron-down cursor-pointer rounded-md text-xl leading-none text-gray-500 transition-all hover:text-primary-600 dark:text-gray-400 dark:hover:text-white"
+                                            :aria-label="'@lang('admin::app.components.datagrid.toolbar.selection-options')'"
+                                        >
+                                        </button>
+                                    </x-slot>
+
+                                    <x-slot:menu class="!py-2 min-w-[180px]">
+                                        <x-admin::dropdown.menu.item
+                                            ::class="$parent.isSelectingAllMatching ? 'pointer-events-none opacity-60' : ''"
+                                            @click="$parent.selectAllMatching()"
+                                        >
+                                            <span class="flex items-center gap-2">
+                                                <span
+                                                    class="text-lg text-primary-600"
+                                                    :class="$parent.isSelectingAllMatching ? 'icon-loader animate-spin' : 'icon-select-all'"
+                                                >
+                                                </span>
+
+                                                @{{ @json(trans('admin::app.components.datagrid.toolbar.select-all-matching')).replace(':total', $parent.available.meta.total) }}
+                                            </span>
+                                        </x-admin::dropdown.menu.item>
+
+                                        <x-admin::dropdown.menu.item
+                                            v-if="$parent.applied.massActions.indices.length"
+                                            @click="$parent.clearMassSelection()"
+                                        >
+                                            <span class="flex items-center gap-2">
+                                                <span class="icon-cancel text-lg text-gray-500 dark:text-gray-400"></span>
+
+                                                @lang('admin::app.components.datagrid.toolbar.clear-selection')
+                                            </span>
+                                        </x-admin::dropdown.menu.item>
+                                    </x-slot>
+                                </x-admin::dropdown>
                             </p>
 
                             <!-- Columns -->
                             <p
-                                v-for="column in $parent.available.columns"
-                                class="flex gap-1.5 items-center break-words"
+                                v-for="column in visibleColumns"
+                                :key="column.index"
+                                :data-grid-column="column.index"
+                                class="flex gap-1.5 items-center min-w-0"
                                 :class="{'cursor-pointer select-none hover:text-gray-800 dark:hover:text-white': column.sortable}"
                                 @click="$parent.sortPage(column)"
                             >
@@ -90,8 +142,10 @@
                     <template v-else>
                         <template v-if="$parent.available.records.length">
                             <div
-                                class="row grid gap-2.5 items-center px-4 py-4 cursor-pointer border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all hover:bg-violet-50 hover:bg-opacity-30 dark:hover:bg-cherry-800"
+                                class="row grid gap-2.5 items-center px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 transition-all"
                                 v-for="record in $parent.available.records"
+                                :key="record[$parent.available.meta.primary_column]"
+                                :class="{'cursor-pointer hover:bg-primary-50 hover:bg-opacity-30 dark:hover:bg-cherry-800': isRowEditable(record)}"
                                 :style="`grid-template-columns: repeat(${gridsCount}, minmax(80px, 1fr))`"
                                 @click="handleRowClick($event, record)"
                             >
@@ -105,23 +159,23 @@
                                             :value="record[$parent.available.meta.primary_column]"
                                             :id="`mass_action_select_record_${record[$parent.available.meta.primary_column]}`"
                                             v-model="$parent.applied.massActions.indices"
-                                            @change="$parent.setCurrentSelectionMode"
                                         >
 
-                                        <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-violet-700 cursor-pointer rounded-md text-2xl">
+                                        <span class="icon-checkbox-normal peer-checked:icon-checkbox-check peer-checked:text-primary-700 cursor-pointer rounded-md text-2xl">
                                         </span>
                                     </label>
                                 </p>
 
                                 <!-- Columns -->
-                                 <template
-                                    v-if="record.is_closure"
-                                    v-for="column in $parent.available.columns"
-                                 >
+                                <div
+                                    class="min-w-0"
+                                    v-for="column in visibleColumns"
+                                    :key="column.index"
+                                >
                                     <template v-if="column.type === 'image'">
                                         <img
                                             :src="record[column.index] ? record[column.index] : '{{ unopim_asset('images/placeholder.svg') }}'"
-                                            alt="Thumbnail"
+                                            alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                             width="74"
                                             height="74"
                                             class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
@@ -146,7 +200,7 @@
                                         <template v-else>
                                             <img
                                                 :src="record[column.index]?.url ? record[column.index].url : '{{ unopim_asset('images/placeholder.svg') }}'"
-                                                alt="Thumbnail"
+                                                alt="@lang('admin::app.components.datagrid.table.thumbnail')"
                                                 width="74"
                                                 height="74"
                                                 class="h-[120px] max-w-[60px] min-w-[60px] max-h-[60px] min-h-[60px] rounded-lg border border-gray-300 shadow-sm object-cover"
@@ -154,32 +208,23 @@
                                         </template>
                                     </template>
 
-                                    <template v-else-if="typeof record[column.index] === 'string' && record[column.index].length > 25">
-                                        <p
-                                            class="break-words text-nowrap overflow-hidden text-ellipsis hover:text-wrap"
-                                            v-html="record[column.index]"
-                                        >
-                                        </p>
-                                    </template>
+                                    {{-- Only closure columns emit trusted server-rendered HTML; everything else is plain text to prevent stored XSS. --}}
+                                    <p
+                                        v-else-if="column.closure"
+                                        class="truncate"
+                                        :title="stripHtml(record[column.index])"
+                                        v-html="record[column.index]"
+                                    >
+                                    </p>
 
                                     <p
                                         v-else
-                                        class="break-words"
-                                        v-html="record[column.index]"
+                                        class="truncate"
+                                        :title="stripHtml(record[column.index])"
+                                        v-text="record[column.index]"
                                     >
                                     </p>
-                                 </template>
-
-                                <template
-                                    v-else
-                                    v-for="column in $parent.available.columns"
-                                >
-                                    <p
-                                        class="break-words"
-                                        v-html="record[column.index]"
-                                    >
-                                    </p>
-                                </template>
+                                </div>
 
                                 <!-- Actions -->
                                 <div
@@ -192,12 +237,13 @@
                                         v-if="$parent.available.actions.length"
                                     >
                                         <span
-                                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-violet-100 dark:hover:bg-gray-800 max-sm:place-self-center"
+                                            class="cursor-pointer rounded-md p-1.5 text-2xl transition-all hover:bg-primary-100 dark:hover:bg-gray-800 max-sm:place-self-center"
                                             :class="action.icon"
                                             v-text="!action.icon ? action.title : ''"
-                                            v-for="action in record.actions"
+                                            v-for="(action, actionIndex) in record.actions"
+                                            :key="actionIndex"
                                             :title="action.title ?? ''"
-                                            @click="$parent.performAction(action)"
+                                            @click="$parent.performAction(action, record)"
                                         >
                                         </span>
                                     </p>
@@ -206,10 +252,25 @@
                         </template>
 
                         <template v-else>
-                            <div class="row grid px-4 py-4 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center">
-                                <p>
+                            <div class="row grid gap-2 px-4 py-8 border-b dark:border-cherry-800 text-gray-600 dark:text-gray-300 text-center">
+                                <p v-if="! $parent.hasAppliedFilters()">
                                     @lang('admin::app.components.datagrid.table.no-records-available')
                                 </p>
+
+                                <template v-else>
+                                    <p>
+                                        @lang('admin::app.components.datagrid.table.no-records-filtered')
+                                    </p>
+
+                                    <button
+                                        type="button"
+                                        class="transparent-button justify-center self-center text-sm"
+                                        data-clear-filters-empty-state
+                                        @click="$parent.clearAllFilters()"
+                                    >
+                                        @lang('admin::app.components.datagrid.filters.custom-filters.clear-all')
+                                    </button>
+                                </template>
                             </div>
                         </template>
                     </template>
@@ -223,8 +284,12 @@
             template: '#v-datagrid-table-template',
 
             computed: {
+                visibleColumns() {
+                    return this.$parent.available.columns.filter(c => c.visible !== false);
+                },
+
                 gridsCount() {
-                    let count = this.$parent.available.columns.length;
+                    let count = this.visibleColumns.length;
 
                     if (this.$parent.available.actions.length) {
                         ++count;
@@ -239,15 +304,21 @@
             },
 
             methods: {
-                handleRowClick(event, record) {
-                    const selection = window.getSelection();
+                isRowEditable(record) {
+                    return (record.actions ?? []).some(action => action.index === 'edit');
+                },
 
-                    if (selection && selection.toString().length > 0) {
-                        return;
+                handleRowClick(event, record) {
+                    this.$parent.handleRowClick(event, record);
+                },
+
+                stripHtml(value) {
+                    if (value === null || value === undefined) {
+                        return '';
                     }
 
-                    this.$parent.performAction(record.actions.find(action => action.index === 'edit'));
-                }
+                    return String(value).replace(/<[^>]*>/g, '').trim();
+                },
             }
         });
     </script>

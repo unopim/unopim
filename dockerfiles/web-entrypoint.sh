@@ -1,16 +1,22 @@
 #!/bin/bash
+set -e
 
-LOCK_FILE="/var/lock/unopim.lock"
+ROOT=/var/www/html
 
-if [ ! -f "$LOCK_FILE" ]; then
-    composer install
-    npm install
-    php artisan unopim:install -n
-    
-    touch "$LOCK_FILE"
-fi
+source "${ROOT}/dockerfiles/lib/ensure-vendor.sh"
+source "${ROOT}/dockerfiles/lib/ensure-app-key.sh"
+source "${ROOT}/dockerfiles/lib/wait-for-db.sh"
+source "${ROOT}/dockerfiles/lib/setup-app.sh"
 
-chown -R 1001:1001 /var/www/html
+ensure_vendor "$ROOT"
+ensure_app_key
+wait_for_db
+setup_app "$ROOT"
 
-# Hand back control to the default entrypoint
-apache2-foreground
+chown -R www-data:www-data "${ROOT}/storage" "${ROOT}/bootstrap/cache"
+
+php artisan view:clear --no-interaction >/dev/null 2>&1 || true
+
+echo "→ UnoPim ready on ${APP_URL:-http://localhost:8000}/${APP_ADMIN_URL:-admin}"
+
+exec apache2-foreground

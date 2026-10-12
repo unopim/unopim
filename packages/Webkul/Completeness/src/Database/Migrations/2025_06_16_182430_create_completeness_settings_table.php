@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('completeness_settings', function (Blueprint $table) {
+        Schema::create('completeness_settings', function (Blueprint $table): void {
             $table->id();
 
             $table->unsignedInteger('family_id');

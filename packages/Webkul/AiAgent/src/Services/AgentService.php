@@ -88,7 +88,7 @@ class AgentService implements AgentServiceContract
 
         $enriched = $payload->withMetadata(['executionId' => $execution->id]);
 
-        ExecuteAgentJob::dispatch($enriched->toArray());
+        dispatch(new ExecuteAgentJob($enriched->toArray()));
     }
 
     /**
@@ -100,7 +100,7 @@ class AgentService implements AgentServiceContract
      */
     protected function resolveStages(array $customStages): array
     {
-        if (! empty($customStages)) {
+        if ($customStages !== []) {
             return $customStages;
         }
 

@@ -3,6 +3,7 @@
 namespace Webkul\Core\Eloquent;
 
 use Astrotomic\Translatable\Translatable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Webkul\Core\Helpers\Locales;
@@ -16,7 +17,7 @@ class TranslatableModel extends Model
      */
     protected function getLocalesHelper(): Locales
     {
-        return app(Locales::class);
+        return resolve(Locales::class);
     }
 
     /**
@@ -30,33 +31,55 @@ class TranslatableModel extends Model
     {
         if ($this->isChannelBased()) {
             return core()->getDefaultLocaleCodeFromDefaultChannel();
-        } else {
-            if ($this->defaultLocale) {
-                return $this->defaultLocale;
-            }
-
-            return config('translatable.locale') ?: app()->make('translator')->getLocale();
         }
+        if ($this->defaultLocale) {
+            return $this->defaultLocale;
+        }
+
+        return config('translatable.locale') ?: app()->make('translator')->getLocale();
     }
 
     /**
      * Is channel based.
-     *
-     * @return bool
      */
-    protected function isChannelBased()
+    protected function isChannelBased(): bool
     {
         return false;
     }
 
-    public function scopeWhereTranslationIn(Builder $query, string $translationField, $value, ?string $locale = null, string $method = 'whereHas')
+    #[Scope]
+    protected function whereTranslationIn(Builder $query, string $translationField, $value, ?string $locale = null, string $method = 'whereHas')
     {
-        return $query->$method('translations', function (Builder $query) use ($translationField, $value, $locale) {
+        return $query->$method('translations', function (Builder $query) use ($translationField, $value, $locale): void {
             $query->whereIn($this->getTranslationsTable().'.'.$translationField, $value);
 
             if ($locale) {
                 $query->whereIn($this->getTranslationsTable().'.'.$this->getLocaleKey(), $locale);
             }
         });
+    }
+
+    /**
+     * Resolve a translated field for the requested locale, falling back to any
+     * locale that has a non-empty value. Returns null when every translation
+     * is empty so callers can apply their own placeholder (e.g. "[code]").
+     */
+    public function getTranslatedValueWithFallback(string $column, ?string $locale = null): ?string
+    {
+        $locale = $locale ?: core()->getRequestedLocaleCode();
+
+        $value = $this->translate($locale)?->{$column};
+
+        if (! empty($value)) {
+            return $value;
+        }
+
+        foreach ($this->translations as $translation) {
+            if (! empty($translation->{$column})) {
+                return $translation->{$column};
+            }
+        }
+
+        return null;
     }
 }

@@ -3,208 +3,305 @@
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/5001c5b0-1ef3-4887-a907-f9c20082b0e6">
       <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/a1e6793d-376e-4452-925b-c72b7d07389a">
-      <img src="https://github.com/user-attachments/assets/a1e6793d-376e-4452-925b-c72b7d07389a" alt="UnoPim logo">
+      <img src="https://github.com/user-attachments/assets/a1e6793d-376e-4452-925b-c72b7d07389a" alt="UnoPim logo" width="320">
     </picture>
   </a>
 </p>
 
 <p align="center">
-  <a href="https://github.com/unopim/unopim/releases"><img src="https://img.shields.io/github/v/release/unopim/unopim?label=version" alt="Latest Version"></a>
-  <a href="https://github.com/unopim/unopim/blob/master/LICENSE"><img src="https://img.shields.io/github/license/unopim/unopim" alt="License"></a>
-  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=master&label=tests" alt="Tests"></a>
-  <a href="https://github.com/unopim/unopim"><img src="https://img.shields.io/github/stars/unopim/unopim" alt="GitHub Stars"></a>
+  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/d/total.svg" alt="Total Downloads"></a>
+  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/v/stable.svg" alt="Latest Stable Version"></a>
+  <a href="https://packagist.org/packages/unopim/unopim"><img src="https://poser.pugx.org/unopim/unopim/license.svg" alt="License"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/pest_tests.yml?branch=3.x&label=tests" alt="Tests"></a>
+  <a href="https://github.com/unopim/unopim/actions"><img src="https://img.shields.io/github/actions/workflow/status/unopim/unopim/linting_tests.yml?branch=3.x&label=lint" alt="Lint"></a>
 </p>
 
-UnoPim is an open-source Product Information Management (PIM) system built on Laravel 12. It helps businesses organize, manage, and enrich their product information in one central repository — now with built-in AI agent capabilities for conversational product management.
+<p align="center">
+  <a href="https://github.com/unopim/unopim/stargazers"><img src="https://img.shields.io/github/stars/unopim/unopim?style=social" alt="GitHub Stars"></a>
+  <a href="https://github.com/unopim/unopim/network/members"><img src="https://img.shields.io/github/forks/unopim/unopim?style=social" alt="GitHub Forks"></a>
+</p>
 
-## 🆕 What's New in v2.0.0
+<p align="center">
+  <a href="https://x.com/uno_pim"><img src="https://img.shields.io/twitter/follow/uno_pim?style=social" alt="Follow on X"></a>
+  <a href="https://www.youtube.com/@UnoPIM"><img src="https://img.shields.io/badge/YouTube-@UnoPIM-red?logo=youtube&logoColor=white" alt="YouTube @UnoPIM"></a>
+  <a href="https://www.facebook.com/unopim/"><img src="https://img.shields.io/badge/Facebook-unopim-1877F2?logo=facebook&logoColor=white" alt="Facebook unopim"></a>
+</p>
 
-- **AI Agent Chat** — Manage products through natural language with 32+ tool actions (search, create, update, bulk edit, export, generate content/images, memory, planning, quality reports, and more)
-- **Agentic PIM** — Autonomous product enrichment, catalog quality monitoring, approval workflows, content feedback loop, and persistent agent memory
-- **Multi-Platform MagicAI** — Support for 10+ AI providers (OpenAI, Anthropic, Gemini, Groq, Ollama, Mistral, DeepSeek, and more) with database-backed credential management
-- **Laravel 12 Upgrade** — Modernized bootstrap architecture with `bootstrap/app.php` fluent API, removing Kernel classes
-- **Enhanced Dashboard** — Channel readiness, product trends, recent activity, and needs-attention widgets
-- **Import/Export Performance & Tracker UI** — Real-time step-by-step progress tracking, ZIP image upload, eager loading optimizations, increased batch sizes, deferred indexing, and field processor improvements for high-volume data handling
-- **AI-Powered Search** — Embedding similarity and semantic ranking services for intelligent product discovery
-- **Improved CI/CD** — Translation auditing, Composer caching, concurrency groups, PHP 8.3 across all workflows
+<p align="center">
+  <a href="https://unopim.com/">🌐&nbsp;Website</a>
+  &nbsp;·&nbsp;
+  <a href="https://devdocs.unopim.com/">📘&nbsp;Documentation</a>
+  &nbsp;·&nbsp;
+  <a href="https://devdocs.unopim.com/3.1/introduction/installation.html">🚀&nbsp;Installation</a>
+  &nbsp;·&nbsp;
+  <a href="https://devdocs.unopim.com/3.1/introduction/installation.html#install-using-docker">🐳&nbsp;Docker&nbsp;Installation</a>
+  &nbsp;·&nbsp;
+  <a href="https://demo.unopim.com/">🎯&nbsp;Live&nbsp;Demo</a>
+</p>
 
-> Upgrading from v1.0.0? See the [Upgrade Guide](UPGRADE-1.0.0-2.0.0.md) and [CHANGELOG](CHANGELOG.md).
+<p align="center">
+  🇦🇪 🇪🇸 🇩🇰 🇩🇪 🇦🇺 🇬🇧 🇳🇿 🇺🇸 🇪🇸 🇻🇪 🇫🇮
+  🇫🇷 🇮🇳 🇭🇷 🇮🇩 🇮🇹 🇯🇵 🇰🇷 🇲🇳 🇳🇱 🇳🇴 🇵🇱
+  🇧🇷 🇵🇹 🇷🇴 🇷🇺 🇸🇪 🇵🇭 🇹🇷 🇺🇦 🇻🇳 🇨🇳 🇹🇼
+</p>
 
-## 🛠️ System Requirements
+UnoPim is an open-source Product Information Management (PIM) and Digital Asset Management (DAM) platform built on Laravel 13. It helps businesses organize, manage, and enrich their product data and digital assets in one central repository — now with built-in AI agent capabilities for conversational product management.
 
-Ensure your server meets the following requirements:
+---
 
-* **Server**: Nginx or Apache2
-* **RAM**: 8GB
-* **PHP**: **8.3** or higher
-* **Node.js**: **20 LTS** or higher
-* **Composer**: **2.5** or higher
-* **Database (choose one):**
-  * **MySQL**: 8.0.32 or higher
-  * **PostgreSQL**: **14.x or higher** *(recommended)*
+## 🎥 Watch & Learn
 
+<table>
+  <tr>
+    <td align="center" width="33%">
+      <a href="https://www.youtube.com/watch?v=_P1zt4BxJK0">
+        <img src="https://img.youtube.com/vi/_P1zt4BxJK0/mqdefault.jpg" width="280" height="158" alt="Introducing Open Source PIM — UnoPim"><br>
+        <sub><b>Introducing Open Source PIM — UnoPim</b></sub>
+      </a>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://www.youtube.com/watch?v=n76bJmdZkL8">
+        <img src="https://img.youtube.com/vi/n76bJmdZkL8/mqdefault.jpg" width="280" height="158" alt="Can an Open Source PIM Handle 10M Products? — Meet UnoPIM"><br>
+        <sub><b>10M Products? Meet UnoPim</b></sub>
+      </a>
+    </td>
+    <td align="center" width="33%">
+      <a href="https://www.youtube.com/watch?v=y6SA4Aip1ow">
+        <img src="https://img.youtube.com/vi/y6SA4Aip1ow/mqdefault.jpg" width="280" height="158" alt="UnoPim CSV Import Optimization — 10x Faster"><br>
+        <sub><b>CSV Import 10x Faster</b></sub>
+      </a>
+    </td>
+  </tr>
+</table>
+
+> Upgrading from an older version? See the [Upgrade Guide](UPGRADE.md) and [CHANGELOG](CHANGELOG.md) for full release notes.
 
 ## ⚙️ Scalability
 
-- [Learn how UnoPim scales to handle over **10 million products**](https://unopim.com/scaling-unopim-for-10-million-products/)
+UnoPim is engineered for high-volume catalogues. Read [how UnoPim scales to handle over 10 million products](https://unopim.com/scaling-unopim-for-10-million-products/), or download the [UnoPim at Scale whitepaper (PDF)](https://unopim.com/wp-content/uploads/2026/08/unopim-at-scale-10m-whitepaper.pdf) for the full benchmarks.
 
-  <a href="https://unopim.com/scaling-unopim-for-10-million-products/" target="_blank">
-    <img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="10 million products" width="790">
+<p align="center">
+  <a href="https://unopim.com/scaling-unopim-for-10-million-products/">
+    <img src="https://github.com/user-attachments/assets/c264d658-3723-46ff-8b60-2b9506a7a412" alt="UnoPim scaling to 10 million products" width="720">
   </a>
+</p>
 
 
 ## ✨ Features
 
 - **AI Agent Chat**
   Manage products through natural language — search, create, update, bulk edit, export, categorize, and generate content via conversational AI with multi-step tool calling.
-
+    <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/ai-agent-chat.png" alt="AI Agent Chat" width="720"></p>
+    
 - **Magic AI with Multi-Platform Support**
   Generate product content, images, and translations using 10+ AI providers. Configure and manage AI platforms with encrypted credential storage, connection testing, and dynamic model selection.
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/magic-ai-with-multi-platform-support.png" alt="Magic AI with Multi-Platform Support" width="720"></p>
 
-  ![AI-powered Product Content Generation](https://raw.githubusercontent.com/unopim/temp-media/main/advanced-features.png)
+- **Advanced AI-Powered Product Management**
+    Create compelling product content, generate high-quality images, and gain actionable insights with intelligent automation. Leverage customizable dashboards, seamless multi-user collaboration, and smart reporting tools to streamline workflows and boost productivity across your entire platform.
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/advanced-features.png" alt="AI-powered Product Content Generation" width="720"></p>
 
 - **Centralized Product Management**
   Manage all your product data in one place.
 
-  ![Centralized Product Management Interface](https://raw.githubusercontent.com/unopim/temp-media/main/catalog-management.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/catalog-management.png" alt="Centralized Product Management Interface" width="720"></p>
 
 - **Data Enrichment**
   Enhance your product information with detailed attributes and descriptions.
 
-  ![Data Enrichment Interface](https://raw.githubusercontent.com/unopim/temp-media/main/data-enrichment.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/data-enrichment.png" alt="Data Enrichment Interface" width="720"></p>
 
 - **Dashboard with Analytics**
   Monitor channel readiness, product trends, recent activity, and items needing attention at a glance.
 
+    <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/dashboard-with-analytics.png" alt="Dashboard with Analytics" width="720"></p>
 - **User Management**
   Control user access and permissions.
 
-  ![User Management Interface](https://raw.githubusercontent.com/unopim/temp-media/main/access-control.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/access-control.png" alt="User Management Interface" width="720"></p>
 
 - **API Integration**
-  Seamlessly integrate with other systems via RESTful APIs.
+  Seamlessly integrate with other systems via RESTful APIs. Import our official [Postman collection](https://www.postman.com/unopim/unopim-apis/collection/kzy03uh/official-unopim-apis?ctx=info) or browse the [full API documentation](https://documenter.getpostman.com/view/37137259/2sBXVhEWjS).
 
-  ![API Integration Interface](https://raw.githubusercontent.com/unopim/temp-media/main/api-integration.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/api-integration.png" alt="API Integration Interface" width="720"></p>
 
 - **Localization**
-  Support for 30+ languages and locales.
+  Support for 33 languages and locales out of the box.
 
-  ![Localization Support](https://raw.githubusercontent.com/unopim/temp-media/main/localization-and-channels.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/localization-and-channels.png" alt="Localization Support" width="720"></p>
 
 - **Multi-Channel**
   Support for multiple sales channels.
 
-  ![Multi-Channel Support](https://raw.githubusercontent.com/unopim/temp-media/main/multi-channel-support.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/multi-channel-support.png" alt="Multi-Channel Support" width="720"></p>
 
 - **Multi-Currency**
   Support for multiple currencies.
 
-  ![Multi-Currency Support](https://raw.githubusercontent.com/unopim/temp-media/main/multi-currency-support.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/multi-currency-support.png" alt="Multi-Currency Support" width="720"></p>
 
 - **Import/Export with Real-Time Tracker**
   Import and export product data using CSV, XLSX, and ZIP formats with real-time step-by-step progress tracking, pipeline visualization, and job-specific logging. Optimized for high-volume data handling with eager loading, increased batch sizes, and deferred indexing.
 
-  ![Data Import/Export Interface](https://raw.githubusercontent.com/unopim/temp-media/main/data-transfer.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/data-transfer.png" alt="Data Import/Export Interface" width="720"></p>
 
 - **Themes**
   UI compatible with both Light and Dark themes.
 
-  ![Light/Dark Theme Interface](https://raw.githubusercontent.com/unopim/temp-media/main/user-interface.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/user-interface.png" alt="Light/Dark Theme Interface" width="720"></p>
 
 - **Version Control**
   Track the history of changes in your product data.
 
-  ![Version Control Interface](https://raw.githubusercontent.com/unopim/temp-media/main/version-control.png)
+  <p><img src="https://raw.githubusercontent.com/unopim/temp-media/main/version-control.png" alt="Version Control Interface" width="720"></p>
+
+- **Digital Product Passport**
+  Build DPP templates, attach QR carriers, and publish per-product passports to a public tier — with the publish path gated behind its own permission and queue.
+
+- **Publication Channels**
+  Push enriched product payloads to downstream destinations on a queue, with per-channel payloads and delivery records.
+
+- **Product Completeness**
+  Score every product against the attributes a family marks required per channel, and surface what is missing before it ships.
+
+- **Measurement Families**
+  Define units and conversions once, then let measurement attributes capture an amount and a unit together.
+
+- **Configurable Products & Associations**
+  Model variant structures with multi-level axes, and relate products through configurable association types.
+
+- **Webhooks**
+  Notify external systems on product events over an asynchronous `webhooks` queue, so subscriber HTTP calls never block a save.
+
+## 🧩 Extensions
+
+Free, officially maintained extensions:
+
+- [**UnoPim DAM**](https://github.com/unopim/unopim-digital-asset-management) — Digital Asset Management: file and directory management, asset upload and preview, metadata tagging, and CSV/XLSX asset assignment.
+- [**Shopify Connector**](https://github.com/unopim/shopify-connector) — sync product data, prices, descriptions, and images with a Shopify store.
+- [**Bagisto Connector**](https://github.com/unopim/bagisto-connector) — sync products, attributes, and media into a [Bagisto](https://bagisto.com/) storefront, with customizable mappings.
+
+More connectors and modules are listed on the [UnoPim extensions marketplace](https://unopim.com/extensions/). Extensions are ordinary Concord packages — see the [developer documentation](https://devdocs.unopim.com/) to build your own.
 
 ## 🚀 Installation
 
-To get started with UnoPim, follow these steps:
+UnoPim supports MariaDB as a primary application datastore, alongside MySQL and PostgreSQL. [UnoPim 3.1.0](https://github.com/unopim/unopim/releases/tag/v3.1.0) added first-class MariaDB support for installation, upgrades, migrations, audit logs, and REST APIs. Composer installations default to MySQL; the supplied Docker stack defaults to PostgreSQL.
 
-1. **Project Setup**:
-    ```bash
-    composer create-project unopim/unopim
-    cd unopim
-    ```
+> **Requirements:** Nginx/Apache2, PHP 8.4.1+, Composer 2.6+, and MariaDB 10.11 LTS or 11.8 LTS, MySQL 8.0.32+, or PostgreSQL 16. Node 22 LTS is recommended for asset builds.
+>
+> **Elasticsearch is optional.** It is off by default (`ELASTICSEARCH_ENABLED=false`) and search and filtering fall back to the database, so a working install needs no Elasticsearch node. Set `ELASTICSEARCH_ENABLED=true` to index large catalogues; both Docker stacks already ship an Elasticsearch 8 service.
+>
+> **PHP extensions:** `calendar`, `curl`, `intl`, `mbstring`, `openssl`, `pdo`, `pdo_mysql`, `tokenizer` — these are hard `composer.json` requirements and `composer install` fails without them. The upgrade preflight additionally checks `json`, `xml`, `gd`, `zip` and `fileinfo`.
+>
+> **On PostgreSQL:** `ext-pdo_mysql` is currently required by `composer.json` regardless of the database you run, so it must be installed even on a PostgreSQL-only host. Install `ext-pdo_pgsql` as well and set `DB_CONNECTION=pgsql`.
 
-2. **Install UnoPim**:
-    ```bash
-    php artisan unopim:install
-    ```
+> **On MariaDB:** Use the latest patch of 10.11 LTS or 11.8 LTS, enable `pdo_mysql`, and set `DB_CONNECTION=mariadb`. Install `mariadb-dump` on the application host for upgrade backups. Community 10.6 and 10.10 are end of life; consult the [MariaDB maintenance policy](https://mariadb.org/about/#maintenance-policy).
 
-3. **Serve the application**:
-    ```bash
-    php artisan serve
-    ```
+See the [3.1 requirements](https://devdocs.unopim.com/3.1/introduction/requirements.html), [MariaDB installation guide](https://devdocs.unopim.com/3.1/introduction/installation-with-mariadb.html), or [Installation Guide](https://devdocs.unopim.com/3.1/introduction/installation.html) — or pick a quick path below.
 
-4. **Access UnoPim**:
-   Open your browser and go to `http://localhost:8000`.
+### Composer
 
-5. **Queue Operations**:
-   To execute import/export operations, AI agent tasks, and product completeness score calculation, start the queue worker:
+```bash
+composer create-project unopim/unopim
+cd unopim
+php artisan unopim:install
+php artisan serve
+```
 
-   ```bash
-   php artisan queue:work --queue=system,default,completeness
-   ```
+Open `http://localhost:8000` in your browser. To execute imports/exports, AI agent tasks, completeness jobs, webhook deliveries, and Digital Product Passport publishing, start the queue worker:
 
-## 🐳 Installation with Docker
+```bash
+php artisan queue:work --queue=webhooks,system,completeness,default,publication
+```
 
-If you have Docker/Docker Compose installed, follow these steps:
+> **Note:** The `webhooks` queue is required for outgoing webhook delivery. The `Webkul\Webhook\Listeners\Product` listener is dispatched asynchronously to this queue so product save/update requests are not blocked by HTTP calls to subscribers. If you omit `webhooks` from the `--queue` list, webhook events will queue up but never be processed.
 
-1. **Clone the repository**:
-   - HTTPS: `git clone https://github.com/unopim/unopim.git`
-   - SSH: `git clone git@github.com:unopim/unopim.git`
+> **Note:** The `publication` queue processes Digital Product Passport publish jobs (single and bulk). Omit it and passports will queue but never publish. If you run a process manager such as Supervisor, add `publication` to your worker's `--queue=` list and restart it (e.g. `sudo supervisorctl restart unopim-worker`).
 
-2. **Enter the directory**:
-   ```bash
-   cd unopim
-   ```
+### Docker
 
-3. **Start the Docker containers**:
-   ```bash
-   docker-compose up -d
-   ```
+Requires Docker + Docker Compose v2+. See the full [Docker guide](https://devdocs.unopim.com/3.1/introduction/installation-docker.html) for advanced configuration.
 
-   This will pull the necessary images and set up the environment. Once running, access the application at:
+**Run UnoPim** — pre-built images, no checkout, no configuration:
 
-   - Application: `http://localhost:8000`
-   - MySQL: `http://localhost:3306`
+```bash
+curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.yaml
+docker compose up -d
+```
 
+Open `http://localhost:8000/admin`. Set the admin credentials **before** the first `docker compose up`, in a `.env` file next to `compose.yaml`:
 
-> **Note**:
-> If MySQL is already running on your system, change the MySQL port in the `docker-compose.yml` and `.env` files.
-> Run `docker-compose up -d` again to apply changes.
+```bash
+INSTALLER_ADMIN_EMAIL=you@example.com
+INSTALLER_ADMIN_PASSWORD=<a password you choose>
+```
 
-## ☁️ Cloud Installation via Amazon AMI
+If you leave them blank, the seeder generates a random 20-character password and writes it to `storage/app/admin-credentials.txt` inside the container:
 
-You can also deploy UnoPim quickly using our pre-configured Amazon Machine Image (AMI) available on the AWS Marketplace:
+```bash
+docker compose exec unopim cat storage/app/admin-credentials.txt
+```
 
-[**Launch UnoPim on AWS**](https://aws.amazon.com/marketplace/pp/prodview-fdyosdv7k3cgw)
+Change it after the first login. Every other setting has a working default; override any of them by exporting it or putting it in that same `.env` file.
 
-This AMI allows you to get started with UnoPim on a cloud environment without manual setup. Ideal for scalable production or testing environments.
+**MySQL instead of PostgreSQL:**
 
-## 📖 Usage
+```bash
+curl -O https://raw.githubusercontent.com/unopim/unopim/3.x/compose.mysql.yaml
+docker compose -f compose.yaml -f compose.mysql.yaml up -d
+```
 
-Once installed, you can start adding and managing your products. The intuitive interface allows you to categorize products, enrich data, and manage user permissions easily. Use the AI Agent Chat to manage products through natural language commands.
+> Switching engines on an existing install needs a fresh database — data is not migrated between them.
 
-## 📬 Postman API Collection
+**Develop UnoPim** — builds from your checkout and bind-mounts it, so edits are live:
 
-To interact with UnoPim's API, you can use our official Postman collection:
+```bash
+git clone https://github.com/unopim/unopim.git
+cd unopim
+cp .env.docker .env
+docker compose -f compose.dev.yaml up -d
+```
 
-[UnoPim APIs Documentation](https://documenter.getpostman.com/view/37137259/2sBXVhEWjS)
+First boot installs Composer dependencies into `./vendor`. The stack defaults to **Nginx + PHP-FPM** and **PostgreSQL 16**; for Apache use `-f compose.dev.yaml -f compose.dev.apache.yaml`, and for MySQL set `COMPOSE_PROFILES=mysql`, `DB_CONNECTION=mysql`, `DB_HOST=unopim-mysql`, `DB_PORT=3306` in `.env` before the first `up`.
 
-[UnoPim APIs on Postman](https://www.postman.com/unopim/unopim-apis/collection/kzy03uh/official-unopim-apis?ctx=info)
+> **Port conflicts?** If you already have MySQL, Redis, or Elasticsearch running locally, edit the `FORWARD_*` ports in `.env` and restart. See `.env.docker` for details.
 
-This collection provides ready-to-use API requests for various UnoPim features. You can import it directly into your Postman workspace and start testing the APIs.
+**Deploying?** Inject `APP_KEY` as a secret rather than letting the container generate one, and set `UNOPIM_SKIP_MIGRATIONS=true` where the schema is managed by the deployment itself — a Kubernetes Job or a release step — so scaled replicas do not race each other.
+
+### ☁️ Cloud Hosting (Managed — no setup)
+<p>
+  <a href="https://unopim.com/cloud-hosting">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/cloud-hosting-banner.png" alt="Deploy UnoPim on cost-effective cloud hosting" width="720">
+  </a>
+</p>
+
+### ☁️ AWS Marketplace
+<p>
+  <a href="https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i">
+    <img src="https://raw.githubusercontent.com/unopim/temp-media/main/aws-marketplace-banner.png" alt="Launch UnoPim on AWS Marketplace" width="720">
+  </a>
+</p>
+
+Pre-configured AMIs — Ubuntu LEMP with Redis, Elasticsearch and phpMyAdmin:
+
+- [**UnoPim on AWS (x86_64)**](https://aws.amazon.com/marketplace/pp/prodview-rhsm6cbxqkm6i)
+- [**UnoPim on AWS (ARM64 / Graviton)**](https://aws.amazon.com/marketplace/pp/prodview-flks5cupod5mi)
 
 ## 🤝 Contributing
 
-We welcome contributions! To contribute:
+Found a bug or want to add a feature? Open an issue or submit a pull request — see [CONTRIBUTING.md](.github/CONTRIBUTING.md) for the full flow.
 
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature/your-feature`).
-3. Commit your changes (`git commit -m 'Add feature'`).
-4. Push to the branch (`git push origin feature/your-feature`).
-5. Open a pull request.
+## 👥 Community
+
+<p align="center">
+  <a href="https://unopim.com/"><img src="https://img.shields.io/badge/Website-unopim.com-2563eb?style=for-the-badge&logo=google-chrome&logoColor=white" alt="Website"></a>
+  <a href="https://devdocs.unopim.com/"><img src="https://img.shields.io/badge/Docs-devdocs-059669?style=for-the-badge&logo=gitbook&logoColor=white" alt="Documentation"></a>
+  <a href="https://www.youtube.com/@UnoPIM"><img src="https://img.shields.io/badge/YouTube-@UnoPIM-FF0000?style=for-the-badge&logo=youtube&logoColor=white" alt="YouTube"></a>
+  <a href="https://x.com/uno_pim"><img src="https://img.shields.io/badge/X-uno__pim-000000?style=for-the-badge&logo=x&logoColor=white" alt="X / Twitter"></a>
+  <a href="https://www.facebook.com/unopim/"><img src="https://img.shields.io/badge/Facebook-unopim-1877F2?style=for-the-badge&logo=facebook&logoColor=white" alt="Facebook"></a>
+</p>
+
+Have questions, feedback, or want to contribute? Reach out through any of the channels above — we're always happy to hear from fellow PIM builders.
 
 ## 🔒 Security
 
@@ -213,7 +310,3 @@ If you discover any security vulnerabilities, please follow our [Security Policy
 ## 📝 License
 
 UnoPim is open-source software distributed under the [MIT License](LICENSE).
-
-## 🙏 Acknowledgements
-
-We extend our thanks to all contributors and the Laravel community for their support and contributions.

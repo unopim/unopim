@@ -10,6 +10,6 @@ if (! function_exists('magic_ai')) {
      */
     function magic_ai()
     {
-        return app('magic_ai');
+        return resolve('magic_ai');
     }
 }

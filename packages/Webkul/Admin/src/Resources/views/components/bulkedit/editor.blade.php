@@ -14,18 +14,26 @@
 @include('admin::components.bulkedit.type.select')
 @include('admin::components.bulkedit.type.multiselect')
 @include('admin::components.bulkedit.type.date')
+@include('admin::components.bulkedit.type.datetime')
 @include('admin::components.bulkedit.type.image')
 @include('admin::components.bulkedit.type.gallery')
 @include('admin::components.bulkedit.type.boolean')
+@includeIf('measurement::components.bulkedit.type.measurement')
+
+<x-admin::media.image-viewer v-if="false" />
 
 
 @php
     $channelLocales = [];
     $allLocales = [];
-    $channels = core()->getAllChannels();
+    $channelCollection = core()->getAllChannels();
     $channelCurrencies = [];
+    $channelNames = [];
+    $localeNames = [];
 
-    foreach ($channels as $channel) {
+    foreach ($channelCollection as $channel) {
+        $channelNames[$channel->code] = $channel->name ?: $channel->code;
+
         $channelCurrencies[$channel->code] = $channel->currencies->map(function ($currency) {
             return [
                 'code'   => $currency->code,
@@ -36,6 +44,10 @@
         $locales = $channel->locales->pluck('code')->toArray();
         $channelLocales[$channel->code] = $locales;
         $allLocales = array_merge($allLocales, $locales);
+
+        foreach ($channel->locales as $locale) {
+            $localeNames[$locale->code] = $locale->name ?: $locale->code;
+        }
     }
 
     $allCurrencies = [];
@@ -47,7 +59,7 @@
     }
 
     $allCurrencies = array_values($allCurrencies);
-    $channels = $channels->pluck('code')->toArray();
+    $channels = $channelCollection->pluck('code')->toArray();
     $allLocales = array_unique($allLocales);
 
     $headers = [];
@@ -65,7 +77,7 @@
                 foreach ($currencies as $currency) {
                     foreach ($locales as $locale) {
                         $headers[] = [
-                            'label' => "{$label} - {$channelCode} - {$currency['code']} - {$locale}",
+                            'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode) . " - {$currency['code']} - " . ($localeNames[$locale] ?? $locale),
                         ];
                         $finalColumns[] = [
                             'id'       => $index,
@@ -84,7 +96,7 @@
             foreach ($channels as $channelCode) {
                 foreach ($channelCurrencies[$channelCode] as $currency) {
                     $headers[] = [
-                        'label' => "{$label} - {$channelCode} - {$currency['code']}",
+                        'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode) . " - {$currency['code']}",
                     ];
                     $finalColumns[] = [
                         'id'       => $index,
@@ -101,7 +113,7 @@
             foreach ($allCurrencies as $currency) {
                 foreach ($allLocales as $locale) {
                     $headers[] = [
-                        'label' => "{$label} - {$currency['code']} - {$locale}",
+                        'label' => "{$label} - {$currency['code']} - " . ($localeNames[$locale] ?? $locale),
                     ];
                     $finalColumns[] = [
                         'id'       => $index,
@@ -132,7 +144,7 @@
             foreach ($channels as $channelCode) {
                 foreach ($channelLocales[$channelCode] as $locale) {
                     $headers[] = [
-                        'label' => "{$label} - {$channelCode} - {$locale}",
+                        'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode) . " - " . ($localeNames[$locale] ?? $locale),
                     ];
                     $finalColumns[] = [
                         'id'       => $index,
@@ -148,7 +160,7 @@
         } elseif ($col['value_per_channel']) {
             foreach ($channels as $channelCode) {
                 $headers[] = [
-                    'label' => "{$label} - {$channelCode}",
+                    'label' => "{$label} - " . ($channelNames[$channelCode] ?? $channelCode),
                 ];
                 $finalColumns[] = [
                     'id'       => $index,
@@ -162,7 +174,7 @@
         } elseif ($col['value_per_locale']) {
             foreach ($allLocales as $locale) {
                 $headers[] = [
-                    'label' => "{$label} - {$locale}",
+                    'label' => "{$label} - " . ($localeNames[$locale] ?? $locale),
                 ];
                 $finalColumns[] = [
                     'id'       => $index,
@@ -204,18 +216,36 @@
 
 @pushOnce('scripts')
     <script type="text/x-template" id="v-spreadsheet-editor-template">
-        <div class="flex  justify-end gap-x-2.5">
-            <a
-                href="{{ route('admin.catalog.products.index') }}"
-                class="transparent-button"
-            >
-                @lang('admin::app.account.edit.back-btn')
-            </a>
-            <button class="primary-button" @click="handleSave">@lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')</button>
+        <div class="flex gap-4 justify-between items-center mb-4 max-sm:flex-wrap">
+            <div class="grid gap-1.5">
+                <p class="text-xl text-gray-800 dark:text-slate-50 font-bold leading-6">
+                    @lang('admin::app.catalog.products.bulk-edit.action')
+                </p>
+
+                <p class="text-gray-600 dark:text-gray-300 text-sm">
+                    @lang('admin::app.catalog.products.bulk-edit.description')
+                </p>
+            </div>
+
+            <div class="flex gap-x-2.5 items-center">
+                <a
+                    href="{{ route('admin.catalog.products.index') }}"
+                    class="transparent-button"
+                >
+                    @lang('admin::app.account.edit.back-btn')
+                </a>
+
+                <button
+                    class="primary-button"
+                    @click="handleSave"
+                >
+                    @lang('admin::app.catalog.products.edit.types.configurable.edit.save-btn')
+                </button>
+            </div>
         </div>
 
-        <div class="h-[calc(100vh-150px)] mt-2 overflow-y-auto space-y-4 rounded-lg shadow-lg">
-            <table class="table-fixed border-4 border-violet-50 border-collapse w-full dark:border-cherry-700">
+        <div class="h-[calc(100vh-170px)] mb-16 overflow-auto rounded-md shadow-sm border border-gray-200 dark:border-cherry-700 bg-white dark:bg-cherry-900 [--active-cell-color:rgb(var(--c-primary-600))]">
+            <table class="table-fixed border border-gray-200 border-collapse w-full dark:border-cherry-700">
                 <v-spreadsheet-header 
                     :columns="columns" 
                     :headers="headers"
@@ -231,6 +261,32 @@
                 />
             </table>
         </div>
+
+        <x-admin::modal ref="imagePreviewModal" no-class="true">
+            <x-slot:content>
+                <v-image-viewer
+                    v-if="previewMedia && previewMedia.isImage"
+                    :src="previewMedia.url"
+                    :file-name="previewMedia.fileName"
+                    @close="closePreview"
+                ></v-image-viewer>
+            </x-slot>
+        </x-admin::modal>
+
+        <x-admin::modal ref="filePreviewModal" type="large">
+            <x-slot:header>
+                <p class="text-lg font-bold text-gray-800 dark:text-white" v-text="previewMedia ? previewMedia.fileName : ''"></p>
+            </x-slot>
+
+            <x-slot:content>
+                <iframe
+                    v-if="previewMedia && ! previewMedia.isImage"
+                    :src="previewMedia.url"
+                    class="w-full rounded"
+                    style="height: 70vh;"
+                ></iframe>
+            </x-slot>
+        </x-admin::modal>
     </script>
 
     <script type="module">
@@ -276,11 +332,12 @@
 
             data() {
                 return {
-                    allRows: this.initialRows || [],
+                    allRows: this.initialData || [],
                     rowsPerPage: 100,
                     currentPage: 1,
                     isLoading: false,
                     updatedEntityData: {},
+                    previewMedia: null,
                 };
             },
 
@@ -293,6 +350,41 @@
                     this.$emitter.on('update-spreadsheet-data', (data) => {
                         this.updateEntityData(data);
                     });
+
+                    this.$emitter.on('preview-image', (payload) => {
+                        this.openPreview(payload);
+                    });
+                },
+
+                openPreview(payload) {
+                    const url = typeof payload === 'string' ? payload : payload?.url;
+
+                    if (! url) {
+                        return;
+                    }
+
+                    const fileName = (typeof payload === 'object' && payload?.fileName)
+                        ? payload.fileName
+                        : decodeURIComponent(url.split('/').pop());
+
+                    this.previewMedia = {
+                        url,
+                        fileName,
+                        isImage: /\.(jpe?g|png|gif|webp|svg|bmp|avif)$/i.test(fileName),
+                    };
+
+                    this.$nextTick(() => {
+                        const modal = this.previewMedia.isImage ? this.$refs.imagePreviewModal : this.$refs.filePreviewModal;
+
+                        modal?.open();
+                    });
+                },
+
+                closePreview() {
+                    this.$refs.imagePreviewModal?.close();
+                    this.$refs.filePreviewModal?.close();
+
+                    this.previewMedia = null;
                 },
 
                 updateEntityData({ value, entityId, column }) {
@@ -323,36 +415,107 @@
                     }
 
                     data[keys[keys.length - 1]] = value;
+
+                    this.warnOnDuplicateAxisTuple(entityId);
+                },
+
+                ownAxisTuple(row) {
+                    const axes = row.axes || [];
+
+                    if (! axes.length || ! row.parent_id) {
+                        return null;
+                    }
+
+                    const edited = this.updatedEntityData[row.id] || {};
+                    const own = row.values?.common || {};
+                    const parts = [];
+
+                    for (const code of axes) {
+                        const value = code in edited ? edited[code] : own[code];
+
+                        if (value === null || value === undefined || value === '') {
+                            return null;
+                        }
+
+                        parts.push(code + '=' + String(value));
+                    }
+
+                    return row.parent_id + '::' + parts.join('|');
+                },
+
+                duplicateAxisSiblingOf(row) {
+                    const tuple = this.ownAxisTuple(row);
+
+                    if (! tuple) {
+                        return null;
+                    }
+
+                    return this.allRows.find(
+                        other => other.id !== row.id && this.ownAxisTuple(other) === tuple
+                    ) ?? null;
+                },
+
+                warnOnDuplicateAxisTuple(entityId) {
+                    const row = this.allRows.find(candidate => candidate.id === entityId);
+
+                    if (! row) {
+                        return;
+                    }
+
+                    if (! this.duplicateAxisSiblingOf(row)) {
+                        return;
+                    }
+
+                    this.$emitter.emit('add-flash', {
+                        type: 'warning',
+                        message: @json(trans('admin::app.catalog.products.bulk-edit.validation.duplicate-axis')),
+                    });
                 },
 
                 handleSave() {
                     if (Object.keys(this.updatedEntityData).length === 0) {
                         this.$emitter.emit('add-flash', {
                             type: 'warning',
-                            message: "@lang('admin::app.catalog.products.bulk-edit.no-changes')",
+                            message: @json(trans('admin::app.catalog.products.bulk-edit.no-changes')),
                         });
                         return;
                     }
 
-                    this.loading = true;
+                    this.isLoading = true;
 
                     this.$axios.post(this.entitySaveUrl, {
                         data: this.updatedEntityData,
                     })
                     .then(response => {
-                        this.updatedEntityData = [];
-                        this.$emitter.emit('add-flash', {
-                            type: 'success',
-                            message: response.data.message ||  "@lang('admin::app.catalog.products.bulk-edit.success')",
-                        });
+                        this.updatedEntityData = {};
 
-                        setTimeout(() => window.location.href= "{{ route('admin.catalog.products.index') }}", 1000);
+                        const message = response.data.message || @json(trans('admin::app.catalog.products.bulk-edit.success'));
+
+                        document.addEventListener('unopim:navigate:success', () => {
+                            window.app?.config?.globalProperties?.$emitter?.emit('add-flash', {
+                                type: 'success',
+                                message,
+                            });
+                        }, { once: true });
+
+                        this.$navigate(response.data.redirect_url || "{{ route('admin.catalog.products.index') }}");
                     })
                     .catch(error => {
-                        console.error(error);
+                        const payload = error.response?.data ?? {};
+                        const details = Object.values(payload.errors ?? {}).flat();
+
+                        this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: payload.message || @json(trans('admin::app.catalog.products.bulk-edit.validation.failed')),
+                        });
+
+                        details.slice(0, 5).forEach(detail => this.$emitter.emit('add-flash', {
+                            type: 'error',
+                            message: detail,
+                        }));
                     })
                     .finally(() => {
-                        this.loading = false;
+                        this.isLoading = false;
                     });
                 },
             },

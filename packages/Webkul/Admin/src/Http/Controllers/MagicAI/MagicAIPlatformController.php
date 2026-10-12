@@ -3,21 +3,44 @@
 namespace Webkul\Admin\Http\Controllers\MagicAI;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
-use Prism\Prism\Facades\Prism;
+use Laravel\Ai\AnonymousAgent;
 use Webkul\Admin\DataGrids\MagicAI\MagicAIPlatformDataGrid;
 use Webkul\Admin\Http\Controllers\Controller;
+use Webkul\Admin\Http\Requests\MagicAI\FetchModelsRequest;
+use Webkul\Admin\Http\Requests\MagicAI\PlatformRequest;
+use Webkul\Admin\Http\Requests\MagicAI\PlatformTestRequest;
+use Webkul\AiAgent\Chat\AiErrorResolver;
 use Webkul\MagicAI\Enums\AiProvider;
 use Webkul\MagicAI\Repository\MagicAIPlatformRepository;
+use Webkul\MagicAI\Services\ManagedPlatform;
+use Webkul\MagicAI\Services\ModelDiscovery;
+use Webkul\MagicAI\Services\ProviderOverrides;
+use Webkul\MagicAI\Services\ScopedProviderConfig;
+use Webkul\MagicAI\Support\ModelRecommender;
+use Webkul\MagicAI\Validator\PlatformValidator;
 
 class MagicAIPlatformController extends Controller
 {
+    /**
+     * Ticked text models tried in turn before a connection test fails, since a
+     * provider can list a model the account is not allowed to call.
+     */
+    private const CONNECTION_TEST_ATTEMPTS = 3;
+
     public function __construct(
         protected MagicAIPlatformRepository $platformRepository,
-    ) {}
+    ) {
+        $this->middleware(function ($request, $next) {
+            if (! bouncer()->hasPermission('ai-agent.platform')) {
+                abort(403);
+            }
+
+            return $next($request);
+        });
+    }
 
     public function index(): View|JsonResponse
     {
@@ -25,7 +48,7 @@ class MagicAIPlatformController extends Controller
             return app(MagicAIPlatformDataGrid::class)->toJson();
         }
 
-        $platformCount = $this->platformRepository->findWhere(['status' => true])->count();
+        $platformCount = $this->platformRepository->count();
         $hasDefault = $this->platformRepository->getDefault() !== null;
 
         return view('admin::configuration.magic-ai.platform.index', [
@@ -35,21 +58,12 @@ class MagicAIPlatformController extends Controller
         ]);
     }
 
-    public function store(): JsonResponse
+    public function store(PlatformRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'label'      => 'required|string|max:255',
-            'provider'   => 'required|string',
-            'api_url'    => 'nullable|url|max:500',
-            'api_key'    => 'nullable|string',
-            'models'     => 'required|string',
-            'is_default' => 'sometimes|boolean',
-            'status'     => 'sometimes|boolean',
-        ]);
-
-        $data = request()->only(['label', 'provider', 'api_url', 'api_key', 'models', 'is_default', 'status']);
+        $data = $request->only(['label', 'provider', 'api_url', 'api_key', 'models', 'is_default', 'status']);
 
         $this->validateModelNames($data['models']);
+        $this->platformValidator()->validateApiUrl($data['provider'] ?? null, $data['api_url'] ?? null);
 
         if (! isset($data['status'])) {
             $data['status'] = true;
@@ -59,9 +73,11 @@ class MagicAIPlatformController extends Controller
             $data['is_default'] = false;
         }
 
-        $extras = request()->input('extras');
-        if ($extras) {
-            $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+        $this->ensureDefaultPlatformIsEnabled($data);
+
+        $extras = ProviderOverrides::decode(request()->input('extras'));
+        if ($extras !== []) {
+            $data['extras'] = $extras;
         }
 
         $this->platformRepository->create($data);
@@ -75,36 +91,42 @@ class MagicAIPlatformController extends Controller
     {
         $platform = $this->platformRepository->findOrFail($id);
 
+        $apiKeyError = $platform->apiKeyError();
+
         return new JsonResponse([
             'data' => [
-                'id'         => $platform->id,
-                'label'      => $platform->label,
-                'provider'   => $platform->provider,
-                'api_url'    => $platform->api_url,
-                'api_key'    => $platform->api_key ? '********' : '',
-                'models'     => $platform->models,
-                'extras'     => $platform->extras ? json_encode($platform->extras) : '',
-                'is_default' => $platform->is_default,
-                'status'     => $platform->status,
+                'id'                => $platform->id,
+                'label'             => $platform->label,
+                'provider'          => $platform->provider,
+                'api_url'           => $platform->api_url,
+                'api_key'           => $apiKeyError ? '' : ($platform->safeApiKey() ? '********' : ''),
+                'models'            => $platform->models,
+                'extras'            => $platform->extras ? json_encode($platform->extras) : '',
+                'is_default'        => $platform->is_default,
+                'is_managed'        => $platform->is_managed,
+                'status'            => $platform->status,
+                'api_key_corrupted' => $apiKeyError !== null,
             ],
+            'message' => $apiKeyError
+                ? trans('admin::app.configuration.platform.message.api-key-corrupted', ['error' => $apiKeyError])
+                : null,
         ]);
     }
 
-    public function update(int $id): JsonResponse
+    public function update(PlatformRequest $request, int $id): JsonResponse
     {
-        $this->validate(request(), [
-            'label'      => 'required|string|max:255',
-            'provider'   => 'required|string',
-            'api_url'    => 'nullable|url|max:500',
-            'api_key'    => 'nullable|string',
-            'models'     => 'required|string',
-            'is_default' => 'sometimes|boolean',
-            'status'     => 'sometimes|boolean',
-        ]);
+        $platform = $this->platformRepository->find($id);
+
+        if (! $platform) {
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.platform.message.not-found'),
+            ], JsonResponse::HTTP_NOT_FOUND);
+        }
 
         $data = request()->only(['label', 'provider', 'api_url', 'models', 'is_default', 'status']);
 
         $this->validateModelNames($data['models']);
+        $this->platformValidator()->validateApiUrl($data['provider'] ?? null, $data['api_url'] ?? null);
 
         if (! isset($data['status'])) {
             $data['status'] = false;
@@ -114,14 +136,24 @@ class MagicAIPlatformController extends Controller
             $data['is_default'] = false;
         }
 
-        $apiKey = request()->input('api_key');
-        if ($apiKey && ! preg_match('/^\*+$/', $apiKey)) {
+        $this->ensureDefaultPlatformIsEnabled($data);
+
+        $managedPlatform = app(ManagedPlatform::class);
+
+        $apiKey = $request->validated('api_key');
+
+        if (! $managedPlatform->usesStoredKey($apiKey)) {
             $data['api_key'] = $apiKey;
         }
 
-        $extras = request()->input('extras');
-        if ($extras) {
-            $data['extras'] = is_string($extras) ? json_decode($extras, true) : $extras;
+        if ($request->has('extras')) {
+            $data['extras'] = ProviderOverrides::decode($request->validated('extras'));
+        }
+
+        if ($managedPlatform->changesLockedFields($platform, $data)) {
+            throw ValidationException::withMessages([
+                'platform' => trans('admin::app.configuration.platform.message.managed-cli-only'),
+            ]);
         }
 
         $this->platformRepository->update($data, $id);
@@ -136,13 +168,16 @@ class MagicAIPlatformController extends Controller
         try {
             $platform = $this->platformRepository->findOrFail($id);
 
+            if ($platform->is_managed) {
+                return new JsonResponse([
+                    'message' => trans('admin::app.configuration.platform.message.managed-cannot-delete'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
+            }
+
             if ($platform->is_default) {
-                $otherCount = $this->platformRepository->findWhere(['status' => true])->count();
-                if ($otherCount <= 1) {
-                    return new JsonResponse([
-                        'message' => trans('admin::app.configuration.platform.message.cannot-delete-default'),
-                    ], JsonResponse::HTTP_BAD_REQUEST);
-                }
+                return new JsonResponse([
+                    'message' => trans('admin::app.configuration.platform.message.cannot-delete-default'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
             }
 
             $this->platformRepository->delete($id);
@@ -163,76 +198,170 @@ class MagicAIPlatformController extends Controller
     {
         $platform = $this->platformRepository->findOrFail($id);
 
-        DB::transaction(function () use ($id) {
-            // Unset all other defaults first
-            DB::table('magic_ai_platforms')->where('is_default', true)->update(['is_default' => false]);
-            // Set the chosen platform as default
-            $this->platformRepository->update(['is_default' => true], $id);
-        });
+        if (! $platform->status) {
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.platform.message.default-requires-enabled'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $this->platformRepository->makeDefault($id);
 
         return new JsonResponse([
             'message' => trans('admin::app.configuration.platform.message.set-default-success'),
         ]);
     }
 
-    public function testConnection(): JsonResponse
+    public function testConnection(PlatformTestRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'provider' => 'required|string',
-            'api_key'  => 'nullable|string',
-            'api_url'  => 'nullable',
-            'models'   => 'required|string',
-        ]);
+        if (! bouncer()->hasPermission('ai-agent.platform')) {
+            abort(403);
+        }
+
+        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
+            return new JsonResponse([
+                'success' => false,
+                'message' => trans('admin::app.configuration.platform.message.test-fail'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
         try {
             $provider = AiProvider::from(request()->input('provider'));
-            $this->configureProviderFromRequest($provider);
 
-            $models = explode(',', request()->input('models'));
-            $model = trim($models[0]);
+            // Custom providers route through the openai-compatible driver, so
+            // without an explicit api_url the request would fall back to the
+            // global env URL and ship the caller's API key to the wrong host.
+            if ($provider === AiProvider::Custom && empty(trim((string) request()->input('api_url')))) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.custom-api-url-required'),
+                ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+            }
 
-            $response = Prism::text()
-                ->using($provider->toPrismProvider(), $model, [
-                    'api_key' => $this->resolveApiKey(),
-                ])
-                ->withMaxTokens(20)
-                ->withClientOptions(['timeout' => 15])
-                ->withPrompt('Say OK')
-                ->asText();
+            $models = array_values(array_filter(array_map(
+                'trim',
+                explode(',', (string) request()->input('models'))
+            )));
+
+            $candidates = array_slice(ModelRecommender::textModels($models), 0, self::CONNECTION_TEST_ATTEMPTS);
+
+            if ($candidates === []) {
+                return new JsonResponse([
+                    'success' => false,
+                    'message' => trans('admin::app.configuration.platform.message.test-fail').': '.trans('admin::app.configuration.platform.message.no-test-model'),
+                ], JsonResponse::HTTP_BAD_REQUEST);
+            }
+
+            $agent = new AnonymousAgent(
+                instructions: 'You are a connectivity test bot. Reply with the single word OK.',
+                messages: [],
+                tools: [],
+            );
+
+            $failure = null;
+
+            foreach ($candidates as $model) {
+                try {
+                    ScopedProviderConfig::run(
+                        $provider->configKey(),
+                        $this->providerOverridesFromRequest(),
+                        fn () => $agent->prompt(
+                            'Say OK',
+                            provider: $provider->toLab(),
+                            model: $model,
+                            timeout: 15,
+                        ),
+                    );
+
+                    $failure = null;
+
+                    break;
+                } catch (\Throwable $e) {
+                    $failure ??= $e;
+                }
+            }
+
+            if ($failure instanceof \Throwable) {
+                throw $failure;
+            }
 
             return new JsonResponse([
                 'success' => true,
                 'message' => trans('admin::app.configuration.platform.message.test-success'),
             ]);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            $resolved = AiErrorResolver::resolve($e);
+
+            // Always use the resolver's message: known errors get the localized
+            // user-friendly text (rate limit / overloaded / too large), and
+            // unknown errors go through sanitizeRawMessage which extracts the
+            // underlying upstream HTTP response body when the gateway's own
+            // message is just an "Unknown error" placeholder.
+            $detail = $resolved['message'];
+
+            // Custom platforms route through laravel/ai's OpenAI-compatible
+            // gateway for the /chat/completions endpoint. Its error messages
+            // hardcode the driver's name (e.g. "OpenAI-compatible Error" when
+            // the actual HTTP call went to Cerebras). Rewrite the prefix so
+            // the message accurately reflects the user's selected provider.
+            if (request()->input('provider') === AiProvider::Custom->value) {
+                $detail = preg_replace(
+                    '/^(OpenAI-compatible|Groq) Error\b/',
+                    trans('admin::app.configuration.platform.message.custom-provider-error'),
+                    $detail,
+                );
+            }
+
             return new JsonResponse([
                 'success' => false,
-                'message' => trans('admin::app.configuration.platform.message.test-fail').': '.$e->getMessage(),
-            ], JsonResponse::HTTP_BAD_REQUEST);
+                'message' => trans('admin::app.configuration.platform.message.test-fail').': '.$detail,
+            ], $resolved['is_known'] ? $resolved['status'] : JsonResponse::HTTP_BAD_REQUEST);
         }
     }
 
-    public function fetchModels(): JsonResponse
+    public function fetchModels(FetchModelsRequest $request): JsonResponse
     {
-        $this->validate(request(), [
-            'provider' => 'required|string',
-            'api_key'  => 'nullable|string',
-            'api_url'  => 'nullable',
-        ]);
+        if (! bouncer()->hasPermission('ai-agent.platform')) {
+            abort(403);
+        }
+
+        if (! $this->platformValidator()->isSafeApiUrl(request()->input('api_url'))) {
+            return new JsonResponse([
+                'message' => trans('admin::app.configuration.platform.message.fetch-models-fail'),
+            ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        $managedPlatform = app(ManagedPlatform::class);
+
+        $platform = $managedPlatform->usesStoredKey(request()->input('api_key'))
+            ? $this->platformRepository->find((int) request()->input('id'))
+            : null;
+
+        if ($platform && $managedPlatform->isManagedPlatform($platform)) {
+            $models = $managedPlatform->models($platform);
+
+            return new JsonResponse([
+                'models'      => $models,
+                'recommended' => ModelRecommender::recommend($models),
+                'api_url'     => $managedPlatform->apiUrl($platform),
+            ]);
+        }
 
         try {
             $provider = AiProvider::from(request()->input('provider'));
-            $models = $provider->fetchModels(
+            $discovery = app(ModelDiscovery::class)->discover(
+                $provider,
                 $this->resolveApiKey(),
                 request()->input('api_url'),
             );
 
-            // Pick top recommended models from the fetched list
-            $recommended = $this->pickRecommendedModels($models, $provider);
+            $models = ModelRecommender::chatCapable($discovery['models']);
+
+            $recommended = ModelRecommender::recommend($models, released: $discovery['released']);
 
             return new JsonResponse([
                 'models'      => $models,
                 'recommended' => $recommended,
+                'api_url'     => $discovery['api_url'],
             ]);
         } catch (\Exception $e) {
             return new JsonResponse([
@@ -242,83 +371,28 @@ class MagicAIPlatformController extends Controller
     }
 
     /**
-     * Pick recommended models from the fetched list.
-     * Uses pattern matching to find the latest/best models for each provider.
-     */
-    protected function pickRecommendedModels(array $models, AiProvider $provider): array
-    {
-        if (empty($models)) {
-            return [];
-        }
-
-        // Provider-specific patterns to match the latest flagship models
-        $patterns = match ($provider) {
-            AiProvider::OpenAI     => ['/^gpt-\d+(\.\d+)?$/i', '/^gpt-\d+(\.\d+)?-mini$/i'],
-            AiProvider::Anthropic  => ['/^claude-.*sonnet/i', '/^claude-.*haiku/i'],
-            AiProvider::Gemini     => ['/gemini-.*pro/i', '/gemini-.*flash$/i'],
-            AiProvider::Groq       => ['/llama.*versatile/i', '/llama.*instant/i'],
-            AiProvider::XAI        => ['/^grok-\d+$/i', '/^grok-\d+-mini$/i'],
-            AiProvider::Mistral    => ['/mistral-large/i', '/mistral-small/i'],
-            AiProvider::DeepSeek   => ['/deepseek-chat/i', '/deepseek-reasoner/i'],
-            default                => [],
-        };
-
-        if (empty($patterns)) {
-            return array_slice($models, 0, 3);
-        }
-
-        $recommended = [];
-
-        foreach ($patterns as $pattern) {
-            $matches = preg_grep($pattern, $models);
-
-            if (! empty($matches)) {
-                // Sort descending so newest version (highest number) comes first
-                $sorted = array_values($matches);
-                rsort($sorted);
-                $recommended[] = $sorted[0];
-            }
-        }
-
-        // If patterns didn't match enough, pad with first models from list
-        if (count($recommended) < 2 && count($models) >= 2) {
-            foreach ($models as $model) {
-                if (! in_array($model, $recommended)) {
-                    $recommended[] = $model;
-                }
-
-                if (count($recommended) >= 3) {
-                    break;
-                }
-            }
-        }
-
-        return array_values(array_unique($recommended));
-    }
-
-    /**
      * Validate each model name in the comma-separated models string.
      *
      * @throws ValidationException
      */
-    protected function validateModelNames(string $models): void
+    protected function validateModelNames(string &$models): void
     {
-        $modelList = array_map('trim', explode(',', $models));
-        $invalid = [];
+        $models = $this->platformValidator()->validateModelNames($models);
+    }
 
-        foreach ($modelList as $model) {
-            if ($model === '' || ! preg_match('/^[a-zA-Z0-9][a-zA-Z0-9\-._:\/@]+$/', $model)) {
-                $invalid[] = $model;
-            }
-        }
+    /**
+     * A platform cannot be marked default unless it is also enabled.
+     *
+     * @throws ValidationException
+     */
+    protected function ensureDefaultPlatformIsEnabled(array $data): void
+    {
+        $this->platformValidator()->ensureDefaultIsEnabled($data);
+    }
 
-        if (! empty($invalid)) {
-            throw ValidationException::withMessages([
-                'models' => trans('admin::app.configuration.platform.message.invalid-model-names', [
-                    'names' => implode(', ', $invalid),
-                ]),
-            ]);
-        }
+    protected function platformValidator(): PlatformValidator
+    {
+        return app(PlatformValidator::class);
     }
 
     /**
@@ -333,37 +407,29 @@ class MagicAIPlatformController extends Controller
         if ($apiKey && preg_match('/^\*+$/', $apiKey) && $platformId) {
             $platform = $this->platformRepository->find($platformId);
 
-            return $platform?->api_key;
+            return $platform?->safeApiKey();
         }
 
         return $apiKey;
     }
 
     /**
-     * Configure the Laravel AI SDK provider from request data.
+     * Build the laravel/ai provider overrides from request data so Test
+     * Connection honours custom api_url / api_key / extras for the chosen
+     * platform. Applied via ScopedProviderConfig for the test call only.
+     *
+     * @return array<string, mixed>
      */
-    protected function configureProviderFromRequest(AiProvider $provider): void
+    protected function providerOverridesFromRequest(): array
     {
-        $configKey = $provider->configKey();
-
-        config([
-            "ai.providers.{$configKey}.key" => $this->resolveApiKey(),
-        ]);
+        $overrides = [
+            'key' => $this->resolveApiKey(),
+        ];
 
         if (request()->input('api_url')) {
-            config([
-                "ai.providers.{$configKey}.url" => request()->input('api_url'),
-            ]);
+            $overrides['url'] = request()->input('api_url');
         }
 
-        $extras = request()->input('extras');
-        if ($extras) {
-            $decoded = is_string($extras) ? json_decode($extras, true) : $extras;
-            if (is_array($decoded)) {
-                foreach ($decoded as $key => $value) {
-                    config(["ai.providers.{$configKey}.{$key}" => $value]);
-                }
-            }
-        }
+        return ProviderOverrides::build($overrides, request()->input('extras'));
     }
 }

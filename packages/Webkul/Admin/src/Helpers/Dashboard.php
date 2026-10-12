@@ -13,13 +13,26 @@ use Webkul\Admin\Helpers\Reporting\Channel;
 use Webkul\Admin\Helpers\Reporting\Currency;
 use Webkul\Admin\Helpers\Reporting\Locale;
 use Webkul\Admin\Helpers\Reporting\Product;
+use Webkul\Product\Enums\ProductType;
 
 class Dashboard
 {
     /**
-     * Cache TTL in seconds (5 minutes).
+     * Cache TTL in seconds. Must exceed the runtime of the catalog-wide
+     * queries below, or the entry expires before the value arrives and the
+     * cache can never warm. Use `unopim:dashboard:refresh` for fresher data.
      */
-    protected const CACHE_TTL = 300;
+    protected const CACHE_TTL = 3600;
+
+    /**
+     * Cache keys that depend on product data.
+     */
+    public const PRODUCT_CACHE_KEYS = [
+        'dashboard.total_catalogs',
+        'dashboard.product_stats',
+        'dashboard.needs_attention',
+        'dashboard.channel_readiness',
+    ];
 
     /**
      * Create a controller instance.
@@ -36,6 +49,35 @@ class Dashboard
         protected Channel $channel,
         protected Currency $currency
     ) {}
+
+    /**
+     * Invalidate all product-related dashboard cache keys.
+     */
+    public static function invalidateProductCache(): void
+    {
+        foreach (self::PRODUCT_CACHE_KEYS as $key) {
+            Cache::forget($key);
+        }
+    }
+
+    /**
+     * Invalidate the catalog totals cache (categories + products) so the
+     * dashboard reflects a category create/update/delete immediately.
+     */
+    public static function invalidateCatalogCache(): void
+    {
+        Cache::forget('dashboard.total_catalogs');
+    }
+
+    /**
+     * Invalidate the configuration totals cache (attributes, attribute groups,
+     * attribute families, locales, channels, currencies) so the dashboard
+     * reflects a change to any of those immediately.
+     */
+    public static function invalidateConfigurationCache(): void
+    {
+        Cache::forget('dashboard.total_configurations');
+    }
 
     /**
      * This method calculates and returns the total number of various catalog entities.
@@ -77,13 +119,13 @@ class Dashboard
     public function getProductStats()
     {
         return Cache::remember('dashboard.product_stats', self::CACHE_TTL, function () {
-            // Single query for type + status using conditional aggregation
+            $castType = DB::getDriverName() === 'pgsql' ? 'INTEGER' : 'SIGNED';
             $stats = DB::table('products')
                 ->select(
                     'type',
                     DB::raw('COUNT(*) as total'),
-                    DB::raw('SUM(CASE WHEN status = 1 THEN 1 ELSE 0 END) as active_count'),
-                    DB::raw('SUM(CASE WHEN status = 0 THEN 1 ELSE 0 END) as inactive_count')
+                    DB::raw("SUM(CASE WHEN CAST(status AS {$castType}) = 1 THEN 1 ELSE 0 END) as active_count"),
+                    DB::raw("SUM(CASE WHEN CAST(status AS {$castType}) = 0 THEN 1 ELSE 0 END) as inactive_count")
                 )
                 ->groupBy('type')
                 ->get();
@@ -108,17 +150,14 @@ class Dashboard
                 ->where('updated_at', '>=', $startDate)
                 ->whereColumn('updated_at', '!=', 'created_at')
                 ->groupBy(DB::raw('DATE(updated_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
             $creationRaw = DB::table('products')
                 ->select(DB::raw('DATE(created_at) as date'), DB::raw('COUNT(*) as count'))
                 ->where('created_at', '>=', $startDate)
                 ->groupBy(DB::raw('DATE(created_at)'))
-                ->get()
                 ->pluck('count', 'date');
 
-            // Fill missing days with 0
             $created = [];
             $updated = [];
 
@@ -128,17 +167,16 @@ class Dashboard
                 $updated[$date] = (int) ($updateTrends[$date] ?? 0);
             }
 
-            // Quick insights
             $newThisWeek = DB::table('products')
                 ->where('created_at', '>=', $startDate)
                 ->count();
 
-            $withVariants = DB::table('products')
-                ->where('type', 'configurable')
+            $withVariants = DB::table('products as parents')
+                ->where('parents.type', ProductType::Configurable->value)
                 ->whereExists(function ($query) {
                     $query->select(DB::raw(1))
-                        ->from('product_relations')
-                        ->whereColumn('product_relations.parent_id', 'products.id');
+                        ->from('products as variants')
+                        ->whereColumn('variants.parent_id', 'parents.id');
                 })
                 ->count();
 
@@ -150,7 +188,6 @@ class Dashboard
                     ->avg('avg_completeness_score');
             }
 
-            // Enrichment velocity
             $enrichedThisWeek = 0;
             $enrichedLastWeek = 0;
 
@@ -290,24 +327,33 @@ class Dashboard
     public function getDataTransferStatus()
     {
         $recentJobs = DB::table('job_track')
+            ->leftJoin('job_instances', 'job_instances.id', '=', 'job_track.job_instances_id')
             ->leftJoin('admins', 'admins.id', '=', 'job_track.user_id')
             ->select(
                 'job_track.id',
                 'job_track.state',
-                'job_track.type',
+                'job_instances.code as job_code',
+                'job_instances.type',
+                'job_instances.entity_type',
                 'job_track.processed_rows_count',
                 'job_track.invalid_rows_count',
                 'job_track.errors_count',
+                'job_track.summary',
                 'job_track.started_at',
                 'job_track.completed_at',
                 'job_track.created_at',
                 'admins.name as user_name',
             )
             ->orderByDesc('job_track.created_at')
-            ->limit(5)
+            ->limit(10)
             ->get()
             ->map(function ($job) {
+                $summary = ! empty($job->summary) ? json_decode($job->summary, true) : [];
+
+                $job->processed_rows_count = $summary['processed'] ?? $job->processed_rows_count;
                 $job->time_ago = $this->calculateTimeAgo($job->created_at);
+
+                unset($job->summary);
 
                 return $job;
             });
@@ -315,7 +361,6 @@ class Dashboard
         $jobSummary = DB::table('job_track')
             ->select('state', DB::raw('COUNT(*) as count'))
             ->groupBy('state')
-            ->get()
             ->pluck('count', 'state')
             ->toArray();
 

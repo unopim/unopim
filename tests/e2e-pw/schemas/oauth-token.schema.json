@@ -1,0 +1,12 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "OAuth2 Token Response",
+  "type": "object",
+  "required": ["access_token", "token_type", "expires_in"],
+  "properties": {
+    "access_token": { "type": "string", "minLength": 10 },
+    "token_type": { "type": "string", "enum": ["Bearer"] },
+    "expires_in": { "type": "integer", "minimum": 1 },
+    "refresh_token": { "type": "string" }
+  }
+}

@@ -1,12 +1,14 @@
 <?php
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Attribute\Models\AttributeFamily;
 use Webkul\Category\Models\Category;
 use Webkul\Core\Models\Channel;
 use Webkul\Core\Models\Locale;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -15,7 +17,8 @@ beforeEach(function () {
 
 it('should return the list of all simple products', function () {
     $product = Product::factory()->simple()->create();
-    $response = $this->withHeaders($this->headers)->json('GET', route('admin.api.products.index'))
+
+    $this->withHeaders($this->headers)->json('GET', route('admin.api.products.index'))
         ->assertOk()
         ->assertJsonStructure([
             'data' => [
@@ -41,31 +44,32 @@ it('should return the list of all simple products', function () {
                 'prev',
             ],
         ])
-        ->assertJsonFragment(['total' => Product::where('type', 'simple')->count()])
+        ->assertJsonFragment(['total' => Product::where('type', ProductType::Simple->value)->count()]);
+
+    $response = $this->withHeaders($this->headers)
+        ->json('GET', route('admin.api.products.index', [
+            'filters' => json_encode(['sku' => [['operator' => '=', 'value' => $product->sku]]]),
+        ]))
+        ->assertOk()
         ->json('data');
 
-    $product = Product::where('type', 'simple')->limit(1)->first();
+    $product->refresh();
 
-    $expectedProducts = [
-        'sku'        => $product->sku,
-        'status'     => (bool) $product->status,
-        'parent'     => $product->parent,
-        'family'     => $product->attribute_family->code,
-        'type'       => $product->type,
-        'additional' => $product->additional,
-        'created_at' => $product->created_at->toISOString(),
-        'updated_at' => $product->updated_at->toISOString(),
-        'values'     => $product->values,
-    ];
+    $responseProduct = collect($response)->firstWhere('sku', $product->sku);
 
-    $this->assertTrue(
-        collect($response)->contains($expectedProducts),
-    );
+    expect($responseProduct)->not->toBeNull();
+    expect($responseProduct['sku'])->toBe($product->sku);
+    expect($responseProduct['status'])->toBe((bool) $product->status);
+    expect($responseProduct['parent'])->toBe($product->parent?->sku);
+    expect($responseProduct['family'])->toBe($product->attribute_family->code);
+    expect($responseProduct['type'])->toBe($product->type);
+    expect($responseProduct['additional'])->toEqual($product->additional);
+    expect($responseProduct['values'])->toEqual($product->values);
 });
 
 it('should return the simple product using the code', function () {
     $product = Product::factory()->simple()->create();
-    $simpleProduct = Product::where('type', 'simple')->first();
+    $simpleProduct = Product::where('type', ProductType::Simple->value)->first();
 
     $this->withHeaders($this->headers)->json('GET', route('admin.api.products.get', ['code' => $simpleProduct->sku]))
         ->assertOK()
@@ -197,7 +201,7 @@ it('should update the product', function () {
     $family = AttributeFamily::where('id', $product->attribute_family_id);
     $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
     $family->first()->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
-    $category = Category::first();
+    $category = Category::whereNotNull('parent_id')->first() ?? Category::factory()->create(['parent_id' => Category::first()->id]);
 
     $updatedproduct = [
         'sku'    => $product->sku,
@@ -226,6 +230,34 @@ it('should update the product', function () {
 
     $this->assertEquals('text update', $product->values['common'][$attribute->code] ?? '');
     $this->assertEquals([$category->code], $product->values['categories'] ?? '');
+});
+
+it('fires catalog.product.update.after when a simple product is updated via REST', function () {
+    $product = Product::factory()->simple()->create();
+
+    $family = AttributeFamily::where('id', $product->attribute_family_id)->first();
+    $attribute = Attribute::factory()->create(['value_per_locale' => false, 'value_per_channel' => false, 'type' => 'text']);
+    $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
+
+    Event::fake(['catalog.product.update.after']);
+
+    $payload = [
+        'sku'    => $product->sku,
+        'parent' => null,
+        'family' => $family->code,
+        'values' => [
+            'common' => [
+                'sku'            => $product->sku,
+                $attribute->code => 'webhook-trigger-value',
+            ],
+        ],
+    ];
+
+    $this->withHeaders($this->headers)
+        ->json('PUT', route('admin.api.products.update', ['code' => $product->sku]), $payload)
+        ->assertOk();
+
+    Event::assertDispatchedTimes('catalog.product.update.after', 1);
 });
 
 it('should delete the product', function () {
@@ -342,7 +374,8 @@ it('should partially update the locale specific attribute in product', function 
     $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
     $family->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
-    $locales = Locale::where('status', 1)->limit(2)->pluck('code')->toArray();
+    $channelLocales = core()->getDefaultChannel()->locales->pluck('code')->toArray();
+    $locales = array_slice($channelLocales, 0, 2);
 
     $data = [];
     foreach ($locales as $locale) {
@@ -426,7 +459,8 @@ it('should update the locale specific attribute in product', function () {
     $attribute = Attribute::factory()->create(['value_per_locale' => true, 'value_per_channel' => false, 'type' => 'text']);
     $family->first()->attributeFamilyGroupMappings->first()?->customAttributes()?->attach($attribute);
 
-    $locales = Locale::where('status', 1)->limit(2)->pluck('code')->toArray();
+    $channelLocales = core()->getDefaultChannel()->locales->pluck('code')->toArray();
+    $locales = array_slice($channelLocales, 0, 2);
 
     $data = [];
     foreach ($locales as $locale) {

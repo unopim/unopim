@@ -2,6 +2,7 @@
 
 use Webkul\Attribute\Models\Attribute;
 use Webkul\Core\Facades\ElasticSearch;
+use Webkul\Product\Enums\ProductType;
 use Webkul\Product\Models\Product;
 
 beforeEach(function () {
@@ -88,8 +89,9 @@ it('should filter products by SKU using Elasticsearch', function () {
                                 [
                                     'wildcard' => [
                                         'sku' => [
-                                            'value'   => '*testSku123*',
-                                            'rewrite' => 'top_terms_1024',
+                                            'value'            => '*testsku123*',
+                                            'case_insensitive' => true,
+                                            'rewrite'          => 'top_terms_1024',
                                         ],
                                     ],
                                 ],
@@ -131,7 +133,7 @@ it('should filter products by type using Elasticsearch', function () {
         ],
 
         'filters' => [
-            'type' => ['simple'],
+            'type' => [ProductType::Simple->value],
         ],
     ];
 
@@ -145,7 +147,7 @@ it('should filter products by type using Elasticsearch', function () {
                             'filter' => [
                                 [
                                     'terms' => [
-                                        'type' => ['simple'],
+                                        'type' => [ProductType::Simple->value],
                                     ],
                                 ],
                             ],
@@ -1296,6 +1298,87 @@ it('should filter products by gallery attribute using Elasticsearch', function (
                     ],
                 ],
             ];
+
+            expect($args['body']['query'])->toEqual($expectedQuery);
+
+            return true;
+        })
+        ->andReturn([
+            'hits' => [
+                'total' => 0,
+                'hits'  => [],
+            ],
+            '_scroll_id' => '83h84747',
+        ]);
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), $data);
+
+    $response->assertOk();
+});
+
+it('should fall back to database query when Elasticsearch throws an exception on product grid', function () {
+    config(['elasticsearch.enabled' => false]);
+    Product::factory()->create(['sku' => 'fallback-test-sku']);
+    config(['elasticsearch.enabled' => true]);
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->andThrow(new Exception('No alive nodes found in your cluster'));
+
+    $response = $this->withHeaders([
+        'X-Requested-With' => 'XMLHttpRequest',
+    ])->json('GET', route('admin.catalog.products.index'), [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+    ]);
+
+    $response->assertOk();
+    expect($response->json())->toHaveKey('records');
+});
+
+it('should filter products by uppercase SKU using Elasticsearch (case-insensitive)', function () {
+    $data = [
+        'pagination' => [
+            'page'     => 1,
+            'per_page' => 10,
+        ],
+
+        'filters' => [
+            'sku' => ['TESTSKU123'],
+        ],
+    ];
+
+    ElasticSearch::shouldReceive('search')
+        ->once()
+        ->withArgs(function ($args) {
+            $expectedQuery = [
+                'constant_score' => [
+                    'filter' => [
+                        'bool' => [
+                            'filter' => [
+                                [
+                                    'wildcard' => [
+                                        'sku' => [
+                                            'value'            => '*testsku123*',
+                                            'case_insensitive' => true,
+                                            'rewrite'          => 'top_terms_1024',
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+
+            expect($args)->toBeArray();
+            expect($args)->toHaveKey('index');
+            expect($args)->toHaveKey('body');
+            expect($args['body'])->toHaveKey('query');
 
             expect($args['body']['query'])->toEqual($expectedQuery);
 

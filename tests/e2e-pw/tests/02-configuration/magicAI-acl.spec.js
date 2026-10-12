@@ -1,11 +1,11 @@
 const { test, expect } = require("../../utils/fixtures");
+const { navigateTo } = require("../../utils/helpers");
 
 test.describe("UnoPim Magic AI ACL Test Cases", () => {
     test("Verify Platforms permission exists in Role creation", async ({
         adminPage,
     }) => {
-        await adminPage.getByRole("link", { name: " Settings" }).click();
-        await adminPage.getByRole("link", { name: "Roles" }).click();
+        await navigateTo(adminPage, "roles");
         await adminPage.getByRole("link", { name: "Create Role" }).click();
 
         await adminPage.waitForLoadState("networkidle");
@@ -18,7 +18,6 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
 
         const platformsText = adminPage.getByText("Platform").first();
         if (!(await platformsText.isVisible())) {
-            // Find any expand icon associated with Magic AI and click it
             const expander = adminPage
                 .locator(".v-tree-item", { has: magicAILayer })
                 .locator("i.icon-chevron-right")
@@ -26,10 +25,9 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
             if (await expander.isVisible()) {
                 await expander.click();
             } else {
-                // Secondary attempt (label click often works)
+                // Fallback: label click often expands it.
                 await magicAILayer.click();
             }
-            await adminPage.waitForTimeout(1000);
         }
 
         await expect(adminPage.getByText("Platform").first()).toBeAttached({
@@ -40,16 +38,15 @@ test.describe("UnoPim Magic AI ACL Test Cases", () => {
     test("Verify Platforms menu visibility based on ACL", async ({
         adminPage,
     }) => {
-        await adminPage.goto("/admin/magic-ai/platform", {
+        await adminPage.goto("/admin/magic-ai/platforms", {
             waitUntil: "networkidle",
         });
         await expect(
-            adminPage.getByText("AI Platforms", { exact: true }).first(),
+            adminPage.locator('#app').getByText("AI Platforms", { exact: true }).first(),
         ).toBeVisible();
 
-        // Check sidebar visibility
-        const sidebar = adminPage.locator("nav");
-        const magicAIMenu = sidebar.getByText("Magic AI").first();
+        // The collapsed sidebar keeps a hidden label copy, so assert the visible menu link.
+        const magicAIMenu = adminPage.getByRole("link", { name: "Magic AI" }).first();
         await expect(magicAIMenu).toBeVisible();
     });
 });

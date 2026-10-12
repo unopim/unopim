@@ -2,50 +2,91 @@
 
 namespace Webkul\Webhook\Listeners;
 
+use Webkul\Webhook\Jobs\SendBulkEditProductWebhook;
 use Webkul\Webhook\Jobs\SendBulkProductWebhook;
-use Webkul\Webhook\Repositories\LogsRepository;
-use Webkul\Webhook\Repositories\SettingsRepository;
+use Webkul\Webhook\Jobs\SendProductWebhook;
+use Webkul\Webhook\Repositories\WebhookRepository;
 use Webkul\Webhook\Services\WebhookService;
 
 class Product
 {
     /**
      * Create a new listener instance.
-     *
-     * @return void
      */
     public function __construct(
-        protected SettingsRepository $settingsRepository,
-        protected LogsRepository $logsRepository,
+        protected WebhookRepository $webhookRepository,
         protected WebhookService $webhookService
     ) {}
 
     /**
      * Update or create product indices
-     *
-     * @param  \Webkul\Product\Contracts\Product  $product
-     * @return void
      */
-    public function afterUpdate($product)
+    public function afterUpdate(\Webkul\Product\Contracts\Product $product, bool $isBulkEdit = false): void
     {
-        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
-            $this->webhookService->sendDataToWebhook($product, $productChanges);
-        }
-    }
-
-    public function afterCreate($product)
-    {
-        if ($this->settingsRepository->isWebhookActive() && $productChanges = $this->webhookService->getProductChangesForWebhook($product)) {
-            $this->webhookService->sendCreatedToWebhook($product, $productChanges);
-        }
-    }
-
-    public function afterBulkUpdate(array $ids)
-    {
-        if (! $this->settingsRepository->isWebhookActive()) {
+        if ($isBulkEdit) {
             return;
         }
 
-        SendBulkProductWebhook::dispatch($ids, auth('admin')?->user()?->id);
+        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
+            return;
+        }
+
+        $changes = $this->webhookService->getProductChangesForWebhook($product);
+
+        if ($changes === []) {
+            return;
+        }
+
+        dispatch(new SendProductWebhook($product->id, $changes, 'updated', auth('admin')?->user()?->id))->onQueue('webhooks');
+    }
+
+    public function afterCreate(\Webkul\Product\Contracts\Product $product): void
+    {
+        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_CREATED)) {
+            return;
+        }
+
+        $changes = $this->webhookService->getProductChangesForWebhook($product);
+
+        if ($changes === []) {
+            return;
+        }
+
+        dispatch(new SendProductWebhook($product->id, $changes, 'created', auth('admin')?->user()?->id))->onQueue('webhooks');
+    }
+
+    public function afterBulkCreate(array $ids): void
+    {
+        $this->dispatchBulkWebhook($ids, WebhookService::EVENT_PRODUCT_CREATED);
+    }
+
+    public function afterBulkEditFromImport(array $ids): void
+    {
+        $this->dispatchBulkWebhook($ids, WebhookService::EVENT_PRODUCT_UPDATED);
+    }
+
+    protected function dispatchBulkWebhook(array $ids, string $event): void
+    {
+        if ($ids === [] || ! $this->webhookRepository->hasActiveForEvent($event)) {
+            return;
+        }
+
+        dispatch(new SendBulkProductWebhook($ids, auth('admin')?->user()?->id, $event))
+            ->onQueue('webhooks');
+    }
+
+    /**
+     * Fire webhook for all products processed by a bulk-edit save.
+     * Unlike afterUpdate, no change-detection audit is required.
+     *
+     * @param  array<int>  $ids
+     */
+    public function afterBulkEdit(array $ids): void
+    {
+        if (! $this->webhookRepository->hasActiveForEvent(WebhookService::EVENT_PRODUCT_UPDATED)) {
+            return;
+        }
+
+        dispatch(new SendBulkEditProductWebhook($ids, auth('admin')?->user()?->id))->onQueue('webhooks');
     }
 }

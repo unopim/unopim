@@ -78,22 +78,17 @@ class EnrichmentStep implements PipelineStageContract
 
         $mapped = $payload->metadata['mappedAttributes'] ?? null;
 
-        if (! is_array($mapped)) {
-            throw new PipelineException(
-                'EnrichmentStep: mappedAttributes is missing — AttributeMappingStep must run first.',
-                self::class,
-            );
-        }
+        throw_unless(is_array($mapped), PipelineException::class, 'EnrichmentStep: mappedAttributes is missing — AttributeMappingStep must run first.', self::class);
 
         $targets = (array) ($payload->context['enrichmentTargets'] ?? self::ENRICHMENT_TARGETS);
 
         // Determine which targets need generation (missing or blank)
         $missingTargets = array_filter(
             $targets,
-            fn (string $key) => empty($mapped[$key]),
+            fn (string $key): bool => empty($mapped[$key]),
         );
 
-        if (empty($missingTargets)) {
+        if ($missingTargets === []) {
             // Everything already populated — skip API call
             return $next($payload->withMetadata([
                 'enrichedAttributes' => $mapped,

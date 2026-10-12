@@ -18,6 +18,17 @@ class CategoryRepository extends Repository
 
     const COMMON_VALUES_KEY = 'common';
 
+    const DEFAULT_PAGE = 1;
+
+    const DEFAULT_PER_PAGE = 100;
+
+    /**
+     * Hard ceiling on a one-shot descendant subtree fetch, so a click on a
+     * near-root category with a huge branch can't pull tens of thousands
+     * of rows into a single response.
+     */
+    const MAX_DESCENDANTS = 5000;
+
     public function __construct(Container $app, protected FileStorer $fileStorer)
     {
         parent::__construct($app);
@@ -135,42 +146,119 @@ class CategoryRepository extends Repository
     /**
      * Retrieves the tree branch from the given category up to its parent categories.
      *
+     * Only the path itself is loaded — the siblings at every level along it are
+     * left to the lazy children endpoint, so a parent holding tens of thousands
+     * of categories no longer hydrates its whole level to reveal one node.
+     *
      * @param  Category  $category  The category instance to start from.
-     * @param  bool  $present  Whether to include the present category in the result.
-     * @return array The branch of categories from the given category to its parent(s).
+     * @param  bool  $present  Retained for backward compatibility; the present category is never part of the path.
+     * @return \Kalnoy\Nestedset\Collection|null The branch of categories from the given category to its parent(s).
      */
     public function getTreeBranchToParent(Category $category, bool $present = true)
     {
-        $parent = $category->parent;
+        if (! $category->parent_id) {
+            return;
+        }
 
-        $id = $category->id;
+        $parent = $this->getModel()->newQuery()->find($category->parent_id, ['code']);
 
         if (! $parent) {
             return;
         }
 
-        $ancestors = $this->model->ancestorsAndSelf($parent->id);
-
-        $ancestorIds = $ancestors->pluck('id')->toArray();
-
-        $query = $this->model->whereIn('parent_id', $ancestorIds);
-
-        if ($present) {
-            $query->where('id', '!=', $id);
-        }
-
-        $siblingMap = $query->get()->groupBy('parent_id');
-
-        $allIds = collect($ancestorIds)
-            ->merge($siblingMap->flatten()->pluck('id'))
-            ->unique()
-            ->values();
-
-        return $this->model
-            ->whereIn('id', $allIds)
-            ->get()
+        return $this->getPathNodes([$parent->code])
             ->toTree()
             ->values();
+    }
+
+    /**
+     * Resolve breadcrumb paths (e.g. "Root / Child / Leaf") for the given category
+     * ids using the nested-set `ancestors` relation.
+     *
+     * Runs a fixed number of queries regardless of tree depth or size (one to load
+     * the categories, one to eager-load all their ancestors), so it stays cheap for
+     * paginated listings instead of walking the whole tree.
+     *
+     * @param  int[]  $ids
+     * @param  string|null  $locale  Locale the names are resolved in; the requested one when omitted.
+     * @return array<int, string> Map of category id => breadcrumb path.
+     */
+    public function getBreadcrumbsForIds(array $ids, ?string $locale = null): array
+    {
+        $ids = array_values(array_unique(array_filter(array_map(intval(...), $ids))));
+
+        if ($ids === []) {
+            return [];
+        }
+
+        return $this->model
+            ->whereIn('id', $ids)
+            ->with(['ancestors' => fn ($query) => $query->defaultOrder()])
+            ->get()
+            ->mapWithKeys(fn ($category): array => [
+                (int) $category->id => $category->ancestors
+                    ->push($category)
+                    ->map(fn ($node) => $this->resolveName($node, $locale))
+                    ->implode(' / '),
+            ])
+            ->all();
+    }
+
+    /**
+     * Name of a category in the given locale, falling back to the configured
+     * locale and finally to the code so a path never renders with holes.
+     */
+    protected function resolveName(Category $category, ?string $locale = null): string
+    {
+        $names = $category->{self::ADDITIONAL_VALUES_KEY}[self::LOCALE_VALUES_KEY] ?? [];
+
+        return $names[$locale ?? core()->getRequestedLocaleCode()]['name']
+            ?? $names[config('app.fallback_locale')]['name']
+            ?? '['.$category->code.']';
+    }
+
+    /**
+     * Nodes needed to reveal the given categories inside a lazily loaded tree:
+     * the categories themselves plus every ancestor, deduplicated.
+     *
+     * Ancestors are resolved one level at a time by primary key, so the query
+     * count follows tree depth rather than the number of selected categories,
+     * and no sibling is loaded — a level with thousands of children stays cheap
+     * because the rest of it is fetched on demand when the branch is expanded.
+     *
+     * @param  string[]  $codes
+     * @return \Kalnoy\Nestedset\Collection<int, \Webkul\Category\Models\Category>
+     */
+    public function getPathNodes(array $codes)
+    {
+        $columns = ['id', 'code', 'parent_id', '_lft', '_rgt', 'additional_data'];
+
+        $nodes = $this->getModel()
+            ->newQuery()
+            ->whereIn('code', $codes)
+            ->get($columns)
+            ->keyBy('id');
+
+        $pending = $nodes->pluck('parent_id')->filter()->unique()->diff($nodes->keys());
+
+        while ($pending->isNotEmpty()) {
+            $ancestors = $this->getModel()
+                ->newQuery()
+                ->whereIn('id', $pending->all())
+                ->get($columns);
+
+            if ($ancestors->isEmpty()) {
+                break;
+            }
+
+            foreach ($ancestors as $ancestor) {
+                $nodes[$ancestor->id] = $ancestor;
+            }
+
+            $pending = $ancestors->pluck('parent_id')->filter()->unique()->diff($nodes->keys());
+        }
+
+        return $nodes->values();
     }
 
     /**
@@ -194,11 +282,69 @@ class CategoryRepository extends Repository
     {
         $query = $this->getModel()->where('parent_id', $parentId);
 
-        if ($categoryId) {
+        if ($categoryId !== 0) {
             $query->where('id', '!=', $categoryId);
         }
 
         return $query->get()->toTree();
+    }
+
+    /**
+     * @return array{data: \Illuminate\Database\Eloquent\Collection<int, \Webkul\Category\Models\Category>, page: int, has_more: bool, total: int}
+     */
+    public function getChildCategoriesPaginated(int $parentId, int $categoryId = 0, int $page = self::DEFAULT_PAGE, int $limit = self::DEFAULT_PER_PAGE): array
+    {
+        $page = max($page, self::DEFAULT_PAGE);
+        $limit = max($limit, 1);
+
+        $query = $this->getModel()->where('parent_id', $parentId);
+
+        if ($categoryId !== 0) {
+            $query->where('id', '!=', $categoryId);
+        }
+
+        $total = (clone $query)->count();
+
+        $children = $query->defaultOrder()
+            ->forPage($page, $limit)
+            ->get();
+
+        return [
+            'data'     => $children,
+            'page'     => $page,
+            'has_more' => ($page * $limit) < $total,
+            'total'    => $total,
+        ];
+    }
+
+    /**
+     * Descendant count read straight off the category's own _lft/_rgt
+     * span — no query against the descendants themselves, just the row
+     * already fetched for validation.
+     */
+    public function countDescendants(int $id): int
+    {
+        $category = $this->model->findOrFail($id);
+
+        return (int) (($category->_rgt - $category->_lft - 1) / 2);
+    }
+
+    /**
+     * The full descendant subtree of a category in one nested-set range
+     * query, hydrated back into a tree so a cascading select can both
+     * select and render every level in a single pass — no per-level
+     * fetch, so nothing pops open staggered as separate requests resolve.
+     *
+     * Passing the loaded model rather than its id keeps kalnoy/nestedset
+     * from re-querying the node's own _lft/_rgt bounds a second time.
+     *
+     * @return Collection
+     */
+    public function getDescendantTree(int $id)
+    {
+        $category = $this->model->findOrFail($id);
+
+        return $this->model->descendantsOf($category)->toTree($id);
     }
 
     /**
@@ -218,9 +364,8 @@ class CategoryRepository extends Repository
      * Get partials.
      *
      * @param  array|null  $columns
-     * @return array
      */
-    public function getPartial($columns = null)
+    public function getPartial($columns = null): array
     {
         $categories = $this->model->all();
 
@@ -246,9 +391,8 @@ class CategoryRepository extends Repository
      * this created method.
      *
      * @param  string  $attributeNames
-     * @return array
      */
-    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames)
+    private function setSameAttributeValueToAllLocale(array $data, ...$attributeNames): array
     {
         $requestedLocale = core()->getRequestedLocaleCode();
 
@@ -312,9 +456,9 @@ class CategoryRepository extends Repository
         }
 
         if (isset($category->additional_data[self::LOCALE_VALUES_KEY])) {
-            $localeValues = ! empty($localeValues)
-                ? array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues)
-                : $category->additional_data[self::LOCALE_VALUES_KEY];
+            $localeValues = empty($localeValues)
+                ? $category->additional_data[self::LOCALE_VALUES_KEY]
+                : array_merge($category->additional_data[self::LOCALE_VALUES_KEY], $localeValues);
         }
 
         $localeValues = is_array($localeValues)
@@ -350,9 +494,9 @@ class CategoryRepository extends Repository
     protected function processAdditionalDataValues(int $categoryId, array $values, array $categoryValues = []): array
     {
         $values = array_filter(
-            ! empty($categoryValues)
-                ? array_merge($categoryValues, $values)
-                : $values
+            $categoryValues === []
+                ? $values
+                : array_merge($categoryValues, $values)
         );
 
         foreach ($values as $field => $fieldValue) {

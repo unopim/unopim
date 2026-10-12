@@ -6,6 +6,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Webkul\DataGrid\DataGrid;
+use Webkul\User\Models\Admin as AdminUser;
 
 class UserDataGrid extends DataGrid
 {
@@ -25,10 +26,12 @@ class UserDataGrid extends DataGrid
     {
         $queryBuilder = DB::table('admins as u')
             ->leftJoin('roles as ro', 'u.role_id', '=', 'ro.id')
+            ->where('u.type', 'user')
             ->addSelect(
                 'u.id as user_id',
                 'u.name as user_name',
                 'u.image as user_image',
+                'u.use_gravatar',
                 'u.status',
                 'u.email',
                 'ro.name as role_name'
@@ -79,7 +82,13 @@ class UserDataGrid extends DataGrid
                     return Storage::url($row->user_image);
                 }
 
-                return null;
+                if (! $row->use_gravatar) {
+                    return null;
+                }
+
+                return AdminUser::gravatarCachedForEmail($row->email)
+                    ? AdminUser::getGravatarUrlFromEmail($row->email)
+                    : null;
             },
         ]);
 

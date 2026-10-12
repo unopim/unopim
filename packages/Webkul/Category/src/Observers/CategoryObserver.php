@@ -11,9 +11,8 @@ class CategoryObserver
      * Handle the Category "deleted" event.
      *
      * @param  \Webkul\Category\Contracts\Category  $category
-     * @return void
      */
-    public function deleted($category)
+    public function deleted($category): void
     {
         Storage::deleteDirectory('category/'.$category->id);
     }
@@ -22,12 +21,10 @@ class CategoryObserver
      * Handle the Category "saved" event.
      *
      * @param  \Webkul\Category\Contracts\Category  $category
-     * @return void
      */
-    public function saved($category)
+    public function saved($category): void
     {
-        foreach ($category->children as $child) {
-            $child->touch();
-        }
+        // Bump direct children in one query; touch() would re-fire this observer per child and recurse the subtree.
+        $category->children()->getQuery()->update(['updated_at' => now()]);
     }
 }
