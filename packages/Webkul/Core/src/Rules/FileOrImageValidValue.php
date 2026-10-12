@@ -24,6 +24,11 @@ class FileOrImageValidValue implements ValidationRule
 
     protected FileMimeExtensionMatch $fileExtensionMatchRule;
 
+    /**
+     * @var string[]
+     */
+    protected array $storedPaths = [];
+
     public function __construct(
         protected bool $isImage = false,
         protected array $allowedMimes = [],
@@ -62,6 +67,21 @@ class FileOrImageValidValue implements ValidationRule
     public function mergeAllowedMimes(array $mimes): self
     {
         $this->allowedMimes = array_unique(array_merge($this->allowedMimes, $mimes));
+
+        return $this;
+    }
+
+    /**
+     * Accept paths the record already stores for this field, wherever they live.
+     *
+     * Values saved before the path-prefix check existed may sit outside the
+     * record's own directory; resubmitting them unchanged must not fail.
+     *
+     * @param  string[]  $paths
+     */
+    public function allowStoredPaths(array $paths): self
+    {
+        $this->storedPaths = array_values(array_unique(array_merge($this->storedPaths, $paths)));
 
         return $this;
     }
@@ -173,6 +193,10 @@ class FileOrImageValidValue implements ValidationRule
     {
         if (str_contains($path, '..') || str_starts_with($path, '/') || str_contains($path, '\\')) {
             return false;
+        }
+
+        if (in_array($path, $this->storedPaths, true)) {
+            return true;
         }
 
         return array_any($this->allowedPathPrefixes, fn ($prefix): bool => str_starts_with($path, rtrim((string) $prefix, '/').'/'));

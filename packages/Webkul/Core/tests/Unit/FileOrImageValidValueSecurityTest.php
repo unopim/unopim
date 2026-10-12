@@ -202,3 +202,29 @@ it('rejects an rtf upload carrying an auto-executing object', function () {
 
     expect($validator->fails())->toBeTrue();
 });
+
+it('accepts an exact stored path outside the allowed prefixes but not its siblings', function () {
+    Storage::fake(config('filesystems.default'));
+
+    $image = UploadedFile::fake()->image('photo.png');
+    Storage::put('assets/Root/front.png', file_get_contents($image->getRealPath()));
+    Storage::put('assets/Root/back.png', file_get_contents($image->getRealPath()));
+
+    $rule = (new FileOrImageValidValue(isImage: true, allowedPathPrefixes: ['product/25/photo']))
+        ->allowStoredPaths(['assets/Root/front.png']);
+
+    expect(Validator::make(['image' => 'assets/Root/front.png'], ['image' => [$rule]])->passes())->toBeTrue()
+        ->and(Validator::make(['image' => 'assets/Root/back.png'], ['image' => [$rule]])->fails())->toBeTrue();
+});
+
+it('still rejects a traversal path even when it is listed as stored', function () {
+    Storage::fake(config('filesystems.default'));
+
+    $image = UploadedFile::fake()->image('photo.png');
+    Storage::put('assets/front.png', file_get_contents($image->getRealPath()));
+
+    $rule = (new FileOrImageValidValue(isImage: true, allowedPathPrefixes: ['product/25/photo']))
+        ->allowStoredPaths(['assets/Root/../front.png']);
+
+    expect(Validator::make(['image' => 'assets/Root/../front.png'], ['image' => [$rule]])->fails())->toBeTrue();
+});
