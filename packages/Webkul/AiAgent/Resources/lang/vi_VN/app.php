@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Tệp trống hoặc không thể phân tích cú pháp.',
         'import-missing-sku-column'     => 'Tệp phải có cột "sku". Các cột được tìm thấy: :columns.',
         'import-family-not-found'       => 'Không tìm thấy họ thuộc tính ":family".',
+        'category-tree-no-family'       => 'Không tìm thấy họ thuộc tính ":family".',
         'import-invalid-sku-row'        => 'Hàng :row: SKU không hợp lệ hoặc trống.',
         'import-acl-skip-update'        => 'Đã bỏ qua SKU ":sku": cập nhật một sản phẩm hiện có yêu cầu quyền \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'Đã bỏ qua SKU ":sku": tạo một sản phẩm mới yêu cầu quyền \'catalog.products.create\'.',

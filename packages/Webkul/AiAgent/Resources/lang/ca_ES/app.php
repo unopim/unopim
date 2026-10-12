@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'El fitxer és buit o no s\'ha pogut analitzar.',
         'import-missing-sku-column'     => 'El fitxer ha de tenir una columna "sku". Columnes trobades: :columns.',
         'import-family-not-found'       => 'No s\'ha trobat la família d\'atributs ":family".',
+        'category-tree-no-family'       => 'No s\'ha trobat la família d\'atributs ":family".',
         'import-invalid-sku-row'        => 'Fila :row: SKU no vàlid o buit.',
         'import-acl-skip-update'        => 'S\'ha omès el SKU ":sku": actualitzar un producte existent requereix el permís \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'S\'ha omès el SKU ":sku": crear un producte nou requereix el permís \'catalog.products.create\'.',

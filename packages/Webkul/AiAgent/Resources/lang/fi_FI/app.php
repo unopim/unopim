@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Tiedosto on tyhjä tai sitä ei voitu jäsentää.',
         'import-missing-sku-column'     => 'Tiedostossa on oltava "sku"-sarake. Löydetyt sarakkeet: :columns.',
         'import-family-not-found'       => 'Attribuuttiperhettä ":family" ei löytynyt.',
+        'category-tree-no-family'       => 'Attribuuttiperhettä ":family" ei löytynyt.',
         'import-invalid-sku-row'        => 'Rivi :row: virheellinen tai tyhjä SKU.',
         'import-acl-skip-update'        => 'SKU ":sku" ohitettiin: olemassa olevan tuotteen päivittäminen edellyttää \'catalog.products.edit\'-oikeutta.',
         'import-acl-skip-create'        => 'SKU ":sku" ohitettiin: uuden tuotteen luominen edellyttää \'catalog.products.create\'-oikeutta.',

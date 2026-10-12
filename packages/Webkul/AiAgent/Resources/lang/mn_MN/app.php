@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Файл хоосон эсвэл задлан шинжлэх боломжгүй байна.',
         'import-missing-sku-column'     => 'Файлд "sku" багана байх ёстой. Олдсон баганууд: :columns.',
         'import-family-not-found'       => '":family" шинж чанарын гэр бүл олдсонгүй.',
+        'category-tree-no-family'       => '":family" шинж чанарын гэр бүл олдсонгүй.',
         'import-invalid-sku-row'        => ':row-р мөр: SKU буруу эсвэл хоосон байна.',
         'import-acl-skip-update'        => 'SKU ":sku"-ыг алгасав: одоо байгаа бүтээгдэхүүнийг шинэчлэхэд \'catalog.products.edit\' зөвшөөрөл шаардлагатай.',
         'import-acl-skip-create'        => 'SKU ":sku"-ыг алгасав: шинэ бүтээгдэхүүн үүсгэхэд \'catalog.products.create\' зөвшөөрөл шаардлагатай.',

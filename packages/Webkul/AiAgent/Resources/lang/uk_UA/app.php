@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Файл порожній або його не вдалося обробити.',
         'import-missing-sku-column'     => 'Файл повинен містити стовпець "sku". Знайдені стовпці: :columns.',
         'import-family-not-found'       => 'Сімейство атрибутів ":family" не знайдено.',
+        'category-tree-no-family'       => 'Сімейство атрибутів ":family" не знайдено.',
         'import-invalid-sku-row'        => 'Рядок :row: недійсний або порожній SKU.',
         'import-acl-skip-update'        => 'SKU ":sku" пропущено: оновлення наявного товару потребує дозволу \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" пропущено: створення нового товару потребує дозволу \'catalog.products.create\'.',

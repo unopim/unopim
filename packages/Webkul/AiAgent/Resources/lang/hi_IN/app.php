@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'फ़ाइल खाली है या उसे पार्स नहीं किया जा सका।',
         'import-missing-sku-column'     => 'फ़ाइल में एक "sku" कॉलम होना चाहिए। मिले कॉलम: :columns।',
         'import-family-not-found'       => 'विशेषता परिवार ":family" नहीं मिला।',
+        'category-tree-no-family'       => 'विशेषता परिवार ":family" नहीं मिला।',
         'import-invalid-sku-row'        => 'पंक्ति :row: अमान्य या खाली SKU।',
         'import-acl-skip-update'        => 'SKU ":sku" छोड़ दिया गया: किसी मौजूदा उत्पाद को अपडेट करने के लिए \'catalog.products.edit\' अनुमति आवश्यक है।',
         'import-acl-skip-create'        => 'SKU ":sku" छोड़ दिया गया: एक नया उत्पाद बनाने के लिए \'catalog.products.create\' अनुमति आवश्यक है।',

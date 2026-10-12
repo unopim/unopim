@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Filen är tom eller kunde inte tolkas.',
         'import-missing-sku-column'     => 'Filen måste ha en "sku"-kolumn. Hittade kolumner: :columns.',
         'import-family-not-found'       => 'Attributfamiljen ":family" hittades inte.',
+        'category-tree-no-family'       => 'Attributfamiljen ":family" hittades inte.',
         'import-invalid-sku-row'        => 'Rad :row: ogiltigt eller tomt SKU.',
         'import-acl-skip-update'        => 'SKU ":sku" hoppades över: att uppdatera en befintlig produkt kräver behörigheten \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" hoppades över: att skapa en ny produkt kräver behörigheten \'catalog.products.create\'.',

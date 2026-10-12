@@ -58,6 +58,7 @@ return [
         'import-empty-file'             => 'Die Datei ist leer oder konnte nicht verarbeitet werden.',
         'import-missing-sku-column'     => 'Die Datei muss eine "sku"-Spalte enthalten. Gefundene Spalten: :columns.',
         'import-family-not-found'       => 'Die Attributfamilie ":family" wurde nicht gefunden.',
+        'category-tree-no-family'       => 'Die Attributfamilie ":family" wurde nicht gefunden.',
         'import-invalid-sku-row'        => 'Zeile :row: ungültige oder leere SKU.',
         'import-acl-skip-update'        => 'SKU ":sku" übersprungen: Das Aktualisieren eines vorhandenen Produkts erfordert die Berechtigung \'catalog.products.edit\'.',
         'import-acl-skip-create'        => 'SKU ":sku" übersprungen: Das Anlegen eines neuen Produkts erfordert die Berechtigung \'catalog.products.create\'.',
