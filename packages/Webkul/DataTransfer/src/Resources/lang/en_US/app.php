@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Categories',
+            'title'   => 'Categories',
+            'filters' => [
+                'locales'      => 'Locales',
+                'locales-info' => 'Categories are exported once per selected locale. Leave empty to export every active locale.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Category Fields',

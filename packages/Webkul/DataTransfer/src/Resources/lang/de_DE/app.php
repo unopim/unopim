@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Kategorien',
+            'title'   => 'Kategorien',
+            'filters' => [
+                'locales'      => 'Sprachen',
+                'locales-info' => 'Kategorien werden einmal pro ausgewählter Sprache exportiert. Leer lassen, um alle aktiven Sprachen zu exportieren.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Kategoriefelder',

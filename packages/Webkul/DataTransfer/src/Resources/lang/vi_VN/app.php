@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Các danh mục',
+            'title'   => 'Các danh mục',
+            'filters' => [
+                'locales'      => 'Ngôn ngữ',
+                'locales-info' => 'Danh mục được xuất một lần cho mỗi ngôn ngữ đã chọn. Để trống để xuất tất cả ngôn ngữ đang hoạt động.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Trường danh mục',

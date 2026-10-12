@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => 'Categorías',
+            'title'   => 'Categorías',
+            'filters' => [
+                'locales'      => 'Idiomes',
+                'locales-info' => 'Les categories s\'exporten una vegada per cada idioma seleccionat. Deixa-ho buit per exportar tots els idiomes actius.',
+            ],
         ],
         'category-fields' => [
             'title' => 'Camps de categoria',

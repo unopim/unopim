@@ -251,7 +251,11 @@ return [
             ],
         ],
         'categories' => [
-            'title' => '카테고리',
+            'title'   => '카테고리',
+            'filters' => [
+                'locales'      => '로케일',
+                'locales-info' => '카테고리는 선택한 로케일마다 한 번씩 내보내집니다. 비워 두면 모든 활성 로케일을 내보냅니다.',
+            ],
         ],
         'category-fields' => [
             'title' => '카테고리 필드',
